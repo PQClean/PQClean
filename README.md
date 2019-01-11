@@ -6,8 +6,8 @@ schemes that are in the
 The goal of PQClean is to provide *standalone implementations* that 
 * can easily be integrated into libraries such as [liboqs](https://openquantumsafe.org/#liboqs) or [libpqcrypto](https://libpqcrypto.org/);
 * can efficiently upstream into higher-level protocol integration efforts such as [Open Quantum Safe](https://openquantumsafe.org/#integrations);
-* can easily be integrated into benchmarking framworks such as [SUPERCOP](https://bench.cr.yp.to/supercop.shtml);
-* can easily be integrated into framworks targeting embedded platforms such as [pqm4](https://github.com/mupq/pqm4);
+* can easily be integrated into benchmarking frameworks such as [SUPERCOP](https://bench.cr.yp.to/supercop.shtml);
+* can easily be integrated into frameworks targeting embedded platforms such as [pqm4](https://github.com/mupq/pqm4);
 * are suitable starting points for architecture-specific optimized implementations;
 * are suitable starting points for evaluation of implementation security; and
 * are suitable targets for formal verification.
@@ -34,28 +34,28 @@ listed below.
 * Only dependencies:
   * `common_crypto.c` (Keccak, AES, SHA-2)
   * `randombytes.c`
-* API functions return 0 on success, negative on failure
+* API functions return `0` on success, negative on failure
 * No dynamic memory allocations
 * No branching on secret data (dynamically checked using valgrind)
 * No access to secret memory locations (dynamically checked using valgrind)
 * Separate subdirectories (without symlinks) for each parameter set of each scheme
-* Builds under Linux, Mac OSX, and Windows
+* Builds under Linux, MacOS, and Windows
 * Makefile-based build for each separate scheme
-* Makefile-based build for Windows (nmake)
+* Makefile-based build for Windows (`nmake`)
 * All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
-* Each implementation comes with a LICENSE file (see below)
-* Each implementation comes with a META file giving details about version of the algorithm, designers, etc.
+* Each implementation comes with a `LICENSE` file (see below)
+* Each implementation comes with a `META` file giving details about version of the algorithm, designers, etc.
 
 
 ## Requirements on C implementations that are manually checked
 
 * Makefiles without explicit rules (rely on implicit, built-in rules)
-* #ifdefs only for header encapsulation
+* `#ifdef`s only for header encapsulation
 * No stringification macros
 * Output-parameter pointers in functions are on the left
-* const arguments are labelled as const
-* All exported symbols are namespaced inplace
-* All integer types are of fixed size, using `stdint.h` types (including `uint8_t` instead of `"unsigned char`)
+* `const` arguments are labeled as `const`
+* All exported symbols are namespaced in place
+* All integer types are of fixed size, using `stdint.h` types (including `uint8_t` instead of `unsigned char`)
 * Integers used for indexing are of size `size_t`
 * variable declarations at the beginning (except in `for (size_t i=...`)
 
@@ -97,4 +97,3 @@ int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size
 Each subdirectory containing implementations contains a LICENSE file stating under what license
 that specific implementation is released. All other code for testing etc. in this repository
 is released under the conditions of [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
-
