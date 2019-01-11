@@ -7,7 +7,7 @@ The goal of PQClean is to provide *standalone implementations* that
 * can easily be integrated into libraries such as [liboqs](https://openquantumsafe.org/#liboqs) or [libpqcrypto](https://libpqcrypto.org/);
 * can efficiently upstream into higher-level protocol integration efforts such as [Open Quantum Safe](https://openquantumsafe.org/#integrations);
 * can easily be integrated into benchmarking framworks such as [SUPERCOP](https://bench.cr.yp.to/supercop.shtml);
-* can easily be integrated into framworks targeting embedded platforms such as [https://github.com/mupq/pqm4][pqm4];
+* can easily be integrated into framworks targeting embedded platforms such as [pqm4](https://github.com/mupq/pqm4);
 * are suitable starting points for architecture-specific optimized implementations;
 * are suitable starting points for evaluation of implementation security; and
 * are suitable targets for formal verification.
