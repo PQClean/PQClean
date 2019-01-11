@@ -88,8 +88,8 @@ in most software stacks of computing and verifying signatures instead of produci
 recovering signed messages. Specifically, those functions have the following name and signature:
 
 ```
-int crypto_sign_signature(uint8_t *sig, size_t *sigbytes, const uint8_t *m, size_t mlen, const uint8_t *sk);
-int crypto_sign_verify(const uint8_t *sig, size_t sigbytes, const uint8_t *m, size_t mlen, const uint8_t *pk);
+int crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
 ```
 
 ## License
