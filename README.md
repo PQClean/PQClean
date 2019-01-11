@@ -65,15 +65,17 @@ listed below.
 Currently, the continuous-integration and testing environment of PQClean is still work in progress 
 and as a consequence PQClean does not yet have any implementations.
 
-[//]: # Currently, PQClean includes clean C implementations of the following KEMs:
+<!--
+ Currently, PQClean includes clean C implementations of the following KEMs:
 
-[//]: # * [Kyber-512](https://pq-crystals.org/kyber/)
-[//]: # * [Kyber-768](https://pq-crystals.org/kyber/)
-[//]: # * [Kyber-1024](https://pq-crystals.org/kyber/)
+ * [Kyber-512](https://pq-crystals.org/kyber/)
+ * [Kyber-768](https://pq-crystals.org/kyber/)
+ * [Kyber-1024](https://pq-crystals.org/kyber/)
 
-[//]: # Currently, PQClean includes clean C implementations of the following signature schemes:
+ Currently, PQClean includes clean C implementations of the following signature schemes:
 
-[//]: # * [Dilithium-III](https://pq-crystals.org/dilithium/)
+ * [Dilithium-III](https://pq-crystals.org/dilithium/)
+-->
 
 ## API used by PQClean
 
