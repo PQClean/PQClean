@@ -22,29 +22,31 @@ listed below.
 
 ## Requirements on C implementations that are automatically checked
 
-* Code is valid C99
-* Passes functional tests
-* API functions do not write outside provided buffers
-* Compiles with `-Wall -Wextra -Wpedantic -Werror` with `gcc` and `clang`
-* Consistent test vectors across runs
-* Consistent test vectors on big-endian and little-endian machines
-* Consistent test vectors on 32-bit and 64-bit machines
-* No errors/warnings reported by valgrind
-* No errors/warnings reported by address sanitizer
-* Only dependencies:
-  * `common_crypto.c` (Keccak, AES, SHA-2)
-  * `randombytes.c`
-* API functions return `0` on success, negative on failure
-* No dynamic memory allocations
-* No branching on secret data (dynamically checked using valgrind)
-* No access to secret memory locations (dynamically checked using valgrind)
-* Separate subdirectories (without symlinks) for each parameter set of each scheme
-* Builds under Linux, MacOS, and Windows
-* Makefile-based build for each separate scheme
-* Makefile-based build for Windows (`nmake`)
-* All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
-* Each implementation comes with a `LICENSE` file (see below)
-* Each implementation comes with a `META` file giving details about version of the algorithm, designers, etc.
+_The checking of items on this list is still being developed. Checked items should be working._
+
+* [ ] Code is valid C99
+* [ ] Passes functional tests
+* [ ] API functions do not write outside provided buffers
+* [ ] Compiles with `-Wall -Wextra -Wpedantic -Werror` with `gcc` and `clang`
+* [ ] Consistent test vectors across runs
+* [ ] Consistent test vectors on big-endian and little-endian machines
+* [ ] Consistent test vectors on 32-bit and 64-bit machines
+* [ ] No errors/warnings reported by valgrind
+* [ ] No errors/warnings reported by address sanitizer
+* [ ] Only dependencies:
+  * [ ] `common_crypto.c` (Keccak, AES, SHA-2)
+  * [ ] `randombytes.c`
+* [ ] API functions return `0` on success, negative on failure
+* [ ] No dynamic memory allocations
+* [ ] No branching on secret data (dynamically checked using valgrind)
+* [ ] No access to secret memory locations (dynamically checked using valgrind)
+* [ ] Separate subdirectories (without symlinks) for each parameter set of each scheme
+* [ ] Builds under Linux, MacOS, and Windows
+* [ ] Makefile-based build for each separate scheme
+* [ ] Makefile-based build for Windows (`nmake`)
+* [ ] All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
+* [ ] Each implementation comes with a `LICENSE` file (see below)
+* [ ] Each implementation comes with a `META` file giving details about version of the algorithm, designers, etc.
 
 
 ## Requirements on C implementations that are manually checked
