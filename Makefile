@@ -5,6 +5,7 @@ ifndef SCHEME
 $(error SCHEME variable is not set)
 endif
 
+# This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99
 
 functest: $(dir $(SCHEME))test.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h)
@@ -21,3 +22,6 @@ functest: $(dir $(SCHEME))test.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SC
 
 clean:
 	rm -rf bin
+
+format:
+	find . -iname *.h -o -iname *.c | xargs clang-format -i -style=file

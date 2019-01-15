@@ -1,8 +1,8 @@
 #ifndef CBD_H
 #define CBD_H
 
-#include <stdint.h>
 #include "poly.h"
+#include <stdint.h>
 
 void cbd(poly *r, const unsigned char *buf);
 
