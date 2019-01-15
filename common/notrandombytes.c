@@ -1,3 +1,12 @@
+/**
+ * WARNING
+ *
+ * This file generates a PREDICTABLE and NOT AT ALL RANDOM sequence of bytes.
+ *
+ * Its purpose is to support our testing suite and it MUST NOT be used in any
+ * scenario where you are expecting actual cryptography to happen.
+ */
+
 #include <stdint.h>
 #include "randombytes.h"
 
