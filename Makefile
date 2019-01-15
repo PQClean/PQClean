@@ -5,6 +5,8 @@ ifndef SCHEME
 $(error SCHEME variable is not set)
 endif
 
+CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99
+
 functest_kem: crypto_kem/test.c $(wildcard crypto_kem/$(SCHEME)/clean/*.c) $(wildcard crypto_kem/$(SCHEME)/clean/*.h)
 	mkdir -p bin
 	$(CC) $(CFLAGS)\
