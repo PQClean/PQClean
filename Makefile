@@ -7,15 +7,15 @@ endif
 
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99
 
-functest_kem: crypto_kem/test.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h)
+functest: $(dir $(SCHEME))test.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h)
 	mkdir -p bin
 	$(CC) $(CFLAGS)\
 		-I"./common/"\
 		-I"$(SCHEME)/clean/"\
-		-o bin/functest_kem_$(SCHEME)\
+		-o bin/functest_$(subst /,_,$(SCHEME))\
 		common/*.c\
 		$(SCHEME)/clean/*.c\
-		crypto_kem/test.c
+		$<
 
 .PHONY: clean
 
