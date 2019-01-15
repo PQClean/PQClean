@@ -36,8 +36,17 @@ static void surf(void) {
     for (r = 0; r < 16; ++r) {
       sum += 0x9e3779b9;
       MUSH(0, 5)
-      MUSH(1, 7) MUSH(2, 9) MUSH(3, 13) MUSH(4, 5) MUSH(5, 7) MUSH(6, 9)
-          MUSH(7, 13) MUSH(8, 5) MUSH(9, 7) MUSH(10, 9) MUSH(11, 13)
+      MUSH(1, 7)
+      MUSH(2, 9)
+      MUSH(3, 13)
+      MUSH(4, 5)
+      MUSH(5, 7)
+      MUSH(6, 9)
+      MUSH(7, 13)
+      MUSH(8, 5)
+      MUSH(9, 7)
+      MUSH(10, 9)
+      MUSH(11, 13)
     }
     for (i = 0; i < 8; ++i)
       out[i] ^= t[i + 4];
