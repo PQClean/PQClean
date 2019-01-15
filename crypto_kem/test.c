@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define NTESTS 10000
+#define NTESTS 100
 
 int test_keys() {
   unsigned char key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
