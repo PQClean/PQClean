@@ -1,0 +1,6 @@
+name: Kyber768
+type: kem
+version: https://github.com/pq-crystals/kyber/commit/ab996e7460e5356b0e23aa034e7c2fe6922e60e6
+claimed_nist_level: 3
+length_public_key: 1088
+length_ciphertext: 1152
