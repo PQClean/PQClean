@@ -30,9 +30,6 @@ static void surf(void)
 
 void randombytes(uint8_t *x,uint64_t xlen)
 {
-  uint64_t bak = xlen;
-  uint8_t *xbak = x;
-
   while (xlen > 0) {
     if (!outleft) {
       if (!++in[0]) if (!++in[1]) if (!++in[2]) ++in[3];
