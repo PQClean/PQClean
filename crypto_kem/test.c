@@ -16,7 +16,8 @@ static int check_canary(const unsigned char *d) {
     if (*(uint64_t *)d != 0x0123456789ABCDEF) {
         return -1;
     }
-    { return 0; }
+
+    return 0;
 }
 
 static int test_keys(void) {
