@@ -2,5 +2,6 @@
 Language:        Cpp
 BasedOnStyle:  LLVM
 AllowShortFunctionsOnASingleLine: false
+IndentWidth: 4
 ...
 

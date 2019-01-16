@@ -6,7 +6,7 @@
 #include <stdint.h>
 
 typedef struct {
-  uint32_t coeffs[N];
+    uint32_t coeffs[N];
 } poly __attribute__((aligned(32)));
 
 void poly_reduce(poly *a);

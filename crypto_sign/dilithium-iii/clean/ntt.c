@@ -84,20 +84,20 @@ static const uint32_t zetas_inv[N] = {
  * Arguments:   - uint32_t p[N]: input/output coefficient array
  **************************************************/
 void ntt(uint32_t p[N]) {
-  unsigned int len, start, j, k;
-  uint32_t zeta, t;
+    unsigned int len, start, j, k;
+    uint32_t zeta, t;
 
-  k = 1;
-  for (len = 128; len > 0; len >>= 1) {
-    for (start = 0; start < N; start = j + len) {
-      zeta = zetas[k++];
-      for (j = start; j < start + len; ++j) {
-        t = montgomery_reduce((uint64_t)zeta * p[j + len]);
-        p[j + len] = p[j] + 2 * Q - t;
-        p[j] = p[j] + t;
-      }
+    k = 1;
+    for (len = 128; len > 0; len >>= 1) {
+        for (start = 0; start < N; start = j + len) {
+            zeta = zetas[k++];
+            for (j = start; j < start + len; ++j) {
+                t = montgomery_reduce((uint64_t)zeta * p[j + len]);
+                p[j + len] = p[j] + 2 * Q - t;
+                p[j] = p[j] + t;
+            }
+        }
     }
-  }
 }
 
 /*************************************************
@@ -111,25 +111,25 @@ void ntt(uint32_t p[N]) {
  * Arguments:   - uint32_t p[N]: input/output coefficient array
  **************************************************/
 void invntt_frominvmont(uint32_t p[N]) {
-  unsigned int start, len, j, k;
-  uint32_t t, zeta;
-  const uint32_t f =
-      (((uint64_t)MONT * MONT % Q) * (Q - 1) % Q) * ((Q - 1) >> 8) % Q;
+    unsigned int start, len, j, k;
+    uint32_t t, zeta;
+    const uint32_t f =
+        (((uint64_t)MONT * MONT % Q) * (Q - 1) % Q) * ((Q - 1) >> 8) % Q;
 
-  k = 0;
-  for (len = 1; len < N; len <<= 1) {
-    for (start = 0; start < N; start = j + len) {
-      zeta = zetas_inv[k++];
-      for (j = start; j < start + len; ++j) {
-        t = p[j];
-        p[j] = t + p[j + len];
-        p[j + len] = t + 256 * Q - p[j + len];
-        p[j + len] = montgomery_reduce((uint64_t)zeta * p[j + len]);
-      }
+    k = 0;
+    for (len = 1; len < N; len <<= 1) {
+        for (start = 0; start < N; start = j + len) {
+            zeta = zetas_inv[k++];
+            for (j = start; j < start + len; ++j) {
+                t = p[j];
+                p[j] = t + p[j + len];
+                p[j + len] = t + 256 * Q - p[j + len];
+                p[j + len] = montgomery_reduce((uint64_t)zeta * p[j + len]);
+            }
+        }
     }
-  }
 
-  for (j = 0; j < N; ++j) {
-    p[j] = montgomery_reduce((uint64_t)f * p[j]);
-  }
+    for (j = 0; j < N; ++j) {
+        p[j] = montgomery_reduce((uint64_t)f * p[j]);
+    }
 }

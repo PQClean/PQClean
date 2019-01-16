@@ -61,8 +61,8 @@
 
 #define CRYPTO_PUBLICKEYBYTES (SEEDBYTES + K * POLT1_SIZE_PACKED)
 #define CRYPTO_SECRETKEYBYTES                                                  \
-  (2 * SEEDBYTES + (L + K) * POLETA_SIZE_PACKED + CRHBYTES +                   \
-   K * POLT0_SIZE_PACKED)
+    (2 * SEEDBYTES + (L + K) * POLETA_SIZE_PACKED + CRHBYTES +                 \
+     K * POLT0_SIZE_PACKED)
 #define CRYPTO_BYTES (L * POLZ_SIZE_PACKED + (OMEGA + K) + (N / 8 + 8))
 
 #endif
