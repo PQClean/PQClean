@@ -1,0 +1,14 @@
+name: Dilithium-III
+type: signature
+version: https://github.com/pq-crystals/dilithium/commit/ffa89bdbc12a8ee178ccec4890aeea5449ef937a
+claimed-nist-level: 3
+length-public-key: 1472
+length-signature: 2701
+principal-submitter: Vadim Lyubashevsky
+auxiliary-submitters:
+  - Léo Ducas
+  - Eike Kiltz
+  - Tancrède Lepoint
+  - Peter Schwabe
+  - Gregor Seiler
+  - Damien Stehlé
