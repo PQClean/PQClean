@@ -1,5 +1,5 @@
 ---
-Checks:          'clang-diagnostic-*,clang-analyzer-*,clang-diagnostic-*,clang-analyzer-*,*,-hicpp-signed-bitwise,-llvm-header-guard,-hicpp-function-*,-readability-function-size'
+Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false

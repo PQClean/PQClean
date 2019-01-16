@@ -18,7 +18,7 @@ void polyvecl_ntt(polyvecl *v);
 void polyvecl_pointwise_acc_invmontgomery(poly *w, const polyvecl *u,
                                           const polyvecl *v);
 
-int polyvecl_chknorm(const polyvecl *v, uint32_t B);
+int polyvecl_chknorm(const polyvecl *v, uint32_t bound);
 
 /* Vectors of polynomials of length K */
 typedef struct {
@@ -36,7 +36,7 @@ void polyveck_shiftl(polyveck *v, unsigned int k);
 void polyveck_ntt(polyveck *v);
 void polyveck_invntt_montgomery(polyveck *v);
 
-int polyveck_chknorm(const polyveck *v, uint32_t B);
+int polyveck_chknorm(const polyveck *v, uint32_t bound);
 
 void polyveck_power2round(polyveck *v1, polyveck *v0, const polyveck *v);
 void polyveck_decompose(polyveck *v1, polyveck *v0, const polyveck *v);

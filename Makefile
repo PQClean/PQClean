@@ -1,7 +1,7 @@
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 $(EXTRAFLAGS)
 
-ALL_SCHEMES=$(filter-out crypto_%/test.c, $(wildcard crypto_*/*))
+ALL_SCHEMES=$(filter-out crypto_%.c, $(wildcard crypto_*/*))
 
 default: help
 
@@ -63,7 +63,6 @@ check-format:
 
 .PHONY: tidy
 tidy:
-	$(eval undefine .TIDY_FIX)
 	$(MAKE) do-tidy
 
 do-tidy: require_scheme
@@ -81,10 +80,11 @@ apply-tidy:
 # The below should be outlined with ts=8
 .PHONY: help
 help:
+	@echo "make test-all				Run all tests"
 	@echo "make functest SCHEME=scheme		Build functional tests for SCHEME"
+	@echo "make functest-all			Build functional tests for all schemes"
 	@echo "make run-functest SCHEME=scheme		Run functional tests for SCHEME"
 	@echo "make run-functest-all			Run all functests"
-	@echo "make testvectors SCHEME=scheme		Build testvector generator for SCHEME"
 	@echo "make clean				Clean up the bin/ folder"
 	@echo "make format				Automatically formats all the source code"
 	@echo "make tidy SCHEME=scheme  		Runs the clang-tidy linter against SCHEME"
@@ -94,23 +94,26 @@ help:
 	@echo "make help				Displays this message"
 
 .PHONY: functest-all
-build-functests: $(foreach skeme,$(ALL_SCHEMES),bin/functest_$(subst /,_,$(skeme)))
+functest-all:
+	@for scheme in $(ALL_SCHEMES); do \
+	    $(MAKE) functest SCHEME=$$scheme || exit 1; \
+	done
 
 .PHONY: run-functest-all
-run-functest-all: build-functests
+run-functest-all: functest-all
 	@for functest in bin/functest_* ; do \
 		echo ./$$functest ; \
-		./$$functest ; \
+		./$$functest || exit 1 ;\
 	done
 	@echo Tests completed
 
 .PHONY: test-all
-test-all: run-functests
+test-all: run-functest-all
 
 .PHONY: tidy-all
 tidy-all:
 	@for scheme in $(ALL_SCHEMES); do \
-		$(MAKE) tidy SCHEME=$$scheme; \
+		$(MAKE) tidy SCHEME=$$scheme || exit 1 ; \
 	done
 
 .PHONY: apply-tidy-all
