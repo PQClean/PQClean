@@ -18,10 +18,6 @@ clean:
 .PHONY: format
 format:
 	find . -iname *.h -o -iname *.c | xargs clang-format -i -style=file
-ifneq (,$(shell which dos2unix))
-	# TODO should we make this mandatory?
-	find . -iname *.h -o -iname *.c | xargs dos2unix -q
-endif
 
 .PHONY: tidy
 tidy: require_scheme

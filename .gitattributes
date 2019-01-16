@@ -1,0 +1,3 @@
+*       text=auto
+*.[ch]  text whitespace=fix
+*.yaml  text whitespace=fix
