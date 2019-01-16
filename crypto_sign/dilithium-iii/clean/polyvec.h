@@ -42,6 +42,6 @@ void polyveck_power2round(polyveck *v1, polyveck *v0, const polyveck *v);
 void polyveck_decompose(polyveck *v1, polyveck *v0, const polyveck *v);
 unsigned int polyveck_make_hint(polyveck *h, const polyveck *u,
                                 const polyveck *v);
-void polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h);
+void polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h);
 
 #endif

@@ -16,12 +16,14 @@ void pack_pk(unsigned char pk[CRYPTO_PUBLICKEYBYTES],
              const unsigned char rho[SEEDBYTES], const polyveck *t1) {
     unsigned int i;
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         pk[i] = rho[i];
+    }
     pk += SEEDBYTES;
 
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         polyt1_pack(pk + i * POLT1_SIZE_PACKED, t1->vec + i);
+    }
 }
 
 /*************************************************
@@ -37,12 +39,14 @@ void unpack_pk(unsigned char rho[SEEDBYTES], polyveck *t1,
                const unsigned char pk[CRYPTO_PUBLICKEYBYTES]) {
     unsigned int i;
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         rho[i] = pk[i];
+    }
     pk += SEEDBYTES;
 
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         polyt1_unpack(t1->vec + i, pk + i * POLT1_SIZE_PACKED);
+    }
 }
 
 /*************************************************
@@ -65,28 +69,34 @@ void pack_sk(unsigned char sk[CRYPTO_SECRETKEYBYTES],
              const polyveck *s2, const polyveck *t0) {
     unsigned int i;
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         sk[i] = rho[i];
+    }
     sk += SEEDBYTES;
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         sk[i] = key[i];
+    }
     sk += SEEDBYTES;
 
-    for (i = 0; i < CRHBYTES; ++i)
+    for (i = 0; i < CRHBYTES; ++i) {
         sk[i] = tr[i];
+    }
     sk += CRHBYTES;
 
-    for (i = 0; i < L; ++i)
+    for (i = 0; i < L; ++i) {
         polyeta_pack(sk + i * POLETA_SIZE_PACKED, s1->vec + i);
+    }
     sk += L * POLETA_SIZE_PACKED;
 
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         polyeta_pack(sk + i * POLETA_SIZE_PACKED, s2->vec + i);
+    }
     sk += K * POLETA_SIZE_PACKED;
 
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         polyt0_pack(sk + i * POLT0_SIZE_PACKED, t0->vec + i);
+    }
 }
 
 /*************************************************
@@ -107,28 +117,34 @@ void unpack_sk(unsigned char rho[SEEDBYTES], unsigned char key[SEEDBYTES],
                polyveck *t0, const unsigned char sk[CRYPTO_SECRETKEYBYTES]) {
     unsigned int i;
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         rho[i] = sk[i];
+    }
     sk += SEEDBYTES;
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         key[i] = sk[i];
+    }
     sk += SEEDBYTES;
 
-    for (i = 0; i < CRHBYTES; ++i)
+    for (i = 0; i < CRHBYTES; ++i) {
         tr[i] = sk[i];
+    }
     sk += CRHBYTES;
 
-    for (i = 0; i < L; ++i)
+    for (i = 0; i < L; ++i) {
         polyeta_unpack(s1->vec + i, sk + i * POLETA_SIZE_PACKED);
+    }
     sk += L * POLETA_SIZE_PACKED;
 
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         polyeta_unpack(s2->vec + i, sk + i * POLETA_SIZE_PACKED);
+    }
     sk += K * POLETA_SIZE_PACKED;
 
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         polyt0_unpack(t0->vec + i, sk + i * POLT0_SIZE_PACKED);
+    }
 }
 
 /*************************************************
@@ -146,21 +162,25 @@ void pack_sig(unsigned char sig[CRYPTO_BYTES], const polyvecl *z,
     unsigned int i, j, k;
     uint64_t signs, mask;
 
-    for (i = 0; i < L; ++i)
+    for (i = 0; i < L; ++i) {
         polyz_pack(sig + i * POLZ_SIZE_PACKED, z->vec + i);
+    }
     sig += L * POLZ_SIZE_PACKED;
 
     /* Encode h */
     k = 0;
     for (i = 0; i < K; ++i) {
-        for (j = 0; j < N; ++j)
-            if (h->vec[i].coeffs[j] != 0)
+        for (j = 0; j < N; ++j) {
+            if (h->vec[i].coeffs[j] != 0) {
                 sig[k++] = j;
+            }
+        }
 
         sig[OMEGA + i] = k;
     }
-    while (k < OMEGA)
+    while (k < OMEGA) {
         sig[k++] = 0;
+    }
     sig += OMEGA + K;
 
     /* Encode c */
@@ -171,15 +191,17 @@ void pack_sig(unsigned char sig[CRYPTO_BYTES], const polyvecl *z,
         for (j = 0; j < 8; ++j) {
             if (c->coeffs[8 * i + j] != 0) {
                 sig[i] |= (1U << j);
-                if (c->coeffs[8 * i + j] == (Q - 1))
+                if (c->coeffs[8 * i + j] == (Q - 1)) {
                     signs |= mask;
+                }
                 mask <<= 1;
             }
         }
     }
     sig += N / 8;
-    for (i = 0; i < 8; ++i)
+    for (i = 0; i < 8; ++i) {
         sig[i] = signs >> 8 * i;
+    }
 }
 
 /*************************************************
@@ -200,23 +222,27 @@ int unpack_sig(polyvecl *z, polyveck *h, poly *c,
     unsigned int i, j, k;
     uint64_t signs, mask;
 
-    for (i = 0; i < L; ++i)
+    for (i = 0; i < L; ++i) {
         polyz_unpack(z->vec + i, sig + i * POLZ_SIZE_PACKED);
+    }
     sig += L * POLZ_SIZE_PACKED;
 
     /* Decode h */
     k = 0;
     for (i = 0; i < K; ++i) {
-        for (j = 0; j < N; ++j)
+        for (j = 0; j < N; ++j) {
             h->vec[i].coeffs[j] = 0;
+        }
 
-        if (sig[OMEGA + i] < k || sig[OMEGA + i] > OMEGA)
+        if (sig[OMEGA + i] < k || sig[OMEGA + i] > OMEGA) {
             return 1;
+        }
 
         for (j = k; j < sig[OMEGA + i]; ++j) {
             /* Coefficients are ordered for strong unforgeability */
-            if (j > k && sig[j] <= sig[j - 1])
+            if (j > k && sig[j] <= sig[j - 1]) {
                 return 1;
+            }
             h->vec[i].coeffs[sig[j]] = 1;
         }
 
@@ -224,23 +250,28 @@ int unpack_sig(polyvecl *z, polyveck *h, poly *c,
     }
 
     /* Extra indices are zero for strong unforgeability */
-    for (j = k; j < OMEGA; ++j)
-        if (sig[j])
+    for (j = k; j < OMEGA; ++j) {
+        if (sig[j]) {
             return 1;
+        }
+    }
 
     sig += OMEGA + K;
 
     /* Decode c */
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         c->coeffs[i] = 0;
+    }
 
     signs = 0;
-    for (i = 0; i < 8; ++i)
+    for (i = 0; i < 8; ++i) {
         signs |= (uint64_t)sig[N / 8 + i] << 8 * i;
+    }
 
     /* Extra sign bits are zero for strong unforgeability */
-    if (signs >> 60)
+    if (signs >> 60) {
         return 1;
+    }
 
     mask = 1;
     for (i = 0; i < N / 8; ++i) {

@@ -13,11 +13,11 @@ static void write_canary(unsigned char *d) {
     *((uint64_t *)d) = 0x0123456789ABCDEF;
 }
 
-static int check_canary(unsigned char *d) {
-    if (*(uint64_t *)d != 0x0123456789ABCDEF)
+static int check_canary(const unsigned char *d) {
+    if (*(uint64_t *)d != 0x0123456789ABCDEF) {
         return -1;
-    else
-        return 0;
+    }
+    return 0;
 }
 static int test_sign(void) {
     unsigned char pk[CRYPTO_PUBLICKEYBYTES + 16];
@@ -48,11 +48,14 @@ static int test_sign(void) {
         // twice
         if (crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) {
             printf("ERROR Signature did not verify correctly!\n");
-        } else if (check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
-                   check_canary(sk) || check_canary(sk + sizeof(sk) - 8) ||
-                   check_canary(sm) || check_canary(sm + sizeof(sm) - 8) ||
-                   check_canary(m) || check_canary(m + sizeof(m) - 8)) {
+            return 1;
+        }
+        if (check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
+            check_canary(sk) || check_canary(sk + sizeof(sk) - 8) ||
+            check_canary(sm) || check_canary(sm + sizeof(sm) - 8) ||
+            check_canary(m) || check_canary(m + sizeof(m) - 8)) {
             printf("ERROR canary overwritten\n");
+            return 1;
         }
     }
 
@@ -84,6 +87,7 @@ static int test_wrong_pk(void) {
         if (!crypto_sign_open(sm, &mlen, sm, smlen, pk2)) {
             printf("ERROR Signature did verify correctly under wrong public "
                    "key!\n");
+            return 1;
         }
     }
 
@@ -91,8 +95,9 @@ static int test_wrong_pk(void) {
 }
 
 int main(void) {
-    test_sign();
-    test_wrong_pk();
+    int result = 0;
+    result += test_sign();
+    result += test_wrong_pk();
 
-    return 0;
+    return result;
 }

@@ -50,16 +50,15 @@ static int test_keys(void) {
 
         if (memcmp(key_a + 8, key_b + 8, CRYPTO_BYTES) != 0) {
             printf("ERROR KEYS\n");
-        } else if (check_canary(key_a) ||
-                   check_canary(key_a + sizeof(key_a) - 8) ||
-                   check_canary(key_b) ||
-                   check_canary(key_b + sizeof(key_b) - 8) ||
-                   check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
-                   check_canary(sendb) ||
-                   check_canary(sendb + sizeof(sendb) - 8) ||
-                   check_canary(sk_a) ||
-                   check_canary(sk_a + sizeof(sk_a) - 8)) {
+            return 1;
+        }
+        if (check_canary(key_a) || check_canary(key_a + sizeof(key_a) - 8) ||
+            check_canary(key_b) || check_canary(key_b + sizeof(key_b) - 8) ||
+            check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
+            check_canary(sendb) || check_canary(sendb + sizeof(sendb) - 8) ||
+            check_canary(sk_a) || check_canary(sk_a + sizeof(sk_a) - 8)) {
             printf("ERROR canary overwritten\n");
+            return 1;
         }
     }
 
@@ -88,6 +87,7 @@ static int test_invalid_sk_a(void) {
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid sk_a\n");
+            return 1;
         }
     }
 
@@ -119,6 +119,7 @@ static int test_invalid_ciphertext(void) {
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid ciphertext\n");
+            return 1;
         }
     }
 
@@ -126,9 +127,13 @@ static int test_invalid_ciphertext(void) {
 }
 
 int main(void) {
-    test_keys();
-    test_invalid_sk_a();
-    test_invalid_ciphertext();
+    int result = 0;
+    result += test_keys();
+    result += test_invalid_sk_a();
+    result += test_invalid_ciphertext();
 
-    return 0;
+    if (result != 0) {
+        puts("Errors occurred");
+    }
+    return result;
 }

@@ -1,7 +1,7 @@
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 $(EXTRAFLAGS)
 
-functest: require_scheme $(dir $(SCHEME))test.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h)
+bin/functest_$(subst /,_,$(SCHEME)): $(dir $(SCHEME))test.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
 		-iquote "./common/" \
@@ -10,6 +10,13 @@ functest: require_scheme $(dir $(SCHEME))test.c $(wildcard $(SCHEME)/clean/*.c) 
 		common/*.c \
 		$(SCHEME)/clean/*.c \
 		$<
+
+.PHONY: functest
+functest: bin/functest_$(subst /,_,$(SCHEME))
+
+.PHONY: run-functest
+run-functest: bin/functest_$(subst /,_,$(SCHEME))
+	./$<
 
 .PHONY: clean
 clean:
@@ -23,7 +30,7 @@ format:
 tidy: require_scheme
 	clang-tidy \
 		$(SCHEME)/clean/*.c \
-		crypto_kem/test.c \
+		$(SCHEME)/../test.c \
 		common/*.c \
 		$(.TIDY_FIX) \
 		-- -iquote "common/" -iquote "$(SCHEME)/clean"
@@ -46,3 +53,22 @@ require_scheme:
 ifndef SCHEME
 	$(error The SCHEME variable is not set. Example: SCHEME=crypto_kem/kyber768)
 endif
+
+.PHONY: build-functests
+build-functests:
+	find crypto_kem/ crypto_sign/ -mindepth 1 -maxdepth 1 -type d -exec make functest SCHEME={} \;
+
+.PHONY: run-functests
+run-functests:
+	find crypto_kem/ crypto_sign/ -mindepth 1 -maxdepth 1 -type d -exec make run-functest SCHEME={} \;
+
+.PHONY: test-all
+test-all: run-functests
+
+.PHONY: tidy-all
+tidy-all:
+	find crypto_kem/ crypto_sign/ -mindepth 1 -maxdepth 1 -type d -exec make tidy SCHEME={} \;
+
+.PHONY: applytidy-all
+apply-tidy-all:
+	find crypto_kem/ crypto_sign/ -mindepth 1 -maxdepth 1 -type d -exec make apply-tidy SCHEME={} \;

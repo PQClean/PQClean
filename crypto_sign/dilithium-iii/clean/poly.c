@@ -17,8 +17,9 @@
 void poly_reduce(poly *a) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a->coeffs[i] = reduce32(a->coeffs[i]);
+    }
 }
 
 /*************************************************
@@ -32,8 +33,9 @@ void poly_reduce(poly *a) {
 void poly_csubq(poly *a) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a->coeffs[i] = csubq(a->coeffs[i]);
+    }
 }
 
 /*************************************************
@@ -47,8 +49,9 @@ void poly_csubq(poly *a) {
 void poly_freeze(poly *a) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a->coeffs[i] = freeze(a->coeffs[i]);
+    }
 }
 
 /*************************************************
@@ -63,8 +66,9 @@ void poly_freeze(poly *a) {
 void poly_add(poly *c, const poly *a, const poly *b) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         c->coeffs[i] = a->coeffs[i] + b->coeffs[i];
+    }
 }
 
 /*************************************************
@@ -82,8 +86,9 @@ void poly_add(poly *c, const poly *a, const poly *b) {
 void poly_sub(poly *c, const poly *a, const poly *b) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         c->coeffs[i] = a->coeffs[i] + 2 * Q - b->coeffs[i];
+    }
 }
 
 /*************************************************
@@ -97,8 +102,9 @@ void poly_sub(poly *c, const poly *a, const poly *b) {
 void poly_neg(poly *a) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a->coeffs[i] = Q - a->coeffs[i];
+    }
 }
 
 /*************************************************
@@ -113,8 +119,9 @@ void poly_neg(poly *a) {
 void poly_shiftl(poly *a, unsigned int k) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a->coeffs[i] <<= k;
+    }
 }
 
 /*************************************************
@@ -156,8 +163,9 @@ void poly_invntt_montgomery(poly *a) {
 void poly_pointwise_invmontgomery(poly *c, const poly *a, const poly *b) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         c->coeffs[i] = montgomery_reduce((uint64_t)a->coeffs[i] * b->coeffs[i]);
+    }
 }
 
 /*************************************************
@@ -176,8 +184,9 @@ void poly_pointwise_invmontgomery(poly *c, const poly *a, const poly *b) {
 void poly_power2round(poly *a1, poly *a0, const poly *a) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a1->coeffs[i] = power2round(a->coeffs[i], a0->coeffs + i);
+    }
 }
 
 /*************************************************
@@ -197,8 +206,9 @@ void poly_power2round(poly *a1, poly *a0, const poly *a) {
 void poly_decompose(poly *a1, poly *a0, const poly *a) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a1->coeffs[i] = decompose(a->coeffs[i], a0->coeffs + i);
+    }
 }
 
 /*************************************************
@@ -237,8 +247,9 @@ unsigned int poly_make_hint(poly *h, const poly *a, const poly *b) {
 void poly_use_hint(poly *a, const poly *b, const poly *h) {
     unsigned int i;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         a->coeffs[i] = use_hint(b->coeffs[i], h->coeffs[i]);
+    }
 }
 
 /*************************************************
@@ -293,8 +304,9 @@ void poly_uniform(poly *a, const unsigned char *buf) {
         t |= (uint32_t)buf[pos++] << 16;
         t &= 0x7FFFFF;
 
-        if (t < Q)
+        if (t < Q) {
             a->coeffs[ctr++] = t;
+        }
     }
 }
 
@@ -330,10 +342,12 @@ static unsigned int rej_eta(uint32_t *a, unsigned int len,
         t1 = buf[pos++] >> 4;
 #endif
 
-        if (t0 <= 2 * ETA)
+        if (t0 <= 2 * ETA) {
             a[ctr++] = Q + ETA - t0;
-        if (t1 <= 2 * ETA && ctr < len)
+        }
+        if (t1 <= 2 * ETA && ctr < len) {
             a[ctr++] = Q + ETA - t1;
+        }
     }
     return ctr;
 }
@@ -359,8 +373,9 @@ void poly_uniform_eta(poly *a, const unsigned char seed[SEEDBYTES],
     unsigned char outbuf[2 * SHAKE256_RATE];
     uint64_t state[25];
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         inbuf[i] = seed[i];
+    }
     inbuf[SEEDBYTES] = nonce;
 
     shake256_absorb(state, inbuf, SEEDBYTES + 1);
@@ -410,10 +425,12 @@ static unsigned int rej_gamma1m1(uint32_t *a, unsigned int len,
 
         pos += 5;
 
-        if (t0 <= 2 * GAMMA1 - 2)
+        if (t0 <= 2 * GAMMA1 - 2) {
             a[ctr++] = Q + GAMMA1 - 1 - t0;
-        if (t1 <= 2 * GAMMA1 - 2 && ctr < len)
+        }
+        if (t1 <= 2 * GAMMA1 - 2 && ctr < len) {
             a[ctr++] = Q + GAMMA1 - 1 - t1;
+        }
     }
 
     return ctr;
@@ -441,8 +458,9 @@ void poly_uniform_gamma1m1(poly *a,
     unsigned char outbuf[5 * SHAKE256_RATE];
     uint64_t state[25];
 
-    for (i = 0; i < SEEDBYTES + CRHBYTES; ++i)
+    for (i = 0; i < SEEDBYTES + CRHBYTES; ++i) {
         inbuf[i] = seed[i];
+    }
     inbuf[SEEDBYTES + CRHBYTES] = nonce & 0xFF;
     inbuf[SEEDBYTES + CRHBYTES + 1] = nonce >> 8;
 
@@ -761,6 +779,7 @@ void polyz_unpack(poly *r, const unsigned char *a) {
 void polyw1_pack(unsigned char *r, const poly *a) {
     unsigned int i;
 
-    for (i = 0; i < N / 2; ++i)
+    for (i = 0; i < N / 2; ++i) {
         r[i] = a->coeffs[2 * i + 0] | (a->coeffs[2 * i + 1] << 4);
+    }
 }

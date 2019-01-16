@@ -26,8 +26,9 @@ void expand_mat(polyvecl mat[K], const unsigned char rho[SEEDBYTES]) {
      * Probability that we need more than 6 blocks: < 2^{-546}. */
     unsigned char outbuf[5 * SHAKE128_RATE];
 
-    for (i = 0; i < SEEDBYTES; ++i)
+    for (i = 0; i < SEEDBYTES; ++i) {
         inbuf[i] = rho[i];
+    }
 
     for (i = 0; i < K; ++i) {
         for (j = 0; j < L; ++j) {
@@ -55,23 +56,27 @@ void challenge(poly *c, const unsigned char mu[CRHBYTES], const polyveck *w1) {
     unsigned char outbuf[SHAKE256_RATE];
     uint64_t state[25], signs, mask;
 
-    for (i = 0; i < CRHBYTES; ++i)
+    for (i = 0; i < CRHBYTES; ++i) {
         inbuf[i] = mu[i];
-    for (i = 0; i < K; ++i)
+    }
+    for (i = 0; i < K; ++i) {
         polyw1_pack(inbuf + CRHBYTES + i * POLW1_SIZE_PACKED, w1->vec + i);
+    }
 
     shake256_absorb(state, inbuf, sizeof(inbuf));
     shake256_squeezeblocks(outbuf, 1, state);
 
     signs = 0;
-    for (i = 0; i < 8; ++i)
+    for (i = 0; i < 8; ++i) {
         signs |= (uint64_t)outbuf[i] << 8 * i;
+    }
 
     pos = 8;
     mask = 1;
 
-    for (i = 0; i < N; ++i)
+    for (i = 0; i < N; ++i) {
         c->coeffs[i] = 0;
+    }
 
     for (i = 196; i < 256; ++i) {
         do {
@@ -122,10 +127,12 @@ int crypto_sign_keypair(unsigned char *pk, unsigned char *sk) {
     expand_mat(mat, rho);
 
     /* Sample short vectors s1 and s2 */
-    for (i = 0; i < L; ++i)
+    for (i = 0; i < L; ++i) {
         poly_uniform_eta(s1.vec + i, rhoprime, nonce++);
-    for (i = 0; i < K; ++i)
+    }
+    for (i = 0; i < K; ++i) {
         poly_uniform_eta(s2.vec + i, rhoprime, nonce++);
+    }
 
     /* Matrix-vector multiplication */
     s1hat = s1;
@@ -173,7 +180,7 @@ int crypto_sign(unsigned char *sm, unsigned long long *smlen,
     unsigned long long i, j;
     unsigned int n;
     unsigned char
-        seedbuf[2 * SEEDBYTES + CRHBYTES]; // TODO: nonce in seedbuf (2x)
+        seedbuf[2 * SEEDBYTES + CRHBYTES]; // TODO(thom): nonce in seedbuf (2x)
     unsigned char tr[CRHBYTES];
     unsigned char *rho, *key, *mu;
     uint16_t nonce = 0;
@@ -189,10 +196,12 @@ int crypto_sign(unsigned char *sm, unsigned long long *smlen,
 
     /* Copy tr and message into the sm buffer,
      * backwards since m and sm can be equal in SUPERCOP API */
-    for (i = 1; i <= mlen; ++i)
+    for (i = 1; i <= mlen; ++i) {
         sm[CRYPTO_BYTES + mlen - i] = m[mlen - i];
-    for (i = 0; i < CRHBYTES; ++i)
+    }
+    for (i = 0; i < CRHBYTES; ++i) {
         sm[CRYPTO_BYTES - CRHBYTES + i] = tr[i];
+    }
 
     /* Compute CRH(tr, msg) */
     shake256(mu, CRHBYTES, sm + CRYPTO_BYTES - CRHBYTES, CRHBYTES + mlen);
@@ -205,8 +214,9 @@ int crypto_sign(unsigned char *sm, unsigned long long *smlen,
 
 rej:
     /* Sample intermediate vector y */
-    for (i = 0; i < L; ++i)
+    for (i = 0; i < L; ++i) {
         poly_uniform_gamma1m1(y.vec + i, key, nonce++);
+    }
 
     /* Matrix-vector multiplication */
     yhat = y;
@@ -231,8 +241,9 @@ rej:
     }
     polyvecl_add(&z, &z, &y);
     polyvecl_freeze(&z);
-    if (polyvecl_chknorm(&z, GAMMA1 - BETA))
+    if (polyvecl_chknorm(&z, GAMMA1 - BETA)) {
         goto rej;
+    }
 
     /* Compute w - cs2, reject if w1 can not be computed from it */
     for (i = 0; i < K; ++i) {
@@ -243,13 +254,17 @@ rej:
     polyveck_freeze(&wcs2);
     polyveck_decompose(&tmp, &wcs20, &wcs2);
     polyveck_csubq(&wcs20);
-    if (polyveck_chknorm(&wcs20, GAMMA2 - BETA))
+    if (polyveck_chknorm(&wcs20, GAMMA2 - BETA)) {
         goto rej;
+    }
 
-    for (i = 0; i < K; ++i)
-        for (j = 0; j < N; ++j)
-            if (tmp.vec[i].coeffs[j] != w1.vec[i].coeffs[j])
+    for (i = 0; i < K; ++i) {
+        for (j = 0; j < N; ++j) {
+            if (tmp.vec[i].coeffs[j] != w1.vec[i].coeffs[j]) {
                 goto rej;
+            }
+        }
+    }
 
     /* Compute hints for w1 */
     for (i = 0; i < K; ++i) {
@@ -258,14 +273,16 @@ rej:
     }
 
     polyveck_csubq(&ct0);
-    if (polyveck_chknorm(&ct0, GAMMA2))
+    if (polyveck_chknorm(&ct0, GAMMA2)) {
         goto rej;
+    }
 
     polyveck_add(&tmp, &wcs2, &ct0);
     polyveck_csubq(&tmp);
     n = polyveck_make_hint(&h, &wcs2, &tmp);
-    if (n > OMEGA)
+    if (n > OMEGA) {
         goto rej;
+    }
 
     /* Write signature */
     pack_sig(sm, &z, &h, &c);
@@ -298,21 +315,26 @@ int crypto_sign_open(unsigned char *m, unsigned long long *mlen,
     polyvecl mat[K], z;
     polyveck t1, w1, h, tmp1, tmp2;
 
-    if (smlen < CRYPTO_BYTES)
+    if (smlen < CRYPTO_BYTES) {
         goto badsig;
+    }
 
     *mlen = smlen - CRYPTO_BYTES;
 
     unpack_pk(rho, &t1, pk);
-    if (unpack_sig(&z, &h, &c, sm))
+    if (unpack_sig(&z, &h, &c, sm)) {
         goto badsig;
-    if (polyvecl_chknorm(&z, GAMMA1 - BETA))
+    }
+    if (polyvecl_chknorm(&z, GAMMA1 - BETA)) {
         goto badsig;
+    }
 
     /* Compute CRH(CRH(rho, t1), msg) using m as "playground" buffer */
-    if (sm != m)
-        for (i = 0; i < *mlen; ++i)
+    if (sm != m) {
+        for (i = 0; i < *mlen; ++i) {
             m[CRYPTO_BYTES + i] = sm[CRYPTO_BYTES + i];
+        }
+    }
 
     shake256(m + CRYPTO_BYTES - CRHBYTES, CRHBYTES, pk, CRYPTO_PUBLICKEYBYTES);
     shake256(mu, CRHBYTES, m + CRYPTO_BYTES - CRHBYTES, CRHBYTES + *mlen);
@@ -320,15 +342,17 @@ int crypto_sign_open(unsigned char *m, unsigned long long *mlen,
     /* Matrix-vector multiplication; compute Az - c2^dt1 */
     expand_mat(mat, rho);
     polyvecl_ntt(&z);
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         polyvecl_pointwise_acc_invmontgomery(tmp1.vec + i, mat + i, &z);
+    }
 
     chat = c;
     poly_ntt(&chat);
     polyveck_shiftl(&t1, D);
     polyveck_ntt(&t1);
-    for (i = 0; i < K; ++i)
+    for (i = 0; i < K; ++i) {
         poly_pointwise_invmontgomery(tmp2.vec + i, &chat, t1.vec + i);
+    }
 
     polyveck_sub(&tmp1, &tmp1, &tmp2);
     polyveck_reduce(&tmp1);
@@ -340,21 +364,25 @@ int crypto_sign_open(unsigned char *m, unsigned long long *mlen,
 
     /* Call random oracle and verify challenge */
     challenge(&cp, mu, &w1);
-    for (i = 0; i < N; ++i)
-        if (c.coeffs[i] != cp.coeffs[i])
+    for (i = 0; i < N; ++i) {
+        if (c.coeffs[i] != cp.coeffs[i]) {
             goto badsig;
+        }
+    }
 
     /* All good, copy msg, return 0 */
-    for (i = 0; i < *mlen; ++i)
+    for (i = 0; i < *mlen; ++i) {
         m[i] = sm[CRYPTO_BYTES + i];
+    }
 
     return 0;
 
 /* Signature verification failed */
 badsig:
     *mlen = (unsigned long long)-1;
-    for (i = 0; i < smlen; ++i)
+    for (i = 0; i < smlen; ++i) {
         m[i] = 0;
+    }
 
     return -1;
 }

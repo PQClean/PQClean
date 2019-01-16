@@ -97,12 +97,14 @@ uint32_t use_hint(const uint32_t a, const unsigned int hint) {
     uint32_t a0, a1;
 
     a1 = decompose(a, &a0);
-    if (hint == 0)
+    if (hint == 0) {
         return a1;
-    else if (a0 > Q)
+    }
+    if (a0 > Q) {
         return (a1 + 1) & 0xF;
-    else
+    } else {
         return (a1 - 1) & 0xF;
+    }
 
     /* If decompose does not divide out ALPHA:
     if(hint == 0)
