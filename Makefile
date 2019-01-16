@@ -29,6 +29,19 @@ functest: bin/functest_$(subst /,_,$(SCHEME))
 run-functest: bin/functest_$(subst /,_,$(SCHEME))
 	./$<
 
+bin/testvectors_$(subst /,_,$(SCHEME)): $(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
+	mkdir -p bin
+	$(CC) $(CFLAGS) \
+		-iquote "./common/" \
+		-iquote "$(SCHEME)/clean/" \
+		-o bin/testvectors_$(subst /,_,$(SCHEME)) \
+		common/*.c \
+		$(SCHEME)/clean/*.c \
+		$<
+
+.PHONY: testvectors
+testvectors: bin/testvectors_$(subst /,_,$(SCHEME))
+
 .PHONY: clean
 clean:
 	rm -rf bin
@@ -71,6 +84,7 @@ help:
 	@echo "make functest SCHEME=scheme		Build functional tests for SCHEME"
 	@echo "make run-functest SCHEME=scheme		Run functional tests for SCHEME"
 	@echo "make run-functest-all			Run all functests"
+	@echo "make testvectors SCHEME=scheme		Build testvector generator for SCHEME"
 	@echo "make clean				Clean up the bin/ folder"
 	@echo "make format				Automatically formats all the source code"
 	@echo "make tidy SCHEME=scheme  		Runs the clang-tidy linter against SCHEME"
