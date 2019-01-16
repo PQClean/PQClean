@@ -1,3 +1,6 @@
-*       text=auto
-*.[ch]  text whitespace=fix
-*.yaml  text whitespace=fix
+*           text=auto
+*.[ch]      text whitespacestrict
+*.yaml      text whitespacestrict
+Makefile    text whitespace="tabwidth=4,-tab-in-indent"
+
+[attr]whitespacestrict whitespace="trailing-space,indent-with-non-tab,space-before-tab,tabwidth=4"
