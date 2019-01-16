@@ -17,9 +17,8 @@ matrix:
       env:
         - MAKETARGET=test-all
     - os: osx
-      osx_image: xcode9
       env:
-        - MATRIX_EVAL="brew upgrade && brew install gcc && CC=gcc-8 && CXX=g++-8"
+        - MATRIX_EVAL="brew install gcc && CC=gcc-8 && CXX=g++-8"
         - MAKETARGET=test-all
 
 before_install:
