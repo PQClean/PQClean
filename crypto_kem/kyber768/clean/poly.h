@@ -19,7 +19,7 @@ void poly_tobytes(unsigned char *r, const poly *a);
 void poly_frombytes(poly *r, const unsigned char *a);
 
 void poly_frommsg(poly *r, const unsigned char msg[KYBER_SYMBYTES]);
-void poly_tomsg(unsigned char msg[KYBER_SYMBYTES], const poly *r);
+void poly_tomsg(unsigned char msg[KYBER_SYMBYTES], const poly *a);
 
 void poly_getnoise(poly *r, const unsigned char *seed, unsigned char nonce);
 

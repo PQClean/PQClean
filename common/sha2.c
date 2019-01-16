@@ -34,14 +34,14 @@ static void store_bigendian(unsigned char *x, uint64 u) {
 #define SHR(x, c) ((x) >> (c))
 #define ROTR(x, c) (((x) >> (c)) | ((x) << (64 - (c))))
 
-#define Ch(x, y, z) ((x & y) ^ (~x & z))
-#define Maj(x, y, z) ((x & y) ^ (x & z) ^ (y & z))
+#define Ch(x, y, z) (((x) & (y)) ^ (~(x) & (z)))
+#define Maj(x, y, z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 #define Sigma0(x) (ROTR(x, 28) ^ ROTR(x, 34) ^ ROTR(x, 39))
 #define Sigma1(x) (ROTR(x, 14) ^ ROTR(x, 18) ^ ROTR(x, 41))
 #define sigma0(x) (ROTR(x, 1) ^ ROTR(x, 8) ^ SHR(x, 7))
 #define sigma1(x) (ROTR(x, 19) ^ ROTR(x, 61) ^ SHR(x, 6))
 
-#define M(w0, w14, w9, w1) w0 = sigma1(w14) + w9 + sigma0(w1) + w0;
+#define M(w0, w14, w9, w1) w0 = sigma1(w14) + (w9) + sigma0(w1) + (w0);
 
 #define EXPAND                                                                 \
   M(w0, w14, w9, w1)                                                           \
@@ -62,7 +62,7 @@ static void store_bigendian(unsigned char *x, uint64 u) {
   M(w15, w13, w8, w0)
 
 #define F(w, k)                                                                \
-  T1 = h + Sigma1(e) + Ch(e, f, g) + k + w;                                    \
+  T1 = h + Sigma1(e) + Ch(e, f, g) + (k) + (w);                                \
   T2 = Sigma0(a) + Maj(a, b, c);                                               \
   h = g;                                                                       \
   g = f;                                                                       \
@@ -275,21 +275,24 @@ int sha384(unsigned char *out, const unsigned char *in,
   unsigned int i;
   unsigned long long bytes = inlen;
 
-  for (i = 0; i < 64; ++i)
+  for (i = 0; i < 64; ++i) {
     h[i] = iv_384[i];
+  }
 
   blocks(h, in, inlen);
   in += inlen;
   inlen &= 127;
   in -= inlen;
 
-  for (i = 0; i < inlen; ++i)
+  for (i = 0; i < inlen; ++i) {
     padded[i] = in[i];
+  }
   padded[inlen] = 0x80;
 
   if (inlen < 112) {
-    for (i = inlen + 1; i < 119; ++i)
+    for (i = inlen + 1; i < 119; ++i) {
       padded[i] = 0;
+    }
     padded[119] = bytes >> 61;
     padded[120] = bytes >> 53;
     padded[121] = bytes >> 45;
@@ -301,8 +304,9 @@ int sha384(unsigned char *out, const unsigned char *in,
     padded[127] = bytes << 3;
     blocks(h, padded, 128);
   } else {
-    for (i = inlen + 1; i < 247; ++i)
+    for (i = inlen + 1; i < 247; ++i) {
       padded[i] = 0;
+    }
     padded[247] = bytes >> 61;
     padded[248] = bytes >> 53;
     padded[249] = bytes >> 45;
@@ -315,8 +319,9 @@ int sha384(unsigned char *out, const unsigned char *in,
     blocks(h, padded, 256);
   }
 
-  for (i = 0; i < 48; ++i)
+  for (i = 0; i < 48; ++i) {
     out[i] = h[i];
+  }
 
   return 0;
 }
@@ -328,21 +333,24 @@ int sha512(unsigned char *out, const unsigned char *in,
   unsigned int i;
   unsigned long long bytes = inlen;
 
-  for (i = 0; i < 64; ++i)
+  for (i = 0; i < 64; ++i) {
     h[i] = iv_512[i];
+  }
 
   blocks(h, in, inlen);
   in += inlen;
   inlen &= 127;
   in -= inlen;
 
-  for (i = 0; i < inlen; ++i)
+  for (i = 0; i < inlen; ++i) {
     padded[i] = in[i];
+  }
   padded[inlen] = 0x80;
 
   if (inlen < 112) {
-    for (i = inlen + 1; i < 119; ++i)
+    for (i = inlen + 1; i < 119; ++i) {
       padded[i] = 0;
+    }
     padded[119] = bytes >> 61;
     padded[120] = bytes >> 53;
     padded[121] = bytes >> 45;
@@ -354,8 +362,9 @@ int sha512(unsigned char *out, const unsigned char *in,
     padded[127] = bytes << 3;
     blocks(h, padded, 128);
   } else {
-    for (i = inlen + 1; i < 247; ++i)
+    for (i = inlen + 1; i < 247; ++i) {
       padded[i] = 0;
+    }
     padded[247] = bytes >> 61;
     padded[248] = bytes >> 53;
     padded[249] = bytes >> 45;
@@ -368,8 +377,9 @@ int sha512(unsigned char *out, const unsigned char *in,
     blocks(h, padded, 256);
   }
 
-  for (i = 0; i < 64; ++i)
+  for (i = 0; i < 64; ++i) {
     out[i] = h[i];
+  }
 
   return 0;
 }

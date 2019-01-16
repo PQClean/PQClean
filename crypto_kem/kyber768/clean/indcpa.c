@@ -21,8 +21,9 @@ static void pack_pk(unsigned char *r, const polyvec *pk,
                     const unsigned char *seed) {
   int i;
   polyvec_compress(r, pk);
-  for (i = 0; i < KYBER_SYMBYTES; i++)
+  for (i = 0; i < KYBER_SYMBYTES; i++) {
     r[i + KYBER_POLYVECCOMPRESSEDBYTES] = seed[i];
+  }
 }
 
 /*************************************************
@@ -43,8 +44,9 @@ static void unpack_pk(polyvec *pk, unsigned char *seed,
   int i;
   polyvec_decompress(pk, packedpk);
 
-  for (i = 0; i < KYBER_SYMBYTES; i++)
+  for (i = 0; i < KYBER_SYMBYTES; i++) {
     seed[i] = packedpk[i + KYBER_POLYVECCOMPRESSEDBYTES];
+  }
 }
 
 /*************************************************
@@ -136,8 +138,9 @@ void gen_matrix(polyvec *a, const unsigned char *seed,
   uint64_t state[25]; // SHAKE state
   unsigned char extseed[KYBER_SYMBYTES + 2];
 
-  for (i = 0; i < KYBER_SYMBYTES; i++)
+  for (i = 0; i < KYBER_SYMBYTES; i++) {
     extseed[i] = seed[i];
+  }
 
   for (i = 0; i < KYBER_K; i++) {
     for (j = 0; j < KYBER_K; j++) {
@@ -195,17 +198,20 @@ void indcpa_keypair(unsigned char *pk, unsigned char *sk) {
 
   gen_a(a, publicseed);
 
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_getnoise(skpv.vec + i, noiseseed, nonce++);
+  }
 
   polyvec_ntt(&skpv);
 
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_getnoise(e.vec + i, noiseseed, nonce++);
+  }
 
   // matrix-vector multiplication
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     polyvec_pointwise_acc(&pkpv.vec[i], &skpv, a + i);
+  }
 
   polyvec_invntt(&pkpv);
   polyvec_add(&pkpv, &pkpv, &e);
@@ -246,17 +252,20 @@ void indcpa_enc(unsigned char *c, const unsigned char *m,
 
   gen_at(at, seed);
 
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_getnoise(sp.vec + i, coins, nonce++);
+  }
 
   polyvec_ntt(&sp);
 
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_getnoise(ep.vec + i, coins, nonce++);
+  }
 
   // matrix-vector multiplication
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     polyvec_pointwise_acc(&bp.vec[i], &sp, at + i);
+  }
 
   polyvec_invntt(&bp);
   polyvec_add(&bp, &bp, &ep);

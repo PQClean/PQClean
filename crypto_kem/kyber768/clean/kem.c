@@ -21,8 +21,9 @@
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
   size_t i;
   indcpa_keypair(pk, sk);
-  for (i = 0; i < KYBER_INDCPA_PUBLICKEYBYTES; i++)
+  for (i = 0; i < KYBER_INDCPA_PUBLICKEYBYTES; i++) {
     sk[i + KYBER_INDCPA_SECRETKEYBYTES] = pk[i];
+  }
   sha3_256(sk + KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES, pk,
            KYBER_PUBLICKEYBYTES);
   randombytes(sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES,
@@ -97,9 +98,10 @@ int crypto_kem_dec(unsigned char *ss, const unsigned char *ct,
   indcpa_dec(buf, ct, sk);
 
   for (i = 0; i < KYBER_SYMBYTES;
-       i++) /* Multitarget countermeasure for coins + contributory KEM */
+       i++) { /* Multitarget countermeasure for coins + contributory KEM */
     buf[KYBER_SYMBYTES + i] = sk[KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES +
                                  i]; /* Save hash by storing H(pk) in sk */
+  }
   sha3_512(kr, buf, 2 * KYBER_SYMBYTES);
 
   indcpa_enc(cmp, buf, pk,

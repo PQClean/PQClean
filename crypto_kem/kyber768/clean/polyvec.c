@@ -17,11 +17,12 @@ void polyvec_compress(unsigned char *r, const polyvec *a) {
   uint16_t t[8];
   for (i = 0; i < KYBER_K; i++) {
     for (j = 0; j < KYBER_N / 8; j++) {
-      for (k = 0; k < 8; k++)
+      for (k = 0; k < 8; k++) {
         t[k] = ((((uint32_t)freeze(a->vec[i].coeffs[8 * j + k]) << 11) +
                  KYBER_Q / 2) /
                 KYBER_Q) &
                0x7ff;
+      }
 
       r[11 * j + 0] = t[0] & 0xff;
       r[11 * j + 1] = (t[0] >> 8) | ((t[1] & 0x1f) << 3);
@@ -109,8 +110,9 @@ void polyvec_decompress(polyvec *r, const unsigned char *a) {
  **************************************************/
 void polyvec_tobytes(unsigned char *r, const polyvec *a) {
   int i;
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_tobytes(r + i * KYBER_POLYBYTES, &a->vec[i]);
+  }
 }
 
 /*************************************************
@@ -124,8 +126,9 @@ void polyvec_tobytes(unsigned char *r, const polyvec *a) {
  **************************************************/
 void polyvec_frombytes(polyvec *r, const unsigned char *a) {
   int i;
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_frombytes(&r->vec[i], a + i * KYBER_POLYBYTES);
+  }
 }
 
 /*************************************************
@@ -137,8 +140,9 @@ void polyvec_frombytes(polyvec *r, const unsigned char *a) {
  **************************************************/
 void polyvec_ntt(polyvec *r) {
   int i;
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_ntt(&r->vec[i]);
+  }
 }
 
 /*************************************************
@@ -150,8 +154,9 @@ void polyvec_ntt(polyvec *r) {
  **************************************************/
 void polyvec_invntt(polyvec *r) {
   int i;
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_invntt(&r->vec[i]);
+  }
 }
 
 /*************************************************
@@ -189,6 +194,7 @@ void polyvec_pointwise_acc(poly *r, const polyvec *a, const polyvec *b) {
  **************************************************/
 void polyvec_add(polyvec *r, const polyvec *a, const polyvec *b) {
   int i;
-  for (i = 0; i < KYBER_K; i++)
+  for (i = 0; i < KYBER_K; i++) {
     poly_add(&r->vec[i], &a->vec[i], &b->vec[i]);
+  }
 }

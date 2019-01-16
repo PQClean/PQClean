@@ -4,6 +4,6 @@
 #include <stdint.h>
 
 void ntt(uint16_t *poly);
-void invntt(uint16_t *poly);
+void invntt(uint16_t *a);
 
 #endif

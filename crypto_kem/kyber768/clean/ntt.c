@@ -30,10 +30,11 @@ void ntt(uint16_t *p) {
 
         p[j + (1 << level)] = barrett_reduce(p[j] + 4 * KYBER_Q - t);
 
-        if (level & 1)     /* odd level */
+        if (level & 1) {   /* odd level */
           p[j] = p[j] + t; /* Omit reduction (be lazy) */
-        else
+        } else {
           p[j] = barrett_reduce(p[j] + t);
+        }
       }
     }
   }
@@ -60,10 +61,11 @@ void invntt(uint16_t *a) {
         W = omegas_inv_bitrev_montgomery[jTwiddle++];
         temp = a[j];
 
-        if (level & 1) /* odd level */
+        if (level & 1) { /* odd level */
           a[j] = barrett_reduce((temp + a[j + (1 << level)]));
-        else
+        } else {
           a[j] = (temp + a[j + (1 << level)]); /* Omit reduction (be lazy) */
+        }
 
         t = (W * ((uint32_t)temp + 4 * KYBER_Q - a[j + (1 << level)]));
 
@@ -72,6 +74,7 @@ void invntt(uint16_t *a) {
     }
   }
 
-  for (j = 0; j < KYBER_N; j++)
+  for (j = 0; j < KYBER_N; j++) {
     a[j] = montgomery_reduce((a[j] * psis_inv_montgomery[j]));
+  }
 }

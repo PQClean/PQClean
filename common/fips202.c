@@ -10,7 +10,7 @@
 #include <stdint.h>
 
 #define NROUNDS 24
-#define ROL(a, offset) ((a << offset) ^ (a >> (64 - offset)))
+#define ROL(a, offset) (((a) << (offset)) ^ ((a) >> (64 - (offset))))
 
 /*************************************************
  * Name:        load64
@@ -25,8 +25,9 @@ static uint64_t load64(const unsigned char *x) {
   unsigned int i;
   uint64_t r = 0;
 
-  for (i = 0; i < 8; ++i)
+  for (i = 0; i < 8; ++i) {
     r |= (uint64_t)x[i] << 8 * i;
+  }
 
   return r;
 }
@@ -42,8 +43,9 @@ static uint64_t load64(const unsigned char *x) {
 static void store64(uint8_t *x, uint64_t u) {
   unsigned int i;
 
-  for (i = 0; i < 8; ++i)
+  for (i = 0; i < 8; ++i) {
     x[i] = u >> 8 * i;
+  }
 }
 
 /* Keccak round constants */
@@ -137,7 +139,7 @@ static void KeccakF1600_StatePermute(uint64_t *state) {
     Asu ^= Du;
     BCu = ROL(Asu, 14);
     Eba = BCa ^ ((~BCe) & BCi);
-    Eba ^= (uint64_t)KeccakF_RoundConstants[round];
+    Eba ^= KeccakF_RoundConstants[round];
     Ebe = BCe ^ ((~BCi) & BCo);
     Ebi = BCi ^ ((~BCo) & BCu);
     Ebo = BCo ^ ((~BCu) & BCa);
@@ -232,7 +234,7 @@ static void KeccakF1600_StatePermute(uint64_t *state) {
     Esu ^= Du;
     BCu = ROL(Esu, 14);
     Aba = BCa ^ ((~BCe) & BCi);
-    Aba ^= (uint64_t)KeccakF_RoundConstants[round + 1];
+    Aba ^= KeccakF_RoundConstants[round + 1];
     Abe = BCe ^ ((~BCi) & BCo);
     Abi = BCi ^ ((~BCo) & BCu);
     Abo = BCo ^ ((~BCu) & BCa);
@@ -350,26 +352,31 @@ static void keccak_absorb(uint64_t *s, unsigned int r, const unsigned char *m,
   unsigned char t[200];
 
   /* Zero state */
-  for (i = 0; i < 25; ++i)
+  for (i = 0; i < 25; ++i) {
     s[i] = 0;
+  }
 
   while (mlen >= r) {
-    for (i = 0; i < r / 8; ++i)
+    for (i = 0; i < r / 8; ++i) {
       s[i] ^= load64(m + 8 * i);
+    }
 
     KeccakF1600_StatePermute(s);
     mlen -= r;
     m += r;
   }
 
-  for (i = 0; i < r; ++i)
+  for (i = 0; i < r; ++i) {
     t[i] = 0;
-  for (i = 0; i < mlen; ++i)
+  }
+  for (i = 0; i < mlen; ++i) {
     t[i] = m[i];
+  }
   t[i] = p;
   t[r - 1] |= 128;
-  for (i = 0; i < r / 8; ++i)
+  for (i = 0; i < r / 8; ++i) {
     s[i] ^= load64(t + 8 * i);
+  }
 }
 
 /*************************************************
@@ -490,8 +497,9 @@ void shake128(unsigned char *output, unsigned long long outlen,
 
   if (outlen) {
     shake128_squeezeblocks(t, 1, s);
-    for (i = 0; i < outlen; ++i)
+    for (i = 0; i < outlen; ++i) {
       output[i] = t[i];
+    }
   }
 }
 
@@ -520,8 +528,9 @@ void shake256(unsigned char *output, unsigned long long outlen,
 
   if (outlen) {
     shake256_squeezeblocks(t, 1, s);
-    for (i = 0; i < outlen; ++i)
+    for (i = 0; i < outlen; ++i) {
       output[i] = t[i];
+    }
   }
 }
 
@@ -546,8 +555,9 @@ void sha3_256(unsigned char *output, const unsigned char *input,
   /* Squeeze output */
   keccak_squeezeblocks(t, 1, s, SHA3_256_RATE);
 
-  for (i = 0; i < 32; i++)
+  for (i = 0; i < 32; i++) {
     output[i] = t[i];
+  }
 }
 
 /*************************************************
@@ -571,6 +581,7 @@ void sha3_512(unsigned char *output, const unsigned char *input,
   /* Squeeze output */
   keccak_squeezeblocks(t, 1, s, SHA3_512_RATE);
 
-  for (i = 0; i < 64; i++)
+  for (i = 0; i < 64; i++) {
     output[i] = t[i];
+  }
 }

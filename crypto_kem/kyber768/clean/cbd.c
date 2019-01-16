@@ -15,8 +15,9 @@
 static uint64_t load_littleendian(const unsigned char *x, int bytes) {
   int i;
   uint64_t r = x[0];
-  for (i = 1; i < bytes; i++)
+  for (i = 1; i < bytes; i++) {
     r |= (uint64_t)x[i] << (8 * i);
+  }
   return r;
 }
 
@@ -62,8 +63,9 @@ void cbd(poly *r, const unsigned char *buf) {
   for (i = 0; i < KYBER_N / 4; i++) {
     t = load_littleendian(buf + 4 * i, 4);
     d = 0;
-    for (j = 0; j < 4; j++)
+    for (j = 0; j < 4; j++) {
       d += (t >> j) & 0x11111111;
+    }
 
     a[0] = d & 0xf;
     b[0] = (d >> 4) & 0xf;

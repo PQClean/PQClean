@@ -12,11 +12,11 @@ static void write_canary(unsigned char *d) {
   *((uint64_t *)d) = 0x0123456789ABCDEF;
 }
 
-static int check_canary(unsigned char *d) {
-  if (*(uint64_t *)d != 0x0123456789ABCDEF)
+static int check_canary(const unsigned char *d) {
+  if (*(uint64_t *)d != 0x0123456789ABCDEF) {
     return -1;
-  else
-    return 0;
+  }
+  { return 0; }
 }
 
 static int test_keys(void) {
@@ -48,7 +48,7 @@ static int test_keys(void) {
     // Alice uses Bobs response to get her secret key
     crypto_kem_dec(key_a + 8, sendb + 8, sk_a + 8);
 
-    if (memcmp(key_a + 8, key_b + 8, CRYPTO_BYTES)) {
+    if (memcmp(key_a + 8, key_b + 8, CRYPTO_BYTES) != 0) {
       printf("ERROR KEYS\n");
     } else if (check_canary(key_a) || check_canary(key_a + sizeof(key_a) - 8) ||
                check_canary(key_b) || check_canary(key_b + sizeof(key_b) - 8) ||
