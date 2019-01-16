@@ -1,0 +1,13 @@
+language: c
+
+compiler:
+  - clang
+  - gcc
+
+script:
+  - make test-all
+  - if [[ $(find . -iname *.h -o -iname *.c | xargs clang-format -style=file) ]]; then;
+      echo "Files need formatting.";
+      exit 1;
+    fi;
+#  vim: set ft=yaml ts=2 sw=2 tw=0 et :
