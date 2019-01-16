@@ -6,6 +6,6 @@ compiler:
 
 script:
   - make test-all
+  - make tidy-all
   - make check-format
-  - make tidy
 #  vim: set ft=yaml ts=2 sw=2 tw=0 et :
