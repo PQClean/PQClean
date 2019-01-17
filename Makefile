@@ -7,12 +7,12 @@ default: help
 
 .PHONY: require_scheme
 require_scheme:
-# assumes a SCHEME variable; e.g. make functest_kem SCHEME=crypto_kem/kyber768
+# assumes a SCHEME variable; e.g. make functest SCHEME=crypto_kem/kyber768
 ifndef SCHEME
 	$(error The SCHEME variable is not set. Example: SCHEME=crypto_kem/kyber768)
 endif
 
-bin/functest_$(subst /,_,$(SCHEME)): $(dir $(SCHEME))test.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
+bin/functest_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
 		-iquote "./common/" \
@@ -29,7 +29,7 @@ functest: bin/functest_$(subst /,_,$(SCHEME))
 run-functest: bin/functest_$(subst /,_,$(SCHEME))
 	./$<
 
-bin/testvectors_$(subst /,_,$(SCHEME)): $(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
+bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
 		-iquote "./common/" \
@@ -69,7 +69,6 @@ do-tidy: require_scheme
 	clang-tidy \
 		-quiet $(.TIDY_FIX) \
 		$(SCHEME)/clean/*.c \
-		$(SCHEME)/../test.c \
 		common/*.c \
 		-- -iquote "common/" -iquote "$(SCHEME)/clean"
 
