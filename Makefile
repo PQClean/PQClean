@@ -42,6 +42,16 @@ bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wil
 .PHONY: testvectors
 testvectors: bin/testvectors_$(subst /,_,$(SCHEME))
 
+bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | require_scheme
+	mkdir -p bin
+	gcc $(CFLAGS) \
+		-shared \
+		-fPIC \
+		-iquote "./common/" \
+		-iquote "$(SCHEME)/clean/" \
+		-o $@ \
+		$^
+
 .PHONY: clean
 clean:
 	rm -rf bin
