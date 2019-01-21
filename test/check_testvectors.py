@@ -34,5 +34,7 @@ for impl in implementations:
     if testvectorsHash.lower() != expectedTestvectorsHash.lower():
         print(f"testvectors of {SCHEME} should be {expectedTestvectorsHash}, but is {testvectorsHash}")
         sys.exit(1)
+    else:
+        print(f"testvectors of {SCHEME} matched expected hash")
 
 
