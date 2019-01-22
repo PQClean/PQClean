@@ -12,13 +12,15 @@
  * Arguments:   - unsigned char *r: pointer to output byte array
  *              - const polyvec *a: pointer to input vector of polynomials
  **************************************************/
-void polyvec_compress(unsigned char *r, const polyvec *a) {
+void PQCLEAN_KYBER768_polyvec_compress(unsigned char *r, const polyvec *a) {
     int i, j, k;
     uint16_t t[8];
     for (i = 0; i < KYBER_K; i++) {
         for (j = 0; j < KYBER_N / 8; j++) {
             for (k = 0; k < 8; k++) {
-                t[k] = ((((uint32_t)freeze(a->vec[i].coeffs[8 * j + k]) << 11) +
+                t[k] = ((((uint32_t)PQCLEAN_KYBER768_freeze(
+                              a->vec[i].coeffs[8 * j + k])
+                          << 11) +
                          KYBER_Q / 2) /
                         KYBER_Q) &
                        0x7ff;
@@ -49,7 +51,7 @@ void polyvec_compress(unsigned char *r, const polyvec *a) {
  * Arguments:   - polyvec *r:       pointer to output vector of polynomials
  *              - unsigned char *a: pointer to input byte array
  **************************************************/
-void polyvec_decompress(polyvec *r, const unsigned char *a) {
+void PQCLEAN_KYBER768_polyvec_decompress(polyvec *r, const unsigned char *a) {
     int i, j;
     for (i = 0; i < KYBER_K; i++) {
         for (j = 0; j < KYBER_N / 8; j++) {
@@ -115,10 +117,10 @@ void polyvec_decompress(polyvec *r, const unsigned char *a) {
  * Arguments:   - unsigned char *r: pointer to output byte array
  *              - const polyvec *a: pointer to input vector of polynomials
  **************************************************/
-void polyvec_tobytes(unsigned char *r, const polyvec *a) {
+void PQCLEAN_KYBER768_polyvec_tobytes(unsigned char *r, const polyvec *a) {
     int i;
     for (i = 0; i < KYBER_K; i++) {
-        poly_tobytes(r + i * KYBER_POLYBYTES, &a->vec[i]);
+        PQCLEAN_KYBER768_poly_tobytes(r + i * KYBER_POLYBYTES, &a->vec[i]);
     }
 }
 
@@ -131,10 +133,10 @@ void polyvec_tobytes(unsigned char *r, const polyvec *a) {
  * Arguments:   - unsigned char *r: pointer to output byte array
  *              - const polyvec *a: pointer to input vector of polynomials
  **************************************************/
-void polyvec_frombytes(polyvec *r, const unsigned char *a) {
+void PQCLEAN_KYBER768_polyvec_frombytes(polyvec *r, const unsigned char *a) {
     int i;
     for (i = 0; i < KYBER_K; i++) {
-        poly_frombytes(&r->vec[i], a + i * KYBER_POLYBYTES);
+        PQCLEAN_KYBER768_poly_frombytes(&r->vec[i], a + i * KYBER_POLYBYTES);
     }
 }
 
@@ -145,10 +147,10 @@ void polyvec_frombytes(polyvec *r, const unsigned char *a) {
  *
  * Arguments:   - polyvec *r: pointer to in/output vector of polynomials
  **************************************************/
-void polyvec_ntt(polyvec *r) {
+void PQCLEAN_KYBER768_polyvec_ntt(polyvec *r) {
     int i;
     for (i = 0; i < KYBER_K; i++) {
-        poly_ntt(&r->vec[i]);
+        PQCLEAN_KYBER768_poly_ntt(&r->vec[i]);
     }
 }
 
@@ -159,10 +161,10 @@ void polyvec_ntt(polyvec *r) {
  *
  * Arguments:   - polyvec *r: pointer to in/output vector of polynomials
  **************************************************/
-void polyvec_invntt(polyvec *r) {
+void PQCLEAN_KYBER768_polyvec_invntt(polyvec *r) {
     int i;
     for (i = 0; i < KYBER_K; i++) {
-        poly_invntt(&r->vec[i]);
+        PQCLEAN_KYBER768_poly_invntt(&r->vec[i]);
     }
 }
 
@@ -175,18 +177,22 @@ void polyvec_invntt(polyvec *r) {
  *            - const polyvec *a: pointer to first input vector of polynomials
  *            - const polyvec *b: pointer to second input vector of polynomials
  **************************************************/
-void polyvec_pointwise_acc(poly *r, const polyvec *a, const polyvec *b) {
+void PQCLEAN_KYBER768_polyvec_pointwise_acc(poly *r, const polyvec *a,
+                                            const polyvec *b) {
     int i, j;
     uint16_t t;
     for (j = 0; j < KYBER_N; j++) {
-        t = montgomery_reduce(
+        t = PQCLEAN_KYBER768_montgomery_reduce(
             4613 * (uint32_t)b->vec[0].coeffs[j]); // 4613 = 2^{2*18} % q
-        r->coeffs[j] = montgomery_reduce(a->vec[0].coeffs[j] * t);
+        r->coeffs[j] =
+            PQCLEAN_KYBER768_montgomery_reduce(a->vec[0].coeffs[j] * t);
         for (i = 1; i < KYBER_K; i++) {
-            t = montgomery_reduce(4613 * (uint32_t)b->vec[i].coeffs[j]);
-            r->coeffs[j] += montgomery_reduce(a->vec[i].coeffs[j] * t);
+            t = PQCLEAN_KYBER768_montgomery_reduce(
+                4613 * (uint32_t)b->vec[i].coeffs[j]);
+            r->coeffs[j] +=
+                PQCLEAN_KYBER768_montgomery_reduce(a->vec[i].coeffs[j] * t);
         }
-        r->coeffs[j] = barrett_reduce(r->coeffs[j]);
+        r->coeffs[j] = PQCLEAN_KYBER768_barrett_reduce(r->coeffs[j]);
     }
 }
 
@@ -199,9 +205,10 @@ void polyvec_pointwise_acc(poly *r, const polyvec *a, const polyvec *b) {
  *            - const polyvec *a: pointer to first input vector of polynomials
  *            - const polyvec *b: pointer to second input vector of polynomials
  **************************************************/
-void polyvec_add(polyvec *r, const polyvec *a, const polyvec *b) {
+void PQCLEAN_KYBER768_polyvec_add(polyvec *r, const polyvec *a,
+                                  const polyvec *b) {
     int i;
     for (i = 0; i < KYBER_K; i++) {
-        poly_add(&r->vec[i], &a->vec[i], &b->vec[i]);
+        PQCLEAN_KYBER768_poly_add(&r->vec[i], &a->vec[i], &b->vec[i]);
     }
 }

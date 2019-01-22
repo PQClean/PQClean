@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void ntt(uint16_t *p);
-void invntt(uint16_t *a);
+void PQCLEAN_KYBER768_ntt(uint16_t *p);
+void PQCLEAN_KYBER768_invntt(uint16_t *a);
 
 #endif

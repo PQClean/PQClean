@@ -13,7 +13,7 @@
  *
  * Returns a1.
  **************************************************/
-uint32_t power2round(uint32_t a, uint32_t *a0) {
+uint32_t PQCLEAN_DILITHIUMIII_power2round(uint32_t a, uint32_t *a0) {
     int32_t t;
 
     /* Centralized remainder mod 2^D */
@@ -39,7 +39,7 @@ uint32_t power2round(uint32_t a, uint32_t *a0) {
  *
  * Returns a1.
  **************************************************/
-uint32_t decompose(uint32_t a, uint32_t *a0) {
+uint32_t PQCLEAN_DILITHIUMIII_decompose(uint32_t a, uint32_t *a0) {
 #if ALPHA != (Q - 1) / 16
 #error "decompose assumes ALPHA == (Q-1)/16"
 #endif
@@ -77,10 +77,12 @@ uint32_t decompose(uint32_t a, uint32_t *a0) {
  *
  * Returns 1 if high bits of a and b differ and 0 otherwise.
  **************************************************/
-unsigned int make_hint(const uint32_t a, const uint32_t b) {
+unsigned int PQCLEAN_DILITHIUMIII_make_hint(const uint32_t a,
+                                            const uint32_t b) {
     uint32_t t;
 
-    return decompose(a, &t) != decompose(b, &t);
+    return PQCLEAN_DILITHIUMIII_decompose(a, &t) !=
+           PQCLEAN_DILITHIUMIII_decompose(b, &t);
 }
 
 /*************************************************
@@ -93,10 +95,11 @@ unsigned int make_hint(const uint32_t a, const uint32_t b) {
  *
  * Returns corrected high bits.
  **************************************************/
-uint32_t use_hint(const uint32_t a, const unsigned int hint) {
+uint32_t PQCLEAN_DILITHIUMIII_use_hint(const uint32_t a,
+                                       const unsigned int hint) {
     uint32_t a0, a1;
 
-    a1 = decompose(a, &a0);
+    a1 = PQCLEAN_DILITHIUMIII_decompose(a, &a0);
     if (hint == 0) {
         return a1;
     }

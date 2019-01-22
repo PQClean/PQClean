@@ -20,7 +20,7 @@
 static void pack_pk(unsigned char *r, const polyvec *pk,
                     const unsigned char *seed) {
     int i;
-    polyvec_compress(r, pk);
+    PQCLEAN_KYBER768_polyvec_compress(r, pk);
     for (i = 0; i < KYBER_SYMBYTES; i++) {
         r[i + KYBER_POLYVECCOMPRESSEDBYTES] = seed[i];
     }
@@ -42,7 +42,7 @@ static void pack_pk(unsigned char *r, const polyvec *pk,
 static void unpack_pk(polyvec *pk, unsigned char *seed,
                       const unsigned char *packedpk) {
     int i;
-    polyvec_decompress(pk, packedpk);
+    PQCLEAN_KYBER768_polyvec_decompress(pk, packedpk);
 
     for (i = 0; i < KYBER_SYMBYTES; i++) {
         seed[i] = packedpk[i + KYBER_POLYVECCOMPRESSEDBYTES];
@@ -61,8 +61,8 @@ static void unpack_pk(polyvec *pk, unsigned char *seed,
  *polynomials b const unsigned char *seed: pointer to the input polynomial v
  **************************************************/
 static void pack_ciphertext(unsigned char *r, const polyvec *b, const poly *v) {
-    polyvec_compress(r, b);
-    poly_compress(r + KYBER_POLYVECCOMPRESSEDBYTES, v);
+    PQCLEAN_KYBER768_polyvec_compress(r, b);
+    PQCLEAN_KYBER768_poly_compress(r + KYBER_POLYVECCOMPRESSEDBYTES, v);
 }
 
 /*************************************************
@@ -78,8 +78,8 @@ static void pack_ciphertext(unsigned char *r, const polyvec *b, const poly *v) {
  *ciphertext
  **************************************************/
 static void unpack_ciphertext(polyvec *b, poly *v, const unsigned char *c) {
-    polyvec_decompress(b, c);
-    poly_decompress(v, c + KYBER_POLYVECCOMPRESSEDBYTES);
+    PQCLEAN_KYBER768_polyvec_decompress(b, c);
+    PQCLEAN_KYBER768_poly_decompress(v, c + KYBER_POLYVECCOMPRESSEDBYTES);
 }
 
 /*************************************************
@@ -92,7 +92,7 @@ static void unpack_ciphertext(polyvec *b, poly *v, const unsigned char *c) {
  *(secret key)
  **************************************************/
 static void pack_sk(unsigned char *r, const polyvec *sk) {
-    polyvec_tobytes(r, sk);
+    PQCLEAN_KYBER768_polyvec_tobytes(r, sk);
 }
 
 /*************************************************
@@ -107,11 +107,11 @@ static void pack_sk(unsigned char *r, const polyvec *sk) {
  *secret key
  **************************************************/
 static void unpack_sk(polyvec *sk, const unsigned char *packedsk) {
-    polyvec_frombytes(sk, packedsk);
+    PQCLEAN_KYBER768_polyvec_frombytes(sk, packedsk);
 }
 
-#define gen_a(A, B) gen_matrix(A, B, 0)
-#define gen_at(A, B) gen_matrix(A, B, 1)
+#define gen_a(A, B) PQCLEAN_KYBER768_gen_matrix(A, B, 0)
+#define gen_at(A, B) PQCLEAN_KYBER768_gen_matrix(A, B, 1)
 
 /*************************************************
  * Name:        gen_matrix
@@ -126,8 +126,8 @@ static void unpack_sk(polyvec *sk, const unsigned char *packedsk) {
  *              - int transposed:            boolean deciding whether A or A^T
  *is generated
  **************************************************/
-void gen_matrix(polyvec *a, const unsigned char *seed,
-                int transposed) // Not static for benchmarking
+void PQCLEAN_KYBER768_gen_matrix(polyvec *a, const unsigned char *seed,
+                                 int transposed) // Not static for benchmarking
 {
     unsigned int pos = 0, ctr;
     uint16_t val;
@@ -185,7 +185,7 @@ void gen_matrix(polyvec *a, const unsigned char *seed,
  *              - unsigned char *sk: pointer to output private key (of length
  *KYBER_INDCPA_SECRETKEYBYTES bytes)
  **************************************************/
-void indcpa_keypair(unsigned char *pk, unsigned char *sk) {
+void PQCLEAN_KYBER768_indcpa_keypair(unsigned char *pk, unsigned char *sk) {
     polyvec a[KYBER_K], e, pkpv, skpv;
     unsigned char buf[KYBER_SYMBYTES + KYBER_SYMBYTES];
     unsigned char *publicseed = buf;
@@ -199,22 +199,22 @@ void indcpa_keypair(unsigned char *pk, unsigned char *sk) {
     gen_a(a, publicseed);
 
     for (i = 0; i < KYBER_K; i++) {
-        poly_getnoise(skpv.vec + i, noiseseed, nonce++);
+        PQCLEAN_KYBER768_poly_getnoise(skpv.vec + i, noiseseed, nonce++);
     }
 
-    polyvec_ntt(&skpv);
+    PQCLEAN_KYBER768_polyvec_ntt(&skpv);
 
     for (i = 0; i < KYBER_K; i++) {
-        poly_getnoise(e.vec + i, noiseseed, nonce++);
+        PQCLEAN_KYBER768_poly_getnoise(e.vec + i, noiseseed, nonce++);
     }
 
     // matrix-vector multiplication
     for (i = 0; i < KYBER_K; i++) {
-        polyvec_pointwise_acc(&pkpv.vec[i], &skpv, a + i);
+        PQCLEAN_KYBER768_polyvec_pointwise_acc(&pkpv.vec[i], &skpv, a + i);
     }
 
-    polyvec_invntt(&pkpv);
-    polyvec_add(&pkpv, &pkpv, &e);
+    PQCLEAN_KYBER768_polyvec_invntt(&pkpv);
+    PQCLEAN_KYBER768_polyvec_add(&pkpv, &pkpv, &e);
 
     pack_sk(sk, &skpv);
     pack_pk(pk, &pkpv, publicseed);
@@ -236,8 +236,9 @@ void indcpa_keypair(unsigned char *pk, unsigned char *sk) {
  *as seed (of length KYBER_SYMBYTES bytes) to deterministically generate all
  *randomness
  **************************************************/
-void indcpa_enc(unsigned char *c, const unsigned char *m,
-                const unsigned char *pk, const unsigned char *coins) {
+void PQCLEAN_KYBER768_indcpa_enc(unsigned char *c, const unsigned char *m,
+                                 const unsigned char *pk,
+                                 const unsigned char *coins) {
     polyvec sp, pkpv, ep, at[KYBER_K], bp;
     poly v, k, epp;
     unsigned char seed[KYBER_SYMBYTES];
@@ -246,37 +247,37 @@ void indcpa_enc(unsigned char *c, const unsigned char *m,
 
     unpack_pk(&pkpv, seed, pk);
 
-    poly_frommsg(&k, m);
+    PQCLEAN_KYBER768_poly_frommsg(&k, m);
 
-    polyvec_ntt(&pkpv);
+    PQCLEAN_KYBER768_polyvec_ntt(&pkpv);
 
     gen_at(at, seed);
 
     for (i = 0; i < KYBER_K; i++) {
-        poly_getnoise(sp.vec + i, coins, nonce++);
+        PQCLEAN_KYBER768_poly_getnoise(sp.vec + i, coins, nonce++);
     }
 
-    polyvec_ntt(&sp);
+    PQCLEAN_KYBER768_polyvec_ntt(&sp);
 
     for (i = 0; i < KYBER_K; i++) {
-        poly_getnoise(ep.vec + i, coins, nonce++);
+        PQCLEAN_KYBER768_poly_getnoise(ep.vec + i, coins, nonce++);
     }
 
     // matrix-vector multiplication
     for (i = 0; i < KYBER_K; i++) {
-        polyvec_pointwise_acc(&bp.vec[i], &sp, at + i);
+        PQCLEAN_KYBER768_polyvec_pointwise_acc(&bp.vec[i], &sp, at + i);
     }
 
-    polyvec_invntt(&bp);
-    polyvec_add(&bp, &bp, &ep);
+    PQCLEAN_KYBER768_polyvec_invntt(&bp);
+    PQCLEAN_KYBER768_polyvec_add(&bp, &bp, &ep);
 
-    polyvec_pointwise_acc(&v, &pkpv, &sp);
-    poly_invntt(&v);
+    PQCLEAN_KYBER768_polyvec_pointwise_acc(&v, &pkpv, &sp);
+    PQCLEAN_KYBER768_poly_invntt(&v);
 
-    poly_getnoise(&epp, coins, nonce++);
+    PQCLEAN_KYBER768_poly_getnoise(&epp, coins, nonce++);
 
-    poly_add(&v, &v, &epp);
-    poly_add(&v, &v, &k);
+    PQCLEAN_KYBER768_poly_add(&v, &v, &epp);
+    PQCLEAN_KYBER768_poly_add(&v, &v, &k);
 
     pack_ciphertext(c, &bp, &v);
 }
@@ -294,20 +295,20 @@ void indcpa_enc(unsigned char *c, const unsigned char *m,
  *              - const unsigned char *sk: pointer to input secret key (of
  *length KYBER_INDCPA_SECRETKEYBYTES)
  **************************************************/
-void indcpa_dec(unsigned char *m, const unsigned char *c,
-                const unsigned char *sk) {
+void PQCLEAN_KYBER768_indcpa_dec(unsigned char *m, const unsigned char *c,
+                                 const unsigned char *sk) {
     polyvec bp, skpv;
     poly v, mp;
 
     unpack_ciphertext(&bp, &v, c);
     unpack_sk(&skpv, sk);
 
-    polyvec_ntt(&bp);
+    PQCLEAN_KYBER768_polyvec_ntt(&bp);
 
-    polyvec_pointwise_acc(&mp, &skpv, &bp);
-    poly_invntt(&mp);
+    PQCLEAN_KYBER768_polyvec_pointwise_acc(&mp, &skpv, &bp);
+    PQCLEAN_KYBER768_poly_invntt(&mp);
 
-    poly_sub(&mp, &mp, &v);
+    PQCLEAN_KYBER768_poly_sub(&mp, &mp, &v);
 
-    poly_tomsg(m, &mp);
+    PQCLEAN_KYBER768_poly_tomsg(m, &mp);
 }

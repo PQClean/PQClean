@@ -4,7 +4,7 @@
 #include "reduce.h"
 
 /* Roots of unity in order needed by forward ntt */
-static const uint32_t zetas[N] = {
+static const uint32_t PQCLEAN_DILITHIUMIII_zetas[N] = {
     0,       25847,   5771523, 7861508, 237124,  7602457, 7504169, 466468,
     1826347, 2353451, 8021166, 6288512, 3119733, 5495562, 3111497, 2680103,
     2725464, 1024112, 7300517, 3585928, 7830929, 7260833, 2619752, 6271868,
@@ -39,7 +39,7 @@ static const uint32_t zetas[N] = {
     7826001, 3919660, 8332111, 7018208, 3937738, 1400424, 7534263, 1976782};
 
 /* Roots of unity in order needed by inverse ntt */
-static const uint32_t zetas_inv[N] = {
+static const uint32_t PQCLEAN_DILITHIUMIII_zetas_inv[N] = {
     6403635, 846154,  6979993, 4442679, 1362209, 48306,   4460757, 554416,
     3545687, 6767575, 976891,  8196974, 2286327, 420899,  2235985, 2939036,
     3833893, 260646,  1104333, 1667432, 6470041, 1803090, 6656817, 426683,
@@ -83,16 +83,17 @@ static const uint32_t zetas_inv[N] = {
  *
  * Arguments:   - uint32_t p[N]: input/output coefficient array
  **************************************************/
-void ntt(uint32_t p[N]) {
+void PQCLEAN_DILITHIUMIII_ntt(uint32_t p[N]) {
     unsigned int len, start, j, k;
     uint32_t zeta, t;
 
     k = 1;
     for (len = 128; len > 0; len >>= 1) {
         for (start = 0; start < N; start = j + len) {
-            zeta = zetas[k++];
+            zeta = PQCLEAN_DILITHIUMIII_zetas[k++];
             for (j = start; j < start + len; ++j) {
-                t = montgomery_reduce((uint64_t)zeta * p[j + len]);
+                t = PQCLEAN_DILITHIUMIII_montgomery_reduce((uint64_t)zeta *
+                                                           p[j + len]);
                 p[j + len] = p[j] + 2 * Q - t;
                 p[j] = p[j] + t;
             }
@@ -110,7 +111,7 @@ void ntt(uint32_t p[N]) {
  *
  * Arguments:   - uint32_t p[N]: input/output coefficient array
  **************************************************/
-void invntt_frominvmont(uint32_t p[N]) {
+void PQCLEAN_DILITHIUMIII_invntt_frominvmont(uint32_t p[N]) {
     unsigned int start, len, j, k;
     uint32_t t, zeta;
     const uint32_t f =
@@ -119,17 +120,18 @@ void invntt_frominvmont(uint32_t p[N]) {
     k = 0;
     for (len = 1; len < N; len <<= 1) {
         for (start = 0; start < N; start = j + len) {
-            zeta = zetas_inv[k++];
+            zeta = PQCLEAN_DILITHIUMIII_zetas_inv[k++];
             for (j = start; j < start + len; ++j) {
                 t = p[j];
                 p[j] = t + p[j + len];
                 p[j + len] = t + 256 * Q - p[j + len];
-                p[j + len] = montgomery_reduce((uint64_t)zeta * p[j + len]);
+                p[j + len] = PQCLEAN_DILITHIUMIII_montgomery_reduce(
+                    (uint64_t)zeta * p[j + len]);
             }
         }
     }
 
     for (j = 0; j < N; ++j) {
-        p[j] = montgomery_reduce((uint64_t)f * p[j]);
+        p[j] = PQCLEAN_DILITHIUMIII_montgomery_reduce((uint64_t)f * p[j]);
     }
 }

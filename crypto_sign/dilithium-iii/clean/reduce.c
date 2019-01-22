@@ -12,7 +12,7 @@
  *
  * Returns r.
  **************************************************/
-uint32_t montgomery_reduce(uint64_t a) {
+uint32_t PQCLEAN_DILITHIUMIII_montgomery_reduce(uint64_t a) {
     uint64_t t;
 
     t = a * QINV;
@@ -33,7 +33,7 @@ uint32_t montgomery_reduce(uint64_t a) {
  *
  * Returns r.
  **************************************************/
-uint32_t reduce32(uint32_t a) {
+uint32_t PQCLEAN_DILITHIUMIII_reduce32(uint32_t a) {
     uint32_t t;
 
     t = a & 0x7FFFFF;
@@ -51,7 +51,7 @@ uint32_t reduce32(uint32_t a) {
  *
  * Returns r.
  **************************************************/
-uint32_t csubq(uint32_t a) {
+uint32_t PQCLEAN_DILITHIUMIII_csubq(uint32_t a) {
     a -= Q;
     a += ((int32_t)a >> 31) & Q;
     return a;
@@ -67,8 +67,8 @@ uint32_t csubq(uint32_t a) {
  *
  * Returns r.
  **************************************************/
-uint32_t freeze(uint32_t a) {
-    a = reduce32(a);
-    a = csubq(a);
+uint32_t PQCLEAN_DILITHIUMIII_freeze(uint32_t a) {
+    a = PQCLEAN_DILITHIUMIII_reduce32(a);
+    a = PQCLEAN_DILITHIUMIII_csubq(a);
     return a;
 }

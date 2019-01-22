@@ -4,7 +4,7 @@
 #include "params.h"
 #include <stdint.h>
 
-void ntt(uint32_t p[N]);
-void invntt_frominvmont(uint32_t p[N]);
+void PQCLEAN_DILITHIUMIII_ntt(uint32_t p[N]);
+void PQCLEAN_DILITHIUMIII_invntt_frominvmont(uint32_t p[N]);
 
 #endif

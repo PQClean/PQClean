@@ -12,7 +12,8 @@
  *
  * Returns 0 if the byte arrays are equal, 1 otherwise
  **************************************************/
-int verify(const unsigned char *a, const unsigned char *b, size_t len) {
+int PQCLEAN_KYBER768_verify(const unsigned char *a, const unsigned char *b,
+                            size_t len) {
     uint64_t r;
     size_t i;
     r = 0;
@@ -38,8 +39,8 @@ int verify(const unsigned char *a, const unsigned char *b, size_t len) {
  *              size_t len:             Amount of bytes to be copied
  *              unsigned char b:        Condition bit; has to be in {0,1}
  **************************************************/
-void cmov(unsigned char *r, const unsigned char *x, size_t len,
-          unsigned char b) {
+void PQCLEAN_KYBER768_cmov(unsigned char *r, const unsigned char *x, size_t len,
+                           unsigned char b) {
     size_t i;
 
     b = -b;
