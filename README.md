@@ -1,5 +1,7 @@
 # PQClean
 
+[![Build Status](https://travis-ci.com/PQClean/PQClean.svg?branch=master)](https://travis-ci.com/PQClean/PQClean)
+
 **PQClean**, in short, is an effort to collect **clean** implementations of the post-quantum
 schemes that are in the 
 [NIST post-quantum project](https://csrc.nist.gov/projects/post-quantum-cryptography).
