@@ -13,7 +13,7 @@ if len(sys.argv) != 2:
 SCHEME = sys.argv[1]
 SCHEMEFULL = SCHEME.replace('/', '_')  # e.g. crypto_kem_kyber768
 SCHEMESHORT = SCHEME.split('/')[1].upper()
-namespace = f"PQCLEAN_{SCHEMESHORT}_"
+namespace = f"PQCLEAN_{SCHEMESHORT}_".replace('-', '')
 
 # TODO can we do this using object files instead, to preserve file origin?
 sharedlib = f"bin/shared_{SCHEMEFULL}_clean.so"

@@ -13,6 +13,15 @@ static void printbytes(const unsigned char *x, unsigned long long xlen) {
     printf("\n");
 }
 
+// https://stackoverflow.com/a/1489985/1711232
+#define PASTER(x, y) x##_##y
+#define EVALUATOR(x, y) PASTER(x, y)
+#define NAMESPACE(fun) EVALUATOR(PQCLEAN_NAMESPACE, fun)
+
+#define crypto_kem_keypair NAMESPACE(crypto_kem_keypair)
+#define crypto_kem_enc NAMESPACE(crypto_kem_enc)
+#define crypto_kem_dec NAMESPACE(crypto_kem_dec)
+
 int main(void) {
     unsigned char key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
     unsigned char pk[CRYPTO_PUBLICKEYBYTES];

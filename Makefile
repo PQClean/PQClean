@@ -15,6 +15,7 @@ endif
 bin/functest_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
+		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
 		-o bin/functest_$(subst /,_,$(SCHEME)) \
@@ -49,6 +50,7 @@ sanitizer: bin/sanitizer_$(subst /,_,$(SCHEME))
 bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
+		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
 		-o bin/testvectors_$(subst /,_,$(SCHEME)) \
@@ -62,6 +64,7 @@ testvectors: bin/testvectors_$(subst /,_,$(SCHEME))
 bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | require_scheme
 	mkdir -p bin
 	gcc $(CFLAGS) \
+		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-shared \
 		-fPIC \
 		-iquote "./common/" \

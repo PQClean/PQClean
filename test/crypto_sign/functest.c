@@ -20,6 +20,16 @@ static int check_canary(const unsigned char *d) {
 
     return 0;
 }
+
+// https://stackoverflow.com/a/1489985/1711232
+#define PASTER(x, y) x##_##y
+#define EVALUATOR(x, y) PASTER(x, y)
+#define NAMESPACE(fun) EVALUATOR(PQCLEAN_NAMESPACE, fun)
+
+#define crypto_sign_keypair NAMESPACE(crypto_sign_keypair)
+#define crypto_sign NAMESPACE(crypto_sign)
+#define crypto_sign_open NAMESPACE(crypto_sign_open)
+
 static int test_sign(void) {
     unsigned char pk[CRYPTO_PUBLICKEYBYTES + 16];
     unsigned char sk[CRYPTO_SECRETKEYBYTES + 16];
