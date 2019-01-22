@@ -33,8 +33,8 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] Consistent test vectors across runs
 * [ ] Consistent test vectors on big-endian and little-endian machines
 * [ ] Consistent test vectors on 32-bit and 64-bit machines
-* [ ] No errors/warnings reported by valgrind
-* [ ] No errors/warnings reported by address sanitizer
+* [X] No errors/warnings reported by valgrind
+* [X] No errors/warnings reported by address sanitizer
 * [ ] Only dependencies:
   * [x] `fips202.c`
   * [x] `sha2.c`

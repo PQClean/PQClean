@@ -33,6 +33,18 @@ run-functest: bin/functest_$(subst /,_,$(SCHEME))
 run-valgrind: bin/functest_$(subst /,_,$(SCHEME))
 	valgrind --leak-check=full --error-exitcode=1 $<
 
+bin/sanitizer_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
+	mkdir -p bin
+	$(CC) $(CFLAGS) -fsanitize=address \
+		-iquote "./common/" \
+		-iquote "$(SCHEME)/clean/" \
+		-o bin/sanitizer_$(subst /,_,$(SCHEME)) \
+		common/*.c \
+		$(SCHEME)/clean/*.c \
+		$<
+
+.PHONY: sanitizer
+sanitizer: bin/sanitizer_$(subst /,_,$(SCHEME))
 
 bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
@@ -101,6 +113,7 @@ help:
 	@echo "make run-functest-all			Run all functests"
 	@echo "make run-testvectors SCHEME=scheme	Run testvector checks for SCHEME"
 	@echo "make run-testvectors-all			Run all testvector checks"
+	@echo "make run-sanitizer-all			Run address sanitizer for all schemes"
 	@echo "make run-symbol-namespace SCHEME=scheme	Run symbol namespace checks for SCHEME"
 	@echo "make run-symbol-namespace-all		Run all symbol namespace checks"
 	@echo "make run-valgrind SCHEME=scheme		Run valgrind checks for SCHEME"
@@ -117,6 +130,12 @@ help:
 functest-all:
 	@for scheme in $(ALL_SCHEMES); do \
 	    $(MAKE) functest SCHEME=$$scheme || exit 1; \
+	done
+
+.PHONY: sanitizer-all
+sanitizer-all:
+	@for scheme in $(ALL_SCHEMES); do \
+	    $(MAKE) sanitizer SCHEME=$$scheme || exit 1; \
 	done
 
 .PHONY: run-valgrind-all
@@ -153,8 +172,16 @@ run-functest-all: functest-all
 	done
 	@echo Tests completed
 
+.PHONY: run-sanitizer-all
+run-sanitizer-all: sanitizer-all
+	@for sanitizer in bin/sanitizer_* ; do \
+		echo ./$$sanitizer ; \
+		./$$sanitizer || exit 1 ;\
+	done
+	@echo Tests completed
+
 .PHONY: test-all
-test-all: run-functest-all run-valgrind-all run-testvectors-all run-symbol-namespace-all
+test-all: run-functest-all run-valgrind-all run-sanitizer-all run-testvectors-all run-symbol-namespace-all
 
 .PHONY: tidy-all
 tidy-all:
