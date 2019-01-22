@@ -8,25 +8,54 @@ matrix:
       compiler: gcc
       env:
         - MAKETARGET="test-all tidy-all check-format"
+      addons:
+        apt:
+          sources:
+            - deadsnakes
+          packages:
+            - valgrind
+            - python3.7
     - os: linux
       compiler: clang
       env:
         - MAKETARGET=test-all
+      addons:
+        apt:
+          sources:
+            - deadsnakes
+          packages:
+            - valgrind
+            - python3.7
     - os: osx
+      osx_image: xcode10.1
       compiler: clang
       env:
         - MAKETARGET=test-all
-  # This currently appears to be broken.
-  # - os: osx
-  #   env:
-  #     - MATRIX_EVAL="brew install gcc && CC=gcc-8 && CXX=g++-8"
-  #     - MAKETARGET=test-all
+      addons:
+        homebrew:
+          packages:
+            - python@3.7
+    - os: osx
+      osx_image: xcode10.1
+      compiler: gcc
+      addons:
+        homebrew:
+          packages:
+            - gcc@8
+            - python@3.7
+      env:
+        - MAKETARGET=test-all
 
 before_install:
-  - eval "${MATRIX_EVAL}"
+  - python3.7 --version
+  - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+  - python3.7 get-pip.py --user
+  - python3.7 -mpip install -r requirements.txt
 
 script:
   - make ${MAKETARGET}
 
+
+cache: pip
 
 #  vim: set ft=yaml ts=2 sw=2 tw=0 et :

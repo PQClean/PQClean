@@ -16,8 +16,8 @@ SCHEMESHORT = SCHEME.split('/')[1].upper()
 namespace = f"PQCLEAN_{SCHEMESHORT}_".replace('-', '')
 
 # TODO can we do this using object files instead, to preserve file origin?
-sharedlib = f"bin/shared_{SCHEMEFULL}_clean.so"
-subprocess.run(["make", sharedlib, f"SCHEME={SCHEME}"])
+sharedlib = "bin/shared_{}_clean.so".format(SCHEMEFULL)
+subprocess.run(["make", sharedlib, "SCHEME={}".format(SCHEME)])
 p = subprocess.run(["nm", "-D", sharedlib], capture_output=True)
 
 symbols = p.stdout.decode('utf-8').strip().split("\n")
@@ -31,7 +31,7 @@ for symbolstr in symbols:
 
 if non_namespaced:
     print("! Not all symbols were properly namespaced.", file=sys.stderr)
-    print(f"! Missing namespace literal {namespace}", file=sys.stderr)
+    print("! Missing namespace literal {}".format(namespace), file=sys.stderr)
     for symbol in non_namespaced:
-        print(f"\t{symbol}", file=sys.stderr)
+        print("\t{}".format(symbol), file=sys.stderr)
     sys.exit(1)
