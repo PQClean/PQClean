@@ -94,6 +94,10 @@ help:
 	@echo "make functest-all			Build functional tests for all schemes"
 	@echo "make run-functest SCHEME=scheme		Run functional tests for SCHEME"
 	@echo "make run-functest-all			Run all functests"
+	@echo "make run-testvectors SCHEME=scheme	Run testvector checks for SCHEME"
+	@echo "make run-testvectors-all			Run all testvector checks"
+	@echo "make run-symbol-namespace SCHEME=scheme	Run symbol namespace checks for SCHEME"
+	@echo "make run-symbol-namespace-all		Run all symbol namespace checks"
 	@echo "make clean				Clean up the bin/ folder"
 	@echo "make format				Automatically formats all the source code"
 	@echo "make tidy SCHEME=scheme  		Runs the clang-tidy linter against SCHEME"
@@ -108,6 +112,26 @@ functest-all:
 	    $(MAKE) functest SCHEME=$$scheme || exit 1; \
 	done
 
+.PHONY: run-testvectors
+run-testvectors: test/check_testvectors.py | require_scheme
+	python3 test/check_testvectors.py $(SCHEME) || exit 1; \
+
+.PHONY: run-symbol-namespace
+run-symbol-namespace: test/check_symbol_namespace.py | require_scheme
+	python3 test/check_symbol_namespace.py $(SCHEME) || exit 1; \
+
+.PHONY: run-testvectors-all
+run-testvectors-all: test/check_testvectors.py
+	@for scheme in $(ALL_SCHEMES); do \
+	    python3 test/check_testvectors.py $$scheme || exit 1; \
+	done
+
+.PHONY: run-symbol-namespace-all
+run-symbol-namespace-all:
+	@for scheme in $(ALL_SCHEMES); do \
+	    python3 test/check_symbol_namespace.py $$scheme || exit 1; \
+	done
+
 .PHONY: run-functest-all
 run-functest-all: functest-all
 	@for functest in bin/functest_* ; do \
@@ -117,7 +141,7 @@ run-functest-all: functest-all
 	@echo Tests completed
 
 .PHONY: test-all
-test-all: run-functest-all
+test-all: run-functest-all run-testvectors-all run-symbol-namespace-all
 
 .PHONY: tidy-all
 tidy-all:
