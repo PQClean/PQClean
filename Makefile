@@ -29,6 +29,11 @@ functest: bin/functest_$(subst /,_,$(SCHEME))
 run-functest: bin/functest_$(subst /,_,$(SCHEME))
 	./$<
 
+.PHONY: run-valgrind
+run-valgrind: bin/functest_$(subst /,_,$(SCHEME))
+	valgrind --leak-check=full --error-exitcode=1 $<
+
+
 bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
@@ -98,6 +103,8 @@ help:
 	@echo "make run-testvectors-all			Run all testvector checks"
 	@echo "make run-symbol-namespace SCHEME=scheme	Run symbol namespace checks for SCHEME"
 	@echo "make run-symbol-namespace-all		Run all symbol namespace checks"
+	@echo "make run-valgrind SCHEME=scheme		Run valgrind checks for SCHEME"
+	@echo "make run-valgrind-all			Run valgrind checks all schemes"
 	@echo "make clean				Clean up the bin/ folder"
 	@echo "make format				Automatically formats all the source code"
 	@echo "make tidy SCHEME=scheme  		Runs the clang-tidy linter against SCHEME"
@@ -110,6 +117,12 @@ help:
 functest-all:
 	@for scheme in $(ALL_SCHEMES); do \
 	    $(MAKE) functest SCHEME=$$scheme || exit 1; \
+	done
+
+.PHONY: run-valgrind-all
+run-valgrind-all:
+	@for scheme in $(ALL_SCHEMES); do \
+	    $(MAKE) run-valgrind SCHEME=$$scheme || exit 1; \
 	done
 
 .PHONY: run-testvectors
@@ -141,7 +154,7 @@ run-functest-all: functest-all
 	@echo Tests completed
 
 .PHONY: test-all
-test-all: run-functest-all run-testvectors-all run-symbol-namespace-all
+test-all: run-functest-all run-valgrind-all run-testvectors-all run-symbol-namespace-all
 
 .PHONY: tidy-all
 tidy-all:
