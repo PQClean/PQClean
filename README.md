@@ -26,18 +26,20 @@ listed below.
 
 _The checking of items on this list is still being developed. Checked items should be working._
 
-* [ ] Code is valid C99
-* [ ] Passes functional tests
-* [ ] API functions do not write outside provided buffers
-* [ ] Compiles with `-Wall -Wextra -Wpedantic -Werror` with `gcc` and `clang`
-* [ ] Consistent test vectors across runs
+* [x] Code is valid C99
+* [x] Passes functional tests
+* [x] API functions do not write outside provided buffers
+* [x] Compiles with `-Wall -Wextra -Wpedantic -Werror` with `gcc` and `clang`
+* [x] Consistent test vectors across runs
 * [ ] Consistent test vectors on big-endian and little-endian machines
 * [ ] Consistent test vectors on 32-bit and 64-bit machines
 * [ ] No errors/warnings reported by valgrind
 * [ ] No errors/warnings reported by address sanitizer
 * [ ] Only dependencies:
-  * [ ] `common_crypto.c` (Keccak, AES, SHA-2)
-  * [ ] `randombytes.c`
+  * [x] `fips202.c`
+  * [x] `sha2.c`
+  * [ ] `aes.c`
+  * [x] `randombytes.c`
 * [ ] API functions return `0` on success, negative on failure
 * [ ] No dynamic memory allocations
 * [ ] No branching on secret data (dynamically checked using valgrind)
@@ -46,7 +48,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [ ] Builds under Linux, MacOS, and Windows
 * [ ] Makefile-based build for each separate scheme
 * [ ] Makefile-based build for Windows (`nmake`)
-* [ ] All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
+* [x] All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
 * [ ] Each implementation comes with a `LICENSE` file (see below)
 * [ ] Each implementation comes with a `META` file giving details about version of the algorithm, designers, etc.
 
