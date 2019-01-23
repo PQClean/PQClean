@@ -10,22 +10,16 @@ matrix:
         - MAKETARGET="test-all tidy-all check-format"
       addons:
         apt:
-          sources:
-            - deadsnakes
           packages:
             - valgrind
-            - python3.7
     - os: linux
       compiler: clang
       env:
         - MAKETARGET=test-all
       addons:
         apt:
-          sources:
-            - deadsnakes
           packages:
             - valgrind
-            - python3.7
     - os: osx
       osx_image: xcode10.1
       compiler: clang
@@ -34,7 +28,7 @@ matrix:
       addons:
         homebrew:
           packages:
-            - python@3.7
+            - python
             - valgrind
     - os: osx
       osx_image: xcode10.1
@@ -43,16 +37,14 @@ matrix:
         homebrew:
           packages:
             - gcc@8
-            - python@3.7
+            - python
             - valgrind
       env:
         - MAKETARGET=test-all
 
 before_install:
-  - python3.7 --version
-  - curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
-  - python3.7 get-pip.py --user
-  - python3.7 -mpip install -r requirements.txt
+  - python3 --version
+  - pip3 install -r requirements.txt
 
 script:
   - make ${MAKETARGET}
