@@ -35,3 +35,5 @@ if non_namespaced:
     for symbol in non_namespaced:
         print("\t{}".format(symbol), file=sys.stderr)
     sys.exit(1)
+else:
+    print("Checking {} succeeded".format(SCHEME))
