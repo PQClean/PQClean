@@ -46,6 +46,9 @@ _The checking of items on this list is still being developed. Checked items shou
 * [ ] No access to secret memory locations (dynamically checked using valgrind)
 * [ ] Separate subdirectories (without symlinks) for each parameter set of each scheme
 * [ ] Builds under Linux, MacOS, and Windows
+    * [x] Linux
+    * [x] MacOS
+    * [ ] Windows
 * [ ] Makefile-based build for each separate scheme
 * [ ] Makefile-based build for Windows (`nmake`)
 * [x] All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
@@ -69,7 +72,7 @@ _The checking of items on this list is still being developed. Checked items shou
 ## Clean C implementations currently in PQClean
 
 Currently, the continuous-integration and testing environment of PQClean is still work in progress 
-and as a consequence PQClean does not yet have any implementations.
+and as a consequence PQClean does not yet have many implementations.
 
 <!--
  Currently, PQClean includes clean C implementations of the following KEMs:
