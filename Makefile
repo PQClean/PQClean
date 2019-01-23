@@ -37,6 +37,7 @@ run-valgrind: bin/functest_$(subst /,_,$(SCHEME))
 bin/sanitizer_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) -fsanitize=address \
+		-g \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
@@ -51,6 +52,7 @@ sanitizer: bin/sanitizer_$(subst /,_,$(SCHEME))
 bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
+		-g \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
@@ -66,6 +68,7 @@ bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | re
 	mkdir -p bin
 	gcc $(CFLAGS) \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
+		-g \
 		-shared \
 		-fPIC \
 		-iquote "./common/" \
