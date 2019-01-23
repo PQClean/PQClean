@@ -70,6 +70,7 @@ bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | re
 	gcc $(CFLAGS) \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-g \
+		-nostdlib \
 		-shared \
 		-fPIC \
 		-iquote "./common/" \
