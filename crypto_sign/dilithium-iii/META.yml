@@ -4,7 +4,8 @@ version: https://github.com/pq-crystals/dilithium/commit/ffa89bdbc12a8ee178ccec4
 claimed-nist-level: 3
 length-public-key: 1472
 length-signature: 2701
-testvectors-sha3-256: 0xCE28BBD23C2AC42C7F9A17A4FA463DC9F8ACBF767397AD4ECDE136A92D4D6C3E
+testvectors-sha3-256: ce28bbd23c2ac42c7f9a17a4fa463dc9f8acbf767397ad4ecde136a92d4d6c3e
+testvectors-sha256: e1852a975842c44a683c914ed131d95bee9b786c36c41e47bb77d7dd3c0c07be
 principal-submitter: Vadim Lyubashevsky
 auxiliary-submitters:
   - Léo Ducas

@@ -13,12 +13,12 @@ if len(sys.argv) != 2:
 SCHEME = sys.argv[1]
 SCHEMEFULL = SCHEME.replace('/', '_')  # e.g. crypto_kem_kyber768
 SCHEMESHORT = SCHEME.split('/')[1].upper()
-namespace = f"PQCLEAN_{SCHEMESHORT}_".replace('-', '')
+namespace = "PQCLEAN_{}_".format(SCHEMESHORT).replace('-', '')
 
 # TODO can we do this using object files instead, to preserve file origin?
 sharedlib = "bin/shared_{}_clean.so".format(SCHEMEFULL)
 subprocess.run(["make", sharedlib, "SCHEME={}".format(SCHEME)])
-p = subprocess.run(["nm", "-D", sharedlib], capture_output=True)
+p = subprocess.run(["nm", "-D", sharedlib], stdout=subprocess.PIPE)
 
 symbols = p.stdout.decode('utf-8').strip().split("\n")
 non_namespaced = []

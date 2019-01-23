@@ -4,7 +4,8 @@ version: https://github.com/pq-crystals/kyber/commit/ab996e7460e5356b0e23aa034e7
 claimed-nist-level: 3
 length-public-key: 1088
 length-ciphertext: 1152
-testvectors-sha3-256: 0xF3D335A7C393083F11F2D9EF4D7312ADB5683139473EA9BDF0091618476BA412
+testvectors-sha3-256: f3d335a7c393083f11f2d9ef4d7312adb5683139473ea9bdf0091618476ba412
+testvectors-sha256: 0e002ee528febdab1709f100df79ceb00b31a809e03a4fb84e3a72c39235d372
 principal-submitter: Peter Schwabe
 auxiliary-submitters:
   - Roberto Avanzi

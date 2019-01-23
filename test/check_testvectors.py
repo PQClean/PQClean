@@ -21,7 +21,7 @@ SCHEMESHORT = SCHEME.split('/')[1].upper()
 def get_hash(scheme):
     with open("{}/META.yml".format(scheme), 'r') as stream:
         meta = yaml.load(stream)
-        return hex(meta['testvectors-sha3-256']).replace('0x', '')
+        return meta['testvectors-sha256']
 
 
 expectedTestvectorsHash = get_hash(SCHEME)
@@ -33,7 +33,7 @@ implementations = [
 for impl in implementations:
     testvectors = subprocess.run(["bin/{}".format(impl)],
                                  stdout=subprocess.PIPE)
-    testvectorsHash = hashlib.sha3_256(testvectors.stdout).hexdigest()
+    testvectorsHash = hashlib.sha256(testvectors.stdout).hexdigest()
     if testvectorsHash.lower() != expectedTestvectorsHash.lower():
         print("testvectors of {} should be {}, but is {}"
               .format(SCHEME, expectedTestvectorsHash, testvectorsHash))
