@@ -29,6 +29,12 @@ static int check_canary(const unsigned char *d) {
 #define crypto_kem_enc NAMESPACE(crypto_kem_enc)
 #define crypto_kem_dec NAMESPACE(crypto_kem_dec)
 
+#define RETURNS_ZERO(f) \
+    if ((f) != 0) { \
+        puts(#f " returned non-zero returncode"); \
+        return -1; \
+    }
+
 static int test_keys(void) {
     unsigned char key_a[CRYPTO_BYTES + 16], key_b[CRYPTO_BYTES + 16];
     unsigned char pk[CRYPTO_PUBLICKEYBYTES + 16];
@@ -50,25 +56,26 @@ static int test_keys(void) {
 
     for (i = 0; i < NTESTS; i++) {
         // Alice generates a public key
-        crypto_kem_keypair(pk + 8, sk_a + 8);
+        RETURNS_ZERO(crypto_kem_keypair(pk + 8, sk_a + 8));
 
         // Bob derives a secret key and creates a response
-        crypto_kem_enc(sendb + 8, key_b + 8, pk + 8);
+        RETURNS_ZERO(crypto_kem_enc(sendb + 8, key_b + 8, pk + 8));
 
         // Alice uses Bobs response to get her secret key
-        crypto_kem_dec(key_a + 8, sendb + 8, sk_a + 8);
+        RETURNS_ZERO(crypto_kem_dec(key_a + 8, sendb + 8, sk_a + 8));
 
         if (memcmp(key_a + 8, key_b + 8, CRYPTO_BYTES) != 0) {
             printf("ERROR KEYS\n");
-            return 1;
+            return -1;
         }
+
         if (check_canary(key_a) || check_canary(key_a + sizeof(key_a) - 8) ||
             check_canary(key_b) || check_canary(key_b + sizeof(key_b) - 8) ||
             check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
             check_canary(sendb) || check_canary(sendb + sizeof(sendb) - 8) ||
             check_canary(sk_a) || check_canary(sk_a + sizeof(sk_a) - 8)) {
             printf("ERROR canary overwritten\n");
-            return 1;
+            return -1;
         }
     }
 
@@ -81,19 +88,23 @@ static int test_invalid_sk_a(void) {
     unsigned char pk[CRYPTO_PUBLICKEYBYTES];
     unsigned char sendb[CRYPTO_CIPHERTEXTBYTES];
     int i;
+    int returncode;
 
     for (i = 0; i < NTESTS; i++) {
         // Alice generates a public key
-        crypto_kem_keypair(pk, sk_a);
+        RETURNS_ZERO(crypto_kem_keypair(pk, sk_a));
 
         // Bob derives a secret key and creates a response
-        crypto_kem_enc(sendb, key_b, pk);
+        RETURNS_ZERO(crypto_kem_enc(sendb, key_b, pk));
 
         // Replace secret key with random values
         randombytes(sk_a, CRYPTO_SECRETKEYBYTES);
 
         // Alice uses Bobs response to get her secret key
-        crypto_kem_dec(key_a, sendb, sk_a);
+        if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > -1) {
+            printf("ERROR failing crypto_kem_dec returned %d instead of negative code\n", returncode);
+            return -1;
+        }
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid sk_a\n");
@@ -111,21 +122,25 @@ static int test_invalid_ciphertext(void) {
     unsigned char sendb[CRYPTO_CIPHERTEXTBYTES];
     int i;
     size_t pos;
+    int returncode;
 
     for (i = 0; i < NTESTS; i++) {
         randombytes((unsigned char *)&pos, sizeof(size_t));
 
         // Alice generates a public key
-        crypto_kem_keypair(pk, sk_a);
+        RETURNS_ZERO(crypto_kem_keypair(pk, sk_a));
 
         // Bob derives a secret key and creates a response
-        crypto_kem_enc(sendb, key_b, pk);
+        RETURNS_ZERO(crypto_kem_enc(sendb, key_b, pk));
 
         // Change some byte in the ciphertext (i.e., encapsulated key)
         sendb[pos % CRYPTO_CIPHERTEXTBYTES] ^= 23;
 
         // Alice uses Bobs response to get her secret key
-        crypto_kem_dec(key_a, sendb, sk_a);
+        if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > -1) {
+            printf("ERROR crypto_kem_dec should fail (negative returncode) but returned %d\n", returncode);
+            return -1;
+        }
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid ciphertext\n");

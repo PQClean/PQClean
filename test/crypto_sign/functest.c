@@ -30,6 +30,13 @@ static int check_canary(const unsigned char *d) {
 #define crypto_sign NAMESPACE(crypto_sign)
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
 
+#define RETURNS_ZERO(f) \
+    if ((f) != 0) { \
+        puts("(f) returned non-zero returncode"); \
+        return -1; \
+    }
+
+
 static int test_sign(void) {
     unsigned char pk[CRYPTO_PUBLICKEYBYTES + 16];
     unsigned char sk[CRYPTO_SECRETKEYBYTES + 16];
@@ -38,6 +45,7 @@ static int test_sign(void) {
 
     unsigned long long mlen;
     unsigned long long smlen;
+    int returncode;
 
     int i;
     write_canary(pk);
@@ -50,15 +58,18 @@ static int test_sign(void) {
     write_canary(m + sizeof(m) - 8);
 
     for (i = 0; i < NTESTS; i++) {
-        crypto_sign_keypair(pk + 8, sk + 8);
+        RETURNS_ZERO(crypto_sign_keypair(pk + 8, sk + 8));
 
         randombytes(m + 8, MLEN);
-        crypto_sign(sm + 8, &smlen, m + 8, MLEN, sk + 8);
+        RETURNS_ZERO(crypto_sign(sm + 8, &smlen, m + 8, MLEN, sk + 8));
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
-        if (crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) {
+        if ((returncode = crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) != 0) {
             printf("ERROR Signature did not verify correctly!\n");
+            if (returncode > 0) {
+                puts("ERROR return code should be < 0 on failure");
+            }
             return 1;
         }
         if (check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
@@ -83,21 +94,26 @@ static int test_wrong_pk(void) {
     unsigned long long mlen;
     unsigned long long smlen;
 
+    int returncode;
+
     int i;
 
     for (i = 0; i < NTESTS; i++) {
-        crypto_sign_keypair(pk2, sk);
+        RETURNS_ZERO(crypto_sign_keypair(pk2, sk));
 
-        crypto_sign_keypair(pk, sk);
+        RETURNS_ZERO(crypto_sign_keypair(pk, sk));
 
         randombytes(m, MLEN);
-        crypto_sign(sm, &smlen, m, MLEN, sk);
+        RETURNS_ZERO(crypto_sign(sm, &smlen, m, MLEN, sk));
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
-        if (!crypto_sign_open(sm, &mlen, sm, smlen, pk2)) {
+        if (!(returncode = crypto_sign_open(sm, &mlen, sm, smlen, pk2))) {
             printf("ERROR Signature did verify correctly under wrong public "
                    "key!\n");
+            if (returncode > 0) {
+                puts("ERROR return code should be < 0");
+            }
             return 1;
         }
     }
