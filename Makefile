@@ -32,7 +32,11 @@ run-functest: bin/functest_$(subst /,_,$(SCHEME))
 
 .PHONY: run-valgrind
 run-valgrind: bin/functest_$(subst /,_,$(SCHEME))
+ifeq ($(shell uname -s),Linux)
 	valgrind --leak-check=full --error-exitcode=1 $<
+else
+	echo "Valgrind not supported on this platform."
+endif
 
 bin/sanitizer_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
@@ -159,7 +163,7 @@ run-symbol-namespace: test/check_symbol_namespace.py | require_scheme
 
 .PHONY: run-testvectors-all
 run-testvectors-all: test/check_testvectors.py
-	@for scheme in $(ALL_SCHEMES); do \
+	for scheme in $(ALL_SCHEMES); do \
 	    python3 test/check_testvectors.py $$scheme || exit 1; \
 	done
 

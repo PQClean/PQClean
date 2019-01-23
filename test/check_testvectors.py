@@ -28,7 +28,10 @@ expectedTestvectorsHash = get_hash(SCHEME)
 
 subprocess.run(["make", "testvectors", "SCHEME={}".format(SCHEME)])
 implementations = [
-    x for x in os.listdir('bin') if 'testvectors' in x and SCHEMEFULL in x]
+    x for x in os.listdir('bin')
+    if 'testvectors' in x and SCHEMEFULL in x and '.dSYM' not in x
+
+]
 
 for impl in implementations:
     testvectors = subprocess.run(["bin/{}".format(impl)],

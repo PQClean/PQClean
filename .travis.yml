@@ -35,7 +35,6 @@ matrix:
         homebrew:
           packages:
             - python
-            - valgrind
     - os: osx
       osx_image: xcode10.1
       compiler: gcc
@@ -44,7 +43,6 @@ matrix:
           packages:
             - gcc@8
             - python
-            - valgrind
       env:
         - MAKETARGET=test-all
 
