@@ -1,5 +1,5 @@
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
-CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 $(EXTRAFLAGS)
+CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -g $(EXTRAFLAGS)
 
 ALL_SCHEMES=$(filter-out crypto_%.c, $(wildcard crypto_*/*))
 
@@ -15,7 +15,6 @@ endif
 bin/functest_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
-		-g \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
@@ -38,7 +37,6 @@ run-valgrind: bin/functest_$(subst /,_,$(SCHEME))
 bin/sanitizer_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) -fsanitize=address \
-		-g \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
@@ -53,7 +51,6 @@ sanitizer: bin/sanitizer_$(subst /,_,$(SCHEME))
 bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
-		-g \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
@@ -69,7 +66,6 @@ bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | re
 	mkdir -p bin
 	gcc $(CFLAGS) \
 		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
-		-g \
 		-nostdlib \
 		-shared \
 		-fPIC \
@@ -175,7 +171,7 @@ run-symbol-namespace-all:
 
 .PHONY: run-functest-all
 run-functest-all: functest-all
-	@for functest in bin/functest_* ; do \
+	@for functest in $$(find bin/ -maxdepth 1 -name 'functest_*' -not -type d) ; do \
 		echo ./$$functest ; \
 		./$$functest || exit 1 ;\
 	done
@@ -183,7 +179,7 @@ run-functest-all: functest-all
 
 .PHONY: run-sanitizer-all
 run-sanitizer-all: sanitizer-all
-	@for sanitizer in bin/sanitizer_* ; do \
+	@for sanitizer in $$(find bin/ -maxdepth 1 -name 'sanitizer_*' -not -type d) ; do \
 		echo ./$$sanitizer ; \
 		./$$sanitizer || exit 1 ;\
 	done
