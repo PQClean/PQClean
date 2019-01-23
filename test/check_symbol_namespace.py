@@ -6,6 +6,10 @@ For a given SCHEME, this script verifies that all exported symbols are properly
 namespaced, i.e., all start with "PQCLEAN_SCHEMENAME_"
 """
 
+if sys.platform != 'linux':
+    print("This test is not supported on non-Linux platforms")
+    exit(0)
+
 if len(sys.argv) != 2:
     print("Provide a scheme name (e.g. crypto_kem/kyber768) as argv[1]")
     exit(1)
