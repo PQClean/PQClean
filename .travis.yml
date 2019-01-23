@@ -31,10 +31,6 @@ matrix:
       compiler: clang
       env:
         - MAKETARGET=test-all
-      addons:
-        homebrew:
-          packages:
-            - python
     - os: osx
       osx_image: xcode10.1
       compiler: gcc
@@ -42,7 +38,6 @@ matrix:
         homebrew:
           packages:
             - gcc@8
-            - python
       env:
         - MAKETARGET=test-all
 
