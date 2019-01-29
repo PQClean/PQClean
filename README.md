@@ -42,7 +42,7 @@ _The checking of items on this list is still being developed. Checked items shou
   * [x] `randombytes.c`
 * [ ] API functions return `0` on success, negative on failure
     * [x] 0 on success
-    * [ ] Negative on failure (currently: partially)
+    * [ ] Negative on failure (within restrictions of FO transform).
 * [ ] No dynamic memory allocations
 * [ ] No branching on secret data (dynamically checked using valgrind)
 * [ ] No access to secret memory locations (dynamically checked using valgrind)

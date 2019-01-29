@@ -137,8 +137,8 @@ static int test_invalid_ciphertext(void) {
         sendb[pos % CRYPTO_CIPHERTEXTBYTES] ^= 23;
 
         // Alice uses Bobs response to get her secret key
-        if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > -1) {
-            printf("ERROR crypto_kem_dec should fail (negative returncode) but returned %d\n", returncode);
+        if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > 0) {
+            printf("ERROR crypto_kem_dec should either fail (negative returncode) or succeed (return 0) but returned %d\n", returncode);
             return -1;
         }
 
