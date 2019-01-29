@@ -101,8 +101,8 @@ static int test_invalid_sk_a(void) {
         randombytes(sk_a, CRYPTO_SECRETKEYBYTES);
 
         // Alice uses Bobs response to get her secret key
-        if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > -1) {
-            printf("ERROR failing crypto_kem_dec returned %d instead of negative code\n", returncode);
+        if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > 0) {
+            printf("ERROR failing crypto_kem_dec returned %d instead of negative or zero code\n", returncode);
             return -1;
         }
 
