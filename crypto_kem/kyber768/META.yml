@@ -1,6 +1,5 @@
 name: Kyber768
 type: kem
-version: https://github.com/pq-crystals/kyber/commit/ab996e7460e5356b0e23aa034e7c2fe6922e60e6
 claimed-nist-level: 3
 length-public-key: 1088
 length-ciphertext: 1152
@@ -16,3 +15,6 @@ auxiliary-submitters:
   - John M. Schanck
   - Gregor Seiler
   - Damien Stehlé
+implementations:
+    - name: clean
+      version: https://github.com/pq-crystals/kyber/commit/ab996e7460e5356b0e23aa034e7c2fe6922e60e6
