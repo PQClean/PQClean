@@ -206,4 +206,4 @@ apply-tidy-all:
 
 .PHONY: check-metadata
 check-metadata:
-	python test/check_metadata.py
+	python3 test/check_metadata.py
