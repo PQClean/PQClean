@@ -54,7 +54,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [ ] Makefile-based build for each separate scheme
 * [ ] Makefile-based build for Windows (`nmake`)
 * [x] All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
-* [ ] Each implementation comes with a `LICENSE` file (see below)
+* [x] Each implementation comes with a `LICENSE` file (see below)
 * [x] Each scheme comes with a `META.yml` file giving details about version of the algorithm, designers
     * [x] Each individual implementation is specified in `META.yml`.
 
