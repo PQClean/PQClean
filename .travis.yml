@@ -7,7 +7,7 @@ matrix:
     - os: linux
       compiler: gcc
       env:
-        - MAKETARGET="test-all tidy-all check-format"
+        - MAKETARGET="test-all tidy-all check-format check-metadata"
       addons:
         apt:
           packages:
