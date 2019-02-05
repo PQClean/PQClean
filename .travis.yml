@@ -12,10 +12,9 @@ matrix:
       addons:
         apt:
           packages:
-            - valgrind
             - python3
-            - python3-setuptools
-            - python3-pip
+            - python3-yaml
+            - valgrind
     - name: "Linux + Clang"
       os: linux
       compiler: clang
@@ -24,14 +23,15 @@ matrix:
       addons:
         apt:
           packages:
-            - valgrind
             - python3
-            - python3-setuptools
-            - python3-pip
+            - python3-yaml
+            - valgrind
     - name: "MacOS + Clang"
       os: osx
       osx_image: xcode10.1
       compiler: clang
+      before_install:
+        - pip3 install -r requirements.txt
       env:
         - MAKETARGET=test-all
     - name: "MacOS + GCC8"
@@ -42,12 +42,10 @@ matrix:
         homebrew:
           packages:
             - gcc@8
+      before_install:
+        - pip3 install -r requirements.txt
       env:
         - MAKETARGET=test-all
-
-before_install:
-  - python3 --version
-  - pip3 install -r requirements.txt
 
 script:
   - make ${MAKETARGET}
