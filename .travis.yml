@@ -4,7 +4,8 @@ dist: xenial
 
 matrix:
   include:
-    - os: linux
+    - name: "Linux + GCC + Linting + Metadata"
+      os: linux
       compiler: gcc
       env:
         - MAKETARGET="test-all tidy-all check-format check-metadata check-license-files"
@@ -15,7 +16,8 @@ matrix:
             - python3
             - python3-setuptools
             - python3-pip
-    - os: linux
+    - name: "Linux + Clang"
+      os: linux
       compiler: clang
       env:
         - MAKETARGET=test-all
@@ -26,12 +28,14 @@ matrix:
             - python3
             - python3-setuptools
             - python3-pip
-    - os: osx
+    - name: "MacOS + Clang"
+      os: osx
       osx_image: xcode10.1
       compiler: clang
       env:
         - MAKETARGET=test-all
-    - os: osx
+    - name: "MacOS + GCC8"
+      os: osx
       osx_image: xcode10.1
       compiler: gcc
       addons:
