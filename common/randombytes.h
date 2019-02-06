@@ -2,6 +2,12 @@
 #define RANDOMBYTES_H
 #include <stdint.h>
 
-void randombytes(uint8_t *x, uint64_t xlen);
+#ifdef _WIN32
+#  include <CRTDEFS.H>
+#else
+#  include <unistd.h>
+#endif
+
+int randombytes(uint8_t *buf, size_t xlen);
 
 #endif
