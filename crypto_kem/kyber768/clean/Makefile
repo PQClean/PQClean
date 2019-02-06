@@ -1,14 +1,13 @@
-LIB=libkyber768.so
-OBJECTS=cbd.o indcpa.o kem.o kex.o ntt.o poly.o polyvec.o precomp.o reduce.o verify.o
+LIB=kyber768_clean.a
 
-COMMON_DIR=../../../common
-COMMON_OBJECTS=$(COMMON_DIR)/fips202.o $(COMMON_DIR)/notrandombytes.o
+SOURCES=$(wildcard *.c)
+OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
-CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -fPIC -g -I$(COMMON_DIR) $(EXTRAFLAGS)
+CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I../../../common $(EXTRAFLAGS)
 
-$(LIB): $(OBJECTS) $(COMMON_OBJECTS)
-	$(CC) -shared -o $@ $(OBJECTS) $(COMMON_OBJECTS)
+$(LIB): $(OBJECTS)
+	$(AR) -r $@ $(OBJECTS)
 
 clean:
-	$(RM) $(OBJECTS) $(COMMON_OBJECTS)
+	$(RM) $(OBJECTS)
 	$(RM) $(LIB)
