@@ -5,6 +5,8 @@ OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
 
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I../../../common $(EXTRAFLAGS)
 
+all: $(LIB)
+
 $(LIB): $(OBJECTS)
 	$(AR) -r $@ $(OBJECTS)
 
