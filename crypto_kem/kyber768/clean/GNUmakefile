@@ -1,4 +1,4 @@
-LIB=kyber768_clean.a
+LIB=libkyber768_clean.a
 
 SOURCES=$(wildcard *.c)
 OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
