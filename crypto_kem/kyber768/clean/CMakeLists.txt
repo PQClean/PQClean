@@ -9,4 +9,4 @@ endif(MSVC)
 
 include_directories(../../../common)
 
-add_library(kyber768 SHARED cbd.c indcpa.c kem.c kex.c ntt.c poly.c polyvec.c precomp.c reduce.c verify.c ../../../common/fips202.c ../../../common/notrandombytes.c)
+add_library(kyber768_clean STATIC cbd.c indcpa.c kem.c kex.c ntt.c poly.c polyvec.c precomp.c reduce.c verify.c)
