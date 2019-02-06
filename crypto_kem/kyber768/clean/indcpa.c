@@ -133,7 +133,7 @@ void PQCLEAN_KYBER768_gen_matrix(polyvec *a, const unsigned char *seed,
     uint16_t val;
     unsigned int nblocks;
     const unsigned int maxnblocks = 4;
-    uint8_t buf[SHAKE128_RATE * maxnblocks];
+    uint8_t buf[SHAKE128_RATE * /* maxnblocks = */ 4];
     int i, j;
     uint64_t state[25]; // SHAKE state
     unsigned char extseed[KYBER_SYMBYTES + 2];
