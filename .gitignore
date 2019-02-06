@@ -4,3 +4,7 @@ bin/
 *.a
 *.so
 *~
+
+# Object and library files on Windows
+*.lib
+*.obj
