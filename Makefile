@@ -21,6 +21,7 @@ bin/functest_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard 
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
 		-o bin/functest_$(subst /,_,$(SCHEME)) \
+		$(SCHEME)/clean/*.c \
 		$(COMMON_FILES) \
 		$(RANDOM_IMPL) \
 		$<
