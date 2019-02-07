@@ -1,6 +1,6 @@
 LIB=libdilithium-iii_clean.lib
 
-OBJECTS=ntt.c packing.c poly.c polyvec.c reduce.c rounding.c sign.c
+OBJECTS=ntt.obj packing.obj poly.obj polyvec.obj reduce.obj rounding.obj sign.obj
 
 CFLAGS=/I ..\..\..\common /W1 /WX
 
