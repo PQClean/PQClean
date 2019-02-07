@@ -1,0 +1,14 @@
+LIB=libdilithium-iii_clean.lib
+
+OBJECTS=ntt.c packing.c poly.c polyvec.c reduce.c rounding.c sign.c
+
+CFLAGS=/I ..\..\..\common /W1 /WX
+
+all: $(LIB)
+
+$(LIB): $(OBJECTS)
+    LIB.EXE /OUT:$@ $**
+
+clean:
+    DEL $(OBJECTS)
+    DEL $(LIB)
