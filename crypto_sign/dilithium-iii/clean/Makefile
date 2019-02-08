@@ -1,7 +1,7 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIB=libkyber768_clean.a
-OBJECTS=cbd.o indcpa.o kem.o kex.o ntt.o poly.o polyvec.o precomp.o reduce.o verify.o
+LIB=libdilithium-iii_clean.a
+OBJECTS=ntt.o packing.o poly.o polyvec.o reduce.o rounding.o sign.o
 
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I../../../common $(EXTRAFLAGS)
 
