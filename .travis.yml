@@ -4,46 +4,57 @@ dist: xenial
 
 matrix:
   include:
-    - os: linux
+    - name: "Linux + GCC + Linting + Metadata"
+      os: linux
       compiler: gcc
       env:
         - MAKETARGET="test-all tidy-all check-format check-metadata check-license-files"
       addons:
         apt:
           packages:
-            - valgrind
             - python3
-            - python3-setuptools
-            - python3-pip
-    - os: linux
+            - python3-yaml
+            - valgrind
+    - name: "Linux + Clang"
+      os: linux
       compiler: clang
       env:
         - MAKETARGET=test-all
       addons:
         apt:
           packages:
-            - valgrind
             - python3
-            - python3-setuptools
-            - python3-pip
-    - os: osx
+            - python3-yaml
+            - valgrind
+    - name: "Run tests on qemu-ppc"
+      os: linux
+      services: docker
+      env:
+        - MAKETARGET="run-functest-all run-testvectors-all run-sanitizer-all run-symbol-namespace-all"
+      script:  # TODO: should we do this in a Dockerfile instead?
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        - docker run --rm -v `pwd`:`pwd` -w `pwd` "twiggers/debian-sid-powerpc" /bin/bash -c "uname -a &&
+          make ${MAKETARGET}"
+    - name: "MacOS + Clang"
+      os: osx
       osx_image: xcode10.1
       compiler: clang
+      before_install:
+        - pip3 install -r requirements.txt
       env:
         - MAKETARGET=test-all
-    - os: osx
+    - name: "MacOS + GCC8"
+      os: osx
       osx_image: xcode10.1
       compiler: gcc
       addons:
         homebrew:
           packages:
             - gcc@8
+      before_install:
+        - pip3 install -r requirements.txt
       env:
         - MAKETARGET=test-all
-
-before_install:
-  - python3 --version
-  - pip3 install -r requirements.txt
 
 script:
   - make ${MAKETARGET}

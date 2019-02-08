@@ -2,6 +2,8 @@
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -g $(EXTRAFLAGS)
 
 ALL_SCHEMES=$(filter-out crypto_%.c, $(wildcard crypto_*/*))
+COMMON_FILES = common/fips202.c common/sha2.c
+RANDOM_IMPL = common/randombytes.c
 
 default: help
 
@@ -19,8 +21,9 @@ bin/functest_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard 
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
 		-o bin/functest_$(subst /,_,$(SCHEME)) \
-		common/*.c \
 		$(SCHEME)/clean/*.c \
+		$(COMMON_FILES) \
+		$(RANDOM_IMPL) \
 		$<
 
 .PHONY: functest
@@ -45,7 +48,8 @@ bin/sanitizer_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
 		-o bin/sanitizer_$(subst /,_,$(SCHEME)) \
-		common/*.c \
+		$(COMMON_FILES) \
+		$(RANDOM_IMPL) \
 		$(SCHEME)/clean/*.c \
 		$<
 
@@ -59,7 +63,8 @@ bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wil
 		-iquote "./common/" \
 		-iquote "$(SCHEME)/clean/" \
 		-o bin/testvectors_$(subst /,_,$(SCHEME)) \
-		common/*.c \
+		$(COMMON_FILES) \
+		common/notrandombytes.c \
 		$(SCHEME)/clean/*.c \
 		$<
 
