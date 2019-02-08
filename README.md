@@ -1,11 +1,13 @@
 # PQClean
 
 [![Build Status](https://travis-ci.com/PQClean/PQClean.svg?branch=master)](https://travis-ci.com/PQClean/PQClean)
+[![Build status](https://ci.appveyor.com/api/projects/status/186ky7yb9mlqj3io?svg=true)](https://ci.appveyor.com/project/PQClean/pqclean)
 
 **PQClean**, in short, is an effort to collect **clean** implementations of the post-quantum
 schemes that are in the 
 [NIST post-quantum project](https://csrc.nist.gov/projects/post-quantum-cryptography).
 The goal of PQClean is to provide *standalone implementations* that 
+
 * can easily be integrated into libraries such as [liboqs](https://openquantumsafe.org/#liboqs) or [libpqcrypto](https://libpqcrypto.org/);
 * can efficiently upstream into higher-level protocol integration efforts such as [Open Quantum Safe](https://openquantumsafe.org/#integrations);
 * can easily be integrated into benchmarking frameworks such as [SUPERCOP](https://bench.cr.yp.to/supercop.html);
@@ -15,6 +17,7 @@ The goal of PQClean is to provide *standalone implementations* that
 * are suitable targets for formal verification.
 
 What PQClean is **not** aiming for is
+
 * a build system producing an integrated library of all schemes;
 * including benchmarking of implementations; and
 * including integration into higher-level applications or protocols.
@@ -33,8 +36,8 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] Consistent test vectors across runs
 * [ ] Consistent test vectors on big-endian and little-endian machines
 * [ ] Consistent test vectors on 32-bit and 64-bit machines
-* [X] No errors/warnings reported by valgrind
-* [X] No errors/warnings reported by address sanitizer
+* [x] No errors/warnings reported by valgrind
+* [x] No errors/warnings reported by address sanitizer
 * [ ] Only dependencies:
   * [x] `fips202.c`
   * [x] `sha2.c`
@@ -47,12 +50,12 @@ _The checking of items on this list is still being developed. Checked items shou
 * [ ] No branching on secret data (dynamically checked using valgrind)
 * [ ] No access to secret memory locations (dynamically checked using valgrind)
 * [ ] Separate subdirectories (without symlinks) for each parameter set of each scheme
-* [ ] Builds under Linux, MacOS, and Windows
+* [x] Builds under Linux, MacOS, and Windows
     * [x] Linux
     * [x] MacOS
-    * [ ] Windows
-* [ ] Makefile-based build for each separate scheme
-* [ ] Makefile-based build for Windows (`nmake`)
+    * [x] Windows
+* [x] Makefile-based build for each separate scheme
+* [x] Makefile-based build for Windows (`nmake`)
 * [x] All exported symbols are namespaced with `PQCLEAN_SCHEMENAME_`
 * [x] Each implementation comes with a `LICENSE` file (see below)
 * [x] Each scheme comes with a `META.yml` file giving details about version of the algorithm, designers
@@ -103,6 +106,23 @@ recovering signed messages. Specifically, those functions have the following nam
 int crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
 int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
 ```
+
+## Building PQClean
+
+As noted above, PQClean is **not** meant to be built as a single library: it is a collection of source code that can be easily integrated into other libraries.  The PQClean repository includes various test programs which do build various files, but you should not use the resulting binaries for any purpose.
+
+## Using source code from PQClean in your own project
+
+Each implementation directory in PQClean (e.g., crypto\_kem/kyber768\clean) can be extracted for use in your own project.  You will need to:
+
+1. Copy the source code from the implementation's directory into your project.
+2. Add the files to your project's build system.
+3. Provide instantiations of any of the common cryptographic algorithms used by the implementation.  This likely includes `common/randombytes.h` (a cryptographic random number generator), and possibly `common/sha2.h` (the SHA-2 hash function family) and `common/fips202.h` (the SHA-3 hash function family).
+
+Regarding #2, adding the files to your project's build system, each implementation in PQClean is accompanied by example two makefiles that show how one could build the files for that implementation:
+
+- The file `Makefile` which can be used with GNU Make, BSD Make, and possibly others.
+- The file `Makefile.Microsoft_nmake` which can be used with Visual Studio's nmake.
 
 ## License
 

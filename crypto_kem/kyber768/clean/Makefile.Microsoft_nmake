@@ -1,0 +1,16 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIB=libkyber768_clean.lib
+OBJECTS=cbd.obj indcpa.obj kem.obj kex.obj ntt.obj poly.obj polyvec.obj precomp.obj reduce.obj verify.obj
+
+CFLAGS=/I ..\..\..\common /W1 /WX # FIXME: ideally would use /W4 instead of /W1, but too many failures in Kyber right now
+
+all: $(LIB)
+
+$(LIB): $(OBJECTS)
+    LIB.EXE /OUT:$@ $**
+
+clean:
+    DEL $(OBJECTS)
+    DEL $(LIB)
