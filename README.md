@@ -121,7 +121,7 @@ Each implementation directory in PQClean (e.g., crypto\_kem/kyber768\clean) can 
 
 Regarding #2, adding the files to your project's build system, each implementation in PQClean is accompanied by example two makefiles that show how one could build the files for that implementation:
 
-- The file `GNUmakefile` which can be used with GNU Make.
+- The file `Makefile` which can be used with GNU Make, BSD Make, and possibly others.
 - The file `Makefile.Microsoft_nmake` which can be used with Visual Studio's nmake.
 
 ## License
