@@ -6,15 +6,17 @@
 #define NTESTS 15
 #define MLEN 32
 
+typedef uint64_t unaligned_uint64_t __attribute__((aligned(1)));
+
 /* allocate a bit more for all keys and messages and
  * make sure it is not touched by the implementations.
  */
 static void write_canary(unsigned char *d) {
-    *((uint64_t *)d) = 0x0123456789ABCDEF;
+    *((unaligned_uint64_t *)d) = 0x0123456789ABCDEF;
 }
 
 static int check_canary(const unsigned char *d) {
-    if (*(uint64_t *)d != 0x0123456789ABCDEF) {
+    if (*(unaligned_uint64_t *)d != 0x0123456789ABCDEF) {
         return -1;
     }
 
