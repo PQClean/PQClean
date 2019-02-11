@@ -7,7 +7,7 @@
 
 typedef struct {
     uint32_t coeffs[N];
-} poly __attribute__((aligned(32)));
+} poly;
 
 void PQCLEAN_DILITHIUMIII_poly_reduce(poly *a);
 void PQCLEAN_DILITHIUMIII_poly_csubq(poly *a);

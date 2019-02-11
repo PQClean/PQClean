@@ -4,9 +4,9 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/186ky7yb9mlqj3io?svg=true)](https://ci.appveyor.com/project/PQClean/pqclean)
 
 **PQClean**, in short, is an effort to collect **clean** implementations of the post-quantum
-schemes that are in the 
+schemes that are in the
 [NIST post-quantum project](https://csrc.nist.gov/projects/post-quantum-cryptography).
-The goal of PQClean is to provide *standalone implementations* that 
+The goal of PQClean is to provide *standalone implementations* that
 
 * can easily be integrated into libraries such as [liboqs](https://openquantumsafe.org/#liboqs) or [libpqcrypto](https://libpqcrypto.org/);
 * can efficiently upstream into higher-level protocol integration efforts such as [Open Quantum Safe](https://openquantumsafe.org/#integrations);
@@ -23,7 +23,7 @@ What PQClean is **not** aiming for is
 * including integration into higher-level applications or protocols.
 
 As a first main target, we are collecting C implementations that fulfill the requirements
-listed below. 
+listed below.
 
 ## Requirements on C implementations that are automatically checked
 
@@ -77,7 +77,7 @@ _The checking of items on this list is still being developed. Checked items shou
 
 ## Clean C implementations currently in PQClean
 
-Currently, the continuous-integration and testing environment of PQClean is still work in progress 
+Currently, the continuous-integration and testing environment of PQClean is still work in progress
 and as a consequence PQClean does not yet have many implementations.
 
 <!--
@@ -94,7 +94,7 @@ and as a consequence PQClean does not yet have many implementations.
 
 ## API used by PQClean
 
-PQClean is essentially using the same API as required for the NIST reference implementations, 
+PQClean is essentially using the same API as required for the NIST reference implementations,
 which is also used by SUPERCOP and by libpqcrypto. The only two differences to that API are
 the following:
 * All lengths are passed as type `size_t` instead of `unsigned long long`; and
