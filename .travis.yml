@@ -26,6 +26,22 @@ matrix:
             - python3
             - python3-yaml
             - valgrind
+    - name: "Linux 32-bit GCC"
+      os: linux
+      compiler: gcc  # Clang has i386-libasan problems on xenial
+      addons:
+        apt:
+          packages:
+            - gcc-multilib
+            - python3
+            - python3-yaml
+            - valgrind
+      before_install:
+        - sudo dpkg --add-architecture i386
+        - sudo apt update -qq && sudo apt-get install -qqy libc6-dbg:i386
+      env:
+        - MAKETARGET=test-all
+        - EXTRAFLAGS=-m32
     - name: "Run tests on qemu-ppc (GCC)"
       os: linux
       services: docker
