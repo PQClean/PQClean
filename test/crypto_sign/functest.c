@@ -35,12 +35,11 @@ static int check_canary(const unsigned char *d) {
 #define crypto_sign NAMESPACE(crypto_sign)
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
 
-#define RETURNS_ZERO(f) \
-    if ((f) != 0) { \
-        puts("(f) returned non-zero returncode"); \
-        return -1; \
+#define RETURNS_ZERO(f)                                                        \
+    if ((f) != 0) {                                                            \
+        puts("(f) returned non-zero returncode");                              \
+        return -1;                                                             \
     }
-
 
 static int test_sign(void) {
     unsigned char pk[CRYPTO_PUBLICKEYBYTES + 16];
@@ -70,7 +69,8 @@ static int test_sign(void) {
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
-        if ((returncode = crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) != 0) {
+        if ((returncode =
+                 crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) != 0) {
             printf("ERROR Signature did not verify correctly!\n");
             if (returncode > 0) {
                 puts("ERROR return code should be < 0 on failure");

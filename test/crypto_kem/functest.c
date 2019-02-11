@@ -34,10 +34,10 @@ static int check_canary(const unsigned char *d) {
 #define crypto_kem_enc NAMESPACE(crypto_kem_enc)
 #define crypto_kem_dec NAMESPACE(crypto_kem_dec)
 
-#define RETURNS_ZERO(f) \
-    if ((f) != 0) { \
-        puts(#f " returned non-zero returncode"); \
-        return -1; \
+#define RETURNS_ZERO(f)                                                        \
+    if ((f) != 0) {                                                            \
+        puts(#f " returned non-zero returncode");                              \
+        return -1;                                                             \
     }
 
 static int test_keys(void) {
@@ -107,7 +107,9 @@ static int test_invalid_sk_a(void) {
 
         // Alice uses Bobs response to get her secret key
         if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > 0) {
-            printf("ERROR failing crypto_kem_dec returned %d instead of negative or zero code\n", returncode);
+            printf("ERROR failing crypto_kem_dec returned %d instead of "
+                   "negative or zero code\n",
+                   returncode);
             return -1;
         }
 
@@ -143,7 +145,9 @@ static int test_invalid_ciphertext(void) {
 
         // Alice uses Bobs response to get her secret key
         if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > 0) {
-            printf("ERROR crypto_kem_dec should either fail (negative returncode) or succeed (return 0) but returned %d\n", returncode);
+            printf("ERROR crypto_kem_dec should either fail (negative "
+                   "returncode) or succeed (return 0) but returned %d\n",
+                   returncode);
             return -1;
         }
 
