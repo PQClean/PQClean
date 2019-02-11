@@ -19,7 +19,7 @@ SCHEMESHORT = SCHEME.split('/')[1].upper()
 
 
 def get_hash(scheme):
-    with open("{}/META.yml".format(scheme), 'r') as stream:
+    with open("{}/META.yml".format(scheme), 'r', encoding='utf-8') as stream:
         meta = yaml.load(stream)
         return meta['testvectors-sha256']
 

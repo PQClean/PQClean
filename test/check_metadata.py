@@ -116,7 +116,7 @@ def check_element(field, element, props, metafile):
 for directory in glob.iglob('crypto_*/*/'):
     metafile = os.path.join(directory, 'META.yml')
     try:
-        with open(metafile) as f:
+        with open(metafile, encoding='utf-8') as f:
             metadata = yaml.load(f.read())
     except Exception as e:
         eprint("Can't open {}: {}".format(metafile, e))
