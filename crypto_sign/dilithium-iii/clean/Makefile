@@ -8,8 +8,8 @@ CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I../../../common $(EXTRAFLAGS)
 all: $(LIB)
 
 $(LIB): $(OBJECTS)
-    $(AR) -r $@ $(OBJECTS)
+	$(AR) -r $@ $(OBJECTS)
 
 clean:
-    $(RM) $(OBJECTS)
-    $(RM) $(LIB)
+	$(RM) $(OBJECTS)
+	$(RM) $(LIB)
