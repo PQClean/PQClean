@@ -13,6 +13,7 @@ matrix:
         apt:
           packages:
             - python3
+            - python3-colorama
             - python3-yaml
             - valgrind
     - name: "Linux + Clang"
@@ -25,6 +26,7 @@ matrix:
           packages:
             - python3
             - python3-yaml
+            - python3-colorama
             - valgrind
     - name: "Linux 32-bit GCC"
       os: linux
@@ -34,6 +36,7 @@ matrix:
           packages:
             - gcc-multilib
             - python3
+            - python3-colorama
             - python3-yaml
             - valgrind
       before_install:
@@ -74,7 +77,7 @@ matrix:
 
 script:
   - make ${MAKETARGET}
-
+  - cd scripts && ./run_checks.py
 
 cache: pip
 
