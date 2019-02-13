@@ -9,7 +9,7 @@ void PQCLEAN_KYBER768_kyber_uake_initA(u8 *send, u8 *tk, u8 *sk,
 }
 
 void PQCLEAN_KYBER768_kyber_uake_sharedB(u8 *send, u8 *k, const u8 *recv,
-                                         const u8 *skb) {
+        const u8 *skb) {
     unsigned char buf[2 * KYBER_SYMBYTES];
     PQCLEAN_KYBER768_crypto_kem_enc(send, buf, recv);
     PQCLEAN_KYBER768_crypto_kem_dec(buf + KYBER_SYMBYTES,
@@ -18,7 +18,7 @@ void PQCLEAN_KYBER768_kyber_uake_sharedB(u8 *send, u8 *k, const u8 *recv,
 }
 
 void PQCLEAN_KYBER768_kyber_uake_sharedA(u8 *k, const u8 *recv, const u8 *tk,
-                                         const u8 *sk) {
+        const u8 *sk) {
     unsigned char buf[2 * KYBER_SYMBYTES];
     int i;
     PQCLEAN_KYBER768_crypto_kem_dec(buf, recv, sk);

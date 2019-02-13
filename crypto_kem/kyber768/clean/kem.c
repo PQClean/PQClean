@@ -95,13 +95,13 @@ int PQCLEAN_KYBER768_crypto_kem_dec(unsigned char *ss, const unsigned char *ct,
     unsigned char cmp[KYBER_CIPHERTEXTBYTES];
     unsigned char buf[2 * KYBER_SYMBYTES];
     unsigned char
-        kr[2 * KYBER_SYMBYTES]; /* Will contain key, coins, qrom-hash */
+    kr[2 * KYBER_SYMBYTES]; /* Will contain key, coins, qrom-hash */
     const unsigned char *pk = sk + KYBER_INDCPA_SECRETKEYBYTES;
 
     PQCLEAN_KYBER768_indcpa_dec(buf, ct, sk);
 
     for (i = 0; i < KYBER_SYMBYTES;
-         i++) { /* Multitarget countermeasure for coins + contributory KEM */
+            i++) { /* Multitarget countermeasure for coins + contributory KEM */
         buf[KYBER_SYMBYTES + i] = sk[KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES +
                                      i]; /* Save hash by storing H(pk) in sk */
     }

@@ -127,8 +127,7 @@ static void unpack_sk(polyvec *sk, const unsigned char *packedsk) {
  *is generated
  **************************************************/
 void PQCLEAN_KYBER768_gen_matrix(polyvec *a, const unsigned char *seed,
-                                 int transposed) // Not static for benchmarking
-{
+                                 int transposed) { // Not static for benchmarking
     unsigned int pos = 0, ctr;
     uint16_t val;
     unsigned int nblocks;
