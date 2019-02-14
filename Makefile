@@ -159,17 +159,17 @@ run-valgrind-all:
 	done
 
 .PHONY: run-testvectors
-run-testvectors: test/check_testvectors.py | require_scheme
-	python3 test/check_testvectors.py $(SCHEME) || exit 1; \
+run-testvectors: test/check_tvectors.py | require_scheme
+	python3 test/check_tvectors.py $(SCHEME) || exit 1; \
 
 .PHONY: run-symbol-namespace
 run-symbol-namespace: test/check_symbol_namespace.py | require_scheme
 	python3 test/check_symbol_namespace.py $(SCHEME) || exit 1; \
 
 .PHONY: run-testvectors-all
-run-testvectors-all: test/check_testvectors.py
+run-testvectors-all: test/check_tvectors.py
 	@for scheme in $(ALL_SCHEMES); do \
-	    python3 test/check_testvectors.py $$scheme || exit 1; \
+	    python3 test/check_tvectors.py $$scheme || exit 1; \
 	done
 
 .PHONY: run-symbol-namespace-all

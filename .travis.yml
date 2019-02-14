@@ -14,6 +14,7 @@ matrix:
           packages:
             - python3
             - python3-yaml
+            - python3-nose
             - valgrind
     - name: "Linux + Clang"
       os: linux
@@ -25,6 +26,7 @@ matrix:
           packages:
             - python3
             - python3-yaml
+            - python3-nose
             - valgrind
     - name: "Linux 32-bit GCC"
       os: linux
@@ -35,6 +37,7 @@ matrix:
             - gcc-multilib
             - python3
             - python3-yaml
+            - python3-nose
             - valgrind
       before_install:
         - sudo dpkg --add-architecture i386
@@ -74,7 +77,7 @@ matrix:
 
 script:
   - make ${MAKETARGET}
-
+  - cd test && python3 -m nose -v
 
 cache: pip
 
