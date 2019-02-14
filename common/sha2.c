@@ -43,34 +43,34 @@ static void store_bigendian(unsigned char *x, uint64 u) {
 
 #define M(w0, w14, w9, w1) w0 = sigma1(w14) + (w9) + sigma0(w1) + (w0);
 
-#define EXPAND                                                                 \
-    M(w0, w14, w9, w1)                                                         \
-    M(w1, w15, w10, w2)                                                        \
-    M(w2, w0, w11, w3)                                                         \
-    M(w3, w1, w12, w4)                                                         \
-    M(w4, w2, w13, w5)                                                         \
-    M(w5, w3, w14, w6)                                                         \
-    M(w6, w4, w15, w7)                                                         \
-    M(w7, w5, w0, w8)                                                          \
-    M(w8, w6, w1, w9)                                                          \
-    M(w9, w7, w2, w10)                                                         \
-    M(w10, w8, w3, w11)                                                        \
-    M(w11, w9, w4, w12)                                                        \
-    M(w12, w10, w5, w13)                                                       \
-    M(w13, w11, w6, w14)                                                       \
-    M(w14, w12, w7, w15)                                                       \
+#define EXPAND           \
+    M(w0, w14, w9, w1)   \
+    M(w1, w15, w10, w2)  \
+    M(w2, w0, w11, w3)   \
+    M(w3, w1, w12, w4)   \
+    M(w4, w2, w13, w5)   \
+    M(w5, w3, w14, w6)   \
+    M(w6, w4, w15, w7)   \
+    M(w7, w5, w0, w8)    \
+    M(w8, w6, w1, w9)    \
+    M(w9, w7, w2, w10)   \
+    M(w10, w8, w3, w11)  \
+    M(w11, w9, w4, w12)  \
+    M(w12, w10, w5, w13) \
+    M(w13, w11, w6, w14) \
+    M(w14, w12, w7, w15) \
     M(w15, w13, w8, w0)
 
-#define F(w, k)                                                                \
-    T1 = h + Sigma1(e) + Ch(e, f, g) + (k) + (w);                              \
-    T2 = Sigma0(a) + Maj(a, b, c);                                             \
-    h = g;                                                                     \
-    g = f;                                                                     \
-    f = e;                                                                     \
-    e = d + T1;                                                                \
-    d = c;                                                                     \
-    c = b;                                                                     \
-    b = a;                                                                     \
+#define F(w, k)                                   \
+    T1 = h + Sigma1(e) + Ch(e, f, g) + (k) + (w); \
+    T2 = Sigma0(a) + Maj(a, b, c);                \
+    h = g;                                        \
+    g = f;                                        \
+    f = e;                                        \
+    e = d + T1;                                   \
+    d = c;                                        \
+    c = b;                                        \
+    b = a;                                        \
     a = T1 + T2;
 
 static int crypto_hashblocks_sha512(unsigned char *statebytes,
@@ -258,7 +258,8 @@ static const unsigned char iv_384[64] = {
     0xdd, 0x17, 0x15, 0x2f, 0xec, 0xd8, 0xf7, 0x0e, 0x59, 0x39, 0x67,
     0x33, 0x26, 0x67, 0xff, 0xc0, 0x0b, 0x31, 0x8e, 0xb4, 0x4a, 0x87,
     0x68, 0x58, 0x15, 0x11, 0xdb, 0x0c, 0x2e, 0x0d, 0x64, 0xf9, 0x8f,
-    0xa7, 0x47, 0xb5, 0x48, 0x1d, 0xbe, 0xfa, 0x4f, 0xa4};
+    0xa7, 0x47, 0xb5, 0x48, 0x1d, 0xbe, 0xfa, 0x4f, 0xa4
+};
 
 static const unsigned char iv_512[64] = {
     0x6a, 0x09, 0xe6, 0x67, 0xf3, 0xbc, 0xc9, 0x08, 0xbb, 0x67, 0xae,
@@ -266,7 +267,8 @@ static const unsigned char iv_512[64] = {
     0xf8, 0x2b, 0xa5, 0x4f, 0xf5, 0x3a, 0x5f, 0x1d, 0x36, 0xf1, 0x51,
     0x0e, 0x52, 0x7f, 0xad, 0xe6, 0x82, 0xd1, 0x9b, 0x05, 0x68, 0x8c,
     0x2b, 0x3e, 0x6c, 0x1f, 0x1f, 0x83, 0xd9, 0xab, 0xfb, 0x41, 0xbd,
-    0x6b, 0x5b, 0xe0, 0xcd, 0x19, 0x13, 0x7e, 0x21, 0x79};
+    0x6b, 0x5b, 0xe0, 0xcd, 0x19, 0x13, 0x7e, 0x21, 0x79
+};
 
 int sha384(unsigned char *out, const unsigned char *in,
            unsigned long long inlen) {

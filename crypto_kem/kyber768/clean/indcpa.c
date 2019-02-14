@@ -17,8 +17,7 @@
  *public key const poly *pk:            pointer to the input public-key
  *polynomial const unsigned char *seed: pointer to the input public seed
  **************************************************/
-static void pack_pk(unsigned char *r, const polyvec *pk,
-                    const unsigned char *seed) {
+static void pack_pk(unsigned char *r, const polyvec *pk, const unsigned char *seed) {
     int i;
     PQCLEAN_KYBER768_polyvec_compress(r, pk);
     for (i = 0; i < KYBER_SYMBYTES; i++) {
@@ -39,8 +38,7 @@ static void pack_pk(unsigned char *r, const polyvec *pk,
  *              - const unsigned char *packedpk: pointer to input serialized
  *public key
  **************************************************/
-static void unpack_pk(polyvec *pk, unsigned char *seed,
-                      const unsigned char *packedpk) {
+static void unpack_pk(polyvec *pk, unsigned char *seed, const unsigned char *packedpk) {
     int i;
     PQCLEAN_KYBER768_polyvec_decompress(pk, packedpk);
 
@@ -110,8 +108,8 @@ static void unpack_sk(polyvec *sk, const unsigned char *packedsk) {
     PQCLEAN_KYBER768_polyvec_frombytes(sk, packedsk);
 }
 
-#define gen_a(A, B) PQCLEAN_KYBER768_gen_matrix(A, B, 0)
-#define gen_at(A, B) PQCLEAN_KYBER768_gen_matrix(A, B, 1)
+#define gen_a(A, B) gen_matrix(A, B, 0)
+#define gen_at(A, B) gen_matrix(A, B, 1)
 
 /*************************************************
  * Name:        gen_matrix
@@ -126,9 +124,7 @@ static void unpack_sk(polyvec *sk, const unsigned char *packedsk) {
  *              - int transposed:            boolean deciding whether A or A^T
  *is generated
  **************************************************/
-void PQCLEAN_KYBER768_gen_matrix(polyvec *a, const unsigned char *seed,
-                                 int transposed) // Not static for benchmarking
-{
+static void gen_matrix(polyvec *a, const unsigned char *seed, int transposed) {
     unsigned int pos = 0, ctr;
     uint16_t val;
     unsigned int nblocks;

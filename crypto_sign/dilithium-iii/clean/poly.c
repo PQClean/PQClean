@@ -161,12 +161,12 @@ void PQCLEAN_DILITHIUMIII_poly_invntt_montgomery(poly *a) {
  *              - const poly *b: pointer to second input polynomial
  **************************************************/
 void PQCLEAN_DILITHIUMIII_poly_pointwise_invmontgomery(poly *c, const poly *a,
-                                                       const poly *b) {
+        const poly *b) {
     unsigned int i;
 
     for (i = 0; i < N; ++i) {
         c->coeffs[i] = PQCLEAN_DILITHIUMIII_montgomery_reduce(
-            (uint64_t)a->coeffs[i] * b->coeffs[i]);
+                           (uint64_t)a->coeffs[i] * b->coeffs[i]);
     }
 }
 
@@ -230,7 +230,7 @@ void PQCLEAN_DILITHIUMIII_poly_decompose(poly *a1, poly *a0, const poly *a) {
  * Returns number of 1 bits.
  **************************************************/
 unsigned int PQCLEAN_DILITHIUMIII_poly_make_hint(poly *h, const poly *a,
-                                                 const poly *b) {
+        const poly *b) {
     unsigned int i, s = 0;
 
     for (i = 0; i < N; ++i) {
@@ -333,21 +333,21 @@ void PQCLEAN_DILITHIUMIII_poly_uniform(poly *a, const unsigned char *buf) {
  **************************************************/
 static unsigned int rej_eta(uint32_t *a, unsigned int len,
                             const unsigned char *buf, unsigned int buflen) {
-#if ETA > 7
+    #if ETA > 7
 #error "rej_eta() assumes ETA <= 7"
-#endif
+    #endif
     unsigned int ctr, pos;
     unsigned char t0, t1;
 
     ctr = pos = 0;
     while (ctr < len && pos < buflen) {
-#if ETA <= 3
+        #if ETA <= 3
         t0 = buf[pos] & 0x07;
         t1 = buf[pos++] >> 5;
-#else
+        #else
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
-#endif
+        #endif
 
         if (t0 <= 2 * ETA) {
             a[ctr++] = Q + ETA - t0;
@@ -372,8 +372,8 @@ static unsigned int rej_eta(uint32_t *a, unsigned int len,
  *              - unsigned char nonce: nonce byte
  **************************************************/
 void PQCLEAN_DILITHIUMIII_poly_uniform_eta(poly *a,
-                                           const unsigned char seed[SEEDBYTES],
-                                           unsigned char nonce) {
+        const unsigned char seed[SEEDBYTES],
+        unsigned char nonce) {
     unsigned int i, ctr;
     unsigned char inbuf[SEEDBYTES + 1];
     /* Probability that we need more than 2 blocks: < 2^{-84}
@@ -414,9 +414,9 @@ void PQCLEAN_DILITHIUMIII_poly_uniform_eta(poly *a,
 static unsigned int rej_gamma1m1(uint32_t *a, unsigned int len,
                                  const unsigned char *buf,
                                  unsigned int buflen) {
-#if GAMMA1 > (1 << 19)
+    #if GAMMA1 > (1 << 19)
 #error "rej_gamma1m1() assumes GAMMA1 - 1 fits in 19 bits"
-#endif
+    #endif
     unsigned int ctr, pos;
     uint32_t t0, t1;
 
@@ -494,13 +494,13 @@ void PQCLEAN_DILITHIUMIII_poly_uniform_gamma1m1(
  *              - const poly *a: pointer to input polynomial
  **************************************************/
 void PQCLEAN_DILITHIUMIII_polyeta_pack(unsigned char *r, const poly *a) {
-#if ETA > 7
+    #if ETA > 7
 #error "polyeta_pack() assumes ETA <= 7"
-#endif
+    #endif
     unsigned int i;
     unsigned char t[8];
 
-#if ETA <= 3
+    #if ETA <= 3
     for (i = 0; i < N / 8; ++i) {
         t[0] = Q + ETA - a->coeffs[8 * i + 0];
         t[1] = Q + ETA - a->coeffs[8 * i + 1];
@@ -522,13 +522,13 @@ void PQCLEAN_DILITHIUMIII_polyeta_pack(unsigned char *r, const poly *a) {
         r[3 * i + 2] |= t[6] << 2;
         r[3 * i + 2] |= t[7] << 5;
     }
-#else
+    #else
     for (i = 0; i < N / 2; ++i) {
         t[0] = Q + ETA - a->coeffs[2 * i + 0];
         t[1] = Q + ETA - a->coeffs[2 * i + 1];
         r[i] = t[0] | (t[1] << 4);
     }
-#endif
+    #endif
 }
 
 /*************************************************
@@ -543,7 +543,7 @@ void PQCLEAN_DILITHIUMIII_polyeta_pack(unsigned char *r, const poly *a) {
 void PQCLEAN_DILITHIUMIII_polyeta_unpack(poly *r, const unsigned char *a) {
     unsigned int i;
 
-#if ETA <= 3
+    #if ETA <= 3
     for (i = 0; i < N / 8; ++i) {
         r->coeffs[8 * i + 0] = a[3 * i + 0] & 0x07;
         r->coeffs[8 * i + 1] = (a[3 * i + 0] >> 3) & 0x07;
@@ -565,14 +565,14 @@ void PQCLEAN_DILITHIUMIII_polyeta_unpack(poly *r, const unsigned char *a) {
         r->coeffs[8 * i + 6] = Q + ETA - r->coeffs[8 * i + 6];
         r->coeffs[8 * i + 7] = Q + ETA - r->coeffs[8 * i + 7];
     }
-#else
+    #else
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
         r->coeffs[2 * i + 1] = a[i] >> 4;
         r->coeffs[2 * i + 0] = Q + ETA - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = Q + ETA - r->coeffs[2 * i + 1];
     }
-#endif
+    #endif
 }
 
 /*************************************************
@@ -586,27 +586,20 @@ void PQCLEAN_DILITHIUMIII_polyeta_unpack(poly *r, const unsigned char *a) {
  *              - const poly *a: pointer to input polynomial
  **************************************************/
 void PQCLEAN_DILITHIUMIII_polyt1_pack(unsigned char *r, const poly *a) {
-#if D != 14
+    #if D != 14
 #error "polyt1_pack() assumes D == 14"
-#endif
+    #endif
     unsigned int i;
 
     for (i = 0; i < N / 8; ++i) {
         r[9 * i + 0] = a->coeffs[8 * i + 0] & 0xFF;
-        r[9 * i + 1] =
-            (a->coeffs[8 * i + 0] >> 8) | ((a->coeffs[8 * i + 1] & 0x7F) << 1);
-        r[9 * i + 2] =
-            (a->coeffs[8 * i + 1] >> 7) | ((a->coeffs[8 * i + 2] & 0x3F) << 2);
-        r[9 * i + 3] =
-            (a->coeffs[8 * i + 2] >> 6) | ((a->coeffs[8 * i + 3] & 0x1F) << 3);
-        r[9 * i + 4] =
-            (a->coeffs[8 * i + 3] >> 5) | ((a->coeffs[8 * i + 4] & 0x0F) << 4);
-        r[9 * i + 5] =
-            (a->coeffs[8 * i + 4] >> 4) | ((a->coeffs[8 * i + 5] & 0x07) << 5);
-        r[9 * i + 6] =
-            (a->coeffs[8 * i + 5] >> 3) | ((a->coeffs[8 * i + 6] & 0x03) << 6);
-        r[9 * i + 7] =
-            (a->coeffs[8 * i + 6] >> 2) | ((a->coeffs[8 * i + 7] & 0x01) << 7);
+        r[9 * i + 1] = (a->coeffs[8 * i + 0] >> 8) | ((a->coeffs[8 * i + 1] & 0x7F) << 1);
+        r[9 * i + 2] = (a->coeffs[8 * i + 1] >> 7) | ((a->coeffs[8 * i + 2] & 0x3F) << 2);
+        r[9 * i + 3] = (a->coeffs[8 * i + 2] >> 6) | ((a->coeffs[8 * i + 3] & 0x1F) << 3);
+        r[9 * i + 4] = (a->coeffs[8 * i + 3] >> 5) | ((a->coeffs[8 * i + 4] & 0x0F) << 4);
+        r[9 * i + 5] = (a->coeffs[8 * i + 4] >> 4) | ((a->coeffs[8 * i + 5] & 0x07) << 5);
+        r[9 * i + 6] = (a->coeffs[8 * i + 5] >> 3) | ((a->coeffs[8 * i + 6] & 0x03) << 6);
+        r[9 * i + 7] = (a->coeffs[8 * i + 6] >> 2) | ((a->coeffs[8 * i + 7] & 0x01) << 7);
         r[9 * i + 8] = a->coeffs[8 * i + 7] >> 1;
     }
 }
@@ -624,22 +617,14 @@ void PQCLEAN_DILITHIUMIII_polyt1_unpack(poly *r, const unsigned char *a) {
     unsigned int i;
 
     for (i = 0; i < N / 8; ++i) {
-        r->coeffs[8 * i + 0] =
-            a[9 * i + 0] | ((uint32_t)(a[9 * i + 1] & 0x01) << 8);
-        r->coeffs[8 * i + 1] =
-            (a[9 * i + 1] >> 1) | ((uint32_t)(a[9 * i + 2] & 0x03) << 7);
-        r->coeffs[8 * i + 2] =
-            (a[9 * i + 2] >> 2) | ((uint32_t)(a[9 * i + 3] & 0x07) << 6);
-        r->coeffs[8 * i + 3] =
-            (a[9 * i + 3] >> 3) | ((uint32_t)(a[9 * i + 4] & 0x0F) << 5);
-        r->coeffs[8 * i + 4] =
-            (a[9 * i + 4] >> 4) | ((uint32_t)(a[9 * i + 5] & 0x1F) << 4);
-        r->coeffs[8 * i + 5] =
-            (a[9 * i + 5] >> 5) | ((uint32_t)(a[9 * i + 6] & 0x3F) << 3);
-        r->coeffs[8 * i + 6] =
-            (a[9 * i + 6] >> 6) | ((uint32_t)(a[9 * i + 7] & 0x7F) << 2);
-        r->coeffs[8 * i + 7] =
-            (a[9 * i + 7] >> 7) | ((uint32_t)(a[9 * i + 8] & 0xFF) << 1);
+        r->coeffs[8 * i + 0] = a[9 * i + 0]        | ((uint32_t)(a[9 * i + 1] & 0x01) << 8);
+        r->coeffs[8 * i + 1] = (a[9 * i + 1] >> 1) | ((uint32_t)(a[9 * i + 2] & 0x03) << 7);
+        r->coeffs[8 * i + 2] = (a[9 * i + 2] >> 2) | ((uint32_t)(a[9 * i + 3] & 0x07) << 6);
+        r->coeffs[8 * i + 3] = (a[9 * i + 3] >> 3) | ((uint32_t)(a[9 * i + 4] & 0x0F) << 5);
+        r->coeffs[8 * i + 4] = (a[9 * i + 4] >> 4) | ((uint32_t)(a[9 * i + 5] & 0x1F) << 4);
+        r->coeffs[8 * i + 5] = (a[9 * i + 5] >> 5) | ((uint32_t)(a[9 * i + 6] & 0x3F) << 3);
+        r->coeffs[8 * i + 6] = (a[9 * i + 6] >> 6) | ((uint32_t)(a[9 * i + 7] & 0x7F) << 2);
+        r->coeffs[8 * i + 7] = (a[9 * i + 7] >> 7) | ((uint32_t)(a[9 * i + 8] & 0xFF) << 1);
     }
 }
 
@@ -663,16 +648,16 @@ void PQCLEAN_DILITHIUMIII_polyt0_pack(unsigned char *r, const poly *a) {
         t[2] = Q + (1 << (D - 1)) - a->coeffs[4 * i + 2];
         t[3] = Q + (1 << (D - 1)) - a->coeffs[4 * i + 3];
 
-        r[7 * i + 0] = t[0];
-        r[7 * i + 1] = t[0] >> 8;
+        r[7 * i + 0]  = t[0];
+        r[7 * i + 1]  = t[0] >> 8;
         r[7 * i + 1] |= t[1] << 6;
-        r[7 * i + 2] = t[1] >> 2;
-        r[7 * i + 3] = t[1] >> 10;
+        r[7 * i + 2]  = t[1] >> 2;
+        r[7 * i + 3]  = t[1] >> 10;
         r[7 * i + 3] |= t[2] << 4;
-        r[7 * i + 4] = t[2] >> 4;
-        r[7 * i + 5] = t[2] >> 12;
+        r[7 * i + 4]  = t[2] >> 4;
+        r[7 * i + 5]  = t[2] >> 12;
         r[7 * i + 5] |= t[3] << 2;
-        r[7 * i + 6] = t[3] >> 6;
+        r[7 * i + 6]  = t[3] >> 6;
     }
 }
 
@@ -722,9 +707,9 @@ void PQCLEAN_DILITHIUMIII_polyt0_unpack(poly *r, const unsigned char *a) {
  *              - const poly *a: pointer to input polynomial
  **************************************************/
 void PQCLEAN_DILITHIUMIII_polyz_pack(unsigned char *r, const poly *a) {
-#if GAMMA1 > (1 << 19)
+    #if GAMMA1 > (1 << 19)
 #error "polyz_pack() assumes GAMMA1 <= 2^{19}"
-#endif
+    #endif
     unsigned int i;
     uint32_t t[2];
 

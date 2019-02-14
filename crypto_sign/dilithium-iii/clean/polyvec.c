@@ -77,11 +77,11 @@ void PQCLEAN_DILITHIUMIII_polyvecl_pointwise_acc_invmontgomery(
     poly t;
 
     PQCLEAN_DILITHIUMIII_poly_pointwise_invmontgomery(w, u->vec + 0,
-                                                      v->vec + 0);
+            v->vec + 0);
 
     for (i = 1; i < L; ++i) {
         PQCLEAN_DILITHIUMIII_poly_pointwise_invmontgomery(&t, u->vec + i,
-                                                          v->vec + i);
+                v->vec + i);
         PQCLEAN_DILITHIUMIII_poly_add(w, w, &t);
     }
 }
@@ -289,7 +289,7 @@ int PQCLEAN_DILITHIUMIII_polyveck_chknorm(const polyveck *v, uint32_t bound) {
  *              - const polyveck *v: pointer to input vector
  **************************************************/
 void PQCLEAN_DILITHIUMIII_polyveck_power2round(polyveck *v1, polyveck *v0,
-                                               const polyveck *v) {
+        const polyveck *v) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {
@@ -314,7 +314,7 @@ void PQCLEAN_DILITHIUMIII_polyveck_power2round(polyveck *v1, polyveck *v0,
  *              - const polyveck *v: pointer to input vector
  **************************************************/
 void PQCLEAN_DILITHIUMIII_polyveck_decompose(polyveck *v1, polyveck *v0,
-                                             const polyveck *v) {
+        const polyveck *v) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {
@@ -335,13 +335,13 @@ void PQCLEAN_DILITHIUMIII_polyveck_decompose(polyveck *v1, polyveck *v0,
  * Returns number of 1 bits.
  **************************************************/
 unsigned int PQCLEAN_DILITHIUMIII_polyveck_make_hint(polyveck *h,
-                                                     const polyveck *u,
-                                                     const polyveck *v) {
+        const polyveck *u,
+        const polyveck *v) {
     unsigned int i, s = 0;
 
     for (i = 0; i < K; ++i) {
         s += PQCLEAN_DILITHIUMIII_poly_make_hint(h->vec + i, u->vec + i,
-                                                 v->vec + i);
+                v->vec + i);
     }
 
     return s;
@@ -358,7 +358,7 @@ unsigned int PQCLEAN_DILITHIUMIII_polyveck_make_hint(polyveck *h,
  *              - const polyveck *h: pointer to input hint vector
  **************************************************/
 void PQCLEAN_DILITHIUMIII_polyveck_use_hint(polyveck *w, const polyveck *u,
-                                            const polyveck *h) {
+        const polyveck *h) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {

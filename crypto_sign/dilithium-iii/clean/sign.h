@@ -11,7 +11,7 @@ void PQCLEAN_DILITHIUMIII_challenge(poly *c, const unsigned char mu[CRHBYTES],
                                     const polyveck *w1);
 
 int PQCLEAN_DILITHIUMIII_crypto_sign_keypair(unsigned char *pk,
-                                             unsigned char *sk);
+        unsigned char *sk);
 
 int PQCLEAN_DILITHIUMIII_crypto_sign(unsigned char *sm,
                                      unsigned long long *smlen,
@@ -20,9 +20,9 @@ int PQCLEAN_DILITHIUMIII_crypto_sign(unsigned char *sm,
                                      const unsigned char *sk);
 
 int PQCLEAN_DILITHIUMIII_crypto_sign_open(unsigned char *m,
-                                          unsigned long long *mlen,
-                                          const unsigned char *sm,
-                                          unsigned long long smlen,
-                                          const unsigned char *pk);
+        unsigned long long *mlen,
+        const unsigned char *sm,
+        unsigned long long smlen,
+        const unsigned char *pk);
 
 #endif

@@ -89,18 +89,11 @@ clean:
 
 .PHONY: format
 format:
-	find . -iname *.h -o -iname *.c | xargs clang-format -i -style=file
+	astyle --project crypto_*/*/*/*.[ch] common/*.[ch]
 
 .PHONY: check-format
 check-format:
-	@for src in $(SOURCES) ; do \
-		var=`clang-format "$(SRC_DIR)/$$src" | diff "$(SRC_DIR)/$$src" - | wc -l` ; \
-		if [ $$var -ne 0 ] ; then \
-			echo "$$src does not respect the coding style (diff: $$var lines)" ; \
-			exit 1 ; \
-		fi ; \
-	done
-	@echo "Style check passed"
+	astyle --dry-run --project crypto_*/*/*/*.[ch] common/*.[ch] | grep Formatted && exit 1 || exit 0
 
 .PHONY: tidy
 tidy:
