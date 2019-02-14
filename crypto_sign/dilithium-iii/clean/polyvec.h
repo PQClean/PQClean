@@ -42,13 +42,13 @@ void PQCLEAN_DILITHIUMIII_polyveck_invntt_montgomery(polyveck *v);
 int PQCLEAN_DILITHIUMIII_polyveck_chknorm(const polyveck *v, uint32_t bound);
 
 void PQCLEAN_DILITHIUMIII_polyveck_power2round(polyveck *v1, polyveck *v0,
-                                               const polyveck *v);
+        const polyveck *v);
 void PQCLEAN_DILITHIUMIII_polyveck_decompose(polyveck *v1, polyveck *v0,
-                                             const polyveck *v);
+        const polyveck *v);
 unsigned int PQCLEAN_DILITHIUMIII_polyveck_make_hint(polyveck *h,
-                                                     const polyveck *u,
-                                                     const polyveck *v);
+        const polyveck *u,
+        const polyveck *v);
 void PQCLEAN_DILITHIUMIII_polyveck_use_hint(polyveck *w, const polyveck *u,
-                                            const polyveck *h);
+        const polyveck *h);
 
 #endif

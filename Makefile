@@ -89,18 +89,11 @@ clean:
 
 .PHONY: format
 format:
-	find . -iname *.h -o -iname *.c | xargs clang-format -i -style=file
+	astyle --project crypto_*/*/*/*.[ch] common/*.[ch]
 
 .PHONY: check-format
 check-format:
-	@for src in $(SOURCES) ; do \
-		var=`clang-format "$(SRC_DIR)/$$src" | diff "$(SRC_DIR)/$$src" - | wc -l` ; \
-		if [ $$var -ne 0 ] ; then \
-			echo "$$src does not respect the coding style (diff: $$var lines)" ; \
-			exit 1 ; \
-		fi ; \
-	done
-	@echo "Style check passed"
+	astyle --dry-run --project crypto_*/*/*/*.[ch] common/*.[ch] | grep Formatted && exit 1 || exit 0
 
 .PHONY: tidy
 tidy:
@@ -159,17 +152,17 @@ run-valgrind-all:
 	done
 
 .PHONY: run-testvectors
-run-testvectors: test/check_testvectors.py | require_scheme
-	python3 test/check_testvectors.py $(SCHEME) || exit 1; \
+run-testvectors: test/check_tvectors.py | require_scheme
+	python3 test/check_tvectors.py $(SCHEME) || exit 1; \
 
 .PHONY: run-symbol-namespace
 run-symbol-namespace: test/check_symbol_namespace.py | require_scheme
 	python3 test/check_symbol_namespace.py $(SCHEME) || exit 1; \
 
 .PHONY: run-testvectors-all
-run-testvectors-all: test/check_testvectors.py
+run-testvectors-all: test/check_tvectors.py
 	@for scheme in $(ALL_SCHEMES); do \
-	    python3 test/check_testvectors.py $$scheme || exit 1; \
+	    python3 test/check_tvectors.py $$scheme || exit 1; \
 	done
 
 .PHONY: run-symbol-namespace-all

@@ -40,9 +40,9 @@ uint32_t PQCLEAN_DILITHIUMIII_power2round(uint32_t a, uint32_t *a0) {
  * Returns a1.
  **************************************************/
 uint32_t PQCLEAN_DILITHIUMIII_decompose(uint32_t a, uint32_t *a0) {
-#if ALPHA != (Q - 1) / 16
+    #if ALPHA != (Q - 1) / 16
 #error "decompose assumes ALPHA == (Q-1)/16"
-#endif
+    #endif
     int32_t t, u;
 
     /* Centralized remainder mod ALPHA */
@@ -78,7 +78,7 @@ uint32_t PQCLEAN_DILITHIUMIII_decompose(uint32_t a, uint32_t *a0) {
  * Returns 1 if high bits of a and b differ and 0 otherwise.
  **************************************************/
 unsigned int PQCLEAN_DILITHIUMIII_make_hint(const uint32_t a,
-                                            const uint32_t b) {
+        const uint32_t b) {
     uint32_t t;
 
     return PQCLEAN_DILITHIUMIII_decompose(a, &t) !=

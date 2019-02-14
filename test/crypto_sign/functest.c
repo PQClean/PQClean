@@ -6,8 +6,9 @@
 #define NTESTS 15
 #define MLEN 32
 
-const unsigned char canary[8] = {0x01, 0x23, 0x45, 0x67,
-                                 0x89, 0xAB, 0xCD, 0xEF};
+const unsigned char canary[8] = {
+    0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
+};
 
 /* allocate a bit more for all keys and messages and
  * make sure it is not touched by the implementations.
@@ -35,10 +36,10 @@ static int check_canary(const unsigned char *d) {
 #define crypto_sign NAMESPACE(crypto_sign)
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
 
-#define RETURNS_ZERO(f)                                                        \
-    if ((f) != 0) {                                                            \
-        puts("(f) returned non-zero returncode");                              \
-        return -1;                                                             \
+#define RETURNS_ZERO(f)                           \
+    if ((f) != 0) {                               \
+        puts("(f) returned non-zero returncode"); \
+        return -1;                                \
     }
 
 static int test_sign(void) {

@@ -110,7 +110,7 @@ void PQCLEAN_DILITHIUMIII_challenge(poly *c, const unsigned char mu[CRHBYTES],
  * Returns 0 (success)
  **************************************************/
 int PQCLEAN_DILITHIUMIII_crypto_sign_keypair(unsigned char *pk,
-                                             unsigned char *sk) {
+        unsigned char *sk) {
     unsigned int i;
     unsigned char seedbuf[3 * SEEDBYTES];
     unsigned char tr[CRHBYTES];
@@ -187,7 +187,7 @@ int PQCLEAN_DILITHIUMIII_crypto_sign(unsigned char *sm,
     unsigned long long i, j;
     unsigned int n;
     unsigned char
-        seedbuf[2 * SEEDBYTES + CRHBYTES]; // TODO(thom): nonce in seedbuf (2x)
+    seedbuf[2 * SEEDBYTES + CRHBYTES]; // TODO(thom): nonce in seedbuf (2x)
     unsigned char tr[CRHBYTES];
     unsigned char *rho, *key, *mu;
     uint16_t nonce = 0;
@@ -245,7 +245,7 @@ rej:
     PQCLEAN_DILITHIUMIII_poly_ntt(&chat);
     for (i = 0; i < L; ++i) {
         PQCLEAN_DILITHIUMIII_poly_pointwise_invmontgomery(z.vec + i, &chat,
-                                                          s1.vec + i);
+                s1.vec + i);
         PQCLEAN_DILITHIUMIII_poly_invntt_montgomery(z.vec + i);
     }
     PQCLEAN_DILITHIUMIII_polyvecl_add(&z, &z, &y);
@@ -257,7 +257,7 @@ rej:
     /* Compute w - cs2, reject if w1 can not be computed from it */
     for (i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUMIII_poly_pointwise_invmontgomery(wcs2.vec + i, &chat,
-                                                          s2.vec + i);
+                s2.vec + i);
         PQCLEAN_DILITHIUMIII_poly_invntt_montgomery(wcs2.vec + i);
     }
     PQCLEAN_DILITHIUMIII_polyveck_sub(&wcs2, &w, &wcs2);
@@ -279,7 +279,7 @@ rej:
     /* Compute hints for w1 */
     for (i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUMIII_poly_pointwise_invmontgomery(ct0.vec + i, &chat,
-                                                          t0.vec + i);
+                t0.vec + i);
         PQCLEAN_DILITHIUMIII_poly_invntt_montgomery(ct0.vec + i);
     }
 
@@ -317,10 +317,10 @@ rej:
  * Returns 0 if signed message could be verified correctly and -1 otherwise
  **************************************************/
 int PQCLEAN_DILITHIUMIII_crypto_sign_open(unsigned char *m,
-                                          unsigned long long *mlen,
-                                          const unsigned char *sm,
-                                          unsigned long long smlen,
-                                          const unsigned char *pk) {
+        unsigned long long *mlen,
+        const unsigned char *sm,
+        unsigned long long smlen,
+        const unsigned char *pk) {
     unsigned long long i;
     unsigned char rho[SEEDBYTES];
     unsigned char mu[CRHBYTES];
@@ -357,7 +357,7 @@ int PQCLEAN_DILITHIUMIII_crypto_sign_open(unsigned char *m,
     PQCLEAN_DILITHIUMIII_polyvecl_ntt(&z);
     for (i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUMIII_polyvecl_pointwise_acc_invmontgomery(tmp1.vec + i,
-                                                                  mat + i, &z);
+                mat + i, &z);
     }
 
     chat = c;
@@ -366,7 +366,7 @@ int PQCLEAN_DILITHIUMIII_crypto_sign_open(unsigned char *m,
     PQCLEAN_DILITHIUMIII_polyveck_ntt(&t1);
     for (i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUMIII_poly_pointwise_invmontgomery(tmp2.vec + i, &chat,
-                                                          t1.vec + i);
+                t1.vec + i);
     }
 
     PQCLEAN_DILITHIUMIII_polyveck_sub(&tmp1, &tmp1, &tmp2);
@@ -392,9 +392,9 @@ int PQCLEAN_DILITHIUMIII_crypto_sign_open(unsigned char *m,
 
     return 0;
 
-/* Signature verification failed */
+    /* Signature verification failed */
 badsig:
-    *mlen = (unsigned long long)-1;
+    *mlen = (unsigned long long) -1;
     for (i = 0; i < smlen; ++i) {
         m[i] = 0;
     }

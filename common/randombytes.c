@@ -86,16 +86,19 @@ static int randombytes_win32_randombytes(void *buf, const size_t n) {
 
     tmp = CryptAcquireContext(&ctx, NULL, NULL, PROV_RSA_FULL,
                               CRYPT_VERIFYCONTEXT);
-    if (tmp == FALSE)
+    if (tmp == FALSE) {
         return -1;
+    }
 
     tmp = CryptGenRandom(ctx, n, (BYTE *)buf);
-    if (tmp == FALSE)
+    if (tmp == FALSE) {
         return -1;
+    }
 
     tmp = CryptReleaseContext(ctx, 0);
-    if (tmp == FALSE)
+    if (tmp == FALSE) {
         return -1;
+    }
 
     return 0;
 }
@@ -147,7 +150,9 @@ static int randombytes_linux_wait_for_entropy(int device) {
     /* We will block on /dev/random, because any increase in the OS' entropy
      * level will unblock the request. I use poll here (as does libsodium),
      * because we don't *actually* want to read from the device. */
-    enum { IOCTL, PROC } strategy = IOCTL;
+    enum { IOCTL,
+           PROC
+         } strategy = IOCTL;
     const int bits = 128;
     struct pollfd pfd;
     int fd;
@@ -234,10 +239,12 @@ static int randombytes_linux_randombytes_urandom(void *buf, size_t n) {
     do {
         fd = open("/dev/urandom", O_RDONLY);
     } while (fd == -1 && errno == EINTR);
-    if (fd == -1)
+    if (fd == -1) {
         return -1;
-    if (randombytes_linux_wait_for_entropy(fd) == -1)
+    }
+    if (randombytes_linux_wait_for_entropy(fd) == -1) {
         return -1;
+    }
 
     while (n > 0) {
         count = n <= SSIZE_MAX ? n : SSIZE_MAX;
@@ -245,8 +252,9 @@ static int randombytes_linux_randombytes_urandom(void *buf, size_t n) {
         if (tmp == -1 && (errno == EAGAIN || errno == EINTR)) {
             continue;
         }
-        if (tmp == -1)
+        if (tmp == -1) {
             return -1; /* Unrecoverable IO error */
+        }
         offset += tmp;
         n -= tmp;
     }
@@ -264,22 +272,21 @@ static int randombytes_bsd_randombytes(void *buf, size_t n) {
 
 #if defined(__EMSCRIPTEN__)
 static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
-    const int ret = EM_ASM_INT(
-        {
-            var crypto;
-            try {
-                crypto = require('crypto');
-            } catch (error) {
-                return -2;
-            }
-            try {
-                writeArrayToMemory(crypto.randomBytes($1), $0);
-                return 0;
-            } catch (error) {
-                return -1;
-            }
-        },
-        buf, n);
+    const int ret = EM_ASM_INT({
+        var crypto;
+        try {
+            crypto = require('crypto');
+        } catch (error) {
+            return -2;
+        }
+        try {
+            writeArrayToMemory(crypto.randomBytes($1), $0);
+            return 0;
+        } catch (error) {
+            return -1;
+        }
+    },
+    buf, n);
     switch (ret) {
     case 0:
         return 0;
@@ -295,23 +302,23 @@ static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
 #endif /* defined(__EMSCRIPTEN__) */
 
 int randombytes(uint8_t *buf, size_t n) {
-#if defined(__EMSCRIPTEN__)
+    #if defined(__EMSCRIPTEN__)
     return randombytes_js_randombytes_nodejs(buf, n);
-#elif defined(__linux__)
-#if defined(SYS_getrandom)
+    #elif defined(__linux__)
+    #if defined(SYS_getrandom)
     /* Use getrandom system call */
     return randombytes_linux_randombytes_getrandom(buf, n);
-#else
+    #else
     /* When we have enough entropy, we can read from /dev/urandom */
     return randombytes_linux_randombytes_urandom(buf, n);
-#endif
-#elif defined(BSD)
+    #endif
+    #elif defined(BSD)
     /* Use arc4random system call */
     return randombytes_bsd_randombytes(buf, n);
-#elif defined(_WIN32)
+    #elif defined(_WIN32)
     /* Use windows API */
     return randombytes_win32_randombytes(buf, n);
-#else
+    #else
 #error "randombytes(...) is not supported on this platform"
-#endif
+    #endif
 }

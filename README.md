@@ -111,7 +111,7 @@ int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size
 
 As noted above, PQClean is **not** meant to be built as a single library: it is a collection of source code that can be easily integrated into other libraries.  The PQClean repository includes various test programs which do build various files, but you should not use the resulting binaries for any purpose.
 
-List of required dependencies: ``gcc or clang, make, python3, python-yaml library, valgrind``.
+List of required dependencies: ``gcc or clang, make, python3, python-yaml library, valgrind, astyle (>= 3.0)``.
 
 ## Using source code from PQClean in your own project
 
