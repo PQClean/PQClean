@@ -14,6 +14,10 @@ def test_compile_lib():
 def check_compile_lib(scheme_name, implementation_name):
     implementation = pqclean.Implementation.by_name(scheme_name, implementation_name)
     helpers.run_subprocess(
+        ['make', 'clean'],
+        implementation.path()
+    )
+    helpers.run_subprocess(
         ['make'],
         implementation.path()
     )

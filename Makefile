@@ -175,14 +175,6 @@ run-sanitizer-all: sanitizer-all
 	done
 	@echo Tests completed
 
-.PHONY: check-license-files
-check-license-files:
-	@echo Checking that LICENSE files exist
-	@for scheme in $(ALL_SCHEMES); do \
-		echo Checking for  $$scheme/clean/LICENSE;\
-		test -f $$scheme/clean/LICENSE || exit 1 ;\
-	done
-
 .PHONY: test-all
 test-all: run-functest-all run-valgrind-all run-sanitizer-all run-testvectors-all
 

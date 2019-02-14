@@ -17,10 +17,6 @@ def test_symbol_namespace():
 def check_symbol_namespace(scheme_name, implementation_name):
     implementation = pqclean.Implementation.by_name(scheme_name, implementation_name)
     helpers.run_subprocess(
-        ['make', 'clean'],
-        implementation.path()
-    )
-    helpers.run_subprocess(
         ['make'],
         implementation.path()
     )
