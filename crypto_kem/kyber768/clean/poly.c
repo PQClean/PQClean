@@ -23,9 +23,9 @@ void PQCLEAN_KYBER768_poly_compress(unsigned char *r, const poly *a) {
             t[j] = (((PQCLEAN_KYBER768_freeze(a->coeffs[i + j]) << 3) + KYBER_Q / 2) / KYBER_Q) & 7;
         }
 
-        r[k]     =  t[0]       | (t[1] << 3) | (t[2] << 6);
-        r[k + 1] = (t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7);
-        r[k + 2] = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
+        r[k]     = (unsigned char)( t[0]       | (t[1] << 3) | (t[2] << 6));
+        r[k + 1] = (unsigned char)((t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7));
+        r[k + 2] = (unsigned char)((t[5] >> 1) | (t[6] << 2) | (t[7] << 5));
         k += 3;
     }
 }
@@ -71,19 +71,19 @@ void PQCLEAN_KYBER768_poly_tobytes(unsigned char *r, const poly *a) {
             t[j] = PQCLEAN_KYBER768_freeze(a->coeffs[8 * i + j]);
         }
 
-        r[13 * i +  0] =  t[0] & 0xff;
-        r[13 * i +  1] = (t[0] >>  8) | ((t[1] & 0x07) << 5);
-        r[13 * i +  2] = (t[1] >>  3) & 0xff;
-        r[13 * i +  3] = (t[1] >> 11) | ((t[2] & 0x3f) << 2);
-        r[13 * i +  4] = (t[2] >>  6) | ((t[3] & 0x01) << 7);
-        r[13 * i +  5] = (t[3] >>  1) & 0xff;
-        r[13 * i +  6] = (t[3] >>  9) | ((t[4] & 0x0f) << 4);
-        r[13 * i +  7] = (t[4] >>  4) & 0xff;
-        r[13 * i +  8] = (t[4] >> 12) | ((t[5] & 0x7f) << 1);
-        r[13 * i +  9] = (t[5] >>  7) | ((t[6] & 0x03) << 6);
-        r[13 * i + 10] = (t[6] >>  2) & 0xff;
-        r[13 * i + 11] = (t[6] >> 10) | ((t[7] & 0x1f) << 3);
-        r[13 * i + 12] = (t[7] >>  5);
+        r[13 * i +  0] = (unsigned char)( t[0] & 0xff);
+        r[13 * i +  1] = (unsigned char)((t[0] >>  8) | ((t[1] & 0x07) << 5));
+        r[13 * i +  2] = (unsigned char)((t[1] >>  3) & 0xff);
+        r[13 * i +  3] = (unsigned char)((t[1] >> 11) | ((t[2] & 0x3f) << 2));
+        r[13 * i +  4] = (unsigned char)((t[2] >>  6) | ((t[3] & 0x01) << 7));
+        r[13 * i +  5] = (unsigned char)((t[3] >>  1) & 0xff);
+        r[13 * i +  6] = (unsigned char)((t[3] >>  9) | ((t[4] & 0x0f) << 4));
+        r[13 * i +  7] = (unsigned char)((t[4] >>  4) & 0xff);
+        r[13 * i +  8] = (unsigned char)((t[4] >> 12) | ((t[5] & 0x7f) << 1));
+        r[13 * i +  9] = (unsigned char)((t[5] >>  7) | ((t[6] & 0x03) << 6));
+        r[13 * i + 10] = (unsigned char)((t[6] >>  2) & 0xff);
+        r[13 * i + 11] = (unsigned char)((t[6] >> 10) | ((t[7] & 0x1f) << 3));
+        r[13 * i + 12] = (unsigned char)((t[7] >>  5));
     }
 }
 

@@ -24,7 +24,7 @@ uint16_t PQCLEAN_KYBER768_montgomery_reduce(uint32_t a) {
     u &= ((1 << rlog) - 1);
     u *= KYBER_Q;
     a = a + u;
-    return a >> rlog;
+    return (uint16_t)(a >> rlog);
 }
 
 /*************************************************
@@ -38,7 +38,7 @@ uint16_t PQCLEAN_KYBER768_montgomery_reduce(uint32_t a) {
  * Returns:     unsigned integer in {0,...,11768} congruent to a modulo q.
  **************************************************/
 uint16_t PQCLEAN_KYBER768_barrett_reduce(uint16_t a) {
-    uint32_t u;
+    uint16_t u;
 
     u = a >> 13; //((uint32_t) a * sinv) >> 16;
     u *= KYBER_Q;
