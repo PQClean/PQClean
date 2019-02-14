@@ -62,8 +62,7 @@ void PQCLEAN_KYBER768_invntt(uint16_t *a) {
                 temp = a[j];
 
                 if (level & 1) { /* odd level */
-                    a[j] = PQCLEAN_KYBER768_barrett_reduce(
-                        (temp + a[j + (1 << level)]));
+                    a[j] = PQCLEAN_KYBER768_barrett_reduce((temp + a[j + (1 << level)]));
                 } else {
                     a[j] = (temp + a[j + (1 << level)]); /* Omit reduction (be lazy) */
                 }
@@ -76,7 +75,6 @@ void PQCLEAN_KYBER768_invntt(uint16_t *a) {
     }
 
     for (j = 0; j < KYBER_N; j++) {
-        a[j] = PQCLEAN_KYBER768_montgomery_reduce(
-            (a[j] * PQCLEAN_KYBER768_psis_inv_montgomery[j]));
+        a[j] = PQCLEAN_KYBER768_montgomery_reduce((a[j] * PQCLEAN_KYBER768_psis_inv_montgomery[j]));
     }
 }

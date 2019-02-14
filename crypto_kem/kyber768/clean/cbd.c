@@ -43,7 +43,7 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
             d += (t >> j) & 0x249249;
         }
 
-        a[0] = d         & 0x7;
+        a[0] =  d        & 0x7;
         b[0] = (d >>  3) & 0x7;
         a[1] = (d >>  6) & 0x7;
         b[1] = (d >>  9) & 0x7;
@@ -68,7 +68,7 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
             d += (t >> j) & 0x11111111;
         }
 
-        a[0] = d         & 0xf;
+        a[0] =  d        & 0xf;
         b[0] = (d >>  4) & 0xf;
         a[1] = (d >>  8) & 0xf;
         b[1] = (d >> 12) & 0xf;
@@ -93,7 +93,7 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
             d += (t >> j) & 0x0842108421UL;
         }
 
-        a[0] = d         & 0x1f;
+        a[0] =  d        & 0x1f;
         b[0] = (d >>  5) & 0x1f;
         a[1] = (d >> 10) & 0x1f;
         b[1] = (d >> 15) & 0x1f;

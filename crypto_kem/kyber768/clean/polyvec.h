@@ -17,10 +17,8 @@ void PQCLEAN_KYBER768_polyvec_frombytes(polyvec *r, const unsigned char *a);
 void PQCLEAN_KYBER768_polyvec_ntt(polyvec *r);
 void PQCLEAN_KYBER768_polyvec_invntt(polyvec *r);
 
-void PQCLEAN_KYBER768_polyvec_pointwise_acc(poly *r, const polyvec *a,
-        const polyvec *b);
+void PQCLEAN_KYBER768_polyvec_pointwise_acc(poly *r, const polyvec *a, const polyvec *b);
 
-void PQCLEAN_KYBER768_polyvec_add(polyvec *r, const polyvec *a,
-                                  const polyvec *b);
+void PQCLEAN_KYBER768_polyvec_add(polyvec *r, const polyvec *a, const polyvec *b);
 
 #endif

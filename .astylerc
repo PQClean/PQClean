@@ -5,7 +5,7 @@
 --pad-oper 
 --pad-comma 
 --pad-header
---unpad-paren 
+#--unpad-paren 
 --align-pointer=name 
 --add-braces 
 --convert-tabs
