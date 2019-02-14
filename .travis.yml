@@ -50,7 +50,7 @@ matrix:
       os: linux
       services: docker
       env:
-        - MAKETARGET="run-functest-all run-testvectors-all run-sanitizer-all run-symbol-namespace-all"
+        - MAKETARGET="run-functest-all run-testvectors-all run-sanitizer-all"
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-unstable-ppc" /bin/bash -c "uname -a &&
