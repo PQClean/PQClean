@@ -1,3 +1,7 @@
+"""
+Checks that a LICENSE or LICENSE.txt file is present for every implementation of the specified scheme.
+"""
+
 import os
 import pqclean
 

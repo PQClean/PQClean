@@ -1,3 +1,7 @@
+"""
+Checks that the archive library can be successfully built for every scheme/implementation.
+"""
+
 import os
 import pqclean
 import helpers

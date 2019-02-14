@@ -1,3 +1,7 @@
+"""
+Checks that the functional test program (functest) can be successfully built and executed for every scheme/implementation.
+"""
+
 import os
 import pqclean
 import helpers

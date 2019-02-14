@@ -77,7 +77,7 @@ matrix:
 
 script:
   - make ${MAKETARGET}
-  - cd test && nosetests -v
+  - cd test && python3 -m nose -v
 
 cache: pip
 
