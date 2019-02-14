@@ -52,10 +52,10 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
         a[3] = (d >> 18) & 0x7;
         b[3] = (d >> 21);
 
-        r->coeffs[4 * i + 0] = (uint16_t)a[0] + KYBER_Q - b[0];
-        r->coeffs[4 * i + 1] = (uint16_t)a[1] + KYBER_Q - b[1];
-        r->coeffs[4 * i + 2] = (uint16_t)a[2] + KYBER_Q - b[2];
-        r->coeffs[4 * i + 3] = (uint16_t)a[3] + KYBER_Q - b[3];
+        r->coeffs[4 * i + 0] = (uint16_t)(a[0] + KYBER_Q - b[0]);
+        r->coeffs[4 * i + 1] = (uint16_t)(a[1] + KYBER_Q - b[1]);
+        r->coeffs[4 * i + 2] = (uint16_t)(a[2] + KYBER_Q - b[2]);
+        r->coeffs[4 * i + 3] = (uint16_t)(a[3] + KYBER_Q - b[3]);
     }
     #elif KYBER_ETA == 4
     uint32_t t, d, a[4], b[4];
@@ -77,10 +77,10 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
         a[3] = (d >> 24) & 0xf;
         b[3] = (d >> 28);
 
-        r->coeffs[4 * i + 0] = (uint16_t)a[0] + KYBER_Q - b[0];
-        r->coeffs[4 * i + 1] = (uint16_t)a[1] + KYBER_Q - b[1];
-        r->coeffs[4 * i + 2] = (uint16_t)a[2] + KYBER_Q - b[2];
-        r->coeffs[4 * i + 3] = (uint16_t)a[3] + KYBER_Q - b[3];
+        r->coeffs[4 * i + 0] = (uint16_t)(a[0] + KYBER_Q - b[0]);
+        r->coeffs[4 * i + 1] = (uint16_t)(a[1] + KYBER_Q - b[1]);
+        r->coeffs[4 * i + 2] = (uint16_t)(a[2] + KYBER_Q - b[2]);
+        r->coeffs[4 * i + 3] = (uint16_t)(a[3] + KYBER_Q - b[3]);
     }
     #elif KYBER_ETA == 5
     uint64_t t, d, a[4], b[4];
@@ -102,10 +102,10 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
         a[3] = (d >> 30) & 0x1f;
         b[3] = (d >> 35);
 
-        r->coeffs[4 * i + 0] = (uint16_t)a[0] + KYBER_Q - b[0];
-        r->coeffs[4 * i + 1] = (uint16_t)a[1] + KYBER_Q - b[1];
-        r->coeffs[4 * i + 2] = (uint16_t)a[2] + KYBER_Q - b[2];
-        r->coeffs[4 * i + 3] = (uint16_t)a[3] + KYBER_Q - b[3];
+        r->coeffs[4 * i + 0] = (uint16_t)(a[0] + KYBER_Q - b[0]);
+        r->coeffs[4 * i + 1] = (uint16_t)(a[1] + KYBER_Q - b[1]);
+        r->coeffs[4 * i + 2] = (uint16_t)(a[2] + KYBER_Q - b[2]);
+        r->coeffs[4 * i + 3] = (uint16_t)(a[3] + KYBER_Q - b[3]);
     }
     #else
 #error "poly_getnoise in poly.c only supports eta in {3,4,5}"
