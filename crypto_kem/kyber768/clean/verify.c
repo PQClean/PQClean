@@ -21,8 +21,8 @@ int PQCLEAN_KYBER768_verify(const unsigned char *a, const unsigned char *b, size
         r |= a[i] ^ b[i];
     }
 
-    r = (-r) >> 63;
-    return r;
+    r = (-(int64_t)r) >> 63;
+    return (int)r;
 }
 
 /*************************************************

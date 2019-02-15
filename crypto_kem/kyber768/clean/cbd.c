@@ -37,7 +37,7 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
     int i, j;
 
     for (i = 0; i < KYBER_N / 4; i++) {
-        t = load_littleendian(buf + 3 * i, 3);
+        t = (uint32_t)load_littleendian(buf + 3 * i, 3);
         d = 0;
         for (j = 0; j < 3; j++) {
             d += (t >> j) & 0x249249;
@@ -52,17 +52,17 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
         a[3] = (d >> 18) & 0x7;
         b[3] = (d >> 21);
 
-        r->coeffs[4 * i + 0] = a[0] + KYBER_Q - b[0];
-        r->coeffs[4 * i + 1] = a[1] + KYBER_Q - b[1];
-        r->coeffs[4 * i + 2] = a[2] + KYBER_Q - b[2];
-        r->coeffs[4 * i + 3] = a[3] + KYBER_Q - b[3];
+        r->coeffs[4 * i + 0] = (uint16_t)(a[0] + KYBER_Q - b[0]);
+        r->coeffs[4 * i + 1] = (uint16_t)(a[1] + KYBER_Q - b[1]);
+        r->coeffs[4 * i + 2] = (uint16_t)(a[2] + KYBER_Q - b[2]);
+        r->coeffs[4 * i + 3] = (uint16_t)(a[3] + KYBER_Q - b[3]);
     }
     #elif KYBER_ETA == 4
     uint32_t t, d, a[4], b[4];
     int i, j;
 
     for (i = 0; i < KYBER_N / 4; i++) {
-        t = load_littleendian(buf + 4 * i, 4);
+        t = (uint32_t)load_littleendian(buf + 4 * i, 4);
         d = 0;
         for (j = 0; j < 4; j++) {
             d += (t >> j) & 0x11111111;
@@ -77,10 +77,10 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
         a[3] = (d >> 24) & 0xf;
         b[3] = (d >> 28);
 
-        r->coeffs[4 * i + 0] = a[0] + KYBER_Q - b[0];
-        r->coeffs[4 * i + 1] = a[1] + KYBER_Q - b[1];
-        r->coeffs[4 * i + 2] = a[2] + KYBER_Q - b[2];
-        r->coeffs[4 * i + 3] = a[3] + KYBER_Q - b[3];
+        r->coeffs[4 * i + 0] = (uint16_t)(a[0] + KYBER_Q - b[0]);
+        r->coeffs[4 * i + 1] = (uint16_t)(a[1] + KYBER_Q - b[1]);
+        r->coeffs[4 * i + 2] = (uint16_t)(a[2] + KYBER_Q - b[2]);
+        r->coeffs[4 * i + 3] = (uint16_t)(a[3] + KYBER_Q - b[3]);
     }
     #elif KYBER_ETA == 5
     uint64_t t, d, a[4], b[4];
@@ -102,10 +102,10 @@ void PQCLEAN_KYBER768_cbd(poly *r, const unsigned char *buf) {
         a[3] = (d >> 30) & 0x1f;
         b[3] = (d >> 35);
 
-        r->coeffs[4 * i + 0] = a[0] + KYBER_Q - b[0];
-        r->coeffs[4 * i + 1] = a[1] + KYBER_Q - b[1];
-        r->coeffs[4 * i + 2] = a[2] + KYBER_Q - b[2];
-        r->coeffs[4 * i + 3] = a[3] + KYBER_Q - b[3];
+        r->coeffs[4 * i + 0] = (uint16_t)(a[0] + KYBER_Q - b[0]);
+        r->coeffs[4 * i + 1] = (uint16_t)(a[1] + KYBER_Q - b[1]);
+        r->coeffs[4 * i + 2] = (uint16_t)(a[2] + KYBER_Q - b[2]);
+        r->coeffs[4 * i + 3] = (uint16_t)(a[3] + KYBER_Q - b[3]);
     }
     #else
 #error "poly_getnoise in poly.c only supports eta in {3,4,5}"

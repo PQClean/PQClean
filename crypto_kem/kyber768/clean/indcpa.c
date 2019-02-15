@@ -143,11 +143,11 @@ static void gen_matrix(polyvec *a, const unsigned char *seed, int transposed) {
             ctr = pos = 0;
             nblocks = maxnblocks;
             if (transposed) {
-                extseed[KYBER_SYMBYTES] = i;
-                extseed[KYBER_SYMBYTES + 1] = j;
+                extseed[KYBER_SYMBYTES] = (unsigned char)i;
+                extseed[KYBER_SYMBYTES + 1] = (unsigned char)j;
             } else {
-                extseed[KYBER_SYMBYTES] = j;
-                extseed[KYBER_SYMBYTES + 1] = i;
+                extseed[KYBER_SYMBYTES] = (unsigned char)j;
+                extseed[KYBER_SYMBYTES + 1] = (unsigned char)i;
             }
 
             shake128_absorb(state, extseed, KYBER_SYMBYTES + 2);
