@@ -55,6 +55,24 @@ matrix:
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-unstable-ppc" /bin/bash -c "uname -a &&
           make ${MAKETARGET}"
+    - name: "Run tests on qemu-arm32 (GCC)"
+      os: linux
+      services: docker
+      env:
+        - MAKETARGET="run-functest-all run-testvectors-all run-sanitizer-all run-symbol-namespace-all"
+      script:
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-buster-arm" /bin/bash -c "uname -a &&
+          make ${MAKETARGET}"
+    - name: "Run tests on qemu-aarch64 (GCC)"
+      os: linux
+      services: docker
+      env:
+        - MAKETARGET="run-functest-all run-testvectors-all run-sanitizer-all run-symbol-namespace-all"
+      script:
+        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+        - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-buster-aarch64" /bin/bash -c "uname -a &&
+          make ${MAKETARGET}"
     - name: "MacOS + Clang"
       os: osx
       osx_image: xcode10.1
