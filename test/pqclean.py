@@ -10,6 +10,9 @@ class Scheme:
     def path(self, base='..'):
         return os.path.join(base, 'crypto_' + self.type, self.name)
 
+    def namespace_prefix(self):
+        return 'PQCLEAN_{}_'.format(self.name.upper()).replace('-', '')
+
     @staticmethod
     def by_name(scheme_name):
         for scheme in Scheme.all_schemes():

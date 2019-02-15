@@ -11,3 +11,4 @@ def run_subprocess(command, working_dir, expected_returncode = 0):
     )
     print(result.stdout.decode('utf-8'))
     assert(result.returncode == expected_returncode)
+    return result.stdout.decode('utf-8')

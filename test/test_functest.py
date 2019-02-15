@@ -14,10 +14,6 @@ def test_functest():
 def check_functest(scheme_name, implementation_name):
     implementation = pqclean.Implementation.by_name(scheme_name, implementation_name)
     helpers.run_subprocess(
-        ['make', 'clean', 'TYPE=' + implementation.scheme.type, 'SCHEME=' + scheme_name, 'IMPLEMENTATION=' + implementation_name],
-        os.path.join('..', 'test')
-    )
-    helpers.run_subprocess(
         ['make', 'TYPE=' + implementation.scheme.type, 'SCHEME=' + scheme_name, 'IMPLEMENTATION=' + implementation_name],
         os.path.join('..', 'test')
     )

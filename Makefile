@@ -121,8 +121,6 @@ help:
 	@echo "make run-testvectors SCHEME=scheme	Run testvector checks for SCHEME"
 	@echo "make run-testvectors-all			Run all testvector checks"
 	@echo "make run-sanitizer-all			Run address sanitizer for all schemes"
-	@echo "make run-symbol-namespace SCHEME=scheme	Run symbol namespace checks for SCHEME"
-	@echo "make run-symbol-namespace-all		Run all symbol namespace checks"
 	@echo "make run-valgrind SCHEME=scheme		Run valgrind checks for SCHEME"
 	@echo "make run-valgrind-all			Run valgrind checks all schemes"
 	@echo "make clean				Clean up the bin/ folder"
@@ -155,20 +153,10 @@ run-valgrind-all:
 run-testvectors: test/check_tvectors.py | require_scheme
 	python3 test/check_tvectors.py $(SCHEME) || exit 1; \
 
-.PHONY: run-symbol-namespace
-run-symbol-namespace: test/check_symbol_namespace.py | require_scheme
-	python3 test/check_symbol_namespace.py $(SCHEME) || exit 1; \
-
 .PHONY: run-testvectors-all
 run-testvectors-all: test/check_tvectors.py
 	@for scheme in $(ALL_SCHEMES); do \
 	    python3 test/check_tvectors.py $$scheme || exit 1; \
-	done
-
-.PHONY: run-symbol-namespace-all
-run-symbol-namespace-all:
-	@for scheme in $(ALL_SCHEMES); do \
-	    python3 test/check_symbol_namespace.py $$scheme || exit 1; \
 	done
 
 .PHONY: run-functest-all
@@ -187,16 +175,8 @@ run-sanitizer-all: sanitizer-all
 	done
 	@echo Tests completed
 
-.PHONY: check-license-files
-check-license-files:
-	@echo Checking that LICENSE files exist
-	@for scheme in $(ALL_SCHEMES); do \
-		echo Checking for  $$scheme/clean/LICENSE;\
-		test -f $$scheme/clean/LICENSE || exit 1 ;\
-	done
-
 .PHONY: test-all
-test-all: run-functest-all run-valgrind-all run-sanitizer-all run-testvectors-all run-symbol-namespace-all
+test-all: run-functest-all run-valgrind-all run-sanitizer-all run-testvectors-all
 
 .PHONY: tidy-all
 tidy-all:
