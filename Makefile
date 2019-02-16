@@ -189,7 +189,3 @@ apply-tidy-all:
 	@for scheme in $(ALL_SCHEMES); do \
 		$(MAKE) apply-tidy SCHEME=$$scheme; \
 	done
-
-.PHONY: check-metadata
-check-metadata:
-	python3 test/check_metadata.py
