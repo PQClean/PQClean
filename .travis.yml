@@ -4,11 +4,11 @@ dist: xenial
 
 matrix:
   include:
-    - name: "Linux + GCC + Linting + Metadata"
+    - name: "Linux + GCC + Linting"
       os: linux
       compiler: gcc
       env:
-        - MAKETARGET="test-all tidy-all check-format check-metadata"
+        - MAKETARGET="test-all tidy-all check-format"
       addons:
         apt:
           packages:
