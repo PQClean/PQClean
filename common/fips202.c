@@ -5,9 +5,10 @@
  * from https://twitter.com/tweetfips202
  * by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
 
-#include "fips202.h"
 #include <stddef.h>
 #include <stdint.h>
+
+#include "fips202.h"
 
 #define NROUNDS 24
 #define ROL(a, offset) (((a) << (offset)) ^ ((a) >> (64 - (offset))))
@@ -17,15 +18,13 @@
  *
  * Description: Load 8 bytes into uint64_t in little-endian order
  *
- * Arguments:   - const unsigned char *x: pointer to input byte array
+ * Arguments:   - const uint8_t *x: pointer to input byte array
  *
  * Returns the loaded 64-bit unsigned integer
  **************************************************/
-static uint64_t load64(const unsigned char *x) {
-    unsigned int i;
+static uint64_t load64(const uint8_t *x) {
     uint64_t r = 0;
-
-    for (i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
         r |= (uint64_t)x[i] << 8 * i;
     }
 
@@ -41,27 +40,25 @@ static uint64_t load64(const unsigned char *x) {
  *              - uint64_t u: input 64-bit unsigned integer
  **************************************************/
 static void store64(uint8_t *x, uint64_t u) {
-    unsigned int i;
-
-    for (i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
         x[i] = u >> 8 * i;
     }
 }
 
 /* Keccak round constants */
 static const uint64_t KeccakF_RoundConstants[NROUNDS] = {
-    (uint64_t)0x0000000000000001ULL, (uint64_t)0x0000000000008082ULL,
-    (uint64_t)0x800000000000808aULL, (uint64_t)0x8000000080008000ULL,
-    (uint64_t)0x000000000000808bULL, (uint64_t)0x0000000080000001ULL,
-    (uint64_t)0x8000000080008081ULL, (uint64_t)0x8000000000008009ULL,
-    (uint64_t)0x000000000000008aULL, (uint64_t)0x0000000000000088ULL,
-    (uint64_t)0x0000000080008009ULL, (uint64_t)0x000000008000000aULL,
-    (uint64_t)0x000000008000808bULL, (uint64_t)0x800000000000008bULL,
-    (uint64_t)0x8000000000008089ULL, (uint64_t)0x8000000000008003ULL,
-    (uint64_t)0x8000000000008002ULL, (uint64_t)0x8000000000000080ULL,
-    (uint64_t)0x000000000000800aULL, (uint64_t)0x800000008000000aULL,
-    (uint64_t)0x8000000080008081ULL, (uint64_t)0x8000000000008080ULL,
-    (uint64_t)0x0000000080000001ULL, (uint64_t)0x8000000080008008ULL
+    0x0000000000000001ULL, 0x0000000000008082ULL,
+    0x800000000000808aULL, 0x8000000080008000ULL,
+    0x000000000000808bULL, 0x0000000080000001ULL,
+    0x8000000080008081ULL, 0x8000000000008009ULL,
+    0x000000000000008aULL, 0x0000000000000088ULL,
+    0x0000000080008009ULL, 0x000000008000000aULL,
+    0x000000008000808bULL, 0x800000000000008bULL,
+    0x8000000000008089ULL, 0x8000000000008003ULL,
+    0x8000000000008002ULL, 0x8000000000000080ULL,
+    0x000000000000800aULL, 0x800000008000000aULL,
+    0x8000000080008081ULL, 0x8000000000008080ULL,
+    0x0000000080000001ULL, 0x8000000080008008ULL
 };
 
 /*************************************************
@@ -341,16 +338,16 @@ static void KeccakF1600_StatePermute(uint64_t *state) {
  *              non-incremental, starts by zeroeing the state.
  *
  * Arguments:   - uint64_t *s: pointer to (uninitialized) output Keccak state
- *              - unsigned int r: rate in bytes (e.g., 168 for SHAKE128)
- *              - const unsigned char *m: pointer to input to be absorbed into s
- *              - unsigned long long mlen: length of input in bytes
- *              - unsigned char p: domain-separation byte for different
+ *              - uint32_t r: rate in bytes (e.g., 168 for SHAKE128)
+ *              - const uint8_t *m: pointer to input to be absorbed into s
+ *              - size_t mlen: length of input in bytes
+ *              - uint8_t p: domain-separation byte for different
  *                                 Keccak-derived functions
  **************************************************/
-static void keccak_absorb(uint64_t *s, unsigned int r, const unsigned char *m,
-                          unsigned long long mlen, unsigned char p) {
-    unsigned int i;
-    unsigned char t[200];
+static void keccak_absorb(uint64_t *s, uint32_t r, const uint8_t *m,
+                          size_t mlen, uint8_t p) {
+    size_t i;
+    uint8_t t[200];
 
     /* Zero state */
     for (i = 0; i < 25; ++i) {
@@ -387,19 +384,17 @@ static void keccak_absorb(uint64_t *s, unsigned int r, const unsigned char *m,
  *              Modifies the state. Can be called multiple times to keep
  *              squeezing, i.e., is incremental.
  *
- * Arguments:   - unsigned char *h: pointer to output blocks
- *              - unsigned long long int nblocks: number of blocks to be
+ * Arguments:   - uint8_t *h: pointer to output blocks
+ *              - size_t nblocks: number of blocks to be
  *                                                squeezed (written to h)
  *              - uint64_t *s: pointer to input/output Keccak state
- *              - unsigned int r: rate in bytes (e.g., 168 for SHAKE128)
+ *              - uint32_t r: rate in bytes (e.g., 168 for SHAKE128)
  **************************************************/
-static void keccak_squeezeblocks(unsigned char *h, unsigned long nblocks,
-                                 uint64_t *s, unsigned int r) {
-    unsigned int i;
-
+static void keccak_squeezeblocks(uint8_t *h, size_t nblocks,
+                                 uint64_t *s, uint32_t r) {
     while (nblocks > 0) {
         KeccakF1600_StatePermute(s);
-        for (i = 0; i < (r >> 3); i++) {
+        for (size_t i = 0; i < (r >> 3); i++) {
             store64(h + 8 * i, s[i]);
         }
         h += r;
@@ -414,12 +409,11 @@ static void keccak_squeezeblocks(unsigned char *h, unsigned long nblocks,
  *              non-incremental, starts by zeroeing the state.
  *
  * Arguments:   - uint64_t *s: pointer to (uninitialized) output Keccak state
- *              - const unsigned char *input: pointer to input to be absorbed
+ *              - const uint8_t *input: pointer to input to be absorbed
  *                                            into s
- *              - unsigned long long inlen: length of input in bytes
+ *              - size_t inlen: length of input in bytes
  **************************************************/
-void shake128_absorb(uint64_t *s, const unsigned char *input,
-                     unsigned long long inlen) {
+void shake128_absorb(uint64_t *s, const uint8_t *input, size_t inlen) {
     keccak_absorb(s, SHAKE128_RATE, input, inlen, 0x1F);
 }
 
@@ -430,13 +424,12 @@ void shake128_absorb(uint64_t *s, const unsigned char *input,
  *              SHAKE128_RATE bytes each. Modifies the state. Can be called
  *              multiple times to keep squeezing, i.e., is incremental.
  *
- * Arguments:   - unsigned char *output: pointer to output blocks
- *              - unsigned long long nblocks: number of blocks to be squeezed
+ * Arguments:   - uint8_t *output: pointer to output blocks
+ *              - size_t nblocks: number of blocks to be squeezed
  *                                            (written to output)
  *              - uint64_t *s: pointer to input/output Keccak state
  **************************************************/
-void shake128_squeezeblocks(unsigned char *output, unsigned long nblocks,
-                            uint64_t *s) {
+void shake128_squeezeblocks(uint8_t *output, size_t nblocks, uint64_t *s) {
     keccak_squeezeblocks(output, nblocks, s, SHAKE128_RATE);
 }
 
@@ -447,12 +440,11 @@ void shake128_squeezeblocks(unsigned char *output, unsigned long nblocks,
  *              non-incremental, starts by zeroeing the state.
  *
  * Arguments:   - uint64_t *s: pointer to (uninitialized) output Keccak state
- *              - const unsigned char *input: pointer to input to be absorbed
+ *              - const uint8_t *input: pointer to input to be absorbed
  *                                            into s
- *              - unsigned long long inlen: length of input in bytes
+ *              - size_t inlen: length of input in bytes
  **************************************************/
-void shake256_absorb(uint64_t *s, const unsigned char *input,
-                     unsigned long long inlen) {
+void shake256_absorb(uint64_t *s, const uint8_t *input, size_t inlen) {
     keccak_absorb(s, SHAKE256_RATE, input, inlen, 0x1F);
 }
 
@@ -463,13 +455,12 @@ void shake256_absorb(uint64_t *s, const unsigned char *input,
  *              SHAKE256_RATE bytes each. Modifies the state. Can be called
  *              multiple times to keep squeezing, i.e., is incremental.
  *
- * Arguments:   - unsigned char *output: pointer to output blocks
- *              - unsigned long long nblocks: number of blocks to be squeezed
- *                                            (written to output)
+ * Arguments:   - uint8_t *output: pointer to output blocks
+ *              - size_t nblocks: number of blocks to be squeezed
+ *                                (written to output)
  *              - uint64_t *s: pointer to input/output Keccak state
  **************************************************/
-void shake256_squeezeblocks(unsigned char *output, unsigned long nblocks,
-                            uint64_t *s) {
+void shake256_squeezeblocks(uint8_t *output, size_t nblocks, uint64_t *s) {
     keccak_squeezeblocks(output, nblocks, s, SHAKE256_RATE);
 }
 
@@ -478,16 +469,15 @@ void shake256_squeezeblocks(unsigned char *output, unsigned long nblocks,
  *
  * Description: SHAKE128 XOF with non-incremental API
  *
- * Arguments:   - unsigned char *output: pointer to output
- *              - unsigned long long outlen: requested output length in bytes
- *              - const unsigned char *input: pointer to input
- *              - unsigned long long inlen: length of input in bytes
+ * Arguments:   - uint8_t *output: pointer to output
+ *              - size_t outlen: requested output length in bytes
+ *              - const uint8_t *input: pointer to input
+ *              - size_t inlen: length of input in bytes
  **************************************************/
-void shake128(unsigned char *output, unsigned long long outlen,
-              const unsigned char *input, unsigned long long inlen) {
-    unsigned int i;
-    unsigned long nblocks = outlen / SHAKE128_RATE;
-    unsigned char t[SHAKE128_RATE];
+void shake128(uint8_t *output, size_t outlen,
+              const uint8_t *input, size_t inlen) {
+    size_t nblocks = outlen / SHAKE128_RATE;
+    uint8_t t[SHAKE128_RATE];
     uint64_t s[25];
 
     shake128_absorb(s, input, inlen);
@@ -498,7 +488,7 @@ void shake128(unsigned char *output, unsigned long long outlen,
 
     if (outlen) {
         shake128_squeezeblocks(t, 1, s);
-        for (i = 0; i < outlen; ++i) {
+        for (size_t i = 0; i < outlen; ++i) {
             output[i] = t[i];
         }
     }
@@ -509,16 +499,15 @@ void shake128(unsigned char *output, unsigned long long outlen,
  *
  * Description: SHAKE256 XOF with non-incremental API
  *
- * Arguments:   - unsigned char *output: pointer to output
- *              - unsigned long long outlen: requested output length in bytes
- *              - const unsigned char *input: pointer to input
- *              - unsigned long long inlen: length of input in bytes
+ * Arguments:   - uint8_t *output: pointer to output
+ *              - size_t outlen: requested output length in bytes
+ *              - const uint8_t *input: pointer to input
+ *              - size_t inlen: length of input in bytes
  **************************************************/
-void shake256(unsigned char *output, unsigned long long outlen,
-              const unsigned char *input, unsigned long long inlen) {
-    unsigned int i;
-    unsigned long nblocks = outlen / SHAKE256_RATE;
-    unsigned char t[SHAKE256_RATE];
+void shake256(uint8_t *output, size_t outlen,
+              const uint8_t *input, size_t inlen) {
+    size_t nblocks = outlen / SHAKE256_RATE;
+    uint8_t t[SHAKE256_RATE];
     uint64_t s[25];
 
     shake256_absorb(s, input, inlen);
@@ -529,7 +518,7 @@ void shake256(unsigned char *output, unsigned long long outlen,
 
     if (outlen) {
         shake256_squeezeblocks(t, 1, s);
-        for (i = 0; i < outlen; ++i) {
+        for (size_t i = 0; i < outlen; ++i) {
             output[i] = t[i];
         }
     }
@@ -540,15 +529,13 @@ void shake256(unsigned char *output, unsigned long long outlen,
  *
  * Description: SHA3-256 with non-incremental API
  *
- * Arguments:   - unsigned char *output:      pointer to output
- *              - const unsigned char *input: pointer to input
- *              - unsigned long long inlen:   length of input in bytes
+ * Arguments:   - uint8_t *output:      pointer to output
+ *              - const uint8_t *input: pointer to input
+ *              - size_t inlen:   length of input in bytes
  **************************************************/
-void sha3_256(unsigned char *output, const unsigned char *input,
-              unsigned long long inlen) {
+void sha3_256(uint8_t *output, const uint8_t *input, size_t inlen) {
     uint64_t s[25];
-    unsigned char t[SHA3_256_RATE];
-    size_t i;
+    uint8_t t[SHA3_256_RATE];
 
     /* Absorb input */
     keccak_absorb(s, SHA3_256_RATE, input, inlen, 0x06);
@@ -556,7 +543,7 @@ void sha3_256(unsigned char *output, const unsigned char *input,
     /* Squeeze output */
     keccak_squeezeblocks(t, 1, s, SHA3_256_RATE);
 
-    for (i = 0; i < 32; i++) {
+    for (size_t i = 0; i < 32; i++) {
         output[i] = t[i];
     }
 }
@@ -566,15 +553,13 @@ void sha3_256(unsigned char *output, const unsigned char *input,
  *
  * Description: SHA3-512 with non-incremental API
  *
- * Arguments:   - unsigned char *output:      pointer to output
- *              - const unsigned char *input: pointer to input
- *              - unsigned long long inlen:   length of input in bytes
+ * Arguments:   - uint8_t *output:      pointer to output
+ *              - const uint8_t *input: pointer to input
+ *              - size_t inlen:   length of input in bytes
  **************************************************/
-void sha3_512(unsigned char *output, const unsigned char *input,
-              unsigned long long inlen) {
+void sha3_512(uint8_t *output, const uint8_t *input, size_t inlen) {
     uint64_t s[25];
-    unsigned char t[SHA3_512_RATE];
-    size_t i;
+    uint8_t t[SHA3_512_RATE];
 
     /* Absorb input */
     keccak_absorb(s, SHA3_512_RATE, input, inlen, 0x06);
@@ -582,7 +567,7 @@ void sha3_512(unsigned char *output, const unsigned char *input,
     /* Squeeze output */
     keccak_squeezeblocks(t, 1, s, SHA3_512_RATE);
 
-    for (i = 0; i < 64; i++) {
+    for (size_t i = 0; i < 64; i++) {
         output[i] = t[i];
     }
 }

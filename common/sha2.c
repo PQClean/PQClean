@@ -2,18 +2,19 @@
  * crypto_hash/sha512/ref/ from http://bench.cr.yp.to/supercop.html
  * by D. J. Bernstein */
 
+#include <stddef.h>
+#include <stdint.h>
+
 #include "sha2.h"
 
-typedef unsigned long long uint64;
-
-static uint64 load_bigendian(const unsigned char *x) {
-    return (uint64)(x[7]) | (((uint64)(x[6])) << 8) | (((uint64)(x[5])) << 16) |
-           (((uint64)(x[4])) << 24) | (((uint64)(x[3])) << 32) |
-           (((uint64)(x[2])) << 40) | (((uint64)(x[1])) << 48) |
-           (((uint64)(x[0])) << 56);
+static uint64_t load_bigendian(const unsigned char *x) {
+    return (uint64_t)(x[7]) | (((uint64_t)(x[6])) << 8) | (((uint64_t)(x[5])) << 16) |
+           (((uint64_t)(x[4])) << 24) | (((uint64_t)(x[3])) << 32) |
+           (((uint64_t)(x[2])) << 40) | (((uint64_t)(x[1])) << 48) |
+           (((uint64_t)(x[0])) << 56);
 }
 
-static void store_bigendian(unsigned char *x, uint64 u) {
+static void store_bigendian(uint8_t *x, uint64_t u) {
     x[7] = u;
     u >>= 8;
     x[6] = u;
@@ -73,20 +74,20 @@ static void store_bigendian(unsigned char *x, uint64 u) {
     b = a;                                        \
     a = T1 + T2;
 
-static int crypto_hashblocks_sha512(unsigned char *statebytes,
-                                    const unsigned char *in,
-                                    unsigned long long inlen) {
-    uint64 state[8];
-    uint64 a;
-    uint64 b;
-    uint64 c;
-    uint64 d;
-    uint64 e;
-    uint64 f;
-    uint64 g;
-    uint64 h;
-    uint64 T1;
-    uint64 T2;
+static int crypto_hashblocks_sha512(uint8_t *statebytes,
+                                    const uint8_t *in,
+                                    size_t inlen) {
+    uint64_t state[8];
+    uint64_t a;
+    uint64_t b;
+    uint64_t c;
+    uint64_t d;
+    uint64_t e;
+    uint64_t f;
+    uint64_t g;
+    uint64_t h;
+    uint64_t T1;
+    uint64_t T2;
 
     a = load_bigendian(statebytes + 0);
     state[0] = a;
@@ -106,22 +107,22 @@ static int crypto_hashblocks_sha512(unsigned char *statebytes,
     state[7] = h;
 
     while (inlen >= 128) {
-        uint64 w0 = load_bigendian(in + 0);
-        uint64 w1 = load_bigendian(in + 8);
-        uint64 w2 = load_bigendian(in + 16);
-        uint64 w3 = load_bigendian(in + 24);
-        uint64 w4 = load_bigendian(in + 32);
-        uint64 w5 = load_bigendian(in + 40);
-        uint64 w6 = load_bigendian(in + 48);
-        uint64 w7 = load_bigendian(in + 56);
-        uint64 w8 = load_bigendian(in + 64);
-        uint64 w9 = load_bigendian(in + 72);
-        uint64 w10 = load_bigendian(in + 80);
-        uint64 w11 = load_bigendian(in + 88);
-        uint64 w12 = load_bigendian(in + 96);
-        uint64 w13 = load_bigendian(in + 104);
-        uint64 w14 = load_bigendian(in + 112);
-        uint64 w15 = load_bigendian(in + 120);
+        uint64_t w0 = load_bigendian(in + 0);
+        uint64_t w1 = load_bigendian(in + 8);
+        uint64_t w2 = load_bigendian(in + 16);
+        uint64_t w3 = load_bigendian(in + 24);
+        uint64_t w4 = load_bigendian(in + 32);
+        uint64_t w5 = load_bigendian(in + 40);
+        uint64_t w6 = load_bigendian(in + 48);
+        uint64_t w7 = load_bigendian(in + 56);
+        uint64_t w8 = load_bigendian(in + 64);
+        uint64_t w9 = load_bigendian(in + 72);
+        uint64_t w10 = load_bigendian(in + 80);
+        uint64_t w11 = load_bigendian(in + 88);
+        uint64_t w12 = load_bigendian(in + 96);
+        uint64_t w13 = load_bigendian(in + 104);
+        uint64_t w14 = load_bigendian(in + 112);
+        uint64_t w15 = load_bigendian(in + 120);
 
         F(w0, 0x428a2f98d728ae22ULL)
         F(w1, 0x7137449123ef65cdULL)
@@ -252,7 +253,7 @@ static int crypto_hashblocks_sha512(unsigned char *statebytes,
 
 #define blocks crypto_hashblocks_sha512
 
-static const unsigned char iv_384[64] = {
+static const uint8_t iv_384[64] = {
     0xcb, 0xbb, 0x9d, 0x5d, 0xc1, 0x05, 0x9e, 0xd8, 0x62, 0x9a, 0x29,
     0x2a, 0x36, 0x7c, 0xd5, 0x07, 0x91, 0x59, 0x01, 0x5a, 0x30, 0x70,
     0xdd, 0x17, 0x15, 0x2f, 0xec, 0xd8, 0xf7, 0x0e, 0x59, 0x39, 0x67,
@@ -261,7 +262,7 @@ static const unsigned char iv_384[64] = {
     0xa7, 0x47, 0xb5, 0x48, 0x1d, 0xbe, 0xfa, 0x4f, 0xa4
 };
 
-static const unsigned char iv_512[64] = {
+static const uint8_t iv_512[64] = {
     0x6a, 0x09, 0xe6, 0x67, 0xf3, 0xbc, 0xc9, 0x08, 0xbb, 0x67, 0xae,
     0x85, 0x84, 0xca, 0xa7, 0x3b, 0x3c, 0x6e, 0xf3, 0x72, 0xfe, 0x94,
     0xf8, 0x2b, 0xa5, 0x4f, 0xf5, 0x3a, 0x5f, 0x1d, 0x36, 0xf1, 0x51,
@@ -270,14 +271,12 @@ static const unsigned char iv_512[64] = {
     0x6b, 0x5b, 0xe0, 0xcd, 0x19, 0x13, 0x7e, 0x21, 0x79
 };
 
-int sha384(unsigned char *out, const unsigned char *in,
-           unsigned long long inlen) {
-    unsigned char h[64];
-    unsigned char padded[256];
-    unsigned int i;
-    unsigned long long bytes = inlen;
+int sha384(uint8_t *out, const uint8_t *in, size_t inlen) {
+    uint8_t h[64];
+    uint8_t padded[256];
+    uint64_t bytes = inlen;
 
-    for (i = 0; i < 64; ++i) {
+    for (size_t i = 0; i < 64; ++i) {
         h[i] = iv_384[i];
     }
 
@@ -286,13 +285,13 @@ int sha384(unsigned char *out, const unsigned char *in,
     inlen &= 127;
     in -= inlen;
 
-    for (i = 0; i < inlen; ++i) {
+    for (size_t i = 0; i < inlen; ++i) {
         padded[i] = in[i];
     }
     padded[inlen] = 0x80;
 
     if (inlen < 112) {
-        for (i = inlen + 1; i < 119; ++i) {
+        for (size_t i = inlen + 1; i < 119; ++i) {
             padded[i] = 0;
         }
         padded[119] = bytes >> 61;
@@ -306,7 +305,7 @@ int sha384(unsigned char *out, const unsigned char *in,
         padded[127] = bytes << 3;
         blocks(h, padded, 128);
     } else {
-        for (i = inlen + 1; i < 247; ++i) {
+        for (size_t i = inlen + 1; i < 247; ++i) {
             padded[i] = 0;
         }
         padded[247] = bytes >> 61;
@@ -321,21 +320,19 @@ int sha384(unsigned char *out, const unsigned char *in,
         blocks(h, padded, 256);
     }
 
-    for (i = 0; i < 48; ++i) {
+    for (size_t i = 0; i < 48; ++i) {
         out[i] = h[i];
     }
 
     return 0;
 }
 
-int sha512(unsigned char *out, const unsigned char *in,
-           unsigned long long inlen) {
-    unsigned char h[64];
-    unsigned char padded[256];
-    unsigned int i;
-    unsigned long long bytes = inlen;
+int sha512(uint8_t *out, const uint8_t *in, size_t inlen) {
+    uint8_t h[64];
+    uint8_t padded[256];
+    uint64_t bytes = inlen;
 
-    for (i = 0; i < 64; ++i) {
+    for (size_t i = 0; i < 64; ++i) {
         h[i] = iv_512[i];
     }
 
@@ -344,13 +341,13 @@ int sha512(unsigned char *out, const unsigned char *in,
     inlen &= 127;
     in -= inlen;
 
-    for (i = 0; i < inlen; ++i) {
+    for (size_t i = 0; i < inlen; ++i) {
         padded[i] = in[i];
     }
     padded[inlen] = 0x80;
 
     if (inlen < 112) {
-        for (i = inlen + 1; i < 119; ++i) {
+        for (size_t i = inlen + 1; i < 119; ++i) {
             padded[i] = 0;
         }
         padded[119] = bytes >> 61;
@@ -364,7 +361,7 @@ int sha512(unsigned char *out, const unsigned char *in,
         padded[127] = bytes << 3;
         blocks(h, padded, 128);
     } else {
-        for (i = inlen + 1; i < 247; ++i) {
+        for (size_t i = inlen + 1; i < 247; ++i) {
             padded[i] = 0;
         }
         padded[247] = bytes >> 61;
@@ -379,7 +376,7 @@ int sha512(unsigned char *out, const unsigned char *in,
         blocks(h, padded, 256);
     }
 
-    for (i = 0; i < 64; ++i) {
+    for (size_t i = 0; i < 64; ++i) {
         out[i] = h[i];
     }
 
