@@ -11,11 +11,11 @@ matrix:
         - MAKETARGET="test-all tidy-all check-format"
       addons:
         apt:
-          packages:
+          packages: &xenial-packages
             - astyle
-            - python3
             - python3-yaml
             - python3-nose
+            - python3-rednose
             - valgrind
     - name: "Linux + Clang"
       os: linux
@@ -24,21 +24,18 @@ matrix:
         - MAKETARGET=test-all
       addons:
         apt:
-          packages:
-            - python3
-            - python3-yaml
-            - python3-nose
-            - valgrind
+          packages: *xenial-packages
     - name: "Linux 32-bit GCC"
       os: linux
       compiler: gcc  # Clang has i386-libasan problems on xenial
       addons:
         apt:
-          packages:
+          packages:  # no way to re-use xenial-packages with lists :(
+            - astyle
             - gcc-multilib
-            - python3
             - python3-yaml
             - python3-nose
+            - python3-rednose
             - valgrind
       before_install:
         - sudo dpkg --add-architecture i386
@@ -91,6 +88,7 @@ matrix:
             - gcc@8
       before_install:
         - pip3 install -r requirements.txt
+        - gcc --version
       env:
         - MAKETARGET=test-all
 
