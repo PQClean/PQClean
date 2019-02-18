@@ -1,11 +1,15 @@
 # This Makefile can be used with GNU Make or BSD Make
 
 LIB=libkyber768_clean.a
+HEADERS=api.h cbd.h indcpa.h ntt.h params.h poly.h polyvec.h reduce.h verify.h
 OBJECTS=cbd.o indcpa.o kem.o ntt.o poly.o polyvec.o precomp.o reduce.o verify.o
 
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(LIB): $(OBJECTS)
 	$(AR) -r $@ $(OBJECTS)
