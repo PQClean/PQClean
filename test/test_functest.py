@@ -21,3 +21,8 @@ def check_functest(scheme_name, implementation_name):
         ['./functest_{}_{}'.format(scheme_name, implementation_name)],
         os.path.join('..', 'bin'),
     )
+
+
+if __name__ == '__main__':
+    import nose
+    nose.runmodule()

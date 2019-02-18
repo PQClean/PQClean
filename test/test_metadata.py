@@ -116,3 +116,8 @@ def check_element(field, element, props):
 
     if type_ == dict:
         check_spec(element, props['spec'].items())
+
+
+if __name__ == '__main__':
+    import nose
+    nose.runmodule()

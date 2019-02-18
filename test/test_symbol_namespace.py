@@ -44,3 +44,8 @@ def check_symbol_namespace(scheme_name, implementation_name):
         for symbol in non_namespaced:
             print("\ttype: {}, symbol: {}".format(symtype, symbol))
         assert(False)
+
+
+if __name__ == '__main__':
+    import nose
+    nose.runmodule()

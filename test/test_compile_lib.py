@@ -21,3 +21,8 @@ def check_compile_lib(scheme_name, implementation_name):
         ['make'],
         implementation.path()
     )
+
+
+if __name__ == '__main__':
+    import nose
+    nose.runmodule()
