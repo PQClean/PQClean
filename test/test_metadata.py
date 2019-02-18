@@ -119,5 +119,9 @@ def check_element(field, element, props):
 
 
 if __name__ == '__main__':
-    import nose
-    nose.runmodule()
+    try:
+        import nose2
+        nose2.main()
+    except ImportError:
+        import nose
+        nose.runmodule()

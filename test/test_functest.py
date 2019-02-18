@@ -24,5 +24,9 @@ def check_functest(scheme_name, implementation_name):
 
 
 if __name__ == '__main__':
-    import nose
-    nose.runmodule()
+    try:
+        import nose2
+        nose2.main()
+    except ImportError:
+        import nose
+        nose.runmodule()
