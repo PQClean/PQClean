@@ -96,7 +96,7 @@ matrix:
 
 script:
   - make ${MAKETARGET}
-  - cd test && python3 -m nose -v
+  - cd test && nosetests --rednose --verbose
 
 cache: pip
 
