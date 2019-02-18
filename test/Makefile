@@ -16,15 +16,18 @@ CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I$(COMMON_DIR) $(EXTRAFLAGS)
 
 all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c
-	mkdir -p $(DEST_DIR)
-	cd $(SCHEME_DIR) && make clean && make
-	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE) -I$(SCHEME_DIR) $^ -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+.PHONY: rebuild-scheme
+rebuild-scheme:
+	cd $(SCHEME_DIR) && make
 
-$(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c
+$(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): rebuild-scheme crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c
+	mkdir -p $(DEST_DIR)
+	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+
+$(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): rebuild-scheme crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c
 	mkdir -p $(DEST_DIR)
 	cd $(SCHEME_DIR) && make clean && make
-	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE) -I$(SCHEME_DIR) $^ -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
 clean:
 	$(RM) $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
