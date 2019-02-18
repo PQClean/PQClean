@@ -16,9 +16,12 @@ CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I$(COMMON_DIR) $(EXTRAFLAGS)
 
 all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): crypto_$(TYPE)/functest.c $(COMMON_FILES)
+.PHONY: rebuild-scheme
+rebuild-scheme:
+	cd $(SCHEME_DIR) && make
+
+$(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): rebuild-scheme crypto_$(TYPE)/functest.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
-	cd $(SCHEME_DIR) && make clean && make
 	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
 clean:
