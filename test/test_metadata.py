@@ -4,14 +4,13 @@ Verify the metadata specified in the META.yml files.
 
 import copy
 import itertools
-import os
 import pqclean
-import yaml
-import unittest
+
 
 def test_metadata():
     for scheme in pqclean.Scheme.all_schemes():
         yield check_metadata, scheme.name
+
 
 def check_metadata(scheme_name):
     scheme = pqclean.Scheme.by_name(scheme_name)
@@ -22,17 +21,22 @@ def check_metadata(scheme_name):
     if scheme.type == 'kem':
         specification = itertools.chain(specification, KEM_FIELDS.items())
     elif scheme.type == 'sign':
-        specification = itertools.chain(specification, SIGNATURE_FIELDS.items())
+        specification = itertools.chain(specification,
+                                        SIGNATURE_FIELDS.items())
     else:
         assert(False)
 
     check_spec(copy.deepcopy(metadata), specification)
 
-    implementation_names_in_yaml = set(i['name'] for i in metadata['implementations'])
+    implementation_names_in_yaml = set(
+        i['name'] for i in metadata['implementations'])
     implementations_on_disk = set(i.name for i in scheme.implementations)
     if implementation_names_in_yaml != implementations_on_disk:
-        raise AssertionError("Implementations in YAML file {} and implementations on disk {} do not match"
-            .format(implementation_names_in_yaml, implementations_on_disk))
+        raise AssertionError("Implementations in YAML file {} and "
+                             "implementations on disk {} do not match"
+                             .format(implementation_names_in_yaml,
+                                     implementations_on_disk))
+
 
 EXPECTED_FIELDS = {
     'name': {'type': str},
@@ -62,6 +66,7 @@ SIGNATURE_FIELDS = {
     'length-signature': {'type': int, 'min': 1},
 }
 
+
 def check_spec(metadata, spec):
     for field, props in spec:
         if field not in metadata:
@@ -75,7 +80,8 @@ def check_spec(metadata, spec):
 
     # Done checking all specified fields, check if we have extras
     for field, value in metadata.items():
-        raise AssertionError("Unexpected item '{}' with value '{}'".format(field, value))
+        raise AssertionError(
+            "Unexpected item '{}' with value '{}'".format(field, value))
 
 
 def check_element(field, element, props):
@@ -96,19 +102,20 @@ def check_element(field, element, props):
         if 'min' in props:
             if element < props['min']:
                 raise ValueError("Value of field '{}' is lower than minimum "
-                       "value {}".format(field, props['min']))
+                                 "value {}".format(field, props['min']))
         if 'max' in props:
             if element > props['max']:
                 raise ValueError("Value of field '{}' is larger than maximum"
-                       " value {}".format(field, metafile, props['max']))
+                                 " value {}"
+                                 .format(field, props['max']))
 
     if type_ == str:
         if 'length' in props:
             actual_len = len(element)
             if actual_len != props['length']:
                 raise ValueError("Value of field '{}' should be length {}"
-                       " but was length {}"
-                       .format(field, props['length'], actual_len))
+                                 " but was length {}"
+                                 .format(field, props['length'], actual_len))
 
     if type_ == list:  # recursively check the elements
         for el in element:

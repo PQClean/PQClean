@@ -51,7 +51,8 @@ matrix:
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-unstable-ppc" /bin/bash -c "uname -a &&
-          make ${MAKETARGET}"
+          make ${MAKETARGET} &&
+          cd test && python3 -m nose --rednose --verbose"
     - name: "Run tests on qemu-arm32 (GCC)"
       os: linux
       services: docker
@@ -60,7 +61,8 @@ matrix:
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-buster-arm" /bin/bash -c "uname -a &&
-          make ${MAKETARGET}"
+          make ${MAKETARGET} &&
+          cd test && python3 -m nose --rednose --verbose"
     - name: "Run tests on qemu-aarch64 (GCC)"
       os: linux
       services: docker
@@ -69,7 +71,8 @@ matrix:
       script:
         - docker run --rm --privileged multiarch/qemu-user-static:register --reset
         - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-buster-aarch64" /bin/bash -c "uname -a &&
-          make ${MAKETARGET}"
+          make ${MAKETARGET} &&
+          cd test && python3 -m nose --rednose --verbose"
     - name: "MacOS + Clang"
       os: osx
       osx_image: xcode10.1
