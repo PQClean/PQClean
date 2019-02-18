@@ -1,6 +1,7 @@
 import os
 import yaml
 
+
 class Scheme:
     def __init__(self):
         self.type = None
@@ -58,6 +59,7 @@ class Scheme:
             print("Can't open {}: {}".format(metafile, e))
             return None
 
+
 class Implementation:
 
     def __init__(self, scheme, name):
@@ -83,22 +85,24 @@ class Implementation:
                 implementations.append(Implementation(scheme, d))
         return implementations
 
+
 class KEM(Scheme):
 
     def __init__(self, name: str):
         self.type = 'kem'
-        self.name = name;
+        self.name = name
         self.implementations = Implementation.all_implementations(self)
 
     @staticmethod
     def all_kems() -> list:
         return Scheme.all_schemes_of_type('kem')
 
+
 class Signature(Scheme):
 
     def __init__(self, name: str):
         self.type = 'sign'
-        self.name = name;
+        self.name = name
         self.implementations = Implementation.all_implementations(self)
 
     @staticmethod
