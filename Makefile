@@ -56,21 +56,6 @@ bin/sanitizer_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard
 .PHONY: sanitizer
 sanitizer: bin/sanitizer_$(subst /,_,$(SCHEME))
 
-bin/testvectors_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))testvectors.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
-	mkdir -p bin
-	$(CC) $(CFLAGS) \
-		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME))) | tr a-z A-Z) \
-		-iquote "./common/" \
-		-iquote "$(SCHEME)/clean/" \
-		-o bin/testvectors_$(subst /,_,$(SCHEME)) \
-		$(COMMON_FILES) \
-		common/notrandombytes.c \
-		$(SCHEME)/clean/*.c \
-		$<
-
-.PHONY: testvectors
-testvectors: bin/testvectors_$(subst /,_,$(SCHEME))
-
 bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
@@ -118,8 +103,6 @@ help:
 	@echo "make functest-all			Build functional tests for all schemes"
 	@echo "make run-functest SCHEME=scheme		Run functional tests for SCHEME"
 	@echo "make run-functest-all			Run all functests"
-	@echo "make run-testvectors SCHEME=scheme	Run testvector checks for SCHEME"
-	@echo "make run-testvectors-all			Run all testvector checks"
 	@echo "make run-sanitizer-all			Run address sanitizer for all schemes"
 	@echo "make run-valgrind SCHEME=scheme		Run valgrind checks for SCHEME"
 	@echo "make run-valgrind-all			Run valgrind checks all schemes"
@@ -149,16 +132,6 @@ run-valgrind-all:
 	    $(MAKE) run-valgrind SCHEME=$$scheme || exit 1; \
 	done
 
-.PHONY: run-testvectors
-run-testvectors: test/check_tvectors.py | require_scheme
-	python3 test/check_tvectors.py $(SCHEME) || exit 1; \
-
-.PHONY: run-testvectors-all
-run-testvectors-all: test/check_tvectors.py
-	@for scheme in $(ALL_SCHEMES); do \
-	    python3 test/check_tvectors.py $$scheme || exit 1; \
-	done
-
 .PHONY: run-functest-all
 run-functest-all: functest-all
 	@for functest in $$(find bin/ -maxdepth 1 -name 'functest_*' -not -type d) ; do \
@@ -176,7 +149,7 @@ run-sanitizer-all: sanitizer-all
 	@echo Tests completed
 
 .PHONY: test-all
-test-all: run-functest-all run-valgrind-all run-sanitizer-all run-testvectors-all
+test-all: run-functest-all run-valgrind-all run-sanitizer-all
 
 .PHONY: tidy-all
 tidy-all:
