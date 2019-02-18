@@ -34,8 +34,8 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] API functions do not write outside provided buffers
 * [x] Compiles with `-Wall -Wextra -Wpedantic -Werror` with `gcc` and `clang`
 * [x] Consistent test vectors across runs
-* [ ] Consistent test vectors on big-endian and little-endian machines
-* [ ] Consistent test vectors on 32-bit and 64-bit machines
+* [x] Consistent test vectors on big-endian and little-endian machines
+* [x] Consistent test vectors on 32-bit and 64-bit machines
 * [x] No errors/warnings reported by valgrind
 * [x] No errors/warnings reported by address sanitizer
 * [ ] Only dependencies:
@@ -131,3 +131,19 @@ Regarding #2, adding the files to your project's build system, each implementati
 Each subdirectory containing implementations contains a LICENSE file stating under what license
 that specific implementation is released. All other code for testing etc. in this repository
 is released under the conditions of [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
+
+## Running tests locally
+
+While we run extensive automatic testing on [Travis CI][travis-pqc] and [Appveyor][appveyor-pqc], most tests can also be run locally.
+To do this, make sure the following is installed:
+
+* Python 3.5+
+* `nosetests` or `nose2` (either for Python 3)
+
+Run the Python-based tests by going into the `test` directory and running `nosetests -v` or `nose2 -B -v`, depending on what you installed.
+If you have the `rednose` plugin for `nosetests` installed, run `nosetests --rednose` to get colored output.
+
+You may also run `python <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
+
+[travis-pqc]: https://travis-ci.com/PQClean/PQClean/
+[appveyor-pqc]: https://ci.appveyor.com/project/PQClean/pqclean

@@ -123,3 +123,12 @@ def check_element(field, element, props):
 
     if type_ == dict:
         check_spec(element, props['spec'].items())
+
+
+if __name__ == '__main__':
+    try:
+        import nose2
+        nose2.main()
+    except ImportError:
+        import nose
+        nose.runmodule()

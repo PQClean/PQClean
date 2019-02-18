@@ -24,3 +24,12 @@ def check_compile_lib(scheme_name, implementation_name):
         ['make'],
         implementation.path()
     )
+
+
+if __name__ == '__main__':
+    try:
+        import nose2
+        nose2.main()
+    except ImportError:
+        import nose
+        nose.runmodule()

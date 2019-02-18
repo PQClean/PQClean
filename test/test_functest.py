@@ -28,3 +28,12 @@ def check_functest(scheme_name, implementation_name):
         ['./functest_{}_{}'.format(scheme_name, implementation_name)],
         os.path.join('..', 'bin'),
     )
+
+
+if __name__ == '__main__':
+    try:
+        import nose2
+        nose2.main()
+    except ImportError:
+        import nose
+        nose.runmodule()

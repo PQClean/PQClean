@@ -19,3 +19,12 @@ def check_license(scheme_name, implementation_name):
     p1 = os.path.join(implementation.path(), 'LICENSE')
     p2 = os.path.join(implementation.path(), 'LICENSE.txt')
     assert(os.path.isfile(p1) or os.path.isfile(p2))
+
+
+if __name__ == '__main__':
+    try:
+        import nose2
+        nose2.main()
+    except ImportError:
+        import nose
+        nose.runmodule()
