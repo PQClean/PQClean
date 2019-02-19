@@ -19,7 +19,7 @@ all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/testvectors_$(
 
 .PHONY: rebuild-scheme
 rebuild-scheme:
-	cd $(SCHEME_DIR) && make
+	cd $(SCHEME_DIR) && $(MAKE) clean && $(MAKE)
 
 $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): rebuild-scheme crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
