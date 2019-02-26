@@ -33,8 +33,8 @@ THE SOFTWARE.
 
 #if defined(_WIN32)
 /* Windows */
-#include <wincrypt.h> /* CryptAcquireContext, CryptGenRandom */
 #include <windows.h>
+#include <wincrypt.h> /* CryptAcquireContext, CryptGenRandom */
 #endif /* defined(_WIN32) */
 
 #if defined(__linux__)
