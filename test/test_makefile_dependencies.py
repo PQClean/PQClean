@@ -9,6 +9,7 @@ import pqclean
 import helpers
 import subprocess
 import glob
+import datetime
 
 
 def test_makefile_dependencies():
@@ -35,15 +36,18 @@ def check_makefile_dependencies(scheme_name, implementation_name, file):
 
     # modification time-based calculations is tricky on a sub-second basis
     # so we reset all the modification times to a known and "sensible" order
-    helpers.run_subprocess(['touch'] + cfiles + hfiles + ofiles)
-    helpers.run_subprocess(['touch', libfile])
-    helpers.run_subprocess(['touch', '-A', '-15', '-m'] + cfiles + hfiles)
-    helpers.run_subprocess(['touch', '-A', '-10', '-m'] + ofiles)
-    helpers.run_subprocess(['touch', '-A', '-05', '-m', libfile])
+    now = datetime.datetime.now()
+    ago15 = now - datetime.timedelta(seconds=15)
+    ago10 = now - datetime.timedelta(seconds=10)
+    ago5 = now - datetime.timedelta(seconds=5)
+    formatstring = "%Y%m%d%H%M.%S"
+    helpers.run_subprocess(['touch', '-t', ago15.strftime(formatstring)] + cfiles + hfiles)
+    helpers.run_subprocess(['touch', '-t', ago10.strftime(formatstring)] + ofiles)
+    helpers.run_subprocess(['touch', '-t', ago5.strftime(formatstring), libfile])
     mtime_lib_orig = os.stat(libfile).st_mtime_ns
 
     # touch the candidate .c / .h file
-    helpers.run_subprocess(['touch', '-A', '15', '-m', file])
+    helpers.run_subprocess(['touch', '-t', now.strftime(formatstring), file])
 
     # rebuild
     helpers.run_subprocess(['make'], implementation.path())
