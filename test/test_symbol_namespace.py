@@ -35,7 +35,7 @@ def check_symbol_namespace(scheme_name, implementation_name):
         if ' T ' in line or ' D ' in line or ' S ' in line:
             symbols.append(line)
 
-    namespace = implementation.scheme.namespace_prefix()
+    namespace = implementation.namespace_prefix()
     non_namespaced = []
     for symbolstr in symbols:
         *_, symtype, symbol = symbolstr.split()

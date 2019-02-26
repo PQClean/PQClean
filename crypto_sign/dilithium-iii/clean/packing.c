@@ -12,9 +12,9 @@
  *              - const unsigned char rho[]: byte array containing rho
  *              - const polyveck *t1: pointer to vector t1
  **************************************************/
-void PQCLEAN_DILITHIUMIII_pack_pk(unsigned char pk[CRYPTO_PUBLICKEYBYTES],
-                                  const unsigned char rho[SEEDBYTES],
-                                  const polyveck *t1) {
+void PQCLEAN_DILITHIUMIII_CLEAN_pack_pk(unsigned char pk[CRYPTO_PUBLICKEYBYTES],
+                                        const unsigned char rho[SEEDBYTES],
+                                        const polyveck *t1) {
     unsigned int i;
 
     for (i = 0; i < SEEDBYTES; ++i) {
@@ -23,8 +23,8 @@ void PQCLEAN_DILITHIUMIII_pack_pk(unsigned char pk[CRYPTO_PUBLICKEYBYTES],
     pk += SEEDBYTES;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUMIII_polyt1_pack(pk + i * POLT1_SIZE_PACKED,
-                                         t1->vec + i);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyt1_pack(pk + i * POLT1_SIZE_PACKED,
+                                               t1->vec + i);
     }
 }
 
@@ -37,7 +37,7 @@ void PQCLEAN_DILITHIUMIII_pack_pk(unsigned char pk[CRYPTO_PUBLICKEYBYTES],
  *              - const polyveck *t1: pointer to output vector t1
  *              - unsigned char pk[]: byte array containing bit-packed pk
  **************************************************/
-void PQCLEAN_DILITHIUMIII_unpack_pk(
+void PQCLEAN_DILITHIUMIII_CLEAN_unpack_pk(
     unsigned char rho[SEEDBYTES], polyveck *t1,
     const unsigned char pk[CRYPTO_PUBLICKEYBYTES]) {
     unsigned int i;
@@ -48,8 +48,8 @@ void PQCLEAN_DILITHIUMIII_unpack_pk(
     pk += SEEDBYTES;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUMIII_polyt1_unpack(t1->vec + i,
-                                           pk + i * POLT1_SIZE_PACKED);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyt1_unpack(t1->vec + i,
+                pk + i * POLT1_SIZE_PACKED);
     }
 }
 
@@ -66,12 +66,12 @@ void PQCLEAN_DILITHIUMIII_unpack_pk(
  *              - const polyveck *s2: pointer to vector s2
  *              - const polyveck *t0: pointer to vector t0
  **************************************************/
-void PQCLEAN_DILITHIUMIII_pack_sk(unsigned char sk[CRYPTO_SECRETKEYBYTES],
-                                  const unsigned char rho[SEEDBYTES],
-                                  const unsigned char key[SEEDBYTES],
-                                  const unsigned char tr[CRHBYTES],
-                                  const polyvecl *s1, const polyveck *s2,
-                                  const polyveck *t0) {
+void PQCLEAN_DILITHIUMIII_CLEAN_pack_sk(unsigned char sk[CRYPTO_SECRETKEYBYTES],
+                                        const unsigned char rho[SEEDBYTES],
+                                        const unsigned char key[SEEDBYTES],
+                                        const unsigned char tr[CRHBYTES],
+                                        const polyvecl *s1, const polyveck *s2,
+                                        const polyveck *t0) {
     unsigned int i;
 
     for (i = 0; i < SEEDBYTES; ++i) {
@@ -90,20 +90,20 @@ void PQCLEAN_DILITHIUMIII_pack_sk(unsigned char sk[CRYPTO_SECRETKEYBYTES],
     sk += CRHBYTES;
 
     for (i = 0; i < L; ++i) {
-        PQCLEAN_DILITHIUMIII_polyeta_pack(sk + i * POLETA_SIZE_PACKED,
-                                          s1->vec + i);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyeta_pack(sk + i * POLETA_SIZE_PACKED,
+                                                s1->vec + i);
     }
     sk += L * POLETA_SIZE_PACKED;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUMIII_polyeta_pack(sk + i * POLETA_SIZE_PACKED,
-                                          s2->vec + i);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyeta_pack(sk + i * POLETA_SIZE_PACKED,
+                                                s2->vec + i);
     }
     sk += K * POLETA_SIZE_PACKED;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUMIII_polyt0_pack(sk + i * POLT0_SIZE_PACKED,
-                                         t0->vec + i);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyt0_pack(sk + i * POLT0_SIZE_PACKED,
+                                               t0->vec + i);
     }
 }
 
@@ -120,7 +120,7 @@ void PQCLEAN_DILITHIUMIII_pack_sk(unsigned char sk[CRYPTO_SECRETKEYBYTES],
  *              - const polyveck *r0: pointer to output vector t0
  *              - unsigned char sk[]: byte array containing bit-packed sk
  **************************************************/
-void PQCLEAN_DILITHIUMIII_unpack_sk(
+void PQCLEAN_DILITHIUMIII_CLEAN_unpack_sk(
     unsigned char rho[SEEDBYTES], unsigned char key[SEEDBYTES],
     unsigned char tr[CRHBYTES], polyvecl *s1, polyveck *s2, polyveck *t0,
     const unsigned char sk[CRYPTO_SECRETKEYBYTES]) {
@@ -142,20 +142,20 @@ void PQCLEAN_DILITHIUMIII_unpack_sk(
     sk += CRHBYTES;
 
     for (i = 0; i < L; ++i) {
-        PQCLEAN_DILITHIUMIII_polyeta_unpack(s1->vec + i,
-                                            sk + i * POLETA_SIZE_PACKED);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyeta_unpack(s1->vec + i,
+                sk + i * POLETA_SIZE_PACKED);
     }
     sk += L * POLETA_SIZE_PACKED;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUMIII_polyeta_unpack(s2->vec + i,
-                                            sk + i * POLETA_SIZE_PACKED);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyeta_unpack(s2->vec + i,
+                sk + i * POLETA_SIZE_PACKED);
     }
     sk += K * POLETA_SIZE_PACKED;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUMIII_polyt0_unpack(t0->vec + i,
-                                           sk + i * POLT0_SIZE_PACKED);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyt0_unpack(t0->vec + i,
+                sk + i * POLT0_SIZE_PACKED);
     }
 }
 
@@ -169,14 +169,14 @@ void PQCLEAN_DILITHIUMIII_unpack_sk(
  *              - const polyveck *h: pointer to hint vector h
  *              - const poly *c: pointer to challenge polynomial
  **************************************************/
-void PQCLEAN_DILITHIUMIII_pack_sig(unsigned char sig[CRYPTO_BYTES],
-                                   const polyvecl *z, const polyveck *h,
-                                   const poly *c) {
+void PQCLEAN_DILITHIUMIII_CLEAN_pack_sig(unsigned char sig[CRYPTO_BYTES],
+        const polyvecl *z, const polyveck *h,
+        const poly *c) {
     unsigned int i, j, k;
     uint64_t signs, mask;
 
     for (i = 0; i < L; ++i) {
-        PQCLEAN_DILITHIUMIII_polyz_pack(sig + i * POLZ_SIZE_PACKED, z->vec + i);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyz_pack(sig + i * POLZ_SIZE_PACKED, z->vec + i);
     }
     sig += L * POLZ_SIZE_PACKED;
 
@@ -230,14 +230,14 @@ void PQCLEAN_DILITHIUMIII_pack_sig(unsigned char sig[CRYPTO_BYTES],
  *
  * Returns 1 in case of malformed signature; otherwise 0.
  **************************************************/
-int PQCLEAN_DILITHIUMIII_unpack_sig(polyvecl *z, polyveck *h, poly *c,
-                                    const unsigned char sig[CRYPTO_BYTES]) {
+int PQCLEAN_DILITHIUMIII_CLEAN_unpack_sig(polyvecl *z, polyveck *h, poly *c,
+        const unsigned char sig[CRYPTO_BYTES]) {
     unsigned int i, j, k;
     uint64_t signs, mask;
 
     for (i = 0; i < L; ++i) {
-        PQCLEAN_DILITHIUMIII_polyz_unpack(z->vec + i,
-                                          sig + i * POLZ_SIZE_PACKED);
+        PQCLEAN_DILITHIUMIII_CLEAN_polyz_unpack(z->vec + i,
+                                                sig + i * POLZ_SIZE_PACKED);
     }
     sig += L * POLZ_SIZE_PACKED;
 
