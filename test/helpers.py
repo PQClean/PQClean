@@ -1,7 +1,7 @@
 import subprocess
 
 
-def run_subprocess(command, working_dir, expected_returncode=0):
+def run_subprocess(command, working_dir='.', expected_returncode=0):
     """
     Helper function to run a shell command and report success/failure
     depending on the exit status of the shell command.
@@ -15,6 +15,7 @@ def run_subprocess(command, working_dir, expected_returncode=0):
         stderr=subprocess.STDOUT,
         cwd=working_dir
     )
+    print(working_dir + " > " + " ".join(command))
     print(result.stdout.decode('utf-8'))
     assert(result.returncode == expected_returncode)
     return result.stdout.decode('utf-8')

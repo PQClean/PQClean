@@ -69,6 +69,9 @@ class Implementation:
     def path(self, base='..') -> str:
         return os.path.join(self.scheme.path(), self.name)
 
+    def libname(self) -> str:
+        return "lib{}_{}.a".format(self.scheme.name, self.name)
+
     @staticmethod
     def by_name(scheme_name, implementation_name):
         scheme = Scheme.by_name(scheme_name)
