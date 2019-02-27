@@ -1,7 +1,7 @@
 # PQClean
 
 [![Build Status](https://travis-ci.com/PQClean/PQClean.svg?branch=master)](https://travis-ci.com/PQClean/PQClean)
-[![Build status](https://ci.appveyor.com/api/projects/status/186ky7yb9mlqj3io?svg=true)](https://ci.appveyor.com/project/PQClean/pqclean)
+[![Build status](https://ci.appveyor.com/api/projects/status/186ky7yb9mlqj3io/branch/master?svg=true)](https://ci.appveyor.com/project/PQClean/pqclean/branch/master)
 
 **PQClean**, in short, is an effort to collect **clean** implementations of the post-quantum
 schemes that are in the
