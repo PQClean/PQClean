@@ -9,16 +9,16 @@
 
 #define CRYPTO_ALGNAME "Dilithium-III"
 
-int PQCLEAN_DILITHIUMIII_crypto_sign_keypair(unsigned char *pk,
+int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_keypair(unsigned char *pk,
         unsigned char *sk);
 
-int PQCLEAN_DILITHIUMIII_crypto_sign(unsigned char *sm,
-                                     unsigned long long *smlen,
-                                     const unsigned char *msg,
-                                     unsigned long long len,
-                                     const unsigned char *sk);
+int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign(unsigned char *sm,
+        unsigned long long *smlen,
+        const unsigned char *msg,
+        unsigned long long len,
+        const unsigned char *sk);
 
-int PQCLEAN_DILITHIUMIII_crypto_sign_open(unsigned char *m,
+int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_open(unsigned char *m,
         unsigned long long *mlen,
         const unsigned char *sm,
         unsigned long long smlen,

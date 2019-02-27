@@ -88,6 +88,10 @@ class Implementation:
                 implementations.append(Implementation(scheme, d))
         return implementations
 
+    def namespace_prefix(self):
+        return '{}{}_'.format(self.scheme.namespace_prefix(),
+                              self.name.upper()).replace('-', '')
+
 
 class KEM(Scheme):
 
