@@ -43,7 +43,7 @@ def check_functest_sanitizers(scheme_name, implementation_name):
     env = None
     if platform.machine() == 'powerpc':
         raise unittest.SkipTest()
-    elif platform.machine() in ['arm32', 'aarch64']:
+    elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
     else:
         print("Supported platform: {}".format(platform.machine))
