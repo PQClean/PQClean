@@ -1,11 +1,17 @@
+import os
 import subprocess
 
 
-def run_subprocess(command, working_dir='.', expected_returncode=0):
+def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
     """
     Helper function to run a shell command and report success/failure
     depending on the exit status of the shell command.
     """
+    if env is not None:
+        env_ = os.environ.copy()
+        env_.update(env)
+        env = env_
+
     # Note we need to capture stdout/stderr from the subprocess,
     # then print it, which nose/unittest will then capture and
     # buffer appropriately
@@ -13,7 +19,8 @@ def run_subprocess(command, working_dir='.', expected_returncode=0):
         command,
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
-        cwd=working_dir
+        cwd=working_dir,
+        env=env,
     )
     print(working_dir + " > " + " ".join(command))
     print(result.stdout.decode('utf-8'))
@@ -21,7 +28,7 @@ def run_subprocess(command, working_dir='.', expected_returncode=0):
     return result.stdout.decode('utf-8')
 
 
-def make(*args, working_dir='.', **kwargs):
+def make(*args, working_dir='.', env=None, **kwargs):
     """
     Runs a make target in the specified working directory
 
@@ -36,4 +43,5 @@ def make(*args, working_dir='.', **kwargs):
             *['{}={}'.format(k, v) for k, v in kwargs.items()],
         ],
         working_dir=working_dir,
+        env=env,
     )
