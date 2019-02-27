@@ -42,7 +42,7 @@ def check_symbol_namespace(scheme_name, implementation_name):
         if symtype in 'TR':
             if (not symbol.startswith(namespace) and
                     # weird things on i386
-                    not symbol.startwith('__x86.get_pc_thunk.') and
+                    not symbol.startswith('__x86.get_pc_thunk.') and
                     not symbol.startswith('_' + namespace)):
                 non_namespaced.append(symbol)
 
