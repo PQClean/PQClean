@@ -48,6 +48,10 @@ def check_makefile_dependencies(scheme_name, implementation_name, file):
     helpers.run_subprocess(
         ['touch', '-t', ago5.strftime(formatstring), libfile])
 
+    # Sanity check: the scheme is up to date
+    helpers.run_subprocess(['make', '-q'], implementation.path(),
+                           expected_returncode=0)
+
     # touch the candidate .c / .h file
     helpers.run_subprocess(['touch', '-t', now.strftime(formatstring), file])
 
