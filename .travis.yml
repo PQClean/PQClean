@@ -1,6 +1,7 @@
 language: c
 
 dist: xenial
+language: minimal
 
 matrix:
   include:
