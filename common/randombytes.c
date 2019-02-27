@@ -111,7 +111,7 @@ static int randombytes_linux_randombytes_getrandom(void *buf, size_t n) {
      * (250 MB/s on my laptop).
      */
     size_t offset = 0, chunk;
-    int ret;
+    long int ret;
     while (n > 0) {
         /* getrandom does not allow chunks larger than 33554431 */
         chunk = n <= 33554431 ? n : 33554431;
@@ -119,10 +119,10 @@ static int randombytes_linux_randombytes_getrandom(void *buf, size_t n) {
             ret = syscall(SYS_getrandom, (char *)buf + offset, chunk, 0);
         } while (ret == -1 && errno == EINTR);
         if (ret < 0) {
-            return ret;
+            return (int) ret;
         }
-        offset += ret;
-        n -= ret;
+        offset += (size_t) ret;
+        n -= (size_t) ret;
     }
     assert(n == 0);
     return 0;

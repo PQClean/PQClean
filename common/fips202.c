@@ -41,7 +41,7 @@ static uint64_t load64(const uint8_t *x) {
  **************************************************/
 static void store64(uint8_t *x, uint64_t u) {
     for (size_t i = 0; i < 8; ++i) {
-        x[i] = u >> 8 * i;
+        x[i] = (uint8_t) (u >> 8 * i);
     }
 }
 

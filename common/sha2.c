@@ -15,21 +15,21 @@ static uint64_t load_bigendian(const unsigned char *x) {
 }
 
 static void store_bigendian(uint8_t *x, uint64_t u) {
-    x[7] = u;
+    x[7] = (uint8_t) u;
     u >>= 8;
-    x[6] = u;
+    x[6] = (uint8_t) u;
     u >>= 8;
-    x[5] = u;
+    x[5] = (uint8_t) u;
     u >>= 8;
-    x[4] = u;
+    x[4] = (uint8_t) u;
     u >>= 8;
-    x[3] = u;
+    x[3] = (uint8_t) u;
     u >>= 8;
-    x[2] = u;
+    x[2] = (uint8_t) u;
     u >>= 8;
-    x[1] = u;
+    x[1] = (uint8_t) u;
     u >>= 8;
-    x[0] = u;
+    x[0] = (uint8_t) u;
 }
 
 #define SHR(x, c) ((x) >> (c))
@@ -74,9 +74,9 @@ static void store_bigendian(uint8_t *x, uint64_t u) {
     b = a;                                        \
     a = T1 + T2;
 
-static int crypto_hashblocks_sha512(uint8_t *statebytes,
-                                    const uint8_t *in,
-                                    size_t inlen) {
+static size_t crypto_hashblocks_sha512(uint8_t *statebytes,
+                                       const uint8_t *in,
+                                       size_t inlen) {
     uint64_t state[8];
     uint64_t a;
     uint64_t b;
@@ -294,29 +294,29 @@ int sha384(uint8_t *out, const uint8_t *in, size_t inlen) {
         for (size_t i = inlen + 1; i < 119; ++i) {
             padded[i] = 0;
         }
-        padded[119] = bytes >> 61;
-        padded[120] = bytes >> 53;
-        padded[121] = bytes >> 45;
-        padded[122] = bytes >> 37;
-        padded[123] = bytes >> 29;
-        padded[124] = bytes >> 21;
-        padded[125] = bytes >> 13;
-        padded[126] = bytes >> 5;
-        padded[127] = bytes << 3;
+        padded[119] = (uint8_t) (bytes >> 61);
+        padded[120] = (uint8_t) (bytes >> 53);
+        padded[121] = (uint8_t) (bytes >> 45);
+        padded[122] = (uint8_t) (bytes >> 37);
+        padded[123] = (uint8_t) (bytes >> 29);
+        padded[124] = (uint8_t) (bytes >> 21);
+        padded[125] = (uint8_t) (bytes >> 13);
+        padded[126] = (uint8_t) (bytes >> 5);
+        padded[127] = (uint8_t) (bytes << 3);
         blocks(h, padded, 128);
     } else {
         for (size_t i = inlen + 1; i < 247; ++i) {
             padded[i] = 0;
         }
-        padded[247] = bytes >> 61;
-        padded[248] = bytes >> 53;
-        padded[249] = bytes >> 45;
-        padded[250] = bytes >> 37;
-        padded[251] = bytes >> 29;
-        padded[252] = bytes >> 21;
-        padded[253] = bytes >> 13;
-        padded[254] = bytes >> 5;
-        padded[255] = bytes << 3;
+        padded[247] = (uint8_t) (bytes >> 61);
+        padded[248] = (uint8_t) (bytes >> 53);
+        padded[249] = (uint8_t) (bytes >> 45);
+        padded[250] = (uint8_t) (bytes >> 37);
+        padded[251] = (uint8_t) (bytes >> 29);
+        padded[252] = (uint8_t) (bytes >> 21);
+        padded[253] = (uint8_t) (bytes >> 13);
+        padded[254] = (uint8_t) (bytes >> 5);
+        padded[255] = (uint8_t) (bytes << 3);
         blocks(h, padded, 256);
     }
 
@@ -350,29 +350,29 @@ int sha512(uint8_t *out, const uint8_t *in, size_t inlen) {
         for (size_t i = inlen + 1; i < 119; ++i) {
             padded[i] = 0;
         }
-        padded[119] = bytes >> 61;
-        padded[120] = bytes >> 53;
-        padded[121] = bytes >> 45;
-        padded[122] = bytes >> 37;
-        padded[123] = bytes >> 29;
-        padded[124] = bytes >> 21;
-        padded[125] = bytes >> 13;
-        padded[126] = bytes >> 5;
-        padded[127] = bytes << 3;
+        padded[119] = (uint8_t) (bytes >> 61);
+        padded[120] = (uint8_t) (bytes >> 53);
+        padded[121] = (uint8_t) (bytes >> 45);
+        padded[122] = (uint8_t) (bytes >> 37);
+        padded[123] = (uint8_t) (bytes >> 29);
+        padded[124] = (uint8_t) (bytes >> 21);
+        padded[125] = (uint8_t) (bytes >> 13);
+        padded[126] = (uint8_t) (bytes >> 5);
+        padded[127] = (uint8_t) (bytes << 3);
         blocks(h, padded, 128);
     } else {
         for (size_t i = inlen + 1; i < 247; ++i) {
             padded[i] = 0;
         }
-        padded[247] = bytes >> 61;
-        padded[248] = bytes >> 53;
-        padded[249] = bytes >> 45;
-        padded[250] = bytes >> 37;
-        padded[251] = bytes >> 29;
-        padded[252] = bytes >> 21;
-        padded[253] = bytes >> 13;
-        padded[254] = bytes >> 5;
-        padded[255] = bytes << 3;
+        padded[247] = (uint8_t) (bytes >> 61);
+        padded[248] = (uint8_t) (bytes >> 53);
+        padded[249] = (uint8_t) (bytes >> 45);
+        padded[250] = (uint8_t) (bytes >> 37);
+        padded[251] = (uint8_t) (bytes >> 29);
+        padded[252] = (uint8_t) (bytes >> 21);
+        padded[253] = (uint8_t) (bytes >> 13);
+        padded[254] = (uint8_t) (bytes >> 5);
+        padded[255] = (uint8_t) (bytes << 3);
         blocks(h, padded, 256);
     }
 
