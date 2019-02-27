@@ -72,14 +72,6 @@ bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | re
 clean:
 	rm -rf bin
 
-.PHONY: format
-format:
-	astyle --project crypto_*/*/*/*.[ch] common/*.[ch]
-
-.PHONY: check-format
-check-format:
-	astyle --dry-run --project crypto_*/*/*/*.[ch] common/*.[ch] | grep Formatted && exit 1 || exit 0
-
 .PHONY: tidy
 tidy:
 	$(MAKE) do-tidy
@@ -107,7 +99,6 @@ help:
 	@echo "make run-valgrind SCHEME=scheme		Run valgrind checks for SCHEME"
 	@echo "make run-valgrind-all			Run valgrind checks all schemes"
 	@echo "make clean				Clean up the bin/ folder"
-	@echo "make format				Automatically formats all the source code"
 	@echo "make tidy SCHEME=scheme  		Runs the clang-tidy linter against SCHEME"
 	@echo "make apply-tidy SCHEME=scheme		Tries to automatically fix the issues found by clang-tidy in SCHEME"
 	@echo "make tidy-all				Runs the clang-tidy linter against all schemes"
