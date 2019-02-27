@@ -11,7 +11,7 @@ Also, we apply static and dynamic analysis tools.
 
 For this text, we will assume that you want to contribute a **kem** to PQClean.
 For a signature scheme, these steps are equivalent, but the API is slightly different.
-See the section [API][#API] below.
+See the section [API](#API) below.
 
 1. Fork our repository. You will be creating a pull request soon.
 **Tip:** Do not wait until you think you have gotten everything perfect, before you open the pull request.
@@ -41,12 +41,16 @@ implementations:
 This file needs to be valid [YAML](https://yaml.org/).
 
 4. Put your scheme into ``crypto_kem/yourschemename/clean``.
-  1. Make sure all symbols are prefixed with ``PQCLEAN_YOURSCHEME_CLEAN_``
-  2. Include ``api.h`` into your scheme with the symbols specified in the section [API][#API]:
+    1. Make sure all symbols are prefixed with ``PQCLEAN_YOURSCHEME_CLEAN_``
+    2. Include ``api.h`` into your scheme with the symbols specified in the section [API](#API):
+
 5. Create ``Makefile`` and ``Makefile.Microsoft_nmake`` files to compile your scheme as static library.
-  * We suggest you take these from ``crypto_kem/kyber768/clean`` and modify them to suit your scheme.
+    * We suggest you take these from ``crypto_kem/kyber768/clean`` and modify them to suit your scheme.
+
 6. Add a ``LICENSE`` file to your implementation folder.
+
 7. Commit everything and push it to your fork
+
 8. Open a pull request on our repository and process the feedback given to you by the CI environment.
    The pull request will also set up a checklist for you and us to follow.
 
