@@ -2,6 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 # override as desired
+# vim: set ts=4 sw=4 et:
 TYPE=kem
 SCHEME=kyber768
 SCHEME_UPPERCASE=KYBER768
@@ -23,6 +24,11 @@ all: $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE $(DEST_DIR)\testvector
 build-scheme:
     cd $(SCHEME_DIR)
     nmake /f Makefile.Microsoft_nmake
+    cd ..\..\..\test
+
+clean-scheme:
+    cd $(SCHEME_DIR)
+    nmake /f Makefile.Microsoft_nmake clean
     cd ..\..\..\test
 
 $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\randombytes.obj

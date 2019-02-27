@@ -19,3 +19,21 @@ def run_subprocess(command, working_dir='.', expected_returncode=0):
     print(result.stdout.decode('utf-8'))
     assert(result.returncode == expected_returncode)
     return result.stdout.decode('utf-8')
+
+
+def make(*args, working_dir='.', **kwargs):
+    """
+    Runs a make target in the specified working directory
+
+    Usage:
+        make('clean', 'targetb', SCHEME='bla')
+    """
+    make_command = 'make'
+    return run_subprocess(
+        [
+            make_command,
+            *args,
+            *['{}={}'.format(k, v) for k, v in kwargs.items()],
+        ],
+        working_dir=working_dir,
+    )
