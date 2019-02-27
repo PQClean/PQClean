@@ -49,7 +49,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [ ] No dynamic memory allocations
 * [ ] No branching on secret data (dynamically checked using valgrind)
 * [ ] No access to secret memory locations (dynamically checked using valgrind)
-* [ ] Separate subdirectories (without symlinks) for each parameter set of each scheme
+* [x] Separate subdirectories (without symlinks) for each parameter set of each scheme
 * [x] Builds under Linux, MacOS, and Windows
     * [x] Linux
     * [x] MacOS
