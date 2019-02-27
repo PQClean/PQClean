@@ -14,8 +14,8 @@ For a signature scheme, these steps are equivalent, but the API is slightly diff
 See the section [API](#API) below.
 
 1. Fork our repository. You will be creating a pull request soon.
-**Tip:** Do not wait until you think you have gotten everything perfect, before you open the pull request.
-We set up things so Github and the CI environment will give you
+    * **Tip:** Do not wait until you think you have gotten everything perfect, before you open the pull request.
+      We set up things so Github and the CI environment will give you feedback and guidance on the steps to follow.
 
 2. Create the following folder structure: `crypto_kem/yourschemename/clean`.
 We follow the SUPERCOP layout, so please create a separate folder for each parameter set.
