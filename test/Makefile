@@ -23,7 +23,7 @@ rebuild-scheme:
 
 $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): rebuild-scheme crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
-	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
 $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): rebuild-scheme crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
