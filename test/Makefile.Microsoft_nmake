@@ -20,18 +20,17 @@ CFLAGS=/I $(COMMON_DIR) /W1 /WX # FIXME: Should be /W4 but many compiler warning
 
 all: $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE $(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).EXE
 
-rebuild-scheme:
+build-scheme:
     cd $(SCHEME_DIR)
-    nmake /f Makefile.Microsoft_nmake clean
     nmake /f Makefile.Microsoft_nmake
     cd ..\..\..\test
 
-$(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE: rebuild-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\randombytes.obj
+$(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\randombytes.obj
     -MKDIR $(DEST_DIR)
     $(CC) /c crypto_$(TYPE)\functest.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
     LINK.EXE /OUT:$@ functest.obj $(COMMON_OBJECTS_NOPATH) randombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib Advapi32.lib
 
-$(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).EXE: rebuild-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\notrandombytes.obj
+$(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).EXE: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\notrandombytes.obj
     -MKDIR $(DEST_DIR)
     $(CC) /c crypto_$(TYPE)\testvectors.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
     LINK.EXE /OUT:$@ testvectors.obj $(COMMON_OBJECTS_NOPATH) notrandombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib
