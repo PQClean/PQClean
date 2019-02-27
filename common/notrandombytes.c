@@ -70,7 +70,7 @@ int randombytes(uint8_t *buf, size_t xlen) {
             surf();
             outleft = 8;
         }
-        *buf = out[--outleft];
+        *buf = (uint8_t) out[--outleft];
         ++buf;
         --xlen;
     }
