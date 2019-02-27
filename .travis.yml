@@ -10,8 +10,8 @@ matrix:
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
-      env:
-        - MAKETARGET=test-all
+      script:
+        - "cd test && python3 -m nose --rednose --verbose"
     - name: "MacOS + GCC8"
       os: osx
       osx_image: xcode10.1
@@ -23,8 +23,9 @@ matrix:
       before_install:
         - pip3 install -r requirements.txt
         - gcc --version
-      env:
-        - MAKETARGET=test-all
+      script:
+        - "cd test && python3 -m nose --rednose --verbose"
+
 
 env:
   matrix:
@@ -39,11 +40,9 @@ env:
     - CC=gcc    ARCH=unstable-ppc
     - CC=clang  ARCH=unstable-ppc
 
-before_script:
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
 script:
-  - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-containers:$ARCH" /bin/bash -c "
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
       uname -a &&
       export CC=${CC} &&
       cd test && python3 -m nose --rednose --verbose"
