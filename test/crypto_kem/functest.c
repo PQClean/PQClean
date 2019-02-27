@@ -42,21 +42,45 @@ static int check_canary(const unsigned char *d) {
     }
 
 static int test_keys(void) {
-    unsigned char key_a[CRYPTO_BYTES + 16], key_b[CRYPTO_BYTES + 16];
-    unsigned char pk[CRYPTO_PUBLICKEYBYTES + 16];
-    unsigned char sendb[CRYPTO_CIPHERTEXTBYTES + 16];
-    unsigned char sk_a[CRYPTO_SECRETKEYBYTES + 16];
+    /*
+     * This is most likely going to be aligned by the compiler.
+     * 16 extra bytes for canary
+     * 1 extra byte for unalignment
+     */
+    unsigned char key_a_aligned[CRYPTO_BYTES + 16 + 1];
+    unsigned char key_b_aligned[CRYPTO_BYTES + 16 + 1];
+    unsigned char pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
+    unsigned char sendb_aligned[CRYPTO_CIPHERTEXTBYTES + 16 + 1];
+    unsigned char sk_a_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
 
+    /*
+     * Make sure all pointers are odd.
+     * This ensures that the implementation does not assume anything about the
+     * data alignment. For example this would catch if an implementation
+     * directly uses these pointers to load into vector registers using movdqa.
+     */
+    unsigned char *key_a = (unsigned char *) ((uintptr_t) key_a_aligned|(uintptr_t) 1);
+    unsigned char *key_b = (unsigned char *) ((uintptr_t) key_b_aligned|(uintptr_t) 1);
+    unsigned char *pk    = (unsigned char *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
+    unsigned char *sendb = (unsigned char *) ((uintptr_t) sendb_aligned|(uintptr_t) 1);
+    unsigned char *sk_a  = (unsigned char *) ((uintptr_t) sk_a_aligned|(uintptr_t) 1);
+
+    /*
+     * Write 8 byte canary before and after the actual memory regions.
+     * This is used to validate that the implementation does not assume
+     * anything about the placement of data in memory
+     * (e.g., assuming that the pk is always behind the sk)
+     */
     write_canary(key_a);
-    write_canary(key_a + sizeof(key_a) - 8);
+    write_canary(key_a + CRYPTO_BYTES + 8);
     write_canary(key_b);
-    write_canary(key_b + sizeof(key_b) - 8);
+    write_canary(key_b + CRYPTO_BYTES + 8);
     write_canary(pk);
-    write_canary(pk + sizeof(pk) - 8);
+    write_canary(pk +  CRYPTO_PUBLICKEYBYTES + 8);
     write_canary(sendb);
-    write_canary(sendb + sizeof(sendb) - 8);
+    write_canary(sendb + CRYPTO_CIPHERTEXTBYTES + 8);
     write_canary(sk_a);
-    write_canary(sk_a + sizeof(sk_a) - 8);
+    write_canary(sk_a + CRYPTO_SECRETKEYBYTES + 8);
 
     int i;
 
@@ -75,11 +99,12 @@ static int test_keys(void) {
             return -1;
         }
 
-        if (check_canary(key_a) || check_canary(key_a + sizeof(key_a) - 8) ||
-            check_canary(key_b) || check_canary(key_b + sizeof(key_b) - 8) ||
-            check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
-            check_canary(sendb) || check_canary(sendb + sizeof(sendb) - 8) ||
-            check_canary(sk_a) || check_canary(sk_a + sizeof(sk_a) - 8)) {
+        // Validate that the implementation did not touch the canary
+        if (check_canary(key_a) || check_canary(key_a + CRYPTO_BYTES + 8) ||
+            check_canary(key_b) || check_canary(key_b + CRYPTO_BYTES + 8 ) ||
+            check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8 ) ||
+            check_canary(sendb) || check_canary(sendb + CRYPTO_CIPHERTEXTBYTES + 8 ) ||
+            check_canary(sk_a) || check_canary(sk_a + CRYPTO_SECRETKEYBYTES + 8 )) {
             printf("ERROR canary overwritten\n");
             return -1;
         }

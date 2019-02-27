@@ -43,24 +43,46 @@ static int check_canary(const unsigned char *d) {
     }
 
 static int test_sign(void) {
-    unsigned char pk[CRYPTO_PUBLICKEYBYTES + 16];
-    unsigned char sk[CRYPTO_SECRETKEYBYTES + 16];
-    unsigned char sm[MLEN + CRYPTO_BYTES + 16];
-    unsigned char m[MLEN + 16];
+    /*
+     * This is most likely going to be aligned by the compiler.
+     * 16 extra bytes for canary
+     * 1 extra byte for unalignment
+     */
+    unsigned char pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
+    unsigned char sk_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
+    unsigned char sm_aligned[MLEN + CRYPTO_BYTES + 16 + 1];
+    unsigned char m_aligned[MLEN + 16 + 1];
+
+    /*
+     * Make sure all pointers are odd.
+     * This ensures that the implementation does not assume anything about the
+     * data alignment. For example this would catch if an implementation
+     * directly uses these pointers to load into vector registers using movdqa.
+     */
+    unsigned char *pk = (unsigned char *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
+    unsigned char *sk = (unsigned char *) ((uintptr_t) sk_aligned|(uintptr_t) 1);
+    unsigned char *sm = (unsigned char *) ((uintptr_t) sm_aligned|(uintptr_t) 1);
+    unsigned char *m  = (unsigned char *) ((uintptr_t) m_aligned|(uintptr_t) 1);
 
     unsigned long long mlen;
     unsigned long long smlen;
     int returncode;
 
     int i;
+    /*
+     * Write 8 byte canary before and after the actual memory regions.
+     * This is used to validate that the implementation does not assume
+     * anything about the placement of data in memory
+     * (e.g., assuming that the pk is always behind the sk)
+     */
     write_canary(pk);
-    write_canary(pk + sizeof(pk) - 8);
+    write_canary(pk + CRYPTO_PUBLICKEYBYTES + 8);
     write_canary(sk);
-    write_canary(sk + sizeof(sk) - 8);
+    write_canary(sk + CRYPTO_SECRETKEYBYTES + 8);
     write_canary(sm);
-    write_canary(sm + sizeof(sm) - 8);
+    write_canary(sm + MLEN + CRYPTO_BYTES + 8);
     write_canary(m);
-    write_canary(m + sizeof(m) - 8);
+    write_canary(m + MLEN + 8);
 
     for (i = 0; i < NTESTS; i++) {
         RETURNS_ZERO(crypto_sign_keypair(pk + 8, sk + 8));
@@ -78,10 +100,11 @@ static int test_sign(void) {
             }
             return 1;
         }
-        if (check_canary(pk) || check_canary(pk + sizeof(pk) - 8) ||
-            check_canary(sk) || check_canary(sk + sizeof(sk) - 8) ||
-            check_canary(sm) || check_canary(sm + sizeof(sm) - 8) ||
-            check_canary(m) || check_canary(m + sizeof(m) - 8)) {
+        // Validate that the implementation did not touch the canary
+        if (check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8) ||
+            check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||
+            check_canary(sm) || check_canary(sm + MLEN + CRYPTO_BYTES + 8) ||
+            check_canary(m) || check_canary(m + MLEN + 8)) {
             printf("ERROR canary overwritten\n");
             return 1;
         }
