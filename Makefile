@@ -41,21 +41,6 @@ else
 	@echo "Valgrind not supported on this platform."
 endif
 
-bin/sanitizer_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
-	mkdir -p bin
-	$(CC) $(CFLAGS) -fsanitize=address,undefined \
-		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME)))_CLEAN | tr a-z A-Z) \
-		-iquote "./common/" \
-		-iquote "$(SCHEME)/clean/" \
-		-o bin/sanitizer_$(subst /,_,$(SCHEME)) \
-		$(COMMON_FILES) \
-		$(RANDOM_IMPL) \
-		$(SCHEME)/clean/*.c \
-		$<
-
-.PHONY: sanitizer
-sanitizer: bin/sanitizer_$(subst /,_,$(SCHEME))
-
 bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | require_scheme
 	mkdir -p bin
 	$(CC) $(CFLAGS) \
@@ -100,10 +85,7 @@ apply-tidy:
 help:
 	@echo "make test-all				Run all tests"
 	@echo "make functest SCHEME=scheme		Build functional tests for SCHEME"
-	@echo "make functest-all			Build functional tests for all schemes"
 	@echo "make run-functest SCHEME=scheme		Run functional tests for SCHEME"
-	@echo "make run-functest-all			Run all functests"
-	@echo "make run-sanitizer-all			Run address sanitizer for all schemes"
 	@echo "make run-valgrind SCHEME=scheme		Run valgrind checks for SCHEME"
 	@echo "make run-valgrind-all			Run valgrind checks all schemes"
 	@echo "make clean				Clean up the bin/ folder"
@@ -114,17 +96,6 @@ help:
 	@echo "make apply-tidy-all			Tidy up all schemes"
 	@echo "make help				Displays this message"
 
-.PHONY: functest-all
-functest-all:
-	@for scheme in $(ALL_SCHEMES); do \
-	    $(MAKE) functest SCHEME=$$scheme || exit 1; \
-	done
-
-.PHONY: sanitizer-all
-sanitizer-all:
-	@for scheme in $(ALL_SCHEMES); do \
-	    $(MAKE) sanitizer SCHEME=$$scheme || exit 1; \
-	done
 
 .PHONY: run-valgrind-all
 run-valgrind-all:
@@ -132,24 +103,8 @@ run-valgrind-all:
 	    $(MAKE) run-valgrind SCHEME=$$scheme || exit 1; \
 	done
 
-.PHONY: run-functest-all
-run-functest-all: functest-all
-	@for functest in $$(find bin/ -maxdepth 1 -name 'functest_*' -not -type d) ; do \
-		echo ./$$functest ; \
-		./$$functest || exit 1 ;\
-	done
-	@echo Tests completed
-
-.PHONY: run-sanitizer-all
-run-sanitizer-all: sanitizer-all
-	@for sanitizer in $$(find bin/ -maxdepth 1 -name 'sanitizer_*' -not -type d) ; do \
-		echo ./$$sanitizer ; \
-		./$$sanitizer || exit 1 ;\
-	done
-	@echo Tests completed
-
 .PHONY: test-all
-test-all: run-functest-all run-valgrind-all run-sanitizer-all
+test-all: run-valgrind-all
 
 .PHONY: tidy-all
 tidy-all:
