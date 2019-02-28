@@ -1,5 +1,3 @@
-language: c
-
 dist: xenial
 language: minimal
 
