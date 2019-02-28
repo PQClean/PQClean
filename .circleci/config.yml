@@ -1,0 +1,97 @@
+version: 2
+
+.emulated_job: &defaultjob
+  machine: true
+  steps:
+    - checkout
+    - run:
+        name: Install the emulation handlers
+        command: docker run --rm --privileged multiarch/qemu-user-static:register --reset
+    - run:
+        name: Run the tests in a container
+        command: |
+          docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
+          uname -a &&
+          export CC=${CC} &&
+          cd test && python3 -m nose --rednose --verbose"
+
+.native_job: &nativejob
+  docker:
+    - image: pqclean/ci-container:$ARCH
+  steps:
+    - checkout
+    - run:
+        name: Run tests
+        command: |
+          export CC=${CC}
+          cd test && python3 -m nose --rednose --verbose
+
+
+jobs:
+  arm64-gcc:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: arm64
+  arm64-clang:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: arm64
+  arm32-gcc:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: armhf
+  arm32-clang:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: armhf
+  ppc-clang:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: unstable-ppc
+  ppc-gcc:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: unstable-ppc
+  amd64-gcc:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+  amd64-clang:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+  i386-gcc:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+  i386-clang:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - arm64-gcc
+      - arm64-clang
+      - arm32-gcc
+      - arm32-clang
+      - ppc-gcc
+      - ppc-clang
+      - amd64-gcc
+      - amd64-clang
+      - i386-gcc
+      - i386-clang
+
+#  vim: set ft=yaml ts=2 sw=2 tw=0 et :
