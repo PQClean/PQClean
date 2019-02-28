@@ -41,7 +41,7 @@ def check_functest(scheme_name, implementation_name):
 
 def check_functest_sanitizers(scheme_name, implementation_name):
     env = None
-    if platform.machine() == 'powerpc':
+    if platform.machine() == 'ppc' and os.environ.get('CC', 'gcc') == 'clang':
         raise unittest.SkipTest()
     elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
