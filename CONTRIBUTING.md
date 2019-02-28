@@ -44,6 +44,10 @@ See the section [API](#API) below.
 
     1. Make sure all symbols are prefixed with `PQCLEAN_YOURSCHEME_CLEAN_`.
     2. Include `api.h` into your scheme with the symbols specified in the section [API](#API).
+    3. We use `astyle` to format code. You may consider running the following command on your submission:
+    ```
+    astyle --project crypto_kem/yourschemename/clean/*.[ch]
+    ```
 
 5. Create `Makefile` and `Makefile.Microsoft_nmake` files to compile your scheme as static library.
     * We suggest you copy these from `crypto_kem/kyber768/clean` and modify them to suit your scheme.
