@@ -114,9 +114,9 @@ static int test_wrong_pk(void) {
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
-        if (!(returncode = crypto_sign_open(sm, &mlen, sm, smlen, pk2))) {
-            printf("ERROR Signature did verify correctly under wrong public "
-                   "key!\n");
+        returncode = crypto_sign_open(sm, &mlen, sm, smlen, pk2);
+        if (!returncode) {
+            printf("ERROR Signature did verify correctly under wrong public key!\n");
             if (returncode > 0) {
                 puts("ERROR return code should be < 0");
             }

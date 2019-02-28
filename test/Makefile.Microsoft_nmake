@@ -16,7 +16,7 @@ COMMON_OBJECTS_NOPATH=fips202.obj sha2.obj
 
 DEST_DIR=..\bin
 
-CFLAGS=/I $(COMMON_DIR) /W1 /WX # FIXME: Should be /W4 but many compiler warnings in common files
+CFLAGS=/I $(COMMON_DIR) /W4 /WX
 
 all: $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE $(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).EXE
 
