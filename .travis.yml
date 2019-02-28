@@ -1,86 +1,16 @@
-language: c
-
 dist: xenial
+language: minimal
 
 matrix:
   include:
-    - name: "Linux + GCC + Linting"
-      os: linux
-      compiler: gcc
-      env:
-        - MAKETARGET="test-all tidy-all check-format"
-      addons:
-        apt:
-          packages: &xenial-packages
-            - astyle
-            - python3-yaml
-            - python3-nose
-            - python3-rednose
-            - valgrind
-    - name: "Linux + Clang"
-      os: linux
-      compiler: clang
-      env:
-        - MAKETARGET=test-all
-      addons:
-        apt:
-          packages: *xenial-packages
-    - name: "Linux 32-bit GCC"
-      os: linux
-      compiler: gcc  # Clang has i386-libasan problems on xenial
-      addons:
-        apt:
-          packages:  # no way to re-use xenial-packages with lists :(
-            - astyle
-            - gcc-multilib
-            - python3-yaml
-            - python3-nose
-            - python3-rednose
-            - valgrind
-      before_install:
-        - sudo dpkg --add-architecture i386
-        - sudo apt update -qq && sudo apt-get install -qqy libc6-dbg:i386
-      env:
-        - MAKETARGET=test-all
-        - EXTRAFLAGS=-m32
-    - name: "Run tests on qemu-ppc (GCC)"
-      os: linux
-      services: docker
-      env:
-        - MAKETARGET="run-functest-all run-sanitizer-all"
-      script:
-        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-        - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-unstable-ppc" /bin/bash -c "uname -a &&
-          make ${MAKETARGET} &&
-          cd test && python3 -m nose --rednose --verbose"
-    - name: "Run tests on qemu-arm32 (GCC)"
-      os: linux
-      services: docker
-      env:
-        - MAKETARGET="run-functest-all run-sanitizer-all"
-      script:
-        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-        - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-buster-arm" /bin/bash -c "uname -a &&
-          ASAN_OPTIONS=detect_leaks=0 make ${MAKETARGET} &&
-          cd test && python3 -m nose --rednose --verbose"
-    - name: "Run tests on qemu-aarch64 (GCC)"
-      os: linux
-      services: docker
-      env:
-        - MAKETARGET="run-functest-all run-sanitizer-all"
-      script:
-        - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-        - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/debian-buster-aarch64" /bin/bash -c "uname -a &&
-          ASAN_OPTIONS=detect_leaks=0 make ${MAKETARGET} &&
-          cd test && python3 -m nose --rednose --verbose"
     - name: "MacOS + Clang"
       os: osx
       osx_image: xcode10.1
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
-      env:
-        - MAKETARGET=test-all
+      script:
+        - "cd test && python3 -m nose --rednose --verbose"
     - name: "MacOS + GCC8"
       os: osx
       osx_image: xcode10.1
@@ -92,12 +22,29 @@ matrix:
       before_install:
         - pip3 install -r requirements.txt
         - gcc --version
-      env:
-        - MAKETARGET=test-all
+      script:
+        - "cd test && python3 -m nose --rednose --verbose"
+
+
+env:
+  matrix:
+    - CC=gcc    ARCH=armhf
+    - CC=clang  ARCH=armhf
+    - CC=gcc    ARCH=arm64
+    - CC=clang  ARCH=arm64
+    - CC=gcc    ARCH=i386
+    - CC=clang  ARCH=i386
+    - CC=gcc    ARCH=amd64
+    - CC=clang  ARCH=amd64
+    - CC=gcc    ARCH=unstable-ppc
+    - CC=clang  ARCH=unstable-ppc
 
 script:
-  - make ${MAKETARGET}
-  - cd test && python3 -m nose --rednose --verbose
+  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+  - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
+      uname -a &&
+      export CC=${CC} &&
+      cd test && python3 -m nose --rednose --verbose"
 
 cache: pip
 
