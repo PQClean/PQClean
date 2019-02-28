@@ -1,9 +1,4 @@
-# This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
-CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -g $(EXTRAFLAGS)
-
 ALL_SCHEMES=$(filter-out crypto_%.c, $(wildcard crypto_*/*))
-COMMON_FILES = common/fips202.c common/sha2.c
-RANDOM_IMPL = common/randombytes.c
 
 default: help
 
@@ -13,45 +8,6 @@ require_scheme:
 ifndef SCHEME
 	$(error The SCHEME variable is not set. Example: SCHEME=crypto_kem/kyber768)
 endif
-
-bin/functest_$(subst /,_,$(SCHEME)): test/$(dir $(SCHEME))functest.c $(wildcard $(SCHEME)/clean/*.c) $(wildcard $(SCHEME)/clean/*.h) | require_scheme
-	mkdir -p bin
-	$(CC) $(CFLAGS) \
-		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME)))_CLEAN | tr a-z A-Z) \
-		-iquote "./common/" \
-		-iquote "$(SCHEME)/clean/" \
-		-o bin/functest_$(subst /,_,$(SCHEME)) \
-		$(SCHEME)/clean/*.c \
-		$(COMMON_FILES) \
-		$(RANDOM_IMPL) \
-		$<
-
-.PHONY: functest
-functest: bin/functest_$(subst /,_,$(SCHEME))
-
-.PHONY: run-functest
-run-functest: bin/functest_$(subst /,_,$(SCHEME))
-	./$<
-
-.PHONY: run-valgrind
-run-valgrind: bin/functest_$(subst /,_,$(SCHEME))
-ifeq ($(shell uname -s),Linux)
-	valgrind --leak-check=full --error-exitcode=1 $<
-else
-	@echo "Valgrind not supported on this platform."
-endif
-
-bin/shared_$(subst /,_,$(SCHEME))_clean.so: $(wildcard $(SCHEME)/clean/*.c) | require_scheme
-	mkdir -p bin
-	$(CC) $(CFLAGS) \
-		-DPQCLEAN_NAMESPACE=$(shell echo PQCLEAN_$(subst -,,$(notdir $(SCHEME)))_CLEAN | tr a-z A-Z) \
-		-nostdlib \
-		-shared \
-		-fPIC \
-		-iquote "./common/" \
-		-iquote "$(SCHEME)/clean/" \
-		-o $@ \
-		$^
 
 .PHONY: clean
 clean:
@@ -83,11 +39,6 @@ apply-tidy:
 # The below should be outlined with ts=8
 .PHONY: help
 help:
-	@echo "make test-all				Run all tests"
-	@echo "make functest SCHEME=scheme		Build functional tests for SCHEME"
-	@echo "make run-functest SCHEME=scheme		Run functional tests for SCHEME"
-	@echo "make run-valgrind SCHEME=scheme		Run valgrind checks for SCHEME"
-	@echo "make run-valgrind-all			Run valgrind checks all schemes"
 	@echo "make clean				Clean up the bin/ folder"
 	@echo "make format				Automatically formats all the source code"
 	@echo "make tidy SCHEME=scheme  		Runs the clang-tidy linter against SCHEME"
@@ -96,15 +47,6 @@ help:
 	@echo "make apply-tidy-all			Tidy up all schemes"
 	@echo "make help				Displays this message"
 
-
-.PHONY: run-valgrind-all
-run-valgrind-all:
-	@for scheme in $(ALL_SCHEMES); do \
-	    $(MAKE) run-valgrind SCHEME=$$scheme || exit 1; \
-	done
-
-.PHONY: test-all
-test-all: run-valgrind-all
 
 .PHONY: tidy-all
 tidy-all:

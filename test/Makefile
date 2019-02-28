@@ -14,6 +14,7 @@ COMMON_FILES=$(COMMON_DIR)/fips202.c $(COMMON_DIR)/sha2.c
 COMMON_HEADERS=$(COMMON_DIR)/fips202.h $(COMMON_DIR)/randombytes.h $(COMMON_DIR)/sha2.h
 DEST_DIR=../bin
 
+# This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I$(COMMON_DIR) $(EXTRAFLAGS)
 
 all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
