@@ -4,7 +4,7 @@ Contributing new schemes to PQClean
 Why contribute to PQClean
 -------------------------
 
-PQClean hopes to provide your scheme to people who want to integrate post-quantum cryptography into their own libraries and applications. But our extensive testing framework might also help you catch bugs in your implementation, that might have otherwise gone unnoticed. We run our builds on (emulated) ARMv7, ARMv8, x86 and amd64. Also, we apply static and dynamic analysis tools.
+PQClean hopes to provide your scheme to people who want to integrate post-quantum cryptography into their own libraries and applications. But our extensive testing framework might also help you catch bugs in your implementation, that might have otherwise gone unnoticed. We run our builds on (emulated) ARMv7, ARMv8, 32-bit PowerPC, x86 and amd64. Also, we apply static and dynamic analysis tools.
 
 Adding your scheme
 ------------------
@@ -104,4 +104,4 @@ Notably, `crypto_sign_open` should return `-1` if signature verification failed.
 Contributing to the framework of PQClean
 ========================================
 
-We also welcome contributions to the testing framework. Open an issue or pull request on Github and we will review your suggestion. In general, we are always looking to improve the experience of submitters of schemes and of people consuming the implementations collected by this project. Please do bear in mind the intentions of this project.
+We also welcome contributions to the testing framework. Open an issue or pull request on Github and we will review your suggestion. In general, we are always looking to improve the experience of submitters of schemes and of people consuming the implementations collected by this project.
