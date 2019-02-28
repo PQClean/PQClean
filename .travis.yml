@@ -1,6 +1,3 @@
-dist: xenial
-language: minimal
-
 matrix:
   include:
     - name: "MacOS + Clang"
@@ -25,26 +22,6 @@ matrix:
       script:
         - "cd test && python3 -m nose --rednose --verbose"
 
-
-env:
-  matrix:
-    - CC=gcc    ARCH=armhf
-    - CC=clang  ARCH=armhf
-    - CC=gcc    ARCH=arm64
-    - CC=clang  ARCH=arm64
-    - CC=gcc    ARCH=i386
-    - CC=clang  ARCH=i386
-    - CC=gcc    ARCH=amd64
-    - CC=clang  ARCH=amd64
-    - CC=gcc    ARCH=unstable-ppc
-    - CC=clang  ARCH=unstable-ppc
-
-script:
-  - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-  - docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
-      uname -a &&
-      export CC=${CC} &&
-      cd test && python3 -m nose --rednose --verbose"
 
 cache: pip
 
