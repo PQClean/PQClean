@@ -46,7 +46,7 @@ def check_functest_sanitizers(scheme_name, implementation_name):
     elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
     else:
-        print("Supported platform: {}".format(platform.machine))
+        print("Supported platform: {}".format(platform.machine()))
     implementation = pqclean.Implementation.by_name(
         scheme_name, implementation_name)
     helpers.make('clean-scheme', 'functest',
