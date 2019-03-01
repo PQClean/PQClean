@@ -15,21 +15,15 @@ def test_dynamic_memory():
         for implementation in scheme.implementations:
             # Keep this loop outside, to allow multiple assertions
             for function in ['malloc', 'free', 'realloc', 'calloc']:
-                yield (check_dynamic_memory,
-                       scheme.name, implementation.name, function)
+                yield (check_dynamic_memory, implementation, function)
 
 
-def check_dynamic_memory(scheme_name, implementation_name, function):
-    implementation = pqclean.Implementation.by_name(
-        scheme_name, implementation_name)
+def check_dynamic_memory(implementation, function):
     # 'make' will take care of not rebuilding existing library files
-    helpers.run_subprocess(
-        ['make'],
-        implementation.path()
-    )
+    helpers.make(working_dir=implementation.path())
+    scheme_name = implementation.scheme.name
     out = helpers.run_subprocess(
-        ['nm', '-g', 'lib{}_{}.a'.format(scheme_name,
-                                         implementation_name)],
+        ['nm', '-g', 'lib{}_{}.a'.format(scheme_name, implementation.name)],
         implementation.path()
     )
 
@@ -39,6 +33,7 @@ def check_dynamic_memory(scheme_name, implementation_name, function):
         if 'U {}'.format(function) in line:
             raise AssertionError(
                 "Illegal use of dynamic memory function '{}'".format(function))
+
 
 if __name__ == '__main__':
     try:
