@@ -92,6 +92,12 @@ class Implementation:
         return '{}{}_'.format(self.scheme.namespace_prefix(),
                               self.name.upper()).replace('-', '')
 
+    def __str__(self):
+        return "{} implementation of {}".format(self.name, self.scheme.name)
+
+    def __repr__(self):
+        return "<Implementation({}, {})>".format(self.name, self.scheme.name)
+
 
 class KEM(Scheme):
 

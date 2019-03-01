@@ -13,14 +13,6 @@ endif
 clean:
 	rm -rf bin
 
-.PHONY: format
-format:
-	astyle --project crypto_*/*/*/*.[ch] common/*.[ch]
-
-.PHONY: check-format
-check-format:
-	astyle --dry-run --project crypto_*/*/*/*.[ch] common/*.[ch] | grep Formatted && exit 1 || exit 0
-
 .PHONY: tidy
 tidy:
 	$(MAKE) do-tidy
@@ -40,7 +32,6 @@ apply-tidy:
 .PHONY: help
 help:
 	@echo "make clean				Clean up the bin/ folder"
-	@echo "make format				Automatically formats all the source code"
 	@echo "make tidy SCHEME=scheme  		Runs the clang-tidy linter against SCHEME"
 	@echo "make apply-tidy SCHEME=scheme		Tries to automatically fix the issues found by clang-tidy in SCHEME"
 	@echo "make tidy-all				Runs the clang-tidy linter against all schemes"

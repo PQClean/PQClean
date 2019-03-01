@@ -8,6 +8,10 @@ matrix:
         - pip3 install -r requirements.txt
       script:
         - "cd test && python3 -m nose --rednose --verbose"
+      addons:
+        homebrew:
+          packages:
+            - astyle
     - name: "MacOS + GCC8"
       os: osx
       osx_image: xcode10.1
@@ -15,6 +19,7 @@ matrix:
       addons:
         homebrew:
           packages:
+            - astyle
             - gcc@8
       before_install:
         - pip3 install -r requirements.txt
