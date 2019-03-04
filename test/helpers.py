@@ -26,11 +26,12 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
         env=env,
     )
     print(result.stdout.decode('utf-8'))
-    assert(result.returncode == expected_returncode)
+    assert result.returncode == expected_returncode, \
+        "Got unexpected return code {}".format(result.returncode)
     return result.stdout.decode('utf-8')
 
 
-def make(*args, working_dir='.', env=None, **kwargs):
+def make(*args, working_dir='.', env=None, expected_returncode=0, **kwargs):
     """
     Runs a make target in the specified working directory
 
@@ -54,6 +55,7 @@ def make(*args, working_dir='.', env=None, **kwargs):
         ],
         working_dir=working_dir,
         env=env,
+        expected_returncode=expected_returncode,
     )
 
 
