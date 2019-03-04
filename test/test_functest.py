@@ -43,7 +43,7 @@ def check_functest(implementation):
 def check_functest_sanitizers(implementation):
     env = None
     if platform.machine() == 'ppc' and os.environ.get('CC', 'gcc') == 'clang':
-        raise unittest.SkipTest()
+        raise unittest.SkipTest("Clang does not support ASAN on ppc")
     elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
     else:

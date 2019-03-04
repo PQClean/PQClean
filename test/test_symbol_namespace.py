@@ -10,18 +10,17 @@ import unittest
 
 
 def test_symbol_namespace():
-    if sys.platform not in ['linux', 'darwin']:
-        raise unittest.SkipTest()
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
             yield check_symbol_namespace, implementation
 
 
 def check_symbol_namespace(implementation):
+    if sys.platform not in ['linux', 'darwin']:
+        raise unittest.SkipTest("Unsupported platform")
     helpers.make(working_dir=implementation.path())
     out = helpers.run_subprocess(
-        ['nm', '-g', 'lib{}_{}.a'.format(implementation.scheme.name,
-                                         implementation.name)],
+        ['nm', '-g', implementation.libname()],
         implementation.path()
     )
 
