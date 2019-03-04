@@ -32,6 +32,7 @@ int main(void) {
 
     uint8_t mi[MAXMLEN];
     uint8_t sm[MAXMLEN + CRYPTO_BYTES];
+
     size_t smlen;
     size_t mlen;
 

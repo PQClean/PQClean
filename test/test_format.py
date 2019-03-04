@@ -2,7 +2,7 @@ import os
 from glob import glob
 
 import pqclean
-from helpers import run_subprocess
+from helpers import run_subprocess, skip_windows
 
 
 def test_formatting():
@@ -11,6 +11,8 @@ def test_formatting():
             yield check_format, implementation
 
 
+@skip_windows(message="This test needs to be amended to work with Windows "
+                      "installations of astyle")
 def check_format(implementation: pqclean.Implementation):
     cfiles = glob(os.path.join(implementation.path(), '*.c'))
     hfiles = glob(os.path.join(implementation.path(), '*.h'))

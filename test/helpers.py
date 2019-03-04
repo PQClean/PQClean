@@ -1,5 +1,7 @@
+import functools
 import os
 import subprocess
+import unittest
 
 
 def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
@@ -15,6 +17,7 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
     # Note we need to capture stdout/stderr from the subprocess,
     # then print it, which nose/unittest will then capture and
     # buffer appropriately
+    print(working_dir + " > " + " ".join(command))
     result = subprocess.run(
         command,
         stdout=subprocess.PIPE,
@@ -22,7 +25,6 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
         cwd=working_dir,
         env=env,
     )
-    print(working_dir + " > " + " ".join(command))
     print(result.stdout.decode('utf-8'))
     assert(result.returncode == expected_returncode)
     return result.stdout.decode('utf-8')
@@ -35,13 +37,33 @@ def make(*args, working_dir='.', env=None, **kwargs):
     Usage:
         make('clean', 'targetb', SCHEME='bla')
     """
-    make_command = 'make'
+    if os.name == 'nt':
+        make_command = ['nmake', '/f', 'Makefile.Microsoft_nmake', '/E']
+        # we need SCHEME_UPPERCASE and IMPLEMENTATION_UPPERCASE with nmake
+        for envvar in ['IMPLEMENTATION', 'SCHEME']:
+            if envvar in kwargs:
+                kwargs['{}_UPPERCASE'.format(envvar)] = kwargs[envvar].upper().replace('-', '')
+    else:
+        make_command = ['make']
+
     return run_subprocess(
         [
-            make_command,
-            *args,
+            *make_command,
             *['{}={}'.format(k, v) for k, v in kwargs.items()],
+            *args,
         ],
         working_dir=working_dir,
         env=env,
     )
+
+
+def skip_windows(message="This test is not supported on Windows"):
+    def wrapper(f):
+        @functools.wraps(f)
+        def skip_windows(*args, **kwargs):
+            raise unittest.SkipTest(message)
+        if os.name == 'nt':
+            return skip_windows
+        else:
+            return f
+    return wrapper

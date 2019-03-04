@@ -24,17 +24,22 @@ def test_functest_sanitizers():
 
 
 def check_functest(implementation):
-    helpers.make(TYPE=implementation.scheme.type,
+    helpers.make(#'functest',
+                 TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
                  working_dir=os.path.join('..', 'test'))
     helpers.run_subprocess(
-        ['./functest_{}_{}'.format(implementation.scheme.name,
-                                   implementation.name)],
+        [os.path.join('..', 'bin', 'functest_{}_{}{}'.format(
+            implementation.scheme.name,
+            implementation.name,
+            '.exe' if os.name == 'nt' else ''
+        ))],
         os.path.join('..', 'bin'),
     )
 
 
+@helpers.skip_windows
 def check_functest_sanitizers(implementation):
     env = None
     if platform.machine() == 'ppc' and os.environ.get('CC', 'gcc') == 'clang':
@@ -51,8 +56,11 @@ def check_functest_sanitizers(implementation):
                  working_dir=os.path.join('..', 'test'),
                  env=env)
     helpers.run_subprocess(
-        ['./functest_{}_{}'.format(implementation.scheme.name,
-                                   implementation.name)],
+        [os.path.join('..', 'bin', 'functest_{}_{}{}'.format(
+            implementation.scheme.name,
+            implementation.name,
+            '.exe' if os.name == 'nt' else ''
+        ))],
         os.path.join('..', 'bin'),
         env=env,
     )

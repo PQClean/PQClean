@@ -1,4 +1,5 @@
 #ifndef API_H
+#include <stdint.h>
 #define API_H
 
 #include <stddef.h>
