@@ -7,6 +7,9 @@ build:
 
 init:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - set PATH="C:\\Python37";%PATH%
 
 build_script:
-  - scripts_windows\build_all.bat
+  - python -m pip install -r requirements.txt
+  - cd test
+  - python -m nose -v --rednose
