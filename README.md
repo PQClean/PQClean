@@ -133,7 +133,7 @@ is released under the conditions of [CC0](http://creativecommons.org/publicdomai
 
 ## Running tests locally
 
-While we run extensive automatic testing on [Travis CI][travis-pqc] and [Appveyor][appveyor-pqc], most tests can also be run locally.
+While we run extensive automatic testing on [Circle CI][circleci-pqc] (Linux builds), [Travis CI][travis-pqc] (OS X builds) and [Appveyor][appveyor-pqc] (Windows builds), most tests can also be run locally.
 To do this, make sure the following is installed:
 
 * Python 3.5+
@@ -144,5 +144,6 @@ If you have the `rednose` plugin for `nosetests` installed, run `nosetests --red
 
 You may also run `python <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
 
+[circleci-pqc]: https://circleci.com/gh/PQClean/PQClean/
 [travis-pqc]: https://travis-ci.com/PQClean/PQClean/
 [appveyor-pqc]: https://ci.appveyor.com/project/PQClean/pqclean
