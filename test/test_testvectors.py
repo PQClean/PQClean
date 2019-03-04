@@ -16,15 +16,19 @@ def test_testvectors():
 
 
 def check_vectors(implementation):
-    helpers.make(TYPE=implementation.scheme.type,
+    helpers.make('testvectors',
+                 TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
                  working_dir=os.path.join('..', 'test'))
     out = helpers.run_subprocess(
-        ['./testvectors_{}_{}'.format(implementation.scheme.name,
-                                      implementation.name)],
+        [os.path.join('..', 'bin', 'testvectors_{}_{}{}'.format(
+            implementation.scheme.name,
+            implementation.name,
+            '.exe' if os.name == 'nt' else ''
+        ))],
         os.path.join('..', 'bin'),
-    )
+    ).replace('\r', '')
     assert(implementation.scheme.metadata()['testvectors-sha256'].lower()
            == hashlib.sha256(out.encode('utf-8')).hexdigest().lower())
 
