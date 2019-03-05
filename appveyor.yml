@@ -5,8 +5,13 @@ image: Visual Studio 2017
 build:
   verbosity: minimal
 
+environment:
+  matrix:
+    - BITS: 64
+    - BITS: 32
+
 init:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars%BITS%.bat"
   - set PATH="C:\\Python37";%PATH%
 
 build_script:
