@@ -14,20 +14,16 @@ def test_makefile_dependencies():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
             # initial build - want to have *all* files in place at beginning
-            helpers.run_subprocess(['make', 'clean'], implementation.path())
-            helpers.run_subprocess(['make'], implementation.path())
+            helpers.make('clean', working_dir=implementation.path())
+            helpers.make(working_dir=implementation.path())
             # test case for each candidate file
             cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
             hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
             for file in cfiles + hfiles:
-                yield (check_makefile_dependencies, scheme.name,
-                       implementation.name, file)
+                yield (check_makefile_dependencies, implementation, file)
 
 
-def check_makefile_dependencies(scheme_name, implementation_name, file):
-    implementation = pqclean.Implementation.by_name(scheme_name,
-                                                    implementation_name)
-
+def check_makefile_dependencies(implementation, file):
     cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
     hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
     ofiles = glob.glob(os.path.join(implementation.path(), '*.o'))

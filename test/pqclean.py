@@ -59,6 +59,9 @@ class Scheme:
             print("Can't open {}: {}".format(metafile, e))
             return None
 
+    def __repr__(self):
+        return "<{}({})>".format(self.type.title(), self.name)
+
 
 class Implementation:
 
@@ -96,7 +99,7 @@ class Implementation:
         return "{} implementation of {}".format(self.name, self.scheme.name)
 
     def __repr__(self):
-        return "<Implementation({}, {})>".format(self.name, self.scheme.name)
+        return "<Implementation({}, {})>".format(self.scheme.name, self.name)
 
 
 class KEM(Scheme):

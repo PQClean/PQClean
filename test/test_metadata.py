@@ -9,11 +9,10 @@ import pqclean
 
 def test_metadata():
     for scheme in pqclean.Scheme.all_schemes():
-        yield check_metadata, scheme.name
+        yield check_metadata, scheme
 
 
-def check_metadata(scheme_name):
-    scheme = pqclean.Scheme.by_name(scheme_name)
+def check_metadata(scheme):
     metadata = scheme.metadata()
 
     specification = EXPECTED_FIELDS.items()

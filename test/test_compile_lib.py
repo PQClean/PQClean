@@ -10,20 +10,11 @@ import helpers
 def test_compile_lib():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_compile_lib, scheme.name, implementation.name
+            yield check_compile_lib, implementation
 
 
-def check_compile_lib(scheme_name, implementation_name):
-    implementation = pqclean.Implementation.by_name(
-            scheme_name, implementation_name)
-    helpers.run_subprocess(
-        ['make', 'clean'],
-        implementation.path()
-    )
-    helpers.run_subprocess(
-        ['make'],
-        implementation.path()
-    )
+def check_compile_lib(implementation):
+    helpers.make(working_dir=implementation.path())
 
 
 if __name__ == '__main__':

@@ -4,17 +4,15 @@ Checks that no implementation makes use of symbolic links.
 
 import os
 import pqclean
-import sys
+
 
 def test_no_symlinks():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_no_symlinks, scheme.name, implementation.name
+            yield check_no_symlinks, implementation
 
 
-def check_no_symlinks(scheme_name, implementation_name):
-    implementation = pqclean.Implementation.by_name(
-        scheme_name, implementation_name)
+def check_no_symlinks(implementation):
     for file in os.listdir(implementation.path()):
         fpath = os.path.join(implementation.path(), file)
         if os.path.islink(fpath):

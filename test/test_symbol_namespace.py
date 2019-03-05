@@ -14,18 +14,14 @@ def test_symbol_namespace():
         raise unittest.SkipTest()
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_symbol_namespace, scheme.name, implementation.name
+            yield check_symbol_namespace, implementation
 
 
-def check_symbol_namespace(scheme_name, implementation_name):
-    implementation = pqclean.Implementation.by_name(
-        scheme_name, implementation_name)
-    helpers.run_subprocess(
-        ['make'],
-        implementation.path()
-    )
+def check_symbol_namespace(implementation):
+    helpers.make(working_dir=implementation.path())
     out = helpers.run_subprocess(
-        ['nm', '-g', 'lib{}_{}.a'.format(scheme_name, implementation_name)],
+        ['nm', '-g', 'lib{}_{}.a'.format(implementation.scheme.name,
+                                         implementation.name)],
         implementation.path()
     )
 
