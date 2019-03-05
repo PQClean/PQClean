@@ -27,9 +27,9 @@ FOR %%T IN (kem sign) DO (
     CD %%K
     FOR /D %%L IN (*) DO (
       CD ..\..\test
-      nmake /f Makefile.Microsoft_nmake /E TYPE=%%T SCHEME=%%K SCHEME_UPPERCASE=!schemeuppercase! IMPLEMENTATION=%%L clean
+      nmake /NOLOGO /f Makefile.Microsoft_nmake /E TYPE=%%T SCHEME=%%K SCHEME_UPPERCASE=!schemeuppercase! IMPLEMENTATION=%%L clean
       IF ERRORLEVEL 1 SET EL=4
-      nmake /f Makefile.Microsoft_nmake /E TYPE=%%T SCHEME=%%K SCHEME_UPPERCASE=!schemeuppercase! IMPLEMENTATION=%%L
+      nmake /NOLOGO /f Makefile.Microsoft_nmake /E TYPE=%%T SCHEME=%%K SCHEME_UPPERCASE=!schemeuppercase! IMPLEMENTATION=%%L
       IF ERRORLEVEL 1 SET EL=5
       CD ..
       bin\functest_%%K_%%L

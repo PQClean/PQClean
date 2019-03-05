@@ -39,7 +39,8 @@ def make(*args, working_dir='.', env=None, expected_returncode=0, **kwargs):
         make('clean', 'targetb', SCHEME='bla')
     """
     if os.name == 'nt':
-        make_command = ['nmake', '/f', 'Makefile.Microsoft_nmake', '/E']
+        make_command = ['nmake', '/f', 'Makefile.Microsoft_nmake',
+                        '/NOLOGO', '/E']
         # we need SCHEME_UPPERCASE and IMPLEMENTATION_UPPERCASE with nmake
         for envvar in ['IMPLEMENTATION', 'SCHEME']:
             if envvar in kwargs:
