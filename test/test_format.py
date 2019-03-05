@@ -1,8 +1,8 @@
-import os
-from glob import glob
+import shutil
+import unittest
 
 import pqclean
-from helpers import run_subprocess, skip_windows
+from helpers import run_subprocess
 
 
 def test_formatting():
@@ -11,11 +11,11 @@ def test_formatting():
             yield check_format, implementation
 
 
-@skip_windows(message="This test needs to be amended to work with Windows "
-                      "installations of astyle")
 def check_format(implementation: pqclean.Implementation):
-    cfiles = glob(os.path.join(implementation.path(), '*.c'))
-    hfiles = glob(os.path.join(implementation.path(), '*.h'))
+    if shutil.which('astyle') is None:
+        raise unittest.SkipTest("AStyle is not installed")
+    cfiles = implementation.cfiles()
+    hfiles = implementation.hfiles()
     run_subprocess(['astyle',
                     '--dry-run',
                     '--options=../.astylerc',
