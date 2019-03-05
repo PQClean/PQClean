@@ -68,9 +68,9 @@ These items should be available in your `api.h` file.
 Functions:
 
 ```c
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
 ```
 
 `#define` macros:
@@ -86,9 +86,11 @@ int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned ch
 Functions:
 
 ```c
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign(unsigned char *sm, unsigned long long *smlen, const unsigned char *msg, unsigned long long len, const unsigned char *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_open(unsigned char *m, unsigned long long *mlen, const unsigned char *sm, unsigned long long smlen, const unsigned char *pk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign(uint8_t *sm, unsigned long long *smlen, const uint8_t *msg, unsigned long long len, const uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_open(uint8_t *m, unsigned long long *mlen, const uint8_t *sm, unsigned long long smlen, const uint8_t *pk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
 ```
 
 `#define` macros:
