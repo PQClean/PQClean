@@ -24,20 +24,9 @@ def test_makefile_dependencies():
 
 
 def touch(time, *files):
-    if not files:
-        raise Exception("Please specify the files to update")
-    if os.name == 'nt':
-        formatstring = "Get-Date -year %Y -month %m -day %d -hour %H -minute %M -second %S"
-        time = time.strftime(formatstring)
-        commands = []
-        for file in files:
-            commands.append('(ls {}).LastWriteTime = {}'.format(file, time))
-
-        helpers.run_subprocess(['powershell', '; '.join(commands)])
-    else:
-        formatstring = "%Y%m%d%H%M.%S"
-        time = time.strftime(formatstring)
-        helpers.run_subprocess(['touch', '-t', time, *files])
+    for path in files:
+        times = (time.timestamp(), time.timestamp())
+        os.utime(path, times)
 
 
 def make_check(path, expect_error=False):
