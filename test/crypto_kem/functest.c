@@ -1,27 +1,30 @@
-#include "api.h"
-#include "randombytes.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "api.h"
+#include "randombytes.h"
+
 #define NTESTS 10
 
-const unsigned char canary[8] = {
+const uint8_t canary[8] = {
     0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
 };
 
 /* allocate a bit more for all keys and messages and
  * make sure it is not touched by the implementations.
  */
-static void write_canary(unsigned char *d) {
+static void write_canary(uint8_t *d) {
     for (int i = 0; i < 8; i++) {
         d[i] = canary[i];
     }
 }
 
-static int check_canary(const unsigned char *d) {
+static int check_canary(const uint8_t *d) {
     for (int i = 0; i < 8; i++) {
-        if (d[i] != canary[i])
+        if (d[i] != canary[i]) {
             return -1;
+        }
     }
     return 0;
 }
@@ -47,11 +50,11 @@ static int test_keys(void) {
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
      */
-    unsigned char key_a_aligned[CRYPTO_BYTES + 16 + 1];
-    unsigned char key_b_aligned[CRYPTO_BYTES + 16 + 1];
-    unsigned char pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
-    unsigned char sendb_aligned[CRYPTO_CIPHERTEXTBYTES + 16 + 1];
-    unsigned char sk_a_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
+    uint8_t key_a_aligned[CRYPTO_BYTES + 16 + 1];
+    uint8_t key_b_aligned[CRYPTO_BYTES + 16 + 1];
+    uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
+    uint8_t sendb_aligned[CRYPTO_CIPHERTEXTBYTES + 16 + 1];
+    uint8_t sk_a_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
 
     /*
      * Make sure all pointers are odd.
@@ -59,11 +62,11 @@ static int test_keys(void) {
      * data alignment. For example this would catch if an implementation
      * directly uses these pointers to load into vector registers using movdqa.
      */
-    unsigned char *key_a = (unsigned char *) ((uintptr_t) key_a_aligned|(uintptr_t) 1);
-    unsigned char *key_b = (unsigned char *) ((uintptr_t) key_b_aligned|(uintptr_t) 1);
-    unsigned char *pk    = (unsigned char *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
-    unsigned char *sendb = (unsigned char *) ((uintptr_t) sendb_aligned|(uintptr_t) 1);
-    unsigned char *sk_a  = (unsigned char *) ((uintptr_t) sk_a_aligned|(uintptr_t) 1);
+    uint8_t *key_a = (uint8_t *) ((uintptr_t) key_a_aligned|(uintptr_t) 1);
+    uint8_t *key_b = (uint8_t *) ((uintptr_t) key_b_aligned|(uintptr_t) 1);
+    uint8_t *pk    = (uint8_t *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
+    uint8_t *sendb = (uint8_t *) ((uintptr_t) sendb_aligned|(uintptr_t) 1);
+    uint8_t *sk_a  = (uint8_t *) ((uintptr_t) sk_a_aligned|(uintptr_t) 1);
 
     /*
      * Write 8 byte canary before and after the actual memory regions.
@@ -114,10 +117,10 @@ static int test_keys(void) {
 }
 
 static int test_invalid_sk_a(void) {
-    unsigned char sk_a[CRYPTO_SECRETKEYBYTES];
-    unsigned char key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
-    unsigned char pk[CRYPTO_PUBLICKEYBYTES];
-    unsigned char sendb[CRYPTO_CIPHERTEXTBYTES];
+    uint8_t sk_a[CRYPTO_SECRETKEYBYTES];
+    uint8_t key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
+    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
+    uint8_t sendb[CRYPTO_CIPHERTEXTBYTES];
     int i;
     int returncode;
 
@@ -149,16 +152,16 @@ static int test_invalid_sk_a(void) {
 }
 
 static int test_invalid_ciphertext(void) {
-    unsigned char sk_a[CRYPTO_SECRETKEYBYTES];
-    unsigned char key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
-    unsigned char pk[CRYPTO_PUBLICKEYBYTES];
-    unsigned char sendb[CRYPTO_CIPHERTEXTBYTES];
+    uint8_t sk_a[CRYPTO_SECRETKEYBYTES];
+    uint8_t key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
+    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
+    uint8_t sendb[CRYPTO_CIPHERTEXTBYTES];
     int i;
     size_t pos;
     int returncode;
 
     for (i = 0; i < NTESTS; i++) {
-        randombytes((unsigned char *)&pos, sizeof(size_t));
+        randombytes((uint8_t *)&pos, sizeof(size_t));
 
         // Alice generates a public key
         RETURNS_ZERO(crypto_kem_keypair(pk, sk_a));

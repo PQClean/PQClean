@@ -1,12 +1,15 @@
-#include "api.h"
-#include "randombytes.h"
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "api.h"
+#include "randombytes.h"
+
 #define NTESTS 100
 
-static void printbytes(const unsigned char *x, unsigned long long xlen) {
-    unsigned long long i;
+static void printbytes(const uint8_t *x, size_t xlen) {
+    size_t i;
     for (i = 0; i < xlen; i++) {
         printf("%02x", x[i]);
     }
@@ -23,10 +26,10 @@ static void printbytes(const unsigned char *x, unsigned long long xlen) {
 #define crypto_kem_dec NAMESPACE(crypto_kem_dec)
 
 int main(void) {
-    unsigned char key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
-    unsigned char pk[CRYPTO_PUBLICKEYBYTES];
-    unsigned char sendb[CRYPTO_CIPHERTEXTBYTES];
-    unsigned char sk_a[CRYPTO_SECRETKEYBYTES];
+    uint8_t key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
+    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
+    uint8_t sendb[CRYPTO_CIPHERTEXTBYTES];
+    uint8_t sk_a[CRYPTO_SECRETKEYBYTES];
     int i, j;
     for (i = 0; i < NTESTS; i++) {
         // Key-pair generation

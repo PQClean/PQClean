@@ -1,28 +1,32 @@
-#include "api.h"
-#include "randombytes.h"
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "api.h"
+#include "randombytes.h"
 
 #define NTESTS 15
 #define MLEN 32
 
-const unsigned char canary[8] = {
+const uint8_t canary[8] = {
     0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
 };
 
 /* allocate a bit more for all keys and messages and
  * make sure it is not touched by the implementations.
  */
-static void write_canary(unsigned char *d) {
+static void write_canary(uint8_t *d) {
     for (int i = 0; i < 8; i++) {
         d[i] = canary[i];
     }
 }
 
-static int check_canary(const unsigned char *d) {
+static int check_canary(const uint8_t *d) {
     for (int i = 0; i < 8; i++) {
-        if (d[i] != canary[i])
+        if (d[i] != canary[i]) {
             return -1;
+        }
     }
     return 0;
 }
@@ -48,10 +52,10 @@ static int test_sign(void) {
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
      */
-    unsigned char pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
-    unsigned char sk_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
-    unsigned char sm_aligned[MLEN + CRYPTO_BYTES + 16 + 1];
-    unsigned char m_aligned[MLEN + 16 + 1];
+    uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
+    uint8_t sk_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
+    uint8_t sm_aligned[MLEN + CRYPTO_BYTES + 16 + 1];
+    uint8_t m_aligned[MLEN + 16 + 1];
 
     /*
      * Make sure all pointers are odd.
@@ -59,13 +63,13 @@ static int test_sign(void) {
      * data alignment. For example this would catch if an implementation
      * directly uses these pointers to load into vector registers using movdqa.
      */
-    unsigned char *pk = (unsigned char *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
-    unsigned char *sk = (unsigned char *) ((uintptr_t) sk_aligned|(uintptr_t) 1);
-    unsigned char *sm = (unsigned char *) ((uintptr_t) sm_aligned|(uintptr_t) 1);
-    unsigned char *m  = (unsigned char *) ((uintptr_t) m_aligned|(uintptr_t) 1);
+    uint8_t *pk = (uint8_t *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
+    uint8_t *sk = (uint8_t *) ((uintptr_t) sk_aligned|(uintptr_t) 1);
+    uint8_t *sm = (uint8_t *) ((uintptr_t) sm_aligned|(uintptr_t) 1);
+    uint8_t *m  = (uint8_t *) ((uintptr_t) m_aligned|(uintptr_t) 1);
 
-    unsigned long long mlen;
-    unsigned long long smlen;
+    size_t mlen;
+    size_t smlen;
     int returncode;
 
     int i;
@@ -114,14 +118,14 @@ static int test_sign(void) {
 }
 
 static int test_wrong_pk(void) {
-    unsigned char pk[CRYPTO_PUBLICKEYBYTES];
-    unsigned char pk2[CRYPTO_PUBLICKEYBYTES];
-    unsigned char sk[CRYPTO_SECRETKEYBYTES];
-    unsigned char sm[MLEN + CRYPTO_BYTES];
-    unsigned char m[MLEN];
+    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
+    uint8_t pk2[CRYPTO_PUBLICKEYBYTES];
+    uint8_t sk[CRYPTO_SECRETKEYBYTES];
+    uint8_t sm[MLEN + CRYPTO_BYTES];
+    uint8_t m[MLEN];
 
-    unsigned long long mlen;
-    unsigned long long smlen;
+    size_t mlen;
+    size_t smlen;
 
     int returncode;
 
