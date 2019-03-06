@@ -12,14 +12,16 @@ environment:
 
 init:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars%BITS%.bat"
-  - set PATH="C:\\Python37";"C:\\Python37\Scripts";"C:\\tmp\\tools";%PATH%
-  - mkdir "C:\tmp\tools"
     # Download AStyle 3.1: first enable strong crypto in Invoke-WebRequest
   - ps: Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319" -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
   - ps: Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319" -Name "SchUseStrongCrypto" -Value '1' -Type DWord
-  - ps: Invoke-WebRequest -OutFile "C:\tmp\tools\AStyle.exe" "https://rded.nl/pqclean/AStyle.exe"
+    # Add Python to PATH
+  - set PATH="C:\\Python37";"C:\\Python37\Scripts";%PATH%
 
 build_script:
   - python -m pip install -r requirements.txt
   - cd test
+    # Download Astyle to local folder because putting it in PATH doesn't work
+  - ps: Invoke-WebRequest -OutFile "astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
+    # Run tests
   - python -m nose -v --rednose

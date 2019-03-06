@@ -24,7 +24,7 @@ def test_functest_sanitizers():
 
 
 def check_functest(implementation):
-    helpers.make(#'functest',
+    helpers.make('functest',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
@@ -48,6 +48,8 @@ def check_functest_sanitizers(implementation):
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
     else:
         print("Supported platform: {}".format(platform.machine()))
+
+    helpers.ensure_available('valgrind')
     helpers.make('clean-scheme', 'functest',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,

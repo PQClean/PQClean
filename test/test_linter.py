@@ -1,10 +1,8 @@
 import os
 from glob import glob
-import shutil
-import unittest
 
 import pqclean
-from helpers import run_subprocess
+from helpers import run_subprocess, ensure_available
 
 
 def test_clang_tidy():
@@ -14,8 +12,7 @@ def test_clang_tidy():
 
 
 def check_tidy(implementation: pqclean.Implementation):
-    if shutil.which('clang-tidy') is None:
-        raise unittest.SkipTest("clang-tidy unavailable in PATH")
+    ensure_available('clang-tidy')
     cfiles = glob(os.path.join(implementation.path(), '*.c'))
     common_files = glob(os.path.join('..', 'common', '*.c'))
     run_subprocess(['clang-tidy',
