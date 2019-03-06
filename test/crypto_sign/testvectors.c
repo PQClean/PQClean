@@ -1,13 +1,16 @@
-#include "api.h"
-#include "randombytes.h"
+#include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+
+#include "api.h"
+#include "randombytes.h"
 
 #define NTESTS 100
 #define MAXMLEN 2048
 
-static void printbytes(const unsigned char *x, unsigned long long xlen) {
-    unsigned long long i;
+static void printbytes(const uint8_t *x, size_t xlen) {
+    size_t i;
     for (i = 0; i < xlen; i++) {
         printf("%02x", x[i]);
     }
@@ -24,16 +27,16 @@ static void printbytes(const unsigned char *x, unsigned long long xlen) {
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
 
 int main(void) {
-    unsigned char sk[CRYPTO_SECRETKEYBYTES];
-    unsigned char pk[CRYPTO_PUBLICKEYBYTES];
+    uint8_t sk[CRYPTO_SECRETKEYBYTES];
+    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
 
-    unsigned char mi[MAXMLEN];
-    unsigned char sm[MAXMLEN + CRYPTO_BYTES];
-    unsigned long long smlen;
-    unsigned long long mlen;
+    uint8_t mi[MAXMLEN];
+    uint8_t sm[MAXMLEN + CRYPTO_BYTES];
+    size_t smlen;
+    size_t mlen;
 
     int r;
-    unsigned long long i, k;
+    size_t i, k;
 
     for (i = 0; i < MAXMLEN; i = (i == 0) ? i + 1 : i << 1) {
         randombytes(mi, i);

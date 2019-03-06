@@ -102,15 +102,15 @@ void PQCLEAN_DILITHIUMIII_CLEAN_challenge(poly *c, const unsigned char mu[CRHBYT
  *
  * Description: Generates public and private key.
  *
- * Arguments:   - unsigned char *pk: pointer to output public key (allocated
+ * Arguments:   - uint8_t *pk: pointer to output public key (allocated
  *                                   array of CRYPTO_PUBLICKEYBYTES bytes)
- *              - unsigned char *sk: pointer to output private key (allocated
+ *              - uint8_t *sk: pointer to output private key (allocated
  *                                   array of CRYPTO_SECRETKEYBYTES bytes)
  *
  * Returns 0 (success)
  **************************************************/
-int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_keypair(unsigned char *pk,
-        unsigned char *sk) {
+int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_keypair(uint8_t *pk,
+        uint8_t *sk) {
     unsigned int i;
     unsigned char seedbuf[3 * SEEDBYTES];
     unsigned char tr[CRHBYTES];
@@ -168,26 +168,25 @@ int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_keypair(unsigned char *pk,
  *
  * Description: Compute signed message.
  *
- * Arguments:   - unsigned char *sm: pointer to output signed message (allocated
+ * Arguments:   - uint8_t *sm: pointer to output signed message (allocated
  *                                   array with CRYPTO_BYTES + mlen bytes),
  *                                   can be equal to m
- *              - unsigned long long *smlen: pointer to output length of signed
+ *              - size_t *smlen: pointer to output length of signed
  *                                           message
- *              - const unsigned char *m: pointer to message to be signed
- *              - unsigned long long mlen: length of message
- *              - const unsigned char *sk: pointer to bit-packed secret key
+ *              - const uint8_t *m: pointer to message to be signed
+ *              - size_t mlen: length of message
+ *              - const uint8_t *sk: pointer to bit-packed secret key
  *
  * Returns 0 (success)
  **************************************************/
-int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign(unsigned char *sm,
-        unsigned long long *smlen,
-        const unsigned char *m,
-        unsigned long long mlen,
-        const unsigned char *sk) {
+int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign(uint8_t *sm,
+        size_t *smlen,
+        const uint8_t *m,
+        size_t mlen,
+        const uint8_t *sk) {
     unsigned long long i, j;
     unsigned int n;
-    unsigned char
-    seedbuf[2 * SEEDBYTES + CRHBYTES]; // TODO(thom): nonce in seedbuf (2x)
+    unsigned char seedbuf[2 * SEEDBYTES + CRHBYTES]; // TODO(thom): nonce in seedbuf (2x)
     unsigned char tr[CRHBYTES];
     unsigned char *rho, *key, *mu;
     uint16_t nonce = 0;
@@ -307,20 +306,20 @@ rej:
  *
  * Description: Verify signed message.
  *
- * Arguments:   - unsigned char *m: pointer to output message (allocated
+ * Arguments:   - uint8_t *m: pointer to output message (allocated
  *                                  array with smlen bytes), can be equal to sm
- *              - unsigned long long *mlen: pointer to output length of message
- *              - const unsigned char *sm: pointer to signed message
- *              - unsigned long long smlen: length of signed message
- *              - const unsigned char *sk: pointer to bit-packed public key
+ *              - size_t *mlen: pointer to output length of message
+ *              - const uint8_t *sm: pointer to signed message
+ *              - size_t smlen: length of signed message
+ *              - const uint8_t *sk: pointer to bit-packed public key
  *
  * Returns 0 if signed message could be verified correctly and -1 otherwise
  **************************************************/
-int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_open(unsigned char *m,
-        unsigned long long *mlen,
-        const unsigned char *sm,
-        unsigned long long smlen,
-        const unsigned char *pk) {
+int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_open(uint8_t *m,
+        size_t *mlen,
+        const uint8_t *sm,
+        size_t smlen,
+        const uint8_t *pk) {
     unsigned long long i;
     unsigned char rho[SEEDBYTES];
     unsigned char mu[CRHBYTES];
@@ -394,7 +393,7 @@ int PQCLEAN_DILITHIUMIII_CLEAN_crypto_sign_open(unsigned char *m,
 
     /* Signature verification failed */
 badsig:
-    *mlen = (unsigned long long) -1;
+    *mlen = 0;
     for (i = 0; i < smlen; ++i) {
         m[i] = 0;
     }
