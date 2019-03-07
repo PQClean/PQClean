@@ -19,41 +19,51 @@ def test_makefile_dependencies():
             # test case for each candidate file
             cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
             hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
-            for file in cfiles + hfiles:
+            for file in (cfiles + hfiles):
                 yield (check_makefile_dependencies, implementation, file)
 
 
+def touch(time, *files):
+    for path in files:
+        times = (time.timestamp(), time.timestamp())
+        os.utime(path, times)
+
+
+def make_check(path, expect_error=False):
+    makeflag = '-q' if os.name != 'nt' else '/Q'
+    expected_returncode = 0
+    if expect_error:
+        expected_returncode = 1 if os.name != 'nt' else 255
+    helpers.make(makeflag, working_dir=path,
+                 expected_returncode=expected_returncode)
+
+
 def check_makefile_dependencies(implementation, file):
-    cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
-    hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
-    ofiles = glob.glob(os.path.join(implementation.path(), '*.o'))
+    cfiles = implementation.cfiles()
+    hfiles = implementation.hfiles()
+    ofiles = implementation.ofiles()
 
     libfile = os.path.join(implementation.path(), implementation.libname())
 
     # modification time-based calculations is tricky on a sub-second basis
     # so we reset all the modification times to a known and "sensible" order
-    now = datetime.datetime.now()
-    ago15 = now - datetime.timedelta(seconds=15)
-    ago10 = now - datetime.timedelta(seconds=10)
-    ago5 = now - datetime.timedelta(seconds=5)
-    formatstring = "%Y%m%d%H%M.%S"
-    helpers.run_subprocess(
-        ['touch', '-t', ago15.strftime(formatstring)] + cfiles + hfiles)
-    helpers.run_subprocess(
-        ['touch', '-t', ago10.strftime(formatstring)] + ofiles)
-    helpers.run_subprocess(
-        ['touch', '-t', ago5.strftime(formatstring), libfile])
+    now = datetime.datetime.now() - datetime.timedelta(seconds=10)
+    ago15 = now - datetime.timedelta(minutes=15)
+    ago10 = now - datetime.timedelta(minutes=10)
+    ago5 = now - datetime.timedelta(minutes=5)
+
+    touch(ago15, *cfiles, *hfiles)
+    touch(ago10, *ofiles)
+    touch(ago5, libfile)
 
     # Sanity check: the scheme is up to date
-    helpers.run_subprocess(['make', '-q'], implementation.path(),
-                           expected_returncode=0)
+    make_check(implementation.path())
 
     # touch the candidate .c / .h file
-    helpers.run_subprocess(['touch', '-t', now.strftime(formatstring), file])
+    touch(now, file)
 
     # check if it needs to be rebuilt using make -q
-    helpers.run_subprocess(['make', '-q'], implementation.path(),
-                           expected_returncode=1)
+    make_check(implementation.path(), expect_error=True)
 
 
 if __name__ == '__main__':

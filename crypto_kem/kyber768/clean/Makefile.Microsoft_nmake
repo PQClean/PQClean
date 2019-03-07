@@ -1,16 +1,19 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIB=libkyber768_clean.lib
+LIBRARY=libkyber768_clean.lib
 OBJECTS=cbd.obj indcpa.obj kem.obj ntt.obj poly.obj polyvec.obj precomp.obj reduce.obj verify.obj
 
-CFLAGS=/I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /I ..\..\..\common /W4 /WX
 
-all: $(LIB)
+all: $(LIBRARY)
 
-$(LIB): $(OBJECTS)
-    LIB.EXE /OUT:$@ $**
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
 
 clean:
-    DEL $(OBJECTS)
-    DEL $(LIB)
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)

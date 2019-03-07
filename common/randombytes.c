@@ -33,6 +33,7 @@ THE SOFTWARE.
 
 #if defined(_WIN32)
 /* Windows */
+// NOLINTNEXTLINE(llvm-include-order): Include order required by Windows
 #include <windows.h>
 #include <wincrypt.h> /* CryptAcquireContext, CryptGenRandom */
 #endif /* defined(_WIN32) */

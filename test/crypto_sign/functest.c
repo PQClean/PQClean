@@ -98,9 +98,9 @@ static int test_sign(void) {
         // twice
         if ((returncode =
                  crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) != 0) {
-            printf("ERROR Signature did not verify correctly!\n");
+            fprintf(stderr, "ERROR Signature did not verify correctly!\n");
             if (returncode > 0) {
-                puts("ERROR return code should be < 0 on failure");
+                fprintf(stderr, "ERROR return code should be < 0 on failure");
             }
             return 1;
         }
@@ -109,7 +109,7 @@ static int test_sign(void) {
             check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||
             check_canary(sm) || check_canary(sm + MLEN + CRYPTO_BYTES + 8) ||
             check_canary(m) || check_canary(m + MLEN + 8)) {
-            printf("ERROR canary overwritten\n");
+            fprintf(stderr, "ERROR canary overwritten\n");
             return 1;
         }
     }
@@ -143,9 +143,9 @@ static int test_wrong_pk(void) {
         // twice
         returncode = crypto_sign_open(sm, &mlen, sm, smlen, pk2);
         if (!returncode) {
-            printf("ERROR Signature did verify correctly under wrong public key!\n");
+            fprintf(stderr, "ERROR Signature did verify correctly under wrong public key!\n");
             if (returncode > 0) {
-                puts("ERROR return code should be < 0");
+                fprintf(stderr, "ERROR return code should be < 0");
             }
             return 1;
         }

@@ -10,7 +10,7 @@ version: 2
     - run:
         name: Run the tests in a container
         command: |
-          docker run --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
+          docker run -e CI=true --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
           uname -a &&
           export CC=${CC} &&
           cd test && python3 -m nose --rednose --verbose"

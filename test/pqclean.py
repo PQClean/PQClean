@@ -1,4 +1,5 @@
 import os
+import glob
 import yaml
 
 
@@ -73,7 +74,19 @@ class Implementation:
         return os.path.join(self.scheme.path(), self.name)
 
     def libname(self) -> str:
+        if os.name == 'nt':
+            return "lib{}_{}.lib".format(self.scheme.name, self.name)
         return "lib{}_{}.a".format(self.scheme.name, self.name)
+
+    def cfiles(self) -> [str]:
+        return glob.glob(os.path.join(self.path(), '*.c'))
+
+    def hfiles(self) -> [str]:
+        return glob.glob(os.path.join(self.path(), '*.h'))
+
+    def ofiles(self) -> [str]:
+        return glob.glob(os.path.join(self.path(),
+                         '*.o' if os.name != 'nt' else '*.obj'))
 
     @staticmethod
     def by_name(scheme_name, implementation_name):

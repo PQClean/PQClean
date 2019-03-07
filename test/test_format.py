@@ -1,8 +1,5 @@
-import os
-from glob import glob
-
 import pqclean
-from helpers import run_subprocess
+from helpers import run_subprocess, ensure_available
 
 
 def test_formatting():
@@ -12,8 +9,9 @@ def test_formatting():
 
 
 def check_format(implementation: pqclean.Implementation):
-    cfiles = glob(os.path.join(implementation.path(), '*.c'))
-    hfiles = glob(os.path.join(implementation.path(), '*.h'))
+    ensure_available('astyle')
+    cfiles = implementation.cfiles()
+    hfiles = implementation.hfiles()
     run_subprocess(['astyle',
                     '--dry-run',
                     '--options=../.astylerc',

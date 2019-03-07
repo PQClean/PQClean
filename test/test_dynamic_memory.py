@@ -9,8 +9,6 @@ import unittest
 
 
 def test_dynamic_memory():
-    if sys.platform not in ['linux', 'darwin']:
-        raise unittest.SkipTest()
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
             # Keep this loop outside, to allow multiple assertions
@@ -18,6 +16,7 @@ def test_dynamic_memory():
                 yield (check_dynamic_memory, implementation, function)
 
 
+@helpers.skip_windows()
 def check_dynamic_memory(implementation, function):
     # 'make' will take care of not rebuilding existing library files
     helpers.make(working_dir=implementation.path())

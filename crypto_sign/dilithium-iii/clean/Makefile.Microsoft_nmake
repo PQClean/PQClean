@@ -1,16 +1,19 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIB=libdilithium-iii_clean.lib
+LIBRARY=libdilithium-iii_clean.lib
 OBJECTS=ntt.obj packing.obj poly.obj polyvec.obj reduce.obj rounding.obj sign.obj
 
-CFLAGS=/I ..\..\..\common /W1 /WX # FIXME: ideally would use /W4 instead of /W1, but too many failures in Dilithium right now
+CFLAGS=/nologo /I ..\..\..\common /W1 /WX # FIXME: ideally would use /W4 instead of /W1, but too many failures in Dilithium right now
 
-all: $(LIB)
+all: $(LIBRARY)
 
-$(LIB): $(OBJECTS)
-	LIB.EXE /OUT:$@ $**
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+	LIB.EXE /NOLOGO /WX /OUT:$@ $**
 
 clean:
-	DEL $(OBJECTS)
-	DEL $(LIB)
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)

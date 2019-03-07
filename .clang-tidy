@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size'
+Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false

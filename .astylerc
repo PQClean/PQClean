@@ -10,6 +10,5 @@
 --add-braces 
 --convert-tabs
 --mode=c 
---lineend=linux 
 # disable backup files
 --suffix=none

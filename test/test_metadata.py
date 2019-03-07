@@ -23,7 +23,7 @@ def check_metadata(scheme):
         specification = itertools.chain(specification,
                                         SIGNATURE_FIELDS.items())
     else:
-        assert(False)
+        assert False, "Wrong type of metadata"
 
     check_spec(copy.deepcopy(metadata), specification)
 

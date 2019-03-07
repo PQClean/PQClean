@@ -1,7 +1,7 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-# override as desired
+# override as desired, use /E
 # vim: set ts=4 sw=4 et:
 TYPE=kem
 SCHEME=kyber768
@@ -17,7 +17,7 @@ COMMON_OBJECTS_NOPATH=fips202.obj sha2.obj
 
 DEST_DIR=..\bin
 
-CFLAGS=/I $(COMMON_DIR) /W4 /WX
+CFLAGS=/nologo /I $(COMMON_DIR) /W4 /WX
 
 all: $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE $(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).EXE
 
@@ -31,17 +31,23 @@ clean-scheme:
     nmake /f Makefile.Microsoft_nmake clean
     cd ..\..\..\test
 
-$(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\randombytes.obj
+functest: $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).exe
+
+testvectors: $(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).exe
+
+$(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\randombytes.obj
     -MKDIR $(DEST_DIR)
+    -DEL functest.obj
     $(CC) /c crypto_$(TYPE)\functest.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
     LINK.EXE /OUT:$@ functest.obj $(COMMON_OBJECTS_NOPATH) randombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib Advapi32.lib
 
-$(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).EXE: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\notrandombytes.obj
+$(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\notrandombytes.obj
     -MKDIR $(DEST_DIR)
+    -DEL testvectors.obj
     $(CC) /c crypto_$(TYPE)\testvectors.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
     LINK.EXE /OUT:$@ testvectors.obj $(COMMON_OBJECTS_NOPATH) notrandombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib
 
 clean:
     -DEL functest.obj testvectors.obj
     -DEL $(COMMON_OBJECTS_NOPATH) randombytes.obj notrandombytes.obj
-    -DEL $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE
+    -DEL $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).exe

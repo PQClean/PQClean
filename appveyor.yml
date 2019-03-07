@@ -5,8 +5,23 @@ image: Visual Studio 2017
 build:
   verbosity: minimal
 
+environment:
+  matrix:
+    - BITS: 64
+    - BITS: 32
+
 init:
-  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars%BITS%.bat"
+    # Download AStyle 3.1: first enable strong crypto in Invoke-WebRequest
+  - ps: Set-ItemProperty -Path "HKLM:\SOFTWARE\Wow6432Node\Microsoft\.NetFramework\v4.0.30319" -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
+  - ps: Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NetFramework\v4.0.30319" -Name "SchUseStrongCrypto" -Value '1' -Type DWord
+    # Add Python to PATH
+  - set PATH="C:\\Python37";"C:\\Python37\Scripts";%PATH%
 
 build_script:
-  - scripts_windows\build_all.bat
+  - python -m pip install -r requirements.txt
+  - cd test
+    # Download Astyle to local folder because putting it in PATH doesn't work
+  - ps: Invoke-WebRequest -OutFile "astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
+    # Run tests
+  - python -m nose -v --rednose
