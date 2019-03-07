@@ -17,7 +17,7 @@ DEST_DIR=../bin
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I$(COMMON_DIR) $(EXTRAFLAGS)
 
-all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
+all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/test_fips202
 
 .PHONY: build-scheme
 build-scheme:
@@ -33,6 +33,10 @@ functest: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
 .PHONY: testvectors
 testvectors: $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
 
+$(DEST_DIR)/test_fips202: common/fips202.c $(COMMON_FILES)
+	mkdir -p $(DEST_DIR)
+	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
+
 $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
@@ -45,3 +49,4 @@ $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)
 clean:
 	$(RM) $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
 	$(RM) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
+	$(RM) $(DEST_DIR)/test_fips202
