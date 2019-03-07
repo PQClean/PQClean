@@ -52,6 +52,50 @@ const unsigned char expected[512] = {
     0x6b, 0xf5, 0xf6, 0x0b, 0x21, 0xb5, 0x82, 0x2d
 };
 
+static int test_sha3_256_incremental(void) {
+    unsigned char input[512];
+    unsigned char check[512];
+    unsigned char output[512];
+    uint64_t s_inc[26];
+    int i;
+    int absorbed;
+    int returncode = 0;
+
+    for (i = 0; i < 512; i++) {
+        input[i] = i;
+    }
+
+    sha3_256(check, input, 512);
+
+    sha3_256_inc_init(s_inc);
+
+    absorbed = 0;
+    for (i = 0; i < 512 && absorbed + i <= 512; i++) {
+        sha3_256_inc_absorb(s_inc, input + absorbed, i);
+        absorbed += i;
+    }
+    sha3_256_inc_absorb(s_inc, input + absorbed, 512 - absorbed);
+
+    sha3_256_inc_finalize(output, s_inc);
+
+    if (memcmp(check, output, 512)) {
+        printf("ERROR sha3_256 incremental did not match sha3_256.\n");
+        printf("  Expected: ");
+        for (i = 0; i < 512; i++) {
+            printf("%02X", check[i]);
+        }
+        printf("\n");
+        printf("  Received: ");
+        for (i = 0; i < 512; i++) {
+            printf("%02X", output[i]);
+        }
+        printf("\n");
+        returncode = 1;
+    }
+
+    return returncode;
+}
+
 static int test_shake128_incremental(void) {
     unsigned char input[512];
     unsigned char check[512];
@@ -228,6 +272,7 @@ int main(void) {
     int result = 0;
     result += test_shake128();
     result += test_shake128_incremental();
+    result += test_sha3_256_incremental();
 
     if (result != 0) {
         puts("Errors occurred");
