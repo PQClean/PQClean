@@ -17,7 +17,7 @@ DEST_DIR=../bin
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 -I$(COMMON_DIR) $(EXTRAFLAGS)
 
-all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/test_fips202
+all: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
 
 .PHONY: build-scheme
 build-scheme:
