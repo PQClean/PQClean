@@ -4,6 +4,11 @@
 #include <stddef.h>
 #include <stdint.h>
 
+void sha224_inc_init(uint8_t *state);
+void sha224_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks);
+void sha224_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t inlen);
+void sha224(uint8_t *out, const uint8_t *in, size_t inlen);
+
 void sha256_inc_init(uint8_t *state);
 void sha256_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks);
 void sha256_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t inlen);

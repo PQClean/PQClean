@@ -7,6 +7,12 @@
 
 const unsigned char plaintext[113] = "abcdefghbcdefghicdefghijdefghijkefghijklfghijklmghijklmnhijklmnoijklmnopjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu";
 
+const unsigned char expected_224[28] = {
+    0xc9, 0x7c, 0xa9, 0xa5, 0x59, 0x85, 0x0c, 0xe9, 0x7a, 0x04, 0xa9, 0x6d,
+    0xef, 0x6d, 0x99, 0xa9, 0xe0, 0xe0, 0xe2, 0xab, 0x14, 0xe6, 0xb8, 0xdf,
+    0x26, 0x5f, 0xc0, 0xb3
+};
+
 const unsigned char expected_256[32] = {
     0xcf, 0x5b, 0x16, 0xa7, 0x78, 0xaf, 0x83, 0x80, 0x03, 0x6c, 0xe5, 0x9e,
     0x7b, 0x04, 0x92, 0x37, 0x0b, 0x24, 0x9b, 0x11, 0xe8, 0xf0, 0x7a, 0x51,
@@ -47,6 +53,30 @@ static int test_sha256_incremental(void) {
         printf("\n");
         printf("  Received: ");
         for (i = 0; i < 32; i++) {
+            printf("%02X", output[i]);
+        }
+        printf("\n");
+        return 1;
+    }
+
+    return 0;
+}
+
+static int test_sha224(void) {
+    unsigned char output[28];
+    int i = 0;
+
+    sha224(output, plaintext, 112);
+
+    if (memcmp(expected_224, output, 28)) {
+        printf("ERROR sha224 output did not match test vector.\n");
+        printf("Expected: ");
+        for (i = 0; i < 28; i++) {
+            printf("%02X", expected_224[i]);
+        }
+        printf("\n");
+        printf("Received: ");
+        for (i = 0; i < 28; i++) {
             printf("%02X", output[i]);
         }
         printf("\n");
@@ -130,6 +160,7 @@ static int test_sha512(void) {
 
 int main(void) {
     int result = 0;
+    result += test_sha224();
     result += test_sha256();
     result += test_sha256_incremental();
     result += test_sha384();

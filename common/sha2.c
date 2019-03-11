@@ -460,11 +460,18 @@ static size_t crypto_hashblocks_sha512(uint8_t *statebytes,
     return inlen;
 }
 
+static const uint8_t iv_224[32] = {
+    0xc1, 0x05, 0x9e, 0xd8, 0x36, 0x7c, 0xd5, 0x07,
+    0x30, 0x70, 0xdd, 0x17, 0xf7, 0x0e, 0x59, 0x39,
+    0xff, 0xc0, 0x0b, 0x31, 0x68, 0x58, 0x15, 0x11,
+    0x64, 0xf9, 0x8f, 0xa7, 0xbe, 0xfa, 0x4f, 0xa4
+};
+
 static const uint8_t iv_256[32] = {
     0x6a, 0x09, 0xe6, 0x67, 0xbb, 0x67, 0xae, 0x85,
     0x3c, 0x6e, 0xf3, 0x72, 0xa5, 0x4f, 0xf5, 0x3a,
     0x51, 0x0e, 0x52, 0x7f, 0x9b, 0x05, 0x68, 0x8c,
-    0x1f, 0x83, 0xd9, 0xab, 0x5b, 0xe0, 0xcd, 0x19,
+    0x1f, 0x83, 0xd9, 0xab, 0x5b, 0xe0, 0xcd, 0x19
 };
 
 static const uint8_t iv_384[64] = {
@@ -484,6 +491,15 @@ static const uint8_t iv_512[64] = {
     0x2b, 0x3e, 0x6c, 0x1f, 0x1f, 0x83, 0xd9, 0xab, 0xfb, 0x41, 0xbd,
     0x6b, 0x5b, 0xe0, 0xcd, 0x19, 0x13, 0x7e, 0x21, 0x79
 };
+
+void sha224_inc_init(uint8_t *state) {
+    for (size_t i = 0; i < 32; ++i) {
+        state[i] = iv_224[i];
+    }
+    for (size_t i = 32; i < 40; ++i) {
+        state[i] = 0;
+    }
+}
 
 void sha256_inc_init(uint8_t *state) {
     for (size_t i = 0; i < 32; ++i) {
@@ -519,6 +535,10 @@ void sha256_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks) {
     bytes += 64 * inblocks;
 
     store_bigendian_64(state + 32, bytes);
+}
+
+void sha224_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks) {
+    sha256_inc_blocks(state, in, inblocks);
 }
 
 void sha512_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks) {
@@ -581,6 +601,14 @@ void sha256_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t
     }
 }
 
+void sha224_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t inlen) {
+    sha256_inc_finalize(state, state, in, inlen);
+
+    for (size_t i = 0; i < 28; ++i) {
+        out[i] = state[i];
+    }
+}
+
 void sha512_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t inlen) {
     uint8_t padded[256];
     uint64_t bytes = load_bigendian_64(state + 64) + inlen;
@@ -636,6 +664,13 @@ void sha384_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t
     for (size_t i = 0; i < 48; ++i) {
         out[i] = state[i];
     }
+}
+
+void sha224(uint8_t *out, const uint8_t *in, size_t inlen) {
+    uint8_t state[40];
+
+    sha224_inc_init(state);
+    sha224_inc_finalize(out, state, in, inlen);
 }
 
 void sha256(uint8_t *out, const uint8_t *in, size_t inlen) {
