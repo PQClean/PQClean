@@ -485,16 +485,60 @@ static const uint8_t iv_512[64] = {
     0x6b, 0x5b, 0xe0, 0xcd, 0x19, 0x13, 0x7e, 0x21, 0x79
 };
 
-int sha256(uint8_t *out, const uint8_t *in, size_t inlen) {
-    uint8_t h[32];
-    uint8_t padded[128];
-    uint64_t bytes = inlen;
-
+void sha256_inc_init(uint8_t *state) {
     for (size_t i = 0; i < 32; ++i) {
-        h[i] = iv_256[i];
+        state[i] = iv_256[i];
     }
+    for (size_t i = 32; i < 40; ++i) {
+        state[i] = 0;
+    }
+}
 
-    crypto_hashblocks_sha256(h, in, inlen);
+void sha384_inc_init(uint8_t *state) {
+    for (size_t i = 0; i < 64; ++i) {
+        state[i] = iv_384[i];
+    }
+    for (size_t i = 64; i < 72; ++i) {
+        state[i] = 0;
+    }
+}
+
+void sha512_inc_init(uint8_t *state) {
+    for (size_t i = 0; i < 64; ++i) {
+        state[i] = iv_512[i];
+    }
+    for (size_t i = 64; i < 72; ++i) {
+        state[i] = 0;
+    }
+}
+
+void sha256_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks) {
+    uint64_t bytes = load_bigendian_64(state + 32);
+
+    crypto_hashblocks_sha256(state, in, 64 * inblocks);
+    bytes += 64 * inblocks;
+
+    store_bigendian_64(state + 32, bytes);
+}
+
+void sha512_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks) {
+    uint64_t bytes = load_bigendian_64(state + 64);
+
+    crypto_hashblocks_sha256(state, in, 128 * inblocks);
+    bytes += 128 * inblocks;
+
+    store_bigendian_64(state + 64, bytes);
+}
+
+void sha384_inc_blocks(uint8_t *state, const uint8_t *in, size_t inblocks) {
+    sha512_inc_blocks(state, in, inblocks);
+}
+
+void sha256_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t inlen) {
+    uint8_t padded[128];
+    uint64_t bytes = load_bigendian_64(state + 32) + inlen;
+
+    crypto_hashblocks_sha256(state, in, inlen);
     in += inlen;
     inlen &= 63;
     in -= inlen;
@@ -516,7 +560,7 @@ int sha256(uint8_t *out, const uint8_t *in, size_t inlen) {
         padded[61] = (uint8_t) (bytes >> 13);
         padded[62] = (uint8_t) (bytes >> 5);
         padded[63] = (uint8_t) (bytes << 3);
-        crypto_hashblocks_sha256(h, padded, 64);
+        crypto_hashblocks_sha256(state, padded, 64);
     } else {
         for (size_t i = inlen + 1; i < 120; ++i) {
             padded[i] = 0;
@@ -529,26 +573,19 @@ int sha256(uint8_t *out, const uint8_t *in, size_t inlen) {
         padded[125] = (uint8_t) (bytes >> 13);
         padded[126] = (uint8_t) (bytes >> 5);
         padded[127] = (uint8_t) (bytes << 3);
-        crypto_hashblocks_sha256(h, padded, 128);
+        crypto_hashblocks_sha256(state, padded, 128);
     }
 
     for (size_t i = 0; i < 32; ++i) {
-        out[i] = h[i];
+        out[i] = state[i];
     }
-
-    return 0;
 }
 
-int sha384(uint8_t *out, const uint8_t *in, size_t inlen) {
-    uint8_t h[64];
+void sha512_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t inlen) {
     uint8_t padded[256];
-    uint64_t bytes = inlen;
+    uint64_t bytes = load_bigendian_64(state + 64) + inlen;
 
-    for (size_t i = 0; i < 64; ++i) {
-        h[i] = iv_384[i];
-    }
-
-    crypto_hashblocks_sha512(h, in, inlen);
+    crypto_hashblocks_sha512(state, in, inlen);
     in += inlen;
     inlen &= 127;
     in -= inlen;
@@ -571,7 +608,7 @@ int sha384(uint8_t *out, const uint8_t *in, size_t inlen) {
         padded[125] = (uint8_t) (bytes >> 13);
         padded[126] = (uint8_t) (bytes >> 5);
         padded[127] = (uint8_t) (bytes << 3);
-        crypto_hashblocks_sha512(h, padded, 128);
+        crypto_hashblocks_sha512(state, padded, 128);
     } else {
         for (size_t i = inlen + 1; i < 247; ++i) {
             padded[i] = 0;
@@ -585,68 +622,39 @@ int sha384(uint8_t *out, const uint8_t *in, size_t inlen) {
         padded[253] = (uint8_t) (bytes >> 13);
         padded[254] = (uint8_t) (bytes >> 5);
         padded[255] = (uint8_t) (bytes << 3);
-        crypto_hashblocks_sha512(h, padded, 256);
+        crypto_hashblocks_sha512(state, padded, 256);
     }
+
+    for (size_t i = 0; i < 64; ++i) {
+        out[i] = state[i];
+    }
+}
+
+void sha384_inc_finalize(uint8_t *out, uint8_t *state, const uint8_t *in, size_t inlen) {
+    sha512_inc_finalize(state, state, in, inlen);
 
     for (size_t i = 0; i < 48; ++i) {
-        out[i] = h[i];
+        out[i] = state[i];
     }
-
-    return 0;
 }
 
-int sha512(uint8_t *out, const uint8_t *in, size_t inlen) {
-    uint8_t h[64];
-    uint8_t padded[256];
-    uint64_t bytes = inlen;
+void sha256(uint8_t *out, const uint8_t *in, size_t inlen) {
+    uint8_t state[40];
 
-    for (size_t i = 0; i < 64; ++i) {
-        h[i] = iv_512[i];
-    }
+    sha256_inc_init(state);
+    sha256_inc_finalize(out, state, in, inlen);
+}
 
-    crypto_hashblocks_sha512(h, in, inlen);
-    in += inlen;
-    inlen &= 127;
-    in -= inlen;
+void sha384(uint8_t *out, const uint8_t *in, size_t inlen) {
+    uint8_t state[72];
 
-    for (size_t i = 0; i < inlen; ++i) {
-        padded[i] = in[i];
-    }
-    padded[inlen] = 0x80;
+    sha384_inc_init(state);
+    sha384_inc_finalize(out, state, in, inlen);
+}
 
-    if (inlen < 112) {
-        for (size_t i = inlen + 1; i < 119; ++i) {
-            padded[i] = 0;
-        }
-        padded[119] = (uint8_t) (bytes >> 61);
-        padded[120] = (uint8_t) (bytes >> 53);
-        padded[121] = (uint8_t) (bytes >> 45);
-        padded[122] = (uint8_t) (bytes >> 37);
-        padded[123] = (uint8_t) (bytes >> 29);
-        padded[124] = (uint8_t) (bytes >> 21);
-        padded[125] = (uint8_t) (bytes >> 13);
-        padded[126] = (uint8_t) (bytes >> 5);
-        padded[127] = (uint8_t) (bytes << 3);
-        crypto_hashblocks_sha512(h, padded, 128);
-    } else {
-        for (size_t i = inlen + 1; i < 247; ++i) {
-            padded[i] = 0;
-        }
-        padded[247] = (uint8_t) (bytes >> 61);
-        padded[248] = (uint8_t) (bytes >> 53);
-        padded[249] = (uint8_t) (bytes >> 45);
-        padded[250] = (uint8_t) (bytes >> 37);
-        padded[251] = (uint8_t) (bytes >> 29);
-        padded[252] = (uint8_t) (bytes >> 21);
-        padded[253] = (uint8_t) (bytes >> 13);
-        padded[254] = (uint8_t) (bytes >> 5);
-        padded[255] = (uint8_t) (bytes << 3);
-        crypto_hashblocks_sha512(h, padded, 256);
-    }
+void sha512(uint8_t *out, const uint8_t *in, size_t inlen) {
+    uint8_t state[72];
 
-    for (size_t i = 0; i < 64; ++i) {
-        out[i] = h[i];
-    }
-
-    return 0;
+    sha512_inc_init(state);
+    sha512_inc_finalize(out, state, in, inlen);
 }
