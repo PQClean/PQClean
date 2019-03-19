@@ -36,6 +36,11 @@ static int check_canary(const uint8_t *d) {
 #define EVALUATOR(x, y) PASTER(x, y)
 #define NAMESPACE(fun) EVALUATOR(PQCLEAN_NAMESPACE, fun)
 
+#define CRYPTO_PUBLICKEYBYTES NAMESPACE(CRYPTO_PUBLICKEYBYTES)
+#define CRYPTO_SECRETKEYBYTES NAMESPACE(CRYPTO_SECRETKEYBYTES)
+#define CRYPTO_BYTES          NAMESPACE(CRYPTO_BYTES)
+#define CRYPTO_ALGNAME        NAMESPACE(CRYPTO_ALGNAME)
+
 #define crypto_sign_keypair NAMESPACE(crypto_sign_keypair)
 #define crypto_sign NAMESPACE(crypto_sign)
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
@@ -155,6 +160,7 @@ static int test_wrong_pk(void) {
 }
 
 int main(void) {
+    puts(CRYPTO_ALGNAME);
     int result = 0;
     result += test_sign();
     result += test_wrong_pk();

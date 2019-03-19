@@ -34,6 +34,12 @@ static int check_canary(const uint8_t *d) {
 #define EVALUATOR(x, y) PASTER(x, y)
 #define NAMESPACE(fun) EVALUATOR(PQCLEAN_NAMESPACE, fun)
 
+#define CRYPTO_BYTES           NAMESPACE(CRYPTO_BYTES)
+#define CRYPTO_PUBLICKEYBYTES  NAMESPACE(CRYPTO_PUBLICKEYBYTES)
+#define CRYPTO_SECRETKEYBYTES  NAMESPACE(CRYPTO_SECRETKEYBYTES)
+#define CRYPTO_CIPHERTEXTBYTES NAMESPACE(CRYPTO_CIPHERTEXTBYTES)
+#define CRYPTO_ALGNAME NAMESPACE(CRYPTO_ALGNAME)
+
 #define crypto_kem_keypair NAMESPACE(crypto_kem_keypair)
 #define crypto_kem_enc NAMESPACE(crypto_kem_enc)
 #define crypto_kem_dec NAMESPACE(crypto_kem_dec)
@@ -190,6 +196,7 @@ static int test_invalid_ciphertext(void) {
 }
 
 int main(void) {
+    puts(CRYPTO_ALGNAME);
     int result = 0;
     result += test_keys();
     result += test_invalid_sk_a();

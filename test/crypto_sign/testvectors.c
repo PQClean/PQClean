@@ -22,6 +22,10 @@ static void printbytes(const uint8_t *x, size_t xlen) {
 #define EVALUATOR(x, y) PASTER(x, y)
 #define NAMESPACE(fun) EVALUATOR(PQCLEAN_NAMESPACE, fun)
 
+#define CRYPTO_PUBLICKEYBYTES NAMESPACE(CRYPTO_PUBLICKEYBYTES)
+#define CRYPTO_SECRETKEYBYTES NAMESPACE(CRYPTO_SECRETKEYBYTES)
+#define CRYPTO_BYTES          NAMESPACE(CRYPTO_BYTES)
+
 #define crypto_sign_keypair NAMESPACE(crypto_sign_keypair)
 #define crypto_sign NAMESPACE(crypto_sign)
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
