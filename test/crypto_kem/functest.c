@@ -34,6 +34,12 @@ static int check_canary(const uint8_t *d) {
 #define EVALUATOR(x, y) PASTER(x, y)
 #define NAMESPACE(fun) EVALUATOR(PQCLEAN_NAMESPACE, fun)
 
+#define CRYPTO_BYTES           NAMESPACE(CRYPTO_BYTES)
+#define CRYPTO_PUBLICKEYBYTES  NAMESPACE(CRYPTO_PUBLICKEYBYTES)
+#define CRYPTO_SECRETKEYBYTES  NAMESPACE(CRYPTO_SECRETKEYBYTES)
+#define CRYPTO_CIPHERTEXTBYTES NAMESPACE(CRYPTO_CIPHERTEXTBYTES)
+#define CRYPTO_ALGNAME NAMESPACE(CRYPTO_ALGNAME)
+
 #define crypto_kem_keypair NAMESPACE(crypto_kem_keypair)
 #define crypto_kem_enc NAMESPACE(crypto_kem_enc)
 #define crypto_kem_dec NAMESPACE(crypto_kem_dec)
@@ -44,12 +50,23 @@ static int check_canary(const uint8_t *d) {
         return -1;                                \
     }
 
+// https://stackoverflow.com/a/55243651/248065
+#define MY_TRUTHY_VALUE_X 1
+#define CAT(x,y) CAT_(x,y)
+#define CAT_(x,y) x##y
+#define HAS_NAMESPACE(x) CAT(CAT(MY_TRUTHY_VALUE_,CAT(PQCLEAN_NAMESPACE,CAT(_,x))),X)
+
+#if !HAS_NAMESPACE(API_H)
+#error "namespace not properly defined for header guard"
+#endif
+
 static int test_keys(void) {
     /*
      * This is most likely going to be aligned by the compiler.
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
      */
+
     uint8_t key_a_aligned[CRYPTO_BYTES + 16 + 1];
     uint8_t key_b_aligned[CRYPTO_BYTES + 16 + 1];
     uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
@@ -190,6 +207,9 @@ static int test_invalid_ciphertext(void) {
 }
 
 int main(void) {
+    // Check if CRYPTO_ALGNAME is printable
+    puts(CRYPTO_ALGNAME);
+
     int result = 0;
     result += test_keys();
     result += test_invalid_sk_a();
