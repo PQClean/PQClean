@@ -1,6 +1,5 @@
-#ifndef API_H
-#include <stdint.h>
-#define API_H
+#ifndef PQCLEAN_DILITHIUMIII_API_H
+#define PQCLEAN_DILITHIUMIII_API_H
 
 #include <stddef.h>
 #include <stdint.h>

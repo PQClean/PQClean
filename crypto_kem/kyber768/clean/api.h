@@ -1,5 +1,5 @@
-#ifndef API_H
-#define API_H
+#ifndef PQCLEAN_KYBER768_CLEAN_API_H
+#define PQCLEAN_KYBER768_CLEAN_API_H
 
 #include <stdint.h>
 

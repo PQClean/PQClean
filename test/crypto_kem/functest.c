@@ -50,12 +50,16 @@ static int check_canary(const uint8_t *d) {
         return -1;                                \
     }
 
+#define DEFER(x) x
+#define NAMESPACE_CHECK DEFER(NAMESPACE(API_H))
+
 static int test_keys(void) {
     /*
      * This is most likely going to be aligned by the compiler.
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
      */
+
     uint8_t key_a_aligned[CRYPTO_BYTES + 16 + 1];
     uint8_t key_b_aligned[CRYPTO_BYTES + 16 + 1];
     uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
@@ -196,7 +200,10 @@ static int test_invalid_ciphertext(void) {
 }
 
 int main(void) {
+    // these two will trigger compiler errors
     puts(CRYPTO_ALGNAME);
+    NAMESPACE_CHECK;
+
     int result = 0;
     result += test_keys();
     result += test_invalid_sk_a();

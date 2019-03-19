@@ -51,6 +51,9 @@ static int check_canary(const uint8_t *d) {
         return -1;                                \
     }
 
+#define DEFER(x) x
+#define NAMESPACE_CHECK DEFER(NAMESPACE(API_H))
+
 static int test_sign(void) {
     /*
      * This is most likely going to be aligned by the compiler.
@@ -160,7 +163,10 @@ static int test_wrong_pk(void) {
 }
 
 int main(void) {
+    // these two will generate compile errors
     puts(CRYPTO_ALGNAME);
+    NAMESPACE_CHECK;
+
     int result = 0;
     result += test_sign();
     result += test_wrong_pk();
