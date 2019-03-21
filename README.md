@@ -127,9 +127,9 @@ Regarding #2, adding the files to your project's build system, each implementati
 
 ## License
 
-Each subdirectory containing implementations contains a LICENSE file stating under what license
-that specific implementation is released. All other code for testing etc. in this repository
-is released under the conditions of [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
+Each subdirectory containing implementations contains a `LICENSE` file stating under what license that specific implementation is released.
+The files in `common` contain licensing information at the top of the file (and are currently either public domain or MIT).
+All other code in this repository is released under the conditions of [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
 
 ## Running tests locally
 
