@@ -140,10 +140,10 @@ void PQCLEAN_FRODOKEM640SHAKE_CLEAN_pack(unsigned char *out, const size_t outlen
         while (b < 8) {
             int nbits = min(8 - b, bits);
             uint16_t mask = (1 << nbits) - 1;
-            unsigned char t = (w >> (bits - nbits)) & mask;  // the bits to copy from w to out
+            unsigned char t = (unsigned char) ((w >> (bits - nbits)) & mask);  // the bits to copy from w to out
             out[i] = out[i] + (t << (8 - b - nbits));
-            b += nbits;
-            bits -= nbits;
+            b += (unsigned char) nbits;
+            bits -= (unsigned char) nbits;
             w &= ~(mask << bits);  // not strictly necessary; mostly for debugging
 
             if (bits == 0) {
@@ -191,8 +191,8 @@ void PQCLEAN_FRODOKEM640SHAKE_CLEAN_unpack(uint16_t *out, const size_t outlen, c
             uint16_t mask = (1 << nbits) - 1;
             unsigned char t = (w >> (bits - nbits)) & mask;  // the bits to copy from w to out
             out[i] = out[i] + (t << (lsb - b - nbits));
-            b += nbits;
-            bits -= nbits;
+            b += (unsigned char) nbits;
+            bits -= (unsigned char) nbits;
             w &= ~(mask << bits);  // not strictly necessary; mostly for debugging
 
             if (bits == 0) {
