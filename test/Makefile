@@ -6,8 +6,8 @@ SCHEME=kyber768
 IMPLEMENTATION=clean
 
 SCHEME_DIR="../crypto_$(TYPE)/$(SCHEME)/$(IMPLEMENTATION)"
-SCHEME_UPPERCASE=$(shell echo $(SCHEME) | tr a-z A-Z | sed 's/-//')
-IMPLEMENTATION_UPPERCASE=$(shell echo $(IMPLEMENTATION) | tr a-z A-Z | sed 's/-//')
+SCHEME_UPPERCASE=$(shell echo $(SCHEME) | tr a-z A-Z | sed 's/-//g')
+IMPLEMENTATION_UPPERCASE=$(shell echo $(IMPLEMENTATION) | tr a-z A-Z | sed 's/-//g')
 
 COMMON_DIR=../common
 COMMON_FILES=$(COMMON_DIR)/fips202.c $(COMMON_DIR)/sha2.c
