@@ -11,8 +11,8 @@
 #include "randombytes.h"
 
 #include "api.h"
-#include "params.h"
 #include "common.h"
+#include "params.h"
 
 int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
     // FrodoKEM's key generation
@@ -26,7 +26,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigne
     uint8_t *sk_pkh = &sk[CRYPTO_BYTES + CRYPTO_PUBLICKEYBYTES + 2 * PARAMS_N * PARAMS_NBAR];
     uint16_t B[PARAMS_N * PARAMS_NBAR] = {0};
     uint16_t S[2 * PARAMS_N * PARAMS_NBAR] = {0};           // contains secret data
-    uint16_t *E = (uint16_t *)&S[PARAMS_N * PARAMS_NBAR];   // contains secret data
+    uint16_t *E = &S[PARAMS_N * PARAMS_NBAR];               // contains secret data
     uint8_t randomness[2 * CRYPTO_BYTES + BYTES_SEED_A];    // contains secret data via randomness_s and randomness_seedSE
     uint8_t *randomness_s = &randomness[0];                 // contains secret data
     uint8_t *randomness_seedSE = &randomness[CRYPTO_BYTES]; // contains secret data
@@ -76,8 +76,8 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned ch
     uint16_t C[PARAMS_NBAR * PARAMS_NBAR] = {0};
     uint16_t Bp[PARAMS_N * PARAMS_NBAR] = {0};
     uint16_t Sp[(2 * PARAMS_N + PARAMS_NBAR)*PARAMS_NBAR] = {0}; // contains secret data
-    uint16_t *Ep = (uint16_t *)&Sp[PARAMS_N * PARAMS_NBAR];   // contains secret data
-    uint16_t *Epp = (uint16_t *)&Sp[2 * PARAMS_N * PARAMS_NBAR]; // contains secret data
+    uint16_t *Ep = &Sp[PARAMS_N * PARAMS_NBAR];               // contains secret data
+    uint16_t *Epp = &Sp[2 * PARAMS_N * PARAMS_NBAR];          // contains secret data
     uint8_t G2in[BYTES_PKHASH + BYTES_MU];                    // contains secret data via mu
     uint8_t *pkh = &G2in[0];
     uint8_t *mu = &G2in[BYTES_PKHASH];                        // contains secret data
@@ -140,8 +140,8 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(unsigned char *ss, const unsig
     uint16_t CC[PARAMS_NBAR * PARAMS_NBAR] = {0};
     uint16_t BBp[PARAMS_N * PARAMS_NBAR] = {0};
     uint16_t Sp[(2 * PARAMS_N + PARAMS_NBAR)*PARAMS_NBAR] = {0}; // contains secret data
-    uint16_t *Ep = (uint16_t *)&Sp[PARAMS_N * PARAMS_NBAR];   // contains secret data
-    uint16_t *Epp = (uint16_t *)&Sp[2 * PARAMS_N * PARAMS_NBAR]; // contains secret data
+    uint16_t *Ep = &Sp[PARAMS_N * PARAMS_NBAR];                  // contains secret data
+    uint16_t *Epp = &Sp[2 * PARAMS_N * PARAMS_NBAR];             // contains secret data
     const uint8_t *ct_c1 = &ct[0];
     const uint8_t *ct_c2 = &ct[(PARAMS_LOGQ * PARAMS_N * PARAMS_NBAR) / 8];
     const uint8_t *sk_s = &sk[0];

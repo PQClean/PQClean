@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo'
+Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo-,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
@@ -282,7 +282,7 @@ CheckOptions:
     value:           '1'
   - key:             readability-inconsistent-declaration-parameter-name.Strict
     value:           '0'
-  - key:             readability-simplify-boolean-expr.ChainedConditionalAssignment
+  - key:             readability-inconsistent-declaration-parameter-name.Strict
     value:           '0'
   - key:             readability-simplify-boolean-expr.ChainedConditionalReturn
     value:           '0'
