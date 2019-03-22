@@ -13,77 +13,78 @@
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_bs(uint16_t *out, const uint16_t *b, const uint16_t *s) 
-{ // Multiply by s on the right
-  // Inputs: b (N_BAR x N), s (N x N_BAR)
-  // Output: out = b*s (N_BAR x N_BAR)
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_bs(uint16_t *out, const uint16_t *b, const uint16_t *s) {
+    // Multiply by s on the right
+    // Inputs: b (N_BAR x N), s (N x N_BAR)
+    // Output: out = b*s (N_BAR x N_BAR)
     int i, j, k;
 
     for (i = 0; i < PARAMS_NBAR; i++) {
         for (j = 0; j < PARAMS_NBAR; j++) {
-            out[i*PARAMS_NBAR + j] = 0;
+            out[i * PARAMS_NBAR + j] = 0;
             for (k = 0; k < PARAMS_N; k++) {
-                out[i*PARAMS_NBAR + j] += b[i*PARAMS_N + k] * s[j*PARAMS_N + k];
+                out[i * PARAMS_NBAR + j] += b[i * PARAMS_N + k] * s[j * PARAMS_N + k];
             }
-            out[i*PARAMS_NBAR + j] = (uint32_t)(out[i*PARAMS_NBAR + j]) & ((1<<PARAMS_LOGQ)-1);
+            out[i * PARAMS_NBAR + j] = (uint32_t)(out[i * PARAMS_NBAR + j]) & ((1 << PARAMS_LOGQ) - 1);
         }
     }
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_sb_plus_e(uint16_t *out, const uint16_t *b, const uint16_t *s, const uint16_t *e) 
-{ // Multiply by s on the left
-  // Inputs: b (N x N_BAR), s (N_BAR x N), e (N_BAR x N_BAR)
-  // Output: out = s*b + e (N_BAR x N_BAR)
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_sb_plus_e(uint16_t *out, const uint16_t *b, const uint16_t *s, const uint16_t *e) {
+    // Multiply by s on the left
+    // Inputs: b (N x N_BAR), s (N_BAR x N), e (N_BAR x N_BAR)
+    // Output: out = s*b + e (N_BAR x N_BAR)
     int i, j, k;
 
     for (k = 0; k < PARAMS_NBAR; k++) {
         for (i = 0; i < PARAMS_NBAR; i++) {
-            out[k*PARAMS_NBAR + i] = e[k*PARAMS_NBAR + i];
+            out[k * PARAMS_NBAR + i] = e[k * PARAMS_NBAR + i];
             for (j = 0; j < PARAMS_N; j++) {
-                out[k*PARAMS_NBAR + i] += s[k*PARAMS_N + j] * b[j*PARAMS_NBAR + i];
+                out[k * PARAMS_NBAR + i] += s[k * PARAMS_N + j] * b[j * PARAMS_NBAR + i];
             }
-            out[k*PARAMS_NBAR + i] = (uint32_t)(out[k*PARAMS_NBAR + i]) & ((1<<PARAMS_LOGQ)-1);
+            out[k * PARAMS_NBAR + i] = (uint32_t)(out[k * PARAMS_NBAR + i]) & ((1 << PARAMS_LOGQ) - 1);
         }
     }
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_add(uint16_t *out, const uint16_t *a, const uint16_t *b) 
-{ // Add a and b
-  // Inputs: a, b (N_BAR x N_BAR)
-  // Output: c = a + b
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_add(uint16_t *out, const uint16_t *a, const uint16_t *b) {
+    // Add a and b
+    // Inputs: a, b (N_BAR x N_BAR)
+    // Output: c = a + b
 
-    for (int i = 0; i < (PARAMS_NBAR*PARAMS_NBAR); i++) {
-        out[i] = (a[i] + b[i]) & ((1<<PARAMS_LOGQ)-1);
+    for (int i = 0; i < (PARAMS_NBAR * PARAMS_NBAR); i++) {
+        out[i] = (a[i] + b[i]) & ((1 << PARAMS_LOGQ) - 1);
     }
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_sub(uint16_t *out, const uint16_t *a, const uint16_t *b) 
-{ // Subtract a and b
-  // Inputs: a, b (N_BAR x N_BAR)
-  // Output: c = a - b
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_sub(uint16_t *out, const uint16_t *a, const uint16_t *b) {
+    // Subtract a and b
+    // Inputs: a, b (N_BAR x N_BAR)
+    // Output: c = a - b
 
-    for (int i = 0; i < (PARAMS_NBAR*PARAMS_NBAR); i++) {
-        out[i] = (a[i] - b[i]) & ((1<<PARAMS_LOGQ)-1);
+    for (int i = 0; i < (PARAMS_NBAR * PARAMS_NBAR); i++) {
+        out[i] = (a[i] - b[i]) & ((1 << PARAMS_LOGQ) - 1);
     }
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_key_encode(uint16_t *out, const uint16_t *in) 
-{ // Encoding
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_key_encode(uint16_t *out, const uint16_t *in) {
+    // Encoding
     unsigned int i, j, npieces_word = 8;
-    unsigned int nwords = (PARAMS_NBAR*PARAMS_NBAR)/8;
+    unsigned int nwords = (PARAMS_NBAR * PARAMS_NBAR) / 8;
     uint64_t temp, mask = ((uint64_t)1 << PARAMS_EXTRACTED_BITS) - 1;
-    uint16_t* pos = out;
+    uint16_t *pos = out;
 
     for (i = 0; i < nwords; i++) {
         temp = 0;
-        for(j = 0; j < PARAMS_EXTRACTED_BITS; j++) 
-            temp |= ((uint64_t)((uint8_t*)in)[i*PARAMS_EXTRACTED_BITS + j]) << (8*j);
-        for (j = 0; j < npieces_word; j++) { 
-            *pos = (uint16_t)((temp & mask) << (PARAMS_LOGQ - PARAMS_EXTRACTED_BITS));  
+        for (j = 0; j < PARAMS_EXTRACTED_BITS; j++) {
+            temp |= ((uint64_t)((uint8_t *)in)[i * PARAMS_EXTRACTED_BITS + j]) << (8 * j);
+        }
+        for (j = 0; j < npieces_word; j++) {
+            *pos = (uint16_t)((temp & mask) << (PARAMS_LOGQ - PARAMS_EXTRACTED_BITS));
             temp >>= PARAMS_EXTRACTED_BITS;
             pos++;
         }
@@ -91,12 +92,12 @@ void PQCLEAN_FRODOKEM640SHAKE_CLEAN_key_encode(uint16_t *out, const uint16_t *in
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_key_decode(uint16_t *out, const uint16_t *in)
-{ // Decoding
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_key_decode(uint16_t *out, const uint16_t *in) {
+    // Decoding
     unsigned int i, j, index = 0, npieces_word = 8;
     unsigned int nwords = (PARAMS_NBAR * PARAMS_NBAR) / 8;
-    uint16_t temp, maskex=((uint16_t)1 << PARAMS_EXTRACTED_BITS) -1, maskq =((uint16_t)1 << PARAMS_LOGQ) -1;
-    uint8_t  *pos = (uint8_t*)out;
+    uint16_t temp, maskex = ((uint16_t)1 << PARAMS_EXTRACTED_BITS) - 1, maskq = ((uint16_t)1 << PARAMS_LOGQ) - 1;
+    uint8_t  *pos = (uint8_t *)out;
     uint64_t templong;
 
     for (i = 0; i < nwords; i++) {
@@ -106,15 +107,16 @@ void PQCLEAN_FRODOKEM640SHAKE_CLEAN_key_decode(uint16_t *out, const uint16_t *in
             templong |= ((uint64_t)(temp & maskex)) << (PARAMS_EXTRACTED_BITS * j);
             index++;
         }
-	for(j = 0; j < PARAMS_EXTRACTED_BITS; j++) 
-	    pos[i*PARAMS_EXTRACTED_BITS + j] = (templong >> (8*j)) & 0xFF;
+        for (j = 0; j < PARAMS_EXTRACTED_BITS; j++) {
+            pos[i * PARAMS_EXTRACTED_BITS + j] = (templong >> (8 * j)) & 0xFF;
+        }
     }
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_pack(unsigned char *out, const size_t outlen, const uint16_t *in, const size_t inlen, const unsigned char lsb) 
-{ // Pack the input uint16 vector into a char output vector, copying lsb bits from each input element. 
-  // If inlen * lsb / 8 > outlen, only outlen * 8 bits are copied.
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_pack(unsigned char *out, const size_t outlen, const uint16_t *in, const size_t inlen, const unsigned char lsb) {
+    // Pack the input uint16 vector into a char output vector, copying lsb bits from each input element.
+    // If inlen * lsb / 8 > outlen, only outlen * 8 bits are copied.
     memset(out, 0, outlen);
 
     size_t i = 0;            // whole bytes already filled in
@@ -161,9 +163,9 @@ void PQCLEAN_FRODOKEM640SHAKE_CLEAN_pack(unsigned char *out, const size_t outlen
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_unpack(uint16_t *out, const size_t outlen, const unsigned char *in, const size_t inlen, const unsigned char lsb) 
-{ // Unpack the input char vector into a uint16_t output vector, copying lsb bits
-  // for each output element from input. outlen must be at least ceil(inlen * 8 / lsb).
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_unpack(uint16_t *out, const size_t outlen, const unsigned char *in, const size_t inlen, const unsigned char lsb) {
+    // Unpack the input char vector into a uint16_t output vector, copying lsb bits
+    // for each output element from input. outlen must be at least ceil(inlen * 8 / lsb).
     memset(out, 0, outlen * sizeof(uint16_t));
 
     size_t i = 0;            // whole uint16_t already filled in
@@ -210,10 +212,10 @@ void PQCLEAN_FRODOKEM640SHAKE_CLEAN_unpack(uint16_t *out, const size_t outlen, c
 }
 
 
-void PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes(uint8_t *mem, size_t n)
-{ // Clear 8-bit bytes from memory. "n" indicates the number of bytes to be zeroed.
-  // This function uses the volatile type qualifier to inform the compiler not to optimize out the memory clearing.
-    volatile uint8_t *v = mem; 
+void PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes(uint8_t *mem, size_t n) {
+    // Clear 8-bit bytes from memory. "n" indicates the number of bytes to be zeroed.
+    // This function uses the volatile type qualifier to inform the compiler not to optimize out the memory clearing.
+    volatile uint8_t *v = mem;
 
     for (size_t i = 0; i < n; i++) {
         v[i] = 0;
