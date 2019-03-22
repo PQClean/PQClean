@@ -1,7 +1,7 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIBRARY=lifrodokem640shake_clean.lib
+LIBRARY=libfrodokem640shake_clean.lib
 OBJECTS=kem.obj matrix_shake.obj noise.obj util.obj
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
