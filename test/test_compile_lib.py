@@ -14,6 +14,7 @@ def test_compile_lib():
 
 
 def check_compile_lib(implementation):
+    helpers.make('clean', working_dir=implementation.path())
     helpers.make(working_dir=implementation.path())
 
 
