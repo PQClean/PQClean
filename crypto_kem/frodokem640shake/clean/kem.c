@@ -55,7 +55,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigne
     memcpy(sk_s, randomness_s, CRYPTO_BYTES);
     memcpy(sk_pk, pk, CRYPTO_PUBLICKEYBYTES);
     for (size_t i = 0; i < PARAMS_N * PARAMS_NBAR; i++) {
-        sk_S[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE(sk_S[i]);
+        S[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE(S[i]);
     }
     memcpy(sk_S, S, 2 * PARAMS_N * PARAMS_NBAR);
 
