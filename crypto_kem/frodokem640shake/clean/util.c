@@ -12,6 +12,17 @@
 
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 
+uint16_t PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(const uint16_t n) {
+    return (((uint8_t *) &(n))[0] | (((uint8_t *) &(n))[1] << 8));
+}
+
+uint16_t PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE(const uint16_t n) {
+    uint16_t y;
+    uint8_t *z = (uint8_t *) &y;
+    z[0] = n & 0xFF;
+    z[1] = (n & 0xFF00) >> 8;
+    return y;
+}
 
 void PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_bs(uint16_t *out, const uint16_t *b, const uint16_t *s) {
     // Multiply by s on the right

@@ -41,6 +41,9 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigne
     shake_input_seedSE[0] = 0x5F;
     memcpy(&shake_input_seedSE[1], randomness_seedSE, CRYPTO_BYTES);
     shake((uint8_t *)S, 2 * PARAMS_N * PARAMS_NBAR * sizeof(uint16_t), shake_input_seedSE, 1 + CRYPTO_BYTES);
+    for (size_t i = 0; i < 2 * PARAMS_N * PARAMS_NBAR; i++) {
+        S[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(S[i]);
+    }
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_sample_n(S, PARAMS_N * PARAMS_NBAR);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_sample_n(E, PARAMS_N * PARAMS_NBAR);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_as_plus_e(B, S, E, pk);
@@ -51,6 +54,9 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigne
     // Add s, pk and S to the secret key
     memcpy(sk_s, randomness_s, CRYPTO_BYTES);
     memcpy(sk_pk, pk, CRYPTO_PUBLICKEYBYTES);
+    for (size_t i = 0; i < PARAMS_N * PARAMS_NBAR; i++) {
+        sk_S[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE(sk_S[i]);
+    }
     memcpy(sk_S, S, 2 * PARAMS_N * PARAMS_NBAR);
 
     // Add H(pk) to the secret key
@@ -97,7 +103,10 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned ch
     // Generate Sp and Ep, and compute Bp = Sp*A + Ep. Generate A on-the-fly
     shake_input_seedSE[0] = 0x96;
     memcpy(&shake_input_seedSE[1], seedSE, CRYPTO_BYTES);
-    shake((uint8_t *)Sp, (2 * PARAMS_N + PARAMS_NBAR)*PARAMS_NBAR * sizeof(uint16_t), shake_input_seedSE, 1 + CRYPTO_BYTES);
+    shake((uint8_t *)Sp, (2 * PARAMS_N + PARAMS_NBAR) * PARAMS_NBAR * sizeof(uint16_t), shake_input_seedSE, 1 + CRYPTO_BYTES);
+    for (size_t i = 0; i < (2 * PARAMS_N + PARAMS_NBAR) * PARAMS_NBAR; i++) {
+        Sp[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(Sp[i]);
+    }
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_sample_n(Sp, PARAMS_N * PARAMS_NBAR);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_sample_n(Ep, PARAMS_N * PARAMS_NBAR);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_sa_plus_e(Bp, Sp, Ep, pk_seedA);
@@ -147,6 +156,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(unsigned char *ss, const unsig
     const uint8_t *sk_s = &sk[0];
     const uint8_t *sk_pk = &sk[CRYPTO_BYTES];
     const uint16_t *sk_S = (uint16_t *) &sk[CRYPTO_BYTES + CRYPTO_PUBLICKEYBYTES];
+    uint16_t S[PARAMS_N * PARAMS_NBAR];                      // contains secret data
     const uint8_t *sk_pkh = &sk[CRYPTO_BYTES + CRYPTO_PUBLICKEYBYTES + 2 * PARAMS_N * PARAMS_NBAR];
     const uint8_t *pk_seedA = &sk_pk[0];
     const uint8_t *pk_b = &sk_pk[BYTES_SEED_A];
@@ -161,10 +171,14 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(unsigned char *ss, const unsig
     uint8_t *Fin_k = &Fin[CRYPTO_CIPHERTEXTBYTES];           // contains secret data
     uint8_t shake_input_seedSEprime[1 + CRYPTO_BYTES];       // contains secret data
 
+    for (size_t i = 0; i < PARAMS_N * PARAMS_NBAR; i++) {
+        S[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(sk_S[i]);
+    }
+
     // Compute W = C - Bp*S (mod q), and decode the randomness mu
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_unpack(Bp, PARAMS_N * PARAMS_NBAR, ct_c1, (PARAMS_LOGQ * PARAMS_N * PARAMS_NBAR) / 8, PARAMS_LOGQ);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_unpack(C, PARAMS_NBAR * PARAMS_NBAR, ct_c2, (PARAMS_LOGQ * PARAMS_NBAR * PARAMS_NBAR) / 8, PARAMS_LOGQ);
-    PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_bs(W, Bp, sk_S);
+    PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_bs(W, Bp, S);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_sub(W, C, W);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_key_decode((uint16_t *)muprime, W);
 
@@ -175,7 +189,10 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(unsigned char *ss, const unsig
     // Generate Sp and Ep, and compute BBp = Sp*A + Ep. Generate A on-the-fly
     shake_input_seedSEprime[0] = 0x96;
     memcpy(&shake_input_seedSEprime[1], seedSEprime, CRYPTO_BYTES);
-    shake((uint8_t *)Sp, (2 * PARAMS_N + PARAMS_NBAR)*PARAMS_NBAR * sizeof(uint16_t), shake_input_seedSEprime, 1 + CRYPTO_BYTES);
+    shake((uint8_t *)Sp, (2 * PARAMS_N + PARAMS_NBAR) * PARAMS_NBAR * sizeof(uint16_t), shake_input_seedSEprime, 1 + CRYPTO_BYTES);
+    for (size_t i = 0; i < (2 * PARAMS_N + PARAMS_NBAR) * PARAMS_NBAR; i++) {
+        Sp[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(Sp[i]);
+    }
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_sample_n(Sp, PARAMS_N * PARAMS_NBAR);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_sample_n(Ep, PARAMS_N * PARAMS_NBAR);
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_sa_plus_e(BBp, Sp, Ep, pk_seedA);
@@ -210,6 +227,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(unsigned char *ss, const unsig
     // Cleanup:
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes((uint8_t *)W, PARAMS_NBAR * PARAMS_NBAR * sizeof(uint16_t));
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes((uint8_t *)Sp, PARAMS_N * PARAMS_NBAR * sizeof(uint16_t));
+    PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes((uint8_t *)S, PARAMS_N * PARAMS_NBAR * sizeof(uint16_t));
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes((uint8_t *)Ep, PARAMS_N * PARAMS_NBAR * sizeof(uint16_t));
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes((uint8_t *)Epp, PARAMS_NBAR * PARAMS_NBAR * sizeof(uint16_t));
     PQCLEAN_FRODOKEM640SHAKE_CLEAN_clear_bytes(muprime, BYTES_MU);

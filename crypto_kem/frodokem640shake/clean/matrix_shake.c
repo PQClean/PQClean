@@ -10,6 +10,7 @@
 #include "fips202.h"
 
 #include "api.h"
+#include "common.h"
 #include "params.h"
 
 int PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_as_plus_e(uint16_t *out, const uint16_t *s, const uint16_t *e, const uint8_t *seed_A) {
@@ -23,8 +24,11 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_as_plus_e(uint16_t *out, const uint16
     uint16_t *seed_A_origin = (uint16_t *)&seed_A_separated;
     memcpy(&seed_A_separated[2], seed_A, BYTES_SEED_A);
     for (i = 0; i < PARAMS_N; i++) {
-        seed_A_origin[0] = (uint16_t) i;
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE(i);
         shake128((unsigned char *)(A + i * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
+    }
+    for (i = 0; i < PARAMS_N * PARAMS_N; i++) {
+        A[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(A[i]);
     }
     memcpy(out, e, PARAMS_NBAR * PARAMS_N * sizeof(uint16_t));
 
@@ -53,8 +57,11 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_sa_plus_e(uint16_t *out, const uint16
     uint16_t *seed_A_origin = (uint16_t *)&seed_A_separated;
     memcpy(&seed_A_separated[2], seed_A, BYTES_SEED_A);
     for (i = 0; i < PARAMS_N; i++) {
-        seed_A_origin[0] = (uint16_t) i;
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE(i);
         shake128((unsigned char *)(A + i * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
+    }
+    for (i = 0; i < PARAMS_N * PARAMS_N; i++) {
+        A[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(A[i]);
     }
     memcpy(out, e, PARAMS_NBAR * PARAMS_N * sizeof(uint16_t));
 
