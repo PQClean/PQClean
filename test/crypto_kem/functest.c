@@ -15,13 +15,13 @@ const uint8_t canary[8] = {
  * make sure it is not touched by the implementations.
  */
 static void write_canary(uint8_t *d) {
-    for (int i = 0; i < 8; i++) {
+    for (size_t i = 0; i < 8; i++) {
         d[i] = canary[i];
     }
 }
 
 static int check_canary(const uint8_t *d) {
-    for (int i = 0; i < 8; i++) {
+    for (size_t i = 0; i < 8; i++) {
         if (d[i] != canary[i]) {
             return -1;
         }

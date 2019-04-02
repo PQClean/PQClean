@@ -25,7 +25,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_as_plus_e(uint16_t *out, const uint16
     memcpy(&seed_A_separated[2], seed_A, BYTES_SEED_A);
     for (i = 0; i < PARAMS_N; i++) {
         seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE((uint16_t) i);
-        shake128((unsigned char *)(A + i * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
+        shake128((uint8_t *)(A + i * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
     }
     for (i = 0; i < PARAMS_N * PARAMS_N; i++) {
         A[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(A[i]);
@@ -58,7 +58,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_mul_add_sa_plus_e(uint16_t *out, const uint16
     memcpy(&seed_A_separated[2], seed_A, BYTES_SEED_A);
     for (i = 0; i < PARAMS_N; i++) {
         seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_UINT16_TO_LE((uint16_t) i);
-        shake128((unsigned char *)(A + i * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
+        shake128((uint8_t *)(A + i * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
     }
     for (i = 0; i < PARAMS_N * PARAMS_N; i++) {
         A[i] = PQCLEAN_FRODOKEM640SHAKE_CLEAN_LE_TO_UINT16(A[i]);

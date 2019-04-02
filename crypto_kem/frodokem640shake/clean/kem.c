@@ -14,7 +14,7 @@
 #include "common.h"
 #include "params.h"
 
-int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
+int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
     // FrodoKEM's key generation
     // Outputs: public key pk (               BYTES_SEED_A + (PARAMS_LOGQ*PARAMS_N*PARAMS_NBAR)/8 bytes)
     //          secret key sk (CRYPTO_BYTES + BYTES_SEED_A + (PARAMS_LOGQ*PARAMS_N*PARAMS_NBAR)/8 + 2*PARAMS_N*PARAMS_NBAR + BYTES_PKHASH bytes)
@@ -71,7 +71,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigne
 }
 
 
-int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk) {
+int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk) {
     // FrodoKEM's key encapsulation
     const uint8_t *pk_seedA = &pk[0];
     const uint8_t *pk_b = &pk[BYTES_SEED_A];
@@ -140,7 +140,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned ch
 }
 
 
-int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk) {
+int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk) {
     // FrodoKEM's key decapsulation
     uint16_t B[PARAMS_N * PARAMS_NBAR] = {0};
     uint16_t Bp[PARAMS_N * PARAMS_NBAR] = {0};
@@ -210,7 +210,7 @@ int PQCLEAN_FRODOKEM640SHAKE_CLEAN_crypto_kem_dec(unsigned char *ss, const unsig
     memcpy(Fin_ct, ct, CRYPTO_CIPHERTEXTBYTES);
 
     // Reducing BBp modulo q
-    for (int i = 0; i < PARAMS_N * PARAMS_NBAR; i++) {
+    for (size_t i = 0; i < PARAMS_N * PARAMS_NBAR; i++) {
         BBp[i] = BBp[i] & ((1 << PARAMS_LOGQ) - 1);
     }
 
