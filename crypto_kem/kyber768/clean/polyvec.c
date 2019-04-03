@@ -3,18 +3,18 @@
 #include "poly.h"
 
 /*************************************************
-* Name:        polyvec_compress
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_compress
 *
 * Description: Compress and serialize vector of polynomials
 *
 * Arguments:   - unsigned char *r: pointer to output byte array (needs space for KYBER_POLYVECCOMPRESSEDBYTES)
 *              - const polyvec *a: pointer to input vector of polynomials
 **************************************************/
-void polyvec_compress(unsigned char *r, polyvec *a)
+void PQCLEAN_KYBER768_CLEAN_polyvec_compress(unsigned char *r, polyvec *a)
 {
   int i,j,k;
 
-  polyvec_csubq(a);
+  PQCLEAN_KYBER768_CLEAN_polyvec_csubq(a);
 
 #if (KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K * 352))
   uint16_t t[8];
@@ -62,15 +62,15 @@ void polyvec_compress(unsigned char *r, polyvec *a)
 }
 
 /*************************************************
-* Name:        polyvec_decompress
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_decompress
 *
 * Description: De-serialize and decompress vector of polynomials;
-*              approximate inverse of polyvec_compress
+*              approximate inverse of PQCLEAN_KYBER768_CLEAN_polyvec_compress
 *
 * Arguments:   - polyvec *r:       pointer to output vector of polynomials
 *              - unsigned char *a: pointer to input byte array (of length KYBER_POLYVECCOMPRESSEDBYTES)
 **************************************************/
-void polyvec_decompress(polyvec *r, const unsigned char *a)
+void PQCLEAN_KYBER768_CLEAN_polyvec_decompress(polyvec *r, const unsigned char *a)
 {
   int i,j;
 #if (KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K * 352))
@@ -107,66 +107,66 @@ void polyvec_decompress(polyvec *r, const unsigned char *a)
 }
 
 /*************************************************
-* Name:        polyvec_tobytes
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_tobytes
 *
 * Description: Serialize vector of polynomials
 *
 * Arguments:   - unsigned char *r: pointer to output byte array (needs space for KYBER_POLYVECBYTES)
 *              - const polyvec *a: pointer to input vector of polynomials 
 **************************************************/
-void polyvec_tobytes(unsigned char *r, polyvec *a)
+void PQCLEAN_KYBER768_CLEAN_polyvec_tobytes(unsigned char *r, polyvec *a)
 {
   int i;
   for(i=0;i<KYBER_K;i++)
-    poly_tobytes(r+i*KYBER_POLYBYTES, &a->vec[i]);
+    PQCLEAN_KYBER768_CLEAN_poly_tobytes(r+i*KYBER_POLYBYTES, &a->vec[i]);
 }
 
 /*************************************************
-* Name:        polyvec_frombytes
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_frombytes
 *
 * Description: De-serialize vector of polynomials;
-*              inverse of polyvec_tobytes
+*              inverse of PQCLEAN_KYBER768_CLEAN_polyvec_tobytes
 *
 * Arguments:   - unsigned char *r: pointer to output byte array
 *              - const polyvec *a: pointer to input vector of polynomials (of length KYBER_POLYVECBYTES)
 **************************************************/
-void polyvec_frombytes(polyvec *r, const unsigned char *a)
+void PQCLEAN_KYBER768_CLEAN_polyvec_frombytes(polyvec *r, const unsigned char *a)
 {
   int i;
   for(i=0;i<KYBER_K;i++)
-    poly_frombytes(&r->vec[i], a+i*KYBER_POLYBYTES);
+    PQCLEAN_KYBER768_CLEAN_poly_frombytes(&r->vec[i], a+i*KYBER_POLYBYTES);
 }
 
 /*************************************************
-* Name:        polyvec_ntt
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_ntt
 *
 * Description: Apply forward NTT to all elements of a vector of polynomials
 *
 * Arguments:   - polyvec *r: pointer to in/output vector of polynomials
 **************************************************/
-void polyvec_ntt(polyvec *r)
+void PQCLEAN_KYBER768_CLEAN_polyvec_ntt(polyvec *r)
 {
   int i;
   for(i=0;i<KYBER_K;i++)
-    poly_ntt(&r->vec[i]);
+    PQCLEAN_KYBER768_CLEAN_poly_ntt(&r->vec[i]);
 }
 
 /*************************************************
-* Name:        polyvec_invntt
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_invntt
 *
 * Description: Apply inverse NTT to all elements of a vector of polynomials
 *
 * Arguments:   - polyvec *r: pointer to in/output vector of polynomials
 **************************************************/
-void polyvec_invntt(polyvec *r)
+void PQCLEAN_KYBER768_CLEAN_polyvec_invntt(polyvec *r)
 {
   int i;
   for(i=0;i<KYBER_K;i++)
-    poly_invntt(&r->vec[i]);
+    PQCLEAN_KYBER768_CLEAN_poly_invntt(&r->vec[i]);
 }
 
 /*************************************************
-* Name:        polyvec_pointwise_acc
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_pointwise_acc
 *
 * Description: Pointwise multiply elements of a and b and accumulate into r
 *
@@ -174,22 +174,22 @@ void polyvec_invntt(polyvec *r)
 *            - const polyvec *a: pointer to first input vector of polynomials
 *            - const polyvec *b: pointer to second input vector of polynomials
 **************************************************/
-void polyvec_pointwise_acc(poly *r, const polyvec *a, const polyvec *b)
+void PQCLEAN_KYBER768_CLEAN_polyvec_pointwise_acc(poly *r, const polyvec *a, const polyvec *b)
 {
   int i;
   poly t;
 
-  poly_basemul(r, &a->vec[0], &b->vec[0]);
+  PQCLEAN_KYBER768_CLEAN_poly_basemul(r, &a->vec[0], &b->vec[0]);
   for(i=1;i<KYBER_K;i++) {
-    poly_basemul(&t, &a->vec[i], &b->vec[i]);
-    poly_add(r, r, &t);
+    PQCLEAN_KYBER768_CLEAN_poly_basemul(&t, &a->vec[i], &b->vec[i]);
+    PQCLEAN_KYBER768_CLEAN_poly_add(r, r, &t);
   }
 
-  poly_reduce(r);
+  PQCLEAN_KYBER768_CLEAN_poly_reduce(r);
 }
 
 /*************************************************
-* Name:        polyvec_reduce
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_reduce
 *
 * Description: Applies Barrett reduction to each coefficient 
 *              of each element of a vector of polynomials
@@ -197,15 +197,15 @@ void polyvec_pointwise_acc(poly *r, const polyvec *a, const polyvec *b)
 *
 * Arguments:   - poly *r:       pointer to input/output polynomial
 **************************************************/
-void polyvec_reduce(polyvec *r)
+void PQCLEAN_KYBER768_CLEAN_polyvec_reduce(polyvec *r)
 {
   int i;
   for(i=0;i<KYBER_K;i++)
-    poly_reduce(&r->vec[i]);
+    PQCLEAN_KYBER768_CLEAN_poly_reduce(&r->vec[i]);
 }
 
 /*************************************************
-* Name:        polyvec_csubq
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_csubq
 *
 * Description: Applies conditional subtraction of q to each coefficient 
 *              of each element of a vector of polynomials
@@ -213,15 +213,15 @@ void polyvec_reduce(polyvec *r)
 *
 * Arguments:   - poly *r:       pointer to input/output polynomial
 **************************************************/
-void polyvec_csubq(polyvec *r)
+void PQCLEAN_KYBER768_CLEAN_polyvec_csubq(polyvec *r)
 {
   int i;
   for(i=0;i<KYBER_K;i++)
-    poly_csubq(&r->vec[i]);
+    PQCLEAN_KYBER768_CLEAN_poly_csubq(&r->vec[i]);
 }
 
 /*************************************************
-* Name:        polyvec_add
+* Name:        PQCLEAN_KYBER768_CLEAN_polyvec_add
 *
 * Description: Add vectors of polynomials
 *
@@ -229,9 +229,9 @@ void polyvec_csubq(polyvec *r)
 *            - const polyvec *a: pointer to first input vector of polynomials
 *            - const polyvec *b: pointer to second input vector of polynomials
 **************************************************/
-void polyvec_add(polyvec *r, const polyvec *a, const polyvec *b)
+void PQCLEAN_KYBER768_CLEAN_polyvec_add(polyvec *r, const polyvec *a, const polyvec *b)
 {
   int i;
   for(i=0;i<KYBER_K;i++)
-    poly_add(&r->vec[i], &a->vec[i], &b->vec[i]);
+    PQCLEAN_KYBER768_CLEAN_poly_add(&r->vec[i], &a->vec[i], &b->vec[i]);
 }
