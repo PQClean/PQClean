@@ -7,19 +7,19 @@
 #include "symmetric.h"
 
 /*************************************************
-* Name:        poly_compress
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_compress
 *
 * Description: Compression and subsequent serialization of a polynomial
 *
 * Arguments:   - unsigned char *r: pointer to output byte array (needs space for KYBER_POLYCOMPRESSEDBYTES bytes)
 *              - const poly *a:    pointer to input polynomial
 **************************************************/
-void poly_compress(unsigned char *r, poly *a)
+void PQCLEAN_KYBER768_CLEAN_poly_compress(unsigned char *r, poly *a)
 {
   uint8_t t[8];
   int i,j,k=0;
 
-  poly_csubq(a);
+  PQCLEAN_KYBER768_CLEAN_poly_csubq(a);
 
 #if (KYBER_POLYCOMPRESSEDBYTES == 96)
   for(i=0;i<KYBER_N;i+=8)
@@ -63,15 +63,15 @@ void poly_compress(unsigned char *r, poly *a)
 }
 
 /*************************************************
-* Name:        poly_decompress
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_decompress
 *
 * Description: De-serialization and subsequent decompression of a polynomial;
-*              approximate inverse of poly_compress
+*              approximate inverse of PQCLEAN_KYBER768_CLEAN_poly_compress
 *
 * Arguments:   - poly *r:                pointer to output polynomial
 *              - const unsigned char *a: pointer to input byte array (of length KYBER_POLYCOMPRESSEDBYTES bytes)
 **************************************************/
-void poly_decompress(poly *r, const unsigned char *a)
+void PQCLEAN_KYBER768_CLEAN_poly_decompress(poly *r, const unsigned char *a)
 {
   int i;
 #if (KYBER_POLYCOMPRESSEDBYTES == 96)
@@ -119,19 +119,19 @@ void poly_decompress(poly *r, const unsigned char *a)
 }
 
 /*************************************************
-* Name:        poly_tobytes
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_tobytes
 *
 * Description: Serialization of a polynomial
 *
 * Arguments:   - unsigned char *r: pointer to output byte array (needs space for KYBER_POLYBYTES bytes)
 *              - const poly *a:    pointer to input polynomial
 **************************************************/
-void poly_tobytes(unsigned char *r, poly *a)
+void PQCLEAN_KYBER768_CLEAN_poly_tobytes(unsigned char *r, poly *a)
 {
   int i;
   uint16_t t0, t1;
 
-  poly_csubq(a);
+  PQCLEAN_KYBER768_CLEAN_poly_csubq(a);
 
   for(i=0;i<KYBER_N/2;i++){
     t0 = a->coeffs[2*i];
@@ -143,15 +143,15 @@ void poly_tobytes(unsigned char *r, poly *a)
 }
 
 /*************************************************
-* Name:        poly_frombytes
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_frombytes
 *
 * Description: De-serialization of a polynomial;
-*              inverse of poly_tobytes
+*              inverse of PQCLEAN_KYBER768_CLEAN_poly_tobytes
 *
 * Arguments:   - poly *r:                pointer to output polynomial
 *              - const unsigned char *a: pointer to input byte array (of KYBER_POLYBYTES bytes)
 **************************************************/
-void poly_frombytes(poly *r, const unsigned char *a)
+void PQCLEAN_KYBER768_CLEAN_poly_frombytes(poly *r, const unsigned char *a)
 {
   int i;
 
@@ -162,7 +162,7 @@ void poly_frombytes(poly *r, const unsigned char *a)
 }
 
 /*************************************************
-* Name:        poly_getnoise
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_getnoise
 *
 * Description: Sample a polynomial deterministically from a seed and a nonce,
 *              with output polynomial close to centered binomial distribution
@@ -172,16 +172,16 @@ void poly_frombytes(poly *r, const unsigned char *a)
 *              - const unsigned char *seed: pointer to input seed (pointing to array of length KYBER_SYMBYTES bytes)
 *              - unsigned char nonce:       one-byte input nonce
 **************************************************/
-void poly_getnoise(poly *r, const unsigned char *seed, unsigned char nonce)
+void PQCLEAN_KYBER768_CLEAN_poly_getnoise(poly *r, const unsigned char *seed, unsigned char nonce)
 {
   unsigned char buf[KYBER_ETA*KYBER_N/4];
 
   prf(buf, KYBER_ETA*KYBER_N/4, seed, nonce);
-  cbd(r, buf);
+  PQCLEAN_KYBER768_CLEAN_cbd(r, buf);
 }
 
 /*************************************************
-* Name:        poly_ntt
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_ntt
 *
 * Description: Computes negacyclic number-theoretic transform (NTT) of
 *              a polynomial in place;
@@ -189,14 +189,14 @@ void poly_getnoise(poly *r, const unsigned char *seed, unsigned char nonce)
 *
 * Arguments:   - uint16_t *r: pointer to in/output polynomial
 **************************************************/
-void poly_ntt(poly *r)
+void PQCLEAN_KYBER768_CLEAN_poly_ntt(poly *r)
 {
-  ntt(r->coeffs);
-  poly_reduce(r);
+  PQCLEAN_KYBER768_CLEAN_ntt(r->coeffs);
+  PQCLEAN_KYBER768_CLEAN_poly_reduce(r);
 }
 
 /*************************************************
-* Name:        poly_invntt
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_invntt
 *
 * Description: Computes inverse of negacyclic number-theoretic transform (NTT) of
 *              a polynomial in place;
@@ -204,13 +204,13 @@ void poly_ntt(poly *r)
 *
 * Arguments:   - uint16_t *a: pointer to in/output polynomial
 **************************************************/
-void poly_invntt(poly *r)
+void PQCLEAN_KYBER768_CLEAN_poly_invntt(poly *r)
 {
-  invntt(r->coeffs);
+  PQCLEAN_KYBER768_CLEAN_invntt(r->coeffs);
 }
 
 /*************************************************
-* Name:        poly_basemul
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_basemul
 *
 * Description: Multiplication of two polynomials in NTT domain
 *
@@ -218,67 +218,67 @@ void poly_invntt(poly *r)
 *              - const poly *a: pointer to first input polynomial
 *              - const poly *b: pointer to second input polynomial
 **************************************************/
-void poly_basemul(poly *r, const poly *a, const poly *b)
+void PQCLEAN_KYBER768_CLEAN_poly_basemul(poly *r, const poly *a, const poly *b)
 {
   unsigned int i;
 
   for(i = 0; i < KYBER_N/4; ++i) {
-    basemul(r->coeffs + 4*i, a->coeffs + 4*i, b->coeffs + 4*i, zetas[64 + i]);
-    basemul(r->coeffs + 4*i + 2, a->coeffs + 4*i + 2, b->coeffs + 4*i + 2, -zetas[64 + i]);
+    PQCLEAN_KYBER768_CLEAN_basemul(r->coeffs + 4*i, a->coeffs + 4*i, b->coeffs + 4*i, PQCLEAN_KYBER768_CLEAN_zetas[64 + i]);
+    PQCLEAN_KYBER768_CLEAN_basemul(r->coeffs + 4*i + 2, a->coeffs + 4*i + 2, b->coeffs + 4*i + 2, - PQCLEAN_KYBER768_CLEAN_zetas[64 + i]);
   }
 }
 
 /*************************************************
-* Name:        poly_frommont
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_frommont
 *
 * Description: Inplace conversion of all coefficients of a polynomial 
 *              from Montgomery domain to normal domain
 *
 * Arguments:   - poly *r:       pointer to input/output polynomial
 **************************************************/
-void poly_frommont(poly *r)
+void PQCLEAN_KYBER768_CLEAN_poly_frommont(poly *r)
 {
   int i;
   const int16_t f = (1ULL << 32) % KYBER_Q;
 
   for(i=0;i<KYBER_N;i++)
-    r->coeffs[i] = montgomery_reduce((int32_t)r->coeffs[i]*f);
+    r->coeffs[i] = PQCLEAN_KYBER768_CLEAN_montgomery_reduce((int32_t)r->coeffs[i]*f);
 }
 
 /*************************************************
-* Name:        poly_reduce
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_reduce
 *
 * Description: Applies Barrett reduction to all coefficients of a polynomial
 *              for details of the Barrett reduction see comments in reduce.c
 *
 * Arguments:   - poly *r:       pointer to input/output polynomial
 **************************************************/
-void poly_reduce(poly *r)
+void PQCLEAN_KYBER768_CLEAN_poly_reduce(poly *r)
 {
   int i;
 
   for(i=0;i<KYBER_N;i++)
-    r->coeffs[i] = barrett_reduce(r->coeffs[i]);
+    r->coeffs[i] = PQCLEAN_KYBER768_CLEAN_barrett_reduce(r->coeffs[i]);
 }
 
 /*************************************************
-* Name:        poly_csubq
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_csubq
 *
 * Description: Applies conditional subtraction of q to each coefficient of a polynomial
 *              for details of conditional subtraction of q see comments in reduce.c
 *
 * Arguments:   - poly *r:       pointer to input/output polynomial
 **************************************************/
-void poly_csubq(poly *r)
+void PQCLEAN_KYBER768_CLEAN_poly_csubq(poly *r)
 {
   int i;
 
   for(i=0;i<KYBER_N;i++)
-    r->coeffs[i] = csubq(r->coeffs[i]);
+    r->coeffs[i] = PQCLEAN_KYBER768_CLEAN_csubq(r->coeffs[i]);
 }
 
 /*************************************************
-* Name:        poly_add
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_add
 *
 * Description: Add two polynomials
 *
@@ -286,7 +286,7 @@ void poly_csubq(poly *r)
 *            - const poly *a: pointer to first input polynomial
 *            - const poly *b: pointer to second input polynomial
 **************************************************/
-void poly_add(poly *r, const poly *a, const poly *b)
+void PQCLEAN_KYBER768_CLEAN_poly_add(poly *r, const poly *a, const poly *b)
 {
   int i;
   for(i=0;i<KYBER_N;i++)
@@ -294,7 +294,7 @@ void poly_add(poly *r, const poly *a, const poly *b)
 }
 
 /*************************************************
-* Name:        poly_sub
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_sub
 *
 * Description: Subtract two polynomials
 *
@@ -302,7 +302,7 @@ void poly_add(poly *r, const poly *a, const poly *b)
 *            - const poly *a: pointer to first input polynomial
 *            - const poly *b: pointer to second input polynomial
 **************************************************/
-void poly_sub(poly *r, const poly *a, const poly *b)
+void PQCLEAN_KYBER768_CLEAN_poly_sub(poly *r, const poly *a, const poly *b)
 {
   int i;
   for(i=0;i<KYBER_N;i++)
@@ -310,14 +310,14 @@ void poly_sub(poly *r, const poly *a, const poly *b)
 }
 
 /*************************************************
-* Name:        poly_frommsg
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_frommsg
 *
 * Description: Convert 32-byte message to polynomial
 *
 * Arguments:   - poly *r:                  pointer to output polynomial
 *              - const unsigned char *msg: pointer to input message
 **************************************************/
-void poly_frommsg(poly *r, const unsigned char msg[KYBER_SYMBYTES])
+void PQCLEAN_KYBER768_CLEAN_poly_frommsg(poly *r, const unsigned char msg[KYBER_SYMBYTES])
 {
   int i,j;
   uint16_t mask;
@@ -333,19 +333,19 @@ void poly_frommsg(poly *r, const unsigned char msg[KYBER_SYMBYTES])
 }
 
 /*************************************************
-* Name:        poly_tomsg
+* Name:        PQCLEAN_KYBER768_CLEAN_poly_tomsg
 *
 * Description: Convert polynomial to 32-byte message
 *
 * Arguments:   - unsigned char *msg: pointer to output message
 *              - const poly *a:      pointer to input polynomial
 **************************************************/
-void poly_tomsg(unsigned char msg[KYBER_SYMBYTES], poly *a)
+void PQCLEAN_KYBER768_CLEAN_poly_tomsg(unsigned char msg[KYBER_SYMBYTES], poly *a)
 {
   uint16_t t;
   int i,j;
 
-  poly_csubq(a);
+  PQCLEAN_KYBER768_CLEAN_poly_csubq(a);
 
   for(i=0;i<KYBER_SYMBYTES;i++)
   {

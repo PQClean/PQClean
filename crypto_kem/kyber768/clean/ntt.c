@@ -42,7 +42,7 @@ void init_ntt() {
 }
 
 */ 
-int16_t zetas[128] = {
+int16_t PQCLEAN_KYBER768_CLEAN_zetas[128] = {
   2285, 2571, 2970, 1812, 1493, 1422, 287, 202, 3158, 622, 1577, 182, 962, 2127, 1855, 1468, 
   573, 2004, 264, 383, 2500, 1458, 1727, 3199, 2648, 1017, 732, 608, 1787, 411, 3124, 1758, 
   1223, 652, 2777, 1015, 2036, 1491, 3047, 1785, 516, 3321, 3009, 2663, 1711, 2167, 126, 1469, 
@@ -52,7 +52,7 @@ int16_t zetas[128] = {
   817, 1097, 603, 610, 1322, 2044, 1864, 384, 2114, 3193, 1218, 1994, 2455, 220, 2142, 1670, 
   2144, 1799, 2051, 794, 1819, 2475, 2459, 478, 3221, 3021, 996, 991, 958, 1869, 1522, 1628};
 
-int16_t zetas_inv[128] = {
+int16_t PQCLEAN_KYBER768_CLEAN_zetas_inv[128] = {
   1701, 1807, 1460, 2371, 2338, 2333, 308, 108, 2851, 870, 854, 1510, 2535, 1278, 1530, 1185, 
   1659, 1187, 3109, 874, 1335, 2111, 136, 1215, 2945, 1465, 1285, 2007, 2719, 2726, 2232, 2512, 
   75, 156, 3000, 2911, 2980, 872, 2685, 1590, 2210, 602, 1846, 777, 147, 2170, 2551, 246, 
@@ -74,7 +74,7 @@ int16_t zetas_inv[128] = {
 * Returns 16-bit integer congruent to a*b*R^{-1} mod q
 **************************************************/
 static int16_t fqmul(int16_t a, int16_t b) {
-  return montgomery_reduce((int32_t)a*b);
+  return PQCLEAN_KYBER768_CLEAN_montgomery_reduce((int32_t)a*b);
 }
 
 /*************************************************
@@ -85,14 +85,14 @@ static int16_t fqmul(int16_t a, int16_t b) {
 *
 * Arguments:   - int16_t r[256]: pointer to input/output vector of elements of Zq
 **************************************************/
-void ntt(int16_t r[256]) {
+void PQCLEAN_KYBER768_CLEAN_ntt(int16_t r[256]) {
   unsigned int len, start, j, k;
   int16_t t, zeta;
 
   k = 1;
   for(len = 128; len >= 2; len >>= 1) {
     for(start = 0; start < 256; start = j + len) {
-      zeta = zetas[k++];
+      zeta = PQCLEAN_KYBER768_CLEAN_zetas[k++];
       for(j = start; j < start + len; ++j) {
         t = fqmul(zeta, r[j + len]);
         r[j + len] = r[j] - t;
@@ -110,17 +110,17 @@ void ntt(int16_t r[256]) {
 *
 * Arguments:   - int16_t r[256]: pointer to input/output vector of elements of Zq
 **************************************************/
-void invntt(int16_t r[256]) {
+void PQCLEAN_KYBER768_CLEAN_invntt(int16_t r[256]) {
   unsigned int start, len, j, k;
   int16_t t, zeta;
 
   k = 0;
   for(len = 2; len <= 128; len <<= 1) {
     for(start = 0; start < 256; start = j + len) {
-      zeta = zetas_inv[k++];
+      zeta = PQCLEAN_KYBER768_CLEAN_zetas_inv[k++];
       for(j = start; j < start + len; ++j) {
         t = r[j];
-        r[j] = barrett_reduce(t + r[j + len]);
+        r[j] = PQCLEAN_KYBER768_CLEAN_barrett_reduce(t + r[j + len]);
         r[j + len] = t - r[j + len];
         r[j + len] = fqmul(zeta, r[j + len]);
       }
@@ -128,11 +128,11 @@ void invntt(int16_t r[256]) {
   }
 
   for(j = 0; j < 256; ++j)
-    r[j] = fqmul(r[j], zetas_inv[127]);
+    r[j] = fqmul(r[j], PQCLEAN_KYBER768_CLEAN_zetas_inv[127]);
 }
 
 /*************************************************
-* Name:        basemul
+* Name:        PQCLEAN_KYBER768_CLEAN_basemul
 *
 * Description: Multiplication of polynomials in Zq[X]/((X^2-zeta))
 *              used for multiplication of elements in Rq in NTT domain
@@ -142,7 +142,7 @@ void invntt(int16_t r[256]) {
 *              - const int16_t b[2]: pointer to the second factor
 *              - int16_t zeta: integer defining the reduction polynomial
 **************************************************/
-void basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta) {
+void PQCLEAN_KYBER768_CLEAN_basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta) {
   r[0]  = fqmul(a[1], b[1]);
   r[0]  = fqmul(r[0], zeta);
   r[0] += fqmul(a[0], b[0]);
