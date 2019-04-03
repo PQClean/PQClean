@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-extern int16_t zetas[128];
-extern int16_t zetasinv[128];
+extern int16_t PQCLEAN_KYBER768_CLEAN_zetas[128];
+extern int16_t PQCLEAN_KYBER768_CLEAN_zetas_inv[128];
 
-void ntt(int16_t *poly);
-void invntt(int16_t *poly);
-void basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta);
+void PQCLEAN_KYBER768_CLEAN_ntt(int16_t *poly);
+void PQCLEAN_KYBER768_CLEAN_invntt(int16_t *poly);
+void PQCLEAN_KYBER768_CLEAN_basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta);
 
 #endif

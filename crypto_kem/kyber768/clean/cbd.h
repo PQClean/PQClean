@@ -3,6 +3,6 @@
 
 #include "poly.h"
 
-void cbd(poly *r, const unsigned char *buf);
+void PQCLEAN_KYBER768_CLEAN_cbd(poly *r, const unsigned char *buf);
 
 #endif
