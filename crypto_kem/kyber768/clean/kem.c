@@ -1,9 +1,10 @@
+#include <stdlib.h>
 #include "api.h"
-#include "indcpa.h"
-#include "params.h"
 #include "randombytes.h"
 #include "symmetric.h"
+#include "params.h"
 #include "verify.h"
+#include "indcpa.h"
 
 #include <stdlib.h>
 
@@ -18,15 +19,15 @@
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_KYBER768_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
-    size_t i;
-    PQCLEAN_KYBER768_CLEAN_indcpa_keypair(pk, sk);
-    for (i = 0; i < KYBER_INDCPA_PUBLICKEYBYTES; i++) {
-        sk[i + KYBER_INDCPA_SECRETKEYBYTES] = pk[i];
-    }
-    hash_h(sk + KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES, pk, KYBER_PUBLICKEYBYTES);
-    randombytes(sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES, KYBER_SYMBYTES);    /* Value z for pseudo-random output on reject */
-    return 0;
+int crypto_kem_keypair(unsigned char *pk, unsigned char *sk)
+{
+  size_t i;
+  indcpa_keypair(pk,sk);
+  for(i=0;i<KYBER_INDCPA_PUBLICKEYBYTES;i++)
+    sk[i+KYBER_INDCPA_SECRETKEYBYTES] = pk[i];
+  hash_h(sk+KYBER_SECRETKEYBYTES-2*KYBER_SYMBYTES, pk, KYBER_PUBLICKEYBYTES);
+  randombytes(sk+KYBER_SECRETKEYBYTES-KYBER_SYMBYTES, KYBER_SYMBYTES);        /* Value z for pseudo-random output on reject */
+  return 0;
 }
 
 /*************************************************
@@ -41,21 +42,22 @@ int PQCLEAN_KYBER768_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_KYBER768_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk) {
-    unsigned char  kr[2 * KYBER_SYMBYTES];                                   /* Will contain key, coins */
-    unsigned char buf[2 * KYBER_SYMBYTES];
+int crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk)
+{
+  unsigned char  kr[2*KYBER_SYMBYTES];                                     /* Will contain key, coins */
+  unsigned char buf[2*KYBER_SYMBYTES];
 
-    randombytes(buf, KYBER_SYMBYTES);
-    hash_h(buf, buf, KYBER_SYMBYTES);                                        /* Don't release system RNG output */
+  randombytes(buf, KYBER_SYMBYTES);
+  hash_h(buf, buf, KYBER_SYMBYTES);                                        /* Don't release system RNG output */
 
-    hash_h(buf + KYBER_SYMBYTES, pk, KYBER_PUBLICKEYBYTES);                  /* Multitarget countermeasure for coins + contributory KEM */
-    hash_g(kr, buf, 2 * KYBER_SYMBYTES);
+  hash_h(buf+KYBER_SYMBYTES, pk, KYBER_PUBLICKEYBYTES);                    /* Multitarget countermeasure for coins + contributory KEM */
+  hash_g(kr, buf, 2*KYBER_SYMBYTES);
 
-    PQCLEAN_KYBER768_CLEAN_indcpa_enc(ct, buf, pk, kr + KYBER_SYMBYTES);                            /* coins are in kr+KYBER_SYMBYTES */
+  indcpa_enc(ct, buf, pk, kr+KYBER_SYMBYTES);                              /* coins are in kr+KYBER_SYMBYTES */
 
-    hash_h(kr + KYBER_SYMBYTES, ct, KYBER_CIPHERTEXTBYTES);                  /* overwrite coins in kr with H(c) */
-    kdf(ss, kr, 2 * KYBER_SYMBYTES);                                         /* hash concatenation of pre-k and H(c) to k */
-    return 0;
+  hash_h(kr+KYBER_SYMBYTES, ct, KYBER_CIPHERTEXTBYTES);                    /* overwrite coins in kr with H(c) */
+  kdf(ss, kr, 2*KYBER_SYMBYTES);                                           /* hash concatenation of pre-k and H(c) to k */
+  return 0;
 }
 
 /*************************************************
@@ -72,29 +74,29 @@ int PQCLEAN_KYBER768_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, 
 *
 * On failure, ss will contain a pseudo-random value.
 **************************************************/
-int PQCLEAN_KYBER768_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk) {
-    size_t i;
-    unsigned char fail;
-    unsigned char cmp[KYBER_CIPHERTEXTBYTES];
-    unsigned char buf[2 * KYBER_SYMBYTES];
-    unsigned char kr[2 * KYBER_SYMBYTES];                                    /* Will contain key, coins */
-    const unsigned char *pk = sk + KYBER_INDCPA_SECRETKEYBYTES;
+int crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk)
+{
+  size_t i;
+  int fail;
+  unsigned char __attribute__((aligned(32))) cmp[KYBER_CIPHERTEXTBYTES];
+  unsigned char buf[2*KYBER_SYMBYTES];
+  unsigned char kr[2*KYBER_SYMBYTES];                                      /* Will contain key, coins */
+  const unsigned char *pk = sk+KYBER_INDCPA_SECRETKEYBYTES;
 
-    PQCLEAN_KYBER768_CLEAN_indcpa_dec(buf, ct, sk);
+  indcpa_dec(buf, ct, sk);
 
-    for (i = 0; i < KYBER_SYMBYTES; i++) {                                   /* Multitarget countermeasure for coins + contributory KEM */
-        buf[KYBER_SYMBYTES + i] = sk[KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES + i];    /* Save hash by storing H(pk) in sk */
-    }
-    hash_g(kr, buf, 2 * KYBER_SYMBYTES);
+  for(i=0;i<KYBER_SYMBYTES;i++)                                            /* Multitarget countermeasure for coins + contributory KEM */
+    buf[KYBER_SYMBYTES+i] = sk[KYBER_SECRETKEYBYTES-2*KYBER_SYMBYTES+i];   /* Save hash by storing H(pk) in sk */
+  hash_g(kr, buf, 2*KYBER_SYMBYTES);
 
-    PQCLEAN_KYBER768_CLEAN_indcpa_enc(cmp, buf, pk, kr + KYBER_SYMBYTES);                           /* coins are in kr+KYBER_SYMBYTES */
+  indcpa_enc(cmp, buf, pk, kr+KYBER_SYMBYTES);                             /* coins are in kr+KYBER_SYMBYTES */
 
-    fail = PQCLEAN_KYBER768_CLEAN_verify(ct, cmp, KYBER_CIPHERTEXTBYTES);
+  fail = verify(ct, cmp, KYBER_CIPHERTEXTBYTES);
 
-    hash_h(kr + KYBER_SYMBYTES, ct, KYBER_CIPHERTEXTBYTES);                  /* overwrite coins in kr with H(c)  */
+  hash_h(kr+KYBER_SYMBYTES, ct, KYBER_CIPHERTEXTBYTES);                    /* overwrite coins in kr with H(c)  */
 
-    PQCLEAN_KYBER768_CLEAN_cmov(kr, sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES, KYBER_SYMBYTES, fail); /* Overwrite pre-k with z on re-encryption failure */
+  cmov(kr, sk+KYBER_SECRETKEYBYTES-KYBER_SYMBYTES, KYBER_SYMBYTES, fail);  /* Overwrite pre-k with z on re-encryption failure */
 
-    kdf(ss, kr, 2 * KYBER_SYMBYTES);                                         /* hash concatenation of pre-k and H(c) to k */
-    return 0;
+  kdf(ss, kr, 2*KYBER_SYMBYTES);                                           /* hash concatenation of pre-k and H(c) to k */
+  return 0;
 }

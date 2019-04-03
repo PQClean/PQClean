@@ -1,11 +1,9 @@
+#include <stdint.h>
+#include "params.h"
 #include "reduce.h"
 
-#include "params.h"
-
-#include <stdint.h>
-
 /*************************************************
-* Name:        PQCLEAN_KYBER768_CLEAN_montgomery_reduce
+* Name:        montgomery_reduce
 *
 * Description: Montgomery reduction; given a 32-bit integer a, computes
 *              16-bit integer congruent to a * R^-1 mod q,
@@ -15,19 +13,20 @@
 *
 * Returns:     integer in {-q+1,...,q-1} congruent to a * R^-1 modulo q.
 **************************************************/
-int16_t PQCLEAN_KYBER768_CLEAN_montgomery_reduce(int32_t a) {
-    int32_t t;
-    int16_t u;
+int16_t montgomery_reduce(int32_t a)
+{
+  int32_t t;
+  int16_t u;
 
-    u = (int16_t)(a * QINV);
-    t = (int32_t)u * KYBER_Q;
-    t = a - t;
-    t >>= 16;
-    return (int16_t)t;
+  u = a * QINV;
+  t = (int32_t)u * KYBER_Q;
+  t = a - t;
+  t >>= 16;
+  return t;
 }
 
 /*************************************************
-* Name:        PQCLEAN_KYBER768_CLEAN_barrett_reduce
+* Name:        barrett_reduce
 *
 * Description: Barrett reduction; given a 16-bit integer a, computes
 *              16-bit integer congruent to a mod q in {0,...,q}
@@ -36,18 +35,18 @@ int16_t PQCLEAN_KYBER768_CLEAN_montgomery_reduce(int32_t a) {
 *
 * Returns:     integer in {0,...,q} congruent to a modulo q.
 **************************************************/
-int16_t PQCLEAN_KYBER768_CLEAN_barrett_reduce(int16_t a) {
-    int32_t t;
-    const int32_t v = (1U << 26) / KYBER_Q + 1;
+int16_t barrett_reduce(int16_t a) {
+  int32_t t;
+  const int32_t v = (1U << 26)/KYBER_Q + 1;
 
-    t = v * a;
-    t >>= 26;
-    t *= KYBER_Q;
-    return (int16_t)(a - t);
+  t = v*a;
+  t >>= 26;
+  t *= KYBER_Q;
+  return a - t;
 }
 
 /*************************************************
-* Name:        PQCLEAN_KYBER768_CLEAN_csubq
+* Name:        csubq
 *
 * Description: Conditionallly subtract q
 *
@@ -55,8 +54,8 @@ int16_t PQCLEAN_KYBER768_CLEAN_barrett_reduce(int16_t a) {
 *
 * Returns:     a - q if a >= q, else a
 **************************************************/
-int16_t PQCLEAN_KYBER768_CLEAN_csubq(int16_t a) {
-    a -= KYBER_Q;
-    a += (a >> 15) & KYBER_Q;
-    return a;
+int16_t csubq(int16_t a) {
+  a -= KYBER_Q;
+  a += (a >> 15) & KYBER_Q;
+  return a;
 }

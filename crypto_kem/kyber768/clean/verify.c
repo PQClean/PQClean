@@ -1,7 +1,5 @@
+#include <string.h>
 #include <stdint.h>
-#include <stdlib.h>
-
-#include "verify.h"
 
 /*************************************************
 * Name:        verify
@@ -14,18 +12,17 @@
 *
 * Returns 0 if the byte arrays are equal, 1 otherwise
 **************************************************/
-unsigned char PQCLEAN_KYBER768_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
-    uint64_t r;
-    size_t i;
+int verify(const unsigned char *a, const unsigned char *b, size_t len)
+{
+  uint64_t r;
+  size_t i;
+  r = 0;
 
-    r = 0;
-    for (i = 0; i < len; i++) {
-        r |= a[i] ^ b[i];
-    }
+  for(i=0;i<len;i++)
+    r |= a[i] ^ b[i];
 
-    r = (~r + 1); // Two's complement
-    r >>= 63;
-    return (unsigned char)r;
+  r = (-r) >> 63;
+  return r;
 }
 
 /*************************************************
@@ -41,11 +38,11 @@ unsigned char PQCLEAN_KYBER768_CLEAN_verify(const unsigned char *a, const unsign
 *              size_t len:             Amount of bytes to be copied
 *              unsigned char b:        Condition bit; has to be in {0,1}
 **************************************************/
-void PQCLEAN_KYBER768_CLEAN_cmov(unsigned char *r, const unsigned char *x, size_t len, unsigned char b) {
-    size_t i;
+void cmov(unsigned char *r, const unsigned char *x, size_t len, unsigned char b)
+{
+  size_t i;
 
-    b = -b;
-    for (i = 0; i < len; i++) {
-        r[i] ^= b & (x[i] ^ r[i]);
-    }
+  b = -b;
+  for(i=0;i<len;i++)
+    r[i] ^= b & (x[i] ^ r[i]);
 }
