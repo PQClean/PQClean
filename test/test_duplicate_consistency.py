@@ -5,7 +5,7 @@ Checks that files duplicated across schemes/implementations are consistent.
 import os
 import pqclean
 import helpers
-
+import unittest
 
 def test_duplicate_consistency():
     for scheme in pqclean.Scheme.all_schemes():
@@ -18,17 +18,18 @@ def file_get_contents(filename):
         return f.read()
 
 def check_duplicate_consistency(implementation):
-    helpers.ensure_available('sed')
-    if 'duplicate-consistency' in implementation.metadata():
-        dc = implementation.metadata()['duplicate-consistency']
-        for pairs in dc['files']:
-            transformed_src = helpers.run_subprocess(
-                ['sed', '-e', 's/{}/{}/g'.format(dc['source_namespace'], dc['target_namespace']), pairs['source_file']],
-                '..',
-            )
-            this_src = file_get_contents(os.path.join(implementation.path(), pairs['target_file']))
-            print(this_src)
-            assert(transformed_src == this_src)
+    helpers.skip_windows()
+    if not('duplicate-consistency' in implementation.metadata()):
+        raise unittest.SkipTest('No duplicate consistency requirements defined')
+    dc = implementation.metadata()['duplicate-consistency']
+    for pairs in dc['files']:
+        transformed_src = helpers.run_subprocess(
+            ['sed', '-e', 's/{}/{}/g'.format(dc['source_namespace'], dc['target_namespace']), pairs['source_file']],
+            '..',
+        )
+        this_src = file_get_contents(os.path.join(implementation.path(), pairs['target_file']))
+        print(this_src)
+        assert(transformed_src == this_src)
 
 
 if __name__ == '__main__':
