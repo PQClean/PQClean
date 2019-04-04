@@ -1,6 +1,6 @@
 name: FrodoKEM-976-SHAKE
 type: kem
-claimed-nist-level: 1
+claimed-nist-level: 3
 length-public-key: 15632
 length-ciphertext: 15744
 testvectors-sha256: 5342d51e38c3d98efc0ee71991d20739ad77f57e2f1bab641d56c1a49888788c
