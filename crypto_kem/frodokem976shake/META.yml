@@ -1,0 +1,36 @@
+name: FrodoKEM-976-SHAKE
+type: kem
+claimed-nist-level: 1
+length-public-key: 15632
+length-ciphertext: 15744
+testvectors-sha256: 5342d51e38c3d98efc0ee71991d20739ad77f57e2f1bab641d56c1a49888788c
+principal-submitter: Douglas Stebila, University of Waterloo
+auxiliary-submitters:
+- Erdem Alkim
+- Joppe W. Bos, NXP Semiconductors
+- Léo Ducas, CWI
+- Patrick Longa, Microsoft Research
+- Ilya Mironov, Google
+- Michael Naehrig, Microsoft Research
+- Valeria Nikolaenko
+- Chris Peikert, University of Michigan
+- Ananth Raghunathan, Google
+- Karen Easterbrook, Microsoft Research
+- Brian LaMacchia, Microsoft Research
+implementations:
+- name: clean
+  version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/437e228fca580a82435cab09f30ae14b03183119
+  duplicate-consistency:
+    source_namespace: PQCLEAN_FRODOKEM640SHAKE_CLEAN_
+    target_namespace: PQCLEAN_FRODOKEM976SHAKE_CLEAN_
+    files:
+    - source_file: crypto_kem/frodokem640shake/clean/common.h
+      target_file: common.h
+    - source_file: crypto_kem/frodokem640shake/clean/kem.c
+      target_file: kem.c
+    - source_file: crypto_kem/frodokem640shake/clean/matrix_shake.c
+      target_file: matrix_shake.c
+    - source_file: crypto_kem/frodokem640shake/clean/noise.c
+      target_file: noise.c
+    - source_file: crypto_kem/frodokem640shake/clean/util.c
+      target_file: util.c
