@@ -39,13 +39,13 @@ $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJE
     -MKDIR $(DEST_DIR)
     -DEL functest.obj
     $(CC) /c crypto_$(TYPE)\functest.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
-    LINK.EXE /STACK:2048000 /OUT:$@ functest.obj $(COMMON_OBJECTS_NOPATH) randombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib Advapi32.lib
+    LINK.EXE /STACK:8192000 /OUT:$@ functest.obj $(COMMON_OBJECTS_NOPATH) randombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib Advapi32.lib
 
 $(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\notrandombytes.obj
     -MKDIR $(DEST_DIR)
     -DEL testvectors.obj
     $(CC) /c crypto_$(TYPE)\testvectors.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
-    LINK.EXE /STACK:2048000 /OUT:$@ testvectors.obj $(COMMON_OBJECTS_NOPATH) notrandombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib
+    LINK.EXE /STACK:8192000 /OUT:$@ testvectors.obj $(COMMON_OBJECTS_NOPATH) notrandombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib
 
 clean:
     -DEL functest.obj testvectors.obj
