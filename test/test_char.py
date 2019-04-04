@@ -7,6 +7,8 @@ This is ambiguous; compilers can freely choose `signed` or `unsigned` char.
 import pqclean
 import pycparser
 import os
+import unittest
+import shutil
 
 
 def test_char():
@@ -25,6 +27,8 @@ def walk_tree(ast):
 
 
 def check_char(implementation):
+    if not shutil.which('cpp'):
+        raise unittest.SkipTest("C pre-processor (cpp) was not found.")
     errors = []
     for fname in os.listdir(implementation.path()):
         if not fname.endswith(".c"):
@@ -34,6 +38,7 @@ def check_char(implementation):
             os.path.join(implementation.path(), fname),
             use_cpp=True,
             cpp_args=[
+                '-std=c99',
                 '-nostdinc',  # pycparser cannot deal with e.g. __attribute__
                 '-I{}'.format(os.path.join(tdir, "../common")),
                 # necessary to mock e.g. <stdint.h>
