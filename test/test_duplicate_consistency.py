@@ -18,7 +18,7 @@ def file_get_contents(filename):
         return f.read()
 
 def check_duplicate_consistency(implementation):
-    print(implementation.metadata())
+    helpers.ensure_available('sed')
     if 'duplicate-consistency' in implementation.metadata():
         dc = implementation.metadata()['duplicate-consistency']
         for pairs in dc['files']:
