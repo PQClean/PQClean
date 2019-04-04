@@ -161,7 +161,7 @@ static int test_invalid_sk_a(void) {
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid sk_a\n");
-            return 1;
+            return -1;
         }
     }
 
@@ -199,7 +199,7 @@ static int test_invalid_ciphertext(void) {
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid ciphertext\n");
-            return 1;
+            return -1;
         }
     }
 
