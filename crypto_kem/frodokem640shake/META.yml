@@ -6,17 +6,17 @@ length-ciphertext: 9720
 testvectors-sha256: 521ff891de20efe74e6584d09612dae989427ac76261a41630c4e4d6a4fc78a4
 principal-submitter: Douglas Stebila, University of Waterloo
 auxiliary-submitters:
-  - Erdem Alkim
-  - Joppe W. Bos, NXP Semiconductors
-  - Léo Ducas, CWI
-  - Patrick Longa, Microsoft Research
-  - Ilya Mironov, Google
-  - Michael Naehrig, Microsoft Research
-  - Valeria Nikolaenko
-  - Chris Peikert, University of Michigan
-  - Ananth Raghunathan, Google
-  - Karen Easterbrook, Microsoft Research
-  - Brian LaMacchia, Microsoft Research
+- Erdem Alkim
+- Joppe W. Bos, NXP Semiconductors
+- Léo Ducas, CWI
+- Patrick Longa, Microsoft Research
+- Ilya Mironov, Google
+- Michael Naehrig, Microsoft Research
+- Valeria Nikolaenko
+- Chris Peikert, University of Michigan
+- Ananth Raghunathan, Google
+- Karen Easterbrook, Microsoft Research
+- Brian LaMacchia, Microsoft Research
 implementations:
-    - name: clean
-      version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/437e228fca580a82435cab09f30ae14b03183119
+- name: clean
+  version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/437e228fca580a82435cab09f30ae14b03183119
