@@ -35,7 +35,7 @@ def check_char(implementation):
         ast = pycparser.parse_file(
             os.path.join(implementation.path(), fname),
             use_cpp=True,
-            cpp_path='cc',
+            cpp_path='cc',  # not all platforms link cpp correctly; cc -E works
             cpp_args=[
                 '-E',
                 '-std=c99',
