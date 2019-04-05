@@ -6,7 +6,7 @@
 #include "api.h"
 #include "randombytes.h"
 
-#define NTESTS 100
+#define NTESTS 5
 
 static void printbytes(const uint8_t *x, size_t xlen) {
     size_t i;
