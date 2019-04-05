@@ -18,6 +18,7 @@ version: 2
           docker run -e CI=true --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
           uname -a &&
           export CC=${CC} &&
+          pip3 install -r requirements.txt
           cd test && python3 -m nose --rednose --verbose"
 
 .native_job: &nativejob
