@@ -2,6 +2,7 @@ name: Dilithium-III
 type: signature
 claimed-nist-level: 3
 length-public-key: 1472
+length-secret-key: 3504
 length-signature: 2701
 testvectors-sha256: e1852a975842c44a683c914ed131d95bee9b786c36c41e47bb77d7dd3c0c07be
 principal-submitter: Vadim Lyubashevsky

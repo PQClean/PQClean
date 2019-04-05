@@ -28,7 +28,7 @@ See the section [API](#API) below.
     length-public-key: <N>          # KEM and signature
     length-secret-key: <N>          # KEM and signature
     length-ciphertext: <N>          # KEM only
-    length-sharedsecret: <N>        # KEM only
+    length-shared-secret: <N>        # KEM only
     length-signature: <N>           # Signature only
     testvectors-sha256: sha256sum of output of testvectors
     principal-submitter: Eve
