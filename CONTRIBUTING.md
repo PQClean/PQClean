@@ -19,14 +19,17 @@ See the section [API](#API) below.
 
     For now, we only accept **pure, portable C code**. Our coding conventions impose certain constraints on the C code -- C99 code, fixed sized integer types (e.g., `uint64_t` rather than `unsigned long long`), and more.  See README.md for more information.
 
-3. Create a `META.yml` file in `crypto_kem/yourschemename` following this template:
+3. Create a `META.yml` file in `crypto_(kem|sign)/yourschemename` following this template:
 
     ```yaml
     name: Name
     type: <kem|signature>
     claimed-nist-level: <N>
-    length-public-key: <N>
-    length-ciphertext: <N>
+    length-public-key: <N>          # KEM and signature
+    length-secret-key: <N>          # KEM and signature
+    length-ciphertext: <N>          # KEM only
+    length-sharedsecret: <N>        # KEM only
+    length-signature: <N>           # Signature only
     testvectors-sha256: sha256sum of output of testvectors
     principal-submitter: Eve
     auxiliary-submitters:
@@ -43,11 +46,12 @@ See the section [API](#API) below.
 4. Put your scheme's C source code into `crypto_kem/yourschemename/clean`.
 
     1. Make sure all symbols are prefixed with `PQCLEAN_YOURSCHEME_CLEAN_`.
-    2. Include `api.h` into your scheme with the symbols specified in the section [API](#API).
+    2. Include `api.h` into your scheme with the symbols specified in the section [API](#API). Make sure it does not include other files.
     3. We use `astyle` to format code. You may consider running the following command on your submission:
     ```
     astyle --project crypto_kem/yourschemename/clean/*.[ch]
     ```
+    4. You may run the tests in the `tests/` folder. See the `README` for how to run the test suite.
 
 5. Create `Makefile` and `Makefile.Microsoft_nmake` files to compile your scheme as static library.
     * We suggest you copy these from `crypto_kem/kyber768/clean` and modify them to suit your scheme.
@@ -68,9 +72,12 @@ These items should be available in your `api.h` file.
 Functions:
 
 ```c
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_keypair(
+    uint8_t *pk, uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_enc(
+    uint8_t *ct, uint8_t *ss, const uint8_t *pk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(
+    uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
 ```
 
 `#define` macros:
@@ -86,19 +93,36 @@ int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, cons
 Functions:
 
 ```c
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign(uint8_t *sm, unsigned long long *smlen, const uint8_t *msg, unsigned long long len, const uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_open(uint8_t *m, unsigned long long *mlen, const uint8_t *sm, unsigned long long smlen, const uint8_t *pk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_keypair(
+    uint8_t *pk, uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign(
+    uint8_t *sm, size_t *smlen,
+    const uint8_t *msg, size_t len,
+    const uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_open(
+    uint8_t *m, size_t *mlen,
+    const uint8_t *sm, size_t smlen,
+    const uint8_t *pk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_signature(
+    uint8_t *sig, size_t *siglen,
+    const uint8_t *m, size_t mlen,
+    const uint8_t *sk);
+int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_verify(
+    const uint8_t *sig, size_t siglen,
+    const uint8_t *m, size_t mlen,
+    const uint8_t *pk);
 ```
 
 `#define` macros:
 
-* `CRYPTO_SECRETKEYBYTES`
-* `CRYPTO_PUBLICKEYBYTES`
-* `CRYPTO_BYTES`
-* `CRYPTO_ALGNAME`
+* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_SECRETKEYBYTES`
+* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_PUBLICKEYBYTES`
+* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_ALGNAME`
+* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_BYTES`
+
+for KEMs, additionally define:
+
+* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_CIPHERTEXTBYTES`
 
 Please make sure your `api.h` file does not include any other files.
 
