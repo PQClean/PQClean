@@ -24,6 +24,7 @@ version: 2
         name: Run tests
         command: |
           export CC=${CC}
+          pip3 install -r requirements.txt
           cd test && python3 -m nose --rednose --verbose
 
 
