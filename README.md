@@ -63,15 +63,15 @@ _The checking of items on this list is still being developed. Checked items shou
 
 ## Requirements on C implementations that are manually checked
 
-* Makefiles without explicit rules (rely on implicit, built-in rules)
+* Minimalist Makefiles
 * `#ifdef`s only for header encapsulation
 * No stringification macros
 * Output-parameter pointers in functions are on the left
 * `const` arguments are labeled as `const`
 * All exported symbols are namespaced in place
-* All integer types are of fixed size, using `stdint.h` types (including `uint8_t` instead of `unsigned char`)
-* Integers used for indexing are of size `size_t`
-* variable declarations at the beginning (except in `for (size_t i=...`)
+* Integer types are of fixed size where relevant, using `stdint.h` types
+* Integers used for indexing memory are of size `size_t`
+* Variable declarations at the beginning (except in `for (size_t i=...`)
 
 
 ## Clean C implementations currently in PQClean
