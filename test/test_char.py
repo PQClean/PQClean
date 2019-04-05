@@ -37,7 +37,9 @@ def check_char(implementation):
         ast = pycparser.parse_file(
             os.path.join(implementation.path(), fname),
             use_cpp=True,
+            cpp_path='cc',
             cpp_args=[
+                '-E',
                 '-std=c99',
                 '-nostdinc',  # pycparser cannot deal with e.g. __attribute__
                 '-I{}'.format(os.path.join(tdir, "../common")),
