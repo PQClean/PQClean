@@ -25,7 +25,6 @@ matrix:
         - pip3 install -r requirements.txt
         - export PATH="/usr/local/bin:$PATH"
         - ln -s /usr/local/Cellar/gcc/8.3.0/bin/gcc-8 /usr/local/bin/gcc
-        - ln -s /usr/local/Cellar/gcc/8.3.0/bin/cpp-8 /usr/local/bin/cpp
         - gcc --version
       script:
         - "cd test && python3 -m nose --rednose --verbose"
