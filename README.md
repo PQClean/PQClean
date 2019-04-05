@@ -139,10 +139,16 @@ To do this, make sure the following is installed:
 * Python 3.5+
 * `nosetests` or `nose2` (either for Python 3)
 
+You will also need to make sure the submodules are initialized by running:
+
+```
+git submodule update --init
+```
+
 Run the Python-based tests by going into the `test` directory and running `nosetests -v` or `nose2 -B -v`, depending on what you installed.
 If you have the `rednose` plugin for `nosetests` installed, run `nosetests --rednose` to get colored output.
 
-You may also run `python <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
+You may also run `python3 <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
 
 [circleci-pqc]: https://circleci.com/gh/PQClean/PQClean/
 [travis-pqc]: https://travis-ci.com/PQClean/PQClean/

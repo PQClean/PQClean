@@ -86,7 +86,6 @@ def ensure_available(executable):
     """
     path = shutil.which(executable)
     if path:
-        print("Found", path)
         return path
 
     # Installing clang-tidy on LLVM will be too much of a mess.
