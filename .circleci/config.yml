@@ -5,6 +5,11 @@ version: 2
   steps:
     - checkout
     - run:
+        name: Pull submodules
+        command: |
+          git submodule init
+          git submodule update
+    - run:
         name: Install the emulation handlers
         command: docker run --rm --privileged multiarch/qemu-user-static:register --reset
     - run:
@@ -20,6 +25,11 @@ version: 2
     - image: pqclean/ci-container:$ARCH
   steps:
     - checkout
+    - run:
+        name: Pull submodules
+        command: |
+          git submodule init
+          git submodule update
     - run:
         name: Run tests
         command: |
