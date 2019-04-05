@@ -7,8 +7,7 @@ This is ambiguous; compilers can freely choose `signed` or `unsigned` char.
 import pqclean
 import pycparser
 import os
-import unittest
-import shutil
+import helpers
 
 
 def test_char():
@@ -26,9 +25,8 @@ def walk_tree(ast):
         yield from walk_tree(child)  # recursively yield prohibited nodes
 
 
+@helpers.skip_windows()
 def check_char(implementation):
-    if not shutil.which('cpp'):
-        raise unittest.SkipTest("C pre-processor (cpp) was not found.")
     errors = []
     for fname in os.listdir(implementation.path()):
         if not fname.endswith(".c"):
