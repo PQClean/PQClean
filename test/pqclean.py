@@ -78,6 +78,9 @@ class Implementation:
     def path(self, base='..') -> str:
         return os.path.join(self.scheme.path(), self.name)
 
+    def namespace_prefix(self):
+        return 'PQCLEAN_{}_{}_'.format(self.scheme.name.upper(), self.name.upper()).replace('-', '')
+
     def libname(self) -> str:
         if os.name == 'nt':
             return "lib{}_{}.lib".format(self.scheme.name, self.name)

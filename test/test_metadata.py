@@ -53,24 +53,6 @@ EXPECTED_FIELDS = {
             'spec': {
                 'name': {'type': str},
                 'version': {'type': str},
-                'duplicate-consistency': {
-                    'type': dict,
-                    'optional': True,
-                    'spec': {
-                        'source_namespace': {'type': str},
-                        'target_namespace': {'type': str},
-                        'files': {
-                            'type': list,
-                            'elements': {
-                                'type': dict,
-                                'spec': {
-                                    'source_file': {'type': str},
-                                    'target_file': {'type': str},
-                                },
-                            },
-                        },
-                    },
-                },
             },
         },
     },
