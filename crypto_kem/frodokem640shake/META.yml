@@ -2,8 +2,10 @@ name: FrodoKEM-640-SHAKE
 type: kem
 claimed-nist-level: 1
 length-public-key: 9616
+length-secret-key: 19888
 length-ciphertext: 9720
-testvectors-sha256: 521ff891de20efe74e6584d09612dae989427ac76261a41630c4e4d6a4fc78a4
+length-shared-secret: 16
+testvectors-sha256: 8f922de02d41005fcc3c4164b2ab74c4c7b588ed69e34e22607d1ae4ab13d2c5
 principal-submitter: Douglas Stebila, University of Waterloo
 auxiliary-submitters:
 - Erdem Alkim

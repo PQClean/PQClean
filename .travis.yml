@@ -23,6 +23,9 @@ matrix:
             - gcc@8
       before_install:
         - pip3 install -r requirements.txt
+        - brew link gcc
+        - export PATH="/usr/local/bin:$PATH"
+        - ln -s /usr/local/bin/gcc-8 /usr/local/bin/gcc
         - gcc --version
       script:
         - "cd test && python3 -m nose --rednose --verbose"

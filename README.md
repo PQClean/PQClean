@@ -25,6 +25,7 @@ What PQClean is **not** aiming for is
 
 As a first main target, we are collecting C implementations that fulfill the requirements
 listed below.
+Please also review our [guidelines for contributors](CONTRIBUTING.md) if you are interested in adding a scheme to PQClean.
 
 ## Requirements on C implementations that are automatically checked
 
@@ -63,15 +64,15 @@ _The checking of items on this list is still being developed. Checked items shou
 
 ## Requirements on C implementations that are manually checked
 
-* Makefiles without explicit rules (rely on implicit, built-in rules)
+* Minimalist Makefiles
 * `#ifdef`s only for header encapsulation
 * No stringification macros
 * Output-parameter pointers in functions are on the left
 * `const` arguments are labeled as `const`
 * All exported symbols are namespaced in place
-* All integer types are of fixed size, using `stdint.h` types (including `uint8_t` instead of `unsigned char`)
-* Integers used for indexing are of size `size_t`
-* variable declarations at the beginning (except in `for (size_t i=...`)
+* Integer types are of fixed size where relevant, using `stdint.h` types
+* Integers used for indexing memory are of size `size_t`
+* Variable declarations at the beginning (except in `for (size_t i=...`)
 
 
 ## Clean C implementations currently in PQClean
@@ -139,10 +140,16 @@ To do this, make sure the following is installed:
 * Python 3.5+
 * `nosetests` or `nose2` (either for Python 3)
 
+You will also need to make sure the submodules are initialized by running:
+
+```
+git submodule update --init
+```
+
 Run the Python-based tests by going into the `test` directory and running `nosetests -v` or `nose2 -B -v`, depending on what you installed.
 If you have the `rednose` plugin for `nosetests` installed, run `nosetests --rednose` to get colored output.
 
-You may also run `python <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
+You may also run `python3 <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
 
 [circleci-pqc]: https://circleci.com/gh/PQClean/PQClean/
 [travis-pqc]: https://travis-ci.com/PQClean/PQClean/

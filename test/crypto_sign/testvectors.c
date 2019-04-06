@@ -6,7 +6,6 @@
 #include "api.h"
 #include "randombytes.h"
 
-#define NTESTS 100
 #define MAXMLEN 2048
 
 static void printbytes(const uint8_t *x, size_t xlen) {
@@ -43,7 +42,8 @@ int main(void) {
     int r;
     size_t i, k;
 
-    for (i = 0; i < MAXMLEN; i = (i == 0) ? i + 1 : i << 1) {
+    /* i = 0, 1, 4, 16, 64, 256, 1024 */
+    for (i = 0; i < MAXMLEN; i = (i == 0) ? i + 1 : i << 2) {
         randombytes(mi, i);
 
         crypto_sign_keypair(pk, sk);
