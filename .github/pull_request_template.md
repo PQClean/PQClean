@@ -3,7 +3,7 @@
 <!-- Type some lines about your submission -->
 
 
-## Manually checked properties
+#### Manually checked properties
 <!-- These checkboxes serve for the maintainers of PQClean to verify your submission. Please do not check them yourself. -->
 
 * [ ] `#ifdef`s only for header encapsulation
