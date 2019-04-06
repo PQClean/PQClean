@@ -12,11 +12,11 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_prf_addr(
 void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_gen_message_random(
     unsigned char *R,
     const unsigned char *sk_prf, const unsigned char *optrand,
-    const unsigned char *m, unsigned long long mlen);
+    const unsigned char *m, size_t mlen);
 
 void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_hash_message(
     unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
     const unsigned char *R, const unsigned char *pk,
-    const unsigned char *m, unsigned long long mlen);
+    const unsigned char *m, size_t mlen);
 
 #endif

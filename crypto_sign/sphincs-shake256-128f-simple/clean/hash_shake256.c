@@ -35,7 +35,7 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_prf_addr(
 void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_gen_message_random(
     unsigned char *R,
     const unsigned char *sk_prf, const unsigned char *optrand,
-    const unsigned char *m, unsigned long long mlen) {
+    const unsigned char *m, size_t mlen) {
     uint64_t s_inc[26];
 
     shake256_inc_init(s_inc);
@@ -54,7 +54,7 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_gen_message_random(
 void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_hash_message(
     unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
     const unsigned char *R, const unsigned char *pk,
-    const unsigned char *m, unsigned long long mlen) {
+    const unsigned char *m, size_t mlen) {
 #define SPX_TREE_BITS (SPX_TREE_HEIGHT * (SPX_D - 1))
 #define SPX_TREE_BYTES ((SPX_TREE_BITS + 7) / 8)
 #define SPX_LEAF_BITS SPX_TREE_HEIGHT
@@ -84,7 +84,7 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_hash_message(
     *tree &= (~(uint64_t)0) >> (64 - SPX_TREE_BITS);
     bufp += SPX_TREE_BYTES;
 
-    *leaf_idx = PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_bytes_to_ull(
+    *leaf_idx = (uint32_t)PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_bytes_to_ull(
                     bufp, SPX_LEAF_BYTES);
     *leaf_idx &= (~(uint32_t)0) >> (32 - SPX_LEAF_BITS);
 }

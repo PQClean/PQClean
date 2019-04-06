@@ -135,7 +135,7 @@ int PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_crypto_sign_signature(
     unsigned char optrand[SPX_N];
     unsigned char mhash[SPX_FORS_MSG_BYTES];
     unsigned char root[SPX_N];
-    unsigned long long i;
+    uint32_t i;
     uint64_t tree;
     uint32_t idx_leaf;
     uint32_t wots_addr[8] = {0};

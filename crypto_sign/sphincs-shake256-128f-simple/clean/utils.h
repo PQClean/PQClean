@@ -2,19 +2,20 @@
 #define SPX_UTILS_H
 
 #include "params.h"
+#include <stddef.h>
 #include <stdint.h>
 
 /**
  * Converts the value of 'in' to 'outlen' bytes in big-endian byte order.
  */
 void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_ull_to_bytes(
-    unsigned char *out, unsigned int outlen, unsigned long long in);
+    unsigned char *out, size_t outlen, unsigned long long in);
 
 /**
  * Converts the inlen bytes in 'in' from big-endian byte order to an integer.
  */
 unsigned long long PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_bytes_to_ull(
-    const unsigned char *in, unsigned int inlen);
+    const unsigned char *in, size_t inlen);
 
 /**
  * Computes a root node given a leaf and an auth path.

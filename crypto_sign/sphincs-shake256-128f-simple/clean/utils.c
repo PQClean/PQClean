@@ -1,21 +1,21 @@
+#include <stddef.h>
 #include <string.h>
 
-#include "utils.h"
 #include "address.h"
 #include "hash.h"
 #include "params.h"
 #include "thash.h"
+#include "utils.h"
 
 /**
  * Converts the value of 'in' to 'outlen' bytes in big-endian byte order.
  */
 void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_ull_to_bytes(
-    unsigned char *out, unsigned int outlen, unsigned long long in) {
-    int i;
+    unsigned char *out, size_t outlen, unsigned long long in) {
 
     /* Iterate over out in decreasing order, for big-endianness. */
-    for (i = outlen - 1; i >= 0; i--) {
-        out[i] = in & 0xff;
+    for (size_t i = outlen; i > 0; i--) {
+        out[i - 1] = in & 0xff;
         in = in >> 8;
     }
 }
@@ -24,11 +24,10 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_ull_to_bytes(
  * Converts the inlen bytes in 'in' from big-endian byte order to an integer.
  */
 unsigned long long PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_bytes_to_ull(
-    const unsigned char *in, unsigned int inlen) {
+    const unsigned char *in, size_t inlen) {
     unsigned long long retval = 0;
-    unsigned int i;
 
-    for (i = 0; i < inlen; i++) {
+    for (size_t i = 0; i < inlen; i++) {
         retval |= ((unsigned long long)in[i]) << (8 * (inlen - 1 - i));
     }
     return retval;
