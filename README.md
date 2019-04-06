@@ -25,6 +25,7 @@ What PQClean is **not** aiming for is
 
 As a first main target, we are collecting C implementations that fulfill the requirements
 listed below.
+Please also review our [guidelines for contributors](CONTRIBUTING.md) if you are interested in adding a scheme to PQClean.
 
 ## Requirements on C implementations that are automatically checked
 
