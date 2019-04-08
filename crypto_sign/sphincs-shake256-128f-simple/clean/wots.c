@@ -56,7 +56,7 @@ static void gen_chain(unsigned char *out, const unsigned char *in,
 static void base_w(int *output, const int out_len, const unsigned char *input) {
     int in = 0;
     int out = 0;
-    unsigned char total;
+    unsigned char total = 0;
     int bits = 0;
     int consumed;
 
