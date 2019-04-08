@@ -40,14 +40,15 @@ class Scheme:
     def all_schemes_of_type(type: str) -> list:
         schemes = []
         p = os.path.join('..', 'crypto_' + type)
-        for d in os.listdir(p):
-            if os.path.isdir(os.path.join(p, d)):
-                if type == 'kem':
-                    schemes.append(KEM(d))
-                elif type == 'sign':
-                    schemes.append(Signature(d))
-                else:
-                    assert('Unknown type')
+        if os.path.isdir(p):
+            for d in os.listdir(p):
+                if os.path.isdir(os.path.join(p, d)):
+                    if type == 'kem':
+                        schemes.append(KEM(d))
+                    elif type == 'sign':
+                        schemes.append(Signature(d))
+                    else:
+                        assert('Unknown type')
         return schemes
 
     def metadata(self):
