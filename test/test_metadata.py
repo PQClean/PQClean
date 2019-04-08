@@ -29,6 +29,8 @@ def check_metadata(scheme):
 
     implementation_names_in_yaml = set(
         i['name'] for i in metadata['implementations'])
+    if len(implementation_names_in_yaml) != len(metadata['implementations']):
+        raise AssertionError("Implementations in YAML file are not distinct")
     implementations_on_disk = set(i.name for i in scheme.implementations)
     if implementation_names_in_yaml != implementations_on_disk:
         raise AssertionError("Implementations in YAML file {} and "
