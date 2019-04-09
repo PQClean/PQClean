@@ -522,7 +522,7 @@ static void aes_ctr4x(unsigned char out[64], uint32_t ivw[16], const uint64_t *s
 }
 
 
-static void aes_ecb(unsigned char *out, unsigned char *in, size_t nblocks, const uint64_t *rkeys, unsigned int nrounds) {
+static void aes_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const uint64_t *rkeys, unsigned int nrounds) {
     uint32_t blocks[16];
     unsigned char t[64];
 
@@ -598,7 +598,7 @@ void aes256_keyexp(aes256ctx *r, const unsigned char *key) {
 }
 
 
-void aes128_ecb(unsigned char *out, unsigned char *in, size_t nblocks, const aes128ctx *ctx) {
+void aes128_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const aes128ctx *ctx) {
     aes_ecb(out, in, nblocks, ctx->sk_exp, 10);
 }
 
@@ -606,7 +606,7 @@ void aes128_ctr(unsigned char *out, size_t outlen, const unsigned char *iv, cons
     aes_ctr(out, outlen, iv, ctx->sk_exp, 10);
 }
 
-void aes192_ecb(unsigned char *out, unsigned char *in, size_t nblocks, const aes192ctx *ctx) {
+void aes192_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const aes192ctx *ctx) {
     aes_ecb(out, in, nblocks, ctx->sk_exp, 12);
 }
 
@@ -614,7 +614,7 @@ void aes192_ctr(unsigned char *out, size_t outlen, const unsigned char *iv, cons
     aes_ctr(out, outlen, iv, ctx->sk_exp, 12);
 }
 
-void aes256_ecb(unsigned char *out, unsigned char *in, size_t nblocks, const aes256ctx *ctx) {
+void aes256_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const aes256ctx *ctx) {
     aes_ecb(out, in, nblocks, ctx->sk_exp, 14);
 }
 
