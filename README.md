@@ -65,7 +65,7 @@ _The checking of items on this list is still being developed. Checked items shou
 ## Requirements on C implementations that are manually checked
 
 * Minimalist Makefiles
-* `#ifdef`s only for header encapsulation
+* `#if`/`#ifdef`s only for header encapsulation
 * No stringification macros
 * Output-parameter pointers in functions are on the left
 * `const` arguments are labeled as `const`
