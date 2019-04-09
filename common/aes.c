@@ -338,14 +338,14 @@ static uint32_t sub_word(uint32_t x) {
     return (uint32_t)q[0];
 }
 
-static void br_aes_ct64_keysched(uint64_t *comp_skey, const unsigned char *key, int key_len) {
-    int i, j, k, nk, nkf;
+static void br_aes_ct64_keysched(uint64_t *comp_skey, const unsigned char *key, unsigned int key_len) {
+    unsigned int i, j, k, nk, nkf;
     uint32_t tmp;
     uint32_t skey[60];
     unsigned nrounds = 10 + ((key_len - 16) >> 2);
 
-    nk = (int)(key_len >> 2);
-    nkf = (int)((nrounds + 1) << 2);
+    nk = (key_len >> 2);
+    nkf = ((nrounds + 1) << 2);
     br_range_dec32le(skey, (key_len >> 2), key);
     tmp = skey[(key_len >> 2) - 1];
     for (i = nk, j = 0, k = 0; i < nkf; i ++) {
