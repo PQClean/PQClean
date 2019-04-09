@@ -134,7 +134,7 @@ void PQCLEAN_KYBER768_CLEAN_poly_tobytes(unsigned char *r, poly *a) {
         t1 = a->coeffs[2 * i + 1];
         r[3 * i] = t0 & 0xff;
         r[3 * i + 1] = (t0 >> 8) | ((t1 & 0xf) << 4);
-        r[3 * i + 2] = t1 >> 4;
+        r[3 * i + 2] = (t1 >> 4) & 0xff;
     }
 }
 

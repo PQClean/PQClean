@@ -14,17 +14,18 @@
 *
 * Returns 0 if the byte arrays are equal, 1 otherwise
 **************************************************/
-int PQCLEAN_KYBER768_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
+unsigned char PQCLEAN_KYBER768_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
     uint64_t r;
     size_t i;
-    r = 0;
 
+    r = 0;
     for (i = 0; i < len; i++) {
         r |= a[i] ^ b[i];
     }
 
-    r = (-r) >> 63;
-    return r;
+    r = (~r + 1); // Two's complement
+    r >>= 63;
+    return (unsigned char)r;
 }
 
 /*************************************************

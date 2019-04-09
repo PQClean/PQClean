@@ -135,6 +135,9 @@ static unsigned int rej_uniform(int16_t *r, unsigned int len, const unsigned cha
 #define gen_a(A,B)  PQCLEAN_KYBER768_CLEAN_gen_matrix(A,B,0)
 #define gen_at(A,B) PQCLEAN_KYBER768_CLEAN_gen_matrix(A,B,1)
 
+#define GENMATRIX_MAXNBLOCKS ((530 + XOF_BLOCKBYTES) / XOF_BLOCKBYTES) /* 530 is expected number of required bytes */
+
+
 /*************************************************
 * Name:        gen_matrix
 *
@@ -148,9 +151,9 @@ static unsigned int rej_uniform(int16_t *r, unsigned int len, const unsigned cha
 *              - int transposed:            boolean deciding whether A or A^T is generated
 **************************************************/
 void PQCLEAN_KYBER768_CLEAN_gen_matrix(polyvec *a, const unsigned char *seed, int transposed) { // Not static for benchmarking
-    unsigned int ctr, i, j;
-    const unsigned int maxnblocks = (530 + XOF_BLOCKBYTES) / XOF_BLOCKBYTES; /* 530 is expected number of required bytes */
-    unsigned char buf[XOF_BLOCKBYTES * maxnblocks + 1];
+    unsigned int ctr;
+    unsigned char i, j;
+    unsigned char buf[XOF_BLOCKBYTES * GENMATRIX_MAXNBLOCKS + 1];
     xof_state state;
 
     for (i = 0; i < KYBER_K; i++) {
@@ -161,8 +164,8 @@ void PQCLEAN_KYBER768_CLEAN_gen_matrix(polyvec *a, const unsigned char *seed, in
                 xof_absorb(&state, seed, j, i);
             }
 
-            xof_squeezeblocks(buf, maxnblocks, &state);
-            ctr = rej_uniform(a[i].vec[j].coeffs, KYBER_N, buf, maxnblocks * XOF_BLOCKBYTES);
+            xof_squeezeblocks(buf, GENMATRIX_MAXNBLOCKS, &state);
+            ctr = rej_uniform(a[i].vec[j].coeffs, KYBER_N, buf, GENMATRIX_MAXNBLOCKS * XOF_BLOCKBYTES);
 
             while (ctr < KYBER_N) {
                 xof_squeezeblocks(buf, 1, &state);
