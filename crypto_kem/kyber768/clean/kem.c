@@ -76,7 +76,7 @@ int PQCLEAN_KYBER768_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, 
 **************************************************/
 int PQCLEAN_KYBER768_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk) {
     size_t i;
-    int fail;
+    unsigned char fail;
     unsigned char cmp[KYBER_CIPHERTEXTBYTES];
     unsigned char buf[2 * KYBER_SYMBYTES];
     unsigned char kr[2 * KYBER_SYMBYTES];                                    /* Will contain key, coins */
