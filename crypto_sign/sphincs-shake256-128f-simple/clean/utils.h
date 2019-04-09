@@ -35,10 +35,21 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_compute_root(
  * Applies the offset idx_offset to indices before building addresses, so that
  * it is possible to continue counting indices across trees.
  */
-void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash(
+void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash_FORS_HEIGHT(
     unsigned char *root, unsigned char *auth_path,
     const unsigned char *sk_seed, const unsigned char *pub_seed,
-    uint32_t leaf_idx, uint32_t idx_offset, uint32_t tree_height,
+    uint32_t leaf_idx, uint32_t idx_offset,
+    void (*gen_leaf)(
+        unsigned char * /* leaf */,
+        const unsigned char * /* sk_seed */,
+        const unsigned char * /* pub_seed */,
+        uint32_t /* addr_idx */, const uint32_t[8] /* tree_addr */),
+    uint32_t tree_addr[8]);
+
+void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash_TREE_HEIGHT(
+    unsigned char *root, unsigned char *auth_path,
+    const unsigned char *sk_seed, const unsigned char *pub_seed,
+    uint32_t leaf_idx, uint32_t idx_offset,
     void (*gen_leaf)(
         unsigned char * /* leaf */,
         const unsigned char * /* sk_seed */,

@@ -43,8 +43,8 @@ static void gen_chain(unsigned char *out, const unsigned char *in,
     /* Iterate 'steps' calls to the hash function. */
     for (i = start; i < (start + steps) && i < SPX_WOTS_W; i++) {
         PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_set_hash_addr(addr, i);
-        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash(
-            out, out, 1, pub_seed, addr);
+        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash_1(
+            out, out, pub_seed, addr);
     }
 }
 

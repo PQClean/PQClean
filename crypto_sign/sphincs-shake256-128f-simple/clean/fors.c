@@ -17,8 +17,8 @@ static void fors_gen_sk(unsigned char *sk, const unsigned char *sk_seed,
 static void fors_sk_to_leaf(unsigned char *leaf, const unsigned char *sk,
                             const unsigned char *pub_seed,
                             uint32_t fors_leaf_addr[8]) {
-    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash(
-        leaf, sk, 1, pub_seed, fors_leaf_addr);
+    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash_1(
+        leaf, sk, pub_seed, fors_leaf_addr);
 }
 
 static void fors_gen_leaf(unsigned char *leaf, const unsigned char *sk_seed,
@@ -97,16 +97,15 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_fors_sign(
         sig += SPX_N;
 
         /* Compute the authentication path for this leaf node. */
-        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash(
+        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash_FORS_HEIGHT(
             roots + i * SPX_N, sig, sk_seed, pub_seed,
-            indices[i], idx_offset, SPX_FORS_HEIGHT, fors_gen_leaf,
-            fors_tree_addr);
+            indices[i], idx_offset, fors_gen_leaf, fors_tree_addr);
         sig += SPX_N * SPX_FORS_HEIGHT;
     }
 
     /* Hash horizontally across all tree roots to derive the public key. */
-    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash(
-        pk, roots, SPX_FORS_TREES, pub_seed, fors_pk_addr);
+    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash_FORS_TREES(
+        pk, roots, pub_seed, fors_pk_addr);
 }
 
 /**
@@ -160,6 +159,6 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_fors_pk_from_sig(
     }
 
     /* Hash horizontally across all tree roots to derive the public key. */
-    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash(
-        pk, roots, SPX_FORS_TREES, pub_seed, fors_pk_addr);
+    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash_FORS_TREES(
+        pk, roots, pub_seed, fors_pk_addr);
 }

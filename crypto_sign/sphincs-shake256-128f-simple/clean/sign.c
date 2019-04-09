@@ -37,8 +37,8 @@ static void wots_gen_leaf(unsigned char *leaf, const unsigned char *sk_seed,
 
     PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_copy_keypair_addr(
         wots_pk_addr, wots_addr);
-    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash(
-        leaf, pk, SPX_WOTS_LEN, pub_seed, wots_pk_addr);
+    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash_WOTS_LEN(
+        leaf, pk, pub_seed, wots_pk_addr);
 }
 
 /*
@@ -97,8 +97,8 @@ int PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_crypto_sign_seed_keypair(
     PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_initialize_hash_function(pk, sk);
 
     /* Compute root node of the top-most subtree. */
-    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash(
-        sk + 3 * SPX_N, auth_path, sk, sk + 2 * SPX_N, 0, 0, SPX_TREE_HEIGHT,
+    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash_TREE_HEIGHT(
+        sk + 3 * SPX_N, auth_path, sk, sk + 2 * SPX_N, 0, 0,
         wots_gen_leaf, top_tree_addr);
 
     memcpy(pk + SPX_N, sk + 3 * SPX_N, SPX_N);
@@ -188,9 +188,9 @@ int PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_crypto_sign_signature(
         sig += SPX_WOTS_BYTES;
 
         /* Compute the authentication path for the used WOTS leaf. */
-        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash(
+        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_treehash_TREE_HEIGHT(
             root, sig, sk_seed, pub_seed, idx_leaf, 0,
-            SPX_TREE_HEIGHT, wots_gen_leaf, tree_addr);
+            wots_gen_leaf, tree_addr);
         sig += SPX_TREE_HEIGHT * SPX_N;
 
         /* Update the indices for the next layer. */
@@ -274,8 +274,8 @@ int PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_crypto_sign_verify(
         sig += SPX_WOTS_BYTES;
 
         /* Compute the leaf node using the WOTS public key. */
-        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash(
-            leaf, wots_pk, SPX_WOTS_LEN, pub_seed, wots_pk_addr);
+        PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_thash_WOTS_LEN(
+            leaf, wots_pk, pub_seed, wots_pk_addr);
 
         /* Compute the root node of this subtree. */
         PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_compute_root(
