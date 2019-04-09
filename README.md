@@ -36,6 +36,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] API functions do not write outside provided buffers
 * [x] `api.h` cannot include external files
 * [x] Compiles with `-Wall -Wextra -Wpedantic -Werror` with `gcc` and `clang`
+* [x] `#if`/`#ifdef`s only for header encapsulation
 * [x] Consistent test vectors across runs
 * [x] Consistent test vectors on big-endian and little-endian machines
 * [x] Consistent test vectors on 32-bit and 64-bit machines
@@ -66,7 +67,6 @@ _The checking of items on this list is still being developed. Checked items shou
 ## Requirements on C implementations that are manually checked
 
 * Minimalist Makefiles
-* `#if`/`#ifdef`s only for header encapsulation
 * No stringification macros
 * Output-parameter pointers in functions are on the left
 * `const` arguments are labeled as `const`
