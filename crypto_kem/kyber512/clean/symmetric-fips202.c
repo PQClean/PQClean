@@ -33,10 +33,10 @@ void PQCLEAN_KYBER512_CLEAN_kyber_shake128_absorb(keccak_state *s, const unsigne
 *              i.e., is incremental.
 *
 * Arguments:   - unsigned char *output:      pointer to output blocks
-*              - unsigned long long nblocks: number of blocks to be squeezed (written to output)
+*              - size_t nblocks:             number of blocks to be squeezed (written to output)
 *              - keccak_state *s:            pointer to in/output Keccak state
 **************************************************/
-void PQCLEAN_KYBER512_CLEAN_kyber_shake128_squeezeblocks(unsigned char *output, unsigned long long nblocks, keccak_state *s) {
+void PQCLEAN_KYBER512_CLEAN_kyber_shake128_squeezeblocks(unsigned char *output, size_t nblocks, keccak_state *s) {
     shake128_squeezeblocks(output, nblocks, s->s);
 }
 
@@ -47,11 +47,11 @@ void PQCLEAN_KYBER512_CLEAN_kyber_shake128_squeezeblocks(unsigned char *output, 
 *              and then generates outlen bytes of SHAKE256 output
 *
 * Arguments:   - unsigned char *output:      pointer to output
-*              - unsigned long long outlen:  number of requested output bytes
+*              - size_t outlen:              number of requested output bytes
 *              - const unsigned char * key:  pointer to the key (of length KYBER_SYMBYTES)
 *              - const unsigned char nonce:  single-byte nonce (public PRF input)
 **************************************************/
-void PQCLEAN_KYBER512_CLEAN_shake256_prf(unsigned char *output, unsigned long long outlen, const unsigned char *key, const unsigned char nonce) {
+void PQCLEAN_KYBER512_CLEAN_shake256_prf(unsigned char *output, size_t outlen, const unsigned char *key, const unsigned char nonce) {
     unsigned char extkey[KYBER_SYMBYTES + 1];
     size_t i;
 
