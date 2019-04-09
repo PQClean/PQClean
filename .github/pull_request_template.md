@@ -6,7 +6,6 @@
 #### Manually checked properties
 <!-- These checkboxes serve for the maintainers of PQClean to verify your submission. Please do not check them yourself. -->
 
-* [ ] `#if`/`#ifdef`s only for header encapsulation
 * [ ] No stringification macros
 * [ ] Output-parameter pointers in functions are on the left
 * [ ] Negative return values on failure of API functions (within restrictions of FO transform).
