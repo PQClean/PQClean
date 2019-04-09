@@ -49,8 +49,8 @@ void PQCLEAN_KYBER768_CLEAN_polyvec_compress(unsigned char *r, polyvec *a) {
 
             r[5 * j + 0] =  t[0] & 0xff;
             r[5 * j + 1] = (t[0] >>  8) | ((t[1] & 0x3f) << 2);
-            r[5 * j + 2] = (t[1] >>  6) | ((t[2] & 0x0f) << 4) & 0xff;
-            r[5 * j + 3] = (t[2] >>  4) | ((t[3] & 0x03) << 6) & 0xff;
+            r[5 * j + 2] = ((t[1] >>  6) | ((t[2] & 0x0f) << 4)) & 0xff;
+            r[5 * j + 3] = ((t[2] >>  4) | ((t[3] & 0x03) << 6)) & 0xff;
             r[5 * j + 4] = (t[3] >>  2) & 0xff;
         }
         r += 320;
