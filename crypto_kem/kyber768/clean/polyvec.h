@@ -4,8 +4,8 @@
 #include "params.h"
 #include "poly.h"
 
-typedef struct{
-  poly vec[KYBER_K];
+typedef struct {
+    poly vec[KYBER_K];
 } polyvec;
 
 void PQCLEAN_KYBER768_CLEAN_polyvec_compress(unsigned char *r, polyvec *a);

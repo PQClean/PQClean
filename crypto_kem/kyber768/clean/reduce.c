@@ -1,6 +1,8 @@
-#include <stdint.h>
-#include "params.h"
 #include "reduce.h"
+
+#include "params.h"
+
+#include <stdint.h>
 
 /*************************************************
 * Name:        PQCLEAN_KYBER768_CLEAN_montgomery_reduce
@@ -13,16 +15,15 @@
 *
 * Returns:     integer in {-q+1,...,q-1} congruent to a * R^-1 modulo q.
 **************************************************/
-int16_t PQCLEAN_KYBER768_CLEAN_montgomery_reduce(int32_t a)
-{
-  int32_t t;
-  int16_t u;
+int16_t PQCLEAN_KYBER768_CLEAN_montgomery_reduce(int32_t a) {
+    int32_t t;
+    int16_t u;
 
-  u = a * QINV;
-  t = (int32_t)u * KYBER_Q;
-  t = a - t;
-  t >>= 16;
-  return t;
+    u = a * QINV;
+    t = (int32_t)u * KYBER_Q;
+    t = a - t;
+    t >>= 16;
+    return t;
 }
 
 /*************************************************
@@ -36,13 +37,13 @@ int16_t PQCLEAN_KYBER768_CLEAN_montgomery_reduce(int32_t a)
 * Returns:     integer in {0,...,q} congruent to a modulo q.
 **************************************************/
 int16_t PQCLEAN_KYBER768_CLEAN_barrett_reduce(int16_t a) {
-  int32_t t;
-  const int32_t v = (1U << 26)/KYBER_Q + 1;
+    int32_t t;
+    const int32_t v = (1U << 26) / KYBER_Q + 1;
 
-  t = v*a;
-  t >>= 26;
-  t *= KYBER_Q;
-  return a - t;
+    t = v * a;
+    t >>= 26;
+    t *= KYBER_Q;
+    return a - t;
 }
 
 /*************************************************
@@ -55,7 +56,7 @@ int16_t PQCLEAN_KYBER768_CLEAN_barrett_reduce(int16_t a) {
 * Returns:     a - q if a >= q, else a
 **************************************************/
 int16_t PQCLEAN_KYBER768_CLEAN_csubq(int16_t a) {
-  a -= KYBER_Q;
-  a += (a >> 15) & KYBER_Q;
-  return a;
+    a -= KYBER_Q;
+    a += (a >> 15) & KYBER_Q;
+    return a;
 }
