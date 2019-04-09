@@ -70,9 +70,17 @@ class Implementation:
     def __init__(self, scheme, name):
         self.scheme = scheme
         self.name = name
+        
+    def metadata(self):
+        for i in self.scheme.metadata()['implementations']:
+            if i['name'] == self.name:
+                return i
 
     def path(self, base='..') -> str:
         return os.path.join(self.scheme.path(), self.name)
+
+    def namespace_prefix(self):
+        return 'PQCLEAN_{}_{}_'.format(self.scheme.name.upper(), self.name.upper()).replace('-', '')
 
     def libname(self) -> str:
         if os.name == 'nt':

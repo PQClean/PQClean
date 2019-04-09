@@ -72,14 +72,15 @@ SIGNATURE_FIELDS = {
 
 def check_spec(metadata, spec):
     for field, props in spec:
-        if field not in metadata:
+        if field not in metadata and 'optional' not in props:
             raise AssertionError("Field '{}' not present.".format(field))
 
         # validate element
-        check_element(field, metadata[field], props)
+        if field in metadata:
+            check_element(field, metadata[field], props)
 
-        # delete it to detect extras
-        del metadata[field]
+            # delete it to detect extras
+            del metadata[field]
 
     # Done checking all specified fields, check if we have extras
     for field, value in metadata.items():
