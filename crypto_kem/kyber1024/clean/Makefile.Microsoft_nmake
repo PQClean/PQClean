@@ -1,7 +1,7 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIBRARY=libkyber768_clean.lib
+LIBRARY=libkyber1024_clean.lib
 OBJECTS=cbd.obj indcpa.obj kem.obj ntt.obj poly.obj polyvec.obj reduce.obj verify.obj symmetric-fips202.obj
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
