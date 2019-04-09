@@ -75,10 +75,6 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_hash_message(
     memcpy(digest, bufp, SPX_FORS_MSG_BYTES);
     bufp += SPX_FORS_MSG_BYTES;
 
-    #if SPX_TREE_BITS > 64
-#error For given height and depth, 64 bits cannot represent all subtrees
-    #endif
-
     *tree = PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_bytes_to_ull(
                 bufp, SPX_TREE_BYTES);
     *tree &= (~(uint64_t)0) >> (64 - SPX_TREE_BITS);

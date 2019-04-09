@@ -20,9 +20,6 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_set_layer_addr(
 
 void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_set_tree_addr(
     uint32_t addr[8], uint64_t tree) {
-    #if (SPX_TREE_HEIGHT * (SPX_D - 1)) > 64
-#error Subtree addressing is currently limited to at most 2^64 trees
-    #endif
     addr[1] = 0;
     addr[2] = (uint32_t) (tree >> 32);
     addr[3] = (uint32_t) tree;
