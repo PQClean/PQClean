@@ -9,15 +9,15 @@
 #define AESCTR_NONCEBYTES 12
 
 typedef struct {
-  uint64_t sk_exp[88];
+    uint64_t sk_exp[88];
 } aes128ctx;
 
 typedef struct {
-  uint64_t sk_exp[104];
+    uint64_t sk_exp[104];
 } aes192ctx;
 
 typedef struct {
-  uint64_t sk_exp[120];
+    uint64_t sk_exp[120];
 } aes256ctx;
 
 
