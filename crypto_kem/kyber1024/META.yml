@@ -1,0 +1,22 @@
+name: Kyber1024
+type: kem
+claimed-nist-level: 5
+length-public-key: 1568
+length-ciphertext: 1568
+length-shared-secret: 32
+testvectors-sha256: 7c88c50833f1bc646e55b81922ba2349e620398684f7350f41618467a6604775
+principal-submitter: Peter Schwabe
+auxiliary-submitters:
+  - Roberto Avanzi
+  - Joppe Bos
+  - Léo Ducas
+  - Eike Kiltz
+  - Tancrède Lepoint
+  - Vadim Lyubashevsky
+  - John M. Schanck
+  - Gregor Seiler
+  - Damien Stehlé
+implementations:
+    - name: clean
+      version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
+      length-secret-key: 3168

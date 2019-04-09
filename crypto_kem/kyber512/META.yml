@@ -1,0 +1,22 @@
+name: Kyber512
+type: kem
+claimed-nist-level: 1
+length-public-key: 800
+length-ciphertext: 736
+length-shared-secret: 32
+testvectors-sha256: 011011b995ba85f43bdc65d59779560e12720d37705e2d87ac046534a9ba9639
+principal-submitter: Peter Schwabe
+auxiliary-submitters:
+  - Roberto Avanzi
+  - Joppe Bos
+  - Léo Ducas
+  - Eike Kiltz
+  - Tancrède Lepoint
+  - Vadim Lyubashevsky
+  - John M. Schanck
+  - Gregor Seiler
+  - Damien Stehlé
+implementations:
+    - name: clean
+      version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
+      length-secret-key: 1632
