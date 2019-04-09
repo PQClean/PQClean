@@ -3,6 +3,7 @@
 
 LIBRARY=libkyber512_clean.lib
 OBJECTS=cbd.obj indcpa.obj kem.obj ntt.obj poly.obj polyvec.obj reduce.obj verify.obj symmetric-fips202.obj
+OBJECTS=cbd.o   indcpa.o   kem.o   ntt.o   poly.o   polyvec.o   reduce.o   verify.o
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
 
