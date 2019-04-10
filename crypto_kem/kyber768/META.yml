@@ -2,10 +2,9 @@ name: Kyber768
 type: kem
 claimed-nist-level: 3
 length-public-key: 1088
-length-secret-key: 2400
 length-ciphertext: 1152
 length-shared-secret: 32
-testvectors-sha256: 0e002ee528febdab1709f100df79ceb00b31a809e03a4fb84e3a72c39235d372
+testvectors-sha256: 2f5cf9937959eb4a3bc910f71e830e9e0de029b28093c6192d2c3e915913016f
 principal-submitter: Peter Schwabe
 auxiliary-submitters:
   - Roberto Avanzi
@@ -20,3 +19,4 @@ auxiliary-submitters:
 implementations:
     - name: clean
       version: https://github.com/pq-crystals/kyber/commit/ab996e7460e5356b0e23aa034e7c2fe6922e60e6
+      length-secret-key: 2400

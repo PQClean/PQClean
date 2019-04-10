@@ -11,6 +11,10 @@ import helpers
 
 
 def test_char():
+    if not(os.path.exists(os.path.join('pycparser', '.git'))):
+        helpers.run_subprocess(
+            ['git', 'submodule', 'update', '--init']
+        )
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
             yield check_char, implementation

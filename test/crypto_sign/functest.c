@@ -6,7 +6,7 @@
 #include "api.h"
 #include "randombytes.h"
 
-#define NTESTS 15
+#define NTESTS 5
 #define MLEN 32
 
 const uint8_t canary[8] = {
@@ -44,6 +44,8 @@ static int check_canary(const uint8_t *d) {
 #define crypto_sign_keypair NAMESPACE(crypto_sign_keypair)
 #define crypto_sign NAMESPACE(crypto_sign)
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
+#define crypto_sign_signature NAMESPACE(crypto_sign_signature)
+#define crypto_sign_verify NAMESPACE(crypto_sign_verify)
 
 #define RETURNS_ZERO(f)                           \
     if ((f) != 0) {                               \
@@ -133,6 +135,74 @@ static int test_sign(void) {
     return 0;
 }
 
+static int test_sign_detached(void) {
+    /*
+     * This is most likely going to be aligned by the compiler.
+     * 16 extra bytes for canary
+     * 1 extra byte for unalignment
+     */
+    uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
+    uint8_t sk_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
+    uint8_t sig_aligned[CRYPTO_BYTES + 16 + 1];
+    uint8_t m_aligned[MLEN + 16 + 1];
+
+    /*
+     * Make sure all pointers are odd.
+     * This ensures that the implementation does not assume anything about the
+     * data alignment. For example this would catch if an implementation
+     * directly uses these pointers to load into vector registers using movdqa.
+     */
+    uint8_t *pk = (uint8_t *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
+    uint8_t *sk = (uint8_t *) ((uintptr_t) sk_aligned|(uintptr_t) 1);
+    uint8_t *sig = (uint8_t *) ((uintptr_t) sig_aligned|(uintptr_t) 1);
+    uint8_t *m  = (uint8_t *) ((uintptr_t) m_aligned|(uintptr_t) 1);
+
+    size_t siglen;
+    int returncode;
+
+    int i;
+    /*
+     * Write 8 byte canary before and after the actual memory regions.
+     * This is used to validate that the implementation does not assume
+     * anything about the placement of data in memory
+     * (e.g., assuming that the pk is always behind the sk)
+     */
+    write_canary(pk);
+    write_canary(pk + CRYPTO_PUBLICKEYBYTES + 8);
+    write_canary(sk);
+    write_canary(sk + CRYPTO_SECRETKEYBYTES + 8);
+    write_canary(sig);
+    write_canary(sig + CRYPTO_BYTES + 8);
+    write_canary(m);
+    write_canary(m + MLEN + 8);
+
+    for (i = 0; i < NTESTS; i++) {
+        RETURNS_ZERO(crypto_sign_keypair(pk + 8, sk + 8));
+
+        randombytes(m + 8, MLEN);
+        RETURNS_ZERO(crypto_sign_signature(sig + 8, &siglen, m + 8, MLEN, sk + 8));
+
+        if ((returncode =
+                crypto_sign_verify(sig + 8, siglen, m + 8, MLEN, pk + 8)) != 0) {
+            fprintf(stderr, "ERROR Signature did not verify correctly!\n");
+            if (returncode > 0) {
+                fprintf(stderr, "ERROR return code should be < 0 on failure");
+            }
+            return 1;
+        }
+        // Validate that the implementation did not touch the canary
+        if (check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8) ||
+            check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||
+            check_canary(sig) || check_canary(sig + CRYPTO_BYTES + 8) ||
+            check_canary(m) || check_canary(m + MLEN + 8)) {
+            fprintf(stderr, "ERROR canary overwritten\n");
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 static int test_wrong_pk(void) {
     uint8_t pk[CRYPTO_PUBLICKEYBYTES];
     uint8_t pk2[CRYPTO_PUBLICKEYBYTES];
@@ -175,6 +245,7 @@ int main(void) {
     puts(CRYPTO_ALGNAME);
     int result = 0;
     result += test_sign();
+    result += test_sign_detached();
     result += test_wrong_pk();
 
     return result;

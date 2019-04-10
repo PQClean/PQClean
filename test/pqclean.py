@@ -40,14 +40,15 @@ class Scheme:
     def all_schemes_of_type(type: str) -> list:
         schemes = []
         p = os.path.join('..', 'crypto_' + type)
-        for d in os.listdir(p):
-            if os.path.isdir(os.path.join(p, d)):
-                if type == 'kem':
-                    schemes.append(KEM(d))
-                elif type == 'sign':
-                    schemes.append(Signature(d))
-                else:
-                    assert('Unknown type')
+        if os.path.isdir(p):
+            for d in os.listdir(p):
+                if os.path.isdir(os.path.join(p, d)):
+                    if type == 'kem':
+                        schemes.append(KEM(d))
+                    elif type == 'sign':
+                        schemes.append(Signature(d))
+                    else:
+                        assert('Unknown type')
         return schemes
 
     def metadata(self):
@@ -69,9 +70,17 @@ class Implementation:
     def __init__(self, scheme, name):
         self.scheme = scheme
         self.name = name
+        
+    def metadata(self):
+        for i in self.scheme.metadata()['implementations']:
+            if i['name'] == self.name:
+                return i
 
     def path(self, base='..') -> str:
         return os.path.join(self.scheme.path(), self.name)
+
+    def namespace_prefix(self):
+        return 'PQCLEAN_{}_{}_'.format(self.scheme.name.upper(), self.name.upper()).replace('-', '')
 
     def libname(self) -> str:
         if os.name == 'nt':

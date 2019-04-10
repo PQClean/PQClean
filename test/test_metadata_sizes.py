@@ -13,6 +13,8 @@ def test_metadata_sizes():
 
 def check_metadata_sizes(implementation):
     metadata = implementation.scheme.metadata()
+    impl_meta = next((impl for impl in metadata['implementations']
+                      if impl['name'] == implementation.name), None)
     helpers.make('printparams',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
@@ -30,7 +32,7 @@ def check_metadata_sizes(implementation):
 
     parsed = json.loads(out)
 
-    assert parsed['CRYPTO_SECRETKEYBYTES'] == metadata['length-secret-key']
+    assert parsed['CRYPTO_SECRETKEYBYTES'] == impl_meta['length-secret-key']
     assert parsed['CRYPTO_PUBLICKEYBYTES'] == metadata['length-public-key']
 
     if implementation.scheme.type == 'kem':
