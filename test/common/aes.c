@@ -50,6 +50,7 @@ const unsigned char nonce[AESCTR_NONCEBYTES] = {
 int main(void)
 {
   unsigned char ct[67];
+  int r = 0;
   aes128ctx ctx128; 
   aes192ctx ctx192; 
   aes256ctx ctx256; 
@@ -61,33 +62,39 @@ int main(void)
   aes128_ctr(ct, 67, nonce, &ctx128);
   if(memcmp(ct, stream128, 67)) {
     printf("ERROR AES128CTR output does not match test vector.\n");
+    r = 1;
   }
 
   aes192_ctr(ct, 67, nonce, &ctx192);
   if(memcmp(ct, stream192, 67)) {
     printf("ERROR AES192CTR output does not match test vector.\n");
+    r = 1;
   }
 
   aes256_ctr(ct, 67, nonce, &ctx256);
   if(memcmp(ct, stream256, 67)) {
     printf("ERROR AES256CTR output does not match test vector.\n");
+    r = 1;
   }
 
 
   aes128_ecb(ct, msg, 3, &ctx128);
   if(memcmp(ct, ct128, 48)) {
     printf("ERROR AES128ECB output does not match test vector.\n");
+    r = 1;
   }
 
   aes192_ecb(ct, msg, 3, &ctx192);
   if(memcmp(ct, ct192, 48)) {
     printf("ERROR AES192ECB output does not match test vector.\n");
+    r = 1;
   }
 
   aes256_ecb(ct, msg, 3, &ctx256);
   if(memcmp(ct, ct256, 48)) {
     printf("ERROR AES256ECB output does not match test vector.\n");
+    r = 1;
   }
 
-  return 0;
+  return r;
 }
