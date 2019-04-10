@@ -11,13 +11,13 @@ import pqclean
 import helpers
 
 
+@helpers.skip_windows()
 def test_common():
-    if os.name != 'nt':                    # Cannot build on Windows at the moment
-        for d in os.listdir('common'):
-            primitive = re.sub("\.c$", "", d)        
-            binname = os.path.join('..', 'bin', 'test_'+primitive)
-            helpers.make(binname)
-            helpers.run_subprocess(binname)
+    for d in os.listdir('common'):
+        primitive = re.sub(r"\.c$", "", d)
+        binname = os.path.join('..', 'bin', 'test_'+primitive)
+        helpers.make(binname)
+        helpers.run_subprocess(binname)
 
 
 if __name__ == '__main__':
