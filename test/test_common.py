@@ -17,7 +17,7 @@ def test_common():
         primitive = re.sub(r"\.c$", "", d)
         binname = os.path.join('..', 'bin', 'test_'+primitive)
         helpers.make(binname)
-        helpers.run_subprocess(binname)
+        helpers.run_subprocess([binname])
 
 
 if __name__ == '__main__':
