@@ -1,0 +1,9 @@
+source:
+  scheme: frodokem640shake
+  implementation: clean
+files:
+  - common.h
+  - params.h
+  - kem.c
+  - noise.c
+  - util.c

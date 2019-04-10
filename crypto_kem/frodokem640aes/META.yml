@@ -1,0 +1,24 @@
+name: FrodoKEM-640-AES
+type: kem
+claimed-nist-level: 1
+length-public-key: 9616
+length-ciphertext: 9720
+length-shared-secret: 16
+testvectors-sha256: d4c7d30254a8cac8ad73b742b31813e47dcae6532a4dcbe13c04d72a2920a086
+principal-submitter: Douglas Stebila, University of Waterloo
+auxiliary-submitters:
+- Erdem Alkim
+- Joppe W. Bos, NXP Semiconductors
+- Léo Ducas, CWI
+- Patrick Longa, Microsoft Research
+- Ilya Mironov, Google
+- Michael Naehrig, Microsoft Research
+- Valeria Nikolaenko
+- Chris Peikert, University of Michigan
+- Ananth Raghunathan, Google
+- Karen Easterbrook, Microsoft Research
+- Brian LaMacchia, Microsoft Research
+implementations:
+- name: clean
+  version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/437e228fca580a82435cab09f30ae14b03183119
+  length-secret-key: 19888
