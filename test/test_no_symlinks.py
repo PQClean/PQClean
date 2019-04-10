@@ -4,12 +4,14 @@ Checks that no implementation makes use of symbolic links.
 
 import os
 import pqclean
+import helpers
 
 
 def test_no_symlinks():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_no_symlinks, implementation
+            if helpers.permit_test('no_symlinks', implementation):
+                yield check_no_symlinks, implementation
 
 
 def check_no_symlinks(implementation):

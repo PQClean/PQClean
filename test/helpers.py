@@ -5,6 +5,8 @@ import unittest
 import shutil
 import sys
 
+import pqclean
+
 
 def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
     """
@@ -97,3 +99,32 @@ def ensure_available(executable):
                         else "On Windows, make sure to add it to PATH")
                 )
     raise AssertionError("{} not available on CI".format(executable))
+
+
+def permit_test(testname, thing, **args):
+    if 'PQCLEAN_ONLY_TESTS' in os.environ:
+        if not(testname.lower() in os.environ['PQCLEAN_ONLY_TESTS'].lower().split(',')):
+            return False
+    if 'PQCLEAN_SKIP_TESTS' in os.environ:
+        if testname.lower() in os.environ['PQCLEAN_SKIP_TESTS'].lower().split(','):
+            return False
+
+    if isinstance(thing, pqclean.Implementation):
+        scheme = thing.scheme
+    else:
+        scheme = thing
+
+    if 'PQCLEAN_ONLY_TYPES' in os.environ:
+        if not(scheme.type.lower() in os.environ['PQCLEAN_ONLY_TYPES'].lower().split(',')):
+            return False
+    if 'PQCLEAN_SKIP_TYPES' in os.environ:
+        if scheme.type.lower() in os.environ['PQCLEAN_SKIP_TYPES'].lower().split(','):
+            return False
+    if 'PQCLEAN_ONLY_SCHEMES' in os.environ:
+        if not(scheme.name.lower() in os.environ['PQCLEAN_ONLY_SCHEMES'].lower().split(',')):
+            return False
+    if 'PQCLEAN_SKIP_SCHEMES' in os.environ:
+        if scheme.name.lower() in os.environ['PQCLEAN_SKIP_SCHEMES'].lower().split(','):
+            return False
+
+    return True

@@ -14,13 +14,15 @@ import helpers
 def test_functest():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_functest, implementation
+            if helpers.permit_test('functest', implementation): 
+                yield check_functest, implementation
 
 
 def test_functest_sanitizers():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_functest_sanitizers, implementation
+            if helpers.permit_test('functest_sanitizers', implementation): 
+                yield check_functest_sanitizers, implementation
 
 
 def check_functest(implementation):
