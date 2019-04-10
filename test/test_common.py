@@ -12,9 +12,13 @@ import helpers
 def test_common():
     for d in os.listdir('common'):
         primitive = re.sub(r"\.c$", "", d)
-        binname = os.path.join('..', 'bin', 'test_'+primitive)
-        helpers.make(binname)
-        helpers.run_subprocess([binname])
+        yield check_common, primitive
+
+
+def check_common(primitive):
+    binname = os.path.join('..', 'bin', 'test_'+primitive)
+    helpers.make(binname)
+    helpers.run_subprocess([binname])
 
 
 if __name__ == '__main__':
