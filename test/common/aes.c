@@ -78,19 +78,19 @@ int main(void)
   }
 
 
-  aes128_ecb(ct, msg, 3, &ctx128);
+  aes128_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx128);
   if(memcmp(ct, ct128, 48)) {
     printf("ERROR AES128ECB output does not match test vector.\n");
     r = 1;
   }
 
-  aes192_ecb(ct, msg, 3, &ctx192);
+  aes192_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx192);
   if(memcmp(ct, ct192, 48)) {
     printf("ERROR AES192ECB output does not match test vector.\n");
     r = 1;
   }
 
-  aes256_ecb(ct, msg, 3, &ctx256);
+  aes256_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx256);
   if(memcmp(ct, ct256, 48)) {
     printf("ERROR AES256ECB output does not match test vector.\n");
     r = 1;
