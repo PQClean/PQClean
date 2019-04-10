@@ -12,7 +12,8 @@ import unittest
 def test_symbol_namespace():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_symbol_namespace, implementation
+            if helpers.permit_test('symbol_namespace', implementation):
+                yield check_symbol_namespace, implementation
 
 
 def check_symbol_namespace(implementation):

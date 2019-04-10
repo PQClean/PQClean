@@ -11,8 +11,9 @@ import yaml
 def test_duplicate_consistency():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if os.path.isfile(os.path.join('duplicate_consistency', '{}_{}.yml'.format(scheme.name, implementation.name))):
-                yield check_duplicate_consistency, implementation
+            if helpers.permit_test('duplicate_consistency', implementation): 
+                if os.path.isfile(os.path.join('duplicate_consistency', '{}_{}.yml'.format(scheme.name, implementation.name))):
+                    yield check_duplicate_consistency, implementation
 
 def file_get_contents(filename):
     with open(filename) as f:

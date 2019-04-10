@@ -13,7 +13,8 @@ import helpers
 def test_functest():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_valgrind, implementation
+            if helpers.permit_test('valgrind', implementation):
+                yield check_valgrind, implementation
 
 
 def check_valgrind(implementation: pqclean.Implementation):

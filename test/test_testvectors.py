@@ -12,7 +12,8 @@ import helpers
 def test_testvectors():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_vectors, implementation
+            if helpers.permit_test('testvectors', implementation):
+                yield check_vectors, implementation
 
 
 def check_vectors(implementation):

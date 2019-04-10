@@ -13,14 +13,15 @@ import datetime
 def test_makefile_dependencies():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            # initial build - want to have *all* files in place at beginning
-            helpers.make('clean', working_dir=implementation.path())
-            helpers.make(working_dir=implementation.path())
-            # test case for each candidate file
-            cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
-            hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
-            for file in (cfiles + hfiles):
-                yield (check_makefile_dependencies, implementation, file)
+            if helpers.permit_test('makefile_dependencies', implementation):
+                # initial build - want to have *all* files in place at beginning
+                helpers.make('clean', working_dir=implementation.path())
+                helpers.make(working_dir=implementation.path())
+                # test case for each candidate file
+                cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
+                hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
+                for file in (cfiles + hfiles):
+                    yield (check_makefile_dependencies, implementation, file)
 
 
 def touch(time, *files):

@@ -3,13 +3,15 @@ Verify the metadata specified in the META.yml files.
 """
 
 import copy
+import helpers
 import itertools
 import pqclean
 
 
 def test_metadata():
     for scheme in pqclean.Scheme.all_schemes():
-        yield check_metadata, scheme
+        if helpers.permit_test('metadata', scheme):
+            yield check_metadata, scheme
 
 
 def check_metadata(scheme):

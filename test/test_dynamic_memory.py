@@ -11,9 +11,10 @@ import unittest
 def test_dynamic_memory():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            # Keep this loop outside, to allow multiple assertions
-            for function in ['malloc', 'free', 'realloc', 'calloc']:
-                yield (check_dynamic_memory, implementation, function)
+            if helpers.permit_test('dynamic_memory', implementation): 
+                # Keep this loop outside, to allow multiple assertions
+                for function in ['malloc', 'free', 'realloc', 'calloc']:
+                    yield (check_dynamic_memory, implementation, function)
 
 
 @helpers.skip_windows()
