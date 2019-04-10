@@ -1,9 +1,10 @@
-source:
-  scheme: frodokem640shake
-  implementation: clean
-files:
-  - common.h
-  - kem.c
-  - matrix_shake.c
-  - noise.c
-  - util.c
+consistency_checks:
+- source:
+    scheme: frodokem640shake
+    implementation: clean
+  files:
+    - common.h
+    - kem.c
+    - matrix_shake.c
+    - noise.c
+    - util.c
