@@ -58,5 +58,6 @@ $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)
 clean:
 	$(RM) $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
 	$(RM) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
+	$(RM) $(DEST_DIR)/test_aes
 	$(RM) $(DEST_DIR)/test_fips202
 	$(RM) $(DEST_DIR)/test_sha2
