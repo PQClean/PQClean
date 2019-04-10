@@ -4,10 +4,7 @@ Runs functional tests for common crypto functions (e.g., fips202, sha2, aes).
 
 import os
 import re
-import platform
-import unittest
 
-import pqclean
 import helpers
 
 
