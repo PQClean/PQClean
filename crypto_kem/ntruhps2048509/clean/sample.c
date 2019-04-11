@@ -17,8 +17,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_sample_iid(poly *r, const unsigned char unifor
 {
   int i;
   /* {0,1,...,255} -> {0,1,2}; Pr[0] = 86/256, Pr[1] = Pr[-1] = 85/256 */
-  for(i=0; i<NTRU_N-1; i++)
+  for(i=0; i<NTRU_N-1; i++) {
     r->coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(uniformbytes[i]);
+  }
 
   r->coeffs[NTRU_N-1] = 0;
 }
@@ -45,14 +46,19 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_sample_fixed_type(poly *r, const unsigned char
       s[4*i+1] = ((u[15*i+ 3] & 0xc0) >> 4) + (u[15*i+ 4] << 4) + (u[15*i+ 5] << 12) + (u[15*i+ 6] << 20) + (u[15*i+ 7] << 28);
   }
 
-  for (i = 0; i<NTRU_WEIGHT/2; i++) s[i] |=  1;
+  for (i = 0; i<NTRU_WEIGHT/2; i++) {
+    s[i] |=  1;
+  }
 
-  for (i = NTRU_WEIGHT/2; i<NTRU_WEIGHT; i++) s[i] |=  2;
+  for (i = NTRU_WEIGHT/2; i<NTRU_WEIGHT; i++) {
+    s[i] |=  2;
+  }
 
   PQCLEAN_NTRUHPS2048509_CLEAN_crypto_sort(s,NTRU_N-1);
 
-  for(i=0; i<NTRU_N-1; i++)
+  for(i=0; i<NTRU_N-1; i++) {
     r->coeffs[i] = ((uint16_t) (s[i] & 3));
+  }
 
   r->coeffs[NTRU_N-1] = 0;
 }

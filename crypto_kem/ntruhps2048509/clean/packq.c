@@ -7,8 +7,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Sq_tobytes(unsigned char *r, const poly *
 
   for(i=0;i<NTRU_PACK_DEG/8;i++)
   {
-    for(j=0;j<8;j++)
+    for(j=0;j<8;j++) {
       t[j] = a->coeffs[8*i+j];
+    }
 
     r[11*i+ 0] =  t[0]        & 0xff;
     r[11*i+ 1] = (t[0] >>  8) | ((t[1] & 0x1f) << 3);
@@ -23,10 +24,12 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Sq_tobytes(unsigned char *r, const poly *
     r[11*i+10] = (t[7] >>  3);
   }
 
-  for(j=0;j<NTRU_PACK_DEG-8*i;j++)
+  for(j=0;j<NTRU_PACK_DEG-8*i;j++) {
     t[j] = a->coeffs[8*i+j];
-  for(; j<8; j++)
+  }
+  for(; j<8; j++) {
     t[j] = 0;
+  }
 
   switch(NTRU_PACK_DEG - 8*(NTRU_PACK_DEG/8))
   {

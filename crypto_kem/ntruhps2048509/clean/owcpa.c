@@ -1,6 +1,6 @@
 #include "owcpa.h"
-#include "sample.h"
 #include "poly.h"
+#include "sample.h"
 
 static int owcpa_check_r(const poly *r)
 {
@@ -75,8 +75,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_owcpa_keypair(unsigned char *pk,
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_Z3_to_Zq(g);
 
   /* G = 3*g */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     G->coeffs[i] = MODQ(3 * g->coeffs[i]);
+  }
 
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul(Gf, G, f);
 
@@ -111,8 +112,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_owcpa_enc(unsigned char *c,
 
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_frombytes(m, rm+NTRU_PACK_TRINARY_BYTES);
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_lift(liftm, m);
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     ct->coeffs[i] = MODQ(ct->coeffs[i] + liftm->coeffs[i]);
+  }
 
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_sum_zero_tobytes(c, ct);
 }
@@ -150,8 +152,9 @@ int PQCLEAN_NTRUHPS2048509_CLEAN_owcpa_dec(unsigned char *rm,
 
   /* b = c - Lift(m) mod (q, x^n - 1) */
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_lift(liftm, m);
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     b->coeffs[i] = MODQ(c->coeffs[i] - liftm->coeffs[i]);
+  }
 
   /* r = b / h mod (q, Phi_n) */
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_Sq_frombytes(invh, secretkey+2*NTRU_PACK_TRINARY_BYTES);

@@ -15,6 +15,6 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_owcpa_enc(unsigned char *c,
                const unsigned char *pk);
 
 int PQCLEAN_NTRUHPS2048509_CLEAN_owcpa_dec(unsigned char *rm,
-              const unsigned char *c,
-              const unsigned char *sk);
+              const unsigned char *ciphertext,
+              const unsigned char *secretkey);
 #endif

@@ -18,8 +18,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_tobytes(unsigned char msg[NTRU_OWCPA_M
   if ((NTRU_N - 1) % 5 != 0) {
     i = NTRU_PACK_DEG/5;
     c = 0;
-    for(j = NTRU_PACK_DEG - (5*i) - 1; j>=0; j--)
+    for(j = NTRU_PACK_DEG - (5*i) - 1; j>=0; j--) {
       c = (3*c + a->coeffs[5*i+j]) & 255;
+    }
     msg[i] = c;
   }
 }

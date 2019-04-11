@@ -22,16 +22,18 @@ uint16_t PQCLEAN_NTRUHPS2048509_CLEAN_mod3(uint16_t a)
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Z3_to_Zq(poly *r)
 {
   int i;
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     r->coeffs[i] = r->coeffs[i] | ((-(r->coeffs[i]>>1)) & (NTRU_Q-1));
+  }
 }
 
 /* Map {0, 1, q-1} -> {0,1,2} in place */
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_trinary_Zq_to_Z3(poly *r)
 {
   int i;
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     r->coeffs[i] = 3 & (r->coeffs[i] ^ (r->coeffs[i]>>(NTRU_LOGQ-1)));
+  }
 }
 
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul(poly *r, const poly *a, const poly *b)
@@ -41,10 +43,12 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul(poly *r, const poly *a, const poly
   for(k=0; k<NTRU_N; k++)
   {
     r->coeffs[k] = 0;
-    for(i=1; i<NTRU_N-k; i++)
+    for(i=1; i<NTRU_N-k; i++) {
       r->coeffs[k] += a->coeffs[k+i] * b->coeffs[NTRU_N-i];
-    for(i=0; i<k+1; i++)
+    }
+    for(i=0; i<k+1; i++) {
       r->coeffs[k] += a->coeffs[k-i] * b->coeffs[i];
+    }
     r->coeffs[k] = MODQ(r->coeffs[k]);
   }
 }
@@ -53,8 +57,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Sq_mul(poly *r, const poly *a, const poly
 {
   int i;
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul(r, a, b);
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     r->coeffs[i] = MODQ(r->coeffs[i] - r->coeffs[NTRU_N-1]);
+  }
 }
 
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_mul(poly *r, const poly *a, const poly *b)
@@ -64,13 +69,16 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_mul(poly *r, const poly *a, const poly
   for(k=0; k<NTRU_N; k++)
   {
     r->coeffs[k] = 0;
-    for(i=1; i<NTRU_N-k; i++)
+    for(i=1; i<NTRU_N-k; i++) {
       r->coeffs[k] += a->coeffs[k+i] * b->coeffs[NTRU_N-i];
-    for(i=0; i<k+1; i++)
+    }
+    for(i=0; i<k+1; i++) {
       r->coeffs[k] += a->coeffs[k-i] * b->coeffs[i];
+    }
   }
-  for(k=0; k<NTRU_N; k++)
+  for(k=0; k<NTRU_N; k++) {
     r->coeffs[k] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(r->coeffs[k] + 2*r->coeffs[NTRU_N-1]);
+  }
 }
 
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul_x_minus_1(poly *r, const poly *a)
@@ -87,8 +95,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul_x_minus_1(poly *r, const poly *a)
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_lift(poly *r, const poly *a)
 {
   int i;
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     r->coeffs[i] = a->coeffs[i];
+  }
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_Z3_to_Zq(r);
 }
 
@@ -106,17 +115,18 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_to_S3(poly *r, const poly *a)
   }
   /* Reduce mod (3, Phi) */
   r->coeffs[NTRU_N-1] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(r->coeffs[NTRU_N-1]);
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     r->coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(r->coeffs[i] + 2*r->coeffs[NTRU_N-1]);
+  }
 }
 
 #define POLY_R2_ADD(I,A,B,S)        \
-   for(I=0; I<NTRU_N; I++)        \
-   { A.coeffs[I] ^= B.coeffs[I] * S;  }
+   for((I)=0; (I)<NTRU_N; (I)++)        \
+   { (A).coeffs[(I)] ^= (B).coeffs[(I)] * (S);  }
 
 #define POLY_S3_FMADD(I,A,B,S)                    \
-   for(I=0; I<NTRU_N; I++)                            \
-   { A.coeffs[I] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(A.coeffs[I] + S * B.coeffs[I]); }
+   for((I)=0; (I)<NTRU_N; (I)++)                            \
+   { (A).coeffs[(I)] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3((A).coeffs[(I)] + (S) * (B).coeffs[(I)]); }
 
 static void cswappoly(poly *a, poly *b, int swap)
 {
@@ -135,8 +145,9 @@ static inline void poly_divx(poly *a, int s)
 {
   int i;
 
-  for(i=1; i<NTRU_N; i++)
+  for(i=1; i<NTRU_N; i++) {
     a->coeffs[i-1] = (s * a->coeffs[i]) | (!s * a->coeffs[i-1]);
+  }
   a->coeffs[NTRU_N-1] = (!s * a->coeffs[NTRU_N-1]);
 }
 
@@ -144,8 +155,9 @@ static inline void poly_mulx(poly *a, int s)
 {
   int i;
 
-  for(i=1; i<NTRU_N; i++)
+  for(i=1; i<NTRU_N; i++) {
     a->coeffs[NTRU_N-i] = (s * a->coeffs[NTRU_N-i-1]) | (!s * a->coeffs[NTRU_N-i]);
+  }
   a->coeffs[0] = (!s * a->coeffs[0]);
 }
 
@@ -166,21 +178,25 @@ static void poly_R2_inv(poly *r, const poly *a)
   poly *temp_r = &f;
 
   /* b(X) := 1 */
-  for(i=1; i<NTRU_N; i++)
+  for(i=1; i<NTRU_N; i++) {
     b.coeffs[i] = 0;
+  }
   b.coeffs[0] = 1;
 
   /* c(X) := 0 */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     c->coeffs[i] = 0;
+  }
 
   /* f(X) := a(X) */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     f.coeffs[i] = a->coeffs[i] & 1;
+  }
 
   /* g(X) := 1 + X + X^2 + ... + X^{N-1} */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     g.coeffs[i] = 1;
+  }
 
   for(j=0;j<2*(NTRU_N-1)-1;j++)
   {
@@ -210,8 +226,9 @@ static void poly_R2_inv(poly *r, const poly *a)
   /* This is a k-coefficient rotation. We do this by looking at the binary
      representation of k, rotating for every power of 2, and performing a cmov
      if the respective bit is set. */
-  for (i = 0; i < NTRU_N; i++)
+  for (i = 0; i < NTRU_N; i++) {
     r->coeffs[i] = b.coeffs[i];
+  }
 
   for (i = 0; i < 10; i++) {
     for (j = 0; j < NTRU_N; j++) {
@@ -232,11 +249,13 @@ static void poly_R2_inv_to_Rq_inv(poly *r, const poly *ai, const poly *a)
 
   // for 0..4
   //    ai = ai * (2 - a*ai)  mod q
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     b.coeffs[i] = MODQ(NTRU_Q - a->coeffs[i]); // b = -a
+  }
 
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     r->coeffs[i] = ai->coeffs[i];
+  }
 
   PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul(&c, r, &b);
   c.coeffs[0] += 2; // c = 2 - a*ai
@@ -278,21 +297,25 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a)
   poly *temp_r = &f;
 
   /* b(X) := 1 */
-  for(i=1; i<NTRU_N; i++)
+  for(i=1; i<NTRU_N; i++) {
     b.coeffs[i] = 0;
+  }
   b.coeffs[0] = 1;
 
   /* c(X) := 0 */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     c.coeffs[i] = 0;
+  }
 
   /* f(X) := a(X) */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     f.coeffs[i] = a->coeffs[i];
+  }
 
   /* g(X) := 1 + X + X^2 + ... + X^{N-1} */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     g.coeffs[i] = 1;
+  }
 
   for(j=0; j<2*(NTRU_N-1)-1; j++)
   {
@@ -323,8 +346,9 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a)
   /* This is a k-coefficient rotation. We do this by looking at the binary
      representation of k, rotating for every power of 2, and performing a cmov
      if the respective bit is set. */
-  for (i = 0; i < NTRU_N; i++)
+  for (i = 0; i < NTRU_N; i++) {
     r->coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(fsign * b.coeffs[i]);
+  }
 
   for (i = 0; i < 10; i++) {
     for (j = 0; j < NTRU_N; j++) {
@@ -336,6 +360,7 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a)
   }
 
   /* Reduce modulo Phi_n */
-  for(i=0; i<NTRU_N; i++)
+  for(i=0; i<NTRU_N; i++) {
     r->coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(r->coeffs[i] + 2*r->coeffs[NTRU_N-1]);
+  }
 }

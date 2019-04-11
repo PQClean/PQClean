@@ -2,6 +2,7 @@
 #define POLY_H
 
 #include <stdint.h>
+
 #include "params.h"
 
 #define MODQ(X) ((X) & (NTRU_Q-1))
@@ -18,7 +19,7 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Sq_frombytes(poly *r, const unsigned char
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_sum_zero_tobytes(unsigned char *r, const poly *a);
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_sum_zero_frombytes(poly *r, const unsigned char *a);
 
-void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_tobytes(unsigned char msg[NTRU_PACK_TRINARY_BYTES], const poly *r);
+void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_tobytes(unsigned char msg[NTRU_PACK_TRINARY_BYTES], const poly *a);
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_frombytes(poly *r, const unsigned char msg[NTRU_PACK_TRINARY_BYTES]);
 
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Sq_mul(poly *r, const poly *a, const poly *b);
