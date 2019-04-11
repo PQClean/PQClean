@@ -34,10 +34,10 @@ def check_tidy(implementation: pqclean.Implementation):
     )
 
     # Detect and gracefully avoid segfaults
-    if returncode == 11:
+    if returncode == -11:
         raise unittest.SkipTest("clang-tidy segfaulted")
-
-    assert returncode == 0, "Clang-tidy returned %d" % returncode
+    else:
+        assert returncode == 0, "Clang-tidy returned %d" % returncode
 
 
 if __name__ == "__main__":
