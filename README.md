@@ -42,11 +42,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] Consistent test vectors on 32-bit and 64-bit machines
 * [x] No errors/warnings reported by valgrind
 * [x] No errors/warnings reported by address sanitizer
-* [ ] Only dependencies:
-  * [x] `fips202.c`
-  * [x] `sha2.c`
-  * [ ] `aes.c`
-  * [x] `randombytes.c`
+* [x] Only dependencies: `fips202.c`, `sha2.c`, `aes.c`, `randombytes.c`
 * [x] API functions return `0` on success
 * [x] No dynamic memory allocations
 * [ ] No branching on secret data (dynamically checked using valgrind)
