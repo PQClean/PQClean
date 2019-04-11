@@ -1,6 +1,7 @@
 import os
 from glob import glob
 import sys
+import unittest
 
 import pqclean
 import helpers
@@ -17,18 +18,26 @@ def test_clang_tidy():
 
 def check_tidy(implementation: pqclean.Implementation):
     helpers.ensure_available('clang-tidy')
-    cfiles = glob(os.path.join(implementation.path(), '*.c'))
+    cfiles = implementation.cfiles()
     common_files = glob(os.path.join('..', 'common', '*.c'))
-    helpers.run_subprocess(['clang-tidy',
-                    '-quiet',
-                    '-header-filter=.*'] +
-                     additional_flags +
-                    [*cfiles,
-                    *common_files,
-                    '--',
-                    '-iquote', os.path.join('..', 'common'),
-                    '-iquote', implementation.path(),
-                    ])
+    (returncode, _) = helpers.run_subprocess(
+        ['clang-tidy',
+         '-quiet',
+         '-header-filter=.*',
+         *additional_flags,
+         *cfiles,
+         *common_files,
+         '--',
+         '-iquote', os.path.join('..', 'common'),
+         '-iquote', implementation.path()],
+        expected_returncode=None,
+    )
+
+    # Detect and gracefully avoid segfaults
+    if returncode == 11:
+        raise unittest.SkipTest("clang-tidy segfaulted")
+
+    assert returncode == 0, "Clang-tidy returned %d" % returncode
 
 
 if __name__ == "__main__":
