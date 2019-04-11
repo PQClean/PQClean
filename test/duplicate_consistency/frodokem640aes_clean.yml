@@ -4,7 +4,7 @@ consistency_checks:
     implementation: clean
   files:
     - common.h
+    - params.h
     - kem.c
-    - matrix_shake.c
     - noise.c
     - util.c

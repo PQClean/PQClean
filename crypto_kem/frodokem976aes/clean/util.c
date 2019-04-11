@@ -12,11 +12,11 @@
 
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 
-uint16_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_LE_TO_UINT16(const uint16_t n) {
+uint16_t PQCLEAN_FRODOKEM976AES_CLEAN_LE_TO_UINT16(const uint16_t n) {
     return (((uint8_t *) &n)[0] | (((uint8_t *) &n)[1] << 8));
 }
 
-uint16_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_UINT16_TO_LE(const uint16_t n) {
+uint16_t PQCLEAN_FRODOKEM976AES_CLEAN_UINT16_TO_LE(const uint16_t n) {
     uint16_t y;
     uint8_t *z = (uint8_t *) &y;
     z[0] = n & 0xFF;
@@ -24,7 +24,7 @@ uint16_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_UINT16_TO_LE(const uint16_t n) {
     return y;
 }
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_mul_bs(uint16_t *out, const uint16_t *b, const uint16_t *s) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_mul_bs(uint16_t *out, const uint16_t *b, const uint16_t *s) {
     // Multiply by s on the right
     // Inputs: b (N_BAR x N), s (N x N_BAR)
     // Output: out = b*s (N_BAR x N_BAR)
@@ -42,7 +42,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_mul_bs(uint16_t *out, const uint16_t *b, con
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_mul_add_sb_plus_e(uint16_t *out, const uint16_t *b, const uint16_t *s, const uint16_t *e) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_mul_add_sb_plus_e(uint16_t *out, const uint16_t *b, const uint16_t *s, const uint16_t *e) {
     // Multiply by s on the left
     // Inputs: b (N x N_BAR), s (N_BAR x N), e (N_BAR x N_BAR)
     // Output: out = s*b + e (N_BAR x N_BAR)
@@ -60,7 +60,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_mul_add_sb_plus_e(uint16_t *out, const uint1
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_add(uint16_t *out, const uint16_t *a, const uint16_t *b) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_add(uint16_t *out, const uint16_t *a, const uint16_t *b) {
     // Add a and b
     // Inputs: a, b (N_BAR x N_BAR)
     // Output: c = a + b
@@ -71,7 +71,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_add(uint16_t *out, const uint16_t *a, const 
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_sub(uint16_t *out, const uint16_t *a, const uint16_t *b) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_sub(uint16_t *out, const uint16_t *a, const uint16_t *b) {
     // Subtract a and b
     // Inputs: a, b (N_BAR x N_BAR)
     // Output: c = a - b
@@ -82,7 +82,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_sub(uint16_t *out, const uint16_t *a, const 
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_key_encode(uint16_t *out, const uint16_t *in) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_key_encode(uint16_t *out, const uint16_t *in) {
     // Encoding
     unsigned int i, j, npieces_word = 8;
     unsigned int nwords = (PARAMS_NBAR * PARAMS_NBAR) / 8;
@@ -103,7 +103,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_key_encode(uint16_t *out, const uint16_t *in
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_key_decode(uint16_t *out, const uint16_t *in) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_key_decode(uint16_t *out, const uint16_t *in) {
     // Decoding
     unsigned int i, j, index = 0, npieces_word = 8;
     unsigned int nwords = (PARAMS_NBAR * PARAMS_NBAR) / 8;
@@ -125,7 +125,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_key_decode(uint16_t *out, const uint16_t *in
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_pack(uint8_t *out, const size_t outlen, const uint16_t *in, const size_t inlen, const uint8_t lsb) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_pack(uint8_t *out, const size_t outlen, const uint16_t *in, const size_t inlen, const uint8_t lsb) {
     // Pack the input uint16 vector into a char output vector, copying lsb bits from each input element.
     // If inlen * lsb / 8 > outlen, only outlen * 8 bits are copied.
     memset(out, 0, outlen);
@@ -174,7 +174,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_pack(uint8_t *out, const size_t outlen, cons
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_unpack(uint16_t *out, const size_t outlen, const uint8_t *in, const size_t inlen, const uint8_t lsb) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_unpack(uint16_t *out, const size_t outlen, const uint8_t *in, const size_t inlen, const uint8_t lsb) {
     // Unpack the input char vector into a uint16_t output vector, copying lsb bits
     // for each output element from input. outlen must be at least ceil(inlen * 8 / lsb).
     memset(out, 0, outlen * sizeof(uint16_t));
@@ -223,7 +223,7 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_unpack(uint16_t *out, const size_t outlen, c
 }
 
 
-void PQCLEAN_FRODOKEM976SHAKE_CLEAN_clear_bytes(uint8_t *mem, size_t n) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_clear_bytes(uint8_t *mem, size_t n) {
     // Clear 8-bit bytes from memory. "n" indicates the number of bytes to be zeroed.
     // This function uses the volatile type qualifier to inform the compiler not to optimize out the memory clearing.
     volatile uint8_t *v = mem;

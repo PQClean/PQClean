@@ -10,8 +10,8 @@ SCHEME_UPPERCASE=$(shell echo $(SCHEME) | tr a-z A-Z | sed 's/-//g')
 IMPLEMENTATION_UPPERCASE=$(shell echo $(IMPLEMENTATION) | tr a-z A-Z | sed 's/-//g')
 
 COMMON_DIR=../common
-COMMON_FILES=$(COMMON_DIR)/fips202.c $(COMMON_DIR)/sha2.c
-COMMON_HEADERS=$(COMMON_DIR)/fips202.h $(COMMON_DIR)/randombytes.h $(COMMON_DIR)/sha2.h
+COMMON_FILES=$(COMMON_DIR)/aes.c $(COMMON_DIR)/sha2.c $(COMMON_DIR)/fips202.c
+COMMON_HEADERS=$(COMMON_DIR)/*.h
 DEST_DIR=../bin
 
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
@@ -41,11 +41,7 @@ testvectors: $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
 .PHONY: printparams
 printparams: $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/test_fips202: common/fips202.c $(COMMON_FILES)
-	mkdir -p $(DEST_DIR)
-	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
-
-$(DEST_DIR)/test_sha2: common/sha2.c $(COMMON_FILES)
+$(DEST_DIR)/test_common_%: common/%.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
 
@@ -65,5 +61,6 @@ $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)
 clean:
 	$(RM) $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
 	$(RM) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
+	$(RM) $(DEST_DIR)/test_aes
 	$(RM) $(DEST_DIR)/test_fips202
 	$(RM) $(DEST_DIR)/test_sha2

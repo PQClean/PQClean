@@ -13,11 +13,12 @@ def check_format(implementation: pqclean.Implementation):
     helpers.ensure_available('astyle')
     cfiles = implementation.cfiles()
     hfiles = implementation.hfiles()
-    helpers.run_subprocess(['astyle',
+    result = helpers.run_subprocess(['astyle',
                     '--dry-run',
                     '--options=../.astylerc',
                     *cfiles,
                     *hfiles])
+    assert(not('Formatted' in result))
 
 
 if __name__ == "__main__":
