@@ -13,14 +13,15 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_tobytes(unsigned char msg[NTRU_OWCPA_M
         c = (3 * c + a->coeffs[5 * i + 0]) & 255;
         msg[i] = c;
     }
-    if ((NTRU_N - 1) % 5 != 0) {
-        i = NTRU_PACK_DEG / 5;
-        c = 0;
-        for (j = NTRU_PACK_DEG - (5 * i) - 1; j >= 0; j--) {
-            c = (3 * c + a->coeffs[5 * i + j]) & 255;
-        }
-        msg[i] = c;
+
+    // if ((NTRU_N - 1) % 5 != 0)
+    i = NTRU_PACK_DEG / 5;
+    c = 0;
+    for (j = NTRU_PACK_DEG - (5 * i) - 1; j >= 0; j--) {
+        c = (3 * c + a->coeffs[5 * i + j]) & 255;
     }
+    msg[i] = c;
+
 }
 
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_frombytes(poly *r, const unsigned char msg[NTRU_OWCPA_MSGBYTES]) {
@@ -36,14 +37,15 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_frombytes(poly *r, const unsigned char
         r->coeffs[5 * i + 3] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(c * 19 >> 9); // division by 3^3
         r->coeffs[5 * i + 4] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(c * 203 >> 14); // etc.
     }
-    if ((NTRU_N - 1) % 5 != 0) {
-        i = NTRU_PACK_DEG / 5;
-        c = msg[i];
-        for (j = 0; (5 * i + j) < NTRU_PACK_DEG; j++) {
-            r->coeffs[5 * i + j] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(c);
-            c = c * 171 >> 9;
-        }
+
+    // if ((NTRU_N - 1) % 5 != 0)
+    i = NTRU_PACK_DEG / 5;
+    c = msg[i];
+    for (j = 0; (5 * i + j) < NTRU_PACK_DEG; j++) {
+        r->coeffs[5 * i + j] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(c);
+        c = c * 171 >> 9;
     }
+
     r->coeffs[NTRU_N - 1] = 0;
 }
 

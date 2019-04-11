@@ -14,7 +14,8 @@ static int owcpa_check_r(const poly *r) {
         t |= (c + 1) & 0x4;   /* 0 if c is in {0,1,2} */
     }
     t |= r->coeffs[NTRU_N - 1]; /* Coefficient n-1 must be zero */
-    t = (-t) >> 63;
+    t = (~t + 1); // two's complement
+    t >>= 63;
     return t;
 }
 
@@ -32,7 +33,8 @@ static int owcpa_check_m(const poly *m) {
     /* Need p1 = m1 and p1 + m1 = NTRU_WEIGHT */
     t |= p1 ^ m1;
     t |= (p1 + m1) ^ NTRU_WEIGHT;
-    t = (-t) >> 63;
+    t = (~t + 1); // two's complement
+    t >>= 63;
     return t;
 }
 

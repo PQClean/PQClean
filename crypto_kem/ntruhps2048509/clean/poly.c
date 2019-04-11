@@ -157,7 +157,7 @@ static void poly_R2_inv(poly *r, const poly *a) {
     uint16_t degf = NTRU_N - 1;
     uint16_t degg = NTRU_N - 1;
     int sign, t, swap;
-    int done = 0;
+    int16_t done = 0;
     poly b, f, g;
     poly *c = r; // save some stack space
     poly *temp_r = &f;
@@ -273,7 +273,7 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a) {
     uint16_t degf = NTRU_N - 1;
     uint16_t degg = NTRU_N - 1;
     int sign, fsign = 0, t, swap;
-    int done = 0;
+    int16_t done = 0;
     poly b, c, f, g;
     poly *temp_r = &f;
 

@@ -53,7 +53,7 @@ int PQCLEAN_NTRUHPS2048509_CLEAN_crypto_kem_dec(uint8_t *k, const uint8_t *c, co
     }
     sha3_256(rm, cmp, NTRU_PRFKEYBYTES + NTRU_CIPHERTEXTBYTES);
 
-    PQCLEAN_NTRUHPS2048509_CLEAN_cmov(k, rm, NTRU_SHAREDKEYBYTES, fail);
+    PQCLEAN_NTRUHPS2048509_CLEAN_cmov(k, rm, NTRU_SHAREDKEYBYTES, (unsigned char) fail);
 
     return 0;
 }
