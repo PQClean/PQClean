@@ -1,0 +1,15 @@
+consistency_checks:
+- source:
+    scheme: frodokem640aes
+    implementation: clean
+  files:
+    - common.h
+    - kem.c
+    - matrix_aes.c
+    - noise.c
+    - util.c
+- source:
+    scheme: frodokem976shake
+    implementation: clean
+  files:
+    - params.h
