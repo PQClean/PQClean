@@ -8,8 +8,8 @@
 #define MODQ(X) ((X) & (NTRU_Q-1))
 uint16_t PQCLEAN_NTRUHPS2048509_CLEAN_mod3(uint16_t a);
 
-typedef struct{
-  uint16_t coeffs[NTRU_N];
+typedef struct {
+    uint16_t coeffs[NTRU_N];
 } poly;
 
 
