@@ -12,7 +12,7 @@ import helpers
 def test_common():
     for d in os.listdir('common'):
         primitive = re.sub(r"\.c$", "", d)
-        yield check_common, primitive
+        if helpers.permit_test('common', None): yield check_common, primitive
 
 
 def check_common(primitive):

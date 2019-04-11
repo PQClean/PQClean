@@ -1,11 +1,11 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "utils.h"
 #include "address.h"
 #include "hash.h"
 #include "params.h"
 #include "thash.h"
+#include "utils.h"
 #include "wots.h"
 
 // TODO clarify address expectations, and make them more uniform.
