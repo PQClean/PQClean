@@ -225,9 +225,6 @@ static void poly_R2_inv(poly *r, const poly *a)
 
 static void poly_R2_inv_to_Rq_inv(poly *r, const poly *ai, const poly *a)
 {
-#if NTRU_Q <= 256 || NTRU_Q >= 65536
-#error "poly_R2_inv_to_Rq_inv in poly.c assumes 256 < q < 65536"
-#endif
 
   int i;
   poly b, c;
