@@ -16,7 +16,7 @@ def test_common():
 
 
 def check_common(primitive):
-    binname = os.path.join('..', 'bin', 'test_'+primitive)
+    binname = os.path.join('..', 'bin', 'test_common_'+primitive)
     helpers.make(binname)
     helpers.run_subprocess([binname])
 

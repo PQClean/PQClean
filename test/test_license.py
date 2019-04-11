@@ -5,12 +5,14 @@ implementation of the specified scheme.
 
 import os
 import pqclean
+import helpers
 
 
 def test_license():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_license, implementation
+            if helpers.permit_test('license', implementation): 
+                yield check_license, implementation
 
 
 def check_license(implementation):

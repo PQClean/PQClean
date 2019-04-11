@@ -8,7 +8,8 @@ import helpers
 def test_metadata_sizes():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_metadata_sizes, implementation
+            if helpers.permit_test('metadata_sizes', implementation):
+                yield check_metadata_sizes, implementation
 
 
 def check_metadata_sizes(implementation):

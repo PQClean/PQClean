@@ -12,14 +12,15 @@ def test_duplicate_consistency():
     helpers.skip_windows()
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if os.path.isfile(os.path.join('duplicate_consistency', '{}_{}.yml'.format(scheme.name, implementation.name))):
-                metafile = os.path.join('duplicate_consistency', '{}_{}.yml'.format(implementation.scheme.name, implementation.name))
-                with open(metafile, encoding='utf-8') as f:
-                    metadata = yaml.load(f.read())
-                    for group in metadata['consistency_checks']:
-                        source = pqclean.Implementation.by_name(group['source']['scheme'], group['source']['implementation'])
-                        for file in group['files']:
-                            yield check_duplicate_consistency, implementation, source, file
+            if helpers.permit_test('duplicate_consistency', implementation): 
+                if os.path.isfile(os.path.join('duplicate_consistency', '{}_{}.yml'.format(scheme.name, implementation.name))):
+                    metafile = os.path.join('duplicate_consistency', '{}_{}.yml'.format(implementation.scheme.name, implementation.name))
+                    with open(metafile, encoding='utf-8') as f:
+                        metadata = yaml.load(f.read())
+                        for group in metadata['consistency_checks']:
+                            source = pqclean.Implementation.by_name(group['source']['scheme'], group['source']['implementation'])
+                            for file in group['files']:
+                                yield check_duplicate_consistency, implementation, source, file
 
 def file_get_contents(filename):
     with open(filename) as f:

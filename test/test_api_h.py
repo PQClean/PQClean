@@ -1,13 +1,15 @@
 import os
 import re
 
+import helpers
 import pqclean
 
 
 def test_preprocessor():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_preprocessor, implementation
+            if helpers.permit_test('preprocessor', implementation): 
+                yield check_preprocessor, implementation
 
 
 def check_preprocessor(implementation: pqclean.Implementation):

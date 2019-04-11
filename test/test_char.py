@@ -17,7 +17,8 @@ def test_char():
         )
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            yield check_char, implementation
+            if helpers.permit_test('char', implementation): 
+                yield check_char, implementation
 
 
 def walk_tree(ast):
