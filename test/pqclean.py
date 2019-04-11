@@ -77,7 +77,7 @@ class Implementation:
                 return i
 
     def path(self, base='..') -> str:
-        return os.path.join(self.scheme.path(), self.name)
+        return os.path.join(self.scheme.path(base=base), self.name)
 
     def libname(self) -> str:
         if os.name == 'nt':

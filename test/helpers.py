@@ -132,4 +132,39 @@ def permit_test(testname, thing, **args):
         if scheme.name.lower() in os.environ['PQCLEAN_SKIP_SCHEMES'].lower().split(','):
             return False
 
+    if 'PQCLEAN_ONLY_DIFF' in os.environ:
+        if shutil.which('git') != None:
+            # if we're on a non-master branch, and the only changes are in schemes, 
+            # only run tests on those schemes
+            branch_result = subprocess.run(
+                ['git', 'status', '--porcelain=2', '--branch'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT
+            )
+            # ensure we're in a working directory
+            if branch_result.returncode != 0:
+                return True
+            # ensure we're not on master branch
+            for branch_line in branch_result.stdout.decode('utf-8').splitlines():
+                tokens = branch_line.split(' ')
+                if tokens[0] == '#' and tokens[1] == 'branch.head':
+                    if tokens[2] == 'master':
+                        return True
+            # where are there changes?
+            diff_result = subprocess.run(
+                ['git', 'diff', '--name-only', 'master'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT
+            )
+            assert(diff_result.returncode == 0), "Got unexpected return code {}".format(diff_result.returncode)
+            for diff_line in diff_result.stdout.decode('utf-8').splitlines():
+                # don't skip test if there are any changes outside schemes
+                if not(diff_line.startswith('crypto_kem')) and not (diff_line.startswith('crypto_sign')):
+                    return True
+                # do test if the scheme in question has been changed
+                if diff_line.startswith(thing.path(base='')):
+                    return True
+            # there were no changes outside schemes, and the scheme in question had no diffs
+            return False
+
     return True
