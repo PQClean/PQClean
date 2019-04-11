@@ -4,7 +4,7 @@ claimed-nist-level: 1
 length-public-key: 699
 length-ciphertext: 699
 length-shared-secret: 32
-testvectors-sha256: 2f5cf9937959eb4a3bc910f71e830e9e0de029b28093c6192d2c3e915913016f
+testvectors-sha256: 1a7c207b96f29043fad3e31e69a806aacd98e035ec0128fdf97350ec833f3b83
 principal-submitter: John M. Schanck
 auxiliary-submitters:
   - Cong Chen
