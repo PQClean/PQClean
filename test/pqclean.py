@@ -77,7 +77,7 @@ class Implementation:
                 return i
 
     def path(self, base='..') -> str:
-        return os.path.join(self.scheme.path(), self.name)
+        return os.path.join(self.scheme.path(base=base), self.name)
 
     def namespace_prefix(self):
         return 'PQCLEAN_{}_{}_'.format(self.scheme.name.upper(), self.name.upper()).replace('-', '')
