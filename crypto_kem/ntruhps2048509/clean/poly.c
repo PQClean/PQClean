@@ -303,10 +303,10 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a) {
         degf ^= t;
         degg ^= t;
 
-        for (i=0; i<NTRU_N; i++) {
+        for (i = 0; i < NTRU_N; i++) {
             f.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(f.coeffs[i] + ((uint16_t) (sign * (!done))) * g.coeffs[i]);
         }
-        for (i=0; i<NTRU_N; i++) {
+        for (i = 0; i < NTRU_N; i++) {
             b.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(b.coeffs[i] + ((uint16_t) (sign * (!done))) * c.coeffs[i]);
         }
 
