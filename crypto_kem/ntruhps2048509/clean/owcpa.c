@@ -16,7 +16,7 @@ static int owcpa_check_r(const poly *r) {
     t |= r->coeffs[NTRU_N - 1]; /* Coefficient n-1 must be zero */
     t = (~t + 1); // two's complement
     t >>= 63;
-    return t;
+    return (int) t;
 }
 
 static int owcpa_check_m(const poly *m) {
@@ -35,7 +35,7 @@ static int owcpa_check_m(const poly *m) {
     t |= (p1 + m1) ^ NTRU_WEIGHT;
     t = (~t + 1); // two's complement
     t >>= 63;
-    return t;
+    return (int) t;
 }
 
 void PQCLEAN_NTRUHPS2048509_CLEAN_owcpa_samplemsg(unsigned char msg[NTRU_OWCPA_MSGBYTES],

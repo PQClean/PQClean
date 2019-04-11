@@ -113,11 +113,6 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_to_S3(poly *r, const poly *a) {
         (A).coeffs[(I)] ^= (B).coeffs[(I)] * (S); \
     }
 
-#define POLY_S3_FMADD(I,A,B,S) \
-    for ((I)=0; (I)<NTRU_N; (I)++) { \
-        (A).coeffs[(I)] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3((A).coeffs[(I)] + (S) * (B).coeffs[(I)]); \
-    }
-
 static void cswappoly(poly *a, poly *b, int swap) {
     int i;
     uint16_t t;
@@ -133,7 +128,7 @@ static inline void poly_divx(poly *a, int s) {
     int i;
 
     for (i = 1; i < NTRU_N; i++) {
-        a->coeffs[i - 1] = (s * a->coeffs[i]) | (!s * a->coeffs[i - 1]);
+        a->coeffs[i - 1] = (unsigned char) ((s * a->coeffs[i]) | (!s * a->coeffs[i - 1]));
     }
     a->coeffs[NTRU_N - 1] = (!s * a->coeffs[NTRU_N - 1]);
 }
@@ -142,7 +137,7 @@ static inline void poly_mulx(poly *a, int s) {
     int i;
 
     for (i = 1; i < NTRU_N; i++) {
-        a->coeffs[NTRU_N - i] = (s * a->coeffs[NTRU_N - i - 1]) | (!s * a->coeffs[NTRU_N - i]);
+        a->coeffs[NTRU_N - i] = (unsigned char) ((s * a->coeffs[NTRU_N - i - 1]) | (!s * a->coeffs[NTRU_N - i]));
     }
     a->coeffs[0] = (!s * a->coeffs[0]);
 }
@@ -308,8 +303,12 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a) {
         degf ^= t;
         degg ^= t;
 
-        POLY_S3_FMADD(i, f, g, sign * (!done));
-        POLY_S3_FMADD(i, b, c, sign * (!done));
+        for (i=0; i<NTRU_N; i++) {
+            f.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(f.coeffs[i] + (sign * (!done)) * g.coeffs[i]);
+        }
+        for (i=0; i<NTRU_N; i++) {
+            b.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(b.coeffs[i] + (sign * (!done)) * c.coeffs[i]);
+        }
 
         poly_divx(&f, !done);
         poly_mulx(&c, !done);
