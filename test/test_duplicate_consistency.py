@@ -8,8 +8,8 @@ import helpers
 import unittest
 import yaml
 
+helpers.skip_windows()
 def test_duplicate_consistency():
-    helpers.skip_windows()
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
             if helpers.permit_test('duplicate_consistency', implementation): 
