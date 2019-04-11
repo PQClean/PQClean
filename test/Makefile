@@ -38,7 +38,7 @@ testvectors: $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
 .PHONY: printparams
 printparams: $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/test_%: common/%.c $(COMMON_FILES)
+$(DEST_DIR)/test_common_%: common/%.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
 
