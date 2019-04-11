@@ -30,8 +30,11 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
         env=env,
     )
     print(result.stdout.decode('utf-8'))
-    assert result.returncode == expected_returncode, \
-        "Got unexpected return code {}".format(result.returncode)
+    if expected_returncode is not None:
+        assert result.returncode == expected_returncode, \
+            "Got unexpected return code {}".format(result.returncode)
+    else:
+        return (result.returncode, result.stdout.decode('utf-8'))
     return result.stdout.decode('utf-8')
 
 
@@ -111,8 +114,10 @@ def permit_test(testname, thing, **args):
 
     if isinstance(thing, pqclean.Implementation):
         scheme = thing.scheme
-    else:
+    elif isinstance(thing, pqclean.Scheme):
         scheme = thing
+    else:
+        return True
 
     if 'PQCLEAN_ONLY_TYPES' in os.environ:
         if not(scheme.type.lower() in os.environ['PQCLEAN_ONLY_TYPES'].lower().split(',')):
