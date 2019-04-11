@@ -13,7 +13,7 @@
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 
 uint16_t PQCLEAN_FRODOKEM1344AES_CLEAN_LE_TO_UINT16(const uint16_t n) {
-    return (((uint8_t *) &(n))[0] | (((uint8_t *) &(n))[1] << 8));
+    return (((uint8_t *) &n)[0] | (((uint8_t *) &n)[1] << 8));
 }
 
 uint16_t PQCLEAN_FRODOKEM1344AES_CLEAN_UINT16_TO_LE(const uint16_t n) {
