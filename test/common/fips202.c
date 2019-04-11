@@ -54,8 +54,8 @@ const unsigned char expected[512] = {
 
 static int test_sha3_256_incremental(void) {
     unsigned char input[512];
-    unsigned char check[512];
-    unsigned char output[512];
+    unsigned char check[32];
+    unsigned char output[32];
     uint64_t s_inc[26];
     int i;
     int absorbed;
@@ -78,15 +78,15 @@ static int test_sha3_256_incremental(void) {
 
     sha3_256_inc_finalize(output, s_inc);
 
-    if (memcmp(check, output, 512)) {
+    if (memcmp(check, output, 32)) {
         printf("ERROR sha3_256 incremental did not match sha3_256.\n");
         printf("  Expected: ");
-        for (i = 0; i < 512; i++) {
+        for (i = 0; i < 32; i++) {
             printf("%02X", check[i]);
         }
         printf("\n");
         printf("  Received: ");
-        for (i = 0; i < 512; i++) {
+        for (i = 0; i < 32; i++) {
             printf("%02X", output[i]);
         }
         printf("\n");
