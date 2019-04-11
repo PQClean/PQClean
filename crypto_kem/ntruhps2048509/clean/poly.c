@@ -304,10 +304,10 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a) {
         degg ^= t;
 
         for (i=0; i<NTRU_N; i++) {
-            f.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(f.coeffs[i] + (sign * (!done)) * g.coeffs[i]);
+            f.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(f.coeffs[i] + ((uint16_t) (sign * (!done))) * g.coeffs[i]);
         }
         for (i=0; i<NTRU_N; i++) {
-            b.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(b.coeffs[i] + (sign * (!done)) * c.coeffs[i]);
+            b.coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(b.coeffs[i] + ((uint16_t) (sign * (!done))) * c.coeffs[i]);
         }
 
         poly_divx(&f, !done);
@@ -326,7 +326,7 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_poly_S3_inv(poly *r, const poly *a) {
        representation of k, rotating for every power of 2, and performing a cmov
        if the respective bit is set. */
     for (i = 0; i < NTRU_N; i++) {
-        r->coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(fsign * b.coeffs[i]);
+        r->coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3((uint16_t) fsign * b.coeffs[i]);
     }
 
     for (i = 0; i < 10; i++) {
