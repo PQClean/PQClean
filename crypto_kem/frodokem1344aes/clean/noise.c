@@ -7,6 +7,7 @@
 #include <stdint.h>
 
 #include "api.h"
+#include "common.h"
 #include "params.h"
 
 static uint16_t CDF_TABLE[CDF_TABLE_LEN] = CDF_TABLE_DATA;

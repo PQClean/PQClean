@@ -8,6 +8,7 @@
 #include <string.h>
 
 #include "api.h"
+#include "common.h"
 #include "params.h"
 
 #define min(x, y) (((x) < (y)) ? (x) : (y))
