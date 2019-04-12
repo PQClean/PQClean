@@ -62,7 +62,7 @@ static inline void br_enc32le(unsigned char *dst, uint32_t x) {
 }
 
 
-void br_range_enc32le(unsigned char *dst, const uint32_t *v, size_t num) {
+static void br_range_enc32le(unsigned char *dst, const uint32_t *v, size_t num) {
     while (num-- > 0) {
         br_enc32le(dst, *v ++);
         dst += 4;
@@ -387,7 +387,7 @@ static void br_aes_ct64_keysched(uint64_t *comp_skey, const unsigned char *key, 
     }
 }
 
-void br_aes_ct64_skey_expand(uint64_t *skey, const uint64_t *comp_skey, unsigned int nrounds) {
+static void br_aes_ct64_skey_expand(uint64_t *skey, const uint64_t *comp_skey, unsigned int nrounds) {
     unsigned u, v, n;
 
     n = (nrounds + 1) << 1;
