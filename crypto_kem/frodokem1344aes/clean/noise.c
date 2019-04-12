@@ -12,7 +12,7 @@
 
 static uint16_t CDF_TABLE[CDF_TABLE_LEN] = CDF_TABLE_DATA;
 
-void PQCLEAN_FRODOKEM1344AES_CLEAN_sample_n(uint16_t *s, const size_t n) {
+void PQCLEAN_FRODOKEM1344AES_CLEAN_sample_n(uint16_t *s, size_t n) {
     // Fills vector s with n samples from the noise distribution which requires 16 bits to sample.
     // The distribution is specified by its CDF.
     // Input: pseudo-random values (2*n bytes) passed in s. The input is overwritten by the output.
