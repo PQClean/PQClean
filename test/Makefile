@@ -16,7 +16,7 @@ DEST_DIR=../bin
 
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-Wall -Wextra -Wpedantic -Werror -std=c99 \
-	   -Wundef -Wshadow -Wcast-align -Wpointer-arith \
+	   -Wundef -Wshadow -Wcast-align -Wpointer-arith -Wmissing-prototypes\
 	   -fstrict-aliasing -fno-common -pipe \
 	   -I$(COMMON_DIR) $(EXTRAFLAGS)
 

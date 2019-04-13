@@ -8,15 +8,16 @@
 #include <string.h>
 
 #include "api.h"
+#include "common.h"
 #include "params.h"
 
 #define min(x, y) (((x) < (y)) ? (x) : (y))
 
-uint16_t PQCLEAN_FRODOKEM976AES_CLEAN_LE_TO_UINT16(const uint16_t n) {
+uint16_t PQCLEAN_FRODOKEM976AES_CLEAN_LE_TO_UINT16(uint16_t n) {
     return (((uint8_t *) &n)[0] | (((uint8_t *) &n)[1] << 8));
 }
 
-uint16_t PQCLEAN_FRODOKEM976AES_CLEAN_UINT16_TO_LE(const uint16_t n) {
+uint16_t PQCLEAN_FRODOKEM976AES_CLEAN_UINT16_TO_LE(uint16_t n) {
     uint16_t y;
     uint8_t *z = (uint8_t *) &y;
     z[0] = n & 0xFF;
@@ -125,7 +126,7 @@ void PQCLEAN_FRODOKEM976AES_CLEAN_key_decode(uint16_t *out, const uint16_t *in) 
 }
 
 
-void PQCLEAN_FRODOKEM976AES_CLEAN_pack(uint8_t *out, const size_t outlen, const uint16_t *in, const size_t inlen, const uint8_t lsb) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_pack(uint8_t *out, size_t outlen, const uint16_t *in, size_t inlen, uint8_t lsb) {
     // Pack the input uint16 vector into a char output vector, copying lsb bits from each input element.
     // If inlen * lsb / 8 > outlen, only outlen * 8 bits are copied.
     memset(out, 0, outlen);
@@ -174,7 +175,7 @@ void PQCLEAN_FRODOKEM976AES_CLEAN_pack(uint8_t *out, const size_t outlen, const 
 }
 
 
-void PQCLEAN_FRODOKEM976AES_CLEAN_unpack(uint16_t *out, const size_t outlen, const uint8_t *in, const size_t inlen, const uint8_t lsb) {
+void PQCLEAN_FRODOKEM976AES_CLEAN_unpack(uint16_t *out, size_t outlen, const uint8_t *in, size_t inlen, uint8_t lsb) {
     // Unpack the input char vector into a uint16_t output vector, copying lsb bits
     // for each output element from input. outlen must be at least ceil(inlen * 8 / lsb).
     memset(out, 0, outlen * sizeof(uint16_t));

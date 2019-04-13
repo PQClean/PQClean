@@ -35,7 +35,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] Passes functional tests
 * [x] API functions do not write outside provided buffers
 * [x] `api.h` cannot include external files
-* [x] Compiles with `-Wall -Wextra -Wpedantic -Werror` with `gcc` and `clang`
+* [x] Compiles with `-Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes` with `gcc` and `clang`
 * [x] `#if`/`#ifdef`s only for header encapsulation
 * [x] Consistent test vectors across runs
 * [x] Consistent test vectors on big-endian and little-endian machines
