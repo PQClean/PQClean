@@ -1,6 +1,8 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+#include "verify.h"
+
 /* returns 0 for equal strings, 1 for non-equal strings */
 unsigned char PQCLEAN_NTRUHPS2048509_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
     uint64_t r;

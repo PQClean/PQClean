@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+#include "api.h"
 #include "fips202.h"
 #include "owcpa.h"
 #include "params.h"
