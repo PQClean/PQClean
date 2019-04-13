@@ -1,0 +1,21 @@
+name: ntru-hps2048509
+type: kem
+claimed-nist-level: 1
+length-public-key: 699
+length-ciphertext: 699
+length-shared-secret: 32
+testvectors-sha256: 1a7c207b96f29043fad3e31e69a806aacd98e035ec0128fdf97350ec833f3b83
+principal-submitter: John M. Schanck
+auxiliary-submitters:
+  - Cong Chen
+  - Oussama Danba
+  - Jeffrey Hoffstein
+  - Andreas Hülsing
+  - Joost Rijneveld
+  - Peter Schwabe
+  - William Whyte
+  - Zhenfei Zhang
+implementations:
+    - name: clean
+      version: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/round-2/submissions/NTRU-Round2.zip reference implemntation
+      length-secret-key: 935
