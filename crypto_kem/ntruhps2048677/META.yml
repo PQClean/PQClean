@@ -1,6 +1,6 @@
 name: ntru-hps2048677
 type: kem
-claimed-nist-level: 1
+claimed-nist-level: 3
 length-public-key: 930
 length-ciphertext: 930
 length-shared-secret: 32
