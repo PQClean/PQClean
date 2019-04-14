@@ -1,0 +1,16 @@
+consistency_checks:
+- source:
+    scheme: ntruhps2048509
+    implementation: clean
+  files:
+    - crypto_sort.c
+    - crypto_sort.h
+    - kem.c
+    - owcpa.c
+    - owcpa.h
+    - poly.c
+    - poly.h
+    - sample.c
+    - sample.h
+    - verify.c
+    - verify.h

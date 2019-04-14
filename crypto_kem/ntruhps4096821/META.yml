@@ -1,0 +1,22 @@
+name: ntru-hps4096821
+type: kem
+claimed-nist-level: 5
+length-public-key: 1230
+length-ciphertext: 1230
+length-shared-secret: 32
+testvectors-sha256: 099c3d9b6700608f9c7c95b89efbda75841a1e620a0d3bb0b6e7d403ca249e3f
+nistkat-sha256: 0c5b6b159fab6eb677da469ec35aaa7e6b16162b315dcdb55a3b5da857e10519
+principal-submitter: John M. Schanck
+auxiliary-submitters:
+  - Cong Chen
+  - Oussama Danba
+  - Jeffrey Hoffstein
+  - Andreas Hülsing
+  - Joost Rijneveld
+  - Peter Schwabe
+  - William Whyte
+  - Zhenfei Zhang
+implementations:
+    - name: clean
+      version: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/round-2/submissions/NTRU-Round2.zip reference implemntation
+      length-secret-key: 1590
