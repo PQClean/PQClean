@@ -5,6 +5,7 @@ length-public-key: 21520
 length-ciphertext: 21632
 length-shared-secret: 32
 testvectors-sha256: 8b62fc01fc1e4b4e336776b09b37aaf55d161b7c815b3298f39d4444b011e10c
+nistkat-sha256: 6e54e319cc590c3f136af81990a04cd0009ef78dec92825d2eb834adfec661dc
 principal-submitter: Douglas Stebila, University of Waterloo
 auxiliary-submitters:
 - Erdem Alkim

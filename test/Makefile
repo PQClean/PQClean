@@ -41,6 +41,9 @@ testvectors: $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
 .PHONY: printparams
 printparams: $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION)
 
+.PHONY: nistkat
+nistkat: $(DEST_DIR)/nistkat_$(SCHEME)_$(IMPLEMENTATION)
+
 $(DEST_DIR)/test_common_%: common/%.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
@@ -57,10 +60,16 @@ $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/printparams.c -o $@
 
+$(DEST_DIR)/nistkat_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/nistkat.c $(COMMON_FILES) $(COMMON_DIR)/nistkatrng.c $(COMMON_HEADERS)
+	mkdir -p $(DEST_DIR)
+	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/nistkat.c $(COMMON_FILES) $(COMMON_DIR)/nistkatrng.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+
 .PHONY: clean
 clean:
 	$(RM) $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
 	$(RM) $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
+	$(RM) $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION)
+	$(RM) $(DEST_DIR)/nistkat_$(SCHEME)_$(IMPLEMENTATION)
 	$(RM) $(DEST_DIR)/test_aes
 	$(RM) $(DEST_DIR)/test_fips202
 	$(RM) $(DEST_DIR)/test_sha2
