@@ -5,6 +5,7 @@ length-public-key: 699
 length-ciphertext: 699
 length-shared-secret: 32
 testvectors-sha256: 1a7c207b96f29043fad3e31e69a806aacd98e035ec0128fdf97350ec833f3b83
+nistkat-sha256: 7ecb93dbc7a588878691f2b2d656ebc42192779f335e3a96197f4ce2134f72c6
 principal-submitter: John M. Schanck
 auxiliary-submitters:
   - Cong Chen

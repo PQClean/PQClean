@@ -65,6 +65,7 @@ EXPECTED_FIELDS = {
 KEM_FIELDS = {
     'length-ciphertext': {'type': int, 'min': 1},
     'length-shared-secret': {'type': int, 'min': 1},
+    'nistkat-sha256': {'type': str, 'length': 64},
 }
 
 SIGNATURE_FIELDS = {
