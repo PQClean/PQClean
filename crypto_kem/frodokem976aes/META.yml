@@ -6,17 +6,17 @@ length-ciphertext: 15744
 length-shared-secret: 24
 testvectors-sha256: 30a2a3f2d834b5d90cd10241f53c4a4379abeea0dbd4eb65b260749b2ba81391
 nistkat-sha256: 7e415ab659d0d08d8f43135e1e9d75a8b342f52b65e8326ebf8135521b987615
-principal-submitter: Douglas Stebila, University of Waterloo
+principal-submitter: Michael Naehrig, Microsoft Research
 auxiliary-submitters:
 - Erdem Alkim
 - Joppe W. Bos, NXP Semiconductors
 - Léo Ducas, CWI
 - Patrick Longa, Microsoft Research
 - Ilya Mironov, Google
-- Michael Naehrig, Microsoft Research
 - Valeria Nikolaenko
 - Chris Peikert, University of Michigan
 - Ananth Raghunathan, Google
+- Douglas Stebila, University of Waterloo
 - Karen Easterbrook, Microsoft Research
 - Brian LaMacchia, Microsoft Research
 implementations:
