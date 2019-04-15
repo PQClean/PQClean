@@ -50,7 +50,7 @@ int main() {
     uint8_t shared_secret_d[CRYPTO_BYTES];
     int rc;
 
-    for (size_t i = 0; i < 48; i++) {
+    for (uint8_t i = 0; i < 48; i++) {
         entropy_input[i] = i;
     }
 
