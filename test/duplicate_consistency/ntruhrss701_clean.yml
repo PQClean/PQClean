@@ -1,0 +1,14 @@
+consistency_checks:
+- source:
+    scheme: ntruhps2048509
+    implementation: clean
+  files:
+    - kem.c
+    - poly.h
+    - verify.c
+    - verify.h
+- source:
+    scheme: ntruhps4096821
+    implementation: clean
+  files:
+    - pack3.c
