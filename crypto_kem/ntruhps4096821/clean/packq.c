@@ -5,17 +5,17 @@ void PQCLEAN_NTRUHPS4096821_CLEAN_poly_Sq_tobytes(unsigned char *r, const poly *
     int i;
 
     for (i = 0; i < NTRU_PACK_DEG / 2; i++) {
-        r[3 * i + 0] =  a->coeffs[2 * i + 0] & 0xff;
-        r[3 * i + 1] = (a->coeffs[2 * i + 0] >>  8) | ((a->coeffs[2 * i + 1] & 0x0f) << 4);
-        r[3 * i + 2] = (a->coeffs[2 * i + 1] >>  4);
+        r[3 * i + 0] = (unsigned char) ( a->coeffs[2 * i + 0] & 0xff);
+        r[3 * i + 1] = (unsigned char) ((a->coeffs[2 * i + 0] >>  8) | ((a->coeffs[2 * i + 1] & 0x0f) << 4));
+        r[3 * i + 2] = (unsigned char) ((a->coeffs[2 * i + 1] >>  4));
     }
 }
 
 void PQCLEAN_NTRUHPS4096821_CLEAN_poly_Sq_frombytes(poly *r, const unsigned char *a) {
     int i;
     for (i = 0; i < NTRU_PACK_DEG / 2; i++) {
-        r->coeffs[2 * i + 0] = (a[3 * i + 0] >> 0) | (((uint16_t)a[3 * i + 1] & 0x0f) << 8);
-        r->coeffs[2 * i + 1] = (a[3 * i + 1] >> 4) | (((uint16_t)a[3 * i + 2] & 0xff) << 4);
+        r->coeffs[2 * i + 0] = (unsigned char) ((a[3 * i + 0] >> 0) | (((uint16_t)a[3 * i + 1] & 0x0f) << 8));
+        r->coeffs[2 * i + 1] = (unsigned char) ((a[3 * i + 1] >> 4) | (((uint16_t)a[3 * i + 2] & 0xff) << 4));
     }
 }
 
