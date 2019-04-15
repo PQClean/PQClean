@@ -48,6 +48,8 @@ def check_functest_sanitizers(implementation):
         raise unittest.SkipTest("Clang does not support ASAN on ppc")
     elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
+    elif platform.system() == 'Darwin':
+        raise unittest.SkipTest('valgrind is not reliable on OSX')
     else:
         print("Supported platform: {}".format(platform.machine()))
 
