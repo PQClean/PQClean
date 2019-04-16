@@ -53,7 +53,6 @@ def check_functest_sanitizers(implementation):
     else:
         print("Supported platform: {}".format(platform.machine()))
 
-    helpers.ensure_available('valgrind')
     helpers.make('clean-scheme', 'functest',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
