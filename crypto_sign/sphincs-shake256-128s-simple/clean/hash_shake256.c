@@ -10,7 +10,7 @@
 
 /* For SHAKE256, there is no immediate reason to initialize at the start,
    so this function is an empty operation. */
-void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_initialize_hash_function(
+void PQCLEAN_SPHINCSSHAKE256128SSIMPLE_CLEAN_initialize_hash_function(
     const unsigned char *pub_seed, const unsigned char *sk_seed) {
     (void)pub_seed; /* Suppress an 'unused parameter' warning. */
     (void)sk_seed; /* Suppress an 'unused parameter' warning. */
@@ -19,12 +19,12 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_initialize_hash_function(
 /*
  * Computes PRF(key, addr), given a secret key of SPX_N bytes and an address
  */
-void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_prf_addr(
+void PQCLEAN_SPHINCSSHAKE256128SSIMPLE_CLEAN_prf_addr(
     unsigned char *out, const unsigned char *key, const uint32_t addr[8]) {
     unsigned char buf[SPX_N + SPX_ADDR_BYTES];
 
     memcpy(buf, key, SPX_N);
-    PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_addr_to_bytes(buf + SPX_N, addr);
+    PQCLEAN_SPHINCSSHAKE256128SSIMPLE_CLEAN_addr_to_bytes(buf + SPX_N, addr);
 
     shake256(out, SPX_N, buf, SPX_N + SPX_ADDR_BYTES);
 }
@@ -33,7 +33,7 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_prf_addr(
  * Computes the message-dependent randomness R, using a secret seed and an
  * optional randomization value as well as the message.
  */
-void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_gen_message_random(
+void PQCLEAN_SPHINCSSHAKE256128SSIMPLE_CLEAN_gen_message_random(
     unsigned char *R,
     const unsigned char *sk_prf, const unsigned char *optrand,
     const unsigned char *m, size_t mlen) {
@@ -52,7 +52,7 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_gen_message_random(
  * Outputs the message digest and the index of the leaf. The index is split in
  * the tree index and the leaf index, for convenient copying to an address.
  */
-void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_hash_message(
+void PQCLEAN_SPHINCSSHAKE256128SSIMPLE_CLEAN_hash_message(
     unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
     const unsigned char *R, const unsigned char *pk,
     const unsigned char *m, size_t mlen) {
@@ -76,12 +76,12 @@ void PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_hash_message(
     memcpy(digest, bufp, SPX_FORS_MSG_BYTES);
     bufp += SPX_FORS_MSG_BYTES;
 
-    *tree = PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_bytes_to_ull(
+    *tree = PQCLEAN_SPHINCSSHAKE256128SSIMPLE_CLEAN_bytes_to_ull(
                 bufp, SPX_TREE_BYTES);
     *tree &= (~(uint64_t)0) >> (64 - SPX_TREE_BITS);
     bufp += SPX_TREE_BYTES;
 
-    *leaf_idx = (uint32_t)PQCLEAN_SPHINCSSHAKE256128FSIMPLE_CLEAN_bytes_to_ull(
+    *leaf_idx = (uint32_t)PQCLEAN_SPHINCSSHAKE256128SSIMPLE_CLEAN_bytes_to_ull(
                     bufp, SPX_LEAF_BYTES);
     *leaf_idx &= (~(uint32_t)0) >> (32 - SPX_LEAF_BITS);
 }
