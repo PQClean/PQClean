@@ -16,7 +16,8 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_sample_n(uint16_t *s, size_t n) {
     // Fills vector s with n samples from the noise distribution which requires 16 bits to sample.
     // The distribution is specified by its CDF.
     // Input: pseudo-random values (2*n bytes) passed in s. The input is overwritten by the output.
-    size_t i, j;
+    size_t i;
+    unsigned int j;
 
     for (i = 0; i < n; ++i) {
         uint8_t sample = 0;
