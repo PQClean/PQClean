@@ -7,6 +7,7 @@ matrix:
       before_install:
         - pip3 install -r requirements.txt
       before_script:
+        - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
         - git fetch --unshallow
       script:
         - "cd test && python3 -m nose --rednose --verbose"
@@ -28,6 +29,7 @@ matrix:
       env:
         PQCLEAN_ONLY_DIFF: 1
       before_install:
+        - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
         - git fetch --unshallow
         - pip3 install -r requirements.txt
         - brew link gcc

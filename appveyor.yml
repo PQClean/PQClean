@@ -22,6 +22,8 @@ init:
   - set PATH="C:\\Python37";"C:\\Python37\Scripts";%PATH%
 
 build_script:
+  - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+  - git fetch
   - python -m pip install -r requirements.txt
   - cd test
     # Download Astyle to local folder because putting it in PATH doesn't work
