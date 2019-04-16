@@ -142,7 +142,7 @@ def permit_test(testname, thing, **args):
             return False
 
     if 'PQCLEAN_ONLY_DIFF' in os.environ:
-        if shutil.which('git') != None:
+        if shutil.which('git') is not None:
             # if we're on a non-master branch, and the only changes are in schemes, 
             # only run tests on those schemes
             branch_result = subprocess.run(

@@ -15,7 +15,7 @@ version: 2
     - run:
         name: Run the tests in a container
         command: |
-          docker run -e CI=true --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
+          docker run -e CI=true -e PQCLEAN_ONLY_DIFF=1 --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
           uname -a &&
           export CC=${CC} &&
           pip3 install -r requirements.txt &&
@@ -35,6 +35,7 @@ version: 2
         name: Run tests
         command: |
           export CC=${CC}
+          export PQCLEAN_ONLY_DIFF=1
           pip3 install -r requirements.txt &&
           cd test && python3 -m nose --rednose --verbose
 

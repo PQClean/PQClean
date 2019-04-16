@@ -6,6 +6,7 @@ build:
   verbosity: minimal
 
 environment:
+  PQCLEAN_ONLY_DIFF: 1
   matrix:
     - BITS: 64
     - BITS: 32
