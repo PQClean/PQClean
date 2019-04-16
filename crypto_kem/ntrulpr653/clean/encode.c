@@ -9,7 +9,7 @@ void PQCLEAN_NTRULPR653_CLEAN_Encode(unsigned char *out, const uint16_t *R, cons
         uint16_t r = R[0];
         uint16_t m = M[0];
         while (m > 1) {
-            *out++ = r;
+            *out++ = (unsigned char) r;
             r >>= 8;
             m = (m + 255) >> 8;
         }
