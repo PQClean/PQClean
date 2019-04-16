@@ -57,7 +57,7 @@ def check_functest_sanitizers(implementation):
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
-                 EXTRAFLAGS='-fsanitize=address,undefined',
+                 EXTRAFLAGS='-g -fsanitize=address,undefined',
                  working_dir=os.path.join('..', 'test'),
                  env=env)
     try:
