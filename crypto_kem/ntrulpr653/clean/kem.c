@@ -203,10 +203,17 @@ static void Inputs_encode(unsigned char *s, const Inputs r) {
 
 static const unsigned char aes_nonce[16] = {0};
 
+static uint32_t le_to_uint32(uint32_t n) {
+    return (((uint8_t *) &n)[0] | (((uint8_t *) &n)[1] << 8) | (((uint8_t *) &n)[2] << 16) | (((uint8_t *) &n)[3] << 24));
+}
+
 static void Expand(uint32_t *L, const unsigned char *k) {
     aes256ctx ctx;
     aes256_keyexp(&ctx, k);
     aes256_ctr((unsigned char *) L, 4 * p, aes_nonce, &ctx);
+    for (size_t i = 0; i < p; i++) {
+        L[i] = le_to_uint32(L[i]);
+    }
 }
 
 /* ----- Seeds */
