@@ -64,3 +64,7 @@ clean:
 	$(RM) $(DEST_DIR)/test_aes
 	$(RM) $(DEST_DIR)/test_fips202
 	$(RM) $(DEST_DIR)/test_sha2
+
+.PHONY: distclean
+distclean:
+	$(RM) -r $(DEST_DIR)
