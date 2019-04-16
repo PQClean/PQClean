@@ -31,7 +31,7 @@ static int int16_negative_mask(int16_t x) {
 
 /* x must not be close to top int16 */
 static int8_t F3_freeze(int16_t x) {
-    return PQCLEAN_NTRULPR653_CLEAN_int32_mod_uint14(x + 1, 3) - 1;
+    return (int8_t) (PQCLEAN_NTRULPR653_CLEAN_int32_mod_uint14(x + 1, 3) - 1);
 }
 
 /* ----- arithmetic mod q */
@@ -122,21 +122,7 @@ static void Short_fromlist(int8_t *out, const uint32_t *in) {
 
 #define Hash_bytes 32
 
-/* e.g., b = 0 means out = Hash0(in) */
-static void Hash(unsigned char *out, int b, const unsigned char *in, int inlen) {
-    unsigned char x[inlen + 1];
-    unsigned char h[64];
-    int i;
-
-    x[0] = b;
-    for (i = 0; i < inlen; ++i) {
-        x[i + 1] = in[i];
-    }
-    sha512(h, x, inlen + 1);
-    for (i = 0; i < 32; ++i) {
-        out[i] = h[i];
-    }
-}
+static void Hash(unsigned char *out, int b, const unsigned char *in, int inlen);
 
 /* ----- higher-level randomness */
 
@@ -194,7 +180,7 @@ static void Decrypt(int8_t *r, const Fq *B, const int8_t *T, const int8_t *a) {
 
     Rq_mult_small(aB, B, a);
     for (i = 0; i < I; ++i) {
-        r[i] = -int16_negative_mask(Fq_freeze(Right(T[i]) - aB[i] + 4 * w + 1));
+        r[i] = (int8_t) (-int16_negative_mask(Fq_freeze(Right(T[i]) - aB[i] + 4 * w + 1)));
     }
 }
 
@@ -449,6 +435,24 @@ static void HashSession(unsigned char *k, int b, const unsigned char *y, const u
         x[Inputs_bytes + i] = z[i];
     }
     Hash(k, b, x, sizeof x);
+}
+
+/* ----- underlying hash function */
+
+/* e.g., b = 0 means out = Hash0(in) */
+static void Hash(unsigned char *out, int b, const unsigned char *in, int inlen) {
+    unsigned char x[Inputs_bytes + Ciphertexts_bytes + Confirm_bytes + 1]; // this is the maximum size that Hash is called with
+    unsigned char h[64];
+    int i;
+
+    x[0] = (unsigned char) b;
+    for (i = 0; i < inlen; ++i) {
+        x[i + 1] = in[i];
+    }
+    sha512(h, x, inlen + 1);
+    for (i = 0; i < 32; ++i) {
+        out[i] = h[i];
+    }
 }
 
 /* ----- Streamlined NTRU Prime and NTRU LPRime */

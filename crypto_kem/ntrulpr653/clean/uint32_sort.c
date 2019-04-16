@@ -9,7 +9,7 @@ static void minmax(uint32_t *x, uint32_t *y) {
     uint32_t c = yi - xi;
     c ^= xy & (c ^ yi ^ 0x80000000);
     c >>= 31;
-    c = -c;
+    c = ~c + 1; // two's complement
     c &= xy;
     *x = xi ^ c;
     *y = yi ^ c;

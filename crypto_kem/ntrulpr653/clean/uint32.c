@@ -49,12 +49,12 @@ void PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(uint32_t *qq, uint16_t *r, ui
 
     x -= m;
     *qq += 1;
-    mask = -(x >> 31);
+    mask = ~(x >> 31) + 1; //two two's complement
     x += mask & (uint32_t)m;
     *qq += mask;
     /* x < m */
 
-    *r = x;
+    *r = (uint16_t) x;
 }
 
 uint32_t PQCLEAN_NTRULPR653_CLEAN_uint32_div_uint14(uint32_t x, uint16_t m) {
