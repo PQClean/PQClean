@@ -26,9 +26,8 @@ See the section [API](#API) below.
     type: <kem|signature>
     claimed-nist-level: <N>
     length-public-key: <N>          # KEM and signature
-    length-secret-key: <N>          # KEM and signature
     length-ciphertext: <N>          # KEM only
-    length-shared-secret: <N>        # KEM only
+    length-shared-secret: <N>       # KEM only
     length-signature: <N>           # Signature only
     testvectors-sha256: sha256sum of output of testvectors
     principal-submitter: Eve
@@ -38,6 +37,7 @@ See the section [API](#API) below.
       - ...
     implementations:
       - name: clean
+        length-secret-key: <N>       # KEM and signature
         version: <some version indicator>
     ```
 
