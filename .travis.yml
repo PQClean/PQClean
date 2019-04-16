@@ -6,6 +6,8 @@ matrix:
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
+      before_script:
+        - git fetch --unshallow
       script:
         - "cd test && python3 -m nose --rednose --verbose"
       env:
@@ -26,6 +28,7 @@ matrix:
       env:
         PQCLEAN_ONLY_DIFF: 1
       before_install:
+        - git fetch --unshallow
         - pip3 install -r requirements.txt
         - brew link gcc
         - export PATH="/usr/local/bin:$PATH"

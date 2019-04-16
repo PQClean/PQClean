@@ -161,7 +161,7 @@ def permit_test(testname, thing, **args):
                         return True
             # where are there changes?
             diff_result = subprocess.run(
-                ['git', 'diff', '--name-only', 'master'],
+                ['git', 'diff', '--name-only', 'origin/master'],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT
             )

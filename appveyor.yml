@@ -5,6 +5,8 @@ image: Visual Studio 2017
 build:
   verbosity: minimal
 
+shallow_clone: false
+
 environment:
   PQCLEAN_ONLY_DIFF: 1
   matrix:
