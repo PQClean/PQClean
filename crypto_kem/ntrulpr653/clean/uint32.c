@@ -11,7 +11,7 @@ There could be more CPU issues.
 There could also be compiler issues.
 */
 
-void PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(uint32_t *q, uint16_t *r, uint32_t x, uint16_t m) {
+void PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(uint32_t *qq, uint16_t *r, uint32_t x, uint16_t m) {
     uint32_t v = 0x80000000;
     uint32_t qpart;
     uint32_t mask;
@@ -23,7 +23,7 @@ void PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(uint32_t *q, uint16_t *r, uin
     /* vm <= 2^31 <= vm+m-1 */
     /* xvm <= 2^31 x <= xvm+x(m-1) */
 
-    *q = 0;
+    *qq = 0;
 
     qpart = (x * (uint64_t)v) >> 31;
     /* 2^31 qpart <= xv <= 2^31 qpart + 2^31-1 */
@@ -34,7 +34,7 @@ void PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(uint32_t *q, uint16_t *r, uin
     /* 0 <= newx <= (1-1/2^31)(2^14-1) + (2^32-1)((2^14-1)-1)/2^31 */
 
     x -= qpart * m;
-    *q += qpart;
+    *qq += qpart;
     /* x <= 49146 */
 
     qpart = (x * (uint64_t)v) >> 31;
@@ -44,29 +44,29 @@ void PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(uint32_t *q, uint16_t *r, uin
     /* 0 <= newx <= m */
 
     x -= qpart * m;
-    *q += qpart;
+    *qq += qpart;
     /* x <= m */
 
     x -= m;
-    *q += 1;
+    *qq += 1;
     mask = -(x >> 31);
     x += mask & (uint32_t)m;
-    *q += mask;
+    *qq += mask;
     /* x < m */
 
     *r = x;
 }
 
 uint32_t PQCLEAN_NTRULPR653_CLEAN_uint32_div_uint14(uint32_t x, uint16_t m) {
-    uint32_t q;
+    uint32_t qq;
     uint16_t r;
-    PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(&q, &r, x, m);
-    return q;
+    PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(&qq, &r, x, m);
+    return qq;
 }
 
 uint16_t PQCLEAN_NTRULPR653_CLEAN_uint32_mod_uint14(uint32_t x, uint16_t m) {
-    uint32_t q;
+    uint32_t qq;
     uint16_t r;
-    PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(&q, &r, x, m);
+    PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(&qq, &r, x, m);
     return r;
 }

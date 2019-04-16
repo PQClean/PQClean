@@ -27,14 +27,17 @@ void PQCLEAN_NTRULPR653_CLEAN_uint32_sort(uint32_t *x, int n) {
     }
 
     for (p = top; p > 0; p >>= 1) {
-        for (i = 0; i < n - p; ++i)
+        for (i = 0; i < n - p; ++i) {
             if (!(i & p)) {
                 minmax(x + i, x + i + p);
             }
-        for (q = top; q > p; q >>= 1)
-            for (i = 0; i < n - q; ++i)
+        }
+        for (q = top; q > p; q >>= 1) {
+            for (i = 0; i < n - q; ++i) {
                 if (!(i & p)) {
                     minmax(x + i + p, x + i + q);
                 }
+            }
+        }
     }
 }

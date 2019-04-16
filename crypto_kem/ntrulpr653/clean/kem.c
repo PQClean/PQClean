@@ -4,14 +4,14 @@
 
 #include "params.h"
 
+#include "aes.h"
 #include "randombytes.h"
 #include "sha2.h"
-#include "aes.h"
 
+#include "decode.h"
+#include "encode.h"
 #include "int32.h"
 #include "uint32.h"
-#include "encode.h"
-#include "decode.h"
 
 /* ----- masks */
 

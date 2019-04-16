@@ -3,7 +3,7 @@
 #include "int32.h"
 #include "uint32.h"
 
-void PQCLEAN_NTRULPR653_CLEAN_int32_divmod_uint14(int32_t *q, uint16_t *r, int32_t x, uint16_t m) {
+void PQCLEAN_NTRULPR653_CLEAN_int32_divmod_uint14(int32_t *qq, uint16_t *r, int32_t x, uint16_t m) {
     uint32_t uq, uq2;
     uint16_t ur, ur2;
     uint32_t mask;
@@ -16,7 +16,7 @@ void PQCLEAN_NTRULPR653_CLEAN_int32_divmod_uint14(int32_t *q, uint16_t *r, int32
     ur += mask & m;
     uq += mask;
     *r = ur;
-    *q = uq;
+    *qq = uq;
 }
 
 int32_t PQCLEAN_NTRULPR653_CLEAN_int32_div_uint14(int32_t x, uint16_t m) {
