@@ -53,29 +53,32 @@ def check_functest_sanitizers(implementation):
     else:
         print("Supported platform: {}".format(platform.machine()))
 
-    helpers.ensure_available('valgrind')
     helpers.make('clean-scheme', 'functest',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
-                 EXTRAFLAGS='-fsanitize=address,undefined',
+                 EXTRAFLAGS='-g -fsanitize=address,undefined',
                  working_dir=os.path.join('..', 'test'),
                  env=env)
-    helpers.run_subprocess(
-        [os.path.join('..', 'bin', 'functest_{}_{}{}'.format(
-            implementation.scheme.name,
-            implementation.name,
-            '.exe' if os.name == 'nt' else ''
-        ))],
-        os.path.join('..', 'bin'),
-        env=env,
-    )
-    # Remove files with ASAN library compiled in
-    helpers.make('clean-scheme',
-                 TYPE=implementation.scheme.type,
-                 SCHEME=implementation.scheme.name,
-                 IMPLEMENTATION=implementation.name,
-                 working_dir=os.path.join('..', 'test'))
+    try:
+        helpers.run_subprocess(
+            [os.path.join('..', 'bin', 'functest_{}_{}{}'.format(
+                implementation.scheme.name,
+                implementation.name,
+                '.exe' if os.name == 'nt' else ''
+            ))],
+            os.path.join('..', 'bin'),
+            env=env,
+        )
+    except AssertionError as e:
+        raise e
+    finally:
+        # Remove files with ASAN library compiled in
+        helpers.make('clean-scheme',
+                     TYPE=implementation.scheme.type,
+                     SCHEME=implementation.scheme.name,
+                     IMPLEMENTATION=implementation.name,
+                     working_dir=os.path.join('..', 'test'))
 
 
 if __name__ == '__main__':
