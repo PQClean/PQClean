@@ -31,7 +31,7 @@ static int int16_negative_mask(int16_t x) {
 
 /* x must not be close to top int16 */
 static int8_t F3_freeze(int16_t x) {
-    return int32_mod_uint14(x + 1, 3) - 1;
+    return PQCLEAN_NTRULPR653_CLEAN_int32_mod_uint14(x + 1, 3) - 1;
 }
 
 /* ----- arithmetic mod q */
@@ -43,7 +43,7 @@ typedef int16_t Fq;
 
 /* x must not be close to top int32 */
 static Fq Fq_freeze(int32_t x) {
-    return int32_mod_uint14(x + q12, q) - q12;
+    return PQCLEAN_NTRULPR653_CLEAN_int32_mod_uint14(x + q12, q) - q12;
 }
 
 /* ----- Top and Right */
@@ -112,7 +112,7 @@ static void Short_fromlist(int8_t *out, const uint32_t *in) {
     for (i = w; i < p; ++i) {
         L[i] = (in[i] & (uint32_t) -3) | 1;
     }
-    uint32_sort(L, p);
+    PQCLEAN_NTRULPR653_CLEAN_uint32_sort(L, p);
     for (i = 0; i < p; ++i) {
         out[i] = (L[i] & 3) - 1;
     }
@@ -240,7 +240,7 @@ static void Generator(Fq *G, const unsigned char *k) {
 
     Expand(L, k);
     for (i = 0; i < p; ++i) {
-        G[i] = uint32_mod_uint14(L[i], q) - q12;
+        G[i] = PQCLEAN_NTRULPR653_CLEAN_uint32_mod_uint14(L[i], q) - q12;
     }
 }
 
@@ -330,7 +330,7 @@ static void Rounded_encode(unsigned char *s, const Fq *r) {
     for (i = 0; i < p; ++i) {
         M[i] = (q + 2) / 3;
     }
-    Encode(s, R, M, p);
+    PQCLEAN_NTRULPR653_CLEAN_Encode(s, R, M, p);
 }
 
 static void Rounded_decode(Fq *r, const unsigned char *s) {
@@ -340,7 +340,7 @@ static void Rounded_decode(Fq *r, const unsigned char *s) {
     for (i = 0; i < p; ++i) {
         M[i] = (q + 2) / 3;
     }
-    Decode(R, s, M, p);
+    PQCLEAN_NTRULPR653_CLEAN_Decode(R, s, M, p);
     for (i = 0; i < p; ++i) {
         r[i] = R[i] * 3 - q12;
     }

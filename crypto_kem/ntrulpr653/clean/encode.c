@@ -3,7 +3,7 @@
 #include "encode.h"
 
 /* 0 <= R[i] < M[i] < 16384 */
-void Encode(unsigned char *out, const uint16_t *R, const uint16_t *M, long long len) {
+void PQCLEAN_NTRULPR653_CLEAN_Encode(unsigned char *out, const uint16_t *R, const uint16_t *M, long long len) {
     if (len == 1) {
         uint16_t r = R[0];
         uint16_t m = M[0];
@@ -33,6 +33,6 @@ void Encode(unsigned char *out, const uint16_t *R, const uint16_t *M, long long 
             R2[i / 2] = R[i];
             M2[i / 2] = M[i];
         }
-        Encode(out, R2, M2, (len + 1) / 2);
+        PQCLEAN_NTRULPR653_CLEAN_Encode(out, R2, M2, (len + 1) / 2);
     }
 }

@@ -11,7 +11,7 @@ There could be more CPU issues.
 There could also be compiler issues.
 */
 
-void uint32_divmod_uint14(uint32_t *q, uint16_t *r, uint32_t x, uint16_t m) {
+void PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(uint32_t *q, uint16_t *r, uint32_t x, uint16_t m) {
     uint32_t v = 0x80000000;
     uint32_t qpart;
     uint32_t mask;
@@ -57,16 +57,16 @@ void uint32_divmod_uint14(uint32_t *q, uint16_t *r, uint32_t x, uint16_t m) {
     *r = x;
 }
 
-uint32_t uint32_div_uint14(uint32_t x, uint16_t m) {
+uint32_t PQCLEAN_NTRULPR653_CLEAN_uint32_div_uint14(uint32_t x, uint16_t m) {
     uint32_t q;
     uint16_t r;
-    uint32_divmod_uint14(&q, &r, x, m);
+    PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(&q, &r, x, m);
     return q;
 }
 
-uint16_t uint32_mod_uint14(uint32_t x, uint16_t m) {
+uint16_t PQCLEAN_NTRULPR653_CLEAN_uint32_mod_uint14(uint32_t x, uint16_t m) {
     uint32_t q;
     uint16_t r;
-    uint32_divmod_uint14(&q, &r, x, m);
+    PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(&q, &r, x, m);
     return r;
 }

@@ -3,14 +3,14 @@
 #include "decode.h"
 #include "uint32.h"
 
-extern void Decode(uint16_t *out, const unsigned char *S, const uint16_t *M, long long len) {
+extern void PQCLEAN_NTRULPR653_CLEAN_Decode(uint16_t *out, const unsigned char *S, const uint16_t *M, long long len) {
     if (len == 1) {
         if (M[0] == 1) {
             *out = 0;
         } else if (M[0] <= 256) {
-            *out = uint32_mod_uint14(S[0], M[0]);
+            *out = PQCLEAN_NTRULPR653_CLEAN_uint32_mod_uint14(S[0], M[0]);
         } else {
-            *out = uint32_mod_uint14(S[0] + (((uint16_t)S[1]) << 8), M[0]);
+            *out = PQCLEAN_NTRULPR653_CLEAN_uint32_mod_uint14(S[0] + (((uint16_t)S[1]) << 8), M[0]);
         }
     }
     if (len > 1) {
@@ -40,14 +40,14 @@ extern void Decode(uint16_t *out, const unsigned char *S, const uint16_t *M, lon
         if (i < len) {
             M2[i / 2] = M[i];
         }
-        Decode(R2, S, M2, (len + 1) / 2);
+        PQCLEAN_NTRULPR653_CLEAN_Decode(R2, S, M2, (len + 1) / 2);
         for (i = 0; i < len - 1; i += 2) {
             uint32_t r = bottomr[i / 2];
             uint32_t r1;
             uint16_t r0;
             r += bottomt[i / 2] * R2[i / 2];
-            uint32_divmod_uint14(&r1, &r0, r, M[i]);
-            r1 = uint32_mod_uint14(r1, M[i + 1]); /* only needed for invalid inputs */
+            PQCLEAN_NTRULPR653_CLEAN_uint32_divmod_uint14(&r1, &r0, r, M[i]);
+            r1 = PQCLEAN_NTRULPR653_CLEAN_uint32_mod_uint14(r1, M[i + 1]); /* only needed for invalid inputs */
             *out++ = r0;
             *out++ = r1;
         }

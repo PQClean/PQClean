@@ -15,7 +15,7 @@ static void minmax(uint32_t *x, uint32_t *y) {
     *y = yi ^ c;
 }
 
-void uint32_sort(uint32_t *x, int n) {
+void PQCLEAN_NTRULPR653_CLEAN_uint32_sort(uint32_t *x, int n) {
     int top, p, q, i;
 
     if (n < 2) {
