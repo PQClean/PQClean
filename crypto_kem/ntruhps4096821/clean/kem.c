@@ -37,7 +37,6 @@ int PQCLEAN_NTRUHPS4096821_CLEAN_crypto_kem_dec(uint8_t *k, const uint8_t *c, co
     int i, fail;
     uint8_t rm[NTRU_OWCPA_MSGBYTES];
     uint8_t buf[NTRU_PRFKEYBYTES + NTRU_CIPHERTEXTBYTES];
-    uint8_t *cmp = buf + NTRU_PRFKEYBYTES;
 
     fail = PQCLEAN_NTRUHPS4096821_CLEAN_owcpa_dec(rm, c, sk);
     /* If fail = 0 then c = Enc(h, rm), there is no need to re-encapsulate. */
@@ -50,9 +49,9 @@ int PQCLEAN_NTRUHPS4096821_CLEAN_crypto_kem_dec(uint8_t *k, const uint8_t *c, co
         buf[i] = sk[i + NTRU_OWCPA_SECRETKEYBYTES];
     }
     for (i = 0; i < NTRU_CIPHERTEXTBYTES; i++) {
-        cmp[i] = c[i];
+        buf[NTRU_PRFKEYBYTES + i] = c[i];
     }
-    sha3_256(rm, cmp, NTRU_PRFKEYBYTES + NTRU_CIPHERTEXTBYTES);
+    sha3_256(rm, buf, NTRU_PRFKEYBYTES + NTRU_CIPHERTEXTBYTES);
 
     PQCLEAN_NTRUHPS4096821_CLEAN_cmov(k, rm, NTRU_SHAREDKEYBYTES, (unsigned char) fail);
 
