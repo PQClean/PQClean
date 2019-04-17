@@ -1,0 +1,15 @@
+consistency_checks:
+- source:
+    scheme: ntrulpr653
+    implementation: clean
+  files:
+    - decode.c
+    - decode.h
+    - encode.c
+    - encode.h
+    - int32.c
+    - int32.h
+    - kem.c
+    - uint32_sort.c
+    - uint32.c
+    - uint32.h
