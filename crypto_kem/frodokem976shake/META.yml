@@ -2,6 +2,7 @@ name: FrodoKEM-976-SHAKE
 type: kem
 claimed-nist-level: 3
 length-public-key: 15632
+length-secret-key: 31296
 length-ciphertext: 15744
 length-shared-secret: 24
 testvectors-sha256: 00707dc8158c6e51e70e9a7b23a87054c5f2167b77a2e5940b8e82519834717b
@@ -22,4 +23,3 @@ auxiliary-submitters:
 implementations:
 - name: clean
   version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/437e228fca580a82435cab09f30ae14b03183119
-  length-secret-key: 31296

@@ -46,6 +46,7 @@ EXPECTED_FIELDS = {
     'type': {'type': str},
     'claimed-nist-level': {'type': int, 'min': 1, 'max': 5},
     'length-public-key': {'type': int, 'min': 1},
+    'length-secret-key': {'type': int, 'min': 1},
     'testvectors-sha256': {'type': str, 'length': 64},
     'principal-submitter': {'type': str},
     'auxiliary-submitters': {'type': list, 'elements': {'type': str}},
@@ -56,7 +57,6 @@ EXPECTED_FIELDS = {
             'spec': {
                 'name': {'type': str},
                 'version': {'type': str},
-                'length-secret-key': {'type': int, 'min': 1},
             },
         },
     },

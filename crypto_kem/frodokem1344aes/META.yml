@@ -2,6 +2,7 @@ name: FrodoKEM-1344-AES
 type: kem
 claimed-nist-level: 5
 length-public-key: 21520
+length-secret-key: 43088
 length-ciphertext: 21632
 length-shared-secret: 32
 testvectors-sha256: 91dce2e12200afc88f951aff9349b72d1dda6e53e305135a891aa1a67ef88352
@@ -22,4 +23,3 @@ auxiliary-submitters:
 implementations:
 - name: clean
   version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/437e228fca580a82435cab09f30ae14b03183119
-  length-secret-key: 43088
