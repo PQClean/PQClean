@@ -8,7 +8,7 @@ import pqclean
 def test_preprocessor():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('preprocessor', implementation): 
+            if helpers.permit_test('preprocessor', implementation):
                 yield check_preprocessor, implementation
 
 
