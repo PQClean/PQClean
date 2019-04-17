@@ -1,6 +1,3 @@
-import os
-from glob import glob
-
 import pqclean
 import helpers
 
@@ -28,6 +25,7 @@ def check_preprocessor(implementation: pqclean.Implementation):
         raise AssertionError(
             "Prohibited use of preprocessor conditional" + "".join(errors)
         )
+
 
 if __name__ == "__main__":
     try:
