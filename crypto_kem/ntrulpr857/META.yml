@@ -1,0 +1,18 @@
+name: ntrulpr857
+type: kem
+claimed-nist-level: 4
+length-public-key: 1184
+length-ciphertext: 1312
+length-shared-secret: 32
+testvectors-sha256: 8b3bfb97b477ec1783064f995df257db1cba46cb5f8dfe3b4a9d000711465db7
+nistkat-sha256: cc8c8b8f3e31c07cce27c0e54c636884426593bf0f71c6e9215bde2ed3f516ef
+principal-submitter:
+  - Daniel J. Bernstein, University of Illinois at Chicago
+  - Chitchanok Chuengsatiansup, INRIA and ENS de Lyon
+  - Tanja Lange, Technische Universiteit Eindhoven
+  - Christine van Vredendaal, Technische Universiteit Eindhoven
+auxiliary-submitters: []
+implementations:
+    - name: clean
+      version: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/round-2/submissions/NTRU-Prime-Round2.zip reference implemntation
+      length-secret-key: 1463
