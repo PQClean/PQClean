@@ -16,6 +16,7 @@ def test_clang_tidy():
                 yield check_tidy, implementation
 
 
+@helpers.skip_windows()
 def check_tidy(implementation: pqclean.Implementation):
     helpers.ensure_available('clang-tidy')
     cfiles = implementation.cfiles()
