@@ -68,7 +68,7 @@ static void base_w(unsigned int *output, const size_t out_len,
             bits += 8;
         }
         bits -= SPX_WOTS_LOGW;
-        output[out] = (total >> bits) & (SPX_WOTS_W - 1);
+        output[out] = (unsigned int)((total >> bits) & (SPX_WOTS_W - 1));
         out++;
     }
 }
