@@ -5,7 +5,7 @@ LIB=libsphincs-shake256-192f-simple_clean.a
 HEADERS = params.h address.h wots.h utils.h fors.h api.h  hash.h thash.h
 OBJECTS =          address.o wots.o utils.o fors.o sign.o hash_shake256.o thash_shake256_simple.o
 
-CFLAGS=-Wall -Wconversion -Wextra -Wpedantic -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 
