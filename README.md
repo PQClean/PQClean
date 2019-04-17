@@ -123,6 +123,15 @@ Regarding #2, adding the files to your project's build system, each implementati
 - The file `Makefile` which can be used with GNU Make, BSD Make, and possibly others.
 - The file `Makefile.Microsoft_nmake` which can be used with Visual Studio's nmake.
 
+## Projects integrating PQClean-distributed source code
+
+The following projects consume implementations from PQClean and provide their own wrappers around the implementations.
+Their integration strategies may serve as examples for your own projects.
+
+- **[pqcrypto crate](https://github.com/pqrust/pqcrypto)**: Rust integration that automatically generates wrappers from PQClean source code.
+- **[mupq](https://github.com/mupq/)**: Runs the implementations from PQClean as reference implementations to compare with microcontroller-optimized code.
+- **[Open Quantum Safe](https://github.com/open-quantum-safe/)**: The Open Quantum Safe project integrates implementations from PQClean into their [liboqs](https://github.com/open-quantum-safe/liboqs) C library, which then exposes them via [C++](https://github.com/open-quantum-safe/liboqs-cpp), [C# / .NET](https://github.com/open-quantum-safe/liboqs-dotnet), and [Python](https://github.com/open-quantum-safe/liboqs-python) wrappers, as well as to forks of [OpenSSL](https://github.com/open-quantum-safe/openssl) and [OpenSSH](https://github.com/open-quantum-safe/openssh-portable).
+
 ## License
 
 Each subdirectory containing implementations contains a `LICENSE` file stating under what license that specific implementation is released.
