@@ -9,7 +9,7 @@ import unittest
 import yaml
 
 
-def skipped_test(*args, **kwargs):
+def _skipped_test(*args, **kwargs):
     raise unittest.SkipTest("Skipped consistency check")
 
 
@@ -18,7 +18,7 @@ def test_duplicate_consistency():
         for implementation in scheme.implementations:
             if not helpers.permit_test('duplicate_consistency',
                                        implementation):
-                yield skipped_test, implementation
+                yield _skipped_test, implementation
                 continue
 
             if os.path.isfile(

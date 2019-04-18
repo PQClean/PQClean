@@ -26,7 +26,7 @@ build_script:
   - git fetch --all
   - git checkout %APPVEYOR_REPO_BRANCH%
   - git reset --hard %APPVEYOR_REPO_COMMIT%
-  - git diff ..origin/master
+  - git diff --name-only origin/master
   - python -m pip install -r requirements.txt
   - cd test
     # Download Astyle to local folder because putting it in PATH doesn't work
