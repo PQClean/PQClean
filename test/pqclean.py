@@ -55,7 +55,7 @@ class Scheme:
         metafile = os.path.join(self.path(), 'META.yml')
         try:
             with open(metafile, encoding='utf-8') as f:
-                metadata = yaml.load(f.read())
+                metadata = yaml.safe_load(f.read())
                 return metadata
         except Exception as e:
             print("Can't open {}: {}".format(metafile, e))

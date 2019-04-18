@@ -16,7 +16,7 @@ def test_duplicate_consistency():
                 if os.path.isfile(os.path.join('duplicate_consistency', '{}_{}.yml'.format(scheme.name, implementation.name))):
                     metafile = os.path.join('duplicate_consistency', '{}_{}.yml'.format(implementation.scheme.name, implementation.name))
                     with open(metafile, encoding='utf-8') as f:
-                        metadata = yaml.load(f.read())
+                        metadata = yaml.safe_load(f.read())
                         for group in metadata['consistency_checks']:
                             source = pqclean.Implementation.by_name(group['source']['scheme'], group['source']['implementation'])
                             for file in group['files']:
