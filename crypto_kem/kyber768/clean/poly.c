@@ -22,18 +22,6 @@ void PQCLEAN_KYBER768_CLEAN_poly_compress(unsigned char *r, poly *a) {
 
     PQCLEAN_KYBER768_CLEAN_poly_csubq(a);
 
-    #if (KYBER_POLYCOMPRESSEDBYTES == 96)
-    for (i = 0; i < KYBER_N; i += 8) {
-        for (j = 0; j < 8; j++) {
-            t[j] = ((((uint32_t)a->coeffs[i + j] << 3) + KYBER_Q / 2) / KYBER_Q) & 7;
-        }
-
-        r[k]   =  t[0]       | (t[1] << 3) | (t[2] << 6);
-        r[k + 1] = (t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7);
-        r[k + 2] = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
-        k += 3;
-    }
-    #elif (KYBER_POLYCOMPRESSEDBYTES == 128)
     for (i = 0; i < KYBER_N; i += 8) {
         for (j = 0; j < 8; j++) {
             t[j] = ((((uint32_t)a->coeffs[i + j] << 4) + KYBER_Q / 2) / KYBER_Q) & 15;
@@ -45,22 +33,6 @@ void PQCLEAN_KYBER768_CLEAN_poly_compress(unsigned char *r, poly *a) {
         r[k + 3] = t[6] | (t[7] << 4);
         k += 4;
     }
-    #elif (KYBER_POLYCOMPRESSEDBYTES == 160)
-    for (i = 0; i < KYBER_N; i += 8) {
-        for (j = 0; j < 8; j++) {
-            t[j] = ((((uint32_t)a->coeffs[i + j] << 5) + KYBER_Q / 2) / KYBER_Q) & 31;
-        }
-
-        r[k]   =  t[0]       | (t[1] << 5);
-        r[k + 1] = (t[1] >> 3) | (t[2] << 2) | (t[3] << 7);
-        r[k + 2] = (t[3] >> 1) | (t[4] << 4);
-        r[k + 3] = (t[4] >> 4) | (t[5] << 1) | (t[6] << 6);
-        r[k + 4] = (t[6] >> 2) | (t[7] << 3);
-        k += 5;
-    }
-    #else
-#error "KYBER_POLYCOMPRESSEDBYTES needs to be in {96, 128, 160}"
-    #endif
 }
 
 /*************************************************

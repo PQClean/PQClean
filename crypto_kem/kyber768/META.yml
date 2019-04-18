@@ -3,6 +3,7 @@ type: kem
 claimed-nist-level: 3
 length-public-key: 1184
 length-ciphertext: 1088
+length-secret-key: 2400
 length-shared-secret: 32
 testvectors-sha256: ca70a05d7a02e6a468315533b7c29d92289ffc6159318204a96d86e701e1d08a
 principal-submitter: Peter Schwabe
@@ -19,4 +20,3 @@ auxiliary-submitters:
 implementations:
     - name: clean
       version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
-      length-secret-key: 2400
