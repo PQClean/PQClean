@@ -21,7 +21,10 @@ version: 2
           uname -a &&
           export CC=${CC} &&
           pip3 install -r requirements.txt &&
-          cd test && python3 -m nose --rednose --verbose"
+          mkdir test-results &&
+          cd test && python3 -m nose --rednose --verbose --with-xunit --xunit-file=test-results/nosetests.xml"
+    - store_test_results:
+        path: test-results
 
 .native_job: &nativejob
   docker:
@@ -35,9 +38,12 @@ version: 2
         command: |
           export CC=${CC}
           export PQCLEAN_ONLY_DIFF=1
-          pip3 install -r requirements.txt &&
-          cd test && python3 -m nose --rednose --verbose
-
+          pip3 install -r requirements.txt
+          mkdir test-results
+          cd test
+          python3 -m nose --rednose --verbose --with-xunit --xunit-file=test-results/nosetests.xml
+    - store_test_results:
+        path: test-results
 
 jobs:
   arm64-gcc:
