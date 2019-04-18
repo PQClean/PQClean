@@ -4,7 +4,7 @@ LIB=libkyber768_clean.a
 HEADERS=api.h cbd.h indcpa.h ntt.h params.h poly.h polyvec.h reduce.h verify.h
 OBJECTS=cbd.o indcpa.o kem.o ntt.o poly.o polyvec.o precomp.o reduce.o verify.o
 
-CFLAGS=-Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 
