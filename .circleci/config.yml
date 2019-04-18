@@ -1,4 +1,4 @@
-version: 2
+version: 2.1
 
 .emulated_job: &defaultjob
   machine: true
@@ -90,20 +90,115 @@ jobs:
     environment:
       CC: gcc
       ARCH: i386
+  # These are for the scheduled builds
+  arm64-gcc-slow:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: arm64
+      RUN_SLOW: 1
+  arm64-clang-slow:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: arm64
+      RUN_SLOW: 1
+  arm32-gcc-slow:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: armhf
+      RUN_SLOW: 1
+  arm32-clang-slow:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: armhf
+      RUN_SLOW: 1
+  ppc-clang-slow:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: unstable-ppc
+      RUN_SLOW: 1
+  ppc-gcc-slow:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: unstable-ppc
+      RUN_SLOW: 1
+  amd64-gcc-slow:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+      RUN_SLOW: 1
+  amd64-clang-slow:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+      RUN_SLOW: 1
+  i386-gcc-slow:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+      RUN_SLOW: 1
+  i386-clang-slow:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+      RUN_SLOW: 1
+
 
 workflows:
   version: 2
   build:
     jobs:
-      - arm64-gcc
-      - arm64-clang
-      - arm32-gcc
-      - arm32-clang
-      - ppc-gcc
-      - ppc-clang
+      - arm64-gcc:
+          requires:
+            - amd64-gcc
+      - arm64-clang:
+          requires:
+            - amd64-clang
+      - arm32-gcc:
+          requires:
+            - i386-gcc
+      - arm32-clang:
+          requires:
+            - i386-clang
+      - ppc-gcc:
+          requires:
+            - arm32-gcc
+      - ppc-clang:
+          requires:
+            - arm32-clang
       - amd64-gcc
       - amd64-clang
       - i386-gcc
       - i386-clang
+  scheduled:
+    triggers:
+      - schedule:
+          cron: "0 5 * * *"
+          filters:
+            branches:
+              only: master
+    jobs:
+      - arm64-gcc-slow
+      - arm64-gcc-slow
+      - arm64-clang-slow
+      - arm32-gcc-slow
+      - arm32-clang-slow
+      - ppc-gcc-slow
+      - ppc-clang-slow
+      - amd64-gcc-slow
+      - amd64-clang-slow
+      - i386-gcc-slow
+      - i386-clang-slow
+
+#  vim: set ft=yaml ts=2 sw=2 tw=0 et :
 
 #  vim: set ft=yaml ts=2 sw=2 tw=0 et :
