@@ -33,7 +33,7 @@ def check_metadata_sizes(implementation):
 
     parsed = json.loads(out)
 
-    assert parsed['CRYPTO_SECRETKEYBYTES'] == impl_meta['length-secret-key']
+    assert parsed['CRYPTO_SECRETKEYBYTES'] == metadata['length-secret-key']
     assert parsed['CRYPTO_PUBLICKEYBYTES'] == metadata['length-public-key']
 
     if implementation.scheme.type == 'kem':
