@@ -23,9 +23,10 @@ init:
 
 build_script:
   - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
-  - git fetch
+  - git fetch --all
   - git checkout %APPVEYOR_REPO_BRANCH%
   - git reset --hard %APPVEYOR_REPO_COMMIT%
+  - git diff ..origin/master
   - python -m pip install -r requirements.txt
   - cd test
     # Download Astyle to local folder because putting it in PATH doesn't work
