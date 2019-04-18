@@ -42,6 +42,7 @@ def check_functest(implementation):
 
 
 @helpers.skip_windows()
+@helpers.slow_test
 def check_functest_sanitizers(implementation):
     env = None
     if platform.machine() == 'ppc' and os.environ.get('CC', 'gcc') == 'clang':

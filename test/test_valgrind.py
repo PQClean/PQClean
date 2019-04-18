@@ -17,12 +17,11 @@ def test_functest():
                 yield check_valgrind, implementation
 
 
+@helpers.slow_test
 def check_valgrind(implementation: pqclean.Implementation):
     if (platform.machine() not in ('i386', 'x86_64') or
             platform.system() != 'Linux'):
         raise unittest.SkipTest()
-    if os.environ.get('CIRCLECI') == 'true' and os.environ.get('ARCH') == 'i386' and (implementation.scheme.name == 'frodokem1344aes' or implementation.scheme.name == 'frodokem1344shake'):
-        raise unittest.SkipTest('Skipping too-slow valgrind test')
 
     helpers.make(TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,

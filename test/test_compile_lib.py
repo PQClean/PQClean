@@ -10,7 +10,7 @@ import helpers
 def test_compile_lib():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('compile_lib', implementation): 
+            if helpers.permit_test('compile_lib', implementation):
                 yield check_compile_lib, implementation
 
 
