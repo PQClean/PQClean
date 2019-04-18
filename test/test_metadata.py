@@ -10,10 +10,10 @@ import pqclean
 
 def test_metadata():
     for scheme in pqclean.Scheme.all_schemes():
-        if helpers.permit_test('metadata', scheme):
-            yield check_metadata, scheme
+        yield check_metadata, scheme
 
 
+@helpers.filtered_test
 def check_metadata(scheme):
     metadata = scheme.metadata()
 

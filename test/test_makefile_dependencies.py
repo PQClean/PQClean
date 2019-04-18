@@ -8,20 +8,30 @@ import pqclean
 import helpers
 import glob
 import datetime
+import unittest
+
+
+def _skipped_test(*args, **kwargs):
+    """Used to indicate skipped tests"""
+    raise unittest.SkipTest("Skipped makefile dependencies test")
 
 
 def test_makefile_dependencies():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('makefile_dependencies', implementation):
-                # initial build - want to have *all* files in place at beginning
-                helpers.make('clean', working_dir=implementation.path())
-                helpers.make(working_dir=implementation.path())
-                # test case for each candidate file
-                cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
-                hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
-                for file in (cfiles + hfiles):
-                    yield (check_makefile_dependencies, implementation, file)
+            if not helpers.permit_test(
+                    'makefile_dependencies', implementation):
+                yield _skipped_test, implementation
+                continue
+
+            # initial build - want to have *all* files in place at beginning
+            helpers.make('clean', working_dir=implementation.path())
+            helpers.make(working_dir=implementation.path())
+            # test case for each candidate file
+            cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
+            hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
+            for file in (cfiles + hfiles):
+                yield (check_makefile_dependencies, implementation, file)
 
 
 def touch(time, *files):

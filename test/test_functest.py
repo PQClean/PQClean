@@ -14,17 +14,16 @@ import helpers
 def test_functest():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('functest', implementation):
-                yield check_functest, implementation
+            yield check_functest, implementation
 
 
 def test_functest_sanitizers():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('functest_sanitizers', implementation):
-                yield check_functest_sanitizers, implementation
+            yield check_functest_sanitizers, implementation
 
 
+@helpers.filtered_test
 def check_functest(implementation):
     helpers.make('functest',
                  TYPE=implementation.scheme.type,
@@ -41,6 +40,7 @@ def check_functest(implementation):
     )
 
 
+@helpers.filtered_test
 @helpers.skip_windows()
 @helpers.slow_test
 def check_functest_sanitizers(implementation):

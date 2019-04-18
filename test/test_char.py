@@ -17,8 +17,7 @@ def test_char():
         )
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('char', implementation):
-                yield check_char, implementation
+            yield check_char, implementation
 
 
 def walk_tree(ast):
@@ -30,6 +29,7 @@ def walk_tree(ast):
         yield from walk_tree(child)  # recursively yield prohibited nodes
 
 
+@helpers.filtered_test
 @helpers.skip_windows()
 def check_char(implementation):
     errors = []

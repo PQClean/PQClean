@@ -5,10 +5,10 @@ import helpers
 def test_preprocessor():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('preprocessor', implementation):
-                yield check_preprocessor, implementation
+            yield check_preprocessor, implementation
 
 
+@helpers.filtered_test
 def check_preprocessor(implementation: pqclean.Implementation):
     cfiles = implementation.cfiles()
     hfiles = implementation.hfiles()

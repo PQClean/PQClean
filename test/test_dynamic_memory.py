@@ -4,19 +4,17 @@ Checks that no dynamic memory functions are used
 
 import pqclean
 import helpers
-import sys
-import unittest
 
 
 def test_dynamic_memory():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('dynamic_memory', implementation): 
-                # Keep this loop outside, to allow multiple assertions
-                for function in ['malloc', 'free', 'realloc', 'calloc']:
-                    yield (check_dynamic_memory, implementation, function)
+            # Keep this loop outside, to allow multiple assertions
+            for function in ['malloc', 'free', 'realloc', 'calloc']:
+                yield (check_dynamic_memory, implementation, function)
 
 
+@helpers.filtered_test
 @helpers.skip_windows()
 def check_dynamic_memory(implementation, function):
     # 'make' will take care of not rebuilding existing library files
