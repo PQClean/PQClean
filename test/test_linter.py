@@ -12,10 +12,10 @@ additional_flags = []
 def test_clang_tidy():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('linter', implementation):
-                yield check_tidy, implementation
+            yield check_tidy, implementation
 
 
+@helpers.filtered_test
 @helpers.skip_windows()
 def check_tidy(implementation: pqclean.Implementation):
     helpers.ensure_available('clang-tidy')

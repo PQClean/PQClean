@@ -13,11 +13,11 @@ import helpers
 def test_functest():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('valgrind', implementation):
-                yield check_valgrind, implementation
+            yield check_valgrind, implementation
 
 
 @helpers.slow_test
+@helpers.filtered_test
 def check_valgrind(implementation: pqclean.Implementation):
     if (platform.machine() not in ('i386', 'x86_64') or
             platform.system() != 'Linux'):

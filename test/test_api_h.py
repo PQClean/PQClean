@@ -5,14 +5,14 @@ import helpers
 import pqclean
 
 
-def test_preprocessor():
+def test_api_h():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('preprocessor', implementation):
-                yield check_preprocessor, implementation
+            yield check_api_h, implementation
 
 
-def check_preprocessor(implementation: pqclean.Implementation):
+@helpers.filtered_test
+def check_api_h(implementation: pqclean.Implementation):
     apipath = os.path.join(implementation.path(), 'api.h')
     errors = []
     p = re.compile(r'^\s*#include\s*"')
@@ -24,6 +24,7 @@ def check_preprocessor(implementation: pqclean.Implementation):
         raise AssertionError(
             "Prohibited external include in api.h" + "".join(errors)
         )
+
 
 if __name__ == "__main__":
     try:

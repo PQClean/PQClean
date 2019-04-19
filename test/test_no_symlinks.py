@@ -10,10 +10,10 @@ import helpers
 def test_no_symlinks():
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if helpers.permit_test('no_symlinks', implementation):
-                yield check_no_symlinks, implementation
+            yield check_no_symlinks, implementation
 
 
+@helpers.filtered_test
 def check_no_symlinks(implementation):
     for file in os.listdir(implementation.path()):
         fpath = os.path.join(implementation.path(), file)

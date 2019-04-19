@@ -6,7 +6,10 @@
 #include "api.h"
 #include "randombytes.h"
 
+#ifndef NTESTS
 #define NTESTS 5
+#endif
+
 #define MLEN 32
 
 const uint8_t canary[8] = {

@@ -5,7 +5,10 @@ image: Visual Studio 2017
 build:
   verbosity: minimal
 
+shallow_clone: false
+
 environment:
+  PQCLEAN_ONLY_DIFF: 1
   matrix:
     - BITS: 64
     - BITS: 32
@@ -19,6 +22,11 @@ init:
   - set PATH="C:\\Python37";"C:\\Python37\Scripts";%PATH%
 
 build_script:
+  - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+  - git fetch --all
+  - git checkout %APPVEYOR_REPO_BRANCH%
+  - git reset --hard %APPVEYOR_REPO_COMMIT%
+  - git diff --name-only origin/master
   - python -m pip install -r requirements.txt
   - cd test
     # Download Astyle to local folder because putting it in PATH doesn't work

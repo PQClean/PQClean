@@ -6,8 +6,15 @@ matrix:
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
+      before_script:
+        - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+        - git fetch --unshallow
+        - git checkout $TRAVIS_BRANCH
+        - git reset --hard $TRAVIS_COMMIT
       script:
         - "cd test && python3 -m nose --rednose --verbose"
+      env:
+        PQCLEAN_ONLY_DIFF: 1
       addons:
         homebrew:
           packages:
@@ -21,7 +28,13 @@ matrix:
           packages:
             - astyle
             - gcc@8
+      env:
+        PQCLEAN_ONLY_DIFF: 1
       before_install:
+        - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
+        - git fetch --unshallow
+        - git checkout $TRAVIS_BRANCH
+        - git reset --hard $TRAVIS_COMMIT
         - pip3 install -r requirements.txt
         - brew link gcc
         - export PATH="/usr/local/bin:$PATH"

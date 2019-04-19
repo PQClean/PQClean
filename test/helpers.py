@@ -7,6 +7,8 @@ import sys
 
 import pqclean
 
+import logging
+
 
 def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
     """
@@ -113,7 +115,7 @@ def ensure_available(executable):
     raise AssertionError("{} not available on CI".format(executable))
 
 
-def permit_test(testname, thing, **args):
+def permit_test(testname, thing, *args, **kwargs):
     if 'PQCLEAN_ONLY_TESTS' in os.environ:
         if not(testname.lower() in os.environ['PQCLEAN_ONLY_TESTS'].lower().split(',')):
             return False
@@ -142,13 +144,14 @@ def permit_test(testname, thing, **args):
             return False
 
     if 'PQCLEAN_ONLY_DIFF' in os.environ:
-        if shutil.which('git') != None:
-            # if we're on a non-master branch, and the only changes are in schemes, 
+        if shutil.which('git') is not None:
+            # if we're on a non-master branch, and the only changes are in schemes,
             # only run tests on those schemes
             branch_result = subprocess.run(
                 ['git', 'status', '--porcelain=2', '--branch'],
                 stdout=subprocess.PIPE,
-                stderr=subprocess.STDOUT
+                stderr=subprocess.STDOUT,
+                cwd="..",
             )
             # ensure we're in a working directory
             if branch_result.returncode != 0:
@@ -161,14 +164,18 @@ def permit_test(testname, thing, **args):
                         return True
             # where are there changes?
             diff_result = subprocess.run(
-                ['git', 'diff', '--name-only', 'master'],
+                ['git', 'diff', '--name-only', 'origin/master'],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT
             )
-            assert(diff_result.returncode == 0), "Got unexpected return code {}".format(diff_result.returncode)
+            assert diff_result.returncode == 0, \
+                "Got unexpected return code {}".format(diff_result.returncode)
             for diff_line in diff_result.stdout.decode('utf-8').splitlines():
                 # don't skip test if there are any changes outside schemes
-                if not(diff_line.startswith('crypto_kem')) and not (diff_line.startswith('crypto_sign')):
+                if (not diff_line.startswith('crypto_kem') and
+                        not diff_line.startswith('crypto_sign')):
+                    logging.info("Running all tests as there are changes "
+                                 "outside of schemes")
                     return True
                 # do test if the scheme in question has been changed
                 if diff_line.startswith(thing.path(base='')):
@@ -177,3 +184,15 @@ def permit_test(testname, thing, **args):
             return False
 
     return True
+
+
+def filtered_test(func):
+    funcname = func.__name__[len("check_"):]
+
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        if permit_test(funcname, *args, **kwargs):
+            return func(*args, **kwargs)
+        else:
+            raise unittest.SkipTest("Test disabled by filter")
+    return wrapper

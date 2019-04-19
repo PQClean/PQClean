@@ -2,7 +2,7 @@
 Checks that (hash of the) KATs (in NIST format) produced on this platform matches
 the one provided in the META file for every scheme/implementation.
 
-Note that this only uses the first test case from the NIST-format KAT files.  
+Note that this only uses the first test case from the NIST-format KAT files.
 The appropriate hash can be generated from the original submission's KAT file
 using the command:
     cat PQCkemKAT_whatever.rsp | head -n 8 | tail -n 6 | sha256sum
@@ -14,17 +14,21 @@ import pqclean
 import helpers
 import unittest
 
+
 def test_nistkat():
     for scheme in pqclean.Scheme.all_schemes():
-        if scheme.type != 'kem': continue
+        if scheme.type != 'kem':
+            continue
         for implementation in scheme.implementations:
-            if helpers.permit_test('nistkat', implementation):
-                yield check_nistkat, implementation
+            yield check_nistkat, implementation
 
 
+@helpers.filtered_test
 def check_nistkat(implementation):
     if implementation.scheme.name == "kyber768":
-        raise unittest.SkipTest("Temporarily skip NIST KAT check for kyber768 since it's an outdated implementation")
+        raise unittest.SkipTest(
+            "Temporarily skip NIST KAT check for kyber768 since it's "
+            "an outdated implementation")
     helpers.make('nistkat',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
