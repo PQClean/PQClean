@@ -17,7 +17,6 @@ void PQCLEAN_KYBER1024_CLEAN_polyvec_compress(unsigned char *r, polyvec *a) {
 
     PQCLEAN_KYBER1024_CLEAN_polyvec_csubq(a);
 
-    #if (KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K * 352))
     uint16_t t[8];
     for (i = 0; i < KYBER_K; i++) {
         for (j = 0; j < KYBER_N / 8; j++) {
@@ -39,25 +38,6 @@ void PQCLEAN_KYBER1024_CLEAN_polyvec_compress(unsigned char *r, polyvec *a) {
         }
         r += 352;
     }
-    #elif (KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K * 320))
-    uint16_t t[4];
-    for (i = 0; i < KYBER_K; i++) {
-        for (j = 0; j < KYBER_N / 4; j++) {
-            for (k = 0; k < 4; k++) {
-                t[k] = ((((uint32_t)a->vec[i].coeffs[4 * j + k] << 10) + KYBER_Q / 2) / KYBER_Q) & 0x3ff;
-            }
-
-            r[5 * j + 0] =  t[0] & 0xff;
-            r[5 * j + 1] = (t[0] >>  8) | ((t[1] & 0x3f) << 2);
-            r[5 * j + 2] = ((t[1] >>  6) | ((t[2] & 0x0f) << 4)) & 0xff;
-            r[5 * j + 3] = ((t[2] >>  4) | ((t[3] & 0x03) << 6)) & 0xff;
-            r[5 * j + 4] = (t[3] >>  2) & 0xff;
-        }
-        r += 320;
-    }
-    #else
-#error "KYBER_POLYVECCOMPRESSEDBYTES needs to be in {320*KYBER_K, 352*KYBER_K}"
-    #endif
 }
 
 /*************************************************
@@ -71,7 +51,6 @@ void PQCLEAN_KYBER1024_CLEAN_polyvec_compress(unsigned char *r, polyvec *a) {
 **************************************************/
 void PQCLEAN_KYBER1024_CLEAN_polyvec_decompress(polyvec *r, const unsigned char *a) {
     int i, j;
-    #if (KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K * 352))
     for (i = 0; i < KYBER_K; i++) {
         for (j = 0; j < KYBER_N / 8; j++) {
             r->vec[i].coeffs[8 * j + 0] =  (((a[11 * j + 0]       | (((uint32_t)a[11 * j + 1] & 0x07) << 8)) * KYBER_Q) + 1024) >> 11;
@@ -85,19 +64,6 @@ void PQCLEAN_KYBER1024_CLEAN_polyvec_decompress(polyvec *r, const unsigned char 
         }
         a += 352;
     }
-    #elif (KYBER_POLYVECCOMPRESSEDBYTES == (KYBER_K * 320))
-    for (i = 0; i < KYBER_K; i++) {
-        for (j = 0; j < KYBER_N / 4; j++) {
-            r->vec[i].coeffs[4 * j + 0] =  (((a[5 * j + 0]       | (((uint32_t)a[5 * j + 1] & 0x03) << 8)) * KYBER_Q) + 512) >> 10;
-            r->vec[i].coeffs[4 * j + 1] = ((((a[5 * j + 1] >> 2) | (((uint32_t)a[5 * j + 2] & 0x0f) << 6)) * KYBER_Q) + 512) >> 10;
-            r->vec[i].coeffs[4 * j + 2] = ((((a[5 * j + 2] >> 4) | (((uint32_t)a[5 * j + 3] & 0x3f) << 4)) * KYBER_Q) + 512) >> 10;
-            r->vec[i].coeffs[4 * j + 3] = ((((a[5 * j + 3] >> 6) | (((uint32_t)a[5 * j + 4] & 0xff) << 2)) * KYBER_Q) + 512) >> 10;
-        }
-        a += 320;
-    }
-    #else
-#error "KYBER_POLYVECCOMPRESSEDBYTES needs to be in {320*KYBER_K, 352*KYBER_K}"
-    #endif
 }
 
 /*************************************************
