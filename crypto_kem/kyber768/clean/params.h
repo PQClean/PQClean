@@ -1,9 +1,7 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
-#ifndef KYBER_K
-#define KYBER_K 3 /* Change this for different security strengths */
-#endif
+#define KYBER_K 3
 
 /* Don't change parameters below this line */
 

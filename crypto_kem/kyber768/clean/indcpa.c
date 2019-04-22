@@ -150,7 +150,7 @@ static unsigned int rej_uniform(int16_t *r, unsigned int len, const unsigned cha
 *              - const unsigned char *seed: pointer to input seed
 *              - int transposed:            boolean deciding whether A or A^T is generated
 **************************************************/
-void PQCLEAN_KYBER768_CLEAN_gen_matrix(polyvec *a, const unsigned char *seed, int transposed) { // Not static for benchmarking
+static void PQCLEAN_KYBER768_CLEAN_gen_matrix(polyvec *a, const unsigned char *seed, int transposed) {
     unsigned int ctr;
     unsigned char i, j;
     unsigned char buf[XOF_BLOCKBYTES * GENMATRIX_MAXNBLOCKS + 1];

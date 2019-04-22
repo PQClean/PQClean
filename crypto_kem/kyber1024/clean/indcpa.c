@@ -150,7 +150,7 @@ static unsigned int rej_uniform(int16_t *r, unsigned int len, const unsigned cha
 *              - const unsigned char *seed: pointer to input seed
 *              - int transposed:            boolean deciding whether A or A^T is generated
 **************************************************/
-void PQCLEAN_KYBER1024_CLEAN_gen_matrix(polyvec *a, const unsigned char *seed, int transposed) { // Not static for benchmarking
+static void PQCLEAN_KYBER1024_CLEAN_gen_matrix(polyvec *a, const unsigned char *seed, int transposed) {
     unsigned int ctr;
     unsigned char i, j;
     unsigned char buf[XOF_BLOCKBYTES * GENMATRIX_MAXNBLOCKS + 1];
@@ -233,9 +233,9 @@ void PQCLEAN_KYBER1024_CLEAN_indcpa_keypair(unsigned char *pk, unsigned char *sk
 *                                           to deterministically generate all randomness
 **************************************************/
 void PQCLEAN_KYBER1024_CLEAN_indcpa_enc(unsigned char *c,
-                                       const unsigned char *m,
-                                       const unsigned char *pk,
-                                       const unsigned char *coins) {
+                                        const unsigned char *m,
+                                        const unsigned char *pk,
+                                        const unsigned char *coins) {
     polyvec sp, pkpv, ep, at[KYBER_K], bp;
     poly v, k, epp;
     unsigned char seed[KYBER_SYMBYTES];
@@ -286,8 +286,8 @@ void PQCLEAN_KYBER1024_CLEAN_indcpa_enc(unsigned char *c,
 *              - const unsigned char *sk: pointer to input secret key (of length KYBER_INDCPA_SECRETKEYBYTES)
 **************************************************/
 void PQCLEAN_KYBER1024_CLEAN_indcpa_dec(unsigned char *m,
-                                       const unsigned char *c,
-                                       const unsigned char *sk) {
+                                        const unsigned char *c,
+                                        const unsigned char *sk) {
     polyvec bp, skpv;
     poly v, mp;
 
