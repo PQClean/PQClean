@@ -4,7 +4,7 @@ claimed-nist-level: 3
 length-public-key: 48
 length-secret-key: 96
 length-signature: 17064
-testvectors-sha256: a5964b23e6d86db3534501606d80a11c528b4eb3a846bd76505dc23ec4412148
+testvectors-sha256: 5dd40c8ea9a81ad93e0685843ec1cabdcb6eec9f6e64fc01d928ebaf7cf377c6
 principal-submitter: Andreas Hülsing
 auxiliary-submitters:
   - Jean-Philippe Aumasson
