@@ -1,6 +1,11 @@
 /*
-Plain C implementation of the Haraka256 and Haraka512 permutations.
-*/
+ * Constant time implementation of the Haraka hash function.
+ *
+ * The bit-sliced implementation of the AES round functions are
+ * based on the AES implementation in BearSSL written
+ * by Thomas Pornin <pornin@bolet.org>
+ */
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,133 +14,678 @@ Plain C implementation of the Haraka256 and Haraka512 permutations.
 
 #define HARAKAS_RATE 32
 
-static const unsigned char haraka_rc[40][16] = {
-    {0x9d, 0x7b, 0x81, 0x75, 0xf0, 0xfe, 0xc5, 0xb2, 0x0a, 0xc0, 0x20, 0xe6, 0x4c, 0x70, 0x84, 0x06},
-    {0x17, 0xf7, 0x08, 0x2f, 0xa4, 0x6b, 0x0f, 0x64, 0x6b, 0xa0, 0xf3, 0x88, 0xe1, 0xb4, 0x66, 0x8b},
-    {0x14, 0x91, 0x02, 0x9f, 0x60, 0x9d, 0x02, 0xcf, 0x98, 0x84, 0xf2, 0x53, 0x2d, 0xde, 0x02, 0x34},
-    {0x79, 0x4f, 0x5b, 0xfd, 0xaf, 0xbc, 0xf3, 0xbb, 0x08, 0x4f, 0x7b, 0x2e, 0xe6, 0xea, 0xd6, 0x0e},
-    {0x44, 0x70, 0x39, 0xbe, 0x1c, 0xcd, 0xee, 0x79, 0x8b, 0x44, 0x72, 0x48, 0xcb, 0xb0, 0xcf, 0xcb},
-    {0x7b, 0x05, 0x8a, 0x2b, 0xed, 0x35, 0x53, 0x8d, 0xb7, 0x32, 0x90, 0x6e, 0xee, 0xcd, 0xea, 0x7e},
-    {0x1b, 0xef, 0x4f, 0xda, 0x61, 0x27, 0x41, 0xe2, 0xd0, 0x7c, 0x2e, 0x5e, 0x43, 0x8f, 0xc2, 0x67},
-    {0x3b, 0x0b, 0xc7, 0x1f, 0xe2, 0xfd, 0x5f, 0x67, 0x07, 0xcc, 0xca, 0xaf, 0xb0, 0xd9, 0x24, 0x29},
-    {0xee, 0x65, 0xd4, 0xb9, 0xca, 0x8f, 0xdb, 0xec, 0xe9, 0x7f, 0x86, 0xe6, 0xf1, 0x63, 0x4d, 0xab},
-    {0x33, 0x7e, 0x03, 0xad, 0x4f, 0x40, 0x2a, 0x5b, 0x64, 0xcd, 0xb7, 0xd4, 0x84, 0xbf, 0x30, 0x1c},
-    {0x00, 0x98, 0xf6, 0x8d, 0x2e, 0x8b, 0x02, 0x69, 0xbf, 0x23, 0x17, 0x94, 0xb9, 0x0b, 0xcc, 0xb2},
-    {0x8a, 0x2d, 0x9d, 0x5c, 0xc8, 0x9e, 0xaa, 0x4a, 0x72, 0x55, 0x6f, 0xde, 0xa6, 0x78, 0x04, 0xfa},
-    {0xd4, 0x9f, 0x12, 0x29, 0x2e, 0x4f, 0xfa, 0x0e, 0x12, 0x2a, 0x77, 0x6b, 0x2b, 0x9f, 0xb4, 0xdf},
-    {0xee, 0x12, 0x6a, 0xbb, 0xae, 0x11, 0xd6, 0x32, 0x36, 0xa2, 0x49, 0xf4, 0x44, 0x03, 0xa1, 0x1e},
-    {0xa6, 0xec, 0xa8, 0x9c, 0xc9, 0x00, 0x96, 0x5f, 0x84, 0x00, 0x05, 0x4b, 0x88, 0x49, 0x04, 0xaf},
-    {0xec, 0x93, 0xe5, 0x27, 0xe3, 0xc7, 0xa2, 0x78, 0x4f, 0x9c, 0x19, 0x9d, 0xd8, 0x5e, 0x02, 0x21},
-    {0x73, 0x01, 0xd4, 0x82, 0xcd, 0x2e, 0x28, 0xb9, 0xb7, 0xc9, 0x59, 0xa7, 0xf8, 0xaa, 0x3a, 0xbf},
-    {0x6b, 0x7d, 0x30, 0x10, 0xd9, 0xef, 0xf2, 0x37, 0x17, 0xb0, 0x86, 0x61, 0x0d, 0x70, 0x60, 0x62},
-    {0xc6, 0x9a, 0xfc, 0xf6, 0x53, 0x91, 0xc2, 0x81, 0x43, 0x04, 0x30, 0x21, 0xc2, 0x45, 0xca, 0x5a},
-    {0x3a, 0x94, 0xd1, 0x36, 0xe8, 0x92, 0xaf, 0x2c, 0xbb, 0x68, 0x6b, 0x22, 0x3c, 0x97, 0x23, 0x92},
-    {0xb4, 0x71, 0x10, 0xe5, 0x58, 0xb9, 0xba, 0x6c, 0xeb, 0x86, 0x58, 0x22, 0x38, 0x92, 0xbf, 0xd3},
-    {0x8d, 0x12, 0xe1, 0x24, 0xdd, 0xfd, 0x3d, 0x93, 0x77, 0xc6, 0xf0, 0xae, 0xe5, 0x3c, 0x86, 0xdb},
-    {0xb1, 0x12, 0x22, 0xcb, 0xe3, 0x8d, 0xe4, 0x83, 0x9c, 0xa0, 0xeb, 0xff, 0x68, 0x62, 0x60, 0xbb},
-    {0x7d, 0xf7, 0x2b, 0xc7, 0x4e, 0x1a, 0xb9, 0x2d, 0x9c, 0xd1, 0xe4, 0xe2, 0xdc, 0xd3, 0x4b, 0x73},
-    {0x4e, 0x92, 0xb3, 0x2c, 0xc4, 0x15, 0x14, 0x4b, 0x43, 0x1b, 0x30, 0x61, 0xc3, 0x47, 0xbb, 0x43},
-    {0x99, 0x68, 0xeb, 0x16, 0xdd, 0x31, 0xb2, 0x03, 0xf6, 0xef, 0x07, 0xe7, 0xa8, 0x75, 0xa7, 0xdb},
-    {0x2c, 0x47, 0xca, 0x7e, 0x02, 0x23, 0x5e, 0x8e, 0x77, 0x59, 0x75, 0x3c, 0x4b, 0x61, 0xf3, 0x6d},
-    {0xf9, 0x17, 0x86, 0xb8, 0xb9, 0xe5, 0x1b, 0x6d, 0x77, 0x7d, 0xde, 0xd6, 0x17, 0x5a, 0xa7, 0xcd},
-    {0x5d, 0xee, 0x46, 0xa9, 0x9d, 0x06, 0x6c, 0x9d, 0xaa, 0xe9, 0xa8, 0x6b, 0xf0, 0x43, 0x6b, 0xec},
-    {0xc1, 0x27, 0xf3, 0x3b, 0x59, 0x11, 0x53, 0xa2, 0x2b, 0x33, 0x57, 0xf9, 0x50, 0x69, 0x1e, 0xcb},
-    {0xd9, 0xd0, 0x0e, 0x60, 0x53, 0x03, 0xed, 0xe4, 0x9c, 0x61, 0xda, 0x00, 0x75, 0x0c, 0xee, 0x2c},
-    {0x50, 0xa3, 0xa4, 0x63, 0xbc, 0xba, 0xbb, 0x80, 0xab, 0x0c, 0xe9, 0x96, 0xa1, 0xa5, 0xb1, 0xf0},
-    {0x39, 0xca, 0x8d, 0x93, 0x30, 0xde, 0x0d, 0xab, 0x88, 0x29, 0x96, 0x5e, 0x02, 0xb1, 0x3d, 0xae},
-    {0x42, 0xb4, 0x75, 0x2e, 0xa8, 0xf3, 0x14, 0x88, 0x0b, 0xa4, 0x54, 0xd5, 0x38, 0x8f, 0xbb, 0x17},
-    {0xf6, 0x16, 0x0a, 0x36, 0x79, 0xb7, 0xb6, 0xae, 0xd7, 0x7f, 0x42, 0x5f, 0x5b, 0x8a, 0xbb, 0x34},
-    {0xde, 0xaf, 0xba, 0xff, 0x18, 0x59, 0xce, 0x43, 0x38, 0x54, 0xe5, 0xcb, 0x41, 0x52, 0xf6, 0x26},
-    {0x78, 0xc9, 0x9e, 0x83, 0xf7, 0x9c, 0xca, 0xa2, 0x6a, 0x02, 0xf3, 0xb9, 0x54, 0x9a, 0xe9, 0x4c},
-    {0x35, 0x12, 0x90, 0x22, 0x28, 0x6e, 0xc0, 0x40, 0xbe, 0xf7, 0xdf, 0x1b, 0x1a, 0xa5, 0x51, 0xae},
-    {0xcf, 0x59, 0xa6, 0x48, 0x0f, 0xbc, 0x73, 0xc1, 0x2b, 0xd2, 0x7e, 0xba, 0x3c, 0x61, 0xc1, 0xa0},
-    {0xa1, 0x9d, 0xc5, 0xe9, 0xfd, 0xbd, 0xd6, 0x4a, 0x88, 0x82, 0x28, 0x02, 0x03, 0xcc, 0x6a, 0x75}
+static const uint64_t haraka512_rc64[10][8] = {
+    {0x24cf0ab9086f628b, 0xbdd6eeecc83b8382, 0xd96fb0306cdad0a7, 0xaace082ac8f95f89, 0x449d8e8870d7041f, 0x49bb2f80b2b3e2f8, 0x0569ae98d93bb258, 0x23dc9691e7d6a4b1},
+    {0xd8ba10ede0fe5b6e, 0x7ecf7dbe424c7b8e, 0x6ea9949c6df62a31, 0xbf3f3c97ec9c313e, 0x241d03a196a1861e, 0xead3a51116e5a2ea, 0x77d479fcad9574e3, 0x18657a1af894b7a0},
+    {0x10671e1a7f595522, 0xd9a00ff675d28c7b, 0x2f1edf0d2b9ba661, 0xb8ff58b8e3de45f9, 0xee29261da9865c02, 0xd1532aa4b50bdf43, 0x8bf858159b231bb1, 0xdf17439d22d4f599},
+    {0xdd4b2f0870b918c0, 0x757a81f3b39b1bb6, 0x7a5c556898952e3f, 0x7dd70a16d915d87a, 0x3ae61971982b8301, 0xc3ab319e030412be, 0x17c0033ac094a8cb, 0x5a0630fc1a8dc4ef},
+    {0x17708988c1632f73, 0xf92ddae090b44f4f, 0x11ac0285c43aa314, 0x509059941936b8ba, 0xd03e152fa2ce9b69, 0x3fbcbcb63a32998b, 0x6204696d692254f7, 0x915542ed93ec59b4},
+    {0xf4ed94aa8879236e, 0xff6cb41cd38e03c0, 0x069b38602368aeab, 0x669495b820f0ddba, 0xf42013b1b8bf9e3d, 0xcf935efe6439734d, 0xbc1dcf42ca29e3f8, 0x7e6d3ed29f78ad67},
+    {0xf3b0f6837ffcddaa, 0x3a76faef934ddf41, 0xcec7ae583a9c8e35, 0xe4dd18c68f0260af, 0x2c0e5df1ad398eaa, 0x478df5236ae22e8c, 0xfb944c46fe865f39, 0xaa48f82f028132ba},
+    {0x231b9ae2b76aca77, 0x292a76a712db0b40, 0x5850625dc8134491, 0x73137dd469810fb5, 0x8a12a6a202a474fd, 0xd36fd9daa78bdb80, 0xb34c5e733505706f, 0xbaf1cdca818d9d96},
+    {0x2e99781335e8c641, 0xbddfe5cce47d560e, 0xf74e9bf32e5e040c, 0x1d7a709d65996be9, 0x670df36a9cf66cdd, 0xd05ef84a176a2875, 0x0f888e828cb1c44e, 0x1a79e9c9727b052c},
+    {0x83497348628d84de, 0x2e9387d51f22a754, 0xb000068da2f852d6, 0x378c9e1190fd6fe5, 0x870027c316de7293, 0xe51a9d4462e047bb, 0x90ecf7f8c6251195, 0x655953bfbed90a9c},
 };
 
-static unsigned char rc[40][16];
-static unsigned char rc_sseed[40][16];
+static uint64_t tweaked512_rc64[10][8];
+static uint32_t tweaked256_rc32[10][8];
+static uint32_t tweaked256_rc32_sseed[10][8];
 
-static const unsigned char sbox[256] = {
-    0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe,
-    0xd7, 0xab, 0x76, 0xca, 0x82, 0xc9, 0x7d, 0xfa, 0x59, 0x47, 0xf0, 0xad, 0xd4,
-    0xa2, 0xaf, 0x9c, 0xa4, 0x72, 0xc0, 0xb7, 0xfd, 0x93, 0x26, 0x36, 0x3f, 0xf7,
-    0xcc, 0x34, 0xa5, 0xe5, 0xf1, 0x71, 0xd8, 0x31, 0x15, 0x04, 0xc7, 0x23, 0xc3,
-    0x18, 0x96, 0x05, 0x9a, 0x07, 0x12, 0x80, 0xe2, 0xeb, 0x27, 0xb2, 0x75, 0x09,
-    0x83, 0x2c, 0x1a, 0x1b, 0x6e, 0x5a, 0xa0, 0x52, 0x3b, 0xd6, 0xb3, 0x29, 0xe3,
-    0x2f, 0x84, 0x53, 0xd1, 0x00, 0xed, 0x20, 0xfc, 0xb1, 0x5b, 0x6a, 0xcb, 0xbe,
-    0x39, 0x4a, 0x4c, 0x58, 0xcf, 0xd0, 0xef, 0xaa, 0xfb, 0x43, 0x4d, 0x33, 0x85,
-    0x45, 0xf9, 0x02, 0x7f, 0x50, 0x3c, 0x9f, 0xa8, 0x51, 0xa3, 0x40, 0x8f, 0x92,
-    0x9d, 0x38, 0xf5, 0xbc, 0xb6, 0xda, 0x21, 0x10, 0xff, 0xf3, 0xd2, 0xcd, 0x0c,
-    0x13, 0xec, 0x5f, 0x97, 0x44, 0x17, 0xc4, 0xa7, 0x7e, 0x3d, 0x64, 0x5d, 0x19,
-    0x73, 0x60, 0x81, 0x4f, 0xdc, 0x22, 0x2a, 0x90, 0x88, 0x46, 0xee, 0xb8, 0x14,
-    0xde, 0x5e, 0x0b, 0xdb, 0xe0, 0x32, 0x3a, 0x0a, 0x49, 0x06, 0x24, 0x5c, 0xc2,
-    0xd3, 0xac, 0x62, 0x91, 0x95, 0xe4, 0x79, 0xe7, 0xc8, 0x37, 0x6d, 0x8d, 0xd5,
-    0x4e, 0xa9, 0x6c, 0x56, 0xf4, 0xea, 0x65, 0x7a, 0xae, 0x08, 0xba, 0x78, 0x25,
-    0x2e, 0x1c, 0xa6, 0xb4, 0xc6, 0xe8, 0xdd, 0x74, 0x1f, 0x4b, 0xbd, 0x8b, 0x8a,
-    0x70, 0x3e, 0xb5, 0x66, 0x48, 0x03, 0xf6, 0x0e, 0x61, 0x35, 0x57, 0xb9, 0x86,
-    0xc1, 0x1d, 0x9e, 0xe1, 0xf8, 0x98, 0x11, 0x69, 0xd9, 0x8e, 0x94, 0x9b, 0x1e,
-    0x87, 0xe9, 0xce, 0x55, 0x28, 0xdf, 0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42,
-    0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16
-};
+static inline uint32_t br_dec32le(const unsigned char *src) {
+    return (uint32_t)src[0]
+           | ((uint32_t)src[1] << 8)
+           | ((uint32_t)src[2] << 16)
+           | ((uint32_t)src[3] << 24);
+}
 
-#define XT(x) (((x) << 1) ^ ((((x) >> 7) & 1) * 0x1b))
-
-// Simulate _mm_aesenc_si128 instructions from AESNI
-static void aesenc(unsigned char *s, const unsigned char *rk) {
-    uint8_t i, t, u, v[4][4];
-    for (i = 0; i < 16; ++i) {
-        v[((i / 4) + 4 - (i % 4) ) % 4][i % 4] = sbox[s[i]];
-    }
-    for (i = 0; i < 4; ++i) {
-        t = v[i][0];
-        u = v[i][0] ^ v[i][1] ^ v[i][2] ^ v[i][3];
-        v[i][0] ^= (uint8_t)(u ^ XT(v[i][0] ^ v[i][1]));
-        v[i][1] ^= (uint8_t)(u ^ XT(v[i][1] ^ v[i][2]));
-        v[i][2] ^= (uint8_t)(u ^ XT(v[i][2] ^ v[i][3]));
-        v[i][3] ^= (uint8_t)(u ^ XT(v[i][3] ^ t));
-    }
-    for (i = 0; i < 16; ++i) {
-        s[i] = v[i / 4][i % 4] ^ rk[i];
+static void br_range_dec32le(uint32_t *v, size_t num, const unsigned char *src) {
+    while (num-- > 0) {
+        *v ++ = br_dec32le(src);
+        src += 4;
     }
 }
 
-// Simulate _mm_unpacklo_epi32
-static void unpacklo32(unsigned char *t, unsigned char *a, unsigned char *b) {
-    unsigned char tmp[16];
-    memcpy(tmp, a, 4);
-    memcpy(tmp + 4, b, 4);
-    memcpy(tmp + 8, a + 4, 4);
-    memcpy(tmp + 12, b + 4, 4);
-    memcpy(t, tmp, 16);
+static inline void br_enc32le(unsigned char *dst, uint32_t x) {
+    dst[0] = (unsigned char)x;
+    dst[1] = (unsigned char)(x >> 8);
+    dst[2] = (unsigned char)(x >> 16);
+    dst[3] = (unsigned char)(x >> 24);
 }
 
-// Simulate _mm_unpackhi_epi32
-static void unpackhi32(unsigned char *t, unsigned char *a, unsigned char *b) {
-    unsigned char tmp[16];
-    memcpy(tmp, a + 8, 4);
-    memcpy(tmp + 4, b + 8, 4);
-    memcpy(tmp + 8, a + 12, 4);
-    memcpy(tmp + 12, b + 12, 4);
-    memcpy(t, tmp, 16);
+
+static void br_range_enc32le(unsigned char *dst, const uint32_t *v, size_t num) {
+    while (num-- > 0) {
+        br_enc32le(dst, *v ++);
+        dst += 4;
+    }
+}
+
+static void br_aes_ct64_bitslice_Sbox(uint64_t *q) {
+    /*
+     * This S-box implementation is a straightforward translation of
+     * the circuit described by Boyar and Peralta in "A new
+     * combinational logic minimization technique with applications
+     * to cryptology" (https://eprint.iacr.org/2009/191.pdf).
+     *
+     * Note that variables x* (input) and s* (output) are numbered
+     * in "reverse" order (x0 is the high bit, x7 is the low bit).
+     */
+
+    uint64_t x0, x1, x2, x3, x4, x5, x6, x7;
+    uint64_t y1, y2, y3, y4, y5, y6, y7, y8, y9;
+    uint64_t y10, y11, y12, y13, y14, y15, y16, y17, y18, y19;
+    uint64_t y20, y21;
+    uint64_t z0, z1, z2, z3, z4, z5, z6, z7, z8, z9;
+    uint64_t z10, z11, z12, z13, z14, z15, z16, z17;
+    uint64_t t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
+    uint64_t t10, t11, t12, t13, t14, t15, t16, t17, t18, t19;
+    uint64_t t20, t21, t22, t23, t24, t25, t26, t27, t28, t29;
+    uint64_t t30, t31, t32, t33, t34, t35, t36, t37, t38, t39;
+    uint64_t t40, t41, t42, t43, t44, t45, t46, t47, t48, t49;
+    uint64_t t50, t51, t52, t53, t54, t55, t56, t57, t58, t59;
+    uint64_t t60, t61, t62, t63, t64, t65, t66, t67;
+    uint64_t s0, s1, s2, s3, s4, s5, s6, s7;
+
+    x0 = q[7];
+    x1 = q[6];
+    x2 = q[5];
+    x3 = q[4];
+    x4 = q[3];
+    x5 = q[2];
+    x6 = q[1];
+    x7 = q[0];
+
+    /*
+     * Top linear transformation.
+     */
+    y14 = x3 ^ x5;
+    y13 = x0 ^ x6;
+    y9 = x0 ^ x3;
+    y8 = x0 ^ x5;
+    t0 = x1 ^ x2;
+    y1 = t0 ^ x7;
+    y4 = y1 ^ x3;
+    y12 = y13 ^ y14;
+    y2 = y1 ^ x0;
+    y5 = y1 ^ x6;
+    y3 = y5 ^ y8;
+    t1 = x4 ^ y12;
+    y15 = t1 ^ x5;
+    y20 = t1 ^ x1;
+    y6 = y15 ^ x7;
+    y10 = y15 ^ t0;
+    y11 = y20 ^ y9;
+    y7 = x7 ^ y11;
+    y17 = y10 ^ y11;
+    y19 = y10 ^ y8;
+    y16 = t0 ^ y11;
+    y21 = y13 ^ y16;
+    y18 = x0 ^ y16;
+
+    /*
+     * Non-linear section.
+     */
+    t2 = y12 & y15;
+    t3 = y3 & y6;
+    t4 = t3 ^ t2;
+    t5 = y4 & x7;
+    t6 = t5 ^ t2;
+    t7 = y13 & y16;
+    t8 = y5 & y1;
+    t9 = t8 ^ t7;
+    t10 = y2 & y7;
+    t11 = t10 ^ t7;
+    t12 = y9 & y11;
+    t13 = y14 & y17;
+    t14 = t13 ^ t12;
+    t15 = y8 & y10;
+    t16 = t15 ^ t12;
+    t17 = t4 ^ t14;
+    t18 = t6 ^ t16;
+    t19 = t9 ^ t14;
+    t20 = t11 ^ t16;
+    t21 = t17 ^ y20;
+    t22 = t18 ^ y19;
+    t23 = t19 ^ y21;
+    t24 = t20 ^ y18;
+
+    t25 = t21 ^ t22;
+    t26 = t21 & t23;
+    t27 = t24 ^ t26;
+    t28 = t25 & t27;
+    t29 = t28 ^ t22;
+    t30 = t23 ^ t24;
+    t31 = t22 ^ t26;
+    t32 = t31 & t30;
+    t33 = t32 ^ t24;
+    t34 = t23 ^ t33;
+    t35 = t27 ^ t33;
+    t36 = t24 & t35;
+    t37 = t36 ^ t34;
+    t38 = t27 ^ t36;
+    t39 = t29 & t38;
+    t40 = t25 ^ t39;
+
+    t41 = t40 ^ t37;
+    t42 = t29 ^ t33;
+    t43 = t29 ^ t40;
+    t44 = t33 ^ t37;
+    t45 = t42 ^ t41;
+    z0 = t44 & y15;
+    z1 = t37 & y6;
+    z2 = t33 & x7;
+    z3 = t43 & y16;
+    z4 = t40 & y1;
+    z5 = t29 & y7;
+    z6 = t42 & y11;
+    z7 = t45 & y17;
+    z8 = t41 & y10;
+    z9 = t44 & y12;
+    z10 = t37 & y3;
+    z11 = t33 & y4;
+    z12 = t43 & y13;
+    z13 = t40 & y5;
+    z14 = t29 & y2;
+    z15 = t42 & y9;
+    z16 = t45 & y14;
+    z17 = t41 & y8;
+
+    /*
+     * Bottom linear transformation.
+     */
+    t46 = z15 ^ z16;
+    t47 = z10 ^ z11;
+    t48 = z5 ^ z13;
+    t49 = z9 ^ z10;
+    t50 = z2 ^ z12;
+    t51 = z2 ^ z5;
+    t52 = z7 ^ z8;
+    t53 = z0 ^ z3;
+    t54 = z6 ^ z7;
+    t55 = z16 ^ z17;
+    t56 = z12 ^ t48;
+    t57 = t50 ^ t53;
+    t58 = z4 ^ t46;
+    t59 = z3 ^ t54;
+    t60 = t46 ^ t57;
+    t61 = z14 ^ t57;
+    t62 = t52 ^ t58;
+    t63 = t49 ^ t58;
+    t64 = z4 ^ t59;
+    t65 = t61 ^ t62;
+    t66 = z1 ^ t63;
+    s0 = t59 ^ t63;
+    s6 = t56 ^ ~t62;
+    s7 = t48 ^ ~t60;
+    t67 = t64 ^ t65;
+    s3 = t53 ^ t66;
+    s4 = t51 ^ t66;
+    s5 = t47 ^ t65;
+    s1 = t64 ^ ~s3;
+    s2 = t55 ^ ~t67;
+
+    q[7] = s0;
+    q[6] = s1;
+    q[5] = s2;
+    q[4] = s3;
+    q[3] = s4;
+    q[2] = s5;
+    q[1] = s6;
+    q[0] = s7;
+}
+
+static void br_aes_ct_bitslice_Sbox(uint32_t *q) {
+    /*
+     * This S-box implementation is a straightforward translation of
+     * the circuit described by Boyar and Peralta in "A new
+     * combinational logic minimization technique with applications
+     * to cryptology" (https://eprint.iacr.org/2009/191.pdf).
+     *
+     * Note that variables x* (input) and s* (output) are numbered
+     * in "reverse" order (x0 is the high bit, x7 is the low bit).
+     */
+
+    uint32_t x0, x1, x2, x3, x4, x5, x6, x7;
+    uint32_t y1, y2, y3, y4, y5, y6, y7, y8, y9;
+    uint32_t y10, y11, y12, y13, y14, y15, y16, y17, y18, y19;
+    uint32_t y20, y21;
+    uint32_t z0, z1, z2, z3, z4, z5, z6, z7, z8, z9;
+    uint32_t z10, z11, z12, z13, z14, z15, z16, z17;
+    uint32_t t0, t1, t2, t3, t4, t5, t6, t7, t8, t9;
+    uint32_t t10, t11, t12, t13, t14, t15, t16, t17, t18, t19;
+    uint32_t t20, t21, t22, t23, t24, t25, t26, t27, t28, t29;
+    uint32_t t30, t31, t32, t33, t34, t35, t36, t37, t38, t39;
+    uint32_t t40, t41, t42, t43, t44, t45, t46, t47, t48, t49;
+    uint32_t t50, t51, t52, t53, t54, t55, t56, t57, t58, t59;
+    uint32_t t60, t61, t62, t63, t64, t65, t66, t67;
+    uint32_t s0, s1, s2, s3, s4, s5, s6, s7;
+
+    x0 = q[7];
+    x1 = q[6];
+    x2 = q[5];
+    x3 = q[4];
+    x4 = q[3];
+    x5 = q[2];
+    x6 = q[1];
+    x7 = q[0];
+
+    /*
+     * Top linear transformation.
+     */
+    y14 = x3 ^ x5;
+    y13 = x0 ^ x6;
+    y9 = x0 ^ x3;
+    y8 = x0 ^ x5;
+    t0 = x1 ^ x2;
+    y1 = t0 ^ x7;
+    y4 = y1 ^ x3;
+    y12 = y13 ^ y14;
+    y2 = y1 ^ x0;
+    y5 = y1 ^ x6;
+    y3 = y5 ^ y8;
+    t1 = x4 ^ y12;
+    y15 = t1 ^ x5;
+    y20 = t1 ^ x1;
+    y6 = y15 ^ x7;
+    y10 = y15 ^ t0;
+    y11 = y20 ^ y9;
+    y7 = x7 ^ y11;
+    y17 = y10 ^ y11;
+    y19 = y10 ^ y8;
+    y16 = t0 ^ y11;
+    y21 = y13 ^ y16;
+    y18 = x0 ^ y16;
+
+    /*
+     * Non-linear section.
+     */
+    t2 = y12 & y15;
+    t3 = y3 & y6;
+    t4 = t3 ^ t2;
+    t5 = y4 & x7;
+    t6 = t5 ^ t2;
+    t7 = y13 & y16;
+    t8 = y5 & y1;
+    t9 = t8 ^ t7;
+    t10 = y2 & y7;
+    t11 = t10 ^ t7;
+    t12 = y9 & y11;
+    t13 = y14 & y17;
+    t14 = t13 ^ t12;
+    t15 = y8 & y10;
+    t16 = t15 ^ t12;
+    t17 = t4 ^ t14;
+    t18 = t6 ^ t16;
+    t19 = t9 ^ t14;
+    t20 = t11 ^ t16;
+    t21 = t17 ^ y20;
+    t22 = t18 ^ y19;
+    t23 = t19 ^ y21;
+    t24 = t20 ^ y18;
+
+    t25 = t21 ^ t22;
+    t26 = t21 & t23;
+    t27 = t24 ^ t26;
+    t28 = t25 & t27;
+    t29 = t28 ^ t22;
+    t30 = t23 ^ t24;
+    t31 = t22 ^ t26;
+    t32 = t31 & t30;
+    t33 = t32 ^ t24;
+    t34 = t23 ^ t33;
+    t35 = t27 ^ t33;
+    t36 = t24 & t35;
+    t37 = t36 ^ t34;
+    t38 = t27 ^ t36;
+    t39 = t29 & t38;
+    t40 = t25 ^ t39;
+
+    t41 = t40 ^ t37;
+    t42 = t29 ^ t33;
+    t43 = t29 ^ t40;
+    t44 = t33 ^ t37;
+    t45 = t42 ^ t41;
+    z0 = t44 & y15;
+    z1 = t37 & y6;
+    z2 = t33 & x7;
+    z3 = t43 & y16;
+    z4 = t40 & y1;
+    z5 = t29 & y7;
+    z6 = t42 & y11;
+    z7 = t45 & y17;
+    z8 = t41 & y10;
+    z9 = t44 & y12;
+    z10 = t37 & y3;
+    z11 = t33 & y4;
+    z12 = t43 & y13;
+    z13 = t40 & y5;
+    z14 = t29 & y2;
+    z15 = t42 & y9;
+    z16 = t45 & y14;
+    z17 = t41 & y8;
+
+    /*
+     * Bottom linear transformation.
+     */
+    t46 = z15 ^ z16;
+    t47 = z10 ^ z11;
+    t48 = z5 ^ z13;
+    t49 = z9 ^ z10;
+    t50 = z2 ^ z12;
+    t51 = z2 ^ z5;
+    t52 = z7 ^ z8;
+    t53 = z0 ^ z3;
+    t54 = z6 ^ z7;
+    t55 = z16 ^ z17;
+    t56 = z12 ^ t48;
+    t57 = t50 ^ t53;
+    t58 = z4 ^ t46;
+    t59 = z3 ^ t54;
+    t60 = t46 ^ t57;
+    t61 = z14 ^ t57;
+    t62 = t52 ^ t58;
+    t63 = t49 ^ t58;
+    t64 = z4 ^ t59;
+    t65 = t61 ^ t62;
+    t66 = z1 ^ t63;
+    s0 = t59 ^ t63;
+    s6 = t56 ^ ~t62;
+    s7 = t48 ^ ~t60;
+    t67 = t64 ^ t65;
+    s3 = t53 ^ t66;
+    s4 = t51 ^ t66;
+    s5 = t47 ^ t65;
+    s1 = t64 ^ ~s3;
+    s2 = t55 ^ ~t67;
+
+    q[7] = s0;
+    q[6] = s1;
+    q[5] = s2;
+    q[4] = s3;
+    q[3] = s4;
+    q[2] = s5;
+    q[1] = s6;
+    q[0] = s7;
+}
+
+static void br_aes_ct_ortho(uint32_t *q) {
+#define SWAPN_32(cl, ch, s, x, y)   do { \
+        uint32_t a, b; \
+        a = (x); \
+        b = (y); \
+        (x) = (a & (uint32_t)(cl)) | ((b & (uint32_t)(cl)) << (s)); \
+        (y) = ((a & (uint32_t)(ch)) >> (s)) | (b & (uint32_t)(ch)); \
+    } while (0)
+
+#define SWAP2_32(x, y)   SWAPN_32(0x55555555, 0xAAAAAAAA, 1, x, y)
+#define SWAP4_32(x, y)   SWAPN_32(0x33333333, 0xCCCCCCCC, 2, x, y)
+#define SWAP8_32(x, y)   SWAPN_32(0x0F0F0F0F, 0xF0F0F0F0, 4, x, y)
+
+    SWAP2_32(q[0], q[1]);
+    SWAP2_32(q[2], q[3]);
+    SWAP2_32(q[4], q[5]);
+    SWAP2_32(q[6], q[7]);
+
+    SWAP4_32(q[0], q[2]);
+    SWAP4_32(q[1], q[3]);
+    SWAP4_32(q[4], q[6]);
+    SWAP4_32(q[5], q[7]);
+
+    SWAP8_32(q[0], q[4]);
+    SWAP8_32(q[1], q[5]);
+    SWAP8_32(q[2], q[6]);
+    SWAP8_32(q[3], q[7]);
+}
+
+static inline void add_round_key32(uint32_t *q, const uint32_t *sk) {
+    q[0] ^= sk[0];
+    q[1] ^= sk[1];
+    q[2] ^= sk[2];
+    q[3] ^= sk[3];
+    q[4] ^= sk[4];
+    q[5] ^= sk[5];
+    q[6] ^= sk[6];
+    q[7] ^= sk[7];
+}
+
+static inline void shift_rows32(uint32_t *q) {
+    int i;
+
+    for (i = 0; i < 8; i++) {
+        uint32_t x;
+
+        x = q[i];
+        q[i] = (x & 0x000000FF)
+               | ((x & 0x0000FC00) >> 2) | ((x & 0x00000300) << 6)
+               | ((x & 0x00F00000) >> 4) | ((x & 0x000F0000) << 4)
+               | ((x & 0xC0000000) >> 6) | ((x & 0x3F000000) << 2);
+    }
+}
+
+static inline uint32_t rotr16(uint32_t x) {
+    return (x << 16) | (x >> 16);
+}
+
+static inline void mix_columns32(uint32_t *q) {
+    uint32_t q0, q1, q2, q3, q4, q5, q6, q7;
+    uint32_t r0, r1, r2, r3, r4, r5, r6, r7;
+
+    q0 = q[0];
+    q1 = q[1];
+    q2 = q[2];
+    q3 = q[3];
+    q4 = q[4];
+    q5 = q[5];
+    q6 = q[6];
+    q7 = q[7];
+    r0 = (q0 >> 8) | (q0 << 24);
+    r1 = (q1 >> 8) | (q1 << 24);
+    r2 = (q2 >> 8) | (q2 << 24);
+    r3 = (q3 >> 8) | (q3 << 24);
+    r4 = (q4 >> 8) | (q4 << 24);
+    r5 = (q5 >> 8) | (q5 << 24);
+    r6 = (q6 >> 8) | (q6 << 24);
+    r7 = (q7 >> 8) | (q7 << 24);
+
+    q[0] = q7 ^ r7 ^ r0 ^ rotr16(q0 ^ r0);
+    q[1] = q0 ^ r0 ^ q7 ^ r7 ^ r1 ^ rotr16(q1 ^ r1);
+    q[2] = q1 ^ r1 ^ r2 ^ rotr16(q2 ^ r2);
+    q[3] = q2 ^ r2 ^ q7 ^ r7 ^ r3 ^ rotr16(q3 ^ r3);
+    q[4] = q3 ^ r3 ^ q7 ^ r7 ^ r4 ^ rotr16(q4 ^ r4);
+    q[5] = q4 ^ r4 ^ r5 ^ rotr16(q5 ^ r5);
+    q[6] = q5 ^ r5 ^ r6 ^ rotr16(q6 ^ r6);
+    q[7] = q6 ^ r6 ^ r7 ^ rotr16(q7 ^ r7);
+}
+
+static void br_aes_ct64_ortho(uint64_t *q) {
+#define SWAPN(cl, ch, s, x, y)   do { \
+        uint64_t a, b; \
+        a = (x); \
+        b = (y); \
+        (x) = (a & (uint64_t)(cl)) | ((b & (uint64_t)(cl)) << (s)); \
+        (y) = ((a & (uint64_t)(ch)) >> (s)) | (b & (uint64_t)(ch)); \
+    } while (0)
+
+#define SWAP2(x, y)    SWAPN(0x5555555555555555, 0xAAAAAAAAAAAAAAAA,  1, x, y)
+#define SWAP4(x, y)    SWAPN(0x3333333333333333, 0xCCCCCCCCCCCCCCCC,  2, x, y)
+#define SWAP8(x, y)    SWAPN(0x0F0F0F0F0F0F0F0F, 0xF0F0F0F0F0F0F0F0,  4, x, y)
+
+    SWAP2(q[0], q[1]);
+    SWAP2(q[2], q[3]);
+    SWAP2(q[4], q[5]);
+    SWAP2(q[6], q[7]);
+
+    SWAP4(q[0], q[2]);
+    SWAP4(q[1], q[3]);
+    SWAP4(q[4], q[6]);
+    SWAP4(q[5], q[7]);
+
+    SWAP8(q[0], q[4]);
+    SWAP8(q[1], q[5]);
+    SWAP8(q[2], q[6]);
+    SWAP8(q[3], q[7]);
+}
+
+
+static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t *w) {
+    uint64_t x0, x1, x2, x3;
+
+    x0 = w[0];
+    x1 = w[1];
+    x2 = w[2];
+    x3 = w[3];
+    x0 |= (x0 << 16);
+    x1 |= (x1 << 16);
+    x2 |= (x2 << 16);
+    x3 |= (x3 << 16);
+    x0 &= (uint64_t)0x0000FFFF0000FFFF;
+    x1 &= (uint64_t)0x0000FFFF0000FFFF;
+    x2 &= (uint64_t)0x0000FFFF0000FFFF;
+    x3 &= (uint64_t)0x0000FFFF0000FFFF;
+    x0 |= (x0 << 8);
+    x1 |= (x1 << 8);
+    x2 |= (x2 << 8);
+    x3 |= (x3 << 8);
+    x0 &= (uint64_t)0x00FF00FF00FF00FF;
+    x1 &= (uint64_t)0x00FF00FF00FF00FF;
+    x2 &= (uint64_t)0x00FF00FF00FF00FF;
+    x3 &= (uint64_t)0x00FF00FF00FF00FF;
+    *q0 = x0 | (x2 << 8);
+    *q1 = x1 | (x3 << 8);
+}
+
+
+static void br_aes_ct64_interleave_out(uint32_t *w, uint64_t q0, uint64_t q1) {
+    uint64_t x0, x1, x2, x3;
+
+    x0 = q0 & (uint64_t)0x00FF00FF00FF00FF;
+    x1 = q1 & (uint64_t)0x00FF00FF00FF00FF;
+    x2 = (q0 >> 8) & (uint64_t)0x00FF00FF00FF00FF;
+    x3 = (q1 >> 8) & (uint64_t)0x00FF00FF00FF00FF;
+    x0 |= (x0 >> 8);
+    x1 |= (x1 >> 8);
+    x2 |= (x2 >> 8);
+    x3 |= (x3 >> 8);
+    x0 &= (uint64_t)0x0000FFFF0000FFFF;
+    x1 &= (uint64_t)0x0000FFFF0000FFFF;
+    x2 &= (uint64_t)0x0000FFFF0000FFFF;
+    x3 &= (uint64_t)0x0000FFFF0000FFFF;
+    w[0] = (uint32_t)x0 | (uint32_t)(x0 >> 16);
+    w[1] = (uint32_t)x1 | (uint32_t)(x1 >> 16);
+    w[2] = (uint32_t)x2 | (uint32_t)(x2 >> 16);
+    w[3] = (uint32_t)x3 | (uint32_t)(x3 >> 16);
+}
+
+static inline void add_round_key(uint64_t *q, const uint64_t *sk) {
+    q[0] ^= sk[0];
+    q[1] ^= sk[1];
+    q[2] ^= sk[2];
+    q[3] ^= sk[3];
+    q[4] ^= sk[4];
+    q[5] ^= sk[5];
+    q[6] ^= sk[6];
+    q[7] ^= sk[7];
+}
+
+static inline void shift_rows(uint64_t *q) {
+    int i;
+
+    for (i = 0; i < 8; i++) {
+        uint64_t x;
+
+        x = q[i];
+        q[i] = (x & (uint64_t)0x000000000000FFFF)
+               | ((x & (uint64_t)0x00000000FFF00000) >> 4)
+               | ((x & (uint64_t)0x00000000000F0000) << 12)
+               | ((x & (uint64_t)0x0000FF0000000000) >> 8)
+               | ((x & (uint64_t)0x000000FF00000000) << 8)
+               | ((x & (uint64_t)0xF000000000000000) >> 12)
+               | ((x & (uint64_t)0x0FFF000000000000) << 4);
+    }
+}
+
+static inline uint64_t rotr32(uint64_t x) {
+    return (x << 32) | (x >> 32);
+}
+
+static inline void mix_columns(uint64_t *q) {
+    uint64_t q0, q1, q2, q3, q4, q5, q6, q7;
+    uint64_t r0, r1, r2, r3, r4, r5, r6, r7;
+
+    q0 = q[0];
+    q1 = q[1];
+    q2 = q[2];
+    q3 = q[3];
+    q4 = q[4];
+    q5 = q[5];
+    q6 = q[6];
+    q7 = q[7];
+    r0 = (q0 >> 16) | (q0 << 48);
+    r1 = (q1 >> 16) | (q1 << 48);
+    r2 = (q2 >> 16) | (q2 << 48);
+    r3 = (q3 >> 16) | (q3 << 48);
+    r4 = (q4 >> 16) | (q4 << 48);
+    r5 = (q5 >> 16) | (q5 << 48);
+    r6 = (q6 >> 16) | (q6 << 48);
+    r7 = (q7 >> 16) | (q7 << 48);
+
+    q[0] = q7 ^ r7 ^ r0 ^ rotr32(q0 ^ r0);
+    q[1] = q0 ^ r0 ^ q7 ^ r7 ^ r1 ^ rotr32(q1 ^ r1);
+    q[2] = q1 ^ r1 ^ r2 ^ rotr32(q2 ^ r2);
+    q[3] = q2 ^ r2 ^ q7 ^ r7 ^ r3 ^ rotr32(q3 ^ r3);
+    q[4] = q3 ^ r3 ^ q7 ^ r7 ^ r4 ^ rotr32(q4 ^ r4);
+    q[5] = q4 ^ r4 ^ r5 ^ rotr32(q5 ^ r5);
+    q[6] = q5 ^ r5 ^ r6 ^ rotr32(q6 ^ r6);
+    q[7] = q6 ^ r6 ^ r7 ^ rotr32(q7 ^ r7);
+}
+
+static void interleave_constant(uint64_t *out, const unsigned char *in) {
+    uint32_t tmp_32_constant[16];
+    int i;
+
+    br_range_dec32le(tmp_32_constant, 16, in);
+    for (i = 0; i < 4; i++) {
+        br_aes_ct64_interleave_in(&out[i], &out[i + 4], tmp_32_constant + (i << 2));
+    }
+    br_aes_ct64_ortho(out);
+}
+
+static void interleave_constant32(uint32_t *out, const unsigned char *in) {
+    int i;
+    for (i = 0; i < 4; i++) {
+        out[2 * i] = br_dec32le(in + 4 * i);
+        out[2 * i + 1] = br_dec32le(in + 4 * i + 16);
+    }
+    br_aes_ct_ortho(out);
 }
 
 void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_tweak_constants(
     const unsigned char *pk_seed, const unsigned char *sk_seed,
     unsigned long long seed_length) {
     unsigned char buf[40 * 16];
+    int i;
 
     /* Use the standard constants to generate tweaked ones. */
-    memcpy(rc, haraka_rc, 40 * 16);
+    memcpy((uint8_t *)tweaked512_rc64, (uint8_t *)haraka512_rc64, 40 * 16);
 
     /* Constants for sk.seed */
     if (sk_seed != NULL) {
-        PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S(buf, 40 * 16, sk_seed, seed_length);
-        memcpy(rc_sseed, buf, 40 * 16);
+        PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S(
+            buf, 40 * 16, sk_seed, seed_length);
+
+        /* Interleave constants */
+        for (i = 0; i < 10; i++) {
+            interleave_constant32(tweaked256_rc32_sseed[i], buf + 32 * i);
+        }
     }
 
     /* Constants for pk.seed */
-    PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S(buf, 40 * 16, pk_seed, seed_length);
-    memcpy(rc, buf, 40 * 16);
+    PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S(
+        buf, 40 * 16, pk_seed, seed_length);
+    for (i = 0; i < 10; i++) {
+        interleave_constant32(tweaked256_rc32[i], buf + 32 * i);
+        interleave_constant(tweaked512_rc64[i], buf + 64 * i);
+    }
 }
 
 static void haraka_S_absorb(unsigned char *s, unsigned int r,
@@ -145,7 +695,7 @@ static void haraka_S_absorb(unsigned char *s, unsigned int r,
     unsigned char t[r];
 
     while (mlen >= r) {
-        // XOR block to state
+        /* XOR block to state */
         for (i = 0; i < r; ++i) {
             s[i] ^= m[i];
         }
@@ -243,9 +793,7 @@ void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S_inc_squeeze(uint8_t *out, si
     }
 }
 
-void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S(
-    unsigned char *out, unsigned long long outlen,
-    const unsigned char *in, unsigned long long inlen) {
+void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S(unsigned char *out, unsigned long long outlen, const unsigned char *in, unsigned long long inlen) {
     unsigned long long i;
     unsigned char s[64];
     unsigned char d[32];
@@ -267,36 +815,48 @@ void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka_S(
 }
 
 void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka512_perm(unsigned char *out, const unsigned char *in) {
-    int i, j;
+    uint32_t w[16];
+    uint64_t q[8], tmp_q;
+    unsigned int i, j;
 
-    unsigned char s[64], tmp[16];
+    br_range_dec32le(w, 16, in);
+    for (i = 0; i < 4; i++) {
+        br_aes_ct64_interleave_in(&q[i], &q[i + 4], w + (i << 2));
+    }
+    br_aes_ct64_ortho(q);
 
-    memcpy(s, in, 16);
-    memcpy(s + 16, in + 16, 16);
-    memcpy(s + 32, in + 32, 16);
-    memcpy(s + 48, in + 48, 16);
-
-    for (i = 0; i < 5; ++i) {
-        // aes round(s)
-        for (j = 0; j < 2; ++j) {
-            aesenc(s, rc[4 * 2 * i + 4 * j]);
-            aesenc(s + 16, rc[4 * 2 * i + 4 * j + 1]);
-            aesenc(s + 32, rc[4 * 2 * i + 4 * j + 2]);
-            aesenc(s + 48, rc[4 * 2 * i + 4 * j + 3]);
+    /* AES rounds */
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < 2; j++) {
+            br_aes_ct64_bitslice_Sbox(q);
+            shift_rows(q);
+            mix_columns(q);
+            add_round_key(q, tweaked512_rc64[2 * i + j]);
         }
-
-        // mixing
-        unpacklo32(tmp, s, s + 16);
-        unpackhi32(s, s, s + 16);
-        unpacklo32(s + 16, s + 32, s + 48);
-        unpackhi32(s + 32, s + 32, s + 48);
-        unpacklo32(s + 48, s, s + 32);
-        unpackhi32(s, s, s + 32);
-        unpackhi32(s + 32, s + 16, tmp);
-        unpacklo32(s + 16, s + 16, tmp);
+        /* Mix states */
+        for (j = 0; j < 8; j++) {
+            tmp_q = q[j];
+            q[j] = (tmp_q & 0x0001000100010001) << 5 |
+                   (tmp_q & 0x0002000200020002) << 12 |
+                   (tmp_q & 0x0004000400040004) >> 1 |
+                   (tmp_q & 0x0008000800080008) << 6 |
+                   (tmp_q & 0x0020002000200020) << 9 |
+                   (tmp_q & 0x0040004000400040) >> 4 |
+                   (tmp_q & 0x0080008000800080) << 3 |
+                   (tmp_q & 0x2100210021002100) >> 5 |
+                   (tmp_q & 0x0210021002100210) << 2 |
+                   (tmp_q & 0x0800080008000800) << 4 |
+                   (tmp_q & 0x1000100010001000) >> 12 |
+                   (tmp_q & 0x4000400040004000) >> 10 |
+                   (tmp_q & 0x8400840084008400) >> 3;
+        }
     }
 
-    memcpy(out, s, 64);
+    br_aes_ct64_ortho(q);
+    for (i = 0; i < 4; i ++) {
+        br_aes_ct64_interleave_out(w + (i << 2), q[i], q[i + 4]);
+    }
+    br_range_enc32le(out, w, 16);
 }
 
 void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka512(unsigned char *out, const unsigned char *in) {
@@ -319,55 +879,87 @@ void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka512(unsigned char *out, const u
 
 
 void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka256(unsigned char *out, const unsigned char *in) {
+    uint32_t q[8], tmp_q;
     int i, j;
 
-    unsigned char s[32], tmp[16];
+    for (i = 0; i < 4; i++) {
+        q[2 * i] = br_dec32le(in + 4 * i);
+        q[2 * i + 1] = br_dec32le(in + 4 * i + 16);
+    }
+    br_aes_ct_ortho(q);
 
-    memcpy(s, in, 16);
-    memcpy(s + 16, in + 16, 16);
-
-    for (i = 0; i < 5; ++i) {
-        // aes round(s)
-        for (j = 0; j < 2; ++j) {
-            aesenc(s, rc[2 * 2 * i + 2 * j]);
-            aesenc(s + 16, rc[2 * 2 * i + 2 * j + 1]);
+    /* AES rounds */
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < 2; j++) {
+            br_aes_ct_bitslice_Sbox(q);
+            shift_rows32(q);
+            mix_columns32(q);
+            add_round_key32(q, tweaked256_rc32[2 * i + j]);
         }
 
-        // mixing
-        unpacklo32(tmp, s, s + 16);
-        unpackhi32(s + 16, s, s + 16);
-        memcpy(s, tmp, 16);
+        /* Mix states */
+        for (j = 0; j < 8; j++) {
+            tmp_q = q[j];
+            q[j] = (tmp_q & 0x81818181) |
+                   (tmp_q & 0x02020202) << 1 |
+                   (tmp_q & 0x04040404) << 2 |
+                   (tmp_q & 0x08080808) << 3 |
+                   (tmp_q & 0x10101010) >> 3 |
+                   (tmp_q & 0x20202020) >> 2 |
+                   (tmp_q & 0x40404040) >> 1;
+        }
     }
 
-    /* Feed-forward */
+    br_aes_ct_ortho(q);
+    for (i = 0; i < 4; i++) {
+        br_enc32le(out + 4 * i, q[2 * i]);
+        br_enc32le(out + 4 * i + 16, q[2 * i + 1]);
+    }
+
     for (i = 0; i < 32; i++) {
-        out[i] = in[i] ^ s[i];
+        out[i] ^= in[i];
     }
 }
 
 void PQCLEAN_SPHINCSHARAKA128SSIMPLE_CLEAN_haraka256_sk(unsigned char *out, const unsigned char *in) {
+    uint32_t q[8], tmp_q;
     int i, j;
 
-    unsigned char s[32], tmp[16];
+    for (i = 0; i < 4; i++) {
+        q[2 * i] = br_dec32le(in + 4 * i);
+        q[2 * i + 1] = br_dec32le(in + 4 * i + 16);
+    }
+    br_aes_ct_ortho(q);
 
-    memcpy(s, in, 16);
-    memcpy(s + 16, in + 16, 16);
-
-    for (i = 0; i < 5; ++i) {
-        // aes round(s)
-        for (j = 0; j < 2; ++j) {
-            aesenc(s, rc_sseed[2 * 2 * i + 2 * j]);
-            aesenc(s + 16, rc_sseed[2 * 2 * i + 2 * j + 1]);
+    /* AES rounds */
+    for (i = 0; i < 5; i++) {
+        for (j = 0; j < 2; j++) {
+            br_aes_ct_bitslice_Sbox(q);
+            shift_rows32(q);
+            mix_columns32(q);
+            add_round_key32(q, tweaked256_rc32_sseed[2 * i + j]);
         }
 
-        // mixing
-        unpacklo32(tmp, s, s + 16);
-        unpackhi32(s + 16, s, s + 16);
-        memcpy(s, tmp, 16);
+        /* Mix states */
+        for (j = 0; j < 8; j++) {
+            tmp_q = q[j];
+            q[j] = (tmp_q & 0x81818181) |
+                   (tmp_q & 0x02020202) << 1 |
+                   (tmp_q & 0x04040404) << 2 |
+                   (tmp_q & 0x08080808) << 3 |
+                   (tmp_q & 0x10101010) >> 3 |
+                   (tmp_q & 0x20202020) >> 2 |
+                   (tmp_q & 0x40404040) >> 1;
+        }
     }
 
-    /* Feed-forward */
+    br_aes_ct_ortho(q);
+    for (i = 0; i < 4; i++) {
+        br_enc32le(out + 4 * i, q[2 * i]);
+        br_enc32le(out + 4 * i + 16, q[2 * i + 1]);
+    }
+
     for (i = 0; i < 32; i++) {
-        out[i] = in[i] ^ s[i];
+        out[i] ^= in[i];
     }
 }
