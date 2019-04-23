@@ -2,6 +2,7 @@ name: SPHINCS+
 type: signature
 claimed-nist-level: 5
 length-public-key: 64
+length-secret-key: 128
 length-signature: 29792
 testvectors-sha256: 6b0bf2fb0f2db01be38accb262e0d23a47332f26d765f74f58a7cdd929872c6b
 principal-submitter: Andreas Hülsing
@@ -24,4 +25,3 @@ auxiliary-submitters:
 implementations:
     - name: clean
       version: https://github.com/sphincs/sphincsplus/commit/77755c94d0bc744478044d6efbb888dc13156441
-      length-secret-key: 128
