@@ -13,7 +13,7 @@ matrix:
         - git reset --hard $TRAVIS_COMMIT
       script:
         # Use travis-wait to allow slower tests to run
-        - "cd test && travis_wait 30 python3 -m nose --rednose --verbose"
+        - "cd test && travis_wait 60 python3 -m nose --rednose --verbose"
       env:
         PQCLEAN_ONLY_DIFF: 1
       addons:
@@ -43,7 +43,7 @@ matrix:
         - gcc --version
       script:
         # Use travis-wait to allow slower tests to run
-        - "cd test && travis_wait 30 python3 -m nose --rednose --verbose"
+        - "cd test && travis_wait 60 python3 -m nose --rednose --verbose"
 
 
 cache: pip
