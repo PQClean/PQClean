@@ -85,7 +85,8 @@ def skip_windows(message="This test is not supported on Windows"):
 def slow_test(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        if 'CI' in os.environ and 'RUN_SLOW' not in os.environ:
+        if ('CI' in os.environ and 'RUN_SLOW' not in os.environ and
+                os.environ.get('TRAVIS_EVENT_TYPE') != 'cron'):
             raise unittest.SkipTest("Slow test skipped on CI run")
         return f(*args, **kwargs)
     return wrapper
