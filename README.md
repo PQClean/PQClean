@@ -44,7 +44,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] No errors/warnings reported by address sanitizer
 * [x] Only dependencies: `fips202.c`, `sha2.c`, `aes.c`, `randombytes.c`
 * [x] API functions return `0` on success
-* [x] No dynamic memory allocations
+* [x] No dynamic memory allocations (including variable-length arrays)
 * [ ] No branching on secret data (dynamically checked using valgrind)
 * [ ] No access to secret memory locations (dynamically checked using valgrind)
 * [x] Separate subdirectories (without symlinks) for each parameter set of each scheme
