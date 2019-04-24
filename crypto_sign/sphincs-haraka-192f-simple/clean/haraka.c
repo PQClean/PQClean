@@ -688,41 +688,41 @@ void PQCLEAN_SPHINCSHARAKA192FSIMPLE_CLEAN_tweak_constants(
     }
 }
 
-static void haraka_S_absorb(unsigned char *s, unsigned int r,
+static void haraka_S_absorb(unsigned char *s,
                             const unsigned char *m, unsigned long long mlen,
                             unsigned char p) {
     unsigned long long i;
-    unsigned char t[r];
+    unsigned char t[HARAKAS_RATE];
 
-    while (mlen >= r) {
+    while (mlen >= HARAKAS_RATE) {
         /* XOR block to state */
-        for (i = 0; i < r; ++i) {
+        for (i = 0; i < HARAKAS_RATE; ++i) {
             s[i] ^= m[i];
         }
         PQCLEAN_SPHINCSHARAKA192FSIMPLE_CLEAN_haraka512_perm(s, s);
-        mlen -= r;
-        m += r;
+        mlen -= HARAKAS_RATE;
+        m += HARAKAS_RATE;
     }
 
-    for (i = 0; i < r; ++i) {
+    for (i = 0; i < HARAKAS_RATE; ++i) {
         t[i] = 0;
     }
     for (i = 0; i < mlen; ++i) {
         t[i] = m[i];
     }
     t[i] = p;
-    t[r - 1] |= 128;
-    for (i = 0; i < r; ++i) {
+    t[HARAKAS_RATE - 1] |= 128;
+    for (i = 0; i < HARAKAS_RATE; ++i) {
         s[i] ^= t[i];
     }
 }
 
 static void haraka_S_squeezeblocks(unsigned char *h, unsigned long long nblocks,
-                                   unsigned char *s, unsigned int r) {
+                                   unsigned char *s) {
     while (nblocks > 0) {
         PQCLEAN_SPHINCSHARAKA192FSIMPLE_CLEAN_haraka512_perm(s, s);
         memcpy(h, s, HARAKAS_RATE);
-        h += r;
+        h += HARAKAS_RATE;
         nblocks--;
     }
 }
@@ -801,13 +801,13 @@ void PQCLEAN_SPHINCSHARAKA192FSIMPLE_CLEAN_haraka_S(unsigned char *out, unsigned
     for (i = 0; i < 64; i++) {
         s[i] = 0;
     }
-    haraka_S_absorb(s, 32, in, inlen, 0x1F);
+    haraka_S_absorb(s, in, inlen, 0x1F);
 
-    haraka_S_squeezeblocks(out, outlen / 32, s, 32);
+    haraka_S_squeezeblocks(out, outlen / 32, s);
     out += (outlen / 32) * 32;
 
     if (outlen % 32) {
-        haraka_S_squeezeblocks(d, 1, s, 32);
+        haraka_S_squeezeblocks(d, 1, s);
         for (i = 0; i < outlen % 32; i++) {
             out[i] = d[i];
         }
