@@ -5,7 +5,7 @@ LIB=libsphincs-haraka-192f-robust_clean.a
 HEADERS = params.h address.h wots.h utils.h fors.h api.h  hash.h thash.h haraka.h
 OBJECTS =          address.o wots.o utils.o fors.o sign.o hash_haraka.o thash_haraka_robust.o haraka.o
 
-CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Werror=vla -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 
