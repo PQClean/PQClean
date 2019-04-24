@@ -12,7 +12,7 @@ void PQCLEAN_SPHINCSSHA256256SROBUST_CLEAN_compress_address(unsigned char *out, 
 
 void PQCLEAN_SPHINCSSHA256256SROBUST_CLEAN_mgf1(
     unsigned char *out, unsigned long outlen,
-    const unsigned char *in, unsigned long inlen);
+    unsigned char *input_plus_four_bytes, unsigned long inlen);
 
 uint8_t PQCLEAN_SPHINCSSHA256256SROBUST_CLEAN_state_seeded[40];
 

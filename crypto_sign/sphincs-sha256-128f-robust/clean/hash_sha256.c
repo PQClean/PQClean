@@ -99,7 +99,7 @@ void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_hash_message(
 #define SPX_LEAF_BYTES ((SPX_LEAF_BITS + 7) / 8)
 #define SPX_DGST_BYTES (SPX_FORS_MSG_BYTES + SPX_TREE_BYTES + SPX_LEAF_BYTES)
 
-    unsigned char seed[SPX_SHA256_OUTPUT_BYTES];
+    unsigned char seed[SPX_SHA256_OUTPUT_BYTES + 4];
 
     /* Round to nearest multiple of SPX_SHA256_BLOCK_BYTES */
 #define SPX_INBLOCKS (((SPX_N + SPX_PK_BYTES + SPX_SHA256_BLOCK_BYTES - 1) & \

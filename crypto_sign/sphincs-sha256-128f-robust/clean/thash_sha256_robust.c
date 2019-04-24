@@ -23,6 +23,7 @@ static void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash(
 
     memcpy(buf, pub_seed, SPX_N);
     PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_compress_address(buf + SPX_N, addr);
+    /* MGF1 requires us to have 4 extra bytes in 'buf' */
     PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_mgf1(bitmask, inblocks * SPX_N, buf, SPX_N + SPX_SHA256_ADDR_BYTES);
 
     /* Retrieve precomputed state containing pub_seed */
@@ -43,7 +44,7 @@ void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash_1(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 1 * SPX_N];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 1 * SPX_N + 4];
     PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash(
         out, buf, in, 1, pub_seed, addr);
 }
@@ -52,7 +53,7 @@ void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash_2(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 2 * SPX_N];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 2 * SPX_N + 4];
     PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash(
         out, buf, in, 2, pub_seed, addr);
 }
@@ -61,7 +62,7 @@ void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash_WOTS_LEN(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + SPX_WOTS_LEN * SPX_N];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + SPX_WOTS_LEN * SPX_N + 4];
     PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash(
         out, buf, in, SPX_WOTS_LEN, pub_seed, addr);
 }
@@ -70,7 +71,7 @@ void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash_FORS_TREES(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + SPX_FORS_TREES * SPX_N];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + SPX_FORS_TREES * SPX_N + 4];
     PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_thash(
         out, buf, in, SPX_FORS_TREES, pub_seed, addr);
 }

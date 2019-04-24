@@ -26,29 +26,26 @@ void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_compress_address(unsigned char *out, 
 }
 
 /**
- * Note that inlen should be sufficiently small that it still allows for
- * an array to be allocated on the stack. Typically 'in' is merely a seed.
+ * Requires 'input_plus_four_bytes' to have 'inlen' + 4 bytes, so that the last
+ * four bytes can be used for the counter. Typically 'input' is merely a seed.
  * Outputs outlen number of bytes
  */
 void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_mgf1(
     unsigned char *out, unsigned long outlen,
-    const unsigned char *in, unsigned long inlen) {
-    unsigned char inbuf[inlen + 4];
+    unsigned char *input_plus_four_bytes, unsigned long inlen) {
     unsigned char outbuf[SPX_SHA256_OUTPUT_BYTES];
     unsigned long i;
 
-    memcpy(inbuf, in, inlen);
-
     /* While we can fit in at least another full block of SHA256 output.. */
     for (i = 0; (i + 1)*SPX_SHA256_OUTPUT_BYTES <= outlen; i++) {
-        PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_ull_to_bytes(inbuf + inlen, 4, i);
-        sha256(out, inbuf, inlen + 4);
+        PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_ull_to_bytes(input_plus_four_bytes + inlen, 4, i);
+        sha256(out, input_plus_four_bytes, inlen + 4);
         out += SPX_SHA256_OUTPUT_BYTES;
     }
     /* Until we cannot anymore, and we fill the remainder. */
     if (outlen > i * SPX_SHA256_OUTPUT_BYTES) {
-        PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_ull_to_bytes(inbuf + inlen, 4, i);
-        sha256(outbuf, inbuf, inlen + 4);
+        PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_ull_to_bytes(input_plus_four_bytes + inlen, 4, i);
+        sha256(outbuf, input_plus_four_bytes, inlen + 4);
         memcpy(out, outbuf, outlen - i * SPX_SHA256_OUTPUT_BYTES);
     }
 }
