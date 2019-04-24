@@ -17,7 +17,7 @@ static void PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash(
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
     unsigned char outbuf[SPX_SHA256_OUTPUT_BYTES];
-    unsigned char *bitmask = buf + SPX_N + SPX_SHA256_ADDR_BYTES;
+    unsigned char *bitmask = buf + SPX_N + SPX_SHA256_ADDR_BYTES + 4;
     uint8_t sha2_state[40];
     unsigned int i;
 
@@ -44,7 +44,7 @@ void PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash_1(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 1 * SPX_N + 4];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 4 + 1 * SPX_N];
     PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash(
         out, buf, in, 1, pub_seed, addr);
 }
@@ -53,7 +53,7 @@ void PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash_2(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 2 * SPX_N + 4];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 4 + 2 * SPX_N];
     PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash(
         out, buf, in, 2, pub_seed, addr);
 }
@@ -62,7 +62,7 @@ void PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash_WOTS_LEN(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + SPX_WOTS_LEN * SPX_N + 4];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 4 + SPX_WOTS_LEN * SPX_N];
     PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash(
         out, buf, in, SPX_WOTS_LEN, pub_seed, addr);
 }
@@ -71,7 +71,7 @@ void PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash_FORS_TREES(
     unsigned char *out, const unsigned char *in,
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
-    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + SPX_FORS_TREES * SPX_N + 4];
+    unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES + 4 + SPX_FORS_TREES * SPX_N];
     PQCLEAN_SPHINCSSHA256256FROBUST_CLEAN_thash(
         out, buf, in, SPX_FORS_TREES, pub_seed, addr);
 }
