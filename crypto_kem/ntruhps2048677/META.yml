@@ -2,6 +2,7 @@ name: ntru-hps2048677
 type: kem
 claimed-nist-level: 3
 length-public-key: 930
+length-secret-key: 1234
 length-ciphertext: 930
 length-shared-secret: 32
 testvectors-sha256: 949f3ff44551abe3efd08e3527dd72a0bfba1df50deb49f619becf8b19ac283b
@@ -19,4 +20,3 @@ auxiliary-submitters:
 implementations:
     - name: clean
       version: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/round-2/submissions/NTRU-Round2.zip reference implemntation
-      length-secret-key: 1234

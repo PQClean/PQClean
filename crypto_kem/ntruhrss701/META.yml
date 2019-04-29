@@ -2,6 +2,7 @@ name: ntru-hrss701
 type: kem
 claimed-nist-level: 3
 length-public-key: 1138
+length-secret-key: 1450
 length-ciphertext: 1138
 length-shared-secret: 32
 testvectors-sha256: a0082a6607ab054c296a02e1bea1b5d7ee8465077ee7989ab4295f9e464d0558
@@ -19,4 +20,3 @@ auxiliary-submitters:
 implementations:
     - name: clean
       version: https://csrc.nist.gov/CSRC/media/Projects/Post-Quantum-Cryptography/documents/round-2/submissions/NTRU-Round2.zip reference implemntation
-      length-secret-key: 1450
