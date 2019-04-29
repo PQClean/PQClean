@@ -1,28 +1,28 @@
 #include "sample.h"
 #include "fips202.h"
 
-void PQCLEAN_NTRUHPS2048509_CLEAN_sample_fg(poly *f, poly *g, const unsigned char uniformbytes[NTRU_SAMPLE_FG_BYTES]) {
-    PQCLEAN_NTRUHPS2048509_CLEAN_sample_iid(f, uniformbytes);
-    PQCLEAN_NTRUHPS2048509_CLEAN_sample_fixed_type(g, uniformbytes + NTRU_SAMPLE_IID_BYTES);
+void PQCLEAN_NTRUHPS4096821_CLEAN_sample_fg(poly *f, poly *g, const unsigned char uniformbytes[NTRU_SAMPLE_FG_BYTES]) {
+    PQCLEAN_NTRUHPS4096821_CLEAN_sample_iid(f, uniformbytes);
+    PQCLEAN_NTRUHPS4096821_CLEAN_sample_fixed_type(g, uniformbytes + NTRU_SAMPLE_IID_BYTES);
 }
 
-void PQCLEAN_NTRUHPS2048509_CLEAN_sample_rm(poly *r, poly *m, const unsigned char uniformbytes[NTRU_SAMPLE_RM_BYTES]) {
-    PQCLEAN_NTRUHPS2048509_CLEAN_sample_iid(r, uniformbytes);
-    PQCLEAN_NTRUHPS2048509_CLEAN_sample_fixed_type(m, uniformbytes + NTRU_SAMPLE_IID_BYTES);
+void PQCLEAN_NTRUHPS4096821_CLEAN_sample_rm(poly *r, poly *m, const unsigned char uniformbytes[NTRU_SAMPLE_RM_BYTES]) {
+    PQCLEAN_NTRUHPS4096821_CLEAN_sample_iid(r, uniformbytes);
+    PQCLEAN_NTRUHPS4096821_CLEAN_sample_fixed_type(m, uniformbytes + NTRU_SAMPLE_IID_BYTES);
 }
 
-void PQCLEAN_NTRUHPS2048509_CLEAN_sample_iid(poly *r, const unsigned char uniformbytes[NTRU_SAMPLE_IID_BYTES]) {
+void PQCLEAN_NTRUHPS4096821_CLEAN_sample_iid(poly *r, const unsigned char uniformbytes[NTRU_SAMPLE_IID_BYTES]) {
     int i;
     /* {0,1,...,255} -> {0,1,2}; Pr[0] = 86/256, Pr[1] = Pr[-1] = 85/256 */
     for (i = 0; i < NTRU_N - 1; i++) {
-        r->coeffs[i] = PQCLEAN_NTRUHPS2048509_CLEAN_mod3(uniformbytes[i]);
+        r->coeffs[i] = PQCLEAN_NTRUHPS4096821_CLEAN_mod3(uniformbytes[i]);
     }
 
     r->coeffs[NTRU_N - 1] = 0;
 }
 
 #include "crypto_sort.h"
-void PQCLEAN_NTRUHPS2048509_CLEAN_sample_fixed_type(poly *r, const unsigned char u[NTRU_SAMPLE_FT_BYTES]) {
+void PQCLEAN_NTRUHPS4096821_CLEAN_sample_fixed_type(poly *r, const unsigned char u[NTRU_SAMPLE_FT_BYTES]) {
     // Assumes NTRU_SAMPLE_FT_BYTES = ceil(30*(n-1)/8)
 
     uint32_t s[NTRU_N - 1];
@@ -44,7 +44,7 @@ void PQCLEAN_NTRUHPS2048509_CLEAN_sample_fixed_type(poly *r, const unsigned char
         s[i] |=  2;
     }
 
-    PQCLEAN_NTRUHPS2048509_CLEAN_crypto_sort(s, NTRU_N - 1);
+    PQCLEAN_NTRUHPS4096821_CLEAN_crypto_sort(s, NTRU_N - 1);
 
     for (i = 0; i < NTRU_N - 1; i++) {
         r->coeffs[i] = ((uint16_t) (s[i] & 3));
