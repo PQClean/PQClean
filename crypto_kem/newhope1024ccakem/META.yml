@@ -1,0 +1,21 @@
+name: NewHope1024CCAKEM
+type: kem
+claimed-nist-level: 5
+length-public-key: 1824
+length-secret-key: 3680 
+length-ciphertext: 2208 
+length-shared-secret: 32 
+testvectors-sha256: 233bab7b5e2971b7e271f046e39ba443ffcceada84d3fdb5017d6d3a2e48b0d0
+nistkat-sha256: 8500b88222b3a62e57a6ecaac57f79258f08af49211e0c3f2ca7eab8089c0ce0 
+principal-submitter: Thomas Pöppelmann 
+auxiliary-submitters:
+- Erdem Alkim
+- Roberto Avanzi
+- Joppe Bos
+- Léo Ducas
+- Antonio de la Piedra
+- Peter Schwabe
+- Douglas Stebila
+implementations:
+- name: clean
+  version: https://github.com/newhopecrypto/newhope/commit/3fc68c6090b23c56cc190a78af2f43ee8900e9d0
