@@ -30,7 +30,8 @@ See the section [API](#API) below.
     length-ciphertext: <N>          # KEM only
     length-shared-secret: <N>       # KEM only
     length-signature: <N>           # Signature only
-    testvectors-sha256: sha256sum of output of testvectors
+    nistkat-sha256: sha256sum of 1st NIST KAT test case # KEM only
+    testvectors-sha256: sha256sum of output of testvectors # Signature only
     principal-submitter: Eve
     auxiliary-submitters:
       - Alice
