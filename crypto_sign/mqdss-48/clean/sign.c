@@ -107,7 +107,7 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign_signature(
     unsigned char c[HASH_BYTES * ROUNDS * 2];
     gf31 alpha;
     int alpha_count = 0;
-    unsigned char b;
+    int b;
     int i, j;
     uint64_t s_inc[26];
 
@@ -251,7 +251,7 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign_verify(
     int i, j;
     gf31 alpha;
     int alpha_count = 0;
-    unsigned char b;
+    int b;
     uint64_t s_inc[26];
 
     if (siglen != SIG_LEN) {
