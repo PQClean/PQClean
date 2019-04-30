@@ -140,6 +140,8 @@ All other code in this repository is released under the conditions of [CC0](http
 
 ## Running tests locally
 
+See https://github.com/PQClean/PQClean/wiki/Test-framework for details about the PQClean test framework.
+
 While we run extensive automatic testing on [Circle CI][circleci-pqc] (Linux builds), [Travis CI][travis-pqc] (OS X builds) and [Appveyor][appveyor-pqc] (Windows builds), most tests can also be run locally.
 To do this, make sure the following is installed:
 
