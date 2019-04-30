@@ -4,7 +4,7 @@ claimed-nist-level: 1
 length-public-key: 46
 length-secret-key: 16
 length-signature: 20854
-testvectors-sha256: a14cb8e4f149493fc5979e465e09ce943e8d669186ff5c7c3d11239fa869def6
+testvectors-sha256: 3350a80ccf4316b32ef13060fca8880d6802b7e61150fd36f021d1c52d8edb98
 principal-submitter: Simona Samardjiska
 auxiliary-submitters:
   - Ming-Shing Chen

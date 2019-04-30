@@ -95,7 +95,7 @@ void PQCLEAN_MQDSS48_CLEAN_gf31_nunpack(gf31 *out, const unsigned char *in, unsi
     unsigned int d = 0;
 
     for (i = n; i > 0; i--) {
-        out[i-1] = (in[j] >> d) & 31;
+        out[i-1] = (gf31)((in[j] >> d) & 31);
         d += 5;
         if (d > 8) {
             d -= 8;

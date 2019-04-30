@@ -1,6 +1,6 @@
 #include <assert.h>
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <string.h>
 
 #include "api.h"
@@ -70,45 +70,11 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
     return 0;
 }
 
-
 /**
  * Returns an array containing a detached signature.
  */
 int PQCLEAN_MQDSS48_CLEAN_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
-    const uint8_t *m, size_t mlen, const uint8_t *sk) {
-
-    (void)sig;
-    (void)siglen;
-    (void)m;
-    (void)mlen;
-    (void)sk;
-
-    return 0;
-}
-
-/**
- * Verifies a detached signature and message under a given public key.
- */
-int PQCLEAN_MQDSS48_CLEAN_crypto_sign_verify(
-    const uint8_t *sig, size_t siglen,
-    const uint8_t *m, size_t mlen, const uint8_t *pk) {
-
-    (void)sig;
-    (void)siglen;
-    (void)m;
-    (void)mlen;
-    (void)pk;
-
-    return 0;
-}
-
-
-/**
- * Returns an array containing the signature followed by the message.
- */
-int PQCLEAN_MQDSS48_CLEAN_crypto_sign(
-    uint8_t *sm, size_t *smlen,
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
 
     signed char F[F_LEN];
@@ -146,15 +112,17 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign(
     int alpha_count = 0;
     unsigned char b;
     int i, j;
+    uint64_t s_inc[26];
 
     shake256(skbuf, SEED_BYTES * 4, sk, SEED_BYTES);
 
     PQCLEAN_MQDSS48_CLEAN_gf31_nrand_schar(F, F_LEN, skbuf, SEED_BYTES);
 
-    assert(SIG_LEN > SEED_BYTES);
-    memcpy(sm + SIG_LEN - SEED_BYTES, sk, SEED_BYTES);
-    memcpy(sm + SIG_LEN, m, mlen);
-    H(sm, sm + SIG_LEN - SEED_BYTES, mlen + SEED_BYTES);  // Compute R.
+    shake256_inc_init(s_inc);
+    shake256_inc_absorb(s_inc, sk, SEED_BYTES);
+    shake256_inc_absorb(s_inc, m, mlen);
+    shake256_inc_finalize(s_inc);
+    shake256_inc_squeeze(sig, HASH_BYTES, s_inc); // Compute R.
 
     memcpy(pk, skbuf, SEED_BYTES);
     PQCLEAN_MQDSS48_CLEAN_gf31_nrand(sk_gf31, N, skbuf + SEED_BYTES, SEED_BYTES);
@@ -162,11 +130,14 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign(
     PQCLEAN_MQDSS48_CLEAN_vgf31_unique(pk_gf31, pk_gf31);
     PQCLEAN_MQDSS48_CLEAN_gf31_npack(pk + SEED_BYTES, pk_gf31, M);
 
-    memcpy(sm + SIG_LEN - HASH_BYTES - PK_BYTES, pk, PK_BYTES);
-    memcpy(sm + SIG_LEN - HASH_BYTES, sm, HASH_BYTES);
-    H(D, sm + SIG_LEN - HASH_BYTES - PK_BYTES, mlen + PK_BYTES + HASH_BYTES);
+    shake256_inc_init(s_inc);
+    shake256_inc_absorb(s_inc, pk, PK_BYTES);
+    shake256_inc_absorb(s_inc, sig, HASH_BYTES);
+    shake256_inc_absorb(s_inc, m, mlen);
+    shake256_inc_finalize(s_inc);
+    shake256_inc_squeeze(D, HASH_BYTES, s_inc);
 
-    sm += HASH_BYTES;  // Compensate for prefixed R.
+    sig += HASH_BYTES;  // Compensate for prefixed R.
 
     memcpy(rnd_seed, skbuf + 2*SEED_BYTES, SEED_BYTES);
     memcpy(rnd_seed + SEED_BYTES, D, HASH_BYTES);
@@ -203,8 +174,8 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign(
 
     memcpy(h0, shakeblock, HASH_BYTES);
 
-    memcpy(sm, sigma0, HASH_BYTES);
-    sm += HASH_BYTES;  // Compensate for sigma_0.
+    memcpy(sig, sigma0, HASH_BYTES);
+    sig += HASH_BYTES;  // Compensate for sigma_0.
 
     for (i = 0; i < ROUNDS; i++) {
         do {
@@ -228,42 +199,41 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign(
     PQCLEAN_MQDSS48_CLEAN_gf31_npack(t1packed, t1, N * ROUNDS);
     PQCLEAN_MQDSS48_CLEAN_gf31_npack(e1packed, e1, M * ROUNDS);
 
-    memcpy(sm, t1packed, NPACKED_BYTES * ROUNDS);
-    sm += NPACKED_BYTES * ROUNDS;
-    memcpy(sm, e1packed, MPACKED_BYTES * ROUNDS);
-    sm += MPACKED_BYTES * ROUNDS;
+    memcpy(sig, t1packed, NPACKED_BYTES * ROUNDS);
+    sig += NPACKED_BYTES * ROUNDS;
+    memcpy(sig, e1packed, MPACKED_BYTES * ROUNDS);
+    sig += MPACKED_BYTES * ROUNDS;
 
     shake256(h1, ((ROUNDS + 7) & ~7) >> 3, D_sigma0_h0_sigma1, 3*HASH_BYTES + ROUNDS*(NPACKED_BYTES + MPACKED_BYTES));
 
     for (i = 0; i < ROUNDS; i++) {
         b = (h1[(i >> 3)] >> (i & 7)) & 1;
         if (b == 0) {
-            PQCLEAN_MQDSS48_CLEAN_gf31_npack(sm, r0+i*N, N);
+            PQCLEAN_MQDSS48_CLEAN_gf31_npack(sig, r0+i*N, N);
         } else if (b == 1) {
-            PQCLEAN_MQDSS48_CLEAN_gf31_npack(sm, r1+i*N, N);
+            PQCLEAN_MQDSS48_CLEAN_gf31_npack(sig, r1+i*N, N);
         }
-        memcpy(sm + NPACKED_BYTES, c + HASH_BYTES * (2*i + (1 - b)), HASH_BYTES);
-        memcpy(sm + NPACKED_BYTES + HASH_BYTES, rho + (i + b * ROUNDS) * HASH_BYTES, HASH_BYTES);
-        sm += NPACKED_BYTES + 2*HASH_BYTES;
+        memcpy(sig + NPACKED_BYTES, c + HASH_BYTES * (2*i + (1 - b)), HASH_BYTES);
+        memcpy(sig + NPACKED_BYTES + HASH_BYTES, rho + (i + b * ROUNDS) * HASH_BYTES, HASH_BYTES);
+        sig += NPACKED_BYTES + 2*HASH_BYTES;
     }
-    *smlen = SIG_LEN + mlen;
+
+    *siglen = SIG_LEN;
     return 0;
 }
 
 /**
- * Verifies a given signature-message pair under a given public key.
+ * Verifies a detached signature and message under a given public key.
  */
-int PQCLEAN_MQDSS48_CLEAN_crypto_sign_open(
-    uint8_t *m, size_t *mlen,
-    const uint8_t *sm, size_t smlen, const uint8_t *pk)
-{
+int PQCLEAN_MQDSS48_CLEAN_crypto_sign_verify(
+    const uint8_t *sig, size_t siglen,
+    const uint8_t *m, size_t mlen, const uint8_t *pk) {
+
     gf31 r[N];
     gf31 t[N];
     gf31 e[M];
     signed char F[F_LEN];
     gf31 pk_gf31[M];
-    unsigned char sig[SIG_LEN];
-    unsigned char *sigptr = sig;
     // Concatenated for convenient hashing.
     unsigned char D_sigma0_h0_sigma1[HASH_BYTES * 3 + ROUNDS * (NPACKED_BYTES + MPACKED_BYTES)];
     unsigned char *D = D_sigma0_h0_sigma1;
@@ -285,47 +255,38 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign_open(
     gf31 alpha;
     int alpha_count = 0;
     unsigned char b;
+    uint64_t s_inc[26];
 
-    /* The API caller does not necessarily know what size a signature should be
-       but MQDSS signatures are always exactly SIG_LEN. */
-    if (smlen < SIG_LEN) {
-        memset(m, 0, smlen);
-        *mlen = 0;
-        return 1;
+    if (siglen != SIG_LEN) {
+        return -1;
     }
 
-    *mlen = smlen - SIG_LEN;
+    shake256_inc_init(s_inc);
+    shake256_inc_absorb(s_inc, pk, PK_BYTES);
+    shake256_inc_absorb(s_inc, sig, HASH_BYTES);
+    shake256_inc_absorb(s_inc, m, mlen);
+    shake256_inc_finalize(s_inc);
+    shake256_inc_squeeze(D, HASH_BYTES, s_inc);
 
-    /* Create a copy of the signature so that m = sm is not an issue */
-    memcpy(sig, sm, SIG_LEN);
-
-    /* Put the message all the way at the end of the m buffer, so that we can
-     * prepend the required other inputs for the hash function. */
-    memcpy(m + SIG_LEN, sm + SIG_LEN, *mlen);
-
-    memcpy(m + SIG_LEN - PK_BYTES - HASH_BYTES, pk, PK_BYTES);  // Copy pk to m.
-    memcpy(m + SIG_LEN - HASH_BYTES, sigptr, HASH_BYTES);  // Copy R to m.
-    H(D, m + SIG_LEN - PK_BYTES - HASH_BYTES, *mlen + PK_BYTES + HASH_BYTES);
-
-    sigptr += HASH_BYTES;
+    sig += HASH_BYTES;
 
     PQCLEAN_MQDSS48_CLEAN_gf31_nrand_schar(F, F_LEN, pk, SEED_BYTES);
     pk += SEED_BYTES;
     PQCLEAN_MQDSS48_CLEAN_gf31_nunpack(pk_gf31, pk, M);
 
-    memcpy(sigma0, sigptr, HASH_BYTES);
+    memcpy(sigma0, sig, HASH_BYTES);
 
     shake256_absorb(shakestate, D_sigma0_h0_sigma1, 2 * HASH_BYTES);
     shake256_squeezeblocks(shakeblock, 1, shakestate);
 
     memcpy(h0, shakeblock, HASH_BYTES);
 
-    sigptr += HASH_BYTES;
+    sig += HASH_BYTES;
 
-    memcpy(t1packed, sigptr, ROUNDS * NPACKED_BYTES);
-    sigptr += ROUNDS*NPACKED_BYTES;
-    memcpy(e1packed, sigptr, ROUNDS * MPACKED_BYTES);
-    sigptr += ROUNDS*MPACKED_BYTES;
+    memcpy(t1packed, sig, ROUNDS * NPACKED_BYTES);
+    sig += ROUNDS*NPACKED_BYTES;
+    memcpy(e1packed, sig, ROUNDS * MPACKED_BYTES);
+    sig += ROUNDS*MPACKED_BYTES;
 
     shake256(h1, ((ROUNDS + 7) & ~7) >> 3, D_sigma0_h0_sigma1, 3*HASH_BYTES + ROUNDS*(NPACKED_BYTES + MPACKED_BYTES));
 
@@ -340,7 +301,7 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign_open(
         } while (alpha == 31);
         b = (h1[(i >> 3)] >> (i & 7)) & 1;
 
-        PQCLEAN_MQDSS48_CLEAN_gf31_nunpack(r, sigptr, N);
+        PQCLEAN_MQDSS48_CLEAN_gf31_nunpack(r, sig, N);
         PQCLEAN_MQDSS48_CLEAN_gf31_nunpack(t, t1packed + NPACKED_BYTES*i, N);
         PQCLEAN_MQDSS48_CLEAN_gf31_nunpack(e, e1packed + MPACKED_BYTES*i, M);
 
@@ -356,7 +317,7 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign_open(
             PQCLEAN_MQDSS48_CLEAN_vgf31_shorten_unique(y, y);
             PQCLEAN_MQDSS48_CLEAN_gf31_npack(packbuf0, x, N);
             PQCLEAN_MQDSS48_CLEAN_gf31_npack(packbuf1, y, M);
-            com_0(c + HASH_BYTES*(2*i + 0), sigptr + HASH_BYTES + NPACKED_BYTES, sigptr, packbuf0, packbuf1);
+            com_0(c + HASH_BYTES*(2*i + 0), sig + HASH_BYTES + NPACKED_BYTES, sig, packbuf0, packbuf1);
         } else {
             PQCLEAN_MQDSS48_CLEAN_MQ(y, r, F);
             PQCLEAN_MQDSS48_CLEAN_G(z, t, r, F);
@@ -365,21 +326,62 @@ int PQCLEAN_MQDSS48_CLEAN_crypto_sign_open(
             }
             PQCLEAN_MQDSS48_CLEAN_vgf31_shorten_unique(y, y);
             PQCLEAN_MQDSS48_CLEAN_gf31_npack(packbuf0, y, M);
-            com_1(c + HASH_BYTES*(2*i + 1), sigptr + HASH_BYTES + NPACKED_BYTES, sigptr, packbuf0);
+            com_1(c + HASH_BYTES*(2*i + 1), sig + HASH_BYTES + NPACKED_BYTES, sig, packbuf0);
         }
-        memcpy(c + HASH_BYTES*(2*i + (1 - b)), sigptr + NPACKED_BYTES, HASH_BYTES);
-        sigptr += NPACKED_BYTES + 2*HASH_BYTES;
+        memcpy(c + HASH_BYTES*(2*i + (1 - b)), sig + NPACKED_BYTES, HASH_BYTES);
+        sig += NPACKED_BYTES + 2*HASH_BYTES;
     }
 
     H(c, c, HASH_BYTES * ROUNDS * 2);
-    if (memcmp(c, sigma0, HASH_BYTES)) {
+    if (memcmp(c, sigma0, HASH_BYTES) != 0) {
+        return -1;
+    }
+
+    return 0;
+}
+
+/**
+ * Returns an array containing the signature followed by the message.
+ */
+int PQCLEAN_MQDSS48_CLEAN_crypto_sign(
+    uint8_t *sm, size_t *smlen,
+    const uint8_t *m, size_t mlen, const uint8_t *sk) {
+    size_t siglen;
+
+    PQCLEAN_MQDSS48_CLEAN_crypto_sign_signature(
+        sm, &siglen, m, mlen, sk);
+
+    memmove(sm + SIG_LEN, m, mlen);
+    *smlen = siglen + mlen;
+
+    return 0;
+}
+
+/**
+ * Verifies a given signature-message pair under a given public key.
+ */
+int PQCLEAN_MQDSS48_CLEAN_crypto_sign_open(
+    uint8_t *m, size_t *mlen,
+    const uint8_t *sm, size_t smlen, const uint8_t *pk) {
+    /* The API caller does not necessarily know what size a signature should be
+       but MQDSS signatures are always exactly SIG_LEN. */
+    if (smlen < SIG_LEN) {
         memset(m, 0, smlen);
         *mlen = 0;
-        return 1;
+        return -1;
+    }
+
+    *mlen = smlen - SIG_LEN;
+
+    if (PQCLEAN_MQDSS48_CLEAN_crypto_sign_verify(
+                sm, SIG_LEN, sm + SIG_LEN, *mlen, pk)) {
+        memset(m, 0, smlen);
+        *mlen = 0;
+        return -1;
     }
 
     /* If verification was successful, move the message to the right place. */
-    memmove(m, m + SIG_LEN, *mlen);
+    memmove(m, sm + SIG_LEN, *mlen);
 
     return 0;
 }
