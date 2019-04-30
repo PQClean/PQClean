@@ -22,7 +22,7 @@ gf31 PQCLEAN_MQDSS48_CLEAN_mod31(gf31 x) {
 
     t = (gf31)((t >> 5) + (t & 31));
     t = (gf31)((t >> 5) + (t & 31));
-    return (gf31)((t != 31)*t);
+    return (gf31)((t != 31) * t);
 }
 
 /* Given a vector of N elements in the range [0, 31], this reduces the elements
@@ -95,12 +95,12 @@ void PQCLEAN_MQDSS48_CLEAN_gf31_nunpack(gf31 *out, const unsigned char *in, unsi
     unsigned int d = 0;
 
     for (i = n; i > 0; i--) {
-        out[i-1] = (gf31)((in[j] >> d) & 31);
+        out[i - 1] = (gf31)((in[j] >> d) & 31);
         d += 5;
         if (d > 8) {
             d -= 8;
             j--;
-            out[i-1] = (gf31)(out[i-1] ^ ((in[j] << (5 - d)) & 31));
+            out[i - 1] = (gf31)(out[i - 1] ^ ((in[j] << (5 - d)) & 31));
         }
     }
 }
