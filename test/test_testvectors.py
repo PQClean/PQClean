@@ -28,7 +28,7 @@ def test_testvectors():
         assert(implementation.scheme.metadata()['testvectors-sha256'].lower()
                == hashlib.sha256(out.encode('utf-8')).hexdigest().lower())
 
-    for scheme in pqclean.Scheme.all_schemes():
+    for scheme in pqclean.Scheme.all_schemes_of_type('sign'):
         for implementation in scheme.implementations:
             yield check_testvectors, implementation
 

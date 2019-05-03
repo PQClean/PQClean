@@ -47,7 +47,6 @@ EXPECTED_FIELDS = {
     'claimed-nist-level': {'type': int, 'min': 1, 'max': 5},
     'length-public-key': {'type': int, 'min': 1},
     'length-secret-key': {'type': int, 'min': 1},
-    'testvectors-sha256': {'type': str, 'length': 64},
     'principal-submitter': {'type': str},
     'auxiliary-submitters': {'type': list, 'elements': {'type': str}},
     'implementations': {
@@ -70,6 +69,7 @@ KEM_FIELDS = {
 
 SIGNATURE_FIELDS = {
     'length-signature': {'type': int, 'min': 1},
+    'testvectors-sha256': {'type': str, 'length': 64},
 }
 
 

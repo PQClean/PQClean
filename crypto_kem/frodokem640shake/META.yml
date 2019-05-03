@@ -5,7 +5,6 @@ length-public-key: 9616
 length-secret-key: 19888
 length-ciphertext: 9720
 length-shared-secret: 16
-testvectors-sha256: 8f922de02d41005fcc3c4164b2ab74c4c7b588ed69e34e22607d1ae4ab13d2c5
 nistkat-sha256: df2b77b8e108c61d16c78a99e79f3351ab15840a690f25c1f87a8e89295e9219
 principal-submitter: Michael Naehrig, Microsoft Research
 auxiliary-submitters:

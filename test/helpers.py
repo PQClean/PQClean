@@ -85,7 +85,8 @@ def skip_windows(message="This test is not supported on Windows"):
 def slow_test(f):
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        if 'CI' in os.environ and 'RUN_SLOW' not in os.environ:
+        if ('CI' in os.environ and 'RUN_SLOW' not in os.environ and
+                os.environ.get('TRAVIS_EVENT_TYPE') != 'cron'):
             raise unittest.SkipTest("Slow test skipped on CI run")
         return f(*args, **kwargs)
     return wrapper
@@ -173,12 +174,16 @@ def permit_test(testname, thing, *args, **kwargs):
             for diff_line in diff_result.stdout.decode('utf-8').splitlines():
                 # don't skip test if there are any changes outside schemes
                 if (not diff_line.startswith('crypto_kem') and
-                        not diff_line.startswith('crypto_sign')):
+                        not diff_line.startswith('crypto_sign') and
+                        not diff_line.startswith(os.path.join('test', 'duplicate_consistency'))):
                     logging.info("Running all tests as there are changes "
                                  "outside of schemes")
                     return True
                 # do test if the scheme in question has been changed
                 if diff_line.startswith(thing.path(base='')):
+                    return True
+                # do test if the scheme's duplicate_consistency files have been changed
+                if diff_line.startswith(os.path.join('test', 'duplicate_consistency', scheme.name.lower())):
                     return True
             # there were no changes outside schemes, and the scheme in question had no diffs
             return False

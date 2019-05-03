@@ -5,7 +5,6 @@ length-public-key: 1184
 length-ciphertext: 1088
 length-secret-key: 2400
 length-shared-secret: 32
-testvectors-sha256: ca70a05d7a02e6a468315533b7c29d92289ffc6159318204a96d86e701e1d08a
 nistkat-sha256: d6dbb9399d1ba4ee2d986de3e54a461256b91d6c2f9b90ad2410cf41e09b64d1
 principal-submitter: Peter Schwabe
 auxiliary-submitters:

@@ -44,7 +44,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] No errors/warnings reported by address sanitizer
 * [x] Only dependencies: `fips202.c`, `sha2.c`, `aes.c`, `randombytes.c`
 * [x] API functions return `0` on success
-* [x] No dynamic memory allocations
+* [x] No dynamic memory allocations (including variable-length arrays)
 * [ ] No branching on secret data (dynamically checked using valgrind)
 * [ ] No access to secret memory locations (dynamically checked using valgrind)
 * [x] Separate subdirectories (without symlinks) for each parameter set of each scheme
@@ -139,6 +139,8 @@ The files in `common` contain licensing information at the top of the file (and 
 All other code in this repository is released under the conditions of [CC0](http://creativecommons.org/publicdomain/zero/1.0/).
 
 ## Running tests locally
+
+See https://github.com/PQClean/PQClean/wiki/Test-framework for details about the PQClean test framework.
 
 While we run extensive automatic testing on [Circle CI][circleci-pqc] (Linux builds), [Travis CI][travis-pqc] (OS X builds) and [Appveyor][appveyor-pqc] (Windows builds), most tests can also be run locally.
 To do this, make sure the following is installed:
