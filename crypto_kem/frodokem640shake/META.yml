@@ -21,4 +21,4 @@ auxiliary-submitters:
 - Brian LaMacchia, Microsoft Research
 implementations:
 - name: clean
-  version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/437e228fca580a82435cab09f30ae14b03183119
+  version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/d5bbd0417ba111b08a959c0042a1dcc65fb14a89
