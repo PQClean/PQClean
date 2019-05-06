@@ -25,10 +25,6 @@ def test_nistkat():
 
 @helpers.filtered_test
 def check_nistkat(implementation):
-    if implementation.scheme.name == "kyber768":
-        raise unittest.SkipTest(
-            "Temporarily skip NIST KAT check for kyber768 since it's "
-            "an outdated implementation")
     helpers.make('nistkat',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,

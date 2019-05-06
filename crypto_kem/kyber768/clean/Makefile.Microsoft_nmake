@@ -2,7 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libkyber768_clean.lib
-OBJECTS=cbd.obj indcpa.obj kem.obj ntt.obj poly.obj polyvec.obj precomp.obj reduce.obj verify.obj
+OBJECTS=cbd.obj indcpa.obj kem.obj ntt.obj poly.obj polyvec.obj reduce.obj verify.obj symmetric-fips202.obj
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
 
