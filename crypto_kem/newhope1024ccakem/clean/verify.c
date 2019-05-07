@@ -22,8 +22,8 @@ int PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_verify(const unsigned char *a, const unsigne
         r |= a[i] ^ b[i];
     }
 
-    r = (-r) >> 63;
-    return r;
+    r = (-(int64_t)r) >> 63;
+    return (int)r;
 }
 
 /*************************************************

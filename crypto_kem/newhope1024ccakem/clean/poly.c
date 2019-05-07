@@ -79,12 +79,12 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_tobytes(unsigned char *r, const poly *
         t3 = coeff_freeze(p->coeffs[4 * i + 3]);
 
         r[7 * i + 0] =  t0 & 0xff;
-        r[7 * i + 1] = (t0 >> 8) | (t1 << 6);
-        r[7 * i + 2] = (t1 >> 2);
-        r[7 * i + 3] = (t1 >> 10) | (t2 << 4);
-        r[7 * i + 4] = (t2 >> 4);
-        r[7 * i + 5] = (t2 >> 12) | (t3 << 2);
-        r[7 * i + 6] = (t3 >> 6);
+        r[7 * i + 1] = (unsigned char) ((t0 >> 8) | (t1 << 6));
+        r[7 * i + 2] = (unsigned char) ((t1 >> 2));
+        r[7 * i + 3] = (unsigned char) ((t1 >> 10) | (t2 << 4));
+        r[7 * i + 4] = (unsigned char) ((t2 >> 4));
+        r[7 * i + 5] = (unsigned char) ((t2 >> 12) | (t3 << 2));
+        r[7 * i + 6] = (unsigned char) ((t3 >> 6));
     }
 }
 
@@ -107,9 +107,9 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_compress(unsigned char *r, const poly 
             t[j] = (((t[j] << 3) + NEWHOPE_Q / 2) / NEWHOPE_Q) & 0x7;
         }
 
-        r[k]   =  t[0]       | (t[1] << 3) | (t[2] << 6);
-        r[k + 1] = (t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7);
-        r[k + 2] = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
+        r[k]   =  (unsigned char) (t[0]       | (t[1] << 3) | (t[2] << 6));
+        r[k + 1] = (unsigned char) ((t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7));
+        r[k + 2] = (unsigned char) ((t[5] >> 1) | (t[6] << 2) | (t[7] << 5));
         k += 3;
     }
 }
@@ -213,7 +213,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_uniform(poly *a, const unsigned char *
 
     for (i = 0; i < NEWHOPE_N / 64; i++) { /* generate a in blocks of 64 coefficients */
         ctr = 0;
-        extseed[NEWHOPE_SYMBYTES] = i; /* domain-separate the 16 independent calls */
+        extseed[NEWHOPE_SYMBYTES] = (unsigned char) i; /* domain-separate the 16 independent calls */
         shake128_absorb(state, extseed, NEWHOPE_SYMBYTES + 1);
         while (ctr < 64) { /* Very unlikely to run more than once */
             shake128_squeezeblocks(buf, 1, state);
@@ -267,7 +267,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_sample(poly *r, const unsigned char *s
     extseed[NEWHOPE_SYMBYTES] = nonce;
 
     for (i = 0; i < NEWHOPE_N / 64; i++) { /* Generate noise in blocks of 64 coefficients */
-        extseed[NEWHOPE_SYMBYTES + 1] = i;
+        extseed[NEWHOPE_SYMBYTES + 1] = (unsigned char) i;
         shake256(buf, 128, extseed, NEWHOPE_SYMBYTES + 2);
         for (j = 0; j < 64; j++) {
             a = buf[2 * j];

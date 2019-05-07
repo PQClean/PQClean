@@ -109,7 +109,7 @@ int PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_crypto_kem_dec(unsigned char *ss, const unsi
     fail = PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_verify(ct, ct_cmp, NEWHOPE_CCAKEM_CIPHERTEXTBYTES);
 
     shake256(k_coins_d + NEWHOPE_SYMBYTES, NEWHOPE_SYMBYTES, ct, NEWHOPE_CCAKEM_CIPHERTEXTBYTES); /* overwrite coins in k_coins_d with h(c)  */
-    PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_cmov(k_coins_d, sk + NEWHOPE_CCAKEM_SECRETKEYBYTES - NEWHOPE_SYMBYTES, NEWHOPE_SYMBYTES, fail); /* Overwrite pre-k with z on re-encryption failure */
+    PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_cmov(k_coins_d, sk + NEWHOPE_CCAKEM_SECRETKEYBYTES - NEWHOPE_SYMBYTES, NEWHOPE_SYMBYTES, (unsigned char) fail); /* Overwrite pre-k with z on re-encryption failure */
     shake256(ss, NEWHOPE_SYMBYTES, k_coins_d, 2 * NEWHOPE_SYMBYTES);                            /* hash concatenation of pre-k and h(c) to k */
 
     return 0;
