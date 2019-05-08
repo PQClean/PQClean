@@ -51,7 +51,7 @@ static uint16_t bitrev_table[NEWHOPE_N] = {
 *
 * Arguments:   - uint16_t* poly: pointer to in/output polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_bitrev_vector(uint16_t *poly) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_bitrev_vector(uint16_t *poly) {
     unsigned int i, r;
     uint16_t tmp;
 
@@ -74,11 +74,11 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_bitrev_vector(uint16_t *poly) {
 *              - const uint16_t* factors: pointer to input polynomial, coefficients
 *                                         are assumed to be in Montgomery representation
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_mul_coefficients(uint16_t *poly, const uint16_t *factors) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_mul_coefficients(uint16_t *poly, const uint16_t *factors) {
     unsigned int i;
 
     for (i = 0; i < NEWHOPE_N; i++) {
-        poly[i] = PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_montgomery_reduce((poly[i] * factors[i]));
+        poly[i] = PQCLEAN_NEWHOPE1024CCA_CLEAN_montgomery_reduce((poly[i] * factors[i]));
     }
 }
 
@@ -94,7 +94,7 @@ void /*************************************************
 *              - const uint16_t* omega: pointer to input powers of root of unity omega;
 *                                       assumed to be in Montgomery domain
 **************************************************/
-PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_ntt(uint16_t *a, const uint16_t *omega) {
+PQCLEAN_NEWHOPE1024CCA_CLEAN_ntt(uint16_t *a, const uint16_t *omega) {
     int i, start, j, jTwiddle, distance;
     uint16_t temp, W;
 
@@ -108,7 +108,7 @@ PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_ntt(uint16_t *a, const uint16_t *omega) {
                 W = omega[jTwiddle++];
                 temp = a[j];
                 a[j] = (temp + a[j + distance]); // Omit reduction (be lazy)
-                a[j + distance] = PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_montgomery_reduce((W * ((uint32_t)temp + 3 * NEWHOPE_Q - a[j + distance])));
+                a[j + distance] = PQCLEAN_NEWHOPE1024CCA_CLEAN_montgomery_reduce((W * ((uint32_t)temp + 3 * NEWHOPE_Q - a[j + distance])));
             }
         }
 
@@ -120,7 +120,7 @@ PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_ntt(uint16_t *a, const uint16_t *omega) {
                 W = omega[jTwiddle++];
                 temp = a[j];
                 a[j] = (temp + a[j + distance]) % NEWHOPE_Q;
-                a[j + distance] = PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_montgomery_reduce((W * ((uint32_t)temp + 3 * NEWHOPE_Q - a[j + distance])));
+                a[j + distance] = PQCLEAN_NEWHOPE1024CCA_CLEAN_montgomery_reduce((W * ((uint32_t)temp + 3 * NEWHOPE_Q - a[j + distance])));
             }
         }
     }

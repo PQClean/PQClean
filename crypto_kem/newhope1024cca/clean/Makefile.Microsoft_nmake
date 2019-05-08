@@ -1,7 +1,7 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIBRARY=libnewhope1024ccakem_clean.lib
+LIBRARY=libnewhope1024cca_clean.lib
 OBJECTS=cpapke.obj kem.obj ntt.obj poly.obj precomp.obj reduce.obj verify.obj
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX

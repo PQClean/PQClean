@@ -51,7 +51,7 @@ static uint16_t flipabs(uint16_t x) {
 * Arguments:   - poly *r:                pointer to output polynomial
 *              - const unsigned char *a: pointer to input byte array
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_frombytes(poly *r, const unsigned char *a) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_frombytes(poly *r, const unsigned char *a) {
     int i;
     for (i = 0; i < NEWHOPE_N / 4; i++) {
         r->coeffs[4 * i + 0] =                               a[7 * i + 0]        | (((uint16_t)a[7 * i + 1] & 0x3f) << 8);
@@ -69,7 +69,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_frombytes(poly *r, const unsigned char
 * Arguments:   - unsigned char *r: pointer to output byte array
 *              - const poly *p:    pointer to input polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_tobytes(unsigned char *r, const poly *p) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_tobytes(unsigned char *r, const poly *p) {
     int i;
     uint16_t t0, t1, t2, t3;
     for (i = 0; i < NEWHOPE_N / 4; i++) {
@@ -96,7 +96,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_tobytes(unsigned char *r, const poly *
 * Arguments:   - unsigned char *r: pointer to output byte array
 *              - const poly *p:    pointer to input polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_compress(unsigned char *r, const poly *p) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_compress(unsigned char *r, const poly *p) {
     unsigned int i, j, k = 0;
 
     uint32_t t[8];
@@ -123,7 +123,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_compress(unsigned char *r, const poly 
 * Arguments:   - poly *r:                pointer to output polynomial
 *              - const unsigned char *a: pointer to input byte array
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_decompress(poly *r, const unsigned char *a) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_decompress(poly *r, const unsigned char *a) {
     unsigned int i, j;
     for (i = 0; i < NEWHOPE_N; i += 8) {
         r->coeffs[i + 0] =  a[0] & 7;
@@ -149,7 +149,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_decompress(poly *r, const unsigned cha
 * Arguments:   - poly *r:                  pointer to output polynomial
 *              - const unsigned char *msg: pointer to input message
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_frommsg(poly *r, const unsigned char *msg) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_frommsg(poly *r, const unsigned char *msg) {
     unsigned int i, j, mask;
     for (i = 0; i < 32; i++) { // XXX: MACRO for 32
         for (j = 0; j < 8; j++) {
@@ -170,7 +170,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_frommsg(poly *r, const unsigned char *
 * Arguments:   - unsigned char *msg: pointer to output message
 *              - const poly *x:      pointer to input polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_tomsg(unsigned char *msg, const poly *x) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_tomsg(unsigned char *msg, const poly *x) {
     unsigned int i;
     uint16_t t;
 
@@ -199,7 +199,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_tomsg(unsigned char *msg, const poly *
 * Arguments:   - poly *a:                   pointer to output polynomial
 *              - const unsigned char *seed: pointer to input seed
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_uniform(poly *a, const unsigned char *seed) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_uniform(poly *a, const unsigned char *seed) {
     unsigned int ctr = 0;
     uint16_t val;
     uint64_t state[25];
@@ -254,7 +254,7 @@ static unsigned char hw(unsigned char a) {
 *              - const unsigned char *seed: pointer to input seed
 *              - unsigned char nonce:       one-byte input nonce
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_sample(poly *r, const unsigned char *seed, unsigned char nonce) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_sample(poly *r, const unsigned char *seed, unsigned char nonce) {
     unsigned char buf[128], a, b;
 //  uint32_t t, d, a, b, c;
     int i, j;
@@ -298,12 +298,12 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_sample(poly *r, const unsigned char *s
 *              - const poly *a: pointer to first input polynomial
 *              - const poly *b: pointer to second input polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_mul_pointwise(poly *r, const poly *a, const poly *b) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_mul_pointwise(poly *r, const poly *a, const poly *b) {
     int i;
     uint16_t t;
     for (i = 0; i < NEWHOPE_N; i++) {
-        t            = PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_montgomery_reduce(3186 * b->coeffs[i]); /* t is now in Montgomery domain */
-        r->coeffs[i] = PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_montgomery_reduce(a->coeffs[i] * t);  /* r->coeffs[i] is back in normal domain */
+        t            = PQCLEAN_NEWHOPE1024CCA_CLEAN_montgomery_reduce(3186 * b->coeffs[i]); /* t is now in Montgomery domain */
+        r->coeffs[i] = PQCLEAN_NEWHOPE1024CCA_CLEAN_montgomery_reduce(a->coeffs[i] * t);  /* r->coeffs[i] is back in normal domain */
     }
 }
 
@@ -316,7 +316,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_mul_pointwise(poly *r, const poly *a, 
 *              - const poly *a: pointer to first input polynomial
 *              - const poly *b: pointer to second input polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_add(poly *r, const poly *a, const poly *b) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_add(poly *r, const poly *a, const poly *b) {
     int i;
     for (i = 0; i < NEWHOPE_N; i++) {
         r->coeffs[i] = (a->coeffs[i] + b->coeffs[i]) % NEWHOPE_Q;
@@ -332,7 +332,7 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_add(poly *r, const poly *a, const poly
 *              - const poly *a: pointer to first input polynomial
 *              - const poly *b: pointer to second input polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_sub(poly *r, const poly *a, const poly *b) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_sub(poly *r, const poly *a, const poly *b) {
     int i;
     for (i = 0; i < NEWHOPE_N; i++) {
         r->coeffs[i] = (a->coeffs[i] + 3 * NEWHOPE_Q - b->coeffs[i]) % NEWHOPE_Q;
@@ -348,9 +348,9 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_sub(poly *r, const poly *a, const poly
 *
 * Arguments:   - poly *r: pointer to in/output polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_ntt(poly *r) {
-    PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_mul_coefficients(r->coeffs, PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_gammas_bitrev_montgomery);
-    PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_ntt((uint16_t *)r->coeffs, PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_gammas_bitrev_montgomery);
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_ntt(poly *r) {
+    PQCLEAN_NEWHOPE1024CCA_CLEAN_mul_coefficients(r->coeffs, PQCLEAN_NEWHOPE1024CCA_CLEAN_gammas_bitrev_montgomery);
+    PQCLEAN_NEWHOPE1024CCA_CLEAN_ntt((uint16_t *)r->coeffs, PQCLEAN_NEWHOPE1024CCA_CLEAN_gammas_bitrev_montgomery);
 }
 
 /*************************************************
@@ -362,9 +362,9 @@ void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_ntt(poly *r) {
 *
 * Arguments:   - poly *r: pointer to in/output polynomial
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_poly_invntt(poly *r) {
-    PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_bitrev_vector(r->coeffs);
-    PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_ntt((uint16_t *)r->coeffs, PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_omegas_inv_bitrev_montgomery);
-    PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_mul_coefficients(r->coeffs, PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_gammas_inv_montgomery);
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_poly_invntt(poly *r) {
+    PQCLEAN_NEWHOPE1024CCA_CLEAN_bitrev_vector(r->coeffs);
+    PQCLEAN_NEWHOPE1024CCA_CLEAN_ntt((uint16_t *)r->coeffs, PQCLEAN_NEWHOPE1024CCA_CLEAN_omegas_inv_bitrev_montgomery);
+    PQCLEAN_NEWHOPE1024CCA_CLEAN_mul_coefficients(r->coeffs, PQCLEAN_NEWHOPE1024CCA_CLEAN_gammas_inv_montgomery);
 }
 

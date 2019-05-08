@@ -78,7 +78,7 @@
 * Description: Contains inverses of powers of nth root of unity
 *              in Montgomery domain with R=2^18 in bit-reversed order
 ************************************************************/
-const uint16_t PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_omegas_inv_bitrev_montgomery[NEWHOPE_N / 2] = {
+const uint16_t PQCLEAN_NEWHOPE1024CCA_CLEAN_omegas_inv_bitrev_montgomery[NEWHOPE_N / 2] = {
     4075, 5315, 4324, 4916, 10120, 11767, 7210, 9027, 10316, 6715, 1278, 9945, 3514, 11248, 11271, 5925,
     147, 8500, 7840, 6833, 5537, 4749, 4467, 7500, 11099, 9606, 6171, 8471, 8429, 5445, 11239, 7753,
     9090, 12233, 5529, 5206, 10587, 1987, 11635, 3565, 5415, 8646, 6153, 6427, 7341, 6152, 10561, 400,
@@ -119,7 +119,7 @@ const uint16_t PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_omegas_inv_bitrev_montgomery[NEWH
 * Description: Contains powers of nth root of -1 in Montgomery
 *              domain with R=2^18 in bit-reversed order
 ************************************************************/
-const uint16_t PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_gammas_bitrev_montgomery[NEWHOPE_N] = {
+const uint16_t PQCLEAN_NEWHOPE1024CCA_CLEAN_gammas_bitrev_montgomery[NEWHOPE_N] = {
     4075, 6974, 7373, 7965, 3262, 5079, 522, 2169, 6364, 1018, 1041, 8775, 2344, 11011, 5574, 1973,
     4536, 1050, 6844, 3860, 3818, 6118, 2683, 1190, 4789, 7822, 7540, 6752, 5456, 4449, 3789, 12142,
     11973, 382, 3988, 468, 6843, 5339, 6196, 3710, 11316, 1254, 5435, 10930, 3998, 10256, 10367, 3879,
@@ -192,7 +192,7 @@ const uint16_t PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_gammas_bitrev_montgomery[NEWHOPE_
 * Description: Contains inverses of powers of nth  root of -1
 *              divided by n in Montgomery domain with R=2^18
 ************************************************************/
-const uint16_t PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_gammas_inv_montgomery[NEWHOPE_N] = {
+const uint16_t PQCLEAN_NEWHOPE1024CCA_CLEAN_gammas_inv_montgomery[NEWHOPE_N] = {
     256, 10570, 1510, 7238, 1034, 7170, 6291, 7921, 11665, 3422, 4000, 2327, 2088, 5565, 795, 10647,
     1521, 5484, 2539, 7385, 1055, 7173, 8047, 11683, 1669, 1994, 3796, 5809, 4341, 9398, 11876, 12230,
     10525, 12037, 12253, 3506, 4012, 9351, 4847, 2448, 7372, 9831, 3160, 2207, 5582, 2553, 7387, 6322,

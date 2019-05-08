@@ -1,4 +1,4 @@
-name: NewHope1024CCAKEM
+name: NewHope1024CCA
 type: kem
 claimed-nist-level: 5
 length-public-key: 1824

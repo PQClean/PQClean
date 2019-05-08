@@ -13,7 +13,7 @@
 *
 * Returns 0 if the byte arrays are equal, 1 otherwise
 **************************************************/
-int PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
+int PQCLEAN_NEWHOPE1024CCA_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
     uint64_t r;
     size_t i;
     r = 0;
@@ -39,7 +39,7 @@ int PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_verify(const unsigned char *a, const unsigne
 *              size_t len:             Amount of bytes to be copied
 *              unsigned char b:        Condition bit; has to be in {0,1}
 **************************************************/
-void PQCLEAN_NEWHOPE1024CCAKEM_CLEAN_cmov(unsigned char *r, const unsigned char *x, size_t len, unsigned char b) {
+void PQCLEAN_NEWHOPE1024CCA_CLEAN_cmov(unsigned char *r, const unsigned char *x, size_t len, unsigned char b) {
     size_t i;
 
     b = -b;
