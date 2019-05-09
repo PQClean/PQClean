@@ -176,20 +176,17 @@ static int test_invalid_ciphertext(void) {
     uint8_t pk[CRYPTO_PUBLICKEYBYTES];
     uint8_t sendb[CRYPTO_CIPHERTEXTBYTES];
     int i;
-    size_t pos;
     int returncode;
 
     for (i = 0; i < NTESTS; i++) {
-        randombytes((uint8_t *)&pos, sizeof(size_t));
-
         // Alice generates a public key
         RETURNS_ZERO(crypto_kem_keypair(pk, sk_a));
 
         // Bob derives a secret key and creates a response
         RETURNS_ZERO(crypto_kem_enc(sendb, key_b, pk));
 
-        // Change some byte in the ciphertext (i.e., encapsulated key)
-        sendb[pos % CRYPTO_CIPHERTEXTBYTES] ^= 23;
+        // Change ciphertext to random value
+        randombytes(sendb, sizeof(sendb));
 
         // Alice uses Bobs response to get her secret key
         if ((returncode = crypto_kem_dec(key_a, sendb, sk_a)) > 0) {
