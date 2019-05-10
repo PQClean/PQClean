@@ -1,0 +1,11 @@
+consistency_checks:
+- source:
+    scheme: mqdss-48
+    implementation: clean
+  files:
+    - gf31.c
+    - gf31.h
+    - LICENSE
+    - mq.c
+    - mq.h
+    - sign.c
