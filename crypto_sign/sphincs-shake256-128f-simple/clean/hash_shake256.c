@@ -2,10 +2,11 @@
 #include <string.h>
 
 #include "address.h"
-#include "fips202.h"
 #include "hash.h"
 #include "params.h"
 #include "utils.h"
+
+#include "fips202.h"
 
 /* For SHAKE256, there is no immediate reason to initialize at the start,
    so this function is an empty operation. */
