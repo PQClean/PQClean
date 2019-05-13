@@ -1,6 +1,7 @@
 name: NewHope1024CCA
 type: kem
 claimed-nist-level: 5
+claimed-security: IND-CCA2
 length-public-key: 1824
 length-secret-key: 3680
 length-ciphertext: 2208

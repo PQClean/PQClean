@@ -1,11 +1,12 @@
 name: NewHope1024CPA
 type: kem
 claimed-nist-level: 5
-length-public-key: 1824 
+claimed-security: IND-CPA
+length-public-key: 1824
 length-secret-key: 1792
 length-ciphertext: 2176
 length-shared-secret: 32
-nistkat-sha256: f48b42b21a51d7f9325abc5fbda74872d62feaa8cbf818bee87f29bf96630a2f 
+nistkat-sha256: f48b42b21a51d7f9325abc5fbda74872d62feaa8cbf818bee87f29bf96630a2f
 principal-submitter: Thomas Pöppelmann
 auxiliary-submitters:
 - Erdem Alkim

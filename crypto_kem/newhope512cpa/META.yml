@@ -1,11 +1,12 @@
 name: NewHope512CPA
 type: kem
 claimed-nist-level: 1
+claimed-security: IND-CPA
 length-public-key: 928
 length-secret-key: 896
 length-ciphertext: 1088
 length-shared-secret: 32
-nistkat-sha256: 42444446b96f45c9b7221c4fde8afd5dfc0b3c2ff05b9a88ff12ea3949fbb76c 
+nistkat-sha256: 42444446b96f45c9b7221c4fde8afd5dfc0b3c2ff05b9a88ff12ea3949fbb76c
 principal-submitter: Thomas Pöppelmann
 auxiliary-submitters:
 - Erdem Alkim
