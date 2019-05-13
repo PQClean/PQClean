@@ -1,0 +1,16 @@
+name: MQDSS-48
+type: signature
+claimed-nist-level: 1
+length-public-key: 46
+length-secret-key: 16
+length-signature: 20854
+testvectors-sha256: 3350a80ccf4316b32ef13060fca8880d6802b7e61150fd36f021d1c52d8edb98
+principal-submitter: Simona Samardjiska
+auxiliary-submitters:
+  - Ming-Shing Chen
+  - Andreas Hülsing
+  - Joost Rijneveld
+  - Peter Schwabe
+implementations:
+    - name: clean
+      version: https://github.com/joostrijneveld/MQDSS/commit/0c64d4d67a37051c1299a3049a5bb8984ca27ecc

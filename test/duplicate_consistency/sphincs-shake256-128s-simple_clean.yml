@@ -1,0 +1,31 @@
+consistency_checks:
+- source:
+    scheme: sphincs-shake256-256s-robust
+    implementation: clean
+  files:
+    - address.c
+    - address.h
+    - fors.c
+    - fors.h
+    - hash.h
+    - sign.c
+    - thash.h
+    - utils.c
+    - utils.h
+    - wots.c
+    - wots.h
+- source:
+    scheme: sphincs-shake256-128s-robust
+    implementation: clean
+  files:
+    - params.h
+- source:
+    scheme: sphincs-shake256-256s-robust
+    implementation: clean
+  files:
+    - hash_shake256.c
+- source:
+    scheme: sphincs-shake256-256s-simple
+    implementation: clean
+  files:
+    - thash_shake256_simple.c

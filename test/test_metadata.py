@@ -62,6 +62,7 @@ EXPECTED_FIELDS = {
 }
 
 KEM_FIELDS = {
+    'claimed-security' : {'type' : str, 'values' : ['IND-CPA', 'IND-CCA2'] },
     'length-ciphertext': {'type': int, 'min': 1},
     'length-shared-secret': {'type': int, 'min': 1},
     'nistkat-sha256': {'type': str, 'length': 64},
@@ -123,6 +124,10 @@ def check_element(field, element, props):
                 raise ValueError("Value of field '{}' should be length {}"
                                  " but was length {}"
                                  .format(field, props['length'], actual_len))
+        if 'values' in props and element not in props['values']:
+            raise ValueError("'{}' should be in {}"
+                             .format(element, props['values']))
+
 
     if type_ == list:  # recursively check the elements
         for el in element:

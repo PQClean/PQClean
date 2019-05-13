@@ -24,4 +24,4 @@ auxiliary-submitters:
   - Peter Schwabe
 implementations:
     - name: clean
-      version: https://github.com/sphincs/sphincsplus/commit/492ec4f1f6d3b3dc4b435783bbaaf4e41cdb6f32
+      version: https://github.com/sphincs/sphincsplus/commit/77755c94d0bc744478044d6efbb888dc13156441
