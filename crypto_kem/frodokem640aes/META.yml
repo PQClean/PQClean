@@ -1,6 +1,7 @@
 name: FrodoKEM-640-AES
 type: kem
 claimed-nist-level: 1
+claimed-security: IND-CCA2
 length-public-key: 9616
 length-secret-key: 19888
 length-ciphertext: 9720
