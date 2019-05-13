@@ -1,6 +1,7 @@
 name: FrodoKEM-976-AES
 type: kem
 claimed-nist-level: 3
+claimed-security: IND-CCA2
 length-public-key: 15632
 length-secret-key: 31296
 length-ciphertext: 15744

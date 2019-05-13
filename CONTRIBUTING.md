@@ -25,6 +25,7 @@ See the section [API](#API) below.
     name: Name
     type: <kem|signature>
     claimed-nist-level: <N>
+    claimed-security: IND-CPA/IND-CCA2  # KEM only
     length-public-key: <N>          # KEM and signature
     length-secret-key: <N>          # KEM and signature
     length-ciphertext: <N>          # KEM only

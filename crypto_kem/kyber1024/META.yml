@@ -1,6 +1,7 @@
 name: Kyber1024
 type: kem
 claimed-nist-level: 5
+claimed-security: IND-CCA2
 length-public-key: 1568
 length-ciphertext: 1568
 length-secret-key: 3168

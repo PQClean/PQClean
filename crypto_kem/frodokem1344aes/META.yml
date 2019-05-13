@@ -1,6 +1,7 @@
 name: FrodoKEM-1344-AES
 type: kem
 claimed-nist-level: 5
+claimed-security: IND-CCA2
 length-public-key: 21520
 length-secret-key: 43088
 length-ciphertext: 21632
