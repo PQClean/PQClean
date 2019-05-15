@@ -50,8 +50,6 @@ void PQCLEAN_SPHINCSSHA256192SSIMPLE_CLEAN_mgf1(
     }
 }
 
-uint8_t PQCLEAN_SPHINCSSHA256192SSIMPLE_CLEAN_state_seeded[40];
-
 /**
  * Absorb the constant pub_seed using one round of the compression function
  * This initializes state_seeded, which can then be reused in thash
