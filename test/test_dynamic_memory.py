@@ -28,7 +28,7 @@ def check_dynamic_memory(implementation, function):
     lines = out.strip().split("\n")
 
     for line in lines:
-        if 'U {}'.format(function) in line:
+        if line.endswith('U {}'.format(function)):
             raise AssertionError(
                 "Illegal use of dynamic memory function '{}'".format(function))
 
