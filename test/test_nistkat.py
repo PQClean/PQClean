@@ -17,8 +17,6 @@ import unittest
 
 def test_nistkat():
     for scheme in pqclean.Scheme.all_schemes():
-        if scheme.type != 'kem':
-            continue
         for implementation in scheme.implementations:
             yield check_nistkat, implementation
 
