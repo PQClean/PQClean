@@ -2,7 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libdilithium2_clean.lib
-OBJECTS=sign.o polyvec.o poly.o packing.o ntt.o reduce.o rounding.o symmetric.o
+OBJECTS=sign.obj polyvec.obj poly.obj packing.obj ntt.obj reduce.obj rounding.obj symmetric.obj
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
