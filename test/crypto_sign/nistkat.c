@@ -80,7 +80,7 @@ int main() {
         fprintf(stderr, "[kat_kem] %s ERROR: crypto_sign failed!\n", CRYPTO_ALGNAME);
         return -2;
     }
-    fprintf(fh, "smlen = %lu\n", smlen);
+    fprintf(fh, "smlen = %zu\n", smlen);
     fprintBstr(fh, "sm = ", sm, smlen);
 
     rc = crypto_sign_open(sm, &mlen1, sm, smlen, public_key);
@@ -90,7 +90,7 @@ int main() {
     }
 
     if ( mlen != mlen1 ) {
-        printf("crypto_sign_open returned bad 'mlen': got <%lu>, expected <%lu>\n", mlen1, mlen);
+        printf("crypto_sign_open returned bad 'mlen': got <%zu>, expected <%zu>\n", mlen1, mlen);
         return -4;
     }
     if (memcmp(m, sm, mlen)) {
