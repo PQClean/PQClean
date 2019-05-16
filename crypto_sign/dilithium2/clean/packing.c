@@ -287,7 +287,7 @@ int PQCLEAN_DILITHIUM2_CLEAN_unpack_sig(polyvecl *z,
         for (j = 0; j < 8; ++j) {
             if ((sig[i] >> j) & 0x01) {
                 c->coeffs[8 * i + j] = 1;
-                c->coeffs[8 * i + j] ^= -((uint32_t) signs & 1) & (1 ^ (Q - 1));
+                c->coeffs[8 * i + j] ^= -((int32_t) signs & 1) & (1 ^ (Q - 1));
                 signs >>= 1;
             }
         }

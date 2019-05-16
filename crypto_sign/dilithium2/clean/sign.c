@@ -82,7 +82,7 @@ void PQCLEAN_DILITHIUM2_CLEAN_challenge(poly *c,
 
         c->coeffs[i] = c->coeffs[b];
         c->coeffs[b] = 1;
-        c->coeffs[b] ^= -((uint32_t)signs & 1) & (1 ^ (Q - 1));
+        c->coeffs[b] ^= -((int32_t)signs & 1) & (1 ^ (Q - 1));
         signs >>= 1;
     }
 }
