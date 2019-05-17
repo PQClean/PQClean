@@ -256,7 +256,6 @@ static unsigned char hw(unsigned char a) {
 **************************************************/
 void PQCLEAN_NEWHOPE1024CPA_CLEAN_poly_sample(poly *r, const unsigned char *seed, unsigned char nonce) {
     unsigned char buf[128], a, b;
-//  uint32_t t, d, a, b, c;
     int i, j;
 
     unsigned char extseed[NEWHOPE_SYMBYTES + 2];
@@ -273,18 +272,6 @@ void PQCLEAN_NEWHOPE1024CPA_CLEAN_poly_sample(poly *r, const unsigned char *seed
             a = buf[2 * j];
             b = buf[2 * j + 1];
             r->coeffs[64 * i + j] = hw(a) + NEWHOPE_Q - hw(b);
-            /*
-            t = buf[j] | ((uint32_t)buf[j+1] << 8) | ((uint32_t)buf[j+2] << 16) | ((uint32_t)buf[j+3] << 24);
-            d = 0;
-            for(k=0;k<8;k++)
-              d += (t >> k) & 0x01010101;
-            a = d & 0xff;
-            b = ((d >>  8) & 0xff);
-            c = ((d >> 16) & 0xff);
-            d >>= 24;
-            r->coeffs[64*i+j/2]   = a + NEWHOPE_Q - b;
-            r->coeffs[64*i+j/2+1] = c + NEWHOPE_Q - d;
-            */
         }
     }
 }
