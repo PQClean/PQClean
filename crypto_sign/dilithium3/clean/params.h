@@ -12,15 +12,13 @@
 #define GAMMA2 (GAMMA1/2)
 #define ALPHA (2*GAMMA2)
 
-
-// DilithiumII parameters
-#define K 4
-#define L 3
-#define ETA 6
+// DilithiumIII parameters
+#define K 5
+#define L 4
+#define ETA 5
 #define SETABITS 4
-#define BETA 325
-#define OMEGA 80
-
+#define BETA 275
+#define OMEGA 96
 
 #define POLT1_SIZE_PACKED ((N*(QBITS - D))/8)
 #define POLT0_SIZE_PACKED ((N*D)/8)
