@@ -357,21 +357,13 @@ static unsigned int rej_eta(uint32_t *a,
                             unsigned int len,
                             const unsigned char *buf,
                             unsigned int buflen) {
-    #if ETA > 7
-#error "rej_eta() assumes ETA <= 7"
-    #endif
     unsigned int ctr, pos;
     uint32_t t0, t1;
 
     ctr = pos = 0;
     while (ctr < len && pos < buflen) {
-        #if ETA <= 3
-        t0 = buf[pos] & 0x07;
-        t1 = buf[pos++] >> 5;
-        #else
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
-        #endif
 
         if (t0 <= 2 * ETA) {
             a[ctr++] = Q + ETA - t0;
@@ -436,9 +428,6 @@ static unsigned int rej_gamma1m1(uint32_t *a,
                                  unsigned int len,
                                  const unsigned char *buf,
                                  unsigned int buflen) {
-    #if GAMMA1 > (1 << 19)
-#error "rej_gamma1m1() assumes GAMMA1 - 1 fits in 19 bits"
-    #endif
     unsigned int ctr, pos;
     uint32_t t0, t1;
 
@@ -516,35 +505,14 @@ void PQCLEAN_DILITHIUM2_CLEAN_poly_uniform_gamma1m1(poly *a,
 *              - const poly *a: pointer to input polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM2_CLEAN_polyeta_pack(unsigned char *r, const poly *a) {
-    #if 2*ETA >= 16
-#error "PQCLEAN_DILITHIUM2_CLEAN_polyeta_pack() assumes 2*ETA < 16"
-    #endif
     unsigned int i;
     unsigned char t[8];
 
-    #if 2*ETA <= 7
-    for (i = 0; i < N / 8; ++i) {
-        t[0] = Q + ETA - a->coeffs[8 * i + 0];
-        t[1] = Q + ETA - a->coeffs[8 * i + 1];
-        t[2] = Q + ETA - a->coeffs[8 * i + 2];
-        t[3] = Q + ETA - a->coeffs[8 * i + 3];
-        t[4] = Q + ETA - a->coeffs[8 * i + 4];
-        t[5] = Q + ETA - a->coeffs[8 * i + 5];
-        t[6] = Q + ETA - a->coeffs[8 * i + 6];
-        t[7] = Q + ETA - a->coeffs[8 * i + 7];
-
-        r[3 * i + 0]  = (t[0] >> 0) | (t[1] << 3) | (t[2] << 6);
-        r[3 * i + 1]  = (t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7);
-        r[3 * i + 2]  = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
-    }
-    #else
     for (i = 0; i < N / 2; ++i) {
         t[0] = (uint8_t) (Q + ETA - a->coeffs[2 * i + 0]);
         t[1] = (uint8_t) (Q + ETA - a->coeffs[2 * i + 1]);
         r[i] = (uint8_t) (t[0] | (t[1] << 4));
     }
-    #endif
-
 }
 
 /*************************************************
@@ -558,36 +526,12 @@ void PQCLEAN_DILITHIUM2_CLEAN_polyeta_pack(unsigned char *r, const poly *a) {
 **************************************************/
 void PQCLEAN_DILITHIUM2_CLEAN_polyeta_unpack(poly *r, const unsigned char *a) {
     unsigned int i;
-
-    #if 2*ETA <= 7
-    for (i = 0; i < N / 8; ++i) {
-        r->coeffs[8 * i + 0] = a[3 * i + 0] & 0x07;
-        r->coeffs[8 * i + 1] = (a[3 * i + 0] >> 3) & 0x07;
-        r->coeffs[8 * i + 2] = ((a[3 * i + 0] >> 6) | (a[3 * i + 1] << 2)) & 0x07;
-        r->coeffs[8 * i + 3] = (a[3 * i + 1] >> 1) & 0x07;
-        r->coeffs[8 * i + 4] = (a[3 * i + 1] >> 4) & 0x07;
-        r->coeffs[8 * i + 5] = ((a[3 * i + 1] >> 7) | (a[3 * i + 2] << 1)) & 0x07;
-        r->coeffs[8 * i + 6] = (a[3 * i + 2] >> 2) & 0x07;
-        r->coeffs[8 * i + 7] = (a[3 * i + 2] >> 5) & 0x07;
-
-        r->coeffs[8 * i + 0] = Q + ETA - r->coeffs[8 * i + 0];
-        r->coeffs[8 * i + 1] = Q + ETA - r->coeffs[8 * i + 1];
-        r->coeffs[8 * i + 2] = Q + ETA - r->coeffs[8 * i + 2];
-        r->coeffs[8 * i + 3] = Q + ETA - r->coeffs[8 * i + 3];
-        r->coeffs[8 * i + 4] = Q + ETA - r->coeffs[8 * i + 4];
-        r->coeffs[8 * i + 5] = Q + ETA - r->coeffs[8 * i + 5];
-        r->coeffs[8 * i + 6] = Q + ETA - r->coeffs[8 * i + 6];
-        r->coeffs[8 * i + 7] = Q + ETA - r->coeffs[8 * i + 7];
-    }
-    #else
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
         r->coeffs[2 * i + 1] = a[i] >> 4;
         r->coeffs[2 * i + 0] = Q + ETA - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = Q + ETA - r->coeffs[2 * i + 1];
     }
-    #endif
-
 }
 
 /*************************************************
@@ -601,9 +545,6 @@ void PQCLEAN_DILITHIUM2_CLEAN_polyeta_unpack(poly *r, const unsigned char *a) {
 *              - const poly *a: pointer to input polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM2_CLEAN_polyt1_pack(unsigned char *r, const poly *a) {
-    #if D != 14
-#error "polyt1_pack() assumes D == 14"
-    #endif
     unsigned int i;
 
     for (i = 0; i < N / 8; ++i) {
@@ -726,9 +667,6 @@ void PQCLEAN_DILITHIUM2_CLEAN_polyt0_unpack(poly *r, const unsigned char *a) {
 *              - const poly *a: pointer to input polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM2_CLEAN_polyz_pack(unsigned char *r, const poly *a) {
-    #if GAMMA1 > (1 << 19)
-#error "PQCLEAN_DILITHIUM2_CLEAN_polyz_pack() assumes GAMMA1 <= 2^{19}"
-    #endif
     unsigned int i;
     uint32_t t[2];
 

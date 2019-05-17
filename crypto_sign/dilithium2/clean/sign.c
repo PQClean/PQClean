@@ -185,11 +185,7 @@ int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_signature(
         sig[CRYPTO_BYTES - CRHBYTES + i] = tr[i];
     }
 
-    #ifdef RANDOMIZED_SIGNING
-    randombytes(rhoprime, CRHBYTES);
-    #else
     PQCLEAN_DILITHIUM2_CLEAN_crh(rhoprime, key, SEEDBYTES + CRHBYTES);
-    #endif
 
     /* Expand matrix and transform vectors */
     PQCLEAN_DILITHIUM2_CLEAN_expand_mat(mat, rho);
