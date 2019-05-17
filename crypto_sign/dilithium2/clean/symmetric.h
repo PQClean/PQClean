@@ -8,9 +8,6 @@ typedef struct {
     uint64_t s[25];
 } keccak_state;
 
-//shake256_inc_absorb(&state, inbuf, sizeof(inbuf));
-//shake256_inc_squeezeblocks(outbuf, 1, &state);
-
 void PQCLEAN_DILITHIUM2_CLEAN_shake256_absorb(keccak_state *state, const uint8_t *input, size_t inlen);
 void PQCLEAN_DILITHIUM2_CLEAN_shake256_squeezeblocks(uint8_t *output, size_t nblocks, keccak_state *state);
 void PQCLEAN_DILITHIUM2_CLEAN_shake128_absorb(keccak_state *state, const uint8_t *input, size_t inlen);
