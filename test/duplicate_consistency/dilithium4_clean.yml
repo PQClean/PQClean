@@ -1,0 +1,39 @@
+consistency_checks:
+- source:
+    scheme: dilithium2
+    implementation: clean
+  files:
+    - ntt.c
+    - ntt.h
+    - packing.c
+    - packing.h
+    - poly.h
+    - polyvec.c
+    - polyvec.h
+    - reduce.c
+    - reduce.h
+    - rounding.c
+    - rounding.h
+    - sign.c
+    - sign.h
+    - symmetric.c
+    - symmetric.h
+- source:
+    scheme: dilithium3
+    implementation: clean
+  files:
+    - ntt.c
+    - ntt.h
+    - packing.c
+    - packing.h
+    - poly.h
+    - polyvec.c
+    - polyvec.h
+    - reduce.c
+    - reduce.h
+    - rounding.c
+    - rounding.h
+    - sign.c
+    - sign.h
+    - symmetric.c
+    - symmetric.h

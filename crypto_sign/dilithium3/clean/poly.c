@@ -526,7 +526,6 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyeta_pack(unsigned char *r, const poly *a) {
 **************************************************/
 void PQCLEAN_DILITHIUM3_CLEAN_polyeta_unpack(poly *r, const unsigned char *a) {
     unsigned int i;
-
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
         r->coeffs[2 * i + 1] = a[i] >> 4;
