@@ -1,0 +1,42 @@
+consistency_checks:
+- source:
+    scheme: newhope1024cpa
+    implementation: clean
+  files:
+    - kem.c
+    - cpapke.c
+    - reduce.c
+    - verify.c
+    - cpapke.h
+    - ntt.h
+    - poly.h
+    - reduce.h
+    - verify.h
+- source:
+    scheme: newhope1024cca
+    implementation: clean
+  files:
+    - cpapke.c
+    - reduce.c
+    - verify.c
+    - cpapke.h
+    - ntt.h
+    - poly.h
+    - reduce.h
+    - verify.h
+- source:
+    scheme: newhope512cca
+    implementation: clean
+  files:
+    - ntt.c
+    - poly.c
+    - precomp.c
+    - cpapke.c
+    - reduce.c
+    - verify.c
+    - params.h
+    - cpapke.h
+    - ntt.h
+    - poly.h
+    - reduce.h
+    - verify.h
