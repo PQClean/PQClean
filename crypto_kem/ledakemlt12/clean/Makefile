@@ -17,6 +17,8 @@ OBJECTS=aes256.o bf_decoding.o dfr_test.o gf2x_arith_mod_xPplusOne.o \
 CFLAGS=-O3 -Wall -Wextra -Wpedantic -Wvla -Wmissing-prototypes -std=c99 \
 		-DCATEGORY=$(SL) -DN0=$(N0) -DDFR_SL_LEVEL=$(DFR_SL_LEVEL) -I../../../common $(EXTRAFLAGS)
 
+# TODO: -Werror
+
 all: $(LIB)
 
 %.o: %.c $(HEADERS)
