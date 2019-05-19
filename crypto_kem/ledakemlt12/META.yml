@@ -1,0 +1,18 @@
+name: LEDAcryptKEM-LT12
+type: kem
+claimed-nist-level: 1
+claimed-security: IND-CCA2
+length-public-key: 6520
+length-secret-key: 468
+length-ciphertext: 6520
+length-shared-secret: 32
+nistkat-sha256: 3bb5945e0aea26f121e1d56946760e506bdfbebb07e2fb018ce737b90b1eee2b
+principal-submitter: Marco Baldi
+auxiliary-submitters:
+  - Alessandro Barenghi
+  - Franco Chiaraluce
+  - Gerardo Pelosi
+  - Paolo Santini
+implementations:
+  - name: clean
+    version: 2.0
