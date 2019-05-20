@@ -144,7 +144,7 @@ int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
     PQCLEAN_DILITHIUM2_CLEAN_pack_pk(pk, rho, &t1);
 
     /* Compute CRH(rho, t1) and write secret key */
-    PQCLEAN_DILITHIUM2_CLEAN_crh(tr, pk, CRYPTO_PUBLICKEYBYTES);
+    crh(tr, pk, CRYPTO_PUBLICKEYBYTES);
     PQCLEAN_DILITHIUM2_CLEAN_pack_sk(sk, rho, key, tr, &s1, &s2, &t0);
 
     return 0;
@@ -185,7 +185,7 @@ int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_signature(
         sig[CRYPTO_BYTES - CRHBYTES + i] = tr[i];
     }
 
-    PQCLEAN_DILITHIUM2_CLEAN_crh(rhoprime, key, SEEDBYTES + CRHBYTES);
+    crh(rhoprime, key, SEEDBYTES + CRHBYTES);
 
     /* Expand matrix and transform vectors */
     PQCLEAN_DILITHIUM2_CLEAN_expand_mat(mat, rho);
