@@ -37,14 +37,14 @@ const unsigned char expected_512[64] = {
 
 static int test_sha256_incremental(void) {
     unsigned char output[32];
-    uint8_t state[40];
+    sha256ctx state;
     int i = 0;
 
-    sha256_inc_init(state);
-    sha256_inc_blocks(state, plaintext, 1);
-    sha256_inc_finalize(output, state, plaintext + 64, 112 - 64);
+    sha256_inc_init(&state);
+    sha256_inc_blocks(&state, plaintext, 1);
+    sha256_inc_finalize(output, &state, plaintext + 64, 112 - 64);
 
-    if (memcmp(expected_256, output, 32)) {
+    if (memcmp(expected_256, output, 32) != 0) {
         printf("ERROR sha256 incremental did not match sha256.\n");
         printf("  Expected: ");
         for (i = 0; i < 32; i++) {
@@ -68,7 +68,7 @@ static int test_sha224(void) {
 
     sha224(output, plaintext, 112);
 
-    if (memcmp(expected_224, output, 28)) {
+    if (memcmp(expected_224, output, 28) != 0) {
         printf("ERROR sha224 output did not match test vector.\n");
         printf("Expected: ");
         for (i = 0; i < 28; i++) {
@@ -92,7 +92,7 @@ static int test_sha256(void) {
 
     sha256(output, plaintext, 112);
 
-    if (memcmp(expected_256, output, 32)) {
+    if (memcmp(expected_256, output, 32) != 0) {
         printf("ERROR sha256 output did not match test vector.\n");
         printf("Expected: ");
         for (i = 0; i < 32; i++) {
@@ -116,7 +116,7 @@ static int test_sha384(void) {
 
     sha384(output, plaintext, 112);
 
-    if (memcmp(expected_384, output, 48)) {
+    if (memcmp(expected_384, output, 48) != 0) {
         printf("ERROR sha384 output did not match test vector.\n");
         printf("Expected: ");
         for (i = 0; i < 48; i++) {
@@ -140,7 +140,7 @@ static int test_sha512(void) {
 
     sha512(output, plaintext, 112);
 
-    if (memcmp(expected_512, output, 64)) {
+    if (memcmp(expected_512, output, 64) != 0) {
         printf("ERROR sha512 output did not match test vector.\n");
         printf("Expected: ");
         for (i = 0; i < 64; i++) {
