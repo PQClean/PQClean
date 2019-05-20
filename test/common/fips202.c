@@ -56,7 +56,7 @@ static int test_sha3_256_incremental(void) {
     unsigned char input[512];
     unsigned char check[32];
     unsigned char output[32];
-    uint64_t s_inc[26];
+    sha3_256incctx state;
     int i;
     int absorbed;
     int returncode = 0;
@@ -67,18 +67,18 @@ static int test_sha3_256_incremental(void) {
 
     sha3_256(check, input, 512);
 
-    sha3_256_inc_init(s_inc);
+    sha3_256_inc_init(&state);
 
     absorbed = 0;
     for (i = 0; i < 512 && absorbed + i <= 512; i++) {
-        sha3_256_inc_absorb(s_inc, input + absorbed, i);
+        sha3_256_inc_absorb(&state, input + absorbed, i);
         absorbed += i;
     }
-    sha3_256_inc_absorb(s_inc, input + absorbed, 512 - absorbed);
+    sha3_256_inc_absorb(&state, input + absorbed, 512 - absorbed);
 
-    sha3_256_inc_finalize(output, s_inc);
+    sha3_256_inc_finalize(output, &state);
 
-    if (memcmp(check, output, 32)) {
+    if (memcmp(check, output, 32) != 0) {
         printf("ERROR sha3_256 incremental did not match sha3_256.\n");
         printf("  Expected: ");
         for (i = 0; i < 32; i++) {
@@ -100,11 +100,11 @@ static int test_shake128_incremental(void) {
     unsigned char input[512];
     unsigned char check[512];
     unsigned char output[512];
-    uint64_t s_inc_absorb[26];
-    uint64_t s_inc_squeeze[26];
-    uint64_t s_inc_squeeze_all[26];
-    uint64_t s_inc_both[26];
-    uint64_t s_combined[25];
+    shake128incctx state_absorb;
+    shake128incctx state_squeeze;
+    shake128incctx state_squeeze_all;
+    shake128incctx state_both;
+    shake128ctx state_combined;
     int i;
     int absorbed;
     int squeezed;
@@ -116,47 +116,27 @@ static int test_shake128_incremental(void) {
 
     shake128(check, 512, input, 512);
 
-    shake128_inc_init(s_inc_absorb);
+    shake128_inc_init(&state_absorb);
 
     absorbed = 0;
     for (i = 0; i < 512 && absorbed + i <= 512; i++) {
-        shake128_inc_absorb(s_inc_absorb, input + absorbed, i);
+        shake128_inc_absorb(&state_absorb, input + absorbed, i);
         absorbed += i;
     }
-    shake128_inc_absorb(s_inc_absorb, input + absorbed, 512 - absorbed);
+    shake128_inc_absorb(&state_absorb, input + absorbed, 512 - absorbed);
 
-    shake128_inc_finalize(s_inc_absorb);
+    shake128_inc_finalize(&state_absorb);
 
-    shake128_absorb(s_combined, input, 512);
+    shake128_absorb(&state_combined, input, 512);
 
-    if (memcmp(s_inc_absorb, s_combined, 25 * sizeof(uint64_t))) {
+    if (memcmp(&state_absorb, &state_combined, sizeof(shake128ctx)) != 0) {
         printf("ERROR shake128 state after incremental absorb did not match all-at-once absorb.\n");
-        printf("  Expected: ");
-        for (i = 0; i < 25; i++) {
-            printf("%016" PRIx64, s_combined[i]);
-        }
-        printf("\n");
-        printf("  State:    ");
-        for (i = 0; i < 25; i++) {
-            printf("%016" PRIx64, s_inc_absorb[i]);
-        }
-        printf("\n");
-        for (i = 0; i < 8 * 25; i++) {
-            if (((s_combined[i >> 3]   >> (8*(i & 0x7))) & 0xFF) !=
-                ((s_inc_absorb[i >> 3] >> (8*(i & 0x7))) & 0xFF)) {
-                printf("  First occurred in int %d, byte %d (%02X should be %02X)\n",
-                    i >> 3, i & 0x7,
-                    (uint8_t)((s_inc_absorb[i >> 3] >> (8*(i & 0x7))) & 0xFF),
-                    (uint8_t)((s_combined[i >> 3]   >> (8*(i & 0x7))) & 0xFF));
-                break;
-            }
-        }
         returncode = 1;
     }
 
-    memcpy(s_inc_both, s_inc_absorb, 26 * sizeof(uint64_t));
+    memcpy(&state_both, &state_absorb, sizeof(shake128incctx));
 
-    shake128_squeezeblocks(output, 3, s_inc_absorb);
+    shake128_squeezeblocks(output, 3, (shake128ctx*)&state_absorb);
 
     if (memcmp(check, output, 3*SHAKE128_RATE)) {
         printf("ERROR shake128 incremental absorb did not match shake128.\n");
@@ -173,14 +153,14 @@ static int test_shake128_incremental(void) {
         returncode = 1;
     }
 
-    shake128_absorb(s_inc_squeeze, input, 512);
-    s_inc_squeeze[25] = 0;
+    shake128_absorb((shake128ctx*)&state_squeeze, input, 512);
+    state_squeeze.ctx[25] = 0;
 
-    memcpy(s_inc_squeeze_all, s_inc_squeeze, 26 * sizeof(uint64_t));
+    memcpy(&state_squeeze_all, &state_squeeze, sizeof(shake128incctx));
 
-    shake128_inc_squeeze(output, 512, s_inc_squeeze_all);
+    shake128_inc_squeeze(output, 512, &state_squeeze_all);
 
-    if (memcmp(check, output, 512)) {
+    if (memcmp(check, output, 512) != 0) {
         printf("ERROR shake128 incremental squeeze-all did not match shake128.\n");
         printf("  Expected: ");
         for (i = 0; i < 512; i++) {
@@ -198,12 +178,12 @@ static int test_shake128_incremental(void) {
     squeezed = 0;
     memset(output, 0, 512);
     for (i = 0; i < 512 && squeezed + i <= 512; i++) {
-        shake128_inc_squeeze(output + squeezed, i, s_inc_squeeze);
+        shake128_inc_squeeze(output + squeezed, i, &state_squeeze);
         squeezed += i;
     }
-    shake128_inc_squeeze(output + squeezed, 512 - squeezed, s_inc_squeeze);
+    shake128_inc_squeeze(output + squeezed, 512 - squeezed, &state_squeeze);
 
-    if (memcmp(check, output, 512)) {
+    if (memcmp(check, output, 512) != 0) {
         printf("ERROR shake128 incremental squeeze did not match shake128.\n");
         printf("  Expected: ");
         for (i = 0; i < 512; i++) {
@@ -221,12 +201,12 @@ static int test_shake128_incremental(void) {
     squeezed = 0;
     memset(output, 0, 512);
     for (i = 0; i < 512 && squeezed + i <= 512; i++) {
-        shake128_inc_squeeze(output + squeezed, i, s_inc_both);
+        shake128_inc_squeeze(output + squeezed, i, &state_both);
         squeezed += i;
     }
-    shake128_inc_squeeze(output + squeezed, 512 - squeezed, s_inc_both);
+    shake128_inc_squeeze(output + squeezed, 512 - squeezed, &state_both);
 
-    if (memcmp(check, output, 512)) {
+    if (memcmp(check, output, 512) != 0) {
         printf("ERROR shake128 incremental absorb + squeeze did not match shake128.\n");
         printf("  Expected: ");
         for (i = 0; i < 512; i++) {
@@ -250,7 +230,7 @@ static int test_shake128(void) {
 
     shake128(output, 32, plaintext, 43);
 
-    if (memcmp(expected, output, 32)) {
+    if (memcmp(expected, output, 32) != 0) {
         printf("ERROR shake128 output did not match test vector.\n");
         printf("Expected: ");
         for (i = 0; i < 32; i++) {
