@@ -198,7 +198,7 @@ void PQCLEAN_NEWHOPE512CPA_CLEAN_poly_tomsg(unsigned char *msg, const poly *x) {
 void PQCLEAN_NEWHOPE512CPA_CLEAN_poly_uniform(poly *a, const unsigned char *seed) {
     unsigned int ctr = 0;
     uint16_t val;
-    uint64_t state[25];
+    shake128ctx state;
     uint8_t buf[SHAKE128_RATE];
     uint8_t extseed[NEWHOPE_SYMBYTES + 1];
     int i, j;
@@ -210,9 +210,9 @@ void PQCLEAN_NEWHOPE512CPA_CLEAN_poly_uniform(poly *a, const unsigned char *seed
     for (i = 0; i < NEWHOPE_N / 64; i++) { /* generate a in blocks of 64 coefficients */
         ctr = 0;
         extseed[NEWHOPE_SYMBYTES] = (unsigned char) i; /* domain-separate the 16 independent calls */
-        shake128_absorb(state, extseed, NEWHOPE_SYMBYTES + 1);
+        shake128_absorb(&state, extseed, NEWHOPE_SYMBYTES + 1);
         while (ctr < 64) { /* Very unlikely to run more than once */
-            shake128_squeezeblocks(buf, 1, state);
+            shake128_squeezeblocks(buf, 1, &state);
             for (j = 0; j < SHAKE128_RATE && ctr < 64; j += 2) {
                 val = (buf[j] | ((uint16_t) buf[j + 1] << 8));
                 if (val < 5 * NEWHOPE_Q) {
