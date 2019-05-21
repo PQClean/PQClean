@@ -17,7 +17,8 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t
     // Generate-and-multiply: generate matrix A (N x N) row-wise, multiply by s on the right.
     // Inputs: s, e (N x N_BAR)
     // Output: out = A*s + e (N x N_BAR)
-    int i, j, k;
+    int j, k;
+    uint16_t i;
     int16_t a_row[4 * PARAMS_N];
 
     for (i = 0; i < (PARAMS_N * PARAMS_NBAR); i += 2) {
@@ -64,8 +65,8 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t
     // Generate-and-multiply: generate matrix A (N x N) column-wise, multiply by s' on the left.
     // Inputs: s', e' (N_BAR x N)
     // Output: out = s'*A + e' (N_BAR x N)
-    int i, j, kk;
-
+    int i, j;
+    uint16_t kk;
     for (i = 0; i < (PARAMS_N * PARAMS_NBAR); i += 2) {
         *((uint32_t *)&out[i]) = *((uint32_t *)&e[i]);
     }
