@@ -28,19 +28,8 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t
 
     #if defined(USE_AES128_FOR_A)
     int16_t a_row_temp[4 * PARAMS_N] = {0};                     // Take four lines of A at once
-    #if !defined(USE_OPENSSL)
     uint8_t aes_key_schedule[16 * 11];
     AES128_load_schedule(seed_A, aes_key_schedule);
-    #else
-    EVP_CIPHER_CTX *aes_key_schedule;
-    int len;
-    if (!(aes_key_schedule = EVP_CIPHER_CTX_new())) {
-        handleErrors();
-    }
-    if (1 != EVP_EncryptInit_ex(aes_key_schedule, EVP_aes_128_ecb(), NULL, seed_A, NULL)) {
-        handleErrors();
-    }
-    #endif
 
     for (j = 0; j < PARAMS_N; j += PARAMS_STRIPE_STEP) {
         a_row_temp[j + 1 + 0 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(j);     // Loading values in the little-endian order
@@ -57,13 +46,7 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t
             a_row_temp[j + 3 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 3);
         }
 
-        #if !defined(USE_OPENSSL)
         AES128_ECB_enc_sch((uint8_t *)a_row_temp, 4 * PARAMS_N * sizeof(int16_t), aes_key_schedule, (uint8_t *)a_row);
-        #else
-        if (1 != EVP_EncryptUpdate(aes_key_schedule, (uint8_t *)a_row, &len, (uint8_t *)a_row_temp, 4 * PARAMS_N * sizeof(int16_t))) {
-            handleErrors();
-        }
-        #endif
     #elif defined (USE_SHAKE128_FOR_A)
     uint8_t seed_A_separated[2 + BYTES_SEED_A];
     uint16_t *seed_A_origin = (uint16_t *)&seed_A_separated;
@@ -121,19 +104,8 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t
     uint16_t a_cols[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
     uint16_t a_cols_t[PARAMS_N * PARAMS_STRIPE_STEP];
     uint16_t a_cols_temp[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
-    #if !defined(USE_OPENSSL)
     uint8_t aes_key_schedule[16 * 11];
     AES128_load_schedule(seed_A, aes_key_schedule);
-    #else
-    EVP_CIPHER_CTX *aes_key_schedule;
-    int len;
-    if (!(aes_key_schedule = EVP_CIPHER_CTX_new())) {
-        handleErrors();
-    }
-    if (1 != EVP_EncryptInit_ex(aes_key_schedule, EVP_aes_128_ecb(), NULL, seed_A, NULL)) {
-        handleErrors();
-    }
-    #endif
 
     for (i = 0, j = 0; i < PARAMS_N; i++, j += PARAMS_STRIPE_STEP) {
         a_cols_temp[j] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i);                       // Loading values in the little-endian order
@@ -144,13 +116,7 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t
             a_cols_temp[i + 1] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(kk);              // Loading values in the little-endian order
         }
 
-        #if !defined(USE_OPENSSL)
         AES128_ECB_enc_sch((uint8_t *)a_cols_temp, PARAMS_N * PARAMS_STRIPE_STEP * sizeof(int16_t), aes_key_schedule, (uint8_t *)a_cols);
-        #else
-        if (1 != EVP_EncryptUpdate(aes_key_schedule, (uint8_t *)a_cols, &len, (uint8_t *)a_cols_temp, PARAMS_N * PARAMS_STRIPE_STEP * sizeof(int16_t))) {
-            handleErrors();
-        }
-        #endif
 
         for (i = 0; i < PARAMS_N; i++) {                        // Transpose a_cols to have access to it in the column-major order.
             for (k = 0; k < PARAMS_STRIPE_STEP; k++) {
