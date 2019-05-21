@@ -47,7 +47,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_challenge(poly *c,
     uint64_t signs;
     unsigned char inbuf[CRHBYTES + K * POLW1_SIZE_PACKED];
     unsigned char outbuf[SHAKE256_RATE];
-    keccak_state state;
+    shake256ctx state;
 
     for (i = 0; i < CRHBYTES; ++i) {
         inbuf[i] = mu[i];
@@ -56,8 +56,8 @@ void PQCLEAN_DILITHIUM3_CLEAN_challenge(poly *c,
         PQCLEAN_DILITHIUM3_CLEAN_polyw1_pack(inbuf + CRHBYTES + i * POLW1_SIZE_PACKED, &w1->vec[i]);
     }
 
-    PQCLEAN_DILITHIUM3_CLEAN_shake256_absorb(&state, inbuf, sizeof(inbuf));
-    PQCLEAN_DILITHIUM3_CLEAN_shake256_squeezeblocks(outbuf, 1, &state);
+    shake256_absorb(&state, inbuf, sizeof(inbuf));
+    shake256_squeezeblocks(outbuf, 1, &state);
 
     signs = 0;
     for (i = 0; i < 8; ++i) {
@@ -73,7 +73,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_challenge(poly *c,
     for (i = 196; i < 256; ++i) {
         do {
             if (pos >= SHAKE256_RATE) {
-                PQCLEAN_DILITHIUM3_CLEAN_shake256_squeezeblocks(outbuf, 1, &state);
+                shake256_squeezeblocks(outbuf, 1, &state);
                 pos = 0;
             }
 
@@ -173,12 +173,12 @@ int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_signature(
 
     // use incremental hash API instead of copying around buffers
     /* Compute CRH(tr, msg) */
-    uint64_t s[26];
-    shake256_inc_init(s);
-    shake256_inc_absorb(s, tr, CRHBYTES);
-    shake256_inc_absorb(s, m, mlen);
-    shake256_inc_finalize(s);
-    shake256_inc_squeeze(mu, CRHBYTES, s);
+    shake256incctx state;
+    shake256_inc_init(&state);
+    shake256_inc_absorb(&state, tr, CRHBYTES);
+    shake256_inc_absorb(&state, m, mlen);
+    shake256_inc_finalize(&state);
+    shake256_inc_squeeze(mu, CRHBYTES, &state);
 
 
     for (i = 0; i < CRHBYTES; ++i) {
@@ -286,17 +286,17 @@ int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_verify(
     }
 
     /* Compute CRH(CRH(rho, t1), msg) */
-    uint64_t s[26];
-    shake256_inc_init(s);
-    shake256_inc_absorb(s, pk, CRYPTO_PUBLICKEYBYTES);
-    shake256_inc_finalize(s);
-    shake256_inc_squeeze(mu, CRHBYTES, s);
+    shake256incctx state;
+    shake256_inc_init(&state);
+    shake256_inc_absorb(&state, pk, CRYPTO_PUBLICKEYBYTES);
+    shake256_inc_finalize(&state);
+    shake256_inc_squeeze(mu, CRHBYTES, &state);
 
-    shake256_inc_init(s);
-    shake256_inc_absorb(s, mu, CRHBYTES);
-    shake256_inc_absorb(s, m, mlen);
-    shake256_inc_finalize(s);
-    shake256_inc_squeeze(mu, CRHBYTES, s);
+    shake256_inc_init(&state);
+    shake256_inc_absorb(&state, mu, CRHBYTES);
+    shake256_inc_absorb(&state, m, mlen);
+    shake256_inc_finalize(&state);
+    shake256_inc_squeeze(mu, CRHBYTES, &state);
 
 
     /* Matrix-vector multiplication; compute Az - c2^dt1 */

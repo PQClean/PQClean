@@ -320,7 +320,7 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform(poly *a,
     unsigned int i, ctr, off;
     unsigned int buflen = POLY_UNIFORM_BUFLEN;
     unsigned char buf[POLY_UNIFORM_BUFLEN + 2];
-    stream128_state state;
+    shake128ctx state;
 
     stream128_init(&state, seed, nonce);
     stream128_squeezeblocks(buf, POLY_UNIFORM_NBLOCKS, &state);
@@ -396,7 +396,7 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform_eta(poly *a,
         uint16_t nonce) {
     unsigned int ctr;
     unsigned char buf[POLY_UNIFORM_ETA_BUFLEN];
-    stream128_state state;
+    shake128ctx state;
 
     stream128_init(&state, seed, nonce);
     stream128_squeezeblocks(buf, POLY_UNIFORM_ETA_NBLOCKS, &state);
@@ -475,7 +475,7 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform_gamma1m1(poly *a,
     unsigned int i, ctr, off;
     unsigned int buflen = POLY_UNIFORM_GAMMA1M1_BUFLEN;
     unsigned char buf[POLY_UNIFORM_GAMMA1M1_BUFLEN + 4];
-    stream256_state state;
+    shake256ctx state;
 
     stream256_init(&state, seed, nonce);
     stream256_squeezeblocks(buf, POLY_UNIFORM_GAMMA1M1_NBLOCKS, &state);
