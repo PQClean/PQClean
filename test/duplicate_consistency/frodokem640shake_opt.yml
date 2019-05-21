@@ -1,0 +1,11 @@
+consistency_checks:
+- source:
+    scheme: frodokem640shake
+    implementation: clean
+  files:
+    - api.h
+    - common.h
+    - params.h
+    - kem.c
+    - noise.c
+    - util.c
