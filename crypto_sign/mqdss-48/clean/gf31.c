@@ -49,13 +49,13 @@ void PQCLEAN_MQDSS48_CLEAN_vgf31_shorten_unique(gf31 *out, const gf31 *in) {
    them in a vector of 16-bit elements */
 void PQCLEAN_MQDSS48_CLEAN_gf31_nrand(gf31 *out, int len, const unsigned char *seed, size_t seedlen) {
     int i = 0, j;
-    uint64_t shakestate[25] = {0};
+    shake256ctx shakestate;
     unsigned char shakeblock[SHAKE256_RATE];
 
-    shake256_absorb(shakestate, seed, seedlen);
+    shake256_absorb(&shakestate, seed, seedlen);
 
     while (i < len) {
-        shake256_squeezeblocks(shakeblock, 1, shakestate);
+        shake256_squeezeblocks(shakeblock, 1, &shakestate);
         for (j = 0; j < SHAKE256_RATE && i < len; j++) {
             if ((shakeblock[j] & 31) != 31) {
                 out[i] = (shakeblock[j] & 31);
@@ -70,13 +70,13 @@ void PQCLEAN_MQDSS48_CLEAN_gf31_nrand(gf31 *out, int len, const unsigned char *s
    This is used for the expansion of F, which wants packed elements. */
 void PQCLEAN_MQDSS48_CLEAN_gf31_nrand_schar(signed char *out, int len, const unsigned char *seed, size_t seedlen) {
     int i = 0, j;
-    uint64_t shakestate[25] = {0};
+    shake256ctx shakestate;
     unsigned char shakeblock[SHAKE256_RATE];
 
-    shake256_absorb(shakestate, seed, seedlen);
+    shake256_absorb(&shakestate, seed, seedlen);
 
     while (i < len) {
-        shake256_squeezeblocks(shakeblock, 1, shakestate);
+        shake256_squeezeblocks(shakeblock, 1, &shakestate);
         for (j = 0; j < SHAKE256_RATE && i < len; j++) {
             if ((shakeblock[j] & 31) != 31) {
                 out[i] = (signed char)(((signed char)shakeblock[j] & 31) - 15);

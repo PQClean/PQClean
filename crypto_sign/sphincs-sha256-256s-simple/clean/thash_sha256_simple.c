@@ -17,17 +17,17 @@ static void PQCLEAN_SPHINCSSHA256256SSIMPLE_CLEAN_thash(
     const unsigned char *pub_seed, uint32_t addr[8]) {
 
     unsigned char outbuf[SPX_SHA256_OUTPUT_BYTES];
-    uint8_t sha2_state[40];
+    sha256ctx sha2_state;
 
     (void)pub_seed; /* Suppress an 'unused parameter' warning. */
 
     /* Retrieve precomputed state containing pub_seed */
-    memcpy(sha2_state, PQCLEAN_SPHINCSSHA256256SSIMPLE_CLEAN_state_seeded, 40 * sizeof(uint8_t));
+    memcpy(&sha2_state, &PQCLEAN_SPHINCSSHA256256SSIMPLE_CLEAN_state_seeded, sizeof(sha256ctx));
 
     PQCLEAN_SPHINCSSHA256256SSIMPLE_CLEAN_compress_address(buf, addr);
     memcpy(buf + SPX_SHA256_ADDR_BYTES, in, inblocks * SPX_N);
 
-    sha256_inc_finalize(outbuf, sha2_state, buf, SPX_SHA256_ADDR_BYTES + inblocks * SPX_N);
+    sha256_inc_finalize(outbuf, &sha2_state, buf, SPX_SHA256_ADDR_BYTES + inblocks * SPX_N);
     memcpy(out, outbuf, SPX_N);
 }
 
