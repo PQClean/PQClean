@@ -12,14 +12,15 @@
 #include "api.h"
 #include "common.h"
 #include "params.h"
-#define USE_SHAKE128_FOR_A
+
+#define USE_SHAKE128_FOR_A 1
 
 int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t *s, const uint16_t *e, const uint8_t *seed_A) {
     // Generate-and-multiply: generate matrix A (N x N) row-wise, multiply by s on the right.
     // Inputs: s, e (N x N_BAR)
     // Output: out = A*s + e (N x N_BAR)
     int i, j, k;
-    int16_t a_row[4 * PARAMS_N] = {0};
+    int16_t a_row[4 * PARAMS_N];
 
     for (i = 0; i < (PARAMS_N * PARAMS_NBAR); i += 2) {
         *((uint32_t *)&out[i]) = *((uint32_t *)&e[i]);
@@ -42,18 +43,18 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t
     #endif
 
     for (j = 0; j < PARAMS_N; j += PARAMS_STRIPE_STEP) {
-        a_row_temp[j + 1 + 0 * PARAMS_N] = j;                   // Loading values in the little-endian order
-        a_row_temp[j + 1 + 1 * PARAMS_N] = j;
-        a_row_temp[j + 1 + 2 * PARAMS_N] = j;
-        a_row_temp[j + 1 + 3 * PARAMS_N] = j;
+        a_row_temp[j + 1 + 0 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(j);     // Loading values in the little-endian order
+        a_row_temp[j + 1 + 1 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(j);
+        a_row_temp[j + 1 + 2 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(j);
+        a_row_temp[j + 1 + 3 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(j);
     }
 
     for (i = 0; i < PARAMS_N; i += 4) {
         for (j = 0; j < PARAMS_N; j += PARAMS_STRIPE_STEP) {    // Go through A, four rows at a time
-            a_row_temp[j + 0 * PARAMS_N] = i + 0;               // Loading values in the little-endian order
-            a_row_temp[j + 1 * PARAMS_N] = i + 1;
-            a_row_temp[j + 2 * PARAMS_N] = i + 2;
-            a_row_temp[j + 3 * PARAMS_N] = i + 3;
+            a_row_temp[j + 0 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 0); // Loading values in the little-endian order
+            a_row_temp[j + 1 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 1);
+            a_row_temp[j + 2 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 2);
+            a_row_temp[j + 3 * PARAMS_N] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 3);
         }
 
         #if !defined(USE_OPENSSL)
@@ -68,16 +69,18 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t
     uint16_t *seed_A_origin = (uint16_t *)&seed_A_separated;
     memcpy(&seed_A_separated[2], seed_A, BYTES_SEED_A);
     for (i = 0; i < PARAMS_N; i += 4) {
-        seed_A_origin[0] = (uint16_t) (i + 0);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 0);
         shake128((unsigned char *)(a_row + 0 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
-        seed_A_origin[0] = (uint16_t) (i + 1);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 1);
         shake128((unsigned char *)(a_row + 1 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
-        seed_A_origin[0] = (uint16_t) (i + 2);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 2);
         shake128((unsigned char *)(a_row + 2 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
-        seed_A_origin[0] = (uint16_t) (i + 3);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i + 3);
         shake128((unsigned char *)(a_row + 3 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
     #endif
-
+        for (k = 0; k < 4 * PARAMS_N; k++) {
+            a_row[k] = PQCLEAN_FRODOKEM640SHAKE_OPT_LE_TO_UINT16(a_row[k]);
+        }
         for (k = 0; k < PARAMS_NBAR; k++) {
             uint16_t sum[4] = {0};
             for (j = 0; j < PARAMS_N; j++) {                    // Matrix-vector multiplication
@@ -101,19 +104,22 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t
 }
 
 
+
+
 int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t *s, const uint16_t *e, const uint8_t *seed_A) {
     // Generate-and-multiply: generate matrix A (N x N) column-wise, multiply by s' on the left.
     // Inputs: s', e' (N_BAR x N)
     // Output: out = s'*A + e' (N_BAR x N)
-    int i, j, k, kk;
+    int i, j, kk;
 
     for (i = 0; i < (PARAMS_N * PARAMS_NBAR); i += 2) {
         *((uint32_t *)&out[i]) = *((uint32_t *)&e[i]);
     }
 
     #if defined(USE_AES128_FOR_A)
+    int k;
     uint16_t a_cols[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
-    uint16_t a_cols_t[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
+    uint16_t a_cols_t[PARAMS_N * PARAMS_STRIPE_STEP];
     uint16_t a_cols_temp[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
     #if !defined(USE_OPENSSL)
     uint8_t aes_key_schedule[16 * 11];
@@ -130,12 +136,12 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t
     #endif
 
     for (i = 0, j = 0; i < PARAMS_N; i++, j += PARAMS_STRIPE_STEP) {
-        a_cols_temp[j] = i;                                     // Loading values in the little-endian order
+        a_cols_temp[j] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(i);                       // Loading values in the little-endian order
     }
 
     for (kk = 0; kk < PARAMS_N; kk += PARAMS_STRIPE_STEP) {     // Go through A's columns, 8 (== PARAMS_STRIPE_STEP) columns at a time.
         for (i = 0; i < (PARAMS_N * PARAMS_STRIPE_STEP); i += PARAMS_STRIPE_STEP) {
-            a_cols_temp[i + 1] = kk;                            // Loading values in the little-endian order
+            a_cols_temp[i + 1] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(kk);              // Loading values in the little-endian order
         }
 
         #if !defined(USE_OPENSSL)
@@ -148,7 +154,7 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t
 
         for (i = 0; i < PARAMS_N; i++) {                        // Transpose a_cols to have access to it in the column-major order.
             for (k = 0; k < PARAMS_STRIPE_STEP; k++) {
-                a_cols_t[k * PARAMS_N + i] = a_cols[i * PARAMS_STRIPE_STEP + k];
+                a_cols_t[k * PARAMS_N + i] = PQCLEAN_FRODOKEM640SHAKE_OPT_LE_TO_UINT16(a_cols[i * PARAMS_STRIPE_STEP + k]);
             }
         }
 
@@ -173,19 +179,24 @@ int PQCLEAN_FRODOKEM640SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t
 
     #elif defined (USE_SHAKE128_FOR_A)  // SHAKE128
     int t = 0;
-    uint16_t a_cols[4 * PARAMS_N] = {0};
+    uint16_t a_cols[4 * PARAMS_N];
+
+    int k;
     uint8_t seed_A_separated[2 + BYTES_SEED_A];
     uint16_t *seed_A_origin = (uint16_t *)&seed_A_separated;
     memcpy(&seed_A_separated[2], seed_A, BYTES_SEED_A);
     for (kk = 0; kk < PARAMS_N; kk += 4) {
-        seed_A_origin[0] = (uint16_t) (kk + 0);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(kk + 0);
         shake128((unsigned char *)(a_cols + 0 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
-        seed_A_origin[0] = (uint16_t) (kk + 1);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(kk + 1);
         shake128((unsigned char *)(a_cols + 1 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
-        seed_A_origin[0] = (uint16_t) (kk + 2);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(kk + 2);
         shake128((unsigned char *)(a_cols + 2 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
-        seed_A_origin[0] = (uint16_t) (kk + 3);
+        seed_A_origin[0] = PQCLEAN_FRODOKEM640SHAKE_OPT_UINT16_TO_LE(kk + 3);
         shake128((unsigned char *)(a_cols + 3 * PARAMS_N), (unsigned long long)(2 * PARAMS_N), seed_A_separated, 2 + BYTES_SEED_A);
+        for (i = 0; i < 4 * PARAMS_N; i++) {
+            a_cols[i] = PQCLEAN_FRODOKEM640SHAKE_OPT_LE_TO_UINT16(a_cols[i]);
+        }
 
         for (i = 0; i < PARAMS_NBAR; i++) {
             uint16_t sum[PARAMS_N] = {0};
