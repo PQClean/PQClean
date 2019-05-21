@@ -7,7 +7,7 @@ OBJECTS = sign.o polyvec.o poly.o packing.o ntt.o reduce.o rounding.o symmetric.
 HEADERS = api.h params.h sign.h polyvec.h poly.h packing.h ntt.h \
   reduce.h rounding.h symmetric.h 
 
-CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 
