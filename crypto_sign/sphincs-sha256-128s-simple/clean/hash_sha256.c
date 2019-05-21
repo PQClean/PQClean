@@ -45,7 +45,7 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_gen_message_random(
     const unsigned char *sk_prf, const unsigned char *optrand,
     const unsigned char *m, size_t mlen) {
     unsigned char buf[SPX_SHA256_BLOCK_BYTES + SPX_SHA256_OUTPUT_BYTES];
-    uint8_t state[40];
+    sha256ctx state;
     int i;
 
     /* This implements HMAC-SHA256 */
@@ -54,25 +54,25 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_gen_message_random(
     }
     memset(buf + SPX_N, 0x36, SPX_SHA256_BLOCK_BYTES - SPX_N);
 
-    sha256_inc_init(state);
-    sha256_inc_blocks(state, buf, 1);
+    sha256_inc_init(&state);
+    sha256_inc_blocks(&state, buf, 1);
 
     memcpy(buf, optrand, SPX_N);
 
     /* If optrand + message cannot fill up an entire block */
     if (SPX_N + mlen < SPX_SHA256_BLOCK_BYTES) {
         memcpy(buf + SPX_N, m, mlen);
-        sha256_inc_finalize(buf + SPX_SHA256_BLOCK_BYTES, state,
+        sha256_inc_finalize(buf + SPX_SHA256_BLOCK_BYTES, &state,
                             buf, mlen + SPX_N);
     }
     /* Otherwise first fill a block, so that finalize only uses the message */
     else {
         memcpy(buf + SPX_N, m, SPX_SHA256_BLOCK_BYTES - SPX_N);
-        sha256_inc_blocks(state, buf, 1);
+        sha256_inc_blocks(&state, buf, 1);
 
         m += SPX_SHA256_BLOCK_BYTES - SPX_N;
         mlen -= SPX_SHA256_BLOCK_BYTES - SPX_N;
-        sha256_inc_finalize(buf + SPX_SHA256_BLOCK_BYTES, state, m, mlen);
+        sha256_inc_finalize(buf + SPX_SHA256_BLOCK_BYTES, &state, m, mlen);
     }
 
     for (i = 0; i < SPX_N; i++) {
@@ -108,9 +108,9 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_hash_message(
 
     unsigned char buf[SPX_DGST_BYTES];
     unsigned char *bufp = buf;
-    uint8_t state[40];
+    sha256ctx state;
 
-    sha256_inc_init(state);
+    sha256_inc_init(&state);
 
     memcpy(inbuf, R, SPX_N);
     memcpy(inbuf + SPX_N, pk, SPX_PK_BYTES);
@@ -118,17 +118,17 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_hash_message(
     /* If R + pk + message cannot fill up an entire block */
     if (SPX_N + SPX_PK_BYTES + mlen < SPX_INBLOCKS * SPX_SHA256_BLOCK_BYTES) {
         memcpy(inbuf + SPX_N + SPX_PK_BYTES, m, mlen);
-        sha256_inc_finalize(seed, state, inbuf, SPX_N + SPX_PK_BYTES + mlen);
+        sha256_inc_finalize(seed, &state, inbuf, SPX_N + SPX_PK_BYTES + mlen);
     }
     /* Otherwise first fill a block, so that finalize only uses the message */
     else {
         memcpy(inbuf + SPX_N + SPX_PK_BYTES, m,
                SPX_INBLOCKS * SPX_SHA256_BLOCK_BYTES - SPX_N - SPX_PK_BYTES);
-        sha256_inc_blocks(state, inbuf, SPX_INBLOCKS);
+        sha256_inc_blocks(&state, inbuf, SPX_INBLOCKS);
 
         m += SPX_INBLOCKS * SPX_SHA256_BLOCK_BYTES - SPX_N - SPX_PK_BYTES;
         mlen -= SPX_INBLOCKS * SPX_SHA256_BLOCK_BYTES - SPX_N - SPX_PK_BYTES;
-        sha256_inc_finalize(seed, state, m, mlen);
+        sha256_inc_finalize(seed, &state, m, mlen);
     }
 
     /* By doing this in two steps, we prevent hashing the message twice;

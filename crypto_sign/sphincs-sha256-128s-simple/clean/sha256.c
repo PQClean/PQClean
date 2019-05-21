@@ -50,7 +50,7 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_mgf1(
     }
 }
 
-uint8_t PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_state_seeded[40];
+sha256ctx PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_state_seeded;
 
 /**
  * Absorb the constant pub_seed using one round of the compression function
@@ -67,6 +67,6 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_seed_state(const unsigned char *pub_s
         block[i] = 0;
     }
 
-    sha256_inc_init(PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_state_seeded);
-    sha256_inc_blocks(PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_state_seeded, block, 1);
+    sha256_inc_init(&PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_state_seeded);
+    sha256_inc_blocks(&PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_state_seeded, block, 1);
 }

@@ -8,13 +8,15 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "sha2.h"
+
 void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_compress_address(unsigned char *out, const uint32_t addr[8]);
 
 void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_mgf1(
     unsigned char *out, unsigned long outlen,
     unsigned char *input_plus_four_bytes, unsigned long inlen);
 
-uint8_t PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_state_seeded[40];
+extern sha256ctx PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_state_seeded;
 
 void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_seed_state(const unsigned char *pub_seed);
 

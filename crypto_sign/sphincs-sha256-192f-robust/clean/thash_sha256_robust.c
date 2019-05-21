@@ -18,7 +18,7 @@ static void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_thash(
 
     unsigned char outbuf[SPX_SHA256_OUTPUT_BYTES];
     unsigned char *bitmask = buf + SPX_N + SPX_SHA256_ADDR_BYTES + 4;
-    uint8_t sha2_state[40];
+    sha256ctx sha2_state;
     unsigned int i;
 
     memcpy(buf, pub_seed, SPX_N);
@@ -27,13 +27,13 @@ static void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_thash(
     PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_mgf1(bitmask, inblocks * SPX_N, buf, SPX_N + SPX_SHA256_ADDR_BYTES);
 
     /* Retrieve precomputed state containing pub_seed */
-    memcpy(sha2_state, PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_state_seeded, 40 * sizeof(uint8_t));
+    memcpy(&sha2_state, &PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_state_seeded, sizeof(sha256ctx));
 
     for (i = 0; i < inblocks * SPX_N; i++) {
         buf[SPX_N + SPX_SHA256_ADDR_BYTES + i] = in[i] ^ bitmask[i];
     }
 
-    sha256_inc_finalize(outbuf, sha2_state, buf + SPX_N,
+    sha256_inc_finalize(outbuf, &sha2_state, buf + SPX_N,
                         SPX_SHA256_ADDR_BYTES + inblocks * SPX_N);
     memcpy(out, outbuf, SPX_N);
 }

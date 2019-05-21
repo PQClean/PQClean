@@ -37,14 +37,14 @@ void PQCLEAN_SPHINCSSHAKE256192FROBUST_CLEAN_gen_message_random(
     unsigned char *R,
     const unsigned char *sk_prf, const unsigned char *optrand,
     const unsigned char *m, size_t mlen) {
-    uint64_t s_inc[26];
+    shake256incctx state;
 
-    shake256_inc_init(s_inc);
-    shake256_inc_absorb(s_inc, sk_prf, SPX_N);
-    shake256_inc_absorb(s_inc, optrand, SPX_N);
-    shake256_inc_absorb(s_inc, m, mlen);
-    shake256_inc_finalize(s_inc);
-    shake256_inc_squeeze(R, SPX_N, s_inc);
+    shake256_inc_init(&state);
+    shake256_inc_absorb(&state, sk_prf, SPX_N);
+    shake256_inc_absorb(&state, optrand, SPX_N);
+    shake256_inc_absorb(&state, m, mlen);
+    shake256_inc_finalize(&state);
+    shake256_inc_squeeze(R, SPX_N, &state);
 }
 
 /**
@@ -64,14 +64,14 @@ void PQCLEAN_SPHINCSSHAKE256192FROBUST_CLEAN_hash_message(
 
     unsigned char buf[SPX_DGST_BYTES];
     unsigned char *bufp = buf;
-    uint64_t s_inc[26];
+    shake256incctx state;
 
-    shake256_inc_init(s_inc);
-    shake256_inc_absorb(s_inc, R, SPX_N);
-    shake256_inc_absorb(s_inc, pk, SPX_PK_BYTES);
-    shake256_inc_absorb(s_inc, m, mlen);
-    shake256_inc_finalize(s_inc);
-    shake256_inc_squeeze(buf, SPX_DGST_BYTES, s_inc);
+    shake256_inc_init(&state);
+    shake256_inc_absorb(&state, R, SPX_N);
+    shake256_inc_absorb(&state, pk, SPX_PK_BYTES);
+    shake256_inc_absorb(&state, m, mlen);
+    shake256_inc_finalize(&state);
+    shake256_inc_squeeze(buf, SPX_DGST_BYTES, &state);
 
     memcpy(digest, bufp, SPX_FORS_MSG_BYTES);
     bufp += SPX_FORS_MSG_BYTES;
