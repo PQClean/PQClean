@@ -1,0 +1,16 @@
+consistency_checks:
+- source:
+    scheme: frodokem1344shake
+    implementation: clean
+  files:
+    - api.h
+    - common.h
+    - params.h
+    - kem.c
+    - noise.c
+    - util.c
+- source:
+    scheme: frodokem640shake
+    implementation: opt
+  files:
+    - matrix_shake.c
