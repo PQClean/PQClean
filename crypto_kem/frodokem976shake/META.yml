@@ -23,3 +23,5 @@ auxiliary-submitters:
 implementations:
 - name: clean
   version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/d5bbd0417ba111b08a959c0042a1dcc65fb14a89
+- name: opt
+  version: https://github.com/Microsoft/PQCrypto-LWEKE/commit/d5bbd0417ba111b08a959c0042a1dcc65fb14a89
