@@ -1,12 +1,8 @@
-#pragma once
+#ifndef RNG_H
+#define RNG_H
 
-/******  From this point on, the code was supplied by NIST ****************/
-//  Created by Bassham, Lawrence E (Fed) on 8/29/17.
-//  Copyright © 2017 Bassham, Lawrence E (Fed). All rights reserved.
-//
-/******    from NIST  ****************/
-
-#include <stdio.h>
+#include <stdint.h>
+#include <stddef.h>
 
 #define RNG_SUCCESS      0
 #define RNG_BAD_MAXLEN  -1
@@ -15,50 +11,16 @@
 
 typedef struct {
     unsigned char   buffer[16];
-    int             buffer_pos;
-    unsigned long   length_remaining;
+    unsigned int    buffer_pos;
+    uint64_t        length_remaining;
     unsigned char   key[32];
     unsigned char   ctr[16];
 } AES_XOF_struct;
 
-typedef struct {
-    unsigned char   Key[32];
-    unsigned char   V[16];
-    int             reseed_counter;
-} AES256_CTR_DRBG_struct;
 
+int PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander(AES_XOF_struct *ctx, unsigned char *x, size_t xlen);
 
-void
-AES256_CTR_DRBG_Update(unsigned char *provided_data,
-                       unsigned char *Key,
-                       unsigned char *V);
+/* TRNG_BYTE_LENGTH wide buffer */
+void PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx, const unsigned char *trng_entropy);
 
-int
-seedexpander_init(AES_XOF_struct *ctx,
-                  unsigned char *seed,
-                  unsigned char *diversifier,
-                  unsigned long maxlen);
-
-int
-seedexpander(AES_XOF_struct *ctx, unsigned char *x, unsigned long xlen);
-
-void
-randombytes_init(unsigned char *entropy_input,
-                 unsigned char *personalization_string,
-                 int security_strength);
-
-int
-randombytes(unsigned char *x, unsigned long long xlen);
-
-/******  End of NIST supplied code ****************/
-
-void initialize_pseudo_random_generator_seed(int ac, char *av[]);
-
-void deterministic_random_byte_generator(unsigned char *const output,
-        const unsigned long long output_len,
-        const unsigned char *const seed,
-        const unsigned long long seed_length);
-
-void seedexpander_from_trng(AES_XOF_struct *ctx,
-                            const unsigned char *trng_entropy
-                            /* TRNG_BYTE_LENGTH wide buffer */);
+#endif

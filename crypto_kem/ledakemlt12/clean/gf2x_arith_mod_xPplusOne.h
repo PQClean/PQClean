@@ -1,12 +1,11 @@
-#pragma once
+#ifndef GF2X_ARITH_MOD_XPLUSONE_H
+#define GF2X_ARITH_MOD_XPLUSONE_H
 
 #include "gf2x_limbs.h"
 #include "qc_ldpc_parameters.h"
 
 #include "gf2x_arith.h"
 #include "rng.h"
-
-/*----------------------------------------------------------------------------*/
 
 #define                NUM_BITS_GF2X_ELEMENT (P)
 #define              NUM_DIGITS_GF2X_ELEMENT ((P+DIGIT_SIZE_b-1)/DIGIT_SIZE_b)
@@ -58,63 +57,45 @@
                    )                                      \
      )
 
-/*----------------------------------------------------------------------------*/
-
-
-
-/*----------------------------------------------------------------------------*/
 
 static inline void gf2x_copy(DIGIT dest[], const DIGIT in[]) {
     for (int i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0; i--) {
         dest[i] = in[i];
     }
-} // end gf2x_copy
+}
 
-/*---------------------------------------------------------------------------*/
+/* returns the coefficient of the x^exponent term as the LSB of a digit */
+static inline DIGIT gf2x_get_coeff(const DIGIT poly[], const unsigned int exponent) {
+    unsigned int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
+    unsigned int digitIdx = straightIdx / DIGIT_SIZE_b;
+    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
+    return (poly[digitIdx] >> (DIGIT_SIZE_b - 1 - inDigitIdx)) & ((DIGIT) 1) ;
+}
 
-void gf2x_mod(DIGIT out[],
-              const int nin, const DIGIT in[]); /* out(x) = in(x) mod x^P+1  */
+/* sets the coefficient of the x^exponent term as the LSB of a digit */
+static inline void gf2x_set_coeff(DIGIT poly[], const unsigned int exponent, DIGIT value) {
+    int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
+    int digitIdx = straightIdx / DIGIT_SIZE_b;
 
-/*---------------------------------------------------------------------------*/
+    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
 
-void gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[]);
+    /* clear given coefficient */
+    DIGIT mask = ~( ((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
+    poly[digitIdx] = poly[digitIdx] & mask;
+    poly[digitIdx] = poly[digitIdx] | (( value & ((DIGIT) 1)) <<
+                                       (DIGIT_SIZE_b - 1 - inDigitIdx));
+}
 
-/*---------------------------------------------------------------------------*/
+/* toggles (flips) the coefficient of the x^exponent term as the LSB of a digit */
+static inline void gf2x_toggle_coeff(DIGIT poly[], const unsigned int exponent) {
+    int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
+    int digitIdx = straightIdx / DIGIT_SIZE_b;
+    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
 
-static inline void gf2x_mod_add(DIGIT Res[], const DIGIT A[], const DIGIT B[]) {
-    gf2x_add(NUM_DIGITS_GF2X_ELEMENT, Res,
-             NUM_DIGITS_GF2X_ELEMENT, A,
-             NUM_DIGITS_GF2X_ELEMENT, B);
-} // end gf2x_mod_add
-
-/*----------------------------------------------------------------------------*/
-
-/*
- * Optimized extended GCD algorithm to compute the multiplicative inverse of
- * a non-zero element in GF(2)[x] mod x^P+1, in polyn. representation.
- *
- * H. Brunner, A. Curiger, and M. Hofstetter. 1993.
- * On Computing Multiplicative Inverses in GF(2^m).
- * IEEE Trans. Comput. 42, 8 (August 1993), 1010-1015.
- * DOI=http://dx.doi.org/10.1109/12.238496
- *
- *
- * Henri Cohen, Gerhard Frey, Roberto Avanzi, Christophe Doche, Tanja Lange,
- * Kim Nguyen, and Frederik Vercauteren. 2012.
- * Handbook of Elliptic and Hyperelliptic Curve Cryptography,
- * Second Edition (2nd ed.). Chapman & Hall/CRC.
- * (Chapter 11 -- Algorithm 11.44 -- pag 223)
- *
- */
-int gf2x_mod_inverse(DIGIT out[], const DIGIT in[]);/* ret. 1 if inv. exists */
-
-/*---------------------------------------------------------------------------*/
-
-void gf2x_transpose_in_place(DIGIT
-                             A[]); /* in place bit-transp. of a(x) % x^P+1  *
-                                      * e.g.: a3 a2 a1 a0 --> a1 a2 a3 a0     */
-
-/*---------------------------------------------------------------------------*/
+    /* clear given coefficient */
+    DIGIT mask = ( ((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
+    poly[digitIdx] = poly[digitIdx] ^ mask;
+}
 
 /* population count for a single polynomial */
 static inline int population_count(DIGIT upc[]) {
@@ -139,90 +120,48 @@ with this CPU word bitsize !!! "
     return ret;
 } // end population_count
 
-/*--------------------------------------------------------------------------*/
-
-/* returns the coefficient of the x^exponent term as the LSB of a digit */
-static inline
-DIGIT gf2x_get_coeff(const DIGIT poly[], const unsigned int exponent) {
-    unsigned int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
-    unsigned int digitIdx = straightIdx / DIGIT_SIZE_b;
-    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
-    return (poly[digitIdx] >> (DIGIT_SIZE_b - 1 - inDigitIdx)) & ((DIGIT) 1) ;
+static inline void gf2x_mod_add(DIGIT Res[], const DIGIT A[], const DIGIT B[]) {
+    gf2x_add(Res, A, B, NUM_DIGITS_GF2X_ELEMENT);
 }
 
-/*--------------------------------------------------------------------------*/
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[]);
 
-/* sets the coefficient of the x^exponent term as the LSB of a digit */
-static inline
-void gf2x_set_coeff(DIGIT poly[], const unsigned int exponent, DIGIT value) {
-    int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
-    int digitIdx = straightIdx / DIGIT_SIZE_b;
+int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]);/* ret. 1 if inv. exists */
 
-    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
+/* in place bit-transp. of a(x) % x^P+1, e.g.: a3 a2 a1 a0 --> a1 a2 a3 a0     */
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]);
 
-    /* clear given coefficient */
-    DIGIT mask = ~( ((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
-    poly[digitIdx] = poly[digitIdx] & mask;
-    poly[digitIdx] = poly[digitIdx] | (( value & ((DIGIT) 1)) <<
-                                       (DIGIT_SIZE_b - 1 - inDigitIdx));
-}
-/*--------------------------------------------------------------------------*/
+void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_sparse_block(
+    POSITION_T *pos_ones,
+    const int countOnes,
+    AES_XOF_struct *seed_expander_ctx);
 
-/* toggles (flips) the coefficient of the x^exponent term as the LSB of a digit */
-static inline
-void gf2x_toggle_coeff(DIGIT poly[], const unsigned int exponent) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(
+    DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
+    const int countOnes,
+    AES_XOF_struct *seed_expander_ctx);
 
-    int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
-    int digitIdx = straightIdx / DIGIT_SIZE_b;
-    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add_sparse(
+    int sizeR, POSITION_T Res[],
+    int sizeA, POSITION_T A[],
+    int sizeB, POSITION_T B[]);
 
-    /* clear given coefficient */
-    DIGIT mask = ( ((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
-    poly[digitIdx] = poly[digitIdx] ^ mask;
-}
-/*--------------------------------------------------------------------------*/
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place_sparse(
+    int sizeA,
+    POSITION_T A[]);
 
-void rand_circulant_sparse_block(POSITION_T *pos_ones,
-                                 const int countOnes,
-                                 AES_XOF_struct *seed_expander_ctx);
-/*--------------------------------------------------------------------------*/
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_sparse(
+    size_t sizeR, POSITION_T Res[],
+    size_t sizeA, const POSITION_T A[],
+    size_t sizeB, const POSITION_T B[]);
 
-void rand_circulant_blocks_sequence(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
-                                    const int countOnes,
-                                    AES_XOF_struct *seed_expander_ctx
-                                   );
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_dense_to_sparse(
+    DIGIT Res[],
+    const DIGIT dense[],
+    POSITION_T sparse[],
+    unsigned int nPos);
 
-/*---------------------------------------------------------------------------*/
-
-
-void gf2x_mod_add_sparse(int sizeR,
-                         POSITION_T Res[],
-                         int sizeA,
-                         POSITION_T A[],
-                         int sizeB,
-                         POSITION_T B[]);
-
-/*----------------------------------------------------------------------------*/
-
-void gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[]);
-
-/*----------------------------------------------------------------------------*/
-
-void gf2x_mod_mul_sparse(int
-                         sizeR, /*number of ones in the result, max sizeA*sizeB */
-                         POSITION_T Res[],
-                         int sizeA, /*number of ones in A*/
-                         const POSITION_T A[],
-                         int sizeB, /*number of ones in B*/
-                         const POSITION_T B[]);
-/*----------------------------------------------------------------------------*/
-void gf2x_mod_mul_dense_to_sparse(DIGIT Res[],
-                                  const DIGIT dense[],
-                                  POSITION_T sparse[],
-                                  unsigned int nPos);
-/*----------------------------------------------------------------------------*/
-static inline
-int partition (POSITION_T arr[], int lo, int hi) {
+static inline int partition(POSITION_T arr[], int lo, int hi) {
     POSITION_T x = arr[hi];
     POSITION_T tmp;
     int i = (lo - 1);
@@ -239,12 +178,9 @@ int partition (POSITION_T arr[], int lo, int hi) {
     arr[hi] = tmp;
 
     return i + 1;
-} // end partition
+}
 
-/*----------------------------------------------------------------------------*/
-
-static inline
-void quicksort(POSITION_T Res[], unsigned int sizeR) {
+static inline void quicksort(POSITION_T Res[], unsigned int sizeR) {
     /* sort the result */
     int stack[sizeR];
     int hi, lo, pivot, tos = -1;
@@ -265,4 +201,4 @@ void quicksort(POSITION_T Res[], unsigned int sizeR) {
     }
 }
 
-/*---------------------------------------------------------------------------*/
+#endif

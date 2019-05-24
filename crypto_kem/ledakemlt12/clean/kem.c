@@ -1,65 +1,58 @@
-#include "niederreiter_keygen.h"
-#include "niederreiter_encrypt.h"
-#include "niederreiter_decrypt.h"
+#include "api.h"
+#include "niederreiter.h"
+#include "randombytes.h"
 #include "rng.h"
-#include "sha3.h"
-#include <string.h>
-/* Generates a keypair - pk is the public key and sk is the secret key. */
-int crypto_kem_keypair( unsigned char *pk,
-                        unsigned char *sk ) {
 
+#include <string.h>
+
+/* Generates a keypair - pk is the public key and sk is the secret key. */
+int PQCLEAN_LEDAKEMLT12_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
     AES_XOF_struct niederreiter_keys_expander;
-    randombytes( ((privateKeyNiederreiter_t *)sk)->prng_seed,
-                 TRNG_BYTE_LENGTH);
-    seedexpander_from_trng(&niederreiter_keys_expander,
-                           ((privateKeyNiederreiter_t *)sk)->prng_seed);
-    key_gen_niederreiter((publicKeyNiederreiter_t *) pk,
-                         (privateKeyNiederreiter_t *) sk,
-                         &niederreiter_keys_expander);
+    randombytes(((privateKeyNiederreiter_t *)sk)->prng_seed, TRNG_BYTE_LENGTH);
+    PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(&niederreiter_keys_expander,
+            ((privateKeyNiederreiter_t *)sk)->prng_seed);
+    PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen((publicKeyNiederreiter_t *) pk,
+            (privateKeyNiederreiter_t *) sk,
+            &niederreiter_keys_expander);
     return 0;
 }
 
 /* Encrypt - pk is the public key, ct is a key encapsulation message
   (ciphertext), ss is the shared secret.*/
-int crypto_kem_enc( unsigned char *ct,
-                    unsigned char *ss,
-                    const unsigned char *pk ) {
-
+int PQCLEAN_LEDAKEMLT12_CLEAN_crypto_kem_enc( unsigned char *ct, unsigned char *ss, const unsigned char *pk) {
     AES_XOF_struct niederreiter_encap_key_expander;
     unsigned char encapsulated_key_seed[TRNG_BYTE_LENGTH];
-    randombytes(encapsulated_key_seed, TRNG_BYTE_LENGTH);
-    seedexpander_from_trng(&niederreiter_encap_key_expander, encapsulated_key_seed);
-
     DIGIT error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
-    rand_circulant_blocks_sequence(error_vector,
-                                   NUM_ERRORS_T,
-                                   &niederreiter_encap_key_expander);
 
-    HASH_FUNCTION((const unsigned char *) error_vector,    // input
-                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B), // input Length
-                  ss);
+    randombytes(encapsulated_key_seed, TRNG_BYTE_LENGTH);
+    PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(&niederreiter_encap_key_expander, encapsulated_key_seed);
 
-    encrypt_niederreiter((DIGIT *) ct, (publicKeyNiederreiter_t *) pk, error_vector);
+    PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(error_vector,
+            NUM_ERRORS_T,
+            &niederreiter_encap_key_expander);
+
+    HASH_FUNCTION(ss, (const uint8_t *) error_vector, // input
+                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B)); // input length
+
+    PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt((DIGIT *) ct, (publicKeyNiederreiter_t *) pk, error_vector);
     return 0;
 }
 
 
 /* Decrypt - ct is a key encapsulation message (ciphertext), sk is the private
    key, ss is the shared secret */
-
-int crypto_kem_dec( unsigned char *ss,
-                    const unsigned char *ct,
-                    const unsigned char *sk ) {
+int PQCLEAN_LEDAKEMLT12_CLEAN_crypto_kem_dec(unsigned char *ss,
+        const unsigned char *ct,
+        const unsigned char *sk ) {
     DIGIT decoded_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
 
-    int decode_ok = decrypt_niederreiter(decoded_error_vector,
-                                         (privateKeyNiederreiter_t *)sk,
-                                         (DIGIT *)ct);
-    HASH_FUNCTION((const unsigned char *) decoded_error_vector,
-                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B),
-                  ss);
+    int decode_ok = PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(decoded_error_vector,
+                    (privateKeyNiederreiter_t *)sk,
+                    (DIGIT *)ct);
+    HASH_FUNCTION(ss, (const unsigned char *) decoded_error_vector,
+                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
     if (decode_ok == 1) {
         return 0;
     }
-    return 1;
+    return -1;
 }

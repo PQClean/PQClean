@@ -1,8 +1,8 @@
-#pragma once
+#ifndef GF2X_ARITH_H
+#define GF2X_ARITH_H
 
 #include "gf2x_limbs.h"
 
-/*----------------------------------------------------------------------------*/
 /*
  * Elements of GF(2)[x] are stored in compact dense binary form.
  *
@@ -41,40 +41,29 @@
  *           position[A_{1}]  ==  n-2
  *           position[A_{0}]  ==  n-1
  */
-/*----------------------------------------------------------------------------*/
-
-#define TC3
-#if defined(TC3)
-#define GF2X_MUL gf2x_mul_TC3
-#else
-#define GF2X_MUL gf2x_mul_comb
-#endif
 
 
+#define GF2X_MUL PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3
+// #define GF2X_MUL gf2x_mul_comb
 
-/*----------------------------------------------------------------------------*/
+static inline void gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], const unsigned int nr) {
 
-static inline void gf2x_add(const int nr, DIGIT Res[],
-                            const int na, const DIGIT A[],
-                            const int nb, const DIGIT B[]) {
-    for (unsigned i = 0; i < nr; i++) {
+    unsigned int i;
+    for (i = 0; i < nr; i++) {
         Res[i] = A[i] ^ B[i];
     }
-} // end gf2x_add
-
-/*----------------------------------------------------------------------------*/
+}
 
 void GF2X_MUL(const int nr, DIGIT Res[],
               const int na, const DIGIT A[],
-              const int nb, const DIGIT B[]
-             );
+              const int nb, const DIGIT B[]);
 
-int gf2x_cmp(const unsigned lenA, const DIGIT A[],
-             const unsigned lenB, const DIGIT B[]);
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void right_bit_shift_n(const int length, DIGIT in[], const int amount);
+void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(const int length, DIGIT in[], const int amount);
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void left_bit_shift_n(const int length, DIGIT in[], const int amount);
-/*----------------------------------------------------------------------------*/
+void PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(const int length, DIGIT in[], const int amount);
+
+
+#endif

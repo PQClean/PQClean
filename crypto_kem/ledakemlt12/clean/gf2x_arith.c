@@ -2,27 +2,24 @@
 #include <string.h>  // memset(...)
 #include <assert.h>
 
-/*----------------------------------------------------------------------------*/
-
 /* allows the second operand to be shorter than the first */
 /* the result should be as large as the first operand*/
-static inline void gf2x_add_asymm(const int nr, DIGIT Res[],
-                                  const int na, const DIGIT A[],
-                                  const int nb, const DIGIT B[]) {
-    int delta = na - nb;
-    for (unsigned i = 0; i < delta; i++) {
+static inline void gf2x_add_asymm(const size_t nr, DIGIT Res[],
+                                  const size_t na, const DIGIT A[],
+                                  const size_t nb, const DIGIT B[]) {
+    assert(nr >= na && na >= nb);
+    size_t i;
+    size_t delta = na - nb;
+    for (i = 0; i < delta; i++) {
         Res[i] = A[i];
     }
-    for (unsigned i = 0; i < nb; i++) {
+    for (i = 0; i < nb; i++) {
         Res[i + delta] = A[i + delta] ^ B[i];
     }
-} // end gf2x_add
-
-/*----------------------------------------------------------------------------*/
+}
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-
-void right_bit_shift_n(const int length, DIGIT in[], const int amount) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(const int length, DIGIT in[], const int amount) {
     assert(amount < DIGIT_SIZE_b);
     if ( amount == 0 ) {
         return;
@@ -35,12 +32,10 @@ void right_bit_shift_n(const int length, DIGIT in[], const int amount) {
         in[j] |=  (in[j - 1] & mask) << (DIGIT_SIZE_b - amount);
     }
     in[j] >>= amount;
-} // end right_bit_shift_n
-
-/*----------------------------------------------------------------------------*/
+}
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void left_bit_shift_n(const int length, DIGIT in[], const int amount) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(const int length, DIGIT in[], const int amount) {
     assert(amount < DIGIT_SIZE_b);
     if ( amount == 0 ) {
         return;
@@ -53,13 +48,12 @@ void left_bit_shift_n(const int length, DIGIT in[], const int amount) {
         in[j] |=  (in[j + 1] & mask) >> (DIGIT_SIZE_b - amount);
     }
     in[j] <<= amount;
-} // end right_bit_shift_n
+}
 
-/*----------------------------------------------------------------------------*/
 
-void gf2x_mul_comb(const int nr, DIGIT Res[],
-                   const int na, const DIGIT A[],
-                   const int nb, const DIGIT B[]) {
+static void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_comb(const int nr, DIGIT Res[],
+        const int na, const DIGIT A[],
+        const int nb, const DIGIT B[]) {
     int i, j, k;
     DIGIT u, h;
 
@@ -88,8 +82,6 @@ void gf2x_mul_comb(const int nr, DIGIT Res[],
             }
 }
 
-/*----------------------------------------------------------------------------*/
-
 static inline void gf2x_exact_div_x_plus_one(const int na, DIGIT A[]) {
     DIGIT t = 0;
     for (int i = na - 1; i >= 0; i--) {
@@ -102,48 +94,37 @@ static inline void gf2x_exact_div_x_plus_one(const int na, DIGIT A[]) {
         A[i] = t;
         t >>= DIGIT_SIZE_b - 1;
     }
-} // end gf2x_exact_div_x_plus_one
+}
 
-/*---------------------------------------------------------------------------*/
 #define MIN_KAR_DIGITS 20
 
-void gf2x_mul_Kar(const int nr, DIGIT Res[],
-                  const int na, const DIGIT A[],
-                  const int nb, const DIGIT B[]) {
+static void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(const int nr, DIGIT Res[],
+        const int na, const DIGIT A[],
+        const int nb, const DIGIT B[]) {
 
     if (na < MIN_KAR_DIGITS || nb < MIN_KAR_DIGITS) {
         /* fall back to schoolbook */
-        gf2x_mul_comb(nr, Res, na, A, nb, B);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_comb(nr, Res, na, A, nb, B);
         return;
     }
 
     if (na % 2 == 0) {
         unsigned bih = na / 2;
         DIGIT middle[2 * bih], sumA[bih], sumB[bih];
-        gf2x_add(bih, sumA,
-                 bih, A,
-                 bih, A + bih);
-        gf2x_add(bih, sumB,
-                 bih, B,
-                 bih, B + bih);
-        gf2x_mul_Kar(2 * bih, middle,
-                     bih, sumA,
-                     bih, sumB);
-        gf2x_mul_Kar(2 * bih, Res + 2 * bih,
-                     bih, A + bih,
-                     bih, B + bih);
-        gf2x_add(2 * bih, middle,
-                 2 * bih, middle,
-                 2 * bih, Res + 2 * bih);
-        gf2x_mul_Kar(2 * bih, Res,
-                     bih, A,
-                     bih, B);
-        gf2x_add(2 * bih, middle,
-                 2 * bih, middle,
-                 2 * bih, Res);
-        gf2x_add(2 * bih, Res + bih,
-                 2 * bih, Res + bih,
-                 2 * bih, middle);
+        gf2x_add(sumA, A, A + bih, bih);
+        gf2x_add(sumB, B, B + bih, bih);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(2 * bih, middle,
+                                               bih, sumA,
+                                               bih, sumB);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(2 * bih, Res + 2 * bih,
+                                               bih, A + bih,
+                                               bih, B + bih);
+        gf2x_add(middle, middle, Res + 2 * bih, 2 * bih);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(2 * bih, Res,
+                                               bih, A,
+                                               bih, B);
+        gf2x_add(middle, middle, Res, 2 * bih);
+        gf2x_add(Res + bih, Res + bih, middle, 2 * bih);
     } else {
         unsigned bih = na / 2 + 1;
         DIGIT middle[2 * bih], sumA[bih], sumB[bih];
@@ -153,42 +134,36 @@ void gf2x_mul_Kar(const int nr, DIGIT Res[],
         gf2x_add_asymm(bih,  sumB,
                        bih,  B + bih - 1,
                        bih - 1, B);
-        gf2x_mul_Kar(2 * bih, middle,
-                     bih, sumA,
-                     bih, sumB);
-        gf2x_mul_Kar(2 * bih, Res + 2 * (bih - 1),
-                     bih, A + bih - 1,
-                     bih, B + bih - 1);
-        gf2x_add(2 * bih, middle,
-                 2 * bih, middle,
-                 2 * bih, Res + 2 * (bih - 1));
-        gf2x_mul_Kar(2 * (bih - 1), Res,
-                     (bih - 1), A,
-                     (bih - 1), B);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(2 * bih, middle,
+                                               bih, sumA,
+                                               bih, sumB);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(2 * bih, Res + 2 * (bih - 1),
+                                               bih, A + bih - 1,
+                                               bih, B + bih - 1);
+        gf2x_add(middle, middle, Res + 2 * (bih - 1), 2 * bih);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(2 * (bih - 1), Res,
+                                               (bih - 1), A,
+                                               (bih - 1), B);
         gf2x_add_asymm(2 * bih, middle,
                        2 * bih, middle,
                        2 * (bih - 1), Res);
-        gf2x_add(2 * bih, Res + bih - 2,
-                 2 * bih, Res + bih - 2,
-                 2 * bih, middle);
+        gf2x_add(Res + bih - 2, Res + bih - 2, middle, 2 * bih);
     }
 }
 
-
-/*---------------------------------------------------------------------------*/
 #define MIN_TOOM_DIGITS 35
 
-void gf2x_mul_TC3(const int nr, DIGIT Res[],
-                  const int na, const DIGIT A[],
-                  const int nb, const DIGIT B[]) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3(const int nr, DIGIT Res[],
+        const int na, const DIGIT A[],
+        const int nb, const DIGIT B[]) {
 
     if (na < MIN_TOOM_DIGITS || nb < MIN_TOOM_DIGITS) {
-        /* fall back to schoolbook */
-        gf2x_mul_Kar(nr, Res, na, A, nb, B);
+        /* fall back to Karatsuba */
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_Kar(nr, Res, na, A, nb, B);
         return;
     }
 
-    unsigned bih; //number of limbs for each part.
+    unsigned int bih; //number of limbs for each part.
     if (na % 3 == 0) {
         bih = na / 3;
     } else {
@@ -197,9 +172,9 @@ void gf2x_mul_TC3(const int nr, DIGIT Res[],
 
     DIGIT u2[bih], u1[bih], u0[bih];
 
-    int leading_slack = (3 - (na) % 3) % 3;
+    unsigned int leading_slack = (3 - (na) % 3) % 3;
 //     printf("leading slack %d",leading_slack);
-    int i;
+    unsigned int i;
     for (i = 0; i < leading_slack ; i++) {
         u2[i] = 0;
     }
@@ -231,42 +206,32 @@ void gf2x_mul_TC3(const int nr, DIGIT Res[],
     }
 
     DIGIT sum_u[bih]; /*bih digit wide*/
-    gf2x_add(bih, sum_u,
-             bih, u0,
-             bih, u1);
-    gf2x_add(bih, sum_u,
-             bih, sum_u,
-             bih, u2);
+    gf2x_add(sum_u, u0, u1, bih);
+    gf2x_add(sum_u, sum_u, u2, bih);
 
     DIGIT sum_v[bih]; /*bih digit wide*/
-    gf2x_add(bih, sum_v,
-             bih, v0,
-             bih, v1);
-    gf2x_add(bih, sum_v,
-             bih, sum_v,
-             bih, v2);
+    gf2x_add(sum_v, v0, v1, bih);
+    gf2x_add(sum_v, sum_v, v2, bih);
 
 
     DIGIT w1[2 * bih];
-    gf2x_mul_TC3(2 * bih, w1,
-                 bih, sum_u,
-                 bih, sum_v);
+    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3(2 * bih, w1,
+                                           bih, sum_u,
+                                           bih, sum_v);
 
 
     DIGIT u2_x2[bih + 1];
     u2_x2[0] = 0;
     memcpy(u2_x2 + 1, u2, bih * DIGIT_SIZE_B);
-    left_bit_shift_n(bih + 1, u2_x2, 2);
+    PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(bih + 1, u2_x2, 2);
 
     DIGIT u1_x[bih + 1];
     u1_x[0] = 0;
     memcpy(u1_x + 1, u1, bih * DIGIT_SIZE_B);
-    left_bit_shift_n(bih + 1, u1_x, 1);
+    PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(bih + 1, u1_x, 1);
 
     DIGIT u1_x1_u2_x2[bih + 1];
-    gf2x_add(bih + 1, u1_x1_u2_x2,
-             bih + 1, u1_x,
-             bih + 1, u2_x2);
+    gf2x_add(u1_x1_u2_x2, u1_x, u2_x2, bih + 1);
 
     DIGIT temp_u_components[bih + 1];
     gf2x_add_asymm(bih + 1, temp_u_components,
@@ -276,17 +241,15 @@ void gf2x_mul_TC3(const int nr, DIGIT Res[],
     DIGIT v2_x2[bih + 1];
     v2_x2[0] = 0;
     memcpy(v2_x2 + 1, v2, bih * DIGIT_SIZE_B);
-    left_bit_shift_n(bih + 1, v2_x2, 2);
+    PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(bih + 1, v2_x2, 2);
 
     DIGIT v1_x[bih + 1];
     v1_x[0] = 0;
     memcpy(v1_x + 1, v1, bih * DIGIT_SIZE_B);
-    left_bit_shift_n(bih + 1, v1_x, 1);
+    PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(bih + 1, v1_x, 1);
 
     DIGIT v1_x1_v2_x2[bih + 1];
-    gf2x_add(bih + 1, v1_x1_v2_x2,
-             bih + 1, v1_x,
-             bih + 1, v2_x2);
+    gf2x_add(v1_x1_v2_x2, v1_x, v2_x2, bih + 1);
 
     DIGIT temp_v_components[bih + 1];
     gf2x_add_asymm(bih + 1, temp_v_components,
@@ -294,9 +257,9 @@ void gf2x_mul_TC3(const int nr, DIGIT Res[],
                    bih, sum_v);
 
     DIGIT w3[2 * bih + 2];
-    gf2x_mul_TC3(2 * bih + 2, w3,
-                 bih + 1, temp_u_components,
-                 bih + 1, temp_v_components);
+    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3(2 * bih + 2, w3,
+                                           bih + 1, temp_u_components,
+                                           bih + 1, temp_v_components);
 
     gf2x_add_asymm(bih + 1, u1_x1_u2_x2,
                    bih + 1, u1_x1_u2_x2,
@@ -306,36 +269,32 @@ void gf2x_mul_TC3(const int nr, DIGIT Res[],
                    bih, v0);
 
     DIGIT w2[2 * bih + 2];
-    gf2x_mul_TC3(2 * bih + 2, w2,
-                 bih + 1, u1_x1_u2_x2,
-                 bih + 1, v1_x1_v2_x2);
+    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3(2 * bih + 2, w2,
+                                           bih + 1, u1_x1_u2_x2,
+                                           bih + 1, v1_x1_v2_x2);
 
     DIGIT w4[2 * bih];
-    gf2x_mul_TC3(2 * bih, w4,
-                 bih, u2,
-                 bih, v2);
+    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3(2 * bih, w4,
+                                           bih, u2,
+                                           bih, v2);
     DIGIT w0[2 * bih];
-    gf2x_mul_TC3(2 * bih, w0,
-                 bih, u0,
-                 bih, v0);
+    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3(2 * bih, w0,
+                                           bih, u0,
+                                           bih, v0);
 
     // Interpolation starts
-    gf2x_add(2 * bih + 2, w3,
-             2 * bih + 2, w2,
-             2 * bih + 2, w3);
+    gf2x_add(w3, w2, w3, 2 * bih + 2);
     gf2x_add_asymm(2 * bih + 2, w2,
                    2 * bih + 2, w2,
                    2 * bih, w0);
-    right_bit_shift_n(2 * bih + 2, w2, 1);
-    gf2x_add(2 * bih + 2, w2,
-             2 * bih + 2, w2,
-             2 * bih + 2, w3);
+    PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(2 * bih + 2, w2, 1);
+    gf2x_add(w2, w2, w3, 2 * bih + 2);
 
     // w2 + (w4 * x^3+1) = w2 + w4 + w4 << 3
     DIGIT w4_x3_plus_1[2 * bih + 1];
     w4_x3_plus_1[0] = 0;
     memcpy(w4_x3_plus_1 + 1, w4, 2 * bih * DIGIT_SIZE_B);
-    left_bit_shift_n(2 * bih + 1, w4_x3_plus_1, 3);
+    PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(2 * bih + 1, w4_x3_plus_1, 3);
     gf2x_add_asymm(2 * bih + 2, w2,
                    2 * bih + 2, w2,
                    2 * bih, w4);
@@ -345,27 +304,21 @@ void gf2x_mul_TC3(const int nr, DIGIT Res[],
 
     gf2x_exact_div_x_plus_one(2 * bih + 2, w2);
 
-    gf2x_add(2 * bih, w1,
-             2 * bih, w1,
-             2 * bih, w0);
+    gf2x_add(w1, w1, w0, 2 * bih);
     gf2x_add_asymm(2 * bih + 2, w3,
                    2 * bih + 2, w3,
                    2 * bih, w1);
 
-    right_bit_shift_n(2 * bih + 2, w3, 1);
+    PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(2 * bih + 2, w3, 1);
     gf2x_exact_div_x_plus_one(2 * bih + 2, w3);
 
-    gf2x_add(2 * bih, w1,
-             2 * bih, w1,
-             2 * bih, w4);
+    gf2x_add(w1, w1, w4, 2 * bih);
 
     DIGIT w1_final[2 * bih + 2];
     gf2x_add_asymm(2 * bih + 2, w1_final,
                    2 * bih + 2, w2,
                    2 * bih, w1);
-    gf2x_add(2 * bih + 2, w2,
-             2 * bih + 2, w2,
-             2 * bih + 2, w3);
+    gf2x_add(w2, w2, w3, 2 * bih + 2);
 
     // Result recombination starts here
 
@@ -395,35 +348,32 @@ void gf2x_mul_TC3(const int nr, DIGIT Res[],
         Res[leastSignifDigitIdx - i] ^= w4[2 * bih   - 1 - i];
     }
 }
-
-
-/*----------------------------------------------------------------------------*/
-
-int gf2x_cmp(const unsigned lenA, const DIGIT A[],
-             const unsigned lenB, const DIGIT B[]) {
-
-    int i;
-    unsigned lA = lenA, lB = lenB;
-    for (i = 0; i < lenA && A[i] == 0; i++) {
-        lA--;
-    }
-    for (i = 0; i < lenB && B[i] == 0; i++) {
-        lB--;
-    }
-    if (lA < lB) {
-        return -1;
-    }
-    if (lA > lB) {
-        return +1;
-    }
-    for (i = 0; i < lA; i++) {
-        if (A[i] > B[i]) {
-            return +1;
-        }
-        if (A[i] < B[i]) {
-            return -1;
-        }
-    }
-    return 0;
-
-} // end gf2x_cmp
+// // Unused
+// static int gf2x_cmp(const unsigned lenA, const DIGIT A[],
+//                     const unsigned lenB, const DIGIT B[]) {
+//
+//     int i;
+//     unsigned lA = lenA, lB = lenB;
+//     for (i = 0; i < lenA && A[i] == 0; i++) {
+//         lA--;
+//     }
+//     for (i = 0; i < lenB && B[i] == 0; i++) {
+//         lB--;
+//     }
+//     if (lA < lB) {
+//         return -1;
+//     }
+//     if (lA > lB) {
+//         return +1;
+//     }
+//     for (i = 0; i < lA; i++) {
+//         if (A[i] > B[i]) {
+//             return +1;
+//         }
+//         if (A[i] < B[i]) {
+//             return -1;
+//         }
+//     }
+//     return 0;
+//
+// }

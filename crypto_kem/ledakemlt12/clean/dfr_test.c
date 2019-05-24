@@ -1,19 +1,34 @@
-#include "qc_ldpc_parameters.h"
-#include "gf2x_arith_mod_xPplusOne.h"
 #include "bf_decoding.h"
+#include "dfr_test.h"
+#include "gf2x_arith_mod_xPplusOne.h"
+#include "qc_ldpc_parameters.h"
 
 #include <string.h>
 
-/*---------------------------------------------------------------------------*/
 /* Tests if the current code attains the desired DFR. If that is the case,
  * computes the threshold for the second iteration of the decoder and stores
- * it in the globally accessible vector*/
+ * it in the globally accessible vector */
 
 extern int thresholds[2];
 
-int DFR_test(POSITION_T LSparse[N0][DV * M]) {
+int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
 
     POSITION_T LSparse_loc[N0][DV * M];
+
+    /* Gamma matrix: an N0 x N0 block circulant matrix with block size p
+     * gamma[a][b][c] stores the intersection of the first column of the a-th
+     * block of L  with the c-th column of the b-th block of L */
+    /* Gamma computation can be accelerated employing symmetry and QC properties */
+    int gamma[N0][N0][P] = {{{0}}};
+    uint32_t rotated_column[DV * M];
+    int firstidx, secondidx, intersectionval;
+
+    unsigned int gammaHist[N0][DV * M + 1] = {{0}};
+
+    int maxMut[N0], maxMutMinusOne[N0];
+    int allBlockMaxSumst, allBlockMaxSumstMinusOne;
+
+    unsigned int toAdd, histIdx;
 
     /*transpose blocks of L, we need its columns */
     for (int i = 0; i < N0; i++) {
@@ -24,12 +39,7 @@ int DFR_test(POSITION_T LSparse[N0][DV * M]) {
         }
         quicksort(LSparse_loc[i], DV * M);
     }
-    /* Gamma matrix: an N0 x N0 block circulant matrix with block size p
-     * gamma[a][b][c] stores the intersection of the first column of the a-th
-     * block of L  with the c-th column of the b-th block of L */
-    /* Gamma computation can be accelerated employing symmetry and QC properties */
-    int gamma[N0][N0][P] = {{{0}}};
-    unsigned int rotated_column[DV * M];
+
     for (int i = 0; i < N0; i++ ) {
         for (int j = 0; j < N0; j++ ) {
             for (int k = 0; k < P; k++) {
@@ -39,8 +49,8 @@ int DFR_test(POSITION_T LSparse[N0][DV * M]) {
                 }
                 quicksort(rotated_column, DV * M);
                 /* compute the intersection amount */
-                int firstidx = 0, secondidx = 0;
-                int intersectionval = 0;
+                firstidx = 0, secondidx = 0;
+                intersectionval = 0;
                 while ( (firstidx < DV * M) && (secondidx < DV * M) ) {
                     if ( LSparse_loc[i][firstidx] == rotated_column[secondidx] ) {
                         intersectionval++;
@@ -65,7 +75,6 @@ int DFR_test(POSITION_T LSparse[N0][DV * M]) {
         }
     }
     /* build histogram of values in gamma */
-    unsigned int gammaHist[N0][DV * M + 1] = {{0}};
     for (int i = 0; i < N0; i++ ) {
         for (int j = 0; j < N0; j++ ) {
             for (int k = 0; k < P; k++) {
@@ -74,13 +83,11 @@ int DFR_test(POSITION_T LSparse[N0][DV * M]) {
         }
     }
 
-    int maxMut[N0], maxMutMinusOne[N0];
-    int allBlockMaxSumst, allBlockMaxSumstMinusOne;
 
     for (int gammaBlockRowIdx = 0; gammaBlockRowIdx < N0; gammaBlockRowIdx++) {
-        int toAdd = T_BAR - 1;
+        toAdd = T_BAR - 1;
         maxMutMinusOne[gammaBlockRowIdx] = 0;
-        int histIdx = DV * M;
+        histIdx = DV * M;
         while ( (histIdx > 0) && (toAdd > 0)) {
             if (gammaHist[gammaBlockRowIdx][histIdx] > toAdd ) {
                 maxMutMinusOne[gammaBlockRowIdx] += histIdx * toAdd;

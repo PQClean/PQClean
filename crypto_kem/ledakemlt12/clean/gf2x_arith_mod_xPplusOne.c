@@ -1,12 +1,11 @@
 #include "gf2x_arith_mod_xPplusOne.h"
 #include "rng.h"
+
 #include <string.h>  // memcpy(...), memset(...)
 #include <assert.h>
-#include <stdalign.h>
-/*----------------------------------------------------------------------------*/
 
-void gf2x_mod(DIGIT out[],
-              const int nin, const DIGIT in[]) {
+static void gf2x_mod(DIGIT out[],
+                     const int nin, const DIGIT in[]) {
 
     long int i, j, posTrailingBit, maskOffset;
     DIGIT mask, aux[nin];
@@ -50,12 +49,9 @@ void gf2x_mod(DIGIT out[],
         out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = aux[nin - 1 - i];
     }
 
-} // end gf2x_mod
+}
 
-/*----------------------------------------------------------------------------*/
-
-static
-void left_bit_shift(const int length, DIGIT in[]) {
+static void left_bit_shift(const int length, DIGIT in[]) {
 
     int j;
     for (j = 0; j < length - 1; j++) {
@@ -63,12 +59,9 @@ void left_bit_shift(const int length, DIGIT in[]) {
         in[j] |= in[j + 1] >> (DIGIT_SIZE_b - 1);
     }
     in[j] <<= 1;
-} // end left_bit_shift
+}
 
-/*----------------------------------------------------------------------------*/
-
-static
-void right_bit_shift(const int length, DIGIT in[]) {
+static void right_bit_shift(const int length, DIGIT in[]) {
 
     int j;
     for (j = length - 1; j > 0 ; j--) {
@@ -76,12 +69,11 @@ void right_bit_shift(const int length, DIGIT in[]) {
         in[j] |=  (in[j - 1] & (DIGIT)0x01) << (DIGIT_SIZE_b - 1);
     }
     in[j] >>= 1;
-} // end right_bit_shift
+}
 
-/*----------------------------------------------------------------------------*/
+
 /* shifts by whole digits */
-static inline
-void left_DIGIT_shift_n(const int length, DIGIT in[], int amount) {
+static inline void left_DIGIT_shift_n(const int length, DIGIT in[], int amount) {
     int j;
     for (j = 0; (j + amount) < length; j++) {
         in[j] = in[j + amount];
@@ -89,21 +81,17 @@ void left_DIGIT_shift_n(const int length, DIGIT in[], int amount) {
     for (; j < length; j++) {
         in[j] = (DIGIT)0;
     }
-} // end left_bit_shift_n
+}
 
-/*----------------------------------------------------------------------------*/
+
 /* may shift by an arbitrary amount*/
-
-void left_bit_shift_wide_n(const int length, DIGIT in[], int amount) {
+static void left_bit_shift_wide_n(const int length, DIGIT in[], int amount) {
     left_DIGIT_shift_n(length, in, amount / DIGIT_SIZE_b);
-    left_bit_shift_n(length, in, amount % DIGIT_SIZE_b);
-} // end left_bit_shift_n
-
-/*----------------------------------------------------------------------------*/
+    PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(length, in, amount % DIGIT_SIZE_b);
+}
 
 #if (defined(DIGIT_IS_UINT8) || defined(DIGIT_IS_UINT16))
-static
-uint8_t byte_reverse_with_less32bitDIGIT(uint8_t b) {
+static uint8_t byte_reverse_with_less32bitDIGIT(uint8_t b) {
     uint8_t r = b;
     int s = (sizeof(b) << 3) - 1;
     for (b >>= 1; b; b >>= 1) {
@@ -113,30 +101,25 @@ uint8_t byte_reverse_with_less32bitDIGIT(uint8_t b) {
     }
     r <<= s;
     return r;
-} // end byte_reverse_less32bitDIGIT
+}
 #endif
 
 #if defined(DIGIT_IS_UINT32)
-static
-uint8_t byte_reverse_with_32bitDIGIT(uint8_t b) {
+static uint8_t byte_reverse_with_32bitDIGIT(uint8_t b) {
     b = ( (b * 0x0802LU & 0x22110LU) | (b * 0x8020LU & 0x88440LU)
         ) * 0x10101LU >> 16;
     return b;
-} // end byte_reverse_32bitDIGIT
+}
 #endif
 
 #if defined(DIGIT_IS_UINT64)
-static
-uint8_t byte_reverse_with_64bitDIGIT(uint8_t b) {
+static uint8_t byte_reverse_with_64bitDIGIT(uint8_t b) {
     b = (b * 0x0202020202ULL & 0x010884422010ULL) % 1023;
     return b;
-} // end byte_reverse_64bitDIGIT
+}
 #endif
 
-/*----------------------------------------------------------------------------*/
-
-static
-DIGIT reverse_digit(const DIGIT b) {
+static DIGIT reverse_digit(const DIGIT b) {
     int i;
     union toReverse_t {
         uint8_t inByte[DIGIT_SIZE_B];
@@ -166,15 +149,11 @@ DIGIT reverse_digit(const DIGIT b) {
 with this CPU word bitsize !!! "
     #endif
     return toReverse.digitValue;
-} // end reverse_digit
+}
 
-
-/*----------------------------------------------------------------------------*/
-
-void gf2x_transpose_in_place(DIGIT A[]) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]) {
     /* it keeps the lsb in the same position and
-     * inverts the sequence of the remaining bits
-     */
+     * inverts the sequence of the remaining bits */
 
     DIGIT mask = (DIGIT)0x1;
     DIGIT rev1, rev2, a00;
@@ -205,14 +184,12 @@ void gf2x_transpose_in_place(DIGIT A[]) {
     }
 
     if (slack_bits_amount) {
-        right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A, slack_bits_amount);
+        PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A, slack_bits_amount);
     }
     A[NUM_DIGITS_GF2X_ELEMENT - 1] = (A[NUM_DIGITS_GF2X_ELEMENT - 1] & (~mask)) | a00;
-} // end transpose_in_place
+}
 
-/*----------------------------------------------------------------------------*/
-
-void rotate_bit_left(DIGIT in[]) { /*  equivalent to x * in(x) mod x^P+1 */
+static void rotate_bit_left(DIGIT in[]) { /*  equivalent to x * in(x) mod x^P+1 */
 
     DIGIT mask, rotated_bit;
 
@@ -234,13 +211,9 @@ void rotate_bit_left(DIGIT in[]) { /*  equivalent to x * in(x) mod x^P+1 */
 
     }
     in[NUM_DIGITS_GF2X_ELEMENT - 1] |= rotated_bit;
-} // end rotate_bit_left
+}
 
-
-
-/*----------------------------------------------------------------------------*/
-
-void rotate_bit_right(DIGIT in[]) { /*  x^{-1} * in(x) mod x^P+1 */
+static void rotate_bit_right(DIGIT in[]) { /*  x^{-1} * in(x) mod x^P+1 */
 
     DIGIT rotated_bit = in[NUM_DIGITS_GF2X_ELEMENT - 1] & ((DIGIT)0x1);
     right_bit_shift(NUM_DIGITS_GF2X_ELEMENT, in);
@@ -255,23 +228,18 @@ void rotate_bit_right(DIGIT in[]) { /*  x^{-1} * in(x) mod x^P+1 */
         rotated_bit = rotated_bit << (DIGIT_SIZE_b - 1);
     }
     in[0] |= rotated_bit;
-} // end rotate_bit_right
+}
 
-/*----------------------------------------------------------------------------*/
-
-static
-void gf2x_swap(const int length,
-               DIGIT f[],
-               DIGIT s[]) {
+static void gf2x_swap(const int length,
+                      DIGIT f[],
+                      DIGIT s[]) {
     DIGIT t;
     for (int i = length - 1; i >= 0; i--) {
         t = f[i];
         f[i] = s[i];
         s[i] = t;
     }
-}  // end gf2x_swap
-
-/*----------------------------------------------------------------------------*/
+}
 
 /*
  * Optimized extended GCD algorithm to compute the multiplicative inverse of
@@ -291,14 +259,14 @@ void gf2x_swap(const int length,
  *
  */
 
-int gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {   /* in^{-1} mod x^P-1 */
+int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {   /* in^{-1} mod x^P-1 */
 
     int i;
     long int delta = 0;
-    alignas(32) DIGIT u[NUM_DIGITS_GF2X_ELEMENT] = {0},
-            v[NUM_DIGITS_GF2X_ELEMENT] = {0},
-                                         s[NUM_DIGITS_GF2X_MODULUS] = {0},
-                                                 f[NUM_DIGITS_GF2X_MODULUS] = {0};
+    DIGIT u[NUM_DIGITS_GF2X_ELEMENT] = {0};
+    DIGIT v[NUM_DIGITS_GF2X_ELEMENT] = {0};
+    DIGIT s[NUM_DIGITS_GF2X_MODULUS] = {0};
+    DIGIT f[NUM_DIGITS_GF2X_MODULUS] = {0}; // alignas(32)?
 
     DIGIT mask;
     u[NUM_DIGITS_GF2X_ELEMENT - 1] = 0x1;
@@ -332,9 +300,7 @@ int gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {   /* in^{-1} mod x^P-1 */
             delta += 1;
         } else {
             if ( (s[0] & mask) != 0) {
-                gf2x_add(NUM_DIGITS_GF2X_MODULUS, s,
-                         NUM_DIGITS_GF2X_MODULUS, s,
-                         NUM_DIGITS_GF2X_MODULUS, f);
+                gf2x_add(s, s, f, NUM_DIGITS_GF2X_MODULUS);
                 gf2x_mod_add(v, v, u);
             }
             left_bit_shift(NUM_DIGITS_GF2X_MODULUS, s);
@@ -355,11 +321,9 @@ int gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {   /* in^{-1} mod x^P-1 */
     }
 
     return (delta == 0);
-} // end gf2x_mod_inverse
+}
 
-/*----------------------------------------------------------------------------*/
-
-void gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[]) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[]) {
 
     DIGIT aux[2 * NUM_DIGITS_GF2X_ELEMENT];
     GF2X_MUL(2 * NUM_DIGITS_GF2X_ELEMENT, aux,
@@ -367,16 +331,15 @@ void gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[]) {
              NUM_DIGITS_GF2X_ELEMENT, B);
     gf2x_mod(Res, 2 * NUM_DIGITS_GF2X_ELEMENT, aux);
 
-} // end gf2x_mod_mul
-
-/*----------------------------------------------------------------------------*/
+}
 
 /*PRE: the representation of the sparse coefficients is sorted in increasing
  order of the coefficients themselves */
-void gf2x_mod_mul_dense_to_sparse(DIGIT Res[],
-                                  const DIGIT dense[],
-                                  POSITION_T sparse[],
-                                  unsigned int nPos) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_dense_to_sparse(
+    DIGIT Res[],
+    const DIGIT dense[],
+    POSITION_T sparse[], unsigned int nPos) {
+
     DIGIT aux[2 * NUM_DIGITS_GF2X_ELEMENT] = {0x00};
     DIGIT resDouble[2 * NUM_DIGITS_GF2X_ELEMENT] = {0x00};
     memcpy(aux + NUM_DIGITS_GF2X_ELEMENT, dense, NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
@@ -390,21 +353,16 @@ void gf2x_mod_mul_dense_to_sparse(DIGIT Res[],
         for (unsigned int i = 1; i < nPos; i++) {
             if (sparse[i] != INVALID_POS_VALUE) {
                 left_bit_shift_wide_n(2 * NUM_DIGITS_GF2X_ELEMENT, aux, (sparse[i] - sparse[i - 1]) );
-                gf2x_add(2 * NUM_DIGITS_GF2X_ELEMENT, resDouble,
-                         2 * NUM_DIGITS_GF2X_ELEMENT, aux,
-                         2 * NUM_DIGITS_GF2X_ELEMENT, resDouble);
+                gf2x_add(resDouble, aux, resDouble, 2 * NUM_DIGITS_GF2X_ELEMENT);
             }
         }
     }
 
     gf2x_mod(Res, 2 * NUM_DIGITS_GF2X_ELEMENT, resDouble);
 
-} // end gf2x_mod_mul
+}
 
-/*----------------------------------------------------------------------------*/
-
-
-void gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[]) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[]) {
 
     POSITION_T t;
     int i = 0, j;
@@ -424,21 +382,16 @@ void gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[]) {
         A[i] = t;
     }
 
-} // end gf2x_transpose_in_place_sparse
+}
 
-/*----------------------------------------------------------------------------*/
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T Res[],
+        size_t sizeA, const POSITION_T A[],
+        size_t sizeB, const POSITION_T B[]) {
 
-void gf2x_mod_mul_sparse(int
-                         sizeR, /*number of ones in the result, max sizeA*sizeB */
-                         POSITION_T Res[],
-                         int sizeA, /*number of ones in A*/
-                         const POSITION_T A[],
-                         int sizeB, /*number of ones in B*/
-                         const POSITION_T B[]) {
     /* compute all the coefficients, filling invalid positions with P*/
-    unsigned lastFilledPos = 0;
-    for (int i = 0 ; i < sizeA ; i++) {
-        for (int j = 0 ; j < sizeB ; j++) {
+    size_t lastFilledPos = 0;
+    for (size_t i = 0 ; i < sizeA ; i++) {
+        for (size_t j = 0 ; j < sizeB ; j++) {
             uint32_t prod = ((uint32_t) A[i]) + ((uint32_t) B[j]);
             prod = ( (prod >= P) ? prod - P : prod);
             if ((A[i] != INVALID_POS_VALUE) &&
@@ -458,8 +411,8 @@ void gf2x_mod_mul_sparse(int
     /* eliminate duplicates */
     POSITION_T lastReadPos = Res[0];
     int duplicateCount;
-    int write_idx = 0;
-    int read_idx = 0;
+    size_t write_idx = 0;
+    size_t read_idx = 0;
     while (read_idx < sizeR  && Res[read_idx] != INVALID_POS_VALUE) {
         lastReadPos = Res[read_idx];
         read_idx++;
@@ -477,18 +430,14 @@ void gf2x_mod_mul_sparse(int
     for (; write_idx < sizeR; write_idx++) {
         Res[write_idx] = INVALID_POS_VALUE;
     }
-} // end gf2x_mod_mul_sparse
+}
 
-
-/*----------------------------------------------------------------------------*/
 /* the implementation is safe even in case A or B alias with the result */
 /* PRE: A and B should be sorted and have INVALID_POS_VALUE at the end */
-void gf2x_mod_add_sparse(int sizeR,
-                         POSITION_T Res[],
-                         int sizeA,
-                         POSITION_T A[],
-                         int sizeB,
-                         POSITION_T B[]) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add_sparse(
+    int sizeR, POSITION_T Res[],
+    int sizeA, POSITION_T A[],
+    int sizeB, POSITION_T B[]) {
 
     POSITION_T tmpRes[sizeR];
     int idxA = 0, idxB = 0, idxR = 0;
@@ -530,25 +479,21 @@ void gf2x_mod_add_sparse(int sizeR,
     }
     memcpy(Res, tmpRes, sizeof(POSITION_T)*sizeR);
 
-} // end gf2x_mod_add_sparse
-
-/*----------------------------------------------------------------------------*/
+}
 
 /* Return a uniform random value in the range 0..n-1 inclusive,
  * applying a rejection sampling strategy and exploiting as a random source
  * the NIST seedexpander seeded with the proper key.
  * Assumes that the maximum value for the range n is 2^32-1
  */
-static
-int rand_range(const int n, const int logn, AES_XOF_struct *seed_expander_ctx) {
-
+static uint32_t rand_range(const unsigned int n, const int logn, AES_XOF_struct *seed_expander_ctx) {
     unsigned long required_rnd_bytes = (logn + 7) / 8;
     unsigned char rnd_char_buffer[4];
     uint32_t rnd_value;
     uint32_t mask = ( (uint32_t)1 << logn) - 1;
 
     do {
-        seedexpander(seed_expander_ctx, rnd_char_buffer, required_rnd_bytes);
+        PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander(seed_expander_ctx, rnd_char_buffer, required_rnd_bytes);
         /* obtain an endianness independent representation of the generated random
          bytes into an unsigned integer */
         rnd_value =  ((uint32_t)rnd_char_buffer[3] << 24) +
@@ -559,24 +504,21 @@ int rand_range(const int n, const int logn, AES_XOF_struct *seed_expander_ctx) {
     } while (rnd_value >= n);
 
     return rnd_value;
-} // end rand_range
+}
 
-
-
-/*----------------------------------------------------------------------------*/
 /* Obtains fresh randomness and seed-expands it until all the required positions
  * for the '1's in the circulant block are obtained */
-
-void rand_circulant_sparse_block(POSITION_T *pos_ones,
-                                 const int countOnes,
-                                 AES_XOF_struct *seed_expander_ctx) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_sparse_block(POSITION_T *pos_ones,
+        const int countOnes,
+        AES_XOF_struct *seed_expander_ctx) {
 
     int duplicated, placedOnes = 0;
+    uint32_t p;
 
     while (placedOnes < countOnes) {
-        int p = rand_range(NUM_BITS_GF2X_ELEMENT,
-                           BITS_TO_REPRESENT(P),
-                           seed_expander_ctx);
+        p = rand_range(NUM_BITS_GF2X_ELEMENT,
+                       BITS_TO_REPRESENT(P),
+                       seed_expander_ctx);
         duplicated = 0;
         for (int j = 0; j < placedOnes; j++) if (pos_ones[j] == p) {
                 duplicated = 1;
@@ -586,14 +528,11 @@ void rand_circulant_sparse_block(POSITION_T *pos_ones,
             placedOnes++;
         }
     }
-} // rand_circulant_sparse_block
+}
 
-/*----------------------------------------------------------------------------*/
-
-
-void rand_circulant_blocks_sequence(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
-                                    const int countOnes,
-                                    AES_XOF_struct *seed_expander_ctx) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
+        const int countOnes,
+        AES_XOF_struct *seed_expander_ctx) {
 
     int rndPos[countOnes],  duplicated, counter = 0;
     memset(sequence, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
@@ -618,6 +557,4 @@ void rand_circulant_blocks_sequence(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT]
                         ( (DIGIT) 1));
     }
 
-} // end rand_circulant_blocks_sequence
-
-/*----------------------------------------------------------------------------*/
+}

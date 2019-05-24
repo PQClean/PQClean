@@ -1,5 +1,6 @@
 #include "bf_decoding.h"
 #include "gf2x_arith_mod_xPplusOne.h"
+
 #include <string.h>
 #include <assert.h>
 
@@ -8,14 +9,10 @@
 
 int thresholds[2] = {B0, (DV * M) / 2 + 1};
 
-int bf_decoding(DIGIT out[], // N0 polynomials
-                const POSITION_T HtrPosOnes[N0][DV],
-                const POSITION_T QtrPosOnes[N0][M],
-                DIGIT privateSyndrome[]  //  1 polynomial
-               ) {
-    #if P < 64
-#error The circulant block size should exceed 64
-    #endif
+int PQCLEAN_LEDAKEMLT12_CLEAN_bf_decoding(DIGIT out[], // N0 polynomials
+        const POSITION_T HtrPosOnes[N0][DV],
+        const POSITION_T QtrPosOnes[N0][M],
+        DIGIT privateSyndrome[]) {
 
     uint8_t unsatParityChecks[N0 * P];
     POSITION_T currQBlkPos[M], currQBitPos[M];
@@ -80,4 +77,4 @@ int bf_decoding(DIGIT out[], // N0 polynomials
     } while (iteration < ITERATIONS_MAX && check < NUM_DIGITS_GF2X_ELEMENT);
 
     return (check == NUM_DIGITS_GF2X_ELEMENT);
-}  // end QdecodeSyndromeThresh_bitFlip_sparse
+}

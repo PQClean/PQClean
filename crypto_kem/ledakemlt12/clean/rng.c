@@ -1,58 +1,9 @@
 #include "rng.h"
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h> // void srand(unsigned int seed); int rand(void); RAND_MAX
 #include <string.h> // void *memset(void *s, int c, size_t n);
-#define __USE_POSIX199309
-#include <time.h> // struct timespec; clock_gettime(...); CLOCK_REALTIME
 
-#include "aes256.h"
+#include "aes.h"
 #include "qc_ldpc_parameters.h"
-
-
-/******************************************************************************/
-/*----------------------------------------------------------------------------*/
-/*              start PSEUDO-RAND GENERATOR ROUTINES for rnd.h                */
-/*----------------------------------------------------------------------------*/
-
-
-void initialize_pseudo_random_generator_seed(int ac, char *av[]) {
-
-    if (ac == 2) {
-        srand(atoi(av[1]));
-    } else {
-        struct timespec seedValue;
-        clock_gettime(CLOCK_REALTIME, &seedValue);
-        srand(seedValue.tv_nsec);
-    } // end else-if
-    unsigned char pseudo_entropy[48];
-    for (int i = 0; i < 48; i++) {
-        pseudo_entropy[i] = rand() & 0xff;
-    }
-    randombytes_init(pseudo_entropy,
-                     NULL,
-                     0 /*unused in NIST function*/);
-
-
-} // end initilize_pseudo_random_sequence_seed
-
-
-/*----------------------------------------------------------------------------*/
-
-/* Initializes a dedicated DRBG context to avoid conflicts with the global one
- * declared by NIST for KATs. Provides the output of the DRBG in output, for
- * the given length */
-
-
-/*----------------------------------------------------------------------------*/
-/*              end PSEUDO-RAND GENERATOR ROUTINES for rnd.h                  */
-/*----------------------------------------------------------------------------*/
-
-AES256_CTR_DRBG_struct  DRBG_ctx;
-
-void    AES256_ECB(unsigned char *key, unsigned char *ctr,
-                   unsigned char *buffer);
 
 /*
  seedexpander_init()
@@ -61,11 +12,10 @@ void    AES256_ECB(unsigned char *key, unsigned char *ctr,
  diversifier    - an 8 byte diversifier
  maxlen         - maximum number of bytes (less than 2**32) generated under this seed and diversifier
  */
-int
-seedexpander_init(AES_XOF_struct *ctx,
-                  unsigned char *seed,
-                  unsigned char *diversifier,
-                  unsigned long maxlen) {
+static int seedexpander_init(AES_XOF_struct *ctx,
+                             unsigned char *seed,
+                             unsigned char *diversifier,
+                             uint64_t maxlen) {
     if ( maxlen >= 0x100000000 ) {
         return RNG_BAD_MAXLEN;
     }
@@ -92,15 +42,33 @@ seedexpander_init(AES_XOF_struct *ctx,
     return RNG_SUCCESS;
 }
 
+void PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx,
+        const unsigned char *trng_entropy
+        /* TRNG_BYTE_LENGTH wide buffer */) {
+
+    /*the NIST seedexpander will however access 32B from this buffer */
+    unsigned int prng_buffer_size = TRNG_BYTE_LENGTH < 32 ? 32 : TRNG_BYTE_LENGTH;
+    unsigned char prng_buffer[TRNG_BYTE_LENGTH < 32 ? 32 : TRNG_BYTE_LENGTH] = { 0x00 };
+    unsigned char diversifier[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+    memcpy(prng_buffer,
+           trng_entropy,
+           TRNG_BYTE_LENGTH < prng_buffer_size ? TRNG_BYTE_LENGTH : prng_buffer_size);
+
+    /* the required seed expansion will be quite small, set the max number of
+     * bytes conservatively to 10 MiB*/
+    seedexpander_init(ctx, prng_buffer, diversifier, 10 * 1024 * 1024);
+}
+
 /*
  seedexpander()
     ctx  - stores the current state of an instance of the seed expander
     x    - returns the XOF data
     xlen - number of bytes to return
  */
-int
-seedexpander(AES_XOF_struct *ctx, unsigned char *x, unsigned long xlen) {
-    unsigned long   offset;
+int PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander(AES_XOF_struct *ctx, unsigned char *x, size_t xlen) {
+    uint32_t offset;
+    aes256ctx ctx256;
 
     if ( x == NULL ) {
         return RNG_BAD_OUTBUF;
@@ -109,6 +77,7 @@ seedexpander(AES_XOF_struct *ctx, unsigned char *x, unsigned long xlen) {
         return RNG_BAD_REQ_LEN;
     }
 
+    aes256_keyexp(&ctx256, ctx->key);
     ctx->length_remaining -= xlen;
 
     offset = 0;
@@ -125,7 +94,7 @@ seedexpander(AES_XOF_struct *ctx, unsigned char *x, unsigned long xlen) {
         xlen -= 16 - ctx->buffer_pos;
         offset += 16 - ctx->buffer_pos;
 
-        AES256_ECB(ctx->key, ctx->ctr, ctx->buffer);
+        aes256_ecb(ctx->buffer, ctx->ctr, 16 / AES_BLOCKBYTES, &ctx256);
         ctx->buffer_pos = 0;
 
         //increment the counter
@@ -141,163 +110,4 @@ seedexpander(AES_XOF_struct *ctx, unsigned char *x, unsigned long xlen) {
     }
 
     return RNG_SUCCESS;
-}
-
-// Use whatever AES implementation you have. This uses AES from openSSL library
-//    key - 256-bit AES key
-//    ptx - a 128-bit plaintext value
-//    ctx - a 128-bit ciphertext value
-
-void
-AES256_ECB(unsigned char *key, unsigned char *ptx, unsigned char *ctx) {
-    uint32_t round_key[4 * (NROUNDS + 1)] = {0x00};
-    rijndaelKeySetupEnc(round_key, key, KEYLEN_b);
-    rijndaelEncrypt(round_key, NROUNDS, ptx, ctx);
-}
-
-void
-randombytes_init(unsigned char *entropy_input,
-                 unsigned char *personalization_string,
-                 int security_strength) {
-    unsigned char   seed_material[48];
-
-    memcpy(seed_material, entropy_input, 48);
-    if (personalization_string)
-        for (int i = 0; i < 48; i++) {
-            seed_material[i] ^= personalization_string[i];
-        }
-    memset(DRBG_ctx.Key, 0x00, 32);
-    memset(DRBG_ctx.V, 0x00, 16);
-    AES256_CTR_DRBG_Update(seed_material, DRBG_ctx.Key, DRBG_ctx.V);
-    DRBG_ctx.reseed_counter = 1;
-}
-
-int
-randombytes(unsigned char *x, unsigned long long xlen) {
-    unsigned char   block[16];
-    int             i = 0;
-
-    while ( xlen > 0 ) {
-        //increment V
-        for (int j = 15; j >= 0; j--) {
-            if ( DRBG_ctx.V[j] == 0xff ) {
-                DRBG_ctx.V[j] = 0x00;
-            } else {
-                DRBG_ctx.V[j]++;
-                break;
-            }
-        }
-        AES256_ECB(DRBG_ctx.Key, DRBG_ctx.V, block);
-        if ( xlen > 15 ) {
-            memcpy(x + i, block, 16);
-            i += 16;
-            xlen -= 16;
-        } else {
-            memcpy(x + i, block, xlen);
-            xlen = 0;
-        }
-    }
-    AES256_CTR_DRBG_Update(NULL, DRBG_ctx.Key, DRBG_ctx.V);
-    DRBG_ctx.reseed_counter++;
-
-    return RNG_SUCCESS;
-}
-
-void
-AES256_CTR_DRBG_Update(unsigned char *provided_data,
-                       unsigned char *Key,
-                       unsigned char *V) {
-    unsigned char   temp[48];
-
-    for (int i = 0; i < 3; i++) {
-        //increment V
-        for (int j = 15; j >= 0; j--) {
-            if ( V[j] == 0xff ) {
-                V[j] = 0x00;
-            } else {
-                V[j]++;
-                break;
-            }
-        }
-
-        AES256_ECB(Key, V, temp + 16 * i);
-    }
-    if ( provided_data != NULL )
-        for (int i = 0; i < 48; i++) {
-            temp[i] ^= provided_data[i];
-        }
-    memcpy(Key, temp, 32);
-    memcpy(V, temp + 32, 16);
-}
-
-
-
-void deterministic_random_byte_generator(unsigned char *const output,
-        const unsigned long long output_len,
-        const unsigned char *const seed,
-        const unsigned long long seed_length
-                                        ) {
-    /* DRBG context initialization */
-    AES256_CTR_DRBG_struct ctx;
-    unsigned char   seed_material[48];
-    memset(seed_material, 0x00, 48);
-    memcpy(seed_material, seed, seed_length);
-
-    memset(ctx.Key, 0x00, 32);
-    memset(ctx.V, 0x00, 16);
-    AES256_CTR_DRBG_Update(seed_material, ctx.Key, ctx.V);
-    ctx.reseed_counter = 1;
-
-    /* Actual DRBG computation as from the randombytes(unsigned char *x,
-     * unsigned long long xlen) from NIST */
-
-    unsigned char   block[16];
-    int             i = 0, length_remaining;
-
-    length_remaining = output_len;
-
-    while ( length_remaining > 0 ) {
-        //increment V
-        for (int j = 15; j >= 0; j--) {
-            if ( ctx.V[j] == 0xff ) {
-                ctx.V[j] = 0x00;
-            } else {
-                ctx.V[j]++;
-                break;
-            }
-        }
-        AES256_ECB(ctx.Key, ctx.V, block);
-        if ( length_remaining > 15 ) {
-            memcpy(output + i, block, 16);
-            i += 16;
-            length_remaining -= 16;
-        } else {
-            memcpy(output + i, block, length_remaining);
-            length_remaining = 0;
-        }
-    }
-    AES256_CTR_DRBG_Update(NULL, ctx.Key, ctx.V);
-    ctx.reseed_counter++;
-
-} // end deterministic_random_byte_generator
-
-void seedexpander_from_trng(AES_XOF_struct *ctx,
-                            const unsigned char *trng_entropy
-                            /* TRNG_BYTE_LENGTH wide buffer */) {
-
-    /*the NIST seedexpander will however access 32B from this buffer */
-    unsigned int prng_buffer_size = TRNG_BYTE_LENGTH < 32 ? 32 : TRNG_BYTE_LENGTH;
-    unsigned char prng_buffer[TRNG_BYTE_LENGTH < 32 ? 32 : TRNG_BYTE_LENGTH] = { 0x00 };
-    memcpy(prng_buffer,
-           trng_entropy,
-           TRNG_BYTE_LENGTH < prng_buffer_size ? TRNG_BYTE_LENGTH : prng_buffer_size);
-    /* if extra entropy is provided, add it to the diversifier */
-    #if TRNG_BYTE_LENGTH == 40
-    unsigned char *diversifier = ((unsigned char *)trng_entropy) + 32;
-    #else
-    unsigned char diversifier[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-    #endif
-    /* the required seed expansion will be quite small, set the max number of
-     * bytes conservatively to 10 MiB*/
-    seedexpander_init(ctx, prng_buffer, diversifier, 10 * 1024 * 1024);
 }
