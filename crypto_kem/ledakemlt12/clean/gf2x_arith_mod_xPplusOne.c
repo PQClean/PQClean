@@ -94,7 +94,7 @@ static void left_bit_shift_wide_n(const int length, DIGIT in[], unsigned int amo
 }
 
 static uint8_t byte_reverse_with_64bitDIGIT(uint8_t b) {
-    b = (b * 0x0202020202ULL & 0x010884422010ULL) % 1023;
+    b = (uint8_t)((b * 0x0202020202ULL & 0x010884422010ULL) % 1023);
     return b;
 }
 

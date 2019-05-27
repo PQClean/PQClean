@@ -28,8 +28,8 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk,
 
     /*Rejection-sample for a full L*/
     POSITION_T LPosOnes[N0][DV * M];
-    int is_L_full;
-    int isDFRok;
+    int is_L_full = 0;
+    int isDFRok = 0;
     sk->rejections = (int8_t) 0;
     do {
         PQCLEAN_LEDAKEMLT12_CLEAN_generateHPosOnes_HtrPosOnes(HPosOnes,
