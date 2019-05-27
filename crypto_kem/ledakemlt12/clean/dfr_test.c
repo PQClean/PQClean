@@ -57,11 +57,9 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
                         intersectionval++;
                         firstidx++;
                         secondidx++;
-                    }
-                    if ( LSparse_loc[i][firstidx] > rotated_column[secondidx] ) {
+                    } else if ( LSparse_loc[i][firstidx] > rotated_column[secondidx] ) {
                         secondidx++;
-                    }
-                    if ( LSparse_loc[i][firstidx] < rotated_column[secondidx] ) {
+                    } else { /*if ( LSparse_loc[i][firstidx] < rotated_column[secondidx] ) */
                         firstidx++;
                     }
                 }
