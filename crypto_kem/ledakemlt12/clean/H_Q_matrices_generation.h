@@ -1,8 +1,8 @@
 #ifndef H_Q_MATRICES_GENERATION_H
 #define H_Q_MATRICES_GENERATION_H
 
-#include "qc_ldpc_parameters.h"
 #include "gf2x_limbs.h"
+#include "qc_ldpc_parameters.h"
 #include "rng.h"
 
 void PQCLEAN_LEDAKEMLT12_CLEAN_generateHPosOnes_HtrPosOnes(

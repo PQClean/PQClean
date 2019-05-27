@@ -1,25 +1,25 @@
 #include "gf2x_arith_mod_xPplusOne.h"
 #include "rng.h"
 
-#include <string.h>  // memcpy(...), memset(...)
 #include <assert.h>
+#include <string.h>  // memcpy(...), memset(...)
 
-static void gf2x_mod(DIGIT out[],
-                     const int nin, const DIGIT in[]) {
 
-    long int i, j, posTrailingBit, maskOffset;
-    DIGIT mask, aux[nin];
+static void gf2x_mod(DIGIT out[], const DIGIT in[]) {
 
-    memcpy(aux, in, nin * DIGIT_SIZE_B);
+    int i, j, posTrailingBit, maskOffset;
+    DIGIT mask, aux[2 * NUM_DIGITS_GF2X_ELEMENT];
+
+    memcpy(aux, in, 2 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     memset(out, 0x00, NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
-    if (nin < NUM_DIGITS_GF2X_MODULUS) {
-        for (i = 0; i < nin; i++) {
-            out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = in[nin - 1 - i];
+    if (2 * NUM_DIGITS_GF2X_ELEMENT < NUM_DIGITS_GF2X_MODULUS) {
+        for (i = 0; i < 2 * NUM_DIGITS_GF2X_ELEMENT; i++) {
+            out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = in[2 * NUM_DIGITS_GF2X_ELEMENT - 1 - i];
         }
         return;
     }
 
-    for (i = 0; i < nin - NUM_DIGITS_GF2X_MODULUS; i += 1) {
+    for (i = 0; i < (2 * NUM_DIGITS_GF2X_ELEMENT) - NUM_DIGITS_GF2X_MODULUS; i += 1) {
         for (j = DIGIT_SIZE_b - 1; j >= 0; j--) {
             mask = ((DIGIT)0x1) << j;
             if (aux[i] & mask) {
@@ -43,10 +43,10 @@ static void gf2x_mod(DIGIT out[],
         }
     }
 
-    int to_copy = (nin > NUM_DIGITS_GF2X_ELEMENT) ? NUM_DIGITS_GF2X_ELEMENT : nin;
+    int to_copy = (2 * NUM_DIGITS_GF2X_ELEMENT > NUM_DIGITS_GF2X_ELEMENT) ? NUM_DIGITS_GF2X_ELEMENT : 2 * NUM_DIGITS_GF2X_ELEMENT;
 
     for (i = 0; i < to_copy; i++) {
-        out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = aux[nin - 1 - i];
+        out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = aux[2 * NUM_DIGITS_GF2X_ELEMENT - 1 - i];
     }
 
 }
@@ -61,9 +61,9 @@ static void left_bit_shift(const int length, DIGIT in[]) {
     in[j] <<= 1;
 }
 
-static void right_bit_shift(const int length, DIGIT in[]) {
+static void right_bit_shift(unsigned int length, DIGIT in[]) {
 
-    int j;
+    unsigned int j;
     for (j = length - 1; j > 0 ; j--) {
         in[j] >>= 1;
         in[j] |=  (in[j - 1] & (DIGIT)0x01) << (DIGIT_SIZE_b - 1);
@@ -73,8 +73,8 @@ static void right_bit_shift(const int length, DIGIT in[]) {
 
 
 /* shifts by whole digits */
-static inline void left_DIGIT_shift_n(const int length, DIGIT in[], int amount) {
-    int j;
+static inline void left_DIGIT_shift_n(unsigned int length, DIGIT in[], unsigned int amount) {
+    unsigned int j;
     for (j = 0; (j + amount) < length; j++) {
         in[j] = in[j + amount];
     }
@@ -85,39 +85,15 @@ static inline void left_DIGIT_shift_n(const int length, DIGIT in[], int amount) 
 
 
 /* may shift by an arbitrary amount*/
-static void left_bit_shift_wide_n(const int length, DIGIT in[], int amount) {
+static void left_bit_shift_wide_n(const int length, DIGIT in[], unsigned int amount) {
     left_DIGIT_shift_n(length, in, amount / DIGIT_SIZE_b);
     PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(length, in, amount % DIGIT_SIZE_b);
 }
 
-#if (defined(DIGIT_IS_UINT8) || defined(DIGIT_IS_UINT16))
-static uint8_t byte_reverse_with_less32bitDIGIT(uint8_t b) {
-    uint8_t r = b;
-    int s = (sizeof(b) << 3) - 1;
-    for (b >>= 1; b; b >>= 1) {
-        r <<= 1;
-        r |= b & 1;
-        s--;
-    }
-    r <<= s;
-    return r;
-}
-#endif
-
-#if defined(DIGIT_IS_UINT32)
-static uint8_t byte_reverse_with_32bitDIGIT(uint8_t b) {
-    b = ( (b * 0x0802LU & 0x22110LU) | (b * 0x8020LU & 0x88440LU)
-        ) * 0x10101LU >> 16;
-    return b;
-}
-#endif
-
-#if defined(DIGIT_IS_UINT64)
 static uint8_t byte_reverse_with_64bitDIGIT(uint8_t b) {
     b = (b * 0x0202020202ULL & 0x010884422010ULL) % 1023;
     return b;
 }
-#endif
 
 static DIGIT reverse_digit(const DIGIT b) {
     int i;
@@ -127,28 +103,11 @@ static DIGIT reverse_digit(const DIGIT b) {
     } toReverse;
 
     toReverse.digitValue = b;
-    #if defined(DIGIT_IS_UINT64)
     for (i = 0; i < DIGIT_SIZE_B; i++) {
         toReverse.inByte[i] = byte_reverse_with_64bitDIGIT(toReverse.inByte[i]);
     }
+
     return __builtin_bswap64(toReverse.digitValue);
-    #elif defined(DIGIT_IS_UINT32)
-    for (i = 0; i < DIGIT_SIZE_B; i++) {
-        toReverse.inByte[i] = byte_reverse_with_32bitDIGIT(toReverse.inByte[i]);
-    }
-    return __builtin_bswap32(toReverse.digitValue);
-    #elif defined(DIGIT_IS_UINT16)
-    for (i = 0; i < DIGIT_SIZE_B; i++) {
-        toReverse.inByte[i] = byte_reverse_with_less32bitDIGIT(toReverse.inByte[i]);
-    }
-    reversed = __builtin_bswap16(toReverse.digitValue);
-    #elif defined(DIGIT_IS_UINT8)
-    return byte_reverse_with_less32bitDIGIT(toReverse.inByte[0]);
-    #else
-#error "Missing implementation for reverse_digit(...) \
-with this CPU word bitsize !!! "
-    #endif
-    return toReverse.digitValue;
 }
 
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]) {
@@ -158,17 +117,6 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]) {
     DIGIT mask = (DIGIT)0x1;
     DIGIT rev1, rev2, a00;
     int i, slack_bits_amount = NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - P;
-
-    if (NUM_DIGITS_GF2X_ELEMENT == 1) {
-        a00 = A[0] & mask;
-        right_bit_shift(1, A);
-        rev1 = reverse_digit(A[0]);
-        #if (NUM_DIGITS_GF2X_MOD_P_ELEMENT*DIGIT_SIZE_b - P)
-        rev1 >>= (DIGIT_SIZE_b - (P % DIGIT_SIZE_b));
-        #endif
-        A[0] = (rev1 & (~mask)) | a00;
-        return;
-    }
 
     a00 = A[NUM_DIGITS_GF2X_ELEMENT - 1] & mask;
     right_bit_shift(NUM_DIGITS_GF2X_ELEMENT, A);
@@ -280,18 +228,20 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) { 
     }
     s[0] |= mask;
 
-    for (i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0 && in[i] == 0; i--);
+    for (i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0 && in[i] == 0; i--) { };
     if (i < 0) {
         return 0;
     }
 
-    if (NUM_DIGITS_GF2X_MODULUS == 1 + NUM_DIGITS_GF2X_ELEMENT)
+    if (NUM_DIGITS_GF2X_MODULUS == 1 + NUM_DIGITS_GF2X_ELEMENT) {
         for (i = NUM_DIGITS_GF2X_MODULUS - 1; i >= 1 ; i--) {
             f[i] = in[i - 1];
-        } else /* they are equal */
+        }
+    } else { /* they are equal */
         for (i = NUM_DIGITS_GF2X_MODULUS - 1; i >= 0 ; i--) {
             f[i] = in[i];
         }
+    }
 
     for (i = 1; i <= 2 * P; i++) {
         if ( (f[0] & mask) == 0 ) {
@@ -329,7 +279,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const 
     GF2X_MUL(2 * NUM_DIGITS_GF2X_ELEMENT, aux,
              NUM_DIGITS_GF2X_ELEMENT, A,
              NUM_DIGITS_GF2X_ELEMENT, B);
-    gf2x_mod(Res, 2 * NUM_DIGITS_GF2X_ELEMENT, aux);
+    gf2x_mod(Res, aux);
 
 }
 
@@ -358,7 +308,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_dense_to_sparse(
         }
     }
 
-    gf2x_mod(Res, 2 * NUM_DIGITS_GF2X_ELEMENT, resDouble);
+    gf2x_mod(Res, resDouble);
 
 }
 
@@ -392,7 +342,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T Res[
     size_t lastFilledPos = 0;
     for (size_t i = 0 ; i < sizeA ; i++) {
         for (size_t j = 0 ; j < sizeB ; j++) {
-            uint32_t prod = ((uint32_t) A[i]) + ((uint32_t) B[j]);
+            uint32_t prod = A[i] + B[j];
             prod = ( (prod >= P) ? prod - P : prod);
             if ((A[i] != INVALID_POS_VALUE) &&
                     (B[j] != INVALID_POS_VALUE)) {
@@ -407,7 +357,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T Res[
         Res[lastFilledPos] = INVALID_POS_VALUE;
         lastFilledPos++;
     }
-    quicksort(Res, sizeR);
+    quicksort_sparse(Res);
     /* eliminate duplicates */
     POSITION_T lastReadPos = Res[0];
     int duplicateCount;
@@ -436,10 +386,10 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T Res[
 /* PRE: A and B should be sorted and have INVALID_POS_VALUE at the end */
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add_sparse(
     int sizeR, POSITION_T Res[],
-    int sizeA, POSITION_T A[],
-    int sizeB, POSITION_T B[]) {
+    int sizeA, const POSITION_T A[],
+    int sizeB, const POSITION_T B[]) {
 
-    POSITION_T tmpRes[sizeR];
+    POSITION_T tmpRes[DV * M]; // TODO: now function only works for adding (disjunct) DV and M positions
     int idxA = 0, idxB = 0, idxR = 0;
     while ( idxA < sizeA  &&
             idxB < sizeB  &&
@@ -509,7 +459,7 @@ static uint32_t rand_range(const unsigned int n, const int logn, AES_XOF_struct 
 /* Obtains fresh randomness and seed-expands it until all the required positions
  * for the '1's in the circulant block are obtained */
 void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_sparse_block(POSITION_T *pos_ones,
-        const int countOnes,
+        int countOnes,
         AES_XOF_struct *seed_expander_ctx) {
 
     int duplicated, placedOnes = 0;
@@ -520,9 +470,11 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_sparse_block(POSITION_T *pos_ones,
                        BITS_TO_REPRESENT(P),
                        seed_expander_ctx);
         duplicated = 0;
-        for (int j = 0; j < placedOnes; j++) if (pos_ones[j] == p) {
+        for (int j = 0; j < placedOnes; j++) {
+            if (pos_ones[j] == p) {
                 duplicated = 1;
             }
+        }
         if (duplicated == 0) {
             pos_ones[placedOnes] = p;
             placedOnes++;
@@ -530,21 +482,23 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_sparse_block(POSITION_T *pos_ones,
     }
 }
 
+/* Returns random weight-t circulant block */
 void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
-        const int countOnes,
         AES_XOF_struct *seed_expander_ctx) {
 
-    int rndPos[countOnes],  duplicated, counter = 0;
+    int rndPos[NUM_ERRORS_T],  duplicated, counter = 0;
     memset(sequence, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
 
 
-    while (counter < countOnes) {
+    while (counter < NUM_ERRORS_T) {
         int p = rand_range(N0 * NUM_BITS_GF2X_ELEMENT, BITS_TO_REPRESENT(P),
                            seed_expander_ctx);
         duplicated = 0;
-        for (int j = 0; j < counter; j++) if (rndPos[j] == p) {
+        for (int j = 0; j < counter; j++) {
+            if (rndPos[j] == p) {
                 duplicated = 1;
             }
+        }
         if (duplicated == 0) {
             rndPos[counter] = p;
             counter++;

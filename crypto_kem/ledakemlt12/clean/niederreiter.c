@@ -1,13 +1,12 @@
-#include "niederreiter.h"
 #include "H_Q_matrices_generation.h"
-#include "gf2x_arith_mod_xPplusOne.h"
-#include "rng.h"
-#include "dfr_test.h"
 #include "bf_decoding.h"
+#include "dfr_test.h"
+#include "gf2x_arith_mod_xPplusOne.h"
+#include "niederreiter.h"
 #include "qc_ldpc_parameters.h"
+#include "rng.h"
 
 #include <string.h>
-
 
 void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t   *const pk,
         privateKeyNiederreiter_t *const sk,
@@ -207,7 +206,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT err[],            // N0
     }
     decryptOk = decryptOk && (err_weight == NUM_ERRORS_T);
 
-    if (!decryptOk) {
+    if (!decryptOk) { // TODO: not constant time
         memcpy(err, mockup_error_vector, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     }
 

@@ -43,27 +43,22 @@
  */
 
 
-#define GF2X_MUL PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_TC3
+#define GF2X_MUL PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_comb
 // #define GF2X_MUL gf2x_mul_comb
 
-static inline void gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], const unsigned int nr) {
-
-    unsigned int i;
-    for (i = 0; i < nr; i++) {
+static inline void gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], size_t nr) {
+    for (size_t i = 0; i < nr; i++) {
         Res[i] = A[i] ^ B[i];
     }
 }
 
-void GF2X_MUL(const int nr, DIGIT Res[],
-              const int na, const DIGIT A[],
-              const int nb, const DIGIT B[]);
-
+/* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
+void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(size_t length, DIGIT in[], unsigned int amount);
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(const int length, DIGIT in[], const int amount);
+void PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(size_t length, DIGIT in[], unsigned int amount);
 
-/* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(const int length, DIGIT in[], const int amount);
+void GF2X_MUL(int nr, DIGIT Res[], int na, const DIGIT A[], int nb, const DIGIT B[]);
 
 
 #endif

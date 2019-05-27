@@ -27,12 +27,9 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_crypto_kem_enc( unsigned char *ct, unsigned char *
     randombytes(encapsulated_key_seed, TRNG_BYTE_LENGTH);
     PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(&niederreiter_encap_key_expander, encapsulated_key_seed);
 
-    PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(error_vector,
-            NUM_ERRORS_T,
-            &niederreiter_encap_key_expander);
+    PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(error_vector, &niederreiter_encap_key_expander);
 
-    HASH_FUNCTION(ss, (const uint8_t *) error_vector, // input
-                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B)); // input length
+    HASH_FUNCTION(ss, (const uint8_t *) error_vector, (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
 
     PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt((DIGIT *) ct, (publicKeyNiederreiter_t *) pk, error_vector);
     return 0;
@@ -46,13 +43,10 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_crypto_kem_dec(unsigned char *ss,
         const unsigned char *sk ) {
     DIGIT decoded_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
 
-    int decode_ok = PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(decoded_error_vector,
-                    (privateKeyNiederreiter_t *)sk,
-                    (DIGIT *)ct);
-    HASH_FUNCTION(ss, (const unsigned char *) decoded_error_vector,
-                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
-    if (decode_ok == 1) {
-        return 0;
-    }
-    return -1;
+    PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(decoded_error_vector,
+            (privateKeyNiederreiter_t *)sk,
+            (DIGIT *)ct);
+    HASH_FUNCTION(ss, (const unsigned char *) decoded_error_vector, (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
+
+    return 0;
 }

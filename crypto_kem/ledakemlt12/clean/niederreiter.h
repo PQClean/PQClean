@@ -1,9 +1,9 @@
 #ifndef NIEDERREITER_H
 #define NIEDERREITER_H
 
-#include "qc_ldpc_parameters.h"
-#include "gf2x_limbs.h"
 #include "gf2x_arith_mod_xPplusOne.h"
+#include "gf2x_limbs.h"
+#include "qc_ldpc_parameters.h"
 #include "rng.h"
 
 typedef struct {
@@ -23,18 +23,21 @@ typedef struct {
 
 
 
-void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t   *const pk,
-        privateKeyNiederreiter_t *const sk,
-        AES_XOF_struct *keys_expander);
+void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(
+    publicKeyNiederreiter_t *pk,
+    privateKeyNiederreiter_t *sk,
+    AES_XOF_struct *keys_expander);
 
-void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT syndrome[],
-        const publicKeyNiederreiter_t *const pk,
-        const DIGIT err[]);
+void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(
+    DIGIT syndrome[],
+    const publicKeyNiederreiter_t *pk,
+    const DIGIT *err);
 
 // return 1 if everything is ok
-int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT err[],
-        const privateKeyNiederreiter_t *const sk,
-        const DIGIT syndrome[]);
+int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(
+    DIGIT *err,
+    const privateKeyNiederreiter_t *sk,
+    const DIGIT *syndrome);
 
 
 #endif

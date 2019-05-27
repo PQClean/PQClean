@@ -1,8 +1,8 @@
 #ifndef BF_DECODING_H
 #define BF_DECODING_H
 
-#include "qc_ldpc_parameters.h"
 #include "gf2x_limbs.h"
+#include "qc_ldpc_parameters.h"
 
 /*  Definitions for DFR level 2^-SL with SL=128 */
 #define ITERATIONS_MAX  (2)

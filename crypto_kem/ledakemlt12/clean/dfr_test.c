@@ -9,7 +9,7 @@
  * computes the threshold for the second iteration of the decoder and stores
  * it in the globally accessible vector */
 
-extern int thresholds[2];
+extern unsigned int thresholds[2];
 
 int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
 
@@ -19,14 +19,15 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
      * gamma[a][b][c] stores the intersection of the first column of the a-th
      * block of L  with the c-th column of the b-th block of L */
     /* Gamma computation can be accelerated employing symmetry and QC properties */
-    int gamma[N0][N0][P] = {{{0}}};
-    uint32_t rotated_column[DV * M];
-    int firstidx, secondidx, intersectionval;
+    unsigned int gamma[N0][N0][P] = {{{0}}};
+    unsigned int rotated_column[DV * M];
+
+    unsigned int firstidx, secondidx, intersectionval;
 
     unsigned int gammaHist[N0][DV * M + 1] = {{0}};
 
-    int maxMut[N0], maxMutMinusOne[N0];
-    int allBlockMaxSumst, allBlockMaxSumstMinusOne;
+    unsigned int maxMut[N0], maxMutMinusOne[N0];
+    unsigned int allBlockMaxSumst, allBlockMaxSumstMinusOne;
 
     unsigned int toAdd, histIdx;
 
@@ -34,10 +35,10 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
     for (int i = 0; i < N0; i++) {
         for (int j = 0; j < DV * M; j++) {
             if (LSparse[i][j] != 0) {
-                LSparse_loc[i][j] = (P - LSparse[i][j]) ;
+                LSparse_loc[i][j] = (P - LSparse[i][j]);
             }
         }
-        quicksort(LSparse_loc[i], DV * M);
+        quicksort_sparse(LSparse_loc[i]);
     }
 
     for (int i = 0; i < N0; i++ ) {
@@ -47,7 +48,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
                 for (int idxToRotate = 0; idxToRotate < (DV * M); idxToRotate++) {
                     rotated_column[idxToRotate] = (LSparse_loc[j][idxToRotate] + k) % P;
                 }
-                quicksort(rotated_column, DV * M);
+                quicksort_sparse(rotated_column);
                 /* compute the intersection amount */
                 firstidx = 0, secondidx = 0;
                 intersectionval = 0;

@@ -1,13 +1,13 @@
 #ifndef RNG_H
 #define RNG_H
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
-#define RNG_SUCCESS      0
-#define RNG_BAD_MAXLEN  -1
-#define RNG_BAD_OUTBUF  -2
-#define RNG_BAD_REQ_LEN -3
+#define RNG_SUCCESS     ( 0)
+#define RNG_BAD_MAXLEN  (-1)
+#define RNG_BAD_OUTBUF  (-2)
+#define RNG_BAD_REQ_LEN (-3)
 
 typedef struct {
     unsigned char   buffer[16];
