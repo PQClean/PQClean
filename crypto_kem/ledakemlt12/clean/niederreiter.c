@@ -8,11 +8,11 @@
 
 #include <string.h>
 
-void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t   *const pk,
-        privateKeyNiederreiter_t *const sk,
+void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk,
+        privateKeyNiederreiter_t *sk,
         AES_XOF_struct *keys_expander) {
-    // sequence of N0 circ block matrices (p x p): Hi
 
+    // sequence of N0 circ block matrices (p x p): Hi
     POSITION_T HPosOnes[N0][DV];
     POSITION_T HtrPosOnes[N0][DV];
     /* Sparse representation of the transposed circulant matrix H,
@@ -89,9 +89,10 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t   *co
 }
 
 
-void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT syndrome[],                // 1  polynomial
-        const publicKeyNiederreiter_t *const pk,
-        const DIGIT err[]) {             // N0  polynomials
+void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT *syndrome, // 1  polynomial
+        const publicKeyNiederreiter_t *pk,
+        const DIGIT *err) { // N0  polynomials
+
     int i;
     DIGIT saux[NUM_DIGITS_GF2X_ELEMENT];
 
@@ -108,9 +109,9 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT syndrome[],           
 }
 
 
-int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT err[],            // N0 circ poly
-        const privateKeyNiederreiter_t *const sk,
-        const DIGIT syndrome[]) {
+int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, // N0 circ poly
+        const privateKeyNiederreiter_t *sk,
+        const DIGIT *syndrome) {
 
     AES_XOF_struct niederreiter_decrypt_expander;
     PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(&niederreiter_decrypt_expander,
