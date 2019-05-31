@@ -13,15 +13,15 @@
 * Returns a1.
 **************************************************/
 uint32_t PQCLEAN_DILITHIUM2_CLEAN_power2round(uint32_t a, uint32_t *a0)  {
-    int32_t t;
+    uint32_t t;
 
     /* Centralized remainder mod 2^D */
     t = a & ((1U << D) - 1);
-    t -= (int32_t)((1U << (D - 1)) + 1);
-    t += (int32_t)((uint32_t)(t >> 31) & (1U << D));
-    t -= (int32_t)((1U << ((uint32_t) D - 1)) - 1);
-    *a0 =  (uint32_t) (Q + t);
-    a = (a - (uint32_t)t) >> D;
+    t -= ((1U << (D - 1)) + 1);
+    t += ((uint32_t)((int32_t)t >> 31) & (1U << D));
+    t -= ((1U << (D - 1)) - 1);
+    *a0 = (Q + t);
+    a = (a - t) >> D;
     return a;
 }
 
