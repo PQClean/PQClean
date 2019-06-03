@@ -7,8 +7,9 @@
 
 // for the definition of _HASH_LEN.
 #include "hash_len_config.h"
+#include <stddef.h>
 
-int PQCLEAN_RAINBOWIACLASSIC_CLEAN_hash_msg( unsigned char *digest, unsigned len_digest, const unsigned char *m, unsigned long long mlen );
+int PQCLEAN_RAINBOWIACLASSIC_CLEAN_hash_msg( unsigned char *digest, size_t len_digest, const unsigned char *m, size_t mlen );
 
 
 
