@@ -1,18 +1,15 @@
+#ifndef _RAINBOW_H_
+#define _RAINBOW_H_
 /// @file rainbow.h
 /// @brief APIs for rainbow.
 ///
 
-#ifndef _RAINBOW_H_
-#define _RAINBOW_H_
 
 #include "rainbow_config.h"
 #include "rainbow_keypair.h"
 
 #include <stdint.h>
 
-#ifdef  __cplusplus
-extern  "C" {
-#endif
 
 
 ///
@@ -53,12 +50,5 @@ int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign_cyclic( uint8_t *signature, cons
 /// @return 0 for successful verified. -1 for failed verification.
 ///
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify_cyclic( const uint8_t *digest, const uint8_t *signature, const cpk_t *pk );
-
-
-
-#ifdef  __cplusplus
-}
-#endif
-
 
 #endif // _RAINBOW_H_

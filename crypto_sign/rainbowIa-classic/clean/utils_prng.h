@@ -1,10 +1,10 @@
+#ifndef _UTILS_PRNG_H_
+#define _UTILS_PRNG_H_
 /// @file utils_prng.h
 /// @brief the interface for adapting PRNG functions.
 ///
 ///
 
-#ifndef _UTILS_PRNG_H_
-#define _UTILS_PRNG_H_
 
 #include "randombytes.h"
 

@@ -1,3 +1,5 @@
+#ifndef _H_RAINBOW_CONFIG_H_
+#define _H_RAINBOW_CONFIG_H_
 /// @file rainbow_config.h
 /// @brief Defining the parameters of the Rainbow and the corresponding constants.
 ///
@@ -6,45 +8,43 @@
 ///
 ///
 
-#ifndef _H_RAINBOW_CONFIG_H_
-#define _H_RAINBOW_CONFIG_H_
 
 
 // TODO: refactor this
 
 /// the defined parameter
-#if (!defined(_RAINBOW16_32_32_32))&&(!defined(_RAINBOW256_68_36_36))&&(!defined(_RAINBOW256_92_48_48))
+//#if (!defined(_RAINBOW16_32_32_32))&&(!defined(_RAINBOW256_68_36_36))&&(!defined(_RAINBOW256_92_48_48))
 #define _RAINBOW16_32_32_32
 //#define _RAINBOW256_68_36_36
 //#define _RAINBOW256_92_48_48
-#endif
+//#endif
 
 
-#if defined _RAINBOW16_32_32_32
+//#if defined _RAINBOW16_32_32_32
 #define _USE_GF16
 #define _GFSIZE 16
 #define _V1 32
 #define _O1 32
 #define _O2 32
 #define _HASH_LEN 32
-
-#elif defined _RAINBOW256_68_36_36
-#define _GFSIZE 256
-#define _V1 68
-#define _O1 36
-#define _O2 36
-#define _HASH_LEN 48
-
-#elif defined _RAINBOW256_92_48_48
-#define _GFSIZE 256
-#define _V1 92
-#define _O1 48
-#define _O2 48
-#define _HASH_LEN 64
-
-#else
-error here.
-#endif
+//
+//#elif defined _RAINBOW256_68_36_36
+//#define _GFSIZE 256
+//#define _V1 68
+//#define _O1 36
+//#define _O2 36
+//#define _HASH_LEN 48
+//
+//#elif defined _RAINBOW256_92_48_48
+//#define _GFSIZE 256
+//#define _V1 92
+//#define _O1 48
+//#define _O2 48
+//#define _HASH_LEN 64
+//
+//#else
+//error here.
+//#endif
 
 
 #define _V2 ((_V1)+(_O1))
@@ -64,7 +64,7 @@ error here.
 /// size of variables, in # bytes.
 
 
-#ifdef _USE_GF16
+//#ifdef _USE_GF16
 // GF16
 #define _V1_BYTE (_V1/2)
 #define _V2_BYTE (_V2/2)
@@ -73,16 +73,16 @@ error here.
 #define _PUB_N_BYTE  (_PUB_N/2)
 #define _PUB_M_BYTE  (_PUB_M/2)
 
-#else
-// GF256
-#define _V1_BYTE (_V1)
-#define _V2_BYTE (_V2)
-#define _O1_BYTE (_O1)
-#define _O2_BYTE (_O2)
-#define _PUB_N_BYTE  (_PUB_N)
-#define _PUB_M_BYTE  (_PUB_M)
-
-#endif
+//#else
+//// GF256
+//#define _V1_BYTE (_V1)
+//#define _V2_BYTE (_V2)
+//#define _O1_BYTE (_O1)
+//#define _O2_BYTE (_O2)
+//#define _PUB_N_BYTE  (_PUB_N)
+//#define _PUB_M_BYTE  (_PUB_M)
+//
+//#endif
 
 
 /// length of seed for public key, in # bytes

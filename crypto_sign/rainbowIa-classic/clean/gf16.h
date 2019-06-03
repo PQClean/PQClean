@@ -1,9 +1,9 @@
+#ifndef _GF16_H_
+#define _GF16_H_
 /// @file gf16.h
 /// @brief Library for arithmetics in GF(16) and GF(256)
 ///
 
-#ifndef _GF16_H_
-#define _GF16_H_
 
 #include <stdint.h>
 

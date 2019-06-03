@@ -1,9 +1,9 @@
+#ifndef _BLAS_U32_H_
+#define _BLAS_U32_H_
 /// @file blas_u32.h
 /// @brief Inlined functions for implementing basic linear algebra functions for uint32 arch.
 ///
 
-#ifndef _BLAS_U32_H_
-#define _BLAS_U32_H_
 
 #include "gf16.h"
 

@@ -1,14 +1,9 @@
+#ifndef _P_MATRIX_OP_H_
+#define _P_MATRIX_OP_H_
 ///  @file  parallel_matrix_op.h
 ///  @brief Librarys for operations of batched matrixes.
 ///
 ///
-
-#ifndef _P_MATRIX_OP_H_
-#define _P_MATRIX_OP_H_
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////////
 ///   Librarys for batched matrix operations.

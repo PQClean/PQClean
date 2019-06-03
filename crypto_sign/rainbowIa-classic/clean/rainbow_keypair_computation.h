@@ -1,3 +1,5 @@
+#ifndef _RAINBOW_KEYPAIR_COMP_H_
+#define _RAINBOW_KEYPAIR_COMP_H_
 /// @file rainbow_keypair_computation.h
 /// @brief Functions for calculating pk/sk while generating keys.
 ///
@@ -5,8 +7,6 @@
 /// Functions for calculating pk/sk for key generation.
 ///
 
-#ifndef _RAINBOW_KEYPAIR_COMP_H_
-#define _RAINBOW_KEYPAIR_COMP_H_
 
 
 #include "rainbow_keypair.h"

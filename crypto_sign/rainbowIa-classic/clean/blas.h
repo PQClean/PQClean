@@ -1,9 +1,9 @@
+#ifndef _BLAS_H_
+#define _BLAS_H_
 /// @file blas.h
 /// @brief Defining the implementations for linear algebra functions depending on the machine architecture.
 ///
 
-#ifndef _BLAS_H_
-#define _BLAS_H_
 
 #include "blas_comm.h"
 #include "blas_u32.h"

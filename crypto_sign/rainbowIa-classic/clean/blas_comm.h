@@ -1,8 +1,8 @@
+#ifndef _BLAS_COMM_H_
+#define _BLAS_COMM_H_
 /// @file blas_comm.h
 /// @brief Common functions for linear algebra.
 ///
-#ifndef _BLAS_COMM_H_
-#define _BLAS_COMM_H_
 
 #include <stdint.h>
 

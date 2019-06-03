@@ -1,10 +1,10 @@
+#ifndef _RAINBOW_KEYPAIR_H_
+#define _RAINBOW_KEYPAIR_H_
 /// @file rainbow_keypair.h
 /// @brief Formats of key pairs and functions for generating key pairs.
 /// Formats of key pairs and functions for generating key pairs.
 ///
 
-#ifndef _RAINBOW_KEYPAIR_H_
-#define _RAINBOW_KEYPAIR_H_
 
 
 #include "rainbow_config.h"

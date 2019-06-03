@@ -119,18 +119,8 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     // l2_Q5 : _O2_BYTE * _V1 * _O1
     // l2_Q9 : _O2_BYTE * _V1 * _O2
 
-#define SIZE_TEMPQ (_O1_BYTE * _O1 * _O1)
-    #if (_O1_BYTE*_O2*_O2)> SIZE_TEMPQ
-#define SIZE_TEMPQ (_O1_BYTE*_O2*_O2)
-    #endif
-    #if (_O2_BYTE*_O1*_O1) > SIZE_TEMPQ
-#define SIZE_TEMPQ (_O2_BYTE*_O1*_O1)
-    #endif
-    #if (_O2_BYTE*_O2*_O2) > SIZE_TEMPQ
-#define SIZE_TEMPQ (_O2_BYTE*_O2*_O2)
-    #endif
 
-    unsigned char tempQ[SIZE_TEMPQ + 32];
+    unsigned char tempQ[_O1_BYTE * _O1 * _O1 + 32];
 
     memset( tempQ, 0, _O1_BYTE * _O1 * _O1 );     // l1_Q5
     batch_matTr_madd( tempQ, Ts->t1, _V1, _V1_BYTE, _O1, Qs->l1_Q2, _O1, _O1_BYTE );    // t1_tr*(F1*T1 + F2)

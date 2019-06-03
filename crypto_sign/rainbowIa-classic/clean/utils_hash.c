@@ -4,24 +4,21 @@
 ///
 
 #include "hash_len_config.h"
+#include "rainbow_config.h"
 #include "sha2.h"
 #include "utils_hash.h"
 
-#ifndef _HASH_LEN
-#define _HASH_LEN (32)
-#endif
-
 static inline
 int _hash( unsigned char *digest, const unsigned char *m, unsigned long long mlen ) {
-    #if 32 == _HASH_LEN
+//    #if 32 == _HASH_LEN
     sha256(digest, m, mlen);
-    #elif 48 == _HASH_LEN
-    sha384(digest, m, mlen);
-    #elif 64 == _HASH_LEN
-    sha512(digest, m, mlen);
-    #else
-#error "unsupported _HASH_LEN"
-    #endif
+//    #elif 48 == _HASH_LEN
+//    sha384(digest, m, mlen);
+//    #elif 64 == _HASH_LEN
+//    sha512(digest, m, mlen);
+//    #else
+//#error "unsupported _HASH_LEN"
+//    #endif
     return 0;
 }
 
