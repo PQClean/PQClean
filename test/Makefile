@@ -47,7 +47,13 @@ printparams: $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION)
 .PHONY: nistkat
 nistkat: $(DEST_DIR)/nistkat_$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/test_common_%: common/%.c $(COMMON_FILES)
+$(DEST_DIR)/test_common_aes: common/aes.c $(COMMON_FILES)
+	mkdir -p $(DEST_DIR)
+	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
+$(DEST_DIR)/test_common_fips202: common/fips202.c $(COMMON_FILES)
+	mkdir -p $(DEST_DIR)
+	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
+$(DEST_DIR)/test_common_sha2: common/sha2.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
 
