@@ -126,10 +126,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]) {
         A[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = rev1;
     }
 
-
-    if (NUM_DIGITS_GF2X_ELEMENT % 2 == 1) {
-        A[NUM_DIGITS_GF2X_ELEMENT / 2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT / 2]);
-    }
+    A[NUM_DIGITS_GF2X_ELEMENT / 2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT / 2]); // reverse middle digit
 
     if (slack_bits_amount) {
         PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A, slack_bits_amount);
@@ -140,21 +137,6 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]) {
 static void rotate_bit_left(DIGIT in[]) { /*  equivalent to x * in(x) mod x^P+1 */
 
     DIGIT mask, rotated_bit;
-    /*
-    if (NUM_DIGITS_GF2X_MODULUS == NUM_DIGITS_GF2X_ELEMENT) {
-        int msb_offset_in_digit = MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS - 1;
-        mask = ((DIGIT)0x1) << msb_offset_in_digit;
-        rotated_bit = !!(in[0] & mask);
-        in[0] &= ~mask;
-        left_bit_shift(NUM_DIGITS_GF2X_ELEMENT, in);
-    } else {
-        mask =  ((DIGIT)0x1) << (DIGIT_SIZE_b - 1);
-        rotated_bit = !!(in[0] & mask);
-        in[0] &= ~mask;
-        left_bit_shift(NUM_DIGITS_GF2X_ELEMENT, in);
-
-    } */
-
     int msb_offset_in_digit = MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS - 1;
     mask = ((DIGIT)0x1) << msb_offset_in_digit;
     rotated_bit = !!(in[0] & mask);
@@ -167,14 +149,6 @@ static void rotate_bit_right(DIGIT in[]) { /*  x^{-1} * in(x) mod x^P+1 */
 
     DIGIT rotated_bit = in[NUM_DIGITS_GF2X_ELEMENT - 1] & ((DIGIT)0x1);
     right_bit_shift(NUM_DIGITS_GF2X_ELEMENT, in);
-
-    /*
-    if (NUM_DIGITS_GF2X_MODULUS == NUM_DIGITS_GF2X_ELEMENT) {
-        int msb_offset_in_digit = MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS - 1;
-        rotated_bit = rotated_bit << msb_offset_in_digit;
-    } else {
-        rotated_bit = rotated_bit << (DIGIT_SIZE_b - 1);
-    } */
     int msb_offset_in_digit = MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS - 1;
     rotated_bit = rotated_bit << msb_offset_in_digit;
     in[0] |= rotated_bit;
@@ -222,12 +196,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) { 
     v[NUM_DIGITS_GF2X_ELEMENT - 1] = 0x0;
 
     s[NUM_DIGITS_GF2X_MODULUS - 1] = 0x1;
-    /*
-    if (MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS == 0) {
-        mask = 0x1;
-    } else {
-        mask = (((DIGIT)0x1) << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
-    }*/
+
     mask = (((DIGIT)0x1) << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
     s[0] |= mask;
 
@@ -236,16 +205,6 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) { 
         return 0;
     }
 
-    /*
-    if (NUM_DIGITS_GF2X_MODULUS == 1 + NUM_DIGITS_GF2X_ELEMENT) {
-        for (i = NUM_DIGITS_GF2X_MODULUS - 1; i >= 1 ; i--) {
-            f[i] = in[i - 1];
-        }
-    } else {
-        for (i = NUM_DIGITS_GF2X_MODULUS - 1; i >= 0 ; i--) {
-            f[i] = in[i];
-        }
-    }*/
     for (i = NUM_DIGITS_GF2X_MODULUS - 1; i >= 0 ; i--) {
         f[i] = in[i];
     }
