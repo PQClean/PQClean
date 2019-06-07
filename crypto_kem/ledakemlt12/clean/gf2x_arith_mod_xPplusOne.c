@@ -7,7 +7,7 @@
 
 static void gf2x_mod(DIGIT out[], const DIGIT in[]) {
 
-    int i, j, posTrailingBit, maskOffset;
+    int i, j, posTrailingBit, maskOffset, to_copy;
     DIGIT mask, aux[2 * NUM_DIGITS_GF2X_ELEMENT];
 
     memcpy(aux, in, 2 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
@@ -46,7 +46,7 @@ static void gf2x_mod(DIGIT out[], const DIGIT in[]) {
         }
     }
 
-    int to_copy = (2 * NUM_DIGITS_GF2X_ELEMENT > NUM_DIGITS_GF2X_ELEMENT) ? NUM_DIGITS_GF2X_ELEMENT : 2 * NUM_DIGITS_GF2X_ELEMENT;
+    to_copy = (2 * NUM_DIGITS_GF2X_ELEMENT > NUM_DIGITS_GF2X_ELEMENT) ? NUM_DIGITS_GF2X_ELEMENT : 2 * NUM_DIGITS_GF2X_ELEMENT;
 
     for (i = 0; i < to_copy; i++) {
         out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = aux[2 * NUM_DIGITS_GF2X_ELEMENT - 1 - i];
@@ -93,31 +93,19 @@ static void left_bit_shift_wide_n(const int length, DIGIT in[], unsigned int amo
     PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(length, in, amount % DIGIT_SIZE_b);
 }
 
-static uint8_t byte_reverse_with_64bitDIGIT(uint8_t b) {
-    b = (uint8_t)((b * 0x0202020202ULL & 0x010884422010ULL) % 1023);
-    return b;
-}
-
-/* https://stackoverflow.com/questions/2182002/convert-big-endian-to-little-endian-in-c-without-using-provided-func */
-static uint64_t swap_uint64( uint64_t val ) {
-    val = ((val << 8) & 0xFF00FF00FF00FF00ULL ) | ((val >> 8) & 0x00FF00FF00FF00FFULL );
-    val = ((val << 16) & 0xFFFF0000FFFF0000ULL ) | ((val >> 16) & 0x0000FFFF0000FFFFULL );
-    return (val << 32) | (val >> 32);
-}
-
-static DIGIT reverse_digit(const DIGIT b) {
-    int i;
-    union toReverse_t {
-        uint8_t inByte[DIGIT_SIZE_B];
-        DIGIT digitValue;
-    } toReverse;
-
-    toReverse.digitValue = b;
-    for (i = 0; i < DIGIT_SIZE_B; i++) {
-        toReverse.inByte[i] = byte_reverse_with_64bitDIGIT(toReverse.inByte[i]);
-    }
-
-    return swap_uint64(toReverse.digitValue);
+/* Hackers delight, reverses a uint64_t */
+static DIGIT reverse_digit(DIGIT x) {
+    uint64_t t;
+    x = (x << 31) | (x >> 33);
+    t = (x ^ (x >> 20)) & 0x00000FFF800007FFLL;
+    x = (t | (t << 20)) ^ x;
+    t = (x ^ (x >> 8)) & 0x00F8000F80700807LL;
+    x = (t | (t << 8)) ^ x;
+    t = (x ^ (x >> 4)) & 0x0808708080807008LL;
+    x = (t | (t << 4)) ^ x;
+    t = (x ^ (x >> 2)) & 0x1111111111111111LL;
+    x = (t | (t << 2)) ^ x;
+    return x;
 }
 
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]) {
@@ -137,11 +125,11 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place(DIGIT A[]) {
         A[i] = rev2;
         A[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = rev1;
     }
-    /*
+
+
     if (NUM_DIGITS_GF2X_ELEMENT % 2 == 1) {
         A[NUM_DIGITS_GF2X_ELEMENT / 2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT / 2]);
-    }*/
-    A[NUM_DIGITS_GF2X_ELEMENT / 2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT / 2]);
+    }
 
     if (slack_bits_amount) {
         PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A, slack_bits_amount);
@@ -220,7 +208,6 @@ static void gf2x_swap(const int length,
  * (Chapter 11 -- Algorithm 11.44 -- pag 223)
  *
  */
-
 int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {   /* in^{-1} mod x^P-1 */
 
     int i;
@@ -532,4 +519,13 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(
                         ( (DIGIT) 1));
     }
 
+}
+
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_tobytes(uint8_t *bytes, const DIGIT *poly) {
+    size_t i, j;
+    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+        for (j = 0; j < DIGIT_SIZE_B; j++) {
+            bytes[i * DIGIT_SIZE_B + j] = (uint8_t) ((poly[i] >> (8 * j)) & 0xFF);
+        }
+    }
 }

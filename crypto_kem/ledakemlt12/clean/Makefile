@@ -2,7 +2,7 @@
 
 LIB=libledakemlt12_clean.a
 HEADERS=api.h bf_decoding.h dfr_test.h gf2x_arith_mod_xPplusOne.h \
-		gf2x_arith.h gf2x_limbs.h H_Q_matrices_generation.h \
+		gf2x_arith.h H_Q_matrices_generation.h \
 		niederreiter.h qc_ldpc_parameters.h rng.h
 
 OBJECTS=bf_decoding.o dfr_test.o gf2x_arith_mod_xPplusOne.o \

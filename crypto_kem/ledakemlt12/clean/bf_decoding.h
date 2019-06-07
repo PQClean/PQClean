@@ -1,7 +1,7 @@
 #ifndef BF_DECODING_H
 #define BF_DECODING_H
 
-#include "gf2x_limbs.h"
+#include "gf2x_arith.h"
 #include "qc_ldpc_parameters.h"
 
 /*  Definitions for DFR level 2^-SL with SL=128 */
@@ -11,7 +11,7 @@
 
 int PQCLEAN_LEDAKEMLT12_CLEAN_bf_decoding(DIGIT err[],
         const POSITION_T HtrPosOnes[N0][DV],
-        const POSITION_T QtrPosOnes[N0][M], // N0 vectors containing exp.s of Qtr ones
+        const POSITION_T QtrPosOnes[N0][M],
         DIGIT privateSyndrome[]);
 
 #endif

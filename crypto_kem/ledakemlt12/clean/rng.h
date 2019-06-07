@@ -17,10 +17,7 @@ typedef struct {
     unsigned char   ctr[16];
 } AES_XOF_struct;
 
-
 int PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander(AES_XOF_struct *ctx, unsigned char *x, size_t xlen);
-
-/* TRNG_BYTE_LENGTH wide buffer */
 void PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx, const unsigned char *trng_entropy);
 
 #endif

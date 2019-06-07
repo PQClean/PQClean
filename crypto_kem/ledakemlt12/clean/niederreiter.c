@@ -8,9 +8,7 @@
 
 #include <string.h>
 
-void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk,
-        privateKeyNiederreiter_t *sk,
-        AES_XOF_struct *keys_expander) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk, privateKeyNiederreiter_t *sk, AES_XOF_struct *keys_expander) {
 
     // sequence of N0 circ block matrices (p x p): Hi
     POSITION_T HPosOnes[N0][DV];
@@ -32,12 +30,8 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk,
     int isDFRok = 0;
     sk->rejections = (int8_t) 0;
     do {
-        PQCLEAN_LEDAKEMLT12_CLEAN_generateHPosOnes_HtrPosOnes(HPosOnes,
-                HtrPosOnes,
-                keys_expander);
-
-        PQCLEAN_LEDAKEMLT12_CLEAN_generateQsparse(QPosOnes,
-                keys_expander);
+        PQCLEAN_LEDAKEMLT12_CLEAN_generateHPosOnes_HtrPosOnes(HPosOnes, HtrPosOnes, keys_expander);
+        PQCLEAN_LEDAKEMLT12_CLEAN_generateQsparse(QPosOnes, keys_expander);
         for (int i = 0; i < N0; i++) {
             for (int j = 0; j < DV * M; j++) {
                 LPosOnes[i][j] = INVALID_POS_VALUE;
@@ -89,10 +83,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk,
 }
 
 
-void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT *syndrome, // 1  polynomial
-        const publicKeyNiederreiter_t *pk,
-        const DIGIT *err) { // N0  polynomials
-
+void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT *syndrome, const publicKeyNiederreiter_t *pk, const DIGIT *err) {
     int i;
     DIGIT saux[NUM_DIGITS_GF2X_ELEMENT];
 
@@ -101,21 +92,17 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT *syndrome, // 1  polyn
     for (i = 0; i < N0 - 1; i++) {
         PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul(saux,
                                                pk->Mtr + i * NUM_DIGITS_GF2X_ELEMENT,
-                                               err + i * NUM_DIGITS_GF2X_ELEMENT
-                                              );
+                                               err + i * NUM_DIGITS_GF2X_ELEMENT);
         gf2x_mod_add(syndrome, syndrome, saux);
     }  // end for
     gf2x_mod_add(syndrome, syndrome, err + (N0 - 1)*NUM_DIGITS_GF2X_ELEMENT);
 }
 
 
-int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, // N0 circ poly
-        const privateKeyNiederreiter_t *sk,
-        const DIGIT *syndrome) {
+int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, const privateKeyNiederreiter_t *sk, const DIGIT *syndrome) {
 
     AES_XOF_struct niederreiter_decrypt_expander;
-    PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(&niederreiter_decrypt_expander,
-            sk->prng_seed);
+    PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander_from_trng(&niederreiter_decrypt_expander, sk->prng_seed);
 
     // sequence of N0 circ block matrices (p x p):
     POSITION_T HPosOnes[N0][DV];
@@ -124,8 +111,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, // N0 circ poly
     int rejections = sk->rejections;
     POSITION_T LPosOnes[N0][DV * M];
     do {
-        PQCLEAN_LEDAKEMLT12_CLEAN_generateHPosOnes_HtrPosOnes(HPosOnes, HtrPosOnes,
-                &niederreiter_decrypt_expander);
+        PQCLEAN_LEDAKEMLT12_CLEAN_generateHPosOnes_HtrPosOnes(HPosOnes, HtrPosOnes, &niederreiter_decrypt_expander);
         PQCLEAN_LEDAKEMLT12_CLEAN_generateQsparse(QPosOnes, &niederreiter_decrypt_expander);
         for (int i = 0; i < N0; i++) {
             for (int j = 0; j < DV * M; j++) {
@@ -173,28 +159,25 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, // N0 circ poly
 
     for (int i = 0; i < N0; i++) {
         PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_sparse(DV * M, auxSparse,
-                DV,   HPosOnes[i],
-                qBlockWeights[i][N0 - 1], &QPosOnes[i][ M - qBlockWeights[i][N0 - 1] ]
-                                                     );
+                DV, HPosOnes[i],
+                qBlockWeights[i][N0 - 1], &QPosOnes[i][ M - qBlockWeights[i][N0 - 1]]);
         PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add_sparse(DV * M, Ln0trSparse,
                 DV * M, Ln0trSparse,
-                DV * M, auxSparse
-                                                     );
+                DV * M, auxSparse);
     } // end for i
+
     PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place_sparse(DV * M, Ln0trSparse);
 
     DIGIT privateSyndrome[NUM_DIGITS_GF2X_ELEMENT];
-    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_dense_to_sparse(privateSyndrome,
-            syndrome,
-            Ln0trSparse,
-            DV * M);
+    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_dense_to_sparse(privateSyndrome, syndrome, Ln0trSparse, DV * M);
 
     /* prepare mockup error vector in case a decoding failure occurs */
     DIGIT mockup_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
     memset(mockup_error_vector, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     memcpy(mockup_error_vector, syndrome, NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     PQCLEAN_LEDAKEMLT12_CLEAN_seedexpander(&niederreiter_decrypt_expander,
-                                           ((unsigned char *) mockup_error_vector) + (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B), TRNG_BYTE_LENGTH);
+                                           ((unsigned char *) mockup_error_vector) + (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B),
+                                           TRNG_BYTE_LENGTH);
 
     int decryptOk = 0;
     memset(err, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);

@@ -1,7 +1,8 @@
 #ifndef GF2X_ARITH_H
 #define GF2X_ARITH_H
 
-#include "gf2x_limbs.h"
+#include <inttypes.h>
+#include <stddef.h>
 
 /*
  * Elements of GF(2)[x] are stored in compact dense binary form.
@@ -42,9 +43,12 @@
  *           position[A_{0}]  ==  n-1
  */
 
+typedef uint64_t DIGIT;
+#define DIGIT_SIZE_B (8)
+#define DIGIT_SIZE_b (DIGIT_SIZE_B << 3)
+#define POSITION_T uint32_t
 
 #define GF2X_MUL PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_comb
-// #define GF2X_MUL gf2x_mul_comb
 
 static inline void gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], size_t nr) {
     for (size_t i = 0; i < nr; i++) {
@@ -52,13 +56,8 @@ static inline void gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], size_
     }
 }
 
-/* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
 void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(size_t length, DIGIT in[], unsigned int amount);
-
-/* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
 void PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(size_t length, DIGIT in[], unsigned int amount);
-
 void GF2X_MUL(int nr, DIGIT Res[], int na, const DIGIT A[], int nb, const DIGIT B[]);
-
 
 #endif
