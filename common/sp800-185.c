@@ -3,16 +3,16 @@
 
 #include "sp800-185.h"
 
-static size_t left_encode(uint8_t *encbuf, size_t value)
-{
+static size_t left_encode(uint8_t *encbuf, size_t value) {
     size_t n, i, v;
 
-    for ( v = value, n = 0; v && (n < sizeof(size_t)); ++n, v >>= 8 )
+    for (v = value, n = 0; v && (n < sizeof(size_t)); n++, v >>= 8) {
         ; /* empty */
-    if (n == 0)
+    }
+    if (n == 0) {
         n = 1;
-    for ( i = 1; i <= n; ++i )
-    {
+    }
+    for (i = 1; i <= n; i++) {
         encbuf[i] = (uint8_t)(value >> (8 * (n-i)));
     }
     encbuf[0] = (uint8_t)n;
