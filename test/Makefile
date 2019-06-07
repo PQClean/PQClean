@@ -10,7 +10,7 @@ SCHEME_UPPERCASE=$(shell echo $(SCHEME) | tr a-z A-Z | sed 's/-//g')
 IMPLEMENTATION_UPPERCASE=$(shell echo $(IMPLEMENTATION) | tr a-z A-Z | sed 's/-//g')
 
 COMMON_DIR=../common
-COMMON_FILES=$(COMMON_DIR)/aes.c $(COMMON_DIR)/sha2.c $(COMMON_DIR)/fips202.c
+COMMON_FILES=$(COMMON_DIR)/aes.c $(COMMON_DIR)/sha2.c $(COMMON_DIR)/fips202.c $(COMMON_DIR)/sp800-185.c
 COMMON_HEADERS=$(COMMON_DIR)/*.h
 DEST_DIR=../bin
 
@@ -56,6 +56,9 @@ $(DEST_DIR)/test_common_fips202: common/fips202.c $(COMMON_FILES)
 $(DEST_DIR)/test_common_sha2: common/sha2.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
+$(DEST_DIR)/test_common_sp800-185: common/sp800-185.c $(COMMON_FILES)
+	mkdir -p $(DEST_DIR)
+	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
 
 $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
@@ -82,6 +85,7 @@ clean:
 	$(RM) $(DEST_DIR)/test_aes
 	$(RM) $(DEST_DIR)/test_fips202
 	$(RM) $(DEST_DIR)/test_sha2
+	$(RM) $(DEST_DIR)/test_sp800-185
 
 .PHONY: distclean
 distclean:
