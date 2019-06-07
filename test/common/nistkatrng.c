@@ -49,11 +49,11 @@ void nist_kat_init(uint8_t *entropy_input, const uint8_t *personalization_string
     DRBG_ctx.reseed_counter = 1;
 }
 
-int randombytes(uint8_t *buf, size_t xlen) {
+int randombytes(uint8_t *buf, size_t n) {
     uint8_t block[16];
     int i = 0;
 
-    while (xlen > 0) {
+    while (n > 0) {
         //increment V
         for (int j = 15; j >= 0; j--) {
             if (DRBG_ctx.V[j] == 0xff) {
@@ -64,13 +64,13 @@ int randombytes(uint8_t *buf, size_t xlen) {
             }
         }
         AES256_ECB(DRBG_ctx.Key, DRBG_ctx.V, block);
-        if (xlen > 15) {
+        if (n > 15) {
             memcpy(buf + i, block, 16);
             i += 16;
-            xlen -= 16;
+            n -= 16;
         } else {
-            memcpy(buf + i, block, xlen);
-            xlen = 0;
+            memcpy(buf + i, block, n);
+            n = 0;
         }
     }
     AES256_CTR_DRBG_Update(NULL, DRBG_ctx.Key, DRBG_ctx.V);
