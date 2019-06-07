@@ -164,7 +164,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, const privateKeyN
         PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add_sparse(DV * M, Ln0trSparse,
                 DV * M, Ln0trSparse,
                 DV * M, auxSparse);
-    } // end for i
+    }
 
     PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place_sparse(DV * M, Ln0trSparse);
 
@@ -190,7 +190,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, const privateKeyN
     }
     decryptOk = decryptOk && (err_weight == NUM_ERRORS_T);
 
-    if (!decryptOk) { // TODO: not constant time
+    if (!decryptOk) { // TODO: not constant time, replace with cmov?
         memcpy(err, mockup_error_vector, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     }
 

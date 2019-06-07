@@ -4,8 +4,7 @@
  *
  * @version 2.0 (March 2019)
  *
- * Reference ISO-C11 Implementation of the LEDAcrypt KEM-LT cipher using GCC built-ins.
- * Also contains public domain implementations of AES and Keccak
+ * Adapted code from reference ISO-C11 Implementation of the LEDAcrypt KEM-LT cipher.
  *
  * In alphabetical order:
  *

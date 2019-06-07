@@ -13,15 +13,6 @@ static void gf2x_mod(DIGIT out[], const DIGIT in[]) {
     memcpy(aux, in, 2 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     memset(out, 0x00, NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
 
-    /* not true for parameter set
-    if (2 * NUM_DIGITS_GF2X_ELEMENT < NUM_DIGITS_GF2X_MODULUS) {
-        for (i = 0; i < 2 * NUM_DIGITS_GF2X_ELEMENT; i++) {
-            out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = in[2 * NUM_DIGITS_GF2X_ELEMENT - 1 - i];
-        }
-        return;
-    }
-    */
-
     for (i = 0; i < (2 * NUM_DIGITS_GF2X_ELEMENT) - NUM_DIGITS_GF2X_MODULUS; i += 1) {
         for (j = DIGIT_SIZE_b - 1; j >= 0; j--) {
             mask = ((DIGIT)0x1) << j;

@@ -15,11 +15,11 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_generateHPosOnes_HtrPosOnes(
         /* Obtain directly the sparse representation of the block of H */
         for (int k = 0; k < DV; k++) {
             HPosOnes[i][k] = (P - HtrPosOnes[i][k])  % P; /* transposes indexes */
-        }// end for k
+        }
     }
 }
 
-void  PQCLEAN_LEDAKEMLT12_CLEAN_generateQsparse(
+void PQCLEAN_LEDAKEMLT12_CLEAN_generateQsparse(
     POSITION_T pos_ones[N0][M],
     AES_XOF_struct *keys_expander) {
     for (int i = 0; i < N0; i++) {
@@ -29,6 +29,6 @@ void  PQCLEAN_LEDAKEMLT12_CLEAN_generateQsparse(
                     qBlockWeights[i][j],
                     keys_expander);
             placed_ones += qBlockWeights[i][j];
-        } // end for j
-    } // end for i
+        }
+    }
 }
