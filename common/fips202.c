@@ -718,6 +718,49 @@ void sha3_256(uint8_t *output, const uint8_t *input, size_t inlen) {
     }
 }
 
+void sha3_384_inc_init(sha3_384incctx *state) {
+    keccak_inc_init(state->ctx);
+}
+
+void sha3_384_inc_absorb(sha3_384incctx *state, const uint8_t *input, size_t inlen) {
+    keccak_inc_absorb(state->ctx, SHA3_384_RATE, input, inlen);
+}
+
+void sha3_384_inc_finalize(uint8_t *output, sha3_384incctx *state) {
+    uint8_t t[SHA3_384_RATE];
+    keccak_inc_finalize(state->ctx, SHA3_384_RATE, 0x06);
+
+    keccak_squeezeblocks(t, 1, state->ctx, SHA3_384_RATE);
+
+    for (size_t i = 0; i < 48; i++) {
+        output[i] = t[i];
+    }
+}
+
+/*************************************************
+ * Name:        sha3_384
+ *
+ * Description: SHA3-256 with non-incremental API
+ *
+ * Arguments:   - uint8_t *output:      pointer to output
+ *              - const uint8_t *input: pointer to input
+ *              - size_t inlen:   length of input in bytes
+ **************************************************/
+void sha3_384(uint8_t *output, const uint8_t *input, size_t inlen) {
+    uint64_t s[25];
+    uint8_t t[SHA3_384_RATE];
+
+    /* Absorb input */
+    keccak_absorb(s, SHA3_384_RATE, input, inlen, 0x06);
+
+    /* Squeeze output */
+    keccak_squeezeblocks(t, 1, s, SHA3_384_RATE);
+
+    for (size_t i = 0; i < 48; i++) {
+        output[i] = t[i];
+    }
+}
+
 void sha3_512_inc_init(sha3_512incctx *state) {
     keccak_inc_init(state->ctx);
 }
