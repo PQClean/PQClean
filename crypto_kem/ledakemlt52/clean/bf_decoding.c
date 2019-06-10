@@ -6,7 +6,7 @@
 
 unsigned int thresholds[2] = {B0, (DV * M) / 2 + 1};
 
-int PQCLEAN_LEDAKEMLT12_CLEAN_bf_decoding(DIGIT err[],
+int PQCLEAN_LEDAKEMLT52_CLEAN_bf_decoding(DIGIT err[],
         const POSITION_T HtrPosOnes[N0][DV],
         const POSITION_T QtrPosOnes[N0][M],
         DIGIT privateSyndrome[]) {
