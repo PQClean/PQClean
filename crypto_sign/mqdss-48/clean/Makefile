@@ -5,7 +5,7 @@ LIB=libmqdss-48_clean.a
 HEADERS = params.h gf31.h mq.h api.h
 OBJECTS =          gf31.o mq.o sign.o
 
-CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 

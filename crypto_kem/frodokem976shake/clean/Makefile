@@ -4,7 +4,7 @@ LIB=libfrodokem976shake_clean.a
 HEADERS=api.h params.h common.h
 OBJECTS=kem.o matrix_shake.o noise.o util.o
 
-CFLAGS=-O3 -Wall -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 

@@ -47,6 +47,7 @@ EXPECTED_FIELDS = {
     'claimed-nist-level': {'type': int, 'min': 1, 'max': 5},
     'length-public-key': {'type': int, 'min': 1},
     'length-secret-key': {'type': int, 'min': 1},
+    'nistkat-sha256': {'type': str, 'length': 64},
     'principal-submitter': {'type': str},
     'auxiliary-submitters': {'type': list, 'elements': {'type': str}},
     'implementations': {
@@ -65,7 +66,6 @@ KEM_FIELDS = {
     'claimed-security' : {'type' : str, 'values' : ['IND-CPA', 'IND-CCA2'] },
     'length-ciphertext': {'type': int, 'min': 1},
     'length-shared-secret': {'type': int, 'min': 1},
-    'nistkat-sha256': {'type': str, 'length': 64},
 }
 
 SIGNATURE_FIELDS = {
