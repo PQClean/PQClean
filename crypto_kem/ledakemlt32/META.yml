@@ -1,0 +1,18 @@
+name: LEDAcryptKEMLT32
+type: kem
+claimed-nist-level: 3
+claimed-security: IND-CCA2
+length-public-key: 12032
+length-secret-key: 33
+length-ciphertext: 12032
+length-shared-secret: 48
+nistkat-sha256: 5f4e10c91755d87722bc16e13c6bc5d8bcd6190589cb8924aedb8639d9f1f244
+principal-submitter: Marco Baldi
+auxiliary-submitters:
+  - Alessandro Barenghi
+  - Franco Chiaraluce
+  - Gerardo Pelosi
+  - Paolo Santini
+implementations:
+  - name: clean
+    version: 2.0
