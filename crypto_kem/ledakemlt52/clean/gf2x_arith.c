@@ -3,22 +3,6 @@
 #include <assert.h>
 #include <string.h>  // memset(...)
 
-/* allows the second operand to be shorter than the first */
-/* the result should be as large as the first operand*/
-static inline void gf2x_add_asymm(const size_t nr, DIGIT Res[],
-                                  const size_t na, const DIGIT A[],
-                                  const size_t nb, const DIGIT B[]) {
-    assert(nr >= na && na >= nb);
-    size_t i;
-    size_t delta = na - nb;
-    for (i = 0; i < delta; i++) {
-        Res[i] = A[i];
-    }
-    for (i = 0; i < nb; i++) {
-        Res[i + delta] = A[i + delta] ^ B[i];
-    }
-}
-
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
 void PQCLEAN_LEDAKEMLT52_CLEAN_right_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
     assert(amount < DIGIT_SIZE_b);
@@ -82,19 +66,5 @@ void PQCLEAN_LEDAKEMLT52_CLEAN_gf2x_mul_comb(int nr, DIGIT Res[],
                 Res[i + j + 1] ^= B[j];
             }
         }
-    }
-}
-
-static inline void gf2x_exact_div_x_plus_one(const int na, DIGIT A[]) {
-    DIGIT t = 0;
-    for (int i = na - 1; i >= 0; i--) {
-
-        t ^= A[i];
-
-        for (int j = 1; j <= DIGIT_SIZE_b / 2; j = j * 2) {
-            t ^= t << (unsigned) j;
-        }
-        A[i] = t;
-        t >>= DIGIT_SIZE_b - 1;
     }
 }
