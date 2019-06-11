@@ -1,9 +1,8 @@
+#include "api.h"
+#include "randombytes.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-
-#include "api.h"
-#include "randombytes.h"
 
 #ifndef NTESTS
 #define NTESTS 5
