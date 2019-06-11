@@ -12,13 +12,10 @@
  diversifier    - an 8 byte diversifier
  maxlen         - maximum number of bytes (less than 2**32) generated under this seed and diversifier
  */
-static int seedexpander_init(AES_XOF_struct *ctx,
-                             unsigned char *seed,
-                             unsigned char *diversifier,
-                             size_t maxlen) {
-    if ( maxlen >= 0x100000000 ) {
-        return RNG_BAD_MAXLEN;
-    }
+static void seedexpander_init(AES_XOF_struct *ctx,
+                              unsigned char *seed,
+                              unsigned char *diversifier,
+                              size_t maxlen) {
 
     ctx->length_remaining = maxlen;
 
@@ -38,8 +35,6 @@ static int seedexpander_init(AES_XOF_struct *ctx,
 
     ctx->buffer_pos = 16;
     memset(ctx->buffer, 0x00, 16);
-
-    return RNG_SUCCESS;
 }
 
 void PQCLEAN_LEDAKEMLT52_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx,
@@ -57,7 +52,7 @@ void PQCLEAN_LEDAKEMLT52_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx,
 
     /* the required seed expansion will be quite small, set the max number of
      * bytes conservatively to 10 MiB*/
-    seedexpander_init(ctx, prng_buffer, diversifier, 10 * 1024 * 1024);
+    seedexpander_init(ctx, prng_buffer, diversifier, RNG_MAXLEN);
 }
 
 /*
