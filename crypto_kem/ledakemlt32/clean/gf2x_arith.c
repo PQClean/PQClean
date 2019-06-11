@@ -5,12 +5,12 @@
 
 /* allows the second operand to be shorter than the first */
 /* the result should be as large as the first operand*/
-static inline void gf2x_add_asymm(const size_t nr, DIGIT Res[],
-                                  const size_t na, const DIGIT A[],
-                                  const size_t nb, const DIGIT B[]) {
+static inline void gf2x_add_asymm(const int nr, DIGIT Res[],
+                                  const int na, const DIGIT A[],
+                                  const int nb, const DIGIT B[]) {
     assert(nr >= na && na >= nb);
-    size_t i;
-    size_t delta = na - nb;
+    int i;
+    int delta = na - nb;
     for (i = 0; i < delta; i++) {
         Res[i] = A[i];
     }
@@ -20,7 +20,7 @@ static inline void gf2x_add_asymm(const size_t nr, DIGIT Res[],
 }
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void PQCLEAN_LEDAKEMLT32_CLEAN_right_bit_shift_n(size_t length, DIGIT in[], unsigned int amount) {
+void PQCLEAN_LEDAKEMLT32_CLEAN_right_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
     assert(amount < DIGIT_SIZE_b);
     if ( amount == 0 ) {
         return;
@@ -36,12 +36,12 @@ void PQCLEAN_LEDAKEMLT32_CLEAN_right_bit_shift_n(size_t length, DIGIT in[], unsi
 }
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void PQCLEAN_LEDAKEMLT32_CLEAN_left_bit_shift_n(size_t length, DIGIT in[], unsigned int amount) {
+void PQCLEAN_LEDAKEMLT32_CLEAN_left_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
     assert(amount < DIGIT_SIZE_b);
     if ( amount == 0 ) {
         return;
     }
-    size_t j;
+    int j;
     DIGIT mask;
     mask = ~(((DIGIT)0x01 << (DIGIT_SIZE_b - amount)) - 1);
     for (j = 0 ; j < length - 1 ; j++) {

@@ -15,7 +15,7 @@
 static int seedexpander_init(AES_XOF_struct *ctx,
                              unsigned char *seed,
                              unsigned char *diversifier,
-                             uint64_t maxlen) {
+                             size_t maxlen) {
     if ( maxlen >= 0x100000000 ) {
         return RNG_BAD_MAXLEN;
     }

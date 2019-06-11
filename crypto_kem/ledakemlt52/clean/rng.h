@@ -11,8 +11,8 @@
 
 typedef struct {
     unsigned char   buffer[16];
-    unsigned int    buffer_pos;
-    uint64_t        length_remaining;
+    size_t          buffer_pos;
+    size_t          length_remaining;
     unsigned char   key[32];
     unsigned char   ctr[16];
 } AES_XOF_struct;

@@ -50,14 +50,14 @@ typedef uint64_t DIGIT;
 
 #define GF2X_MUL PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mul_comb
 
-static inline void gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], size_t nr) {
-    for (size_t i = 0; i < nr; i++) {
+static inline void gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], int nr) {
+    for (int i = 0; i < nr; i++) {
         Res[i] = A[i] ^ B[i];
     }
 }
 
-void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(size_t length, DIGIT in[], unsigned int amount);
-void PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(size_t length, DIGIT in[], unsigned int amount);
+void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(int length, DIGIT in[], unsigned int amount);
+void PQCLEAN_LEDAKEMLT12_CLEAN_left_bit_shift_n(int length, DIGIT in[], unsigned int amount);
 void GF2X_MUL(int nr, DIGIT Res[], int na, const DIGIT A[], int nb, const DIGIT B[]);
 
 #endif
