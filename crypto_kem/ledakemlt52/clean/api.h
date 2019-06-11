@@ -8,11 +8,9 @@
 
 #define PQCLEAN_LEDAKEMLT52_CLEAN_CRYPTO_ALGNAME "LEDAKEMLT52"
 
-int PQCLEAN_LEDAKEMLT52_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
-
-int PQCLEAN_LEDAKEMLT52_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk);
-
-int PQCLEAN_LEDAKEMLT52_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk);
+int PQCLEAN_LEDAKEMLT52_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk);
+int PQCLEAN_LEDAKEMLT52_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk);
+int PQCLEAN_LEDAKEMLT52_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t*ct, const uint8_t *sk);
 
 
 #endif
