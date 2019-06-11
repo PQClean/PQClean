@@ -18,13 +18,13 @@ int PQCLEAN_LEDAKEMLT32_CLEAN_bf_decoding(DIGIT err[],
     int iteration = 0;
 
     do {
-        gf2x_copy(currSyndrome, privateSyndrome);
+        PQCLEAN_LEDAKEMLT32_CLEAN_gf2x_copy(currSyndrome, privateSyndrome);
         memset(unsatParityChecks, 0x00, N0 * P * sizeof(uint8_t));
         for (int i = 0; i < N0; i++) {
             for (int valueIdx = 0; valueIdx < P; valueIdx++) {
                 for (int HtrOneIdx = 0; HtrOneIdx < DV; HtrOneIdx++) {
                     POSITION_T tmp = (HtrPosOnes[i][HtrOneIdx] + valueIdx) >= P ? (HtrPosOnes[i][HtrOneIdx] + valueIdx) - P : (HtrPosOnes[i][HtrOneIdx] + valueIdx);
-                    if (gf2x_get_coeff(currSyndrome, tmp)) {
+                    if (PQCLEAN_LEDAKEMLT32_CLEAN_gf2x_get_coeff(currSyndrome, tmp)) {
                         unsatParityChecks[i * P + valueIdx]++;
                     }
                 }
@@ -54,13 +54,13 @@ int PQCLEAN_LEDAKEMLT32_CLEAN_bf_decoding(DIGIT err[],
                 }
                 /* Correlation based flipping */
                 if (correlation >= corrt_syndrome_based) {
-                    gf2x_toggle_coeff(err + NUM_DIGITS_GF2X_ELEMENT * i, j);
+                    PQCLEAN_LEDAKEMLT32_CLEAN_gf2x_toggle_coeff(err + NUM_DIGITS_GF2X_ELEMENT * i, j);
                     for (int v = 0; v < M; v++) {
                         unsigned syndromePosToFlip;
                         for (int HtrOneIdx = 0; HtrOneIdx < DV; HtrOneIdx++) {
                             syndromePosToFlip = (HtrPosOnes[currQBlkPos[v]][HtrOneIdx] + currQBitPos[v] );
                             syndromePosToFlip = syndromePosToFlip >= P ? syndromePosToFlip - P : syndromePosToFlip;
-                            gf2x_toggle_coeff(privateSyndrome, syndromePosToFlip);
+                            PQCLEAN_LEDAKEMLT32_CLEAN_gf2x_toggle_coeff(privateSyndrome, syndromePosToFlip);
                         }
                     } // end for v
                 } // end if

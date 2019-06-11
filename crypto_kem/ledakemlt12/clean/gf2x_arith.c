@@ -3,6 +3,12 @@
 #include <assert.h>
 #include <string.h>  // memset(...)
 
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], int nr) {
+    for (int i = 0; i < nr; i++) {
+        Res[i] = A[i] ^ B[i];
+    }
+}
+
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
 void PQCLEAN_LEDAKEMLT12_CLEAN_right_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
     assert(amount < DIGIT_SIZE_b);

@@ -58,7 +58,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk, 
     memset(Ln0dense, 0x00, sizeof(Ln0dense));
     for (int j = 0; j < DV * M; j++) {
         if (LPosOnes[N0 - 1][j] != INVALID_POS_VALUE) {
-            gf2x_set_coeff(Ln0dense, LPosOnes[N0 - 1][j], 1);
+            PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_set_coeff(Ln0dense, LPosOnes[N0 - 1][j], 1);
         }
     }
 
@@ -86,9 +86,9 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_encrypt(DIGIT *syndrome, const publi
         PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul(saux,
                                                pk->Mtr + i * NUM_DIGITS_GF2X_ELEMENT,
                                                err + i * NUM_DIGITS_GF2X_ELEMENT);
-        gf2x_mod_add(syndrome, syndrome, saux);
+        PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add(syndrome, syndrome, saux);
     }
-    gf2x_mod_add(syndrome, syndrome, err + (N0 - 1)*NUM_DIGITS_GF2X_ELEMENT);
+    PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add(syndrome, syndrome, err + (N0 - 1)*NUM_DIGITS_GF2X_ELEMENT);
 }
 
 
@@ -180,7 +180,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_niederreiter_decrypt(DIGIT *err, const privateKeyN
 
     err_weight = 0;
     for (int i = 0 ; i < N0; i++) {
-        err_weight += population_count(err + (NUM_DIGITS_GF2X_ELEMENT * i));
+        err_weight += PQCLEAN_LEDAKEMLT12_CLEAN_population_count(err + (NUM_DIGITS_GF2X_ELEMENT * i));
     }
     decryptOk = decryptOk && (err_weight == NUM_ERRORS_T);
 

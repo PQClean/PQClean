@@ -38,7 +38,7 @@ int PQCLEAN_LEDAKEMLT52_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
                 LSparse_loc[i][j] = (P - LSparse[i][j]);
             }
         }
-        quicksort_sparse(LSparse_loc[i]);
+        PQCLEAN_LEDAKEMLT52_CLEAN_quicksort_sparse(LSparse_loc[i]);
     }
 
     for (int i = 0; i < N0; i++ ) {
@@ -48,7 +48,7 @@ int PQCLEAN_LEDAKEMLT52_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
                 for (int idxToRotate = 0; idxToRotate < (DV * M); idxToRotate++) {
                     rotated_column[idxToRotate] = (LSparse_loc[j][idxToRotate] + k) % P;
                 }
-                quicksort_sparse(rotated_column);
+                PQCLEAN_LEDAKEMLT52_CLEAN_quicksort_sparse(rotated_column);
                 /* compute the intersection amount */
                 firstidx = 0, secondidx = 0;
                 intersectionval = 0;
