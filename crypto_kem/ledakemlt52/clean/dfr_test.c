@@ -9,7 +9,7 @@
  * computes the threshold for the second iteration of the decoder and stores
  * it in the globally accessible vector */
 
-extern unsigned int thresholds[2];
+extern unsigned int PQCLEAN_LEDAKEMLT52_CLEAN_thresholds[2];
 
 int PQCLEAN_LEDAKEMLT52_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
 
@@ -113,7 +113,7 @@ int PQCLEAN_LEDAKEMLT52_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
                                    allBlockMaxSumstMinusOne;
     }
     if (DV * M > (allBlockMaxSumstMinusOne + allBlockMaxSumst)) {
-        thresholds[1] = allBlockMaxSumst + 1;
+        PQCLEAN_LEDAKEMLT52_CLEAN_thresholds[1] = allBlockMaxSumst + 1;
         return 1;
     }
     return 0;

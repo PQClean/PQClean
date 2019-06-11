@@ -7,7 +7,7 @@
 
 static void gf2x_mod(DIGIT out[], const DIGIT in[]) {
 
-    int i, j, posTrailingBit, maskOffset, to_copy;
+    int i, j, posTrailingBit, maskOffset;
     DIGIT mask, aux[2 * NUM_DIGITS_GF2X_ELEMENT];
 
     memcpy(aux, in, 2 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
@@ -37,9 +37,7 @@ static void gf2x_mod(DIGIT out[], const DIGIT in[]) {
         }
     }
 
-    to_copy = (2 * NUM_DIGITS_GF2X_ELEMENT > NUM_DIGITS_GF2X_ELEMENT) ? NUM_DIGITS_GF2X_ELEMENT : 2 * NUM_DIGITS_GF2X_ELEMENT;
-
-    for (i = 0; i < to_copy; i++) {
+    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
         out[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = aux[2 * NUM_DIGITS_GF2X_ELEMENT - 1 - i];
     }
 
@@ -440,17 +438,17 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_sparse_block(POSITION_T *pos_ones,
 }
 
 /* Returns random weight-t circulant block */
-void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(
-    DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
-    AES_XOF_struct *seed_expander_ctx) {
+void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
+        AES_XOF_struct *seed_expander_ctx) {
 
     int rndPos[NUM_ERRORS_T],  duplicated, counter = 0;
+    int p, polyIndex, exponent;
+
     memset(sequence, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
 
-
     while (counter < NUM_ERRORS_T) {
-        int p = rand_range(N0 * NUM_BITS_GF2X_ELEMENT, P_BITS,
-                           seed_expander_ctx);
+        p = rand_range(N0 * NUM_BITS_GF2X_ELEMENT, P_BITS,
+                       seed_expander_ctx);
         duplicated = 0;
         for (int j = 0; j < counter; j++) {
             if (rndPos[j] == p) {
@@ -463,8 +461,8 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(
         }
     }
     for (int j = 0; j < counter; j++) {
-        int polyIndex = rndPos[j] / P;
-        int exponent = rndPos[j] % P;
+        polyIndex = rndPos[j] / P;
+        exponent = rndPos[j] % P;
         gf2x_set_coeff( sequence + NUM_DIGITS_GF2X_ELEMENT * polyIndex, exponent,
                         ( (DIGIT) 1));
     }
@@ -475,7 +473,7 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_tobytes(uint8_t *bytes, const DIGIT *poly) {
     size_t i, j;
     for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
         for (j = 0; j < DIGIT_SIZE_B; j++) {
-            bytes[i * DIGIT_SIZE_B + j] = (uint8_t) ((poly[i] >> (8 * j)) & 0xFF);
+            bytes[i * DIGIT_SIZE_B + j] = (uint8_t) (poly[i] >> 8 * j);
         }
     }
 }

@@ -4,7 +4,7 @@
 #include <assert.h>
 #include <string.h>
 
-unsigned int thresholds[2] = {B0, (DV * M) / 2 + 1};
+unsigned int PQCLEAN_LEDAKEMLT12_CLEAN_thresholds[2] = {B0, (DV * M) / 2 + 1};
 
 int PQCLEAN_LEDAKEMLT12_CLEAN_bf_decoding(DIGIT err[],
         const POSITION_T HtrPosOnes[N0][DV],
@@ -32,7 +32,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_bf_decoding(DIGIT err[],
         }
 
         /* iteration based threshold determination*/
-        unsigned int corrt_syndrome_based = thresholds[iteration];
+        unsigned int corrt_syndrome_based = PQCLEAN_LEDAKEMLT12_CLEAN_thresholds[iteration];
 
         //Computation of correlation  with a full Q matrix
         for (int i = 0; i < N0; i++) {
