@@ -67,7 +67,7 @@ void PQCLEAN_LEDAKEMLT32_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx,
     xlen - number of bytes to return
  */
 int PQCLEAN_LEDAKEMLT32_CLEAN_seedexpander(AES_XOF_struct *ctx, unsigned char *x, size_t xlen) {
-    uint32_t offset;
+    size_t offset;
     aes256ctx ctx256;
 
     if ( x == NULL ) {
