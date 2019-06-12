@@ -180,11 +180,6 @@ int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_signature(
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
 
-
-    for (i = 0; i < CRHBYTES; ++i) {
-        sig[CRYPTO_BYTES - CRHBYTES + i] = tr[i];
-    }
-
     crh(rhoprime, key, SEEDBYTES + CRHBYTES);
 
     /* Expand matrix and transform vectors */
@@ -286,18 +281,14 @@ int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_verify(
     }
 
     /* Compute CRH(CRH(rho, t1), msg) */
-    shake256incctx state;
-    shake256_inc_init(&state);
-    shake256_inc_absorb(&state, pk, CRYPTO_PUBLICKEYBYTES);
-    shake256_inc_finalize(&state);
-    shake256_inc_squeeze(mu, CRHBYTES, &state);
+    crh(mu, pk, CRYPTO_PUBLICKEYBYTES);
 
+    shake256incctx state;
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, mu, CRHBYTES);
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
-
 
     /* Matrix-vector multiplication; compute Az - c2^dt1 */
     PQCLEAN_DILITHIUM2_CLEAN_expand_mat(mat, rho);
