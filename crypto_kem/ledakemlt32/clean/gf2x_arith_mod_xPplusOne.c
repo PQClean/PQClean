@@ -572,3 +572,13 @@ void PQCLEAN_LEDAKEMLT32_CLEAN_gf2x_tobytes(uint8_t *bytes, const DIGIT *poly) {
         }
     }
 }
+
+void PQCLEAN_LEDAKEMLT32_CLEAN_gf2x_frombytes(DIGIT *poly, const uint8_t *poly_bytes) {
+    size_t i, j;
+    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+        poly[i] = (DIGIT) 0;
+        for (j = 0; j < DIGIT_SIZE_B; j++) {
+            poly[i] |= (DIGIT) poly_bytes[i * DIGIT_SIZE_B + j] << 8 * j;
+        }
+    }
+}

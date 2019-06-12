@@ -28,9 +28,11 @@ void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_sparse_block(POSITION_T *pos_ones,
 void PQCLEAN_LEDAKEMLT12_CLEAN_rand_circulant_blocks_sequence(DIGIT *sequence, AES_XOF_struct *seed_expander_ctx);
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_add_sparse(int sizeR, POSITION_T Res[], int sizeA, const POSITION_T A[], int sizeB, const POSITION_T B[]);
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[]);
+int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]);
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T Res[], size_t sizeA, const POSITION_T A[], size_t sizeB, const POSITION_T B[]);
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_mul_dense_to_sparse(DIGIT Res[], const DIGIT dense[], POSITION_T sparse[], unsigned int nPos);
 void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_tobytes(uint8_t *bytes, const DIGIT *poly);
-int PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]);
+void PQCLEAN_LEDAKEMLT12_CLEAN_gf2x_frombytes(DIGIT *poly, const uint8_t *poly_bytes);
+
 
 #endif
