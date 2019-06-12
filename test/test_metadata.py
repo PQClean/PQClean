@@ -63,14 +63,13 @@ EXPECTED_FIELDS = {
 }
 
 KEM_FIELDS = {
-    'claimed-security' : {'type' : str, 'values' : ['IND-CPA', 'IND-CCA2'] },
+    'claimed-security': {'type': str, 'values': ['IND-CPA', 'IND-CCA2']},
     'length-ciphertext': {'type': int, 'min': 1},
     'length-shared-secret': {'type': int, 'min': 1},
 }
 
 SIGNATURE_FIELDS = {
     'length-signature': {'type': int, 'min': 1},
-    'testvectors-sha256': {'type': str, 'length': 64},
 }
 
 
