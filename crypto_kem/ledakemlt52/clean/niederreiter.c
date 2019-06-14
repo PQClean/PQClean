@@ -10,7 +10,6 @@
 
 void PQCLEAN_LEDAKEMLT52_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk, privateKeyNiederreiter_t *sk, AES_XOF_struct *keys_expander) {
 
-
     POSITION_T HPosOnes[N0][DV]; // sequence of N0 circ block matrices (p x p): Hi
     POSITION_T HtrPosOnes[N0][DV]; // Sparse tranposed circulant H
     POSITION_T QPosOnes[N0][M]; // Sparse Q, Each row contains the position of the ones of all the blocks of a row of Q as exponent+P*block_position
@@ -20,7 +19,7 @@ void PQCLEAN_LEDAKEMLT52_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk, 
     DIGIT Ln0dense[NUM_DIGITS_GF2X_ELEMENT];
     DIGIT Ln0Inv[NUM_DIGITS_GF2X_ELEMENT];
     int is_L_full = 0;
-    int isDFRok = 0;
+    uint8_t threshold; // threshold for round 2
     sk->rejections = (int8_t) 0;
 
     do {
@@ -50,10 +49,11 @@ void PQCLEAN_LEDAKEMLT52_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk, 
         }
         sk->rejections = sk->rejections + 1;
         if (is_L_full) {
-            isDFRok = PQCLEAN_LEDAKEMLT52_CLEAN_DFR_test(LPosOnes);
+            threshold = PQCLEAN_LEDAKEMLT52_CLEAN_DFR_test(LPosOnes);
         }
-    } while (!is_L_full || !isDFRok);
+    } while (!is_L_full || threshold == DFR_TEST_FAIL);
     sk->rejections = sk->rejections - 1;
+    sk->threshold = threshold;
 
     memset(Ln0dense, 0x00, sizeof(Ln0dense));
     for (int j = 0; j < DV * M; j++) {
@@ -176,7 +176,7 @@ int PQCLEAN_LEDAKEMLT52_CLEAN_niederreiter_decrypt(DIGIT *err, const privateKeyN
 
     memset(err, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     decryptOk = PQCLEAN_LEDAKEMLT52_CLEAN_bf_decoding(err, (const POSITION_T (*)[DV]) HtrPosOnes,
-                (const POSITION_T (*)[M]) QtrPosOnes, privateSyndrome);
+                (const POSITION_T (*)[M]) QtrPosOnes, privateSyndrome, sk->threshold);
 
     err_weight = 0;
     for (int i = 0 ; i < N0; i++) {

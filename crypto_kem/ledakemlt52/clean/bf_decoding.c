@@ -4,18 +4,18 @@
 #include <assert.h>
 #include <string.h>
 
-unsigned int PQCLEAN_LEDAKEMLT52_CLEAN_thresholds[2] = {B0, (DV * M) / 2 + 1};
-
 int PQCLEAN_LEDAKEMLT52_CLEAN_bf_decoding(DIGIT err[],
         const POSITION_T HtrPosOnes[N0][DV],
         const POSITION_T QtrPosOnes[N0][M],
-        DIGIT privateSyndrome[]) {
+        DIGIT privateSyndrome[],
+        uint8_t threshold) {
 
     uint8_t unsatParityChecks[N0 * P];
     POSITION_T currQBlkPos[M], currQBitPos[M];
     DIGIT currSyndrome[NUM_DIGITS_GF2X_ELEMENT];
     int check;
     int iteration = 0;
+    unsigned int corrt_syndrome_based;
 
     do {
         PQCLEAN_LEDAKEMLT52_CLEAN_gf2x_copy(currSyndrome, privateSyndrome);
@@ -32,7 +32,7 @@ int PQCLEAN_LEDAKEMLT52_CLEAN_bf_decoding(DIGIT err[],
         }
 
         /* iteration based threshold determination*/
-        unsigned int corrt_syndrome_based = PQCLEAN_LEDAKEMLT52_CLEAN_thresholds[iteration];
+        corrt_syndrome_based = iteration ? (unsigned int) threshold : B0;
 
         //Computation of correlation  with a full Q matrix
         for (int i = 0; i < N0; i++) {
@@ -45,7 +45,7 @@ int PQCLEAN_LEDAKEMLT52_CLEAN_bf_decoding(DIGIT err[],
                     endQblockIdx += qBlockWeights[blockIdx][i];
                     int currblockoffset = blockIdx * P;
                     for (; currQoneIdx < endQblockIdx; currQoneIdx++) {
-                        uint32_t tmp = QtrPosOnes[i][currQoneIdx] + j;
+                        POSITION_T tmp = QtrPosOnes[i][currQoneIdx] + j;
                         tmp = tmp >= P ? tmp - P : tmp;
                         currQBitPos[currQoneIdx] = tmp;
                         currQBlkPos[currQoneIdx] = blockIdx;
@@ -56,7 +56,7 @@ int PQCLEAN_LEDAKEMLT52_CLEAN_bf_decoding(DIGIT err[],
                 if (correlation >= corrt_syndrome_based) {
                     PQCLEAN_LEDAKEMLT52_CLEAN_gf2x_toggle_coeff(err + NUM_DIGITS_GF2X_ELEMENT * i, j);
                     for (int v = 0; v < M; v++) {
-                        unsigned syndromePosToFlip;
+                        POSITION_T syndromePosToFlip;
                         for (int HtrOneIdx = 0; HtrOneIdx < DV; HtrOneIdx++) {
                             syndromePosToFlip = (HtrPosOnes[currQBlkPos[v]][HtrOneIdx] + currQBitPos[v] );
                             syndromePosToFlip = syndromePosToFlip >= P ? syndromePosToFlip - P : syndromePosToFlip;

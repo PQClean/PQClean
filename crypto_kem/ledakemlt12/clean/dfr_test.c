@@ -6,29 +6,22 @@
 #include <string.h>
 
 /* Tests if the current code attains the desired DFR. If that is the case,
- * computes the threshold for the second iteration of the decoder and stores
- * it in the globally accessible vector */
+ * computes the threshold for the second iteration of the decoder and returns this values
+ * (max DV * M), on failure it returns 255 >> DV * M */
 
-extern unsigned int PQCLEAN_LEDAKEMLT12_CLEAN_thresholds[2];
-
-int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
+uint8_t PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
 
     POSITION_T LSparse_loc[N0][DV * M];
-
+    POSITION_T rotated_column[DV * M];
     /* Gamma matrix: an N0 x N0 block circulant matrix with block size p
      * gamma[a][b][c] stores the intersection of the first column of the a-th
-     * block of L  with the c-th column of the b-th block of L */
-    /* Gamma computation can be accelerated employing symmetry and QC properties */
+     * block of L  with the c-th column of the b-th block of L.
+     * Gamma computation can be accelerated employing symmetry and QC properties */
     unsigned int gamma[N0][N0][P] = {{{0}}};
-    unsigned int rotated_column[DV * M];
-
-    unsigned int firstidx, secondidx, intersectionval;
-
     unsigned int gammaHist[N0][DV * M + 1] = {{0}};
-
     unsigned int maxMut[N0], maxMutMinusOne[N0];
+    unsigned int firstidx, secondidx, intersectionval;
     unsigned int allBlockMaxSumst, allBlockMaxSumstMinusOne;
-
     unsigned int toAdd, histIdx;
 
     /*transpose blocks of L, we need its columns */
@@ -113,8 +106,7 @@ int PQCLEAN_LEDAKEMLT12_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
                                    allBlockMaxSumstMinusOne;
     }
     if (DV * M > (allBlockMaxSumstMinusOne + allBlockMaxSumst)) {
-        PQCLEAN_LEDAKEMLT12_CLEAN_thresholds[1] = allBlockMaxSumst + 1;
-        return 1;
+        return allBlockMaxSumst + 1;
     }
-    return 0;
+    return DFR_TEST_FAIL;
 }

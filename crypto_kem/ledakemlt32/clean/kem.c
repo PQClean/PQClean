@@ -13,7 +13,7 @@ static void pack_pk(uint8_t *pk_bytes, publicKeyNiederreiter_t *pk) {
     }
 }
 
-static void unpack_pk(publicKeyNiederreiter_t *pk,  const uint8_t *pk_bytes) {
+static void unpack_pk(publicKeyNiederreiter_t *pk, const uint8_t *pk_bytes) {
     size_t i;
     for (i = 0; i < N0 - 1; i++) {
         PQCLEAN_LEDAKEMLT32_CLEAN_gf2x_frombytes(pk->Mtr + i * NUM_DIGITS_GF2X_ELEMENT,

@@ -12,6 +12,7 @@
 int PQCLEAN_LEDAKEMLT52_CLEAN_bf_decoding(DIGIT err[],
         const POSITION_T HtrPosOnes[N0][DV],
         const POSITION_T QtrPosOnes[N0][M],
-        DIGIT privateSyndrome[]);
+        DIGIT privateSyndrome[],
+        uint8_t threshold);
 
 #endif

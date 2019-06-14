@@ -3,10 +3,10 @@ type: kem
 claimed-nist-level: 1
 claimed-security: IND-CCA2
 length-public-key: 6520
-length-secret-key: 25
+length-secret-key: 26
 length-ciphertext: 6520
 length-shared-secret: 32
-nistkat-sha256: 3bb5945e0aea26f121e1d56946760e506bdfbebb07e2fb018ce737b90b1eee2b
+nistkat-sha256: c49a3f0ff5f3e7d6b41995649d7003daf7c06d9539fc28cb3b93ed02dcbe09d4
 principal-submitter: Marco Baldi
 auxiliary-submitters:
   - Alessandro Barenghi
@@ -15,4 +15,4 @@ auxiliary-submitters:
   - Paolo Santini
 implementations:
   - name: clean
-    version: 2.0
+    version: 2.?
