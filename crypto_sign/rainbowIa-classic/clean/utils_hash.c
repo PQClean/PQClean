@@ -3,7 +3,6 @@
 ///
 ///
 
-#include "hash_len_config.h"
 #include "rainbow_config.h"
 #include "sha2.h"
 #include "utils_hash.h"

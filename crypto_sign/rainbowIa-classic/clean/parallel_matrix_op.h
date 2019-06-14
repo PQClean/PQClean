@@ -5,15 +5,6 @@
 ///
 ///
 
-////////////////////////////////////////////////////////////////////////
-///   Librarys for batched matrix operations.
-///   A batched matrix is a matrix which each element of the matrix
-///   contains size_batch GF elements.
-////////////////////////////////////////////////////////////////////////
-
-
-
-
 ////////////////  Section:  triangle matrix <-> rectangle matrix   ///////////////////////////////////
 
 
@@ -25,27 +16,7 @@
 /// @param[in]  dim       - the dimension of the upper-triangle matrix, i.e., an dim x dim matrix.
 /// @return  the corresponding index in an array storage.
 ///
-static inline
-unsigned idx_of_trimat( unsigned i_row, unsigned j_col, unsigned dim ) {
-    return (dim + dim - i_row + 1 ) * i_row / 2 + j_col - i_row;
-}
-
-///
-/// @brief  Calculate the corresponding index in an array for an upper-triangle or lower-triangle matrix.
-///
-/// @param[in]  i_row     - the i-th row in a triangle matrix.
-/// @param[in]  j_col     - the j-th column in a triangle matrix.
-/// @param[in]  dim       - the dimension of the triangle matrix, i.e., an dim x dim matrix.
-/// @return    the corresponding index in an array storage.
-///
-static inline
-unsigned idx_of_2trimat( unsigned i_row, unsigned j_col, unsigned n_var ) {
-    if ( i_row > j_col ) {
-        return idx_of_trimat(j_col, i_row, n_var);
-    }
-    return idx_of_trimat(i_row, j_col, n_var);
-}
-
+unsigned PQCLEAN_RAINBOWIACLASSIC_CLEAN_idx_of_trimat( unsigned i_row, unsigned j_col, unsigned dim );
 
 ///
 /// @brief  Upper trianglize a rectangle matrix to the corresponding upper-trangle matrix.

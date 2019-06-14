@@ -8,15 +8,16 @@
 #include "blas_comm.h"
 #include "blas_u32.h"
 
-#define gf16v_mul_scalar _gf16v_mul_scalar_u32
-#define gf16v_madd _gf16v_madd_u32
+//TODO remove the gf16v/gf256v if they are not used in the parameter sets
+#define gf16v_mul_scalar PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_mul_scalar_u32
+#define gf16v_madd PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_madd_u32
 
-#define gf256v_add _gf256v_add_u32
-#define gf256v_mul_scalar _gf256v_mul_scalar_u32
-#define gf256v_madd _gf256v_madd_u32
+#define gf256v_add PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_add_u32
+#define gf256v_mul_scalar PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_mul_scalar_u32
+#define gf256v_madd PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_madd_u32
 
-#define gf256v_predicated_add _gf256v_predicated_add_u32
-#define gf16v_dot _gf16v_dot_u32
+#define gf256v_predicated_add PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_predicated_add_u32
+#define gf16v_dot PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_dot_u32
 
 
 #endif // _BLAS_H_

@@ -13,28 +13,7 @@
 /// @param[in]  i         - the index in the vector a.
 /// @return  the value of the element.
 ///
-static inline uint8_t gf16v_get_ele(const uint8_t *a, unsigned i) {
-    uint8_t r = a[i >> 1];
-    uint8_t r0 = r & 0xf;
-    uint8_t r1 = r >> 4;
-    uint8_t m = (uint8_t)(-((int8_t)i & 1));
-    return (uint8_t)((r1 & m) | ((~m)&r0));
-}
-
-/// @brief set an element for a GF(16) vector .
-///
-/// @param[in,out]   a   - the vector a.
-/// @param[in]  i        - the index in the vector a.
-/// @param[in]  v        - the value for the i-th element in vector a.
-/// @return  the value of the element.
-///
-static inline uint8_t gf16v_set_ele(uint8_t *a, unsigned i, uint8_t v) {
-    uint8_t m = (uint8_t) (0xf ^ (-((int8_t)i & 1))); ///  1--> 0xf0 , 0--> 0x0f
-    uint8_t ai_remaining = (uint8_t) (a[i >> 1] & (~m)); /// erase
-    a[i >> 1] = (uint8_t) (ai_remaining | (m & (v << 4)) | (m & v & 0xf)); /// set
-    return v;
-}
-
+uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_get_ele(const uint8_t *a, unsigned i);
 
 /// @brief get an element from GF(256) vector .
 ///
@@ -42,25 +21,7 @@ static inline uint8_t gf16v_set_ele(uint8_t *a, unsigned i, uint8_t v) {
 /// @param[in]  i         - the index in the vector a.
 /// @return  the value of the element.
 ///
-static inline uint8_t gf256v_get_ele(const uint8_t *a, unsigned i) {
-    return a[i];
-}
-
-
-/// @brief set an element for a GF(256) vector .
-///
-/// @param[in,out]   a   - the vector a.
-/// @param[in]  i        - the index in the vector a.
-/// @param[in]  v        - the value for the i-th element in vector a.
-/// @return  the value of the element.
-///
-static inline uint8_t gf256v_set_ele(uint8_t *a, unsigned i, uint8_t v) {
-    a[i] = v;
-    return v;
-}
-
-
-/////////////////////////////////////
+uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_get_ele(const uint8_t *a, unsigned i);
 
 
 /// @brief set a vector to 0.
