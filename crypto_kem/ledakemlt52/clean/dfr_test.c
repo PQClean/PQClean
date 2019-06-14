@@ -106,7 +106,7 @@ uint8_t PQCLEAN_LEDAKEMLT52_CLEAN_DFR_test(POSITION_T LSparse[N0][DV * M]) {
                                    allBlockMaxSumstMinusOne;
     }
     if (DV * M > (allBlockMaxSumstMinusOne + allBlockMaxSumst)) {
-        return allBlockMaxSumst + 1;
+        return (uint8_t) allBlockMaxSumst + 1;
     }
     return DFR_TEST_FAIL;
 }
