@@ -56,6 +56,7 @@ static inline void _gf16v_mul_scalar_u32(uint8_t *a, uint8_t gf16_b, unsigned _n
         uint8_t u8[4];
         uint32_t u32;
     } t;
+    t.u32 = 0;
     a += (n_u32 << 2);
     unsigned rem = _num_byte & 3;
     for (unsigned i = 0; i < rem; i++) {
@@ -78,6 +79,7 @@ static inline void _gf256v_mul_scalar_u32(uint8_t *a, uint8_t b, unsigned _num_b
         uint8_t u8[4];
         uint32_t u32;
     } t;
+    t.u32 = 0;
     a += (n_u32 << 2);
     unsigned rem = _num_byte & 3;
     for (unsigned i = 0; i < rem; i++) {
