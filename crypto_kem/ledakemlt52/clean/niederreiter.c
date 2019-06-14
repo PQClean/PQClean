@@ -19,7 +19,7 @@ void PQCLEAN_LEDAKEMLT52_CLEAN_niederreiter_keygen(publicKeyNiederreiter_t *pk, 
     DIGIT Ln0dense[NUM_DIGITS_GF2X_ELEMENT];
     DIGIT Ln0Inv[NUM_DIGITS_GF2X_ELEMENT];
     int is_L_full = 0;
-    uint8_t threshold; // threshold for round 2
+    uint8_t threshold = (DV * M) / 2 + 1; // threshold for round 2
     sk->rejections = (int8_t) 0;
 
     do {
