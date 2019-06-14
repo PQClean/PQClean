@@ -17,7 +17,7 @@ static inline uint8_t gf16v_get_ele(const uint8_t *a, unsigned i) {
     uint8_t r = a[i >> 1];
     uint8_t r0 = r & 0xf;
     uint8_t r1 = r >> 4;
-    uint8_t m = (uint8_t)(-(i & 1));
+    uint8_t m = (uint8_t)(-((int8_t)i & 1));
     return (uint8_t)((r1 & m) | ((~m)&r0));
 }
 
@@ -29,7 +29,7 @@ static inline uint8_t gf16v_get_ele(const uint8_t *a, unsigned i) {
 /// @return  the value of the element.
 ///
 static inline uint8_t gf16v_set_ele(uint8_t *a, unsigned i, uint8_t v) {
-    uint8_t m = (uint8_t) (0xf ^ (-(i & 1))); ///  1--> 0xf0 , 0--> 0x0f
+    uint8_t m = (uint8_t) (0xf ^ (-((int8_t)i & 1))); ///  1--> 0xf0 , 0--> 0x0f
     uint8_t ai_remaining = (uint8_t) (a[i >> 1] & (~m)); /// erase
     a[i >> 1] = (uint8_t) (ai_remaining | (m & (v << 4)) | (m & v & 0xf)); /// set
     return v;

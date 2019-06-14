@@ -44,7 +44,7 @@ static void randombytes_init_with_state(prng_t *state,
 
 static int randombytes_with_state(prng_t *state,
                                   unsigned char *x,
-                                  unsigned long long xlen) {
+                                  size_t xlen) {
 
     unsigned char   block[16];
     int             i = 0;
