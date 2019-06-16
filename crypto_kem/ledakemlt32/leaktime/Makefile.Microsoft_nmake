@@ -1,0 +1,19 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY=libledakemlt32_leaktime.lib
+OBJECTS=bf_decoding.obj dfr_test.obj gf2x_arith_mod_xPplusOne.obj gf2x_arith.obj H_Q_matrices_generation.obj kem.obj niederreiter.obj rng.obj
+
+CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)
