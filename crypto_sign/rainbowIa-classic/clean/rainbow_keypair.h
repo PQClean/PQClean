@@ -54,6 +54,7 @@ struct rainbow_secretkey {
 
 
 
+#if defined(_RAINBOW_CYCLIC) || defined(_RAINBOW_CYCLIC_COMPRESSED)
 /// @brief public key for cyclic rainbow
 ///
 ///  public key for cyclic rainbow
@@ -81,12 +82,10 @@ struct rainbow_secretkey_cyclic {
     unsigned char pk_seed[LEN_PKSEED];   ///< seed for generating a part of public key.
     unsigned char sk_seed[LEN_SKSEED];   ///< seed for generating a part of secret key.
 } csk_t;
+#endif
 
 
-
-/////////////////////////////////////
-
-
+#if defined _RAINBOW_CLASSIC
 ///
 /// @brief Generate key pairs for classic rainbow.
 ///
@@ -96,6 +95,7 @@ struct rainbow_secretkey_cyclic {
 ///
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair( pk_t *pk, sk_t *sk, const unsigned char *sk_seed );
 
+#elif defined _RAINBOW_CYCLIC
 ///
 /// @brief Generate key pairs for cyclic rainbow.
 ///
@@ -106,6 +106,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair( pk_t *pk, sk_t *sk, const 
 ///
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair_cyclic( cpk_t *pk, sk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
 
+#elif defined _RAINBOW_CYCLIC_COMPRESSED
 ///
 /// @brief Generate compressed key pairs for cyclic rainbow.
 ///
@@ -115,17 +116,9 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair_cyclic( cpk_t *pk, sk_t *sk
 /// @param[in]  sk_seed   - seed for generating the secret key.
 ///
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_compact_keypair_cyclic( cpk_t *pk, csk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
+#endif
 
-////////////////////////////////////
-
-///
-/// @brief Generate secret key for classic rainbow.
-///
-/// @param[out] sk        - the secret key.
-/// @param[in]  sk_seed   - seed for generating the secret key.
-///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_secretkey( sk_t *sk, const unsigned char *sk_seed );
-
+#ifdef _RAINBOW_CYCLIC_COMPRESSED
 ///
 /// @brief Generate secret key for cyclic rainbow.
 ///
@@ -144,5 +137,6 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_secretkey_cyclic( sk_t *sk, const u
 /// @param[in]  cpk      - the cyclic  public key.
 ///
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_cpk_to_pk( pk_t *pk, const cpk_t *cpk );
+#endif
 
 #endif //  _RAINBOW_KEYPAIR_H_

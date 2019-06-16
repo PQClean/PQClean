@@ -13,11 +13,7 @@
 #include <string.h>
 
 
-////////////////////////////////////////////////////////////////
-
-
-
-
+#if defined _RAINBOW_CLASSIC
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk ) {
     const unsigned char *idx_l1 = cpk->l1_Q1;
     const unsigned char *idx_l2 = cpk->l2_Q1;
@@ -86,11 +82,6 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk
         }
     }
 }
-
-
-
-/////////////////////////////////////////////////////////
-
 
 static
 void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
@@ -197,12 +188,16 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     batch_trimatTr_madd( Qs->l2_Q6, Fs->l2_F5, Ts->t3, _O1, _O1_BYTE, _O2, _O2_BYTE );       //   F2tr*T2 + F5_F5T*T3 + F6
     batch_matTr_madd( Qs->l2_Q6, Ts->t1, _V1, _V1_BYTE, _O1, Qs->l2_Q3, _O2, _O2_BYTE );     // Q6
 }
+// TODO: these defines are not really required for a clean implementation - just implement directly
+#define calculate_Q_from_F_impl        calculate_Q_from_F_ref
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
+    calculate_Q_from_F_impl( Qs, Fs, Ts );
+}
+
+#endif
 
 
-
-
-
-/////////////////////////////////////////////////////
+#if defined(_RAINBOW_CYCLIC) || defined(_RAINBOW_CYCLIC_COMPRESSED)
 
 static
 void calculate_F_from_Q_ref( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
@@ -336,15 +331,10 @@ void calculate_Q_from_F_cyclic_ref( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) 
 
 
 // Choosing implementations depends on the macros: _BLAS_SSE_ and _BLAS_AVX2_
-#define calculate_Q_from_F_impl        calculate_Q_from_F_ref
 #define calculate_F_from_Q_impl        calculate_F_from_Q_ref
 #define calculate_Q_from_F_cyclic_impl calculate_Q_from_F_cyclic_ref
 
 
-
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
-    calculate_Q_from_F_impl( Qs, Fs, Ts );
-}
 
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
     calculate_F_from_Q_impl( Fs, Qs, Ts );
@@ -354,4 +344,4 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F_cyclic( cpk_t *Qs, const 
     calculate_Q_from_F_cyclic_impl( Qs, Fs, Ts );
 }
 
-
+#endif

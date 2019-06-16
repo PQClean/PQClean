@@ -18,8 +18,7 @@
 #define _MAX_O  ((_O1>_O2)?_O1:_O2)
 #define _MAX_O_BYTE  ((_O1_BYTE>_O2_BYTE)?_O1_BYTE:_O2_BYTE)
 
-
-
+#if defined(_RAINBOW_CLASSIC) || defined(_RAINBOW_CYCLIC)
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign( uint8_t *signature, const sk_t *sk, const uint8_t *_digest ) {
     uint8_t mat_l1[_O1 * _O1_BYTE];
     uint8_t mat_l2[_O2 * _O2_BYTE];
@@ -149,13 +148,10 @@ int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign( uint8_t *signature, const sk_t 
     gf256v_add( signature + _PUB_N_BYTE, salt, _SALT_BYTE );
     return 0;
 }
+#endif
 
 
-
-
-
-
-
+#ifdef _RAINBOW_CLASSIC
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify( const uint8_t *digest, const uint8_t *signature, const pk_t *pk ) {
     unsigned char digest_ck[_PUB_M_BYTE];
     // public_map( digest_ck , pk , signature ); Evaluating the quadratic public polynomials.
@@ -174,22 +170,21 @@ int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify( const uint8_t *digest, const 
     }
     return (0 == cc) ? 0 : -1;
 }
+#endif
 
-
-
+#ifdef _RAINBOW_CYCLIC_COMPRESSED
 ///////////////  cyclic version  ///////////////////////////
-
-
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign_cyclic( uint8_t *signature, const csk_t *csk, const uint8_t *digest ) {
     unsigned char sk[sizeof(sk_t) + 32];
     PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_secretkey_cyclic((sk_t *)sk, csk->pk_seed, csk->sk_seed );    // generating classic secret key.
     return PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign( signature, (sk_t *) sk, digest );
 }
+#endif
 
+#if defined(_RAINBOW_CYCLIC) || defined(_RAINBOW_CYCLIC_COMPRESSED)
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify_cyclic( const uint8_t *digest, const uint8_t *signature, const cpk_t *_pk ) {
     unsigned char pk[sizeof(pk_t) +32];
     PQCLEAN_RAINBOWIACLASSIC_CLEAN_cpk_to_pk( (pk_t *)pk, _pk );          // generating classic public key.
     return PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify( digest, signature, (pk_t *)pk );
 }
-
-
+#endif

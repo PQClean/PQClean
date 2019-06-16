@@ -10,8 +10,7 @@
 
 #include <stdint.h>
 
-
-
+#if defined(_RAINBOW_CLASSIC) || defined(_RAINBOW_CYCLIC)
 ///
 /// @brief Signing function for classical secret key.
 ///
@@ -20,7 +19,9 @@
 /// @param[in]  digest    - the digest.
 ///
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign( uint8_t *signature, const sk_t *sk, const uint8_t *digest );
+#endif
 
+#ifdef _RAINBOW_CLASSIC
 ///
 /// @brief Verifying function.
 ///
@@ -30,8 +31,9 @@ int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign( uint8_t *signature, const sk_t 
 /// @return 0 for successful verified. -1 for failed verification.
 ///
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify( const uint8_t *digest, const uint8_t *signature, const pk_t *pk );
+#endif
 
-
+#ifdef _RAINBOW_CYCLIC_COMPRESSED
 ///
 /// @brief Signing function for compressed secret key of the cyclic rainbow.
 ///
@@ -40,7 +42,9 @@ int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify( const uint8_t *digest, const 
 /// @param[in]  digest    - the digest.
 ///
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign_cyclic( uint8_t *signature, const csk_t *sk, const uint8_t *digest );
+#endif
 
+#if defined(_RAINBOW_CYCLIC) || defined(_RAINBOW_CYCLIC_COMPRESSED)
 ///
 /// @brief Verifying function for cyclic public keys.
 ///
@@ -50,5 +54,6 @@ int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_sign_cyclic( uint8_t *signature, cons
 /// @return 0 for successful verified. -1 for failed verification.
 ///
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_rainbow_verify_cyclic( const uint8_t *digest, const uint8_t *signature, const cpk_t *pk );
+#endif
 
 #endif // _RAINBOW_H_

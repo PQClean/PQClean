@@ -9,15 +9,15 @@
 
 static inline
 int _hash( unsigned char *digest, const unsigned char *m, size_t mlen ) {
-//    #if 32 == _HASH_LEN
+    #if 32 == _HASH_LEN
     sha256(digest, m, mlen);
-//    #elif 48 == _HASH_LEN
-//    sha384(digest, m, mlen);
-//    #elif 64 == _HASH_LEN
-//    sha512(digest, m, mlen);
-//    #else
-//#error "unsupported _HASH_LEN"
-//    #endif
+    #elif 48 == _HASH_LEN
+    sha384(digest, m, mlen);
+    #elif 64 == _HASH_LEN
+    sha512(digest, m, mlen);
+    #else
+#error "unsupported _HASH_LEN"
+    #endif
     return 0;
 }
 

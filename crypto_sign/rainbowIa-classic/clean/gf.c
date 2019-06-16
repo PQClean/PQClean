@@ -1,8 +1,14 @@
 #include "gf.h"
 
-//TODO remove the gf16v/gf256v if they are not used in the parameter sets
+static inline uint8_t gf256v_reduce_u32(uint32_t a) {
+    // https://godbolt.org/z/7hirMb
+    uint16_t *aa = (uint16_t *) (&a);
+    uint16_t r = aa[0] ^ aa[1];
+    uint8_t *rr = (uint8_t *) (&r);
+    return rr[0] ^ rr[1];
+}
 
-
+#ifdef _USE_GF16
 //// gf4 := gf2[x]/x^2+x+1
 static inline uint8_t gf4_mul_2(uint8_t a) {
     uint8_t r = (uint8_t) (a << 1);
@@ -129,14 +135,6 @@ uint32_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_mul_u32_u32(uint32_t a, uint32_t b
     return _gf16v_mul_u32_u32(a0, a1, a2, a3, b0, b1, b2, b3);
 }
 
-static inline uint8_t gf256v_reduce_u32(uint32_t a) {
-    // https://godbolt.org/z/7hirMb
-    uint16_t *aa = (uint16_t *) (&a);
-    uint16_t r = aa[0] ^ aa[1];
-    uint8_t *rr = (uint8_t *) (&r);
-    return rr[0] ^ rr[1];
-}
-
 uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_reduce_u32(uint32_t a) {
     uint8_t r256 = gf256v_reduce_u32(a);
     return (uint8_t)((r256 & 0xf) ^ (r256 >> 4));
@@ -148,6 +146,7 @@ static inline uint32_t gf16v_mul_8_u32(uint32_t a) {
     return gf4v_mul_2_u32(a0 ^ a1) | gf4v_mul_3_u32(a1 >> 2);
 }
 
+#else
 uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256_is_nonzero(uint8_t a) {
     unsigned a8 = a;
     unsigned r = ((unsigned) 0) - a8;
@@ -200,3 +199,4 @@ uint32_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_mul_u32(uint32_t a, uint8_t b) {
 
     return axb0 ^ a0b1 ^ a1b1 ^ gf16v_mul_8_u32(a1b1_4);
 }
+#endif

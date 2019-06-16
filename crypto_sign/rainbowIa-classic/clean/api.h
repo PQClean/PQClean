@@ -4,40 +4,10 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define _RAINBOW_CLASSIC
-//#define _RAINBOW_CYCLIC
-//#define _RAINBOW_CYCLIC_COMPRESSED
-
 #define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_SECRETKEYBYTES 92960
 #define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_PUBLICKEYBYTES 148992
 #define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_BYTES 64
 #define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_ALGNAME "RAINBOW(16,32,32,32) - classic"
-
-//TODO: remove this after creating the other parameter sets
-
-//#if defined _RAINBOW_CLASSIC
-//
-//#define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_SECRETKEYBYTES sizeof(sk_t)
-//#define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_PUBLICKEYBYTES sizeof(pk_t)
-//
-//#elif defined _RAINBOW_CYCLIC
-//
-//#define CRYPTO_SECRETKEYBYTES sizeof(sk_t)
-//#define CRYPTO_PUBLICKEYBYTES sizeof(cpk_t)
-//
-//#elif defined _RAINBOW_CYCLIC_COMPRESSED
-//
-//#define CRYPTO_SECRETKEYBYTES sizeof(csk_t)
-//#define CRYPTO_PUBLICKEYBYTES sizeof(cpk_t)
-//
-//#else
-//error here
-//#endif
-//
-//
-//#define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_BYTES _SIGNATURE_BYTE
-//
-//#define PQCLEAN_RAINBOWIACLASSIC_CLEAN_CRYPTO_ALGNAME _S_NAME _SUFFIX
 
 int PQCLEAN_RAINBOWIACLASSIC_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
 

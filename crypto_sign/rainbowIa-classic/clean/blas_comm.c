@@ -2,12 +2,19 @@
 /// @brief The standard implementations for blas_comm.h
 ///
 
-#include "blas_comm.h"
 #include "blas.h"
+#include "blas_comm.h"
 #include "gf.h"
+#include "rainbow_config.h"
 
 #include <stdint.h>
 #include <string.h>
+
+
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(uint8_t *b, unsigned _num_byte) {
+    gf256v_add(b, b, _num_byte);
+}
+#ifdef _USE_GF16
 
 /// @brief get an element from GF(16) vector .
 ///
@@ -37,45 +44,6 @@ static uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_set_ele(uint8_t *a, unsigned
     return v;
 }
 
-
-/// @brief get an element from GF(256) vector .
-///
-/// @param[in]  a         - the input vector a.
-/// @param[in]  i         - the index in the vector a.
-/// @return  the value of the element.
-///
-uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_get_ele(const uint8_t *a, unsigned i) {
-    return a[i];
-}
-
-
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(uint8_t *b, unsigned _num_byte) {
-    gf256v_add(b, b, _num_byte);
-}
-
-unsigned PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_is_zero(const uint8_t *a, unsigned _num_byte) {
-    uint8_t r = 0;
-    while ( _num_byte-- ) {
-        r |= a[0];
-        a++;
-    }
-    return (0 == r);
-}
-
-///////////////// multiplications  ////////////////////////////////
-
-/// polynomial multplication
-/// School boook
-
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_polymul(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned _num) {
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(c, _num * 2 - 1);
-    for (unsigned i = 0; i < _num; i++) {
-        gf256v_madd(c + i, a, b[i], _num);
-    }
-}
-
-///////////  matrix-vector
-
 static void gf16mat_prod_ref(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_byte, unsigned n_A_width, const uint8_t *b) {
     PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(c, n_A_vec_byte);
     for (unsigned i = 0; i < n_A_width; i++) {
@@ -84,17 +52,6 @@ static void gf16mat_prod_ref(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_b
         matA += n_A_vec_byte;
     }
 }
-
-static void gf256mat_prod_ref(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_byte, unsigned n_A_width, const uint8_t *b) {
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(c, n_A_vec_byte);
-    for (unsigned i = 0; i < n_A_width; i++) {
-        gf256v_madd(c, matA, b[i], n_A_vec_byte);
-        matA += n_A_vec_byte;
-    }
-}
-
-
-/////////// matrix-matrix
 
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16mat_mul(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned len_vec) {
     unsigned n_vec_byte = (len_vec + 1) / 2;
@@ -108,20 +65,6 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16mat_mul(uint8_t *c, const uint8_t *a, co
         c += n_vec_byte;
     }
 }
-
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256mat_mul(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned len_vec) {
-    unsigned n_vec_byte = len_vec;
-    for (unsigned k = 0; k < len_vec; k++) {
-        PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(c, n_vec_byte);
-        const uint8_t *bk = b + n_vec_byte * k;
-        for (unsigned i = 0; i < len_vec; i++) {
-            gf256v_madd(c, a + n_vec_byte * i, bk[i], n_vec_byte);
-        }
-        c += n_vec_byte;
-    }
-}
-
-/////////////////   algorithms:  gaussian elim  //////////////////
 
 static
 unsigned gf16mat_gauss_elim_ref(uint8_t *mat, unsigned h, unsigned w) {
@@ -190,9 +133,54 @@ unsigned PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16mat_inv(uint8_t *inv_a, const uint8_
     gf16mat_submat(inv_a, H, H, aa, 2 * H, H);
     return r8;
 }
+#else
+/// @brief get an element from GF(256) vector .
+///
+/// @param[in]  a         - the input vector a.
+/// @param[in]  i         - the index in the vector a.
+/// @return  the value of the element.
+///
+uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_get_ele(const uint8_t *a, unsigned i) {
+    return a[i];
+}
 
+unsigned PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_is_zero(const uint8_t *a, unsigned _num_byte) {
+    uint8_t r = 0;
+    while ( _num_byte-- ) {
+        r |= a[0];
+        a++;
+    }
+    return (0 == r);
+}
 
-/////////////////////////////////////////////////
+/// polynomial multplication
+/// School boook
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_polymul(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned _num) {
+    PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(c, _num * 2 - 1);
+    for (unsigned i = 0; i < _num; i++) {
+        gf256v_madd(c + i, a, b[i], _num);
+    }
+}
+
+static void gf256mat_prod_ref(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_byte, unsigned n_A_width, const uint8_t *b) {
+    PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(c, n_A_vec_byte);
+    for (unsigned i = 0; i < n_A_width; i++) {
+        gf256v_madd(c, matA, b[i], n_A_vec_byte);
+        matA += n_A_vec_byte;
+    }
+}
+
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256mat_mul(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned len_vec) {
+    unsigned n_vec_byte = len_vec;
+    for (unsigned k = 0; k < len_vec; k++) {
+        PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_set_zero(c, n_vec_byte);
+        const uint8_t *bk = b + n_vec_byte * k;
+        for (unsigned i = 0; i < len_vec; i++) {
+            gf256v_madd(c, a + n_vec_byte * i, bk[i], n_vec_byte);
+        }
+        c += n_vec_byte;
+    }
+}
 
 static
 unsigned gf256mat_gauss_elim_ref( uint8_t *mat, unsigned h, unsigned w ) {
@@ -261,22 +249,17 @@ unsigned PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256mat_inv( uint8_t *inv_a, const uint
     return r8;
 }
 
+#endif
 
 
 
 
-////////////////////////////////////////////////////
+// choosing the implementations depends on the macros _BLAS_AVX2_ and _BLAS_SSE
 
-
-// choosing the implementations depends on the macros _BLAS_AVX2_ and _BLAS_SSE_
-
+#ifdef _USE_GF16
 #define gf16mat_prod_impl             gf16mat_prod_ref
 #define gf16mat_gauss_elim_impl       gf16mat_gauss_elim_ref
 #define gf16mat_solve_linear_eq_impl  gf16mat_solve_linear_eq_ref
-#define gf256mat_prod_impl            gf256mat_prod_ref
-#define gf256mat_gauss_elim_impl      gf256mat_gauss_elim_ref
-#define gf256mat_solve_linear_eq_impl gf256mat_solve_linear_eq_ref
-
 
 
 
@@ -294,6 +277,10 @@ unsigned PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16mat_solve_linear_eq( uint8_t *sol, c
 }
 
 
+#else
+#define gf256mat_prod_impl            gf256mat_prod_ref
+#define gf256mat_gauss_elim_impl      gf256mat_gauss_elim_ref
+#define gf256mat_solve_linear_eq_impl gf256mat_solve_linear_eq_ref
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256mat_prod(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_byte, unsigned n_A_width, const uint8_t *b) {
     gf256mat_prod_impl( c, matA, n_A_vec_byte, n_A_width, b);
 }
@@ -307,4 +294,4 @@ unsigned PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256mat_solve_linear_eq( uint8_t *sol, 
     return gf256mat_solve_linear_eq_impl( sol, inp_mat, c_terms, n );
 }
 
-
+#endif
