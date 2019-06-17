@@ -1,0 +1,32 @@
+consistency_checks:
+- source:
+    scheme: ledakemlt12
+    implementation: leaktime
+  files:
+    - bf_decoding.c
+    - dfr_test.c
+    - dfr_test.h
+    - gf2x_arith.c
+    - gf2x_arith.h
+    - H_Q_matrices_generation.c
+    - H_Q_matrices_generation.h
+    - kem.c
+    - niederreiter.c
+    - niederreiter.h
+    - rng.h
+- source:
+    scheme: ledakemlt32
+    implementation: leaktime
+  files:
+    - bf_decoding.c
+    - dfr_test.c
+    - dfr_test.h
+    - gf2x_arith.c
+    - gf2x_arith.h
+    - gf2x_arith_mod_xPplusOne.c
+    - H_Q_matrices_generation.c
+    - H_Q_matrices_generation.h
+    - kem.c
+    - niederreiter.c
+    - niederreiter.h
+    - rng.h

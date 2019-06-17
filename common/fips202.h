@@ -7,6 +7,7 @@
 #define SHAKE128_RATE 168
 #define SHAKE256_RATE 136
 #define SHA3_256_RATE 136
+#define SHA3_384_RATE 104
 #define SHA3_512_RATE 72
 
 
@@ -34,6 +35,11 @@ typedef struct {
 typedef struct {
     uint64_t ctx[26];
 } sha3_256incctx;
+
+// Context for incremental API
+typedef struct {
+    uint64_t ctx[26];
+} sha3_384incctx;
 
 // Context for incremental API
 typedef struct {
@@ -68,6 +74,12 @@ void sha3_256_inc_absorb(sha3_256incctx *state, const uint8_t *input, size_t inl
 void sha3_256_inc_finalize(uint8_t *output, sha3_256incctx *state);
 
 void sha3_256(uint8_t *output, const uint8_t *input, size_t inlen);
+
+void sha3_384_inc_init(sha3_384incctx *state);
+void sha3_384_inc_absorb(sha3_384incctx *state, const uint8_t *input, size_t inlen);
+void sha3_384_inc_finalize(uint8_t *output, sha3_384incctx *state);
+
+void sha3_384(uint8_t *output, const uint8_t *input, size_t inlen);
 
 void sha3_512_inc_init(sha3_512incctx *state);
 void sha3_512_inc_absorb(sha3_512incctx *state, const uint8_t *input, size_t inlen);

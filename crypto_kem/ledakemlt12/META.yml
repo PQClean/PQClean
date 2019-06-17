@@ -1,0 +1,18 @@
+name: LEDAcryptKEMLT12
+type: kem
+claimed-nist-level: 1
+claimed-security: IND-CCA2
+length-public-key: 6520
+length-secret-key: 26
+length-ciphertext: 6520
+length-shared-secret: 32
+nistkat-sha256: c49a3f0ff5f3e7d6b41995649d7003daf7c06d9539fc28cb3b93ed02dcbe09d4
+principal-submitter: Marco Baldi
+auxiliary-submitters:
+  - Alessandro Barenghi
+  - Franco Chiaraluce
+  - Gerardo Pelosi
+  - Paolo Santini
+implementations:
+  - name: leaktime
+    version: 2.?
