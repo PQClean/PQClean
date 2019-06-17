@@ -8,7 +8,7 @@
 #define RNG_BAD_MAXLEN  (-1)
 #define RNG_BAD_OUTBUF  (-2)
 #define RNG_BAD_REQ_LEN (-3)
-#define RNG_MAXLEN  (10 * 1024 * 1024)
+#define RNG_MAXLEN      (10 * 1024 * 1024)
 
 typedef struct {
     unsigned char   buffer[16];

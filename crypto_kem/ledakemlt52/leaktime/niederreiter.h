@@ -10,7 +10,7 @@ typedef struct {
      * H and Q during decryption */
     unsigned char prng_seed[TRNG_BYTE_LENGTH];
     int8_t rejections;
-    uint8_t threshold;
+    uint8_t threshold; // for round 2
 } privateKeyNiederreiter_t;
 
 typedef struct {

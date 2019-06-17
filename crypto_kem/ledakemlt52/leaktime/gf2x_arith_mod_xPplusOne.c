@@ -1,9 +1,7 @@
 #include "gf2x_arith_mod_xPplusOne.h"
 #include "rng.h"
 
-#include <assert.h>
 #include <string.h>  // memcpy(...), memset(...)
-
 
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_copy(DIGIT dest[], const DIGIT in[]) {
     for (int i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0; i--) {
@@ -211,8 +209,6 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_transpose_in_place(DIGIT A[]) {
         A[i] = rev2;
         A[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = rev1;
     }
-
-    // A[NUM_DIGITS_GF2X_ELEMENT / 2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT / 2]); // no middle digit
 
     if (slack_bits_amount) {
         PQCLEAN_LEDAKEMLT52_LEAKTIME_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A, slack_bits_amount);
@@ -432,14 +428,14 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T R
     }
 }
 
-/* the implementation is safe even in case A or B alias with the result */
-/* PRE: A and B should be sorted and have INVALID_POS_VALUE at the end */
+/* the implementation is safe even in case A or B alias with the result
+ * PRE: A and B should be sorted, disjunct arrays ending with INVALID_POS_VALUE */
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_add_sparse(
     int sizeR, POSITION_T Res[],
     int sizeA, const POSITION_T A[],
     int sizeB, const POSITION_T B[]) {
 
-    POSITION_T tmpRes[DV * M]; // TODO: now function only works for adding (disjunct) DV and M positions
+    POSITION_T tmpRes[DV * M];
     int idxA = 0, idxB = 0, idxR = 0;
     while ( idxA < sizeA  &&
             idxB < sizeB  &&

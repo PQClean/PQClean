@@ -1,7 +1,6 @@
 #include "bf_decoding.h"
 #include "gf2x_arith_mod_xPplusOne.h"
 
-#include <assert.h>
 #include <string.h>
 
 int PQCLEAN_LEDAKEMLT12_LEAKTIME_bf_decoding(DIGIT err[],

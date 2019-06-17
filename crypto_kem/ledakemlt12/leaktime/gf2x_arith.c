@@ -1,6 +1,5 @@
 #include "gf2x_arith.h"
 
-#include <assert.h>
 #include <string.h>  // memset(...)
 
 void PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], int nr) {
@@ -11,7 +10,6 @@ void PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_add(DIGIT Res[], const DIGIT A[], const D
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
 void PQCLEAN_LEDAKEMLT12_LEAKTIME_right_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
-    assert(amount < DIGIT_SIZE_b);
     if ( amount == 0 ) {
         return;
     }
@@ -27,7 +25,6 @@ void PQCLEAN_LEDAKEMLT12_LEAKTIME_right_bit_shift_n(int length, DIGIT in[], unsi
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
 void PQCLEAN_LEDAKEMLT12_LEAKTIME_left_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
-    assert(amount < DIGIT_SIZE_b);
     if ( amount == 0 ) {
         return;
     }
