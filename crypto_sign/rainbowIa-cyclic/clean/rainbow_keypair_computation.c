@@ -14,12 +14,12 @@
 
 
 #if defined _RAINBOW_CYCLIC || defined _RAINBOW_CLASSIC
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk ) {
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk ) {
     const unsigned char *idx_l1 = cpk->l1_Q1;
     const unsigned char *idx_l2 = cpk->l2_Q1;
     for (unsigned i = 0; i < _V1; i++) {
         for (unsigned j = i; j < _V1; j++) {
-            unsigned pub_idx = PQCLEAN_RAINBOWIACLASSIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
+            unsigned pub_idx = PQCLEAN_RAINBOWIACYCLIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
             memcpy( & pk->pk[ _PUB_M_BYTE * pub_idx ], idx_l1, _O1_BYTE );
             memcpy( (&pk->pk[ _PUB_M_BYTE * pub_idx ]) + _O1_BYTE, idx_l2, _O2_BYTE );
             idx_l1 += _O1_BYTE;
@@ -30,7 +30,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk
     idx_l2 = cpk->l2_Q2;
     for (unsigned i = 0; i < _V1; i++) {
         for (unsigned j = _V1; j < _V1 + _O1; j++) {
-            unsigned pub_idx = PQCLEAN_RAINBOWIACLASSIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
+            unsigned pub_idx = PQCLEAN_RAINBOWIACYCLIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
             memcpy( & pk->pk[ _PUB_M_BYTE * pub_idx ], idx_l1, _O1_BYTE );
             memcpy( (&pk->pk[ _PUB_M_BYTE * pub_idx ]) + _O1_BYTE, idx_l2, _O2_BYTE );
             idx_l1 += _O1_BYTE;
@@ -41,7 +41,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk
     idx_l2 = cpk->l2_Q3;
     for (unsigned i = 0; i < _V1; i++) {
         for (unsigned j = _V1 + _O1; j < _PUB_N; j++) {
-            unsigned pub_idx = PQCLEAN_RAINBOWIACLASSIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
+            unsigned pub_idx = PQCLEAN_RAINBOWIACYCLIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
             memcpy( & pk->pk[ _PUB_M_BYTE * pub_idx ], idx_l1, _O1_BYTE );
             memcpy( (&pk->pk[ _PUB_M_BYTE * pub_idx ]) + _O1_BYTE, idx_l2, _O2_BYTE );
             idx_l1 += _O1_BYTE;
@@ -52,7 +52,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk
     idx_l2 = cpk->l2_Q5;
     for (unsigned i = _V1; i < _V1 + _O1; i++) {
         for (unsigned j = i; j < _V1 + _O1; j++) {
-            unsigned pub_idx = PQCLEAN_RAINBOWIACLASSIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
+            unsigned pub_idx = PQCLEAN_RAINBOWIACYCLIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
             memcpy( & pk->pk[ _PUB_M_BYTE * pub_idx ], idx_l1, _O1_BYTE );
             memcpy( (&pk->pk[ _PUB_M_BYTE * pub_idx ]) + _O1_BYTE, idx_l2, _O2_BYTE );
             idx_l1 += _O1_BYTE;
@@ -63,7 +63,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk
     idx_l2 = cpk->l2_Q6;
     for (unsigned i = _V1; i < _V1 + _O1; i++) {
         for (unsigned j = _V1 + _O1; j < _PUB_N; j++) {
-            unsigned pub_idx = PQCLEAN_RAINBOWIACLASSIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
+            unsigned pub_idx = PQCLEAN_RAINBOWIACYCLIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
             memcpy( & pk->pk[ _PUB_M_BYTE * pub_idx ], idx_l1, _O1_BYTE );
             memcpy( (&pk->pk[ _PUB_M_BYTE * pub_idx ]) + _O1_BYTE, idx_l2, _O2_BYTE );
             idx_l1 += _O1_BYTE;
@@ -74,7 +74,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk
     idx_l2 = cpk->l2_Q9;
     for (unsigned i = _V1 + _O1; i < _PUB_N; i++) {
         for (unsigned j = i; j < _PUB_N; j++) {
-            unsigned pub_idx = PQCLEAN_RAINBOWIACLASSIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
+            unsigned pub_idx = PQCLEAN_RAINBOWIACYCLIC_CLEAN_idx_of_trimat(i, j, _PUB_N);
             memcpy( & pk->pk[ _PUB_M_BYTE * pub_idx ], idx_l1, _O1_BYTE );
             memcpy( (&pk->pk[ _PUB_M_BYTE * pub_idx ]) + _O1_BYTE, idx_l2, _O2_BYTE );
             idx_l1 += _O1_BYTE;
@@ -117,7 +117,7 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
 
     memset( tempQ, 0, _O1_BYTE * _O1 * _O1 );     // l1_Q5
     batch_matTr_madd( tempQ, Ts->t1, _V1, _V1_BYTE, _O1, Qs->l1_Q2, _O1, _O1_BYTE );    // t1_tr*(F1*T1 + F2)
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Qs->l1_Q5, tempQ, _O1, _O1_BYTE );      // UT( ... )   // Q5
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Qs->l1_Q5, tempQ, _O1, _O1_BYTE );      // UT( ... )   // Q5
 
     batch_trimatTr_madd( Qs->l1_Q2, Fs->l1_F1, Ts->t1, _V1, _V1_BYTE, _O1, _O1_BYTE );        // Q2
     /*
@@ -134,7 +134,7 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
 
     memset( tempQ, 0, _O1_BYTE * _O2 * _O2 );                                                // l1_Q9
     batch_matTr_madd( tempQ, t2, _V1, _V1_BYTE, _O2, Qs->l1_Q3, _O2, _O1_BYTE );             // T2tr * ( F1_T2 + F2_T3 )
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Qs->l1_Q9, tempQ, _O2, _O1_BYTE );                                      // Q9
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Qs->l1_Q9, tempQ, _O2, _O1_BYTE );                                      // Q9
 
     batch_trimatTr_madd( Qs->l1_Q3, Fs->l1_F1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE );           // F1_F1T_T2 + F2_T3  // Q3
 
@@ -156,7 +156,7 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     memcpy( Qs->l2_Q5, Fs->l2_F5, _O2_BYTE * N_TRIANGLE_TERMS(_O1) );
     memset( tempQ, 0, _O2_BYTE * _O1 * _O1 );                                                 // l2_Q5
     batch_matTr_madd( tempQ, Ts->t1, _V1, _V1_BYTE, _O1, Qs->l2_Q2, _O1, _O2_BYTE );          // t1_tr*(F1*T1 + F2)
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Qs->l2_Q5, tempQ, _O1, _O2_BYTE );                                       // UT( ... )   // Q5
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Qs->l2_Q5, tempQ, _O1, _O2_BYTE );                                       // UT( ... )   // Q5
 
     batch_trimatTr_madd( Qs->l2_Q2, Fs->l2_F1, Ts->t1, _V1, _V1_BYTE, _O1, _O2_BYTE );        // Q2
 
@@ -182,7 +182,7 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     batch_trimat_madd( Qs->l2_Q6, Fs->l2_F5, Ts->t3, _O1, _O1_BYTE, _O2, _O2_BYTE );         // F5*T3 + F6
     batch_matTr_madd( tempQ, Ts->t3, _O1, _O1_BYTE, _O2, Qs->l2_Q6, _O2, _O2_BYTE );         // T2tr*( ..... ) + T3tr*( ..... )
     memset( Qs->l2_Q9, 0, _O2_BYTE * N_TRIANGLE_TERMS(_O2) );
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Qs->l2_Q9, tempQ, _O2, _O2_BYTE );                                      // Q9
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Qs->l2_Q9, tempQ, _O2, _O2_BYTE );                                      // Q9
 
     batch_trimatTr_madd( Qs->l2_Q3, Fs->l2_F1, t2, _V1, _V1_BYTE, _O2, _O2_BYTE );           // F1_F1T_T2 + F2_T3 + F3 // Q3
 
@@ -192,7 +192,7 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
 }
 // TODO: these defines are not really required for a clean implementation - just implement directly
 #define calculate_Q_from_F_impl        calculate_Q_from_F_ref
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     calculate_Q_from_F_impl( Qs, Fs, Ts );
 }
 
@@ -242,7 +242,7 @@ void calculate_F_from_Q_ref( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
     memset( tempQ, 0, _O1 * _O1 * _O2_BYTE );
     batch_matTr_madd( tempQ, Ts->t1, _V1, _V1_BYTE, _O1, Fs->l2_F2, _O1, _O2_BYTE );       // t1_tr*(Q1_T1+Q2)
     memcpy( Fs->l2_F5, Qs->l2_F5, _O2_BYTE * N_TRIANGLE_TERMS(_O1) );                      // F5
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Fs->l2_F5, tempQ, _O1, _O2_BYTE );                                    // UT( ... )
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Fs->l2_F5, tempQ, _O1, _O2_BYTE );                                    // UT( ... )
 
     batch_trimatTr_madd( Fs->l2_F2, Qs->l2_F1, Ts->t1, _V1, _V1_BYTE, _O1, _O2_BYTE );      // F2 = Q1_T1 + Q2 + Q1^tr*t1
 
@@ -278,7 +278,7 @@ void calculate_Q_from_F_cyclic_ref( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) 
     memset( tempQ.l2_F1, 0, _O1_BYTE * _V1 * _O2 );
     batch_matTr_madd( tempQ.l2_F1, Ts->t1, _V1, _V1_BYTE, _O1, tempQ.l1_F2, _O1, _O1_BYTE );    // T1tr*(F1*T1 + F2)
     memset( Qs->l1_Q5, 0, _O1_BYTE * N_TRIANGLE_TERMS(_O1) );
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Qs->l1_Q5, tempQ.l2_F1, _O1, _O1_BYTE );                          // UT( ... )   // Q5
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Qs->l1_Q5, tempQ.l2_F1, _O1, _O1_BYTE );                          // UT( ... )   // Q5
 
     /*
         F1_T2     = F1 * t2
@@ -297,7 +297,7 @@ void calculate_Q_from_F_cyclic_ref( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) 
 
     memset( tempQ.l1_F2, 0, _O1_BYTE * _V1 * _O2 );                                         // should be F3. assuming: _O1 >= _O2
     batch_matTr_madd( tempQ.l1_F2, t2, _V1, _V1_BYTE, _O2, Qs->l1_Q3, _O2, _O1_BYTE );      // T2tr * ( F1_T2 + F2_T3 )
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Qs->l1_Q9, tempQ.l1_F2, _O2, _O1_BYTE );                               // Q9
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Qs->l1_Q9, tempQ.l1_F2, _O2, _O1_BYTE );                               // Q9
 
     batch_trimatTr_madd( Qs->l1_Q3, Fs->l1_F1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE );          // F1_F1T_T2 + F2_T3  // Q3
 
@@ -324,7 +324,7 @@ void calculate_Q_from_F_cyclic_ref( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) 
 
     batch_matTr_madd( tempQ.l2_F3, Ts->t3, _O1, _O1_BYTE, _O2, tempQ.l2_F6, _O2, _O2_BYTE );   // T2tr*( ..... ) + T3tr*( ..... )
     memset( Qs->l2_Q9, 0, _O2_BYTE * N_TRIANGLE_TERMS(_O2) );
-    PQCLEAN_RAINBOWIACLASSIC_CLEAN_UpperTrianglize( Qs->l2_Q9, tempQ.l2_F3, _O2, _O2_BYTE );                                 // Q9
+    PQCLEAN_RAINBOWIACYCLIC_CLEAN_UpperTrianglize( Qs->l2_Q9, tempQ.l2_F3, _O2, _O2_BYTE );                                 // Q9
 }
 
 
@@ -338,11 +338,11 @@ void calculate_Q_from_F_cyclic_ref( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) 
 
 
 
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
     calculate_F_from_Q_impl( Fs, Qs, Ts );
 }
 
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F_cyclic( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_Q_from_F_cyclic( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     calculate_Q_from_F_cyclic_impl( Qs, Fs, Ts );
 }
 

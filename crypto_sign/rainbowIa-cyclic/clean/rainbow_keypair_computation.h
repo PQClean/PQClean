@@ -43,7 +43,7 @@ struct rainbow_extend_publickey {
 /// @param[out] pk       - the classic public key.
 /// @param[in]  cpk      - the internel public key.
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk );
 /////////////////////////////////////////////////
 
 ///
@@ -53,7 +53,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk
 /// @param[in]  Fs       - parts of the secret key: l1_F1, l1_F2, l2_F1, l2_F2, l2_F3, l2_F5, l2_F6
 /// @param[in]  Ts       - parts of the secret key: T1, T4, T3
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts );
 
 #endif
 
@@ -68,7 +68,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_
 /// @param[in]  Qs       - parts of the pk: l1_Q1, l1_Q2, l2_Q1, l2_Q2, l2_Q3, l2_Q5, l2_Q6
 /// @param[in]  Ts       - parts of the sk: T1, T4, T3
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs, sk_t *Ts );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs, sk_t *Ts );
 
 ///
 /// @brief Computing parts of the pk from the secret key
@@ -77,7 +77,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs
 /// @param[in]  Fs       - parts of the sk: l1_F1, l1_F2, l2_F1, l2_F2, l2_F3, l2_F5, l2_F6
 /// @param[in]  Ts       - parts of the sk: T1, T4, T3
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F_cyclic( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_Q_from_F_cyclic( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts );
 #endif
 
 #endif  // _RAINBOW_KEYPAIR_COMP_H_

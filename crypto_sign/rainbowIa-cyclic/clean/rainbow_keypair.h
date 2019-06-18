@@ -93,7 +93,7 @@ struct rainbow_secretkey_cyclic {
 /// @param[out] sk        - the secret key.
 /// @param[in]  sk_seed   - seed for generating the secret key.
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair( pk_t *pk, sk_t *sk, const unsigned char *sk_seed );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair( pk_t *pk, sk_t *sk, const unsigned char *sk_seed );
 #endif
 
 #if defined _RAINBOW_CYCLIC
@@ -105,7 +105,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair( pk_t *pk, sk_t *sk, const 
 /// @param[in]  pk_seed   - seed for generating parts of public key.
 /// @param[in]  sk_seed   - seed for generating secret key.
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair_cyclic( cpk_t *pk, sk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair_cyclic( cpk_t *pk, sk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
 #endif
 
 #if defined _RAINBOW_CYCLIC_COMPRESSED
@@ -117,7 +117,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_keypair_cyclic( cpk_t *pk, sk_t *sk
 /// @param[in]  pk_seed   - seed for generating parts of the public key.
 /// @param[in]  sk_seed   - seed for generating the secret key.
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_compact_keypair_cyclic( cpk_t *pk, csk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_compact_keypair_cyclic( cpk_t *pk, csk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
 #endif
 
 #ifdef _RAINBOW_CYCLIC_COMPRESSED
@@ -128,7 +128,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_compact_keypair_cyclic( cpk_t *pk, 
 /// @param[in]  pk_seed   - seed for generating parts of the pbulic key.
 /// @param[in]  sk_seed   - seed for generating the secret key.
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_secretkey_cyclic( sk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_secretkey_cyclic( sk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed );
 #endif
 
 #if defined(_RAINBOW_CYCLIC) || defined(_RAINBOW_CYCLIC_COMPRESSED)
@@ -140,7 +140,7 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_generate_secretkey_cyclic( sk_t *sk, const u
 /// @param[out] pk       - the classic public key.
 /// @param[in]  cpk      - the cyclic  public key.
 ///
-void PQCLEAN_RAINBOWIACLASSIC_CLEAN_cpk_to_pk( pk_t *pk, const cpk_t *cpk );
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_cpk_to_pk( pk_t *pk, const cpk_t *cpk );
 #endif
 
 #endif //  _RAINBOW_KEYPAIR_H_
