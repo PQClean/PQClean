@@ -49,7 +49,7 @@ EXPECTED_FIELDS = {
     'length-secret-key': {'type': int, 'min': 1},
     'nistkat-sha256': {'type': str, 'length': 64},
     'principal-submitters': {'type': list, 'elements': {'type': str}},
-    'auxiliary-submitters': {'type': list, 'elements': {'type': str}},
+    'auxiliary-submitters': {'type': list, 'elements': {'type': str}, 'optional' : True},
     'implementations': {
         'type': list,
         'elements': {
