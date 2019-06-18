@@ -9,9 +9,10 @@ Vadim Lyubashevsky, John M. Schanck, Peter Schwabe & Damien stehle
 #define VERIFY_H
 
 #include <stddef.h>
+#include <stdint.h>
 
 /* returns 0 for equal strings, 1 for non-equal strings */
-int PQCLEAN_SABER_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len);
+unsigned char PQCLEAN_SABER_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len);
 
 /* b = 1 means mov, b = 0 means don't mov*/
 void PQCLEAN_SABER_CLEAN_cmov(unsigned char *r, const unsigned char *x, size_t len, unsigned char b);

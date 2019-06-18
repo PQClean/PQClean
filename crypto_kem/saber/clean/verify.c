@@ -9,7 +9,7 @@ Vadim Lyubashevsky, John M. Schanck, Peter Schwabe & Damien stehle
 #include <stdint.h>
 
 /* returns 0 for equal strings, 1 for non-equal strings */
-int PQCLEAN_SABER_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
+unsigned char PQCLEAN_SABER_CLEAN_verify(const unsigned char *a, const unsigned char *b, size_t len) {
     uint64_t r;
     size_t i;
     r = 0;
@@ -19,7 +19,7 @@ int PQCLEAN_SABER_CLEAN_verify(const unsigned char *a, const unsigned char *b, s
     }
 
     r = (-r) >> 63;
-    return r;
+    return (unsigned char) r;
 }
 
 /* b = 1 means mov, b = 0 means don't mov*/
