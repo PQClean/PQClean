@@ -24,27 +24,23 @@ static void MatrixVectorMul(polyvec *a, uint16_t skpv[SABER_K][SABER_N], uint16_
 static void POL2MSG(const uint16_t *message_dec_unpacked, unsigned char *message_dec);
 
 static void GenMatrix(polyvec *a, const unsigned char *seed) {
-    unsigned int one_vector = 13 * SABER_N / 8;
-    unsigned int byte_bank_length = SABER_K * SABER_K * one_vector;
-    unsigned char buf[byte_bank_length];
+    unsigned char buf[SABER_K * SABER_K * (13 * SABER_N / 8)];
 
     uint16_t temp_ar[SABER_N];
 
     int i, j, k;
     uint16_t mod = (SABER_Q - 1);
 
-    shake128(buf, byte_bank_length, seed, SABER_SEEDBYTES);
+    shake128(buf, sizeof(buf), seed, SABER_SEEDBYTES);
 
     for (i = 0; i < SABER_K; i++) {
         for (j = 0; j < SABER_K; j++) {
-            PQCLEAN_SABER_CLEAN_BS2POL(buf + (i * SABER_K + j)*one_vector, temp_ar);
+            PQCLEAN_SABER_CLEAN_BS2POL(buf + (i * SABER_K + j) * (13 * SABER_N / 8), temp_ar);
             for (k = 0; k < SABER_N; k++) {
                 a[i].vec[j].coeffs[k] = (temp_ar[k])& mod ;
             }
         }
     }
-
-
 }
 
 
@@ -325,7 +321,7 @@ static void POL2MSG(const uint16_t *message_dec_unpacked, unsigned char *message
     for (j = 0; j < SABER_KEYBYTES; j++) {
         message_dec[j] = 0;
         for (i = 0; i < 8; i++) {
-            message_dec[j] = message_dec[j] | (message_dec_unpacked[j * 8 + i] << i);
+            message_dec[j] = message_dec[j] | (uint8_t) (message_dec_unpacked[j * 8 + i] << i);
         }
     }
 

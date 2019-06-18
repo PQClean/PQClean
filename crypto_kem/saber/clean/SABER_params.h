@@ -3,8 +3,6 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
-
-
 #if Saber_type == 1
 #define SABER_K 2
 #define SABER_MU 10
