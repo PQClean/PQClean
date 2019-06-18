@@ -47,7 +47,8 @@ int PQCLEAN_SABER_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, con
 
 
 int PQCLEAN_SABER_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk) {
-    int i, fail;
+    int i;
+    unsigned char fail;
     unsigned char cmp[SABER_BYTES_CCA_DEC];
     unsigned char buf[64];
     unsigned char kr[64];                             // Will contain key, coins

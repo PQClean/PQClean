@@ -55,7 +55,7 @@ void PQCLEAN_SABER_CLEAN_cbd(uint16_t *r, const unsigned char *buf) {
     int i, j;
 
     for (i = 0; i < SABER_N / 4; i++) {
-        t = load_littleendian(buf + 4 * i, 4);
+        t = (uint32_t) load_littleendian(buf + 4 * i, 4);
         d = 0;
         for (j = 0; j < 4; j++) {
             d += (t >> j) & 0x11111111;

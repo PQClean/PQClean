@@ -1,7 +1,6 @@
 #include "poly_mul.h"
+#include "SABER_params.h"
 #include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #define SCHB_N 16

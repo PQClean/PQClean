@@ -5,7 +5,7 @@ of "CRYSTALS – Kyber: a CCA-secure module-lattice-based KEM"
 by : Joppe Bos, Leo Ducas, Eike Kiltz, Tancrede Lepoint,
 Vadim Lyubashevsky, John M. Schanck, Peter Schwabe & Damien stehle
 ----------------------------------------------------------------------*/
-#include "api.h"
+#include "SABER_params.h"
 #include "cbd.h"
 #include "fips202.h"
 #include "poly.h"
