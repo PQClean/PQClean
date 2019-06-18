@@ -1,3 +1,6 @@
+#ifndef VERIFY_H
+#define VERIFY_H
+
 /*-------------------------------------------------
 This file has been adapted from the implementation
 (available at https://github.com/pq-crystals/kyber) of
@@ -5,8 +8,6 @@ This file has been adapted from the implementation
  by : Joppe Bos, Leo Ducas, Eike Kiltz, Tancrede Lepoint,
 Vadim Lyubashevsky, John M. Schanck, Peter Schwabe & Damien stehle
 ----------------------------------------------------*/
-#ifndef VERIFY_H
-#define VERIFY_H
 
 #include <stddef.h>
 #include <stdint.h>
