@@ -202,13 +202,7 @@ void PQCLEAN_SABER_CLEAN_indcpa_kem_enc(const unsigned char *message_received, u
     }
 
 
-    #if Saber_type == 1
-    PQCLEAN_SABER_CLEAN_pack_3bit(msk_c, vprime);
-    #elif Saber_type == 2
     PQCLEAN_SABER_CLEAN_pack_4bit(msk_c, vprime);
-    #elif Saber_type == 3
-    PQCLEAN_SABER_CLEAN_pack_6bit(msk_c, vprime);
-    #endif
 
 
     for (j = 0; j < SABER_SCALEBYTES_KEM; j++) {
@@ -258,13 +252,7 @@ void PQCLEAN_SABER_CLEAN_indcpa_kem_dec(const unsigned char *sk, const unsigned 
         scale_ar[i] = ciphertext[SABER_POLYVECCOMPRESSEDBYTES + i];
     }
 
-    #if Saber_type == 1
-    PQCLEAN_SABER_CLEAN_un_pack3bit(scale_ar, op);
-    #elif Saber_type == 2
     PQCLEAN_SABER_CLEAN_un_pack4bit(scale_ar, op);
-    #elif Saber_type == 3
-    PQCLEAN_SABER_CLEAN_un_pack6bit(scale_ar, op);
-    #endif
 
 
     //addition of h1

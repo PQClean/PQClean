@@ -1,23 +1,12 @@
-#include "api.h"
-
 #ifndef PARAMS_H
 #define PARAMS_H
 
-#if Saber_type == 1
-#define SABER_K 2
-#define SABER_MU 10
-#define SABER_ET 3
+#include "api.h"
 
-#elif Saber_type == 2
 #define SABER_K 3
 #define SABER_MU 8
 #define SABER_ET 4
 
-#elif Saber_type == 3
-#define SABER_K 4
-#define SABER_MU 6
-#define SABER_ET 6
-#endif
 
 #define SABER_EQ 13
 #define SABER_EP 10
