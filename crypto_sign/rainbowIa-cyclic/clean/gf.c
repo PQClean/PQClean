@@ -91,12 +91,6 @@ uint8_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16_inv(uint8_t a) {
     return gf16_mul(a8, a6);
 }
 
-static inline uint8_t gf16_mul_8(uint8_t a) {
-    uint8_t a0 = a & 3;
-    uint8_t a1 = a >> 2;
-    return (uint8_t)(gf4_mul_2(a0 ^ a1) << 2 | gf4_mul_3(a1));
-}
-
 // gf16 := gf4[y]/y^2+y+x
 
 uint32_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_mul_u32(uint32_t a, uint8_t b) {
@@ -138,12 +132,6 @@ uint32_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_mul_u32_u32(uint32_t a, uint32_t b)
 uint8_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_reduce_u32(uint32_t a) {
     uint8_t r256 = gf256v_reduce_u32(a);
     return (uint8_t)((r256 & 0xf) ^ (r256 >> 4));
-}
-
-static inline uint32_t gf16v_mul_8_u32(uint32_t a) {
-    uint32_t a1 = a & 0xcccccccc;
-    uint32_t a0 = (a << 2) & 0xcccccccc;
-    return gf4v_mul_2_u32(a0 ^ a1) | gf4v_mul_3_u32(a1 >> 2);
 }
 
 #else
