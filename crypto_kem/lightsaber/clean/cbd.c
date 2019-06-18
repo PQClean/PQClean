@@ -28,7 +28,7 @@ void PQCLEAN_LIGHTSABER_CLEAN_cbd(uint16_t *r, const unsigned char *buf) {
     int i, j;
 
     for (i = 0; i < SABER_N / 4; i++) {
-        t = load_littleendian(buf + 5 * i, 5);
+        t = (uint32_t) load_littleendian(buf + 5 * i, 5);
         d = 0;
         for (j = 0; j < 5; j++) {
             d += (t >> j) & 0x0842108421UL;
