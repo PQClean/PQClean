@@ -16,11 +16,6 @@ static inline uint8_t gf4_mul_2(uint8_t a) {
     return r;
 }
 
-static inline uint8_t gf4_mul_3(uint8_t a) {
-    uint8_t msk = (uint8_t) (a - 2) >> 1;
-    return (uint8_t)((msk & (a * 3)) | ((~msk) & (a - 1)));
-}
-
 static inline uint8_t gf4_mul(uint8_t a, uint8_t b) {
     uint8_t r = (uint8_t) (a * (b & 1));
     return r ^ (uint8_t)(gf4_mul_2(a) * (b >> 1));
@@ -34,12 +29,6 @@ static inline uint32_t gf4v_mul_2_u32(uint32_t a) {
     uint32_t bit0 = a & 0x55555555;
     uint32_t bit1 = a & 0xaaaaaaaa;
     return (bit0 << 1) ^ bit1 ^ (bit1 >> 1);
-}
-
-static inline uint32_t gf4v_mul_3_u32(uint32_t a) {
-    uint32_t bit0 = a & 0x55555555;
-    uint32_t bit1 = a & 0xaaaaaaaa;
-    return (bit0 << 1) ^ bit0 ^ (bit1 >> 1);
 }
 
 static inline uint32_t gf4v_mul_u32(uint32_t a, uint8_t b) {
