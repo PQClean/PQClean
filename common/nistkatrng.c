@@ -48,7 +48,9 @@ void nist_kat_init(uint8_t *entropy_input, const uint8_t *personalization_string
     DRBG_ctx.reseed_counter = 1;
 }
 
-int randombytes(uint8_t *buf, size_t xlen) {
+//multiple definitions of randombytes, so rename it?
+//int randombytes(uint8_t *buf, size_t xlen) {
+int randombytes_nist_kat(uint8_t *buf, size_t xlen) {
     uint8_t block[16];
     int i = 0;
 
