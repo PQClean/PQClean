@@ -57,7 +57,7 @@ static void surf(void) {
     }
 }
 
-int randombytes(uint8_t *buf, size_t xlen) {
+int notrandombytes(uint8_t *buf, size_t xlen) {
     while (xlen > 0) {
         if (!outleft) {
             if (!++in[0]) {
