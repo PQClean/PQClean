@@ -48,6 +48,12 @@ matrix:
         - "cd test && travis_wait 60 python3 -m nose --rednose --verbose"
 
 
-cache: pip
+cache:
+  directories:
+    - $HOME/Library/Caches/pip
+    - $HOME/Library/Caches/Homebrew
+
+before_cache:
+  - brew cleanup
 
 #  vim: set ft=yaml ts=2 sw=2 tw=0 et :
