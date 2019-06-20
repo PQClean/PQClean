@@ -45,7 +45,7 @@ static void GenMatrix(polyvec *a, const unsigned char *seed) {
 
 
 void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_keypair(unsigned char *pk, unsigned char *sk) {
-    polyvec a[SABER_K];// skpv;
+    polyvec a[SABER_K];
 
     uint16_t skpv[SABER_K][SABER_N];
 
@@ -58,43 +58,43 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_keypair(unsigned char *pk, unsigned cha
     uint16_t res[SABER_K][SABER_N];
 
     randombytes(seed, SABER_SEEDBYTES);
-    shake128(seed, SABER_SEEDBYTES, seed, SABER_SEEDBYTES); // for not revealing system RNG state
+
+    // for not revealing system RNG state
+    shake128(seed, SABER_SEEDBYTES, seed, SABER_SEEDBYTES);
     randombytes(noiseseed, SABER_COINBYTES);
 
     GenMatrix(a, seed);   //sample matrix A
 
-    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(skpv, noiseseed); //generate secret from constant-time binomial distribution
+    // generate secret from constant-time binomial distribution
+    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(skpv, noiseseed);
 
-    //------------------------do the matrix vector multiplication and rounding------------
-
+    // do the matrix vector multiplication and rounding
     for (i = 0; i < SABER_K; i++) {
         for (j = 0; j < SABER_N; j++) {
             res[i][j] = 0;
         }
     }
-
     MatrixVectorMul(a, skpv, res, SABER_Q - 1, 1);
 
-    //-----now rounding
-    for (i = 0; i < SABER_K; i++) { //shift right 3 bits
+    // now rounding
+    for (i = 0; i < SABER_K; i++) {
         for (j = 0; j < SABER_N; j++) {
+            // shift right 3 bits
             res[i][j] = (res[i][j] + h1) & (mod_q);
             res[i][j] = (res[i][j] >> (SABER_EQ - SABER_EP));
         }
     }
 
-    //------------------unload and pack sk=3 x (256 coefficients of 14 bits)-------
-
+    // unload and pack sk=3 x (256 coefficients of 14 bits)
     PQCLEAN_LIGHTSABER_CLEAN_POLVEC2BS(sk, skpv, SABER_Q);
 
-    //------------------unload and pack pk=256 bits seed and 3 x (256 coefficients of 11 bits)-------
+    // unload and pack pk=256 bits seed and 3 x (256 coefficients of 11 bits)
+    // load the public-key coefficients
+    PQCLEAN_LIGHTSABER_CLEAN_POLVEC2BS(pk, res, SABER_P);
 
 
-    PQCLEAN_LIGHTSABER_CLEAN_POLVEC2BS(pk, res, SABER_P); // load the public-key coefficients
-
-
-
-    for (i = 0; i < SABER_SEEDBYTES; i++) { // now load the seedbytes in PK. Easy since seed bytes are kept in byte format.
+    // now load the seedbytes in PK. Easy since seed bytes are kept in byte format.
+    for (i = 0; i < SABER_SEEDBYTES; i++) {
         pk[SABER_POLYVECCOMPRESSEDBYTES + i] = seed[i];
     }
 
@@ -103,47 +103,39 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_keypair(unsigned char *pk, unsigned cha
 
 void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(const unsigned char *message_received, unsigned char *noiseseed, const unsigned char *pk, unsigned char *ciphertext) {
     uint32_t i, j, k;
-    polyvec a[SABER_K];     // skpv;
+    polyvec a[SABER_K];
     unsigned char seed[SABER_SEEDBYTES];
-    uint16_t pkcl[SABER_K][SABER_N];    //public key of received by the client
-
-
-
+    // public key of received by the client
+    uint16_t pkcl[SABER_K][SABER_N];
     uint16_t skpv1[SABER_K][SABER_N];
-
     uint16_t message[SABER_KEYBYTES * 8];
-
     uint16_t res[SABER_K][SABER_N];
     uint16_t mod_p = SABER_P - 1;
     uint16_t mod_q = SABER_Q - 1;
-
     uint16_t vprime[SABER_N];
-
-
-
     unsigned char msk_c[SABER_SCALEBYTES_KEM];
 
-    for (i = 0; i < SABER_SEEDBYTES; i++) { // extract the seedbytes from Public Key.
+    // extract the seedbytes from Public Key.
+    for (i = 0; i < SABER_SEEDBYTES; i++) {
         seed[i] = pk[ SABER_POLYVECCOMPRESSEDBYTES + i];
     }
 
     GenMatrix(a, seed);
 
-    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(skpv1, noiseseed); //generate secret from constant-time binomial distribution
+    // generate secret from constant-time binomial distribution
+    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(skpv1, noiseseed);
 
-    //-----------------matrix-vector multiplication and rounding
-
+    // matrix-vector multiplication and rounding
     for (i = 0; i < SABER_K; i++) {
         for (j = 0; j < SABER_N; j++) {
             res[i][j] = 0;
         }
     }
-
     MatrixVectorMul(a, skpv1, res, SABER_Q - 1, 0);
 
-    //-----now rounding
-
-    for (i = 0; i < SABER_K; i++) { //shift right 3 bits
+    // now rounding
+    //shift right 3 bits
+    for (i = 0; i < SABER_K; i++) {
         for (j = 0; j < SABER_N; j++) {
             res[i][j] = ( res[i][j] + h1 ) & mod_q;
             res[i][j] = (res[i][j] >> (SABER_EQ - SABER_EP) );
@@ -152,21 +144,15 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(const unsigned char *message_receiv
 
     PQCLEAN_LIGHTSABER_CLEAN_POLVEC2BS(ciphertext, res, SABER_P);
 
-//*******************client matrix-vector multiplication ends************************************
+    // ************client matrix-vector multiplication ends************
 
-    //------now calculate the v'
-
-    //-------unpack the public_key
-
-    //pkcl is the b in the protocol
+    // now calculate the v'
+    // unpack the public_key
+    // pkcl is the b in the protocol
     PQCLEAN_LIGHTSABER_CLEAN_BS2POLVEC(pk, pkcl, SABER_P);
-
-
-
     for (i = 0; i < SABER_N; i++) {
         vprime[i] = 0;
     }
-
     for (i = 0; i < SABER_K; i++) {
         for (j = 0; j < SABER_N; j++) {
             skpv1[i][j] = skpv1[i][j] & (mod_p);
@@ -176,11 +162,10 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(const unsigned char *message_receiv
     // vector-vector scalar multiplication with mod p
     InnerProd(pkcl, skpv1, mod_p, vprime);
 
-    //addition of h1 to vprime
+    // addition of h1 to vprime
     for (i = 0; i < SABER_N; i++) {
         vprime[i] = vprime[i] + h1;
     }
-
 
     // unpack message_received;
     for (j = 0; j < SABER_KEYBYTES; j++) {
@@ -194,16 +179,12 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(const unsigned char *message_receiv
         message[i] = (message[i] << (SABER_EP - 1));
     }
 
-
-
-
     for (k = 0; k < SABER_N; k++) {
         vprime[k] = ( (vprime[k] - message[k]) & (mod_p) ) >> (SABER_EP - SABER_ET);
     }
 
 
     PQCLEAN_LIGHTSABER_CLEAN_pack_3bit(msk_c, vprime);
-
 
     for (j = 0; j < SABER_SCALEBYTES_KEM; j++) {
         ciphertext[SABER_POLYVECCOMPRESSEDBYTES + j] = msk_c[j];
@@ -212,40 +193,30 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(const unsigned char *message_receiv
 
 
 void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_dec(const unsigned char *sk, const unsigned char *ciphertext, unsigned char message_dec[]) {
-
     uint32_t i, j;
-
-
-    uint16_t sksv[SABER_K][SABER_N]; //secret key of the server
-
-
+    // secret key of the server
+    uint16_t sksv[SABER_K][SABER_N];
     uint16_t pksv[SABER_K][SABER_N];
-
     uint8_t scale_ar[SABER_SCALEBYTES_KEM];
-
     uint16_t mod_p = SABER_P - 1;
-
     uint16_t v[SABER_N];
-
     uint16_t op[SABER_N];
 
-
-    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVEC(sk, sksv, SABER_Q); //sksv is the secret-key
-    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVEC(ciphertext, pksv, SABER_P); //pksv is the ciphertext
+    // sksv is the secret-key
+    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVEC(sk, sksv, SABER_Q);
+    // pksv is the ciphertext
+    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVEC(ciphertext, pksv, SABER_P);
 
     // vector-vector scalar multiplication with mod p
     for (i = 0; i < SABER_N; i++) {
         v[i] = 0;
     }
-
     for (i = 0; i < SABER_K; i++) {
         for (j = 0; j < SABER_N; j++) {
             sksv[i][j] = sksv[i][j] & (mod_p);
         }
     }
-
     InnerProd(pksv, sksv, mod_p, v);
-
 
     //Extraction
     for (i = 0; i < SABER_SCALEBYTES_KEM; i++) {
@@ -254,20 +225,15 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_dec(const unsigned char *sk, const unsi
 
     PQCLEAN_LIGHTSABER_CLEAN_un_pack3bit(scale_ar, op);
 
-
     //addition of h1
     for (i = 0; i < SABER_N; i++) {
         v[i] = ( ( v[i] + h2 - (op[i] << (SABER_EP - SABER_ET)) ) & (mod_p) ) >> (SABER_EP - 1);
     }
 
     // pack decrypted message
-
     POL2MSG(v, message_dec);
-
-
 }
 static void MatrixVectorMul(polyvec *a, uint16_t skpv[SABER_K][SABER_N], uint16_t res[SABER_K][SABER_N], uint16_t mod, int16_t transpose) {
-
     uint16_t acc[SABER_N];
     int32_t i, j, k;
 
@@ -278,32 +244,30 @@ static void MatrixVectorMul(polyvec *a, uint16_t skpv[SABER_K][SABER_N], uint16_
 
                 for (k = 0; k < SABER_N; k++) {
                     res[i][k] = res[i][k] + acc[k];
-                    res[i][k] = (res[i][k] & mod); //reduction mod p
-                    acc[k] = 0; //clear the accumulator
+                    //reduction mod p
+                    res[i][k] = (res[i][k] & mod);
+                    //clear the accumulator
+                    acc[k] = 0;
                 }
-
             }
         }
     } else {
-
         for (i = 0; i < SABER_K; i++) {
             for (j = 0; j < SABER_K; j++) {
                 PQCLEAN_LIGHTSABER_CLEAN_pol_mul((uint16_t *)&a[i].vec[j], skpv[j], acc, SABER_Q, SABER_N);
                 for (k = 0; k < SABER_N; k++) {
                     res[i][k] = res[i][k] + acc[k];
-                    res[i][k] = res[i][k] & mod; //reduction
-                    acc[k] = 0; //clear the accumulator
+                    // reduction
+                    res[i][k] = res[i][k] & mod;
+                    // clear the accumulator
+                    acc[k] = 0;
                 }
-
             }
         }
     }
-
-
 }
 
 static void POL2MSG(const uint16_t *message_dec_unpacked, unsigned char *message_dec) {
-
     int32_t i, j;
 
     for (j = 0; j < SABER_KEYBYTES; j++) {
@@ -312,13 +276,10 @@ static void POL2MSG(const uint16_t *message_dec_unpacked, unsigned char *message
             message_dec[j] = message_dec[j] | (uint8_t) (message_dec_unpacked[j * 8 + i] << i);
         }
     }
-
 }
 
 
 static void InnerProd(uint16_t pkcl[SABER_K][SABER_N], uint16_t skpv[SABER_K][SABER_N], uint16_t mod, uint16_t res[SABER_N]) {
-
-
     uint32_t j, k;
     uint16_t acc[SABER_N];
 
@@ -328,8 +289,10 @@ static void InnerProd(uint16_t pkcl[SABER_K][SABER_N], uint16_t skpv[SABER_K][SA
 
         for (k = 0; k < SABER_N; k++) {
             res[k] = res[k] + acc[k];
-            res[k] = res[k] & mod; //reduction
-            acc[k] = 0; //clear the accumulator
+            // reduction
+            res[k] = res[k] & mod;
+            // clear the accumulator
+            acc[k] = 0;
         }
     }
 }
