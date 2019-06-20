@@ -7,7 +7,8 @@ length-secret-key: 26
 length-ciphertext: 6520
 length-shared-secret: 32
 nistkat-sha256: c49a3f0ff5f3e7d6b41995649d7003daf7c06d9539fc28cb3b93ed02dcbe09d4
-principal-submitter: Marco Baldi
+principal-submitters:
+  - Marco Baldi
 auxiliary-submitters:
   - Alessandro Barenghi
   - Franco Chiaraluce

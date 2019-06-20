@@ -7,7 +7,8 @@ length-secret-key: 1234
 length-ciphertext: 930
 length-shared-secret: 32
 nistkat-sha256: 715a5caf1ee22bb4b75ff6b10f911fec77e0d63378ea359c0773ee0a4c6cbb97
-principal-submitter: John M. Schanck
+principal-submitters:
+  - John M. Schanck
 auxiliary-submitters:
   - Cong Chen
   - Oussama Danba

@@ -6,7 +6,8 @@ length-secret-key: 128
 length-signature: 49216
 nistkat-sha256: e6fafb97dc3575d5dcd79183a4d7faad4f2c986745c63e61ddae3648559664f7
 testvectors-sha256: 14dd19ba3ff75bad890949050289ab0f178d7baa6dcb8ff6bcd6a873692a5686
-principal-submitter: Andreas Hülsing
+principal-submitters:
+  - Andreas Hülsing
 auxiliary-submitters:
   - Jean-Philippe Aumasson
   - Daniel J. Bernstein,

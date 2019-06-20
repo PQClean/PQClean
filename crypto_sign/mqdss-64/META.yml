@@ -6,7 +6,8 @@ length-secret-key: 24
 length-signature: 43728
 nistkat-sha256: 2a50f067babbf4a3eed5197e87820472944d1d79fc03b1d9322a8ad8c245501e
 testvectors-sha256: 1edd33ca64b14f60f153b84dd25c7064cfa9b7dbf1bb5c4296f343377cb0c864
-principal-submitter: Simona Samardjiska
+principal-submitters:
+  - Simona Samardjiska
 auxiliary-submitters:
   - Ming-Shing Chen
   - Andreas Hülsing

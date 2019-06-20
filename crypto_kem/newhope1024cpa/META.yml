@@ -7,7 +7,8 @@ length-secret-key: 1792
 length-ciphertext: 2176
 length-shared-secret: 32
 nistkat-sha256: f48b42b21a51d7f9325abc5fbda74872d62feaa8cbf818bee87f29bf96630a2f
-principal-submitter: Thomas Pöppelmann
+principal-submitters:
+  - Thomas Pöppelmann
 auxiliary-submitters:
 - Erdem Alkim
 - Roberto Avanzi
