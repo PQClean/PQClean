@@ -14,7 +14,8 @@
 static void PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash(
     unsigned char *out, unsigned char *buf,
     const unsigned char *in, unsigned int inblocks,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    sha256ctx *state_seeded) {
 
     unsigned char outbuf[SPX_SHA256_OUTPUT_BYTES];
     sha256ctx sha2_state;
@@ -22,7 +23,7 @@ static void PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash(
     (void)pub_seed; /* Suppress an 'unused parameter' warning. */
 
     /* Retrieve precomputed state containing pub_seed */
-    memcpy(&sha2_state, &PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_state_seeded, sizeof(sha256ctx));
+    memcpy(&sha2_state, state_seeded, sizeof(sha256ctx));
 
     PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_compress_address(buf, addr);
     memcpy(buf + SPX_SHA256_ADDR_BYTES, in, inblocks * SPX_N);
@@ -35,36 +36,40 @@ static void PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash(
 
 void PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash_1(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    sha256ctx *state_seeded) {
 
     unsigned char buf[SPX_SHA256_ADDR_BYTES + 1 * SPX_N];
     PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash(
-        out, buf, in, 1, pub_seed, addr);
+        out, buf, in, 1, pub_seed, addr, state_seeded);
 }
 
 void PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash_2(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    sha256ctx *state_seeded) {
 
     unsigned char buf[SPX_SHA256_ADDR_BYTES + 2 * SPX_N];
     PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash(
-        out, buf, in, 2, pub_seed, addr);
+        out, buf, in, 2, pub_seed, addr, state_seeded);
 }
 
 void PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash_WOTS_LEN(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    sha256ctx *state_seeded) {
 
     unsigned char buf[SPX_SHA256_ADDR_BYTES + SPX_WOTS_LEN * SPX_N];
     PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash(
-        out, buf, in, SPX_WOTS_LEN, pub_seed, addr);
+        out, buf, in, SPX_WOTS_LEN, pub_seed, addr, state_seeded);
 }
 
 void PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash_FORS_TREES(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    sha256ctx *state_seeded) {
 
     unsigned char buf[SPX_SHA256_ADDR_BYTES + SPX_FORS_TREES * SPX_N];
     PQCLEAN_SPHINCSSHA256256FSIMPLE_CLEAN_thash(
-        out, buf, in, SPX_FORS_TREES, pub_seed, addr);
+        out, buf, in, SPX_FORS_TREES, pub_seed, addr, state_seeded);
 }

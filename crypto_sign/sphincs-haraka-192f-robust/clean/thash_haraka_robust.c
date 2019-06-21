@@ -3,6 +3,7 @@
 
 #include "address.h"
 #include "params.h"
+#include "primitive.h"
 #include "thash.h"
 
 #include "haraka.h"
@@ -13,7 +14,8 @@
 static void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
     unsigned char *out, unsigned char *buf,
     const unsigned char *in, unsigned int inblocks,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char *bitmask = buf + SPX_ADDR_BYTES;
     unsigned char outbuf[32];
@@ -21,6 +23,7 @@ static void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
     unsigned int i;
 
     (void)pub_seed; /* Suppress an 'unused parameter' warning. */
+    (void)state_seeded; /* TODO this should be fed into haraka */
 
     if (inblocks == 1) {
         /* F function */
@@ -28,24 +31,24 @@ static void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
         memset(buf_tmp, 0, 64);
         PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_addr_to_bytes(buf_tmp, addr);
 
-        PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_haraka256(outbuf, buf_tmp);
+        PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_haraka256(outbuf, buf_tmp, state_seeded);
         for (i = 0; i < inblocks * SPX_N; i++) {
             buf_tmp[SPX_ADDR_BYTES + i] = in[i] ^ outbuf[i];
         }
-        PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_haraka512(outbuf, buf_tmp);
+        PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_haraka512(outbuf, buf_tmp, state_seeded);
         memcpy(out, outbuf, SPX_N);
     } else {
         /* All other tweakable hashes*/
         PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_addr_to_bytes(buf, addr);
         PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_haraka_S(
-            bitmask, inblocks * SPX_N, buf, SPX_ADDR_BYTES);
+            bitmask, inblocks * SPX_N, buf, SPX_ADDR_BYTES, state_seeded);
 
         for (i = 0; i < inblocks * SPX_N; i++) {
             buf[SPX_ADDR_BYTES + i] = in[i] ^ bitmask[i];
         }
 
         PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_haraka_S(
-            out, SPX_N, buf, SPX_ADDR_BYTES + inblocks * SPX_N);
+            out, SPX_N, buf, SPX_ADDR_BYTES + inblocks * SPX_N, state_seeded);
     }
 }
 
@@ -53,36 +56,40 @@ static void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
 
 void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash_1(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_ADDR_BYTES + 1 * SPX_N];
     PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
-        out, buf, in, 1, pub_seed, addr);
+        out, buf, in, 1, pub_seed, addr, state_seeded);
 }
 
 void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash_2(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_ADDR_BYTES + 2 * SPX_N];
     PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
-        out, buf, in, 2, pub_seed, addr);
+        out, buf, in, 2, pub_seed, addr, state_seeded);
 }
 
 void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash_WOTS_LEN(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_ADDR_BYTES + SPX_WOTS_LEN * SPX_N];
     PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
-        out, buf, in, SPX_WOTS_LEN, pub_seed, addr);
+        out, buf, in, SPX_WOTS_LEN, pub_seed, addr, state_seeded);
 }
 
 void PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash_FORS_TREES(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_ADDR_BYTES + SPX_FORS_TREES * SPX_N];
     PQCLEAN_SPHINCSHARAKA192FROBUST_CLEAN_thash(
-        out, buf, in, SPX_FORS_TREES, pub_seed, addr);
+        out, buf, in, SPX_FORS_TREES, pub_seed, addr, state_seeded);
 }

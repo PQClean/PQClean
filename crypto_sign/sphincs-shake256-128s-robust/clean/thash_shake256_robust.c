@@ -28,42 +28,51 @@ static void PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash(
     }
 
     shake256(out, SPX_N, buf, SPX_N + SPX_ADDR_BYTES + inblocks * SPX_N);
+
 }
 
 /* The wrappers below ensure that we use fixed-size buffers on the stack */
 
 void PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash_1(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_N + SPX_ADDR_BYTES + 1 * SPX_N];
     PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash(
         out, buf, in, 1, pub_seed, addr);
+    (void)state_seeded;
 }
 
 void PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash_2(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_N + SPX_ADDR_BYTES + 2 * SPX_N];
     PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash(
         out, buf, in, 2, pub_seed, addr);
+    (void)state_seeded;
 }
 
 void PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash_WOTS_LEN(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_N + SPX_ADDR_BYTES + SPX_WOTS_LEN * SPX_N];
     PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash(
         out, buf, in, SPX_WOTS_LEN, pub_seed, addr);
+    (void)state_seeded;
 }
 
 void PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash_FORS_TREES(
     unsigned char *out, const unsigned char *in,
-    const unsigned char *pub_seed, uint32_t addr[8]) {
+    const unsigned char *pub_seed, uint32_t addr[8],
+    hash_state *state_seeded) {
 
     unsigned char buf[SPX_N + SPX_ADDR_BYTES + SPX_FORS_TREES * SPX_N];
     PQCLEAN_SPHINCSSHAKE256128SROBUST_CLEAN_thash(
         out, buf, in, SPX_FORS_TREES, pub_seed, addr);
+    (void)state_seeded;
 }
