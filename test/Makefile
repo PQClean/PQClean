@@ -9,6 +9,7 @@ SCHEME_DIR="../crypto_$(TYPE)/$(SCHEME)/$(IMPLEMENTATION)"
 SCHEME_UPPERCASE=$(shell echo $(SCHEME) | tr a-z A-Z | sed 's/-//g')
 IMPLEMENTATION_UPPERCASE=$(shell echo $(IMPLEMENTATION) | tr a-z A-Z | sed 's/-//g')
 
+TEST_COMMON_DIR=../test/common/
 COMMON_DIR=../common
 COMMON_FILES=$(COMMON_DIR)/aes.c $(COMMON_DIR)/sha2.c $(COMMON_DIR)/fips202.c $(COMMON_DIR)/sp800-185.c
 COMMON_HEADERS=$(COMMON_DIR)/*.h
@@ -47,34 +48,34 @@ printparams: $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION)
 .PHONY: nistkat
 nistkat: $(DEST_DIR)/nistkat_$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/test_common_aes: common/aes.c $(COMMON_FILES)
+$(DEST_DIR)/test_common_aes: test_common/aes.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
-$(DEST_DIR)/test_common_fips202: common/fips202.c $(COMMON_FILES)
+$(DEST_DIR)/test_common_fips202: test_common/fips202.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
-$(DEST_DIR)/test_common_sha2: common/sha2.c $(COMMON_FILES)
+$(DEST_DIR)/test_common_sha2: test_common/sha2.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
-$(DEST_DIR)/test_common_sp800-185: common/sp800-185.c $(COMMON_FILES)
+$(DEST_DIR)/test_common_sp800-185: test_common/sp800-185.c $(COMMON_FILES)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
 
 $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
-	$(CC) $(CFLAGS) -DNTESTS=$(NTESTS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+	$(CC) $(CFLAGS) -DNTESTS=$(NTESTS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c $(COMMON_HEADERS)
+$(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(TEST_COMMON_DIR)/notrandombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
-	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(COMMON_DIR)/notrandombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(TEST_COMMON_DIR)/notrandombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
 $(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/printparams.c
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/printparams.c -o $@
 
-$(DEST_DIR)/nistkat_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/nistkat.c $(COMMON_FILES) $(COMMON_DIR)/nistkatrng.c $(COMMON_HEADERS)
+$(DEST_DIR)/nistkat_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/nistkat.c $(COMMON_FILES) $(TEST_COMMON_DIR)/nistkatrng.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
-	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/nistkat.c $(COMMON_FILES) $(COMMON_DIR)/nistkatrng.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/nistkat.c $(COMMON_FILES) $(TEST_COMMON_DIR)/nistkatrng.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
 .PHONY: clean
 clean:
