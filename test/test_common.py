@@ -10,7 +10,7 @@ import helpers
 
 @helpers.skip_windows()
 def test_common():
-    for d in os.listdir('common'):
+    for d in os.listdir('test_common'):
         primitive = re.sub(r"\.c$", "", d)
         if helpers.permit_test('common', None):
             yield check_common, primitive

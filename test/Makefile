@@ -9,7 +9,7 @@ SCHEME_DIR="../crypto_$(TYPE)/$(SCHEME)/$(IMPLEMENTATION)"
 SCHEME_UPPERCASE=$(shell echo $(SCHEME) | tr a-z A-Z | sed 's/-//g')
 IMPLEMENTATION_UPPERCASE=$(shell echo $(IMPLEMENTATION) | tr a-z A-Z | sed 's/-//g')
 
-TEST_COMMON_DIR=../test/common/
+TEST_COMMON_DIR=../test/common
 COMMON_DIR=../common
 COMMON_FILES=$(COMMON_DIR)/aes.c $(COMMON_DIR)/sha2.c $(COMMON_DIR)/fips202.c $(COMMON_DIR)/sp800-185.c
 COMMON_HEADERS=$(COMMON_DIR)/*.h
