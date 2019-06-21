@@ -19,25 +19,11 @@ PQCLEAN_RAINBOWIACYCLIC_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned ch
     unsigned char sk_seed[LEN_SKSEED] = {0};
     randombytes( sk_seed, LEN_SKSEED );
 
-    #if defined _RAINBOW_CLASSIC
-
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair( (pk_t *) pk, (sk_t *) sk, sk_seed );
-
-    #elif defined _RAINBOW_CYCLIC
 
     unsigned char pk_seed[LEN_PKSEED] = {0};
     randombytes( pk_seed, LEN_PKSEED );
     PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair_cyclic( (cpk_t *) pk, (sk_t *) sk, pk_seed, sk_seed );
 
-    #elif defined _RAINBOW_CYCLIC_COMPRESSED
-
-    unsigned char pk_seed[LEN_PKSEED] = {0};
-    randombytes( pk_seed, LEN_PKSEED );
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_compact_keypair_cyclic( (cpk_t *) pk, (csk_t *) sk, pk_seed, sk_seed );
-
-    #else
-    error here
-    #endif
     return 0;
 }
 
@@ -54,21 +40,9 @@ PQCLEAN_RAINBOWIACYCLIC_CLEAN_crypto_sign(unsigned char *sm, size_t *smlen, cons
     memcpy( sm, m, mlen );
     smlen[0] = mlen + _SIGNATURE_BYTE;
 
-    #if defined _RAINBOW_CLASSIC
 
     return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign( sm + mlen, (const sk_t *)sk, digest );
 
-    #elif defined _RAINBOW_CYCLIC
-
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign( sm + mlen, (const sk_t *)sk, digest );
-
-    #elif defined _RAINBOW_CYCLIC_COMPRESSED
-
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign_cyclic( sm + mlen, (const csk_t *)sk, digest );
-
-    #else
-    error here
-    #endif
 
 
 }
@@ -90,21 +64,9 @@ PQCLEAN_RAINBOWIACYCLIC_CLEAN_crypto_sign_open(unsigned char *m, size_t *mlen, c
     unsigned char digest[_HASH_LEN];
     PQCLEAN_RAINBOWIACYCLIC_CLEAN_hash_msg( digest, _HASH_LEN, m, *mlen );
 
-    #if defined _RAINBOW_CLASSIC
-
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_verify( digest, sm + mlen[0], (const pk_t *)pk );
-
-    #elif defined _RAINBOW_CYCLIC
 
     return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_verify_cyclic( digest, sm + mlen[0], (const cpk_t *)pk );
 
-    #elif defined _RAINBOW_CYCLIC_COMPRESSED
-
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_verify_cyclic( digest, sm + mlen[0], (const cpk_t *)pk );
-
-    #else
-    error here
-    #endif
 
 
 }
@@ -116,15 +78,7 @@ int PQCLEAN_RAINBOWIACYCLIC_CLEAN_crypto_sign_signature(
 
     PQCLEAN_RAINBOWIACYCLIC_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
     *siglen = _SIGNATURE_BYTE;
-    #if defined _RAINBOW_CLASSIC
     return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign( sig, (const sk_t *)sk, digest );
-    #elif defined _RAINBOW_CYCLIC
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign( sig, (const sk_t *)sk, digest );
-    #elif defined _RAINBOW_CYCLIC_COMPRESSED
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign_cyclic( sig, (const csk_t *)sk, digest );
-    #else
-    error here
-    #endif
 }
 
 int PQCLEAN_RAINBOWIACYCLIC_CLEAN_crypto_sign_verify(
@@ -135,14 +89,6 @@ int PQCLEAN_RAINBOWIACYCLIC_CLEAN_crypto_sign_verify(
     }
     unsigned char digest[_HASH_LEN];
     PQCLEAN_RAINBOWIACYCLIC_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
-    #if defined _RAINBOW_CLASSIC
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_verify( digest, sig, (const pk_t *)pk );
-    #elif defined _RAINBOW_CYCLIC
     return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_verify_cyclic( digest, sig, (const cpk_t *)pk );
-    #elif defined _RAINBOW_CYCLIC_COMPRESSED
-    return PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_verify_cyclic( digest, sig, (const cpk_t *)pk );
-    #else
-    error here
-    #endif
 
 }

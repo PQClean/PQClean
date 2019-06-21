@@ -97,46 +97,8 @@ void obsfucate_l1_polys( unsigned char *l1_polys, const unsigned char *l2_polys,
 
 ///////////////////  Classic //////////////////////////////////
 
-#if defined _RAINBOW_CLASSIC
-static
-void _generate_secretkey( sk_t *sk, const unsigned char *sk_seed ) {
-    memcpy( sk->sk_seed, sk_seed, LEN_SKSEED );
-
-    // set up prng
-    prng_t prng0;
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_prng_set( &prng0, sk_seed, LEN_SKSEED );
-
-    // generating secret key with prng.
-    generate_S_T( sk->s1, &prng0 );
-    generate_B1_B2( sk->l1_F1, &prng0 );
-
-    // clean prng
-    memset( &prng0, 0, sizeof(prng_t) );
-}
-
-void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair( pk_t *rpk, sk_t *sk, const unsigned char *sk_seed ) {
-    _generate_secretkey( sk, sk_seed );
-
-    // set up a temporary structure ext_cpk_t for calculating public key.
-    ext_cpk_t pk;
-
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_Q_from_F( &pk, sk, sk );    // compute the public key in ext_cpk_t format.
-    calculate_t4( sk->t4, sk->t1, sk->t3 );
-
-    obsfucate_l1_polys( pk.l1_Q1, pk.l2_Q1, N_TRIANGLE_TERMS(_V1), sk->s1 );
-    obsfucate_l1_polys( pk.l1_Q2, pk.l2_Q2, _V1 * _O1, sk->s1 );
-    obsfucate_l1_polys( pk.l1_Q3, pk.l2_Q3, _V1 * _O2, sk->s1 );
-    obsfucate_l1_polys( pk.l1_Q5, pk.l2_Q5, N_TRIANGLE_TERMS(_O1), sk->s1 );
-    obsfucate_l1_polys( pk.l1_Q6, pk.l2_Q6, _O1 * _O2, sk->s1 );
-    obsfucate_l1_polys( pk.l1_Q9, pk.l2_Q9, N_TRIANGLE_TERMS(_O2), sk->s1 );
-    // so far, the pk contains the full pk but in ext_cpk_t format.
-
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_extcpk_to_pk( rpk, &pk );      // convert the public key from ext_cpk_t to pk_t.
-}
-#endif
 
 
-#if defined _RAINBOW_CYCLIC
 /////////////////////   Cyclic   //////////////////////////////////
 void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair_cyclic( cpk_t *pk, sk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed ) {
     memcpy( pk->pk_seed, pk_seed, LEN_PKSEED );
@@ -180,46 +142,9 @@ void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair_cyclic( cpk_t *pk, sk_t *sk,
     memset( &prng, 0, sizeof(prng_t) );
 }
 
-#endif
 
 
-#ifdef _RAINBOW_CYCLIC_COMPRESSED
-void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_compact_keypair_cyclic( cpk_t *pk, csk_t *rsk, const unsigned char *pk_seed, const unsigned char *sk_seed ) {
-    memcpy( rsk->pk_seed, pk_seed, LEN_PKSEED );
-    memcpy( rsk->sk_seed, sk_seed, LEN_SKSEED );
-    sk_t sk;
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_keypair_cyclic( pk, &sk, pk_seed, sk_seed );
-}
-#endif
 
-#ifdef _RAINBOW_CYCLIC_COMPRESSED
-void PQCLEAN_RAINBOWIACYCLIC_CLEAN_generate_secretkey_cyclic( sk_t *sk, const unsigned char *pk_seed, const unsigned char *sk_seed ) {
-    memcpy( sk->sk_seed, sk_seed, LEN_SKSEED );
-
-    // prng for sk
-    prng_t prng0;
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_prng_set( &prng0, sk_seed, LEN_SKSEED );
-    generate_S_T( sk->s1, &prng0 );
-    calculate_t4( sk->t4, sk->t1, sk->t3 );
-
-    // prng for pk
-    sk_t inst_Qs;
-    sk_t *Qs = &inst_Qs;
-    prng_t prng1;
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_prng_set( &prng1, pk_seed, LEN_PKSEED );
-    generate_B1_B2( Qs->l1_F1, &prng1 );
-
-    obsfucate_l1_polys( Qs->l1_F1, Qs->l2_F1, N_TRIANGLE_TERMS(_V1), sk->s1 );
-    obsfucate_l1_polys( Qs->l1_F2, Qs->l2_F2, _V1 * _O1, sk->s1 );
-
-    // calcuate the parts of sk according to pk.
-    PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_F_from_Q( sk, Qs, sk );
-
-    // clean prng for sk
-    memset( &prng0, 0, sizeof(prng_t) );
-}
-#endif
-#if defined(_RAINBOW_CYCLIC) || defined(_RAINBOW_CYCLIC_COMPRESSED)
 void PQCLEAN_RAINBOWIACYCLIC_CLEAN_cpk_to_pk( pk_t *rpk, const cpk_t *cpk ) {
     // procedure:  cpk_t --> extcpk_t  --> pk_t
 
@@ -243,4 +168,3 @@ void PQCLEAN_RAINBOWIACYCLIC_CLEAN_cpk_to_pk( pk_t *rpk, const cpk_t *cpk ) {
     // convert from extcpk_t to pk_t
     PQCLEAN_RAINBOWIACYCLIC_CLEAN_extcpk_to_pk( rpk, &pk );
 }
-#endif
