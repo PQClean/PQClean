@@ -622,3 +622,21 @@ void aes256_ctr(unsigned char *out, size_t outlen, const unsigned char *iv, cons
     aes_ctr(out, outlen, iv, ctx->sk_exp, 14);
 }
 
+#ifdef __GNUC__
+#  define UNUSED(x) UNUSED_ ## x __attribute__((__unused__))
+#else
+#  define UNUSED(x) UNUSED_ ## x
+#endif
+
+void aes128_ctx_release(aes128ctx *UNUSED(r)) {
+    // no-op for PQClean's basic AES operation
+}
+
+void aes192_ctx_release(aes192ctx *UNUSED(r)) {
+    // no-op for PQClean's basic AES operation
+}
+
+void aes256_ctx_release(aes256ctx *UNUSED(r)) {
+    // no-op for PQClean's basic AES operation
+}
+
