@@ -8,47 +8,48 @@
 #define N_SB (SABER_N >> 2)
 #define N_SB_RES (2*N_SB-1)
 
+
+#define KARATSUBA_N 64
 static void karatsuba_simple(const uint16_t *a_1, const uint16_t *b_1, uint16_t *result_final) {
-    uint16_t N = 64;
-    uint16_t d01[N / 2 - 1];
-    uint16_t d0123[N / 2 - 1];
-    uint16_t d23[N / 2 - 1];
-    uint16_t result_d01[N - 1];
+    uint16_t d01[KARATSUBA_N / 2 - 1];
+    uint16_t d0123[KARATSUBA_N / 2 - 1];
+    uint16_t d23[KARATSUBA_N / 2 - 1];
+    uint16_t result_d01[KARATSUBA_N - 1];
 
     int32_t i, j;
 
-    memset(result_d01, 0, (N - 1)*sizeof(uint16_t));
-    memset(d01, 0, (N / 2 - 1)*sizeof(uint16_t));
-    memset(d0123, 0, (N / 2 - 1)*sizeof(uint16_t));
-    memset(d23, 0, (N / 2 - 1)*sizeof(uint16_t));
-    memset(result_final, 0, (2 * N - 1)*sizeof(uint16_t));
+    memset(result_d01, 0, (KARATSUBA_N - 1)*sizeof(uint16_t));
+    memset(d01, 0, (KARATSUBA_N / 2 - 1)*sizeof(uint16_t));
+    memset(d0123, 0, (KARATSUBA_N / 2 - 1)*sizeof(uint16_t));
+    memset(d23, 0, (KARATSUBA_N / 2 - 1)*sizeof(uint16_t));
+    memset(result_final, 0, (2 * KARATSUBA_N - 1)*sizeof(uint16_t));
 
     uint16_t acc1, acc2, acc3, acc4, acc5, acc6, acc7, acc8, acc9, acc10;
 
 
-    for (i = 0; i < N / 4; i++) {
+    for (i = 0; i < KARATSUBA_N / 4; i++) {
         acc1 = a_1[i]; //a0
-        acc2 = a_1[i + N / 4]; //a1
-        acc3 = a_1[i + 2 * N / 4]; //a2
-        acc4 = a_1[i + 3 * N / 4]; //a3
-        for (j = 0; j < N / 4; j++) {
+        acc2 = a_1[i + KARATSUBA_N / 4]; //a1
+        acc3 = a_1[i + 2 * KARATSUBA_N / 4]; //a2
+        acc4 = a_1[i + 3 * KARATSUBA_N / 4]; //a3
+        for (j = 0; j < KARATSUBA_N / 4; j++) {
 
             acc5 = b_1[j]; //b0
-            acc6 = b_1[j + N / 4]; //b1
+            acc6 = b_1[j + KARATSUBA_N / 4]; //b1
 
-            result_final[i + j + 0 * N / 4] = result_final[i + j + 0 * N / 4] + acc1 * acc5;
-            result_final[i + j + 2 * N / 4] = result_final[i + j + 2 * N / 4] + acc2 * acc6;
+            result_final[i + j + 0 * KARATSUBA_N / 4] = result_final[i + j + 0 * KARATSUBA_N / 4] + acc1 * acc5;
+            result_final[i + j + 2 * KARATSUBA_N / 4] = result_final[i + j + 2 * KARATSUBA_N / 4] + acc2 * acc6;
 
             acc7 = acc5 + acc6; //b01
             acc8 = acc1 + acc2; //a01
             d01[i + j] = d01[i + j] + acc7 * acc8;
             //--------------------------------------------------------
 
-            acc7 = b_1[j + 2 * N / 4]; //b2
-            acc8 = b_1[j + 3 * N / 4]; //b3
-            result_final[i + j + 4 * N / 4] = result_final[i + j + 4 * N / 4] + acc7 * acc3;
+            acc7 = b_1[j + 2 * KARATSUBA_N / 4]; //b2
+            acc8 = b_1[j + 3 * KARATSUBA_N / 4]; //b3
+            result_final[i + j + 4 * KARATSUBA_N / 4] = result_final[i + j + 4 * KARATSUBA_N / 4] + acc7 * acc3;
 
-            result_final[i + j + 6 * N / 4] = result_final[i + j + 6 * N / 4] + acc8 * acc4;
+            result_final[i + j + 6 * KARATSUBA_N / 4] = result_final[i + j + 6 * KARATSUBA_N / 4] + acc8 * acc4;
 
             acc9 = acc3 + acc4;
             acc10 = acc7 + acc8;
@@ -57,11 +58,11 @@ static void karatsuba_simple(const uint16_t *a_1, const uint16_t *b_1, uint16_t 
 
             acc5 = acc5 + acc7; //b02
             acc7 = acc1 + acc3; //a02
-            result_d01[i + j + 0 * N / 4] = result_d01[i + j + 0 * N / 4] + acc5 * acc7;
+            result_d01[i + j + 0 * KARATSUBA_N / 4] = result_d01[i + j + 0 * KARATSUBA_N / 4] + acc5 * acc7;
 
             acc6 = acc6 + acc8; //b13
             acc8 = acc2 + acc4;
-            result_d01[i + j + 2 * N / 4] = result_d01[i + j + 2 * N / 4] + acc6 * acc8;
+            result_d01[i + j + 2 * KARATSUBA_N / 4] = result_d01[i + j + 2 * KARATSUBA_N / 4] + acc6 * acc8;
 
             acc5 = acc5 + acc6;
             acc7 = acc7 + acc8;
@@ -71,25 +72,25 @@ static void karatsuba_simple(const uint16_t *a_1, const uint16_t *b_1, uint16_t 
 
     // 2nd last stage
 
-    for (i = 0; i < N / 2 - 1; i++) {
-        d0123[i] = d0123[i] - result_d01[i + 0 * N / 4] - result_d01[i + 2 * N / 4];
-        d01[i] = d01[i] - result_final[i + 0 * N / 4] - result_final[i + 2 * N / 4];
-        d23[i] = d23[i] - result_final[i + 4 * N / 4] - result_final[i + 6 * N / 4];
+    for (i = 0; i < KARATSUBA_N / 2 - 1; i++) {
+        d0123[i] = d0123[i] - result_d01[i + 0 * KARATSUBA_N / 4] - result_d01[i + 2 * KARATSUBA_N / 4];
+        d01[i] = d01[i] - result_final[i + 0 * KARATSUBA_N / 4] - result_final[i + 2 * KARATSUBA_N / 4];
+        d23[i] = d23[i] - result_final[i + 4 * KARATSUBA_N / 4] - result_final[i + 6 * KARATSUBA_N / 4];
     }
 
-    for (i = 0; i < N / 2 - 1; i++) {
-        result_d01[i + 1 * N / 4] = result_d01[i + 1 * N / 4] + d0123[i];
-        result_final[i + 1 * N / 4] = result_final[i + 1 * N / 4] + d01[i];
-        result_final[i + 5 * N / 4] = result_final[i + 5 * N / 4] + d23[i];
+    for (i = 0; i < KARATSUBA_N / 2 - 1; i++) {
+        result_d01[i + 1 * KARATSUBA_N / 4] = result_d01[i + 1 * KARATSUBA_N / 4] + d0123[i];
+        result_final[i + 1 * KARATSUBA_N / 4] = result_final[i + 1 * KARATSUBA_N / 4] + d01[i];
+        result_final[i + 5 * KARATSUBA_N / 4] = result_final[i + 5 * KARATSUBA_N / 4] + d23[i];
     }
 
     // Last stage
-    for (i = 0; i < N - 1; i++) {
-        result_d01[i] = result_d01[i] - result_final[i] - result_final[i + N];
+    for (i = 0; i < KARATSUBA_N - 1; i++) {
+        result_d01[i] = result_d01[i] - result_final[i] - result_final[i + KARATSUBA_N];
     }
 
-    for (i = 0; i < N - 1; i++) {
-        result_final[i + 1 * N / 2] = result_final[i + 1 * N / 2] + result_d01[i];
+    for (i = 0; i < KARATSUBA_N - 1; i++) {
+        result_final[i + 1 * KARATSUBA_N / 2] = result_final[i + 1 * KARATSUBA_N / 2] + result_d01[i];
     }
 
 }
@@ -212,10 +213,6 @@ static void toom_cook_4way (const uint16_t *a1, const uint16_t *b1, uint16_t *re
         C[i + 320] += r1;
         C[i + 384] += r0;
     }
-}
-
-static inline int16_t reduce(int16_t a, int64_t p) {
-    return a & (p - 1);
 }
 
 void PQCLEAN_FIRESABER_CLEAN_pol_mul(uint16_t *a, uint16_t *b, uint16_t *res, uint16_t p, uint32_t n)
