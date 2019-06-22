@@ -1,13 +1,5 @@
 #include "gf.h"
 
-static inline uint8_t gf256v_reduce_u32(uint32_t a) {
-    // https://godbolt.org/z/7hirMb
-    uint16_t *aa = (uint16_t *) (&a);
-    uint16_t r = aa[0] ^ aa[1];
-    uint8_t *rr = (uint8_t *) (&r);
-    return rr[0] ^ rr[1];
-}
-
 //// gf4 := gf2[x]/x^2+x+1
 static inline uint8_t gf4_mul_2(uint8_t a) {
     uint8_t r = (uint8_t) (a << 1);
@@ -36,20 +28,6 @@ static inline uint32_t gf4v_mul_u32(uint32_t a, uint8_t b) {
     return (a & bit0_b) ^ (bit1_b & gf4v_mul_2_u32(a));
 }
 
-static inline uint32_t _gf4v_mul_u32_u32(uint32_t a0, uint32_t a1, uint32_t b0, uint32_t b1) {
-    uint32_t c0 = a0 & b0;
-    uint32_t c2 = a1 & b1;
-    uint32_t c1_ = (a0 ^ a1) & (b0 ^ b1);
-    return ((c1_ ^ c0) << 1) ^ c0 ^ c2;
-}
-
-uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16_is_nonzero(uint8_t a) {
-    unsigned a4 = a & 0xf;
-    unsigned r = ((unsigned) 0) - a4;
-    r >>= 4;
-    return r & 1;
-}
-
 //// gf16 := gf4[y]/y^2+y+x
 static inline uint8_t gf16_mul(uint8_t a, uint8_t b) {
     uint8_t a0 = a & 3;
@@ -71,16 +49,7 @@ static inline uint8_t gf16_squ(uint8_t a) {
     return (uint8_t)((a1 << 2) ^ a1squ_x2 ^ gf4_squ(a0));
 }
 
-uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16_inv(uint8_t a) {
-    uint8_t a2 = gf16_squ(a);
-    uint8_t a4 = gf16_squ(a2);
-    uint8_t a8 = gf16_squ(a4);
-    uint8_t a6 = gf16_mul(a4, a2);
-    return gf16_mul(a8, a6);
-}
-
 // gf16 := gf4[y]/y^2+y+x
-
 uint32_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_mul_u32(uint32_t a, uint8_t b) {
     uint32_t axb0 = gf4v_mul_u32(a, b);
     uint32_t axb1 = gf4v_mul_u32(a, b >> 2);
@@ -89,6 +58,38 @@ uint32_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_mul_u32(uint32_t a, uint8_t b) {
     uint32_t a1b1_2 = a1b1 >> 2;
 
     return axb0 ^ a0b1 ^ a1b1 ^ gf4v_mul_2_u32(a1b1_2);
+}
+
+static inline uint8_t gf256v_reduce_u32(uint32_t a) {
+    // https://godbolt.org/z/7hirMb
+    uint16_t *aa = (uint16_t *) (&a);
+    uint16_t r = aa[0] ^ aa[1];
+    uint8_t *rr = (uint8_t *) (&r);
+    return rr[0] ^ rr[1];
+}
+
+
+
+static inline uint32_t _gf4v_mul_u32_u32(uint32_t a0, uint32_t a1, uint32_t b0, uint32_t b1) {
+    uint32_t c0 = a0 & b0;
+    uint32_t c2 = a1 & b1;
+    uint32_t c1_ = (a0 ^ a1) & (b0 ^ b1);
+    return ((c1_ ^ c0) << 1) ^ c0 ^ c2;
+}
+
+uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16_is_nonzero(uint8_t a) {
+    unsigned a4 = a & 0xf;
+    unsigned r = ((unsigned) 0) - a4;
+    r >>= 4;
+    return r & 1;
+}
+
+uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16_inv(uint8_t a) {
+    uint8_t a2 = gf16_squ(a);
+    uint8_t a4 = gf16_squ(a2);
+    uint8_t a8 = gf16_squ(a4);
+    uint8_t a6 = gf16_mul(a4, a2);
+    return gf16_mul(a8, a6);
 }
 
 static inline uint32_t _gf16v_mul_u32_u32(uint32_t a0, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t b0, uint32_t b1, uint32_t b2, uint32_t b3) {

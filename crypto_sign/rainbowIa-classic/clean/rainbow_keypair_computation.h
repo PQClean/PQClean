@@ -56,6 +56,5 @@ void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_
 
 
 
-
 #endif  // _RAINBOW_KEYPAIR_COMP_H_
 

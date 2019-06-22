@@ -57,7 +57,6 @@ void PQCLEAN_RAINBOWIACYCLIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t
 
 
 
-
 ///
 /// @brief Computing parts of the sk from parts of pk and sk
 ///
