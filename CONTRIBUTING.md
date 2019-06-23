@@ -33,8 +33,11 @@ See the section [API](#API) below.
     length-signature: <N>           # Signature only
     nistkat-sha256: sha256sum of 1st NIST KAT test case # KEM and signature
     testvectors-sha256: sha256sum of output of testvectors # Signature only
-    principal-submitter: Eve
-    auxiliary-submitters:
+    principal-submitters:
+      - Alice
+      - Bob
+      - ...
+    auxiliary-submitters: # optional
       - Alice
       - Bob
       - ...
