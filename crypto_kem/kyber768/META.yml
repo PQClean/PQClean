@@ -7,7 +7,8 @@ length-ciphertext: 1088
 length-secret-key: 2400
 length-shared-secret: 32
 nistkat-sha256: d6dbb9399d1ba4ee2d986de3e54a461256b91d6c2f9b90ad2410cf41e09b64d1
-principal-submitter: Peter Schwabe
+principal-submitters:
+  - Peter Schwabe
 auxiliary-submitters:
   - Roberto Avanzi
   - Joppe Bos

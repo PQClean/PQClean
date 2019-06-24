@@ -7,7 +7,8 @@ length-secret-key: 19888
 length-ciphertext: 9720
 length-shared-secret: 16
 nistkat-sha256: c1f006531583896c47416e10707d1c8e487fe549df304d7a9c43155d5e47b8b6
-principal-submitter: Michael Naehrig, Microsoft Research
+principal-submitters:
+  - Michael Naehrig, Microsoft Research
 auxiliary-submitters:
 - Erdem Alkim
 - Joppe W. Bos, NXP Semiconductors
