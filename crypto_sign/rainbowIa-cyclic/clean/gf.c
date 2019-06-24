@@ -60,13 +60,6 @@ uint32_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_mul_u32(uint32_t a, uint8_t b) {
     return axb0 ^ a0b1 ^ a1b1 ^ gf4v_mul_2_u32(a1b1_2);
 }
 
-static inline uint8_t gf256v_reduce_u32(uint32_t a) {
-    // https://godbolt.org/z/7hirMb
-    uint16_t *aa = (uint16_t *) (&a);
-    uint16_t r = aa[0] ^ aa[1];
-    uint8_t *rr = (uint8_t *) (&r);
-    return rr[0] ^ rr[1];
-}
 
 
 
@@ -118,8 +111,17 @@ uint32_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_mul_u32_u32(uint32_t a, uint32_t b)
     return _gf16v_mul_u32_u32(a0, a1, a2, a3, b0, b1, b2, b3);
 }
 
+static inline uint8_t gf256v_reduce_u32(uint32_t a) {
+    // https://godbolt.org/z/7hirMb
+    uint16_t *aa = (uint16_t *) (&a);
+    uint16_t r = aa[0] ^ aa[1];
+    uint8_t *rr = (uint8_t *) (&r);
+    return rr[0] ^ rr[1];
+}
+
 uint8_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_reduce_u32(uint32_t a) {
     uint8_t r256 = gf256v_reduce_u32(a);
     return (uint8_t)((r256 & 0xf) ^ (r256 >> 4));
 }
+
 

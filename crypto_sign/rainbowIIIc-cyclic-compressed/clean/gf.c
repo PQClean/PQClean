@@ -60,13 +60,6 @@ uint32_t PQCLEAN_RAINBOWIIICCYCLICCOMPRESSED_CLEAN_gf16v_mul_u32(uint32_t a, uin
     return axb0 ^ a0b1 ^ a1b1 ^ gf4v_mul_2_u32(a1b1_2);
 }
 
-static inline uint8_t gf256v_reduce_u32(uint32_t a) {
-    // https://godbolt.org/z/7hirMb
-    uint16_t *aa = (uint16_t *) (&a);
-    uint16_t r = aa[0] ^ aa[1];
-    uint8_t *rr = (uint8_t *) (&r);
-    return rr[0] ^ rr[1];
-}
 
 uint8_t PQCLEAN_RAINBOWIIICCYCLICCOMPRESSED_CLEAN_gf256_is_nonzero(uint8_t a) {
     unsigned a8 = a;
