@@ -6,7 +6,8 @@ length-secret-key: 64
 length-signature: 64
 nistkat-sha256: 65bb9e9b68b3114105e86d1107ede320901e174770ff8474722b4f459c3f2a51
 testvectors-sha256: 79d0bfaee00d058aa39981397016279738925f65bfec1aebb42372030abc4056
-principal-submitter: Jintai Ding
+principal-submitters:
+  - Jintai Ding
 auxiliary-submitters:
   - Ming-Shing Chen
   - Albrecht Petzoldt
