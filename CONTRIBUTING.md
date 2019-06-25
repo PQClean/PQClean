@@ -57,6 +57,7 @@ See the section [API](#API) below.
     astyle --project crypto_kem/yourschemename/clean/*.[ch]
     ```
     4. You may run the tests in the `tests/` folder. See the `README` for how to run the test suite.
+    5. Migrate your use of AES, SHA-2, and SHA-3 to the API in the `common` directory. Note that if you use the AES API, you must use the `aes128_keyexp` routine (or 192 or 256) to expand the key into a key schedule object, then use `aes128_ctx_release` to release the key schedule object once you're finished with it.
 
 5. Create `Makefile` and `Makefile.Microsoft_nmake` files to compile your scheme as static library.
     * We suggest you copy these from `crypto_kem/kyber768/clean` and modify them to suit your scheme.
