@@ -1,0 +1,11 @@
+consistency_checks:
+- source:
+    scheme: rainbowVc-cyclic
+    implementation: clean
+  files:
+    - utils_hash.c
+- source:
+    scheme: rainbowVc-cyclic-compressed
+    implementation: clean
+  files:
+    - utils_hash.c

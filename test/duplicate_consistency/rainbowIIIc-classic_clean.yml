@@ -1,0 +1,73 @@
+consistency_checks:
+- source:
+    scheme: rainbowIIIc-cyclic
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.h
+    - blas_u32.c
+    - blas_u32.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+    - utils_hash.c
+- source:
+    scheme: rainbowIIIc-cyclic-compressed
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.h
+    - blas_u32.c
+    - blas_u32.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+    - utils_hash.c
+- source:
+    scheme: rainbowVc-classic
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.h
+    - blas_u32.c
+    - blas_u32.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+- source:
+    scheme: rainbowVc-cyclic
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.h
+    - blas_u32.c
+    - blas_u32.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+- source:
+    scheme: rainbowVc-cyclic-compressed
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.h
+    - blas_u32.c
+    - blas_u32.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
