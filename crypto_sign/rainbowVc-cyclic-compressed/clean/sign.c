@@ -12,24 +12,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
 int
 PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char *sk) {
     unsigned char sk_seed[LEN_SKSEED] = {0};
     randombytes( sk_seed, LEN_SKSEED );
 
-
     unsigned char pk_seed[LEN_PKSEED] = {0};
     randombytes( pk_seed, LEN_PKSEED );
     PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_generate_compact_keypair_cyclic( (cpk_t *) pk, (csk_t *) sk, pk_seed, sk_seed );
-
     return 0;
 }
-
-
-
-
 
 int
 PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_crypto_sign(unsigned char *sm, size_t *smlen, const unsigned char *m, size_t mlen, const unsigned char *sk) {
@@ -40,35 +32,29 @@ PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_crypto_sign(unsigned char *sm, size_t *s
     memcpy( sm, m, mlen );
     smlen[0] = mlen + _SIGNATURE_BYTE;
 
-
     return PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_rainbow_sign_cyclic( sm + mlen, (const csk_t *)sk, digest );
-
-
-
 }
-
-
-
-
-
 
 int
 PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_crypto_sign_open(unsigned char *m, size_t *mlen, const unsigned char *sm, size_t smlen, const unsigned char *pk) {
-    //TODO: this should not copy out the message if verification fails
+    int rc;
     if ( _SIGNATURE_BYTE > smlen ) {
-        return -1;
+        rc = -1;
+    } else {
+        *mlen = smlen - _SIGNATURE_BYTE;
+
+        unsigned char digest[_HASH_LEN];
+        PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_hash_msg(digest, _HASH_LEN, sm, *mlen);
+
+        rc = PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_rainbow_verify_cyclic(digest, sm + mlen[0], (const cpk_t *)pk);
     }
-    memcpy( m, sm, smlen - _SIGNATURE_BYTE );
-    mlen[0] = smlen - _SIGNATURE_BYTE;
-
-    unsigned char digest[_HASH_LEN];
-    PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_hash_msg( digest, _HASH_LEN, m, *mlen );
-
-
-    return PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_rainbow_verify_cyclic( digest, sm + mlen[0], (const cpk_t *)pk );
-
-
-
+    if (!rc) {
+        memcpy( m, sm, smlen - _SIGNATURE_BYTE );
+    } else { // bad signature
+        *mlen = (size_t) -1;
+        memset(m, 0, smlen);
+    }
+    return rc;
 }
 
 int PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_crypto_sign_signature(
@@ -90,5 +76,4 @@ int PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_crypto_sign_verify(
     unsigned char digest[_HASH_LEN];
     PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
     return PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_rainbow_verify_cyclic( digest, sig, (const cpk_t *)pk );
-
 }

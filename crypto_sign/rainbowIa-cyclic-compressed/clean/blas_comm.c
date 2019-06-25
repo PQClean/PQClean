@@ -100,7 +100,7 @@ unsigned gf16mat_solve_linear_eq_ref(uint8_t *sol, const uint8_t *inp_mat, const
         memcpy(mat + i * (n_byte + 1), inp_mat + i * n_byte, n_byte);
         mat[i * (n_byte + 1) + n_byte] = PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_get_ele(c_terms, i);
     }
-    unsigned r8 = PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_gauss_elim(mat, n, n + 2);  /// XXX: this function is ``defined'' in blas.h
+    unsigned r8 = PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_gauss_elim(mat, n, n + 2);
     for (unsigned i = 0; i < n; i++) {
         PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_set_ele(sol, i, mat[i * (n_byte + 1) + n_byte]);
     }
@@ -128,7 +128,7 @@ unsigned PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_inv(uint8_t *inv_a, con
         gf256v_add(ai, a + i * n_w_byte, n_w_byte);
         PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_set_ele(ai + n_w_byte, i, 1);
     }
-    unsigned r8 = PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_gauss_elim(aa, H, 2 * H);  /// XXX: would 2*H fail if H is odd ???
+    unsigned r8 = PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_gauss_elim(aa, H, 2 * H);
     gf16mat_submat(inv_a, H, H, aa, 2 * H, H);
     return r8;
 }

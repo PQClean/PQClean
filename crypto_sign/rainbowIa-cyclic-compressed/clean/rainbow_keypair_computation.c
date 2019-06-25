@@ -2,7 +2,6 @@
 /// @brief Implementations for functions in rainbow_keypair_computation.h
 ///
 
-
 #include "blas.h"
 #include "blas_comm.h"
 #include "rainbow_blas.h"
@@ -11,7 +10,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk ) {
     const unsigned char *idx_l1 = cpk->l1_Q1;
@@ -82,9 +80,6 @@ void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_extcpk_to_pk( pk_t *pk, const ext_c
     }
 }
 
-
-
-
 static
 void calculate_F_from_Q_ref( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
     // Layer 1
@@ -146,9 +141,6 @@ void calculate_F_from_Q_ref( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
     batch_bmatTr_madd( Fs->l2_F6, Qs->l2_F2, _O1, Ts->t4, _V1, _V1_BYTE, _O2, _O2_BYTE );
 
 }
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
 
 static
 void calculate_Q_from_F_cyclic_ref( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
@@ -212,16 +204,9 @@ void calculate_Q_from_F_cyclic_ref( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) 
     PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_UpperTrianglize( Qs->l2_Q9, tempQ.l2_F3, _O2, _O2_BYTE );                                 // Q9
 }
 
-
-
-///////////////////////////////////////////////////////////////////////
-
-
 // Choosing implementations depends on the macros: _BLAS_SSE_ and _BLAS_AVX2_
 #define calculate_F_from_Q_impl        calculate_F_from_Q_ref
 #define calculate_Q_from_F_cyclic_impl calculate_Q_from_F_cyclic_ref
-
-
 
 void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs, sk_t *Ts ) {
     calculate_F_from_Q_impl( Fs, Qs, Ts );
@@ -230,4 +215,3 @@ void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_calculate_F_from_Q( sk_t *Fs, const
 void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_calculate_Q_from_F_cyclic( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     calculate_Q_from_F_cyclic_impl( Qs, Fs, Ts );
 }
-

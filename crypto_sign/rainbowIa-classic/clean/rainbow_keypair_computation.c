@@ -2,7 +2,6 @@
 /// @brief Implementations for functions in rainbow_keypair_computation.h
 ///
 
-
 #include "blas.h"
 #include "blas_comm.h"
 #include "rainbow_blas.h"
@@ -11,7 +10,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
 
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk ) {
     const unsigned char *idx_l1 = cpk->l1_Q1;
@@ -187,11 +185,7 @@ void calculate_Q_from_F_ref( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     batch_trimatTr_madd( Qs->l2_Q6, Fs->l2_F5, Ts->t3, _O1, _O1_BYTE, _O2, _O2_BYTE );       //   F2tr*T2 + F5_F5T*T3 + F6
     batch_matTr_madd( Qs->l2_Q6, Ts->t1, _V1, _V1_BYTE, _O1, Qs->l2_Q3, _O2, _O2_BYTE );     // Q6
 }
-// TODO: these defines are not really required for a clean implementation - just implement directly
 #define calculate_Q_from_F_impl        calculate_Q_from_F_ref
 void PQCLEAN_RAINBOWIACLASSIC_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts ) {
     calculate_Q_from_F_impl( Qs, Fs, Ts );
 }
-
-
-
