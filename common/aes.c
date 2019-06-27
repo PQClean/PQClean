@@ -622,3 +622,18 @@ void aes256_ctr(unsigned char *out, size_t outlen, const unsigned char *iv, cons
     aes_ctr(out, outlen, iv, ctx->sk_exp, 14);
 }
 
+void aes128_ctx_release(aes128ctx *r) {
+    // no-op for PQClean's basic AES operation
+    (void) r;
+}
+
+void aes192_ctx_release(aes192ctx *r) {
+    // no-op for PQClean's basic AES operation
+    (void) r;
+}
+
+void aes256_ctx_release(aes256ctx *r) {
+    // no-op for PQClean's basic AES operation
+    (void) r;
+}
+

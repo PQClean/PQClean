@@ -63,6 +63,7 @@ int PQCLEAN_FRODOKEM976AES_OPT_mul_add_as_plus_e(uint16_t *out, const uint16_t *
             out[(i + 3)*PARAMS_NBAR + k] += sum[3];
         }
     }
+    aes128_ctx_release(&ctx128);
     return 1;
 }
 
@@ -121,5 +122,6 @@ int PQCLEAN_FRODOKEM976AES_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t *
             }
         }
     }
+    aes128_ctx_release(&ctx128);
     return 1;
 }

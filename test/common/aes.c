@@ -96,5 +96,9 @@ int main(void)
     r = 1;
   }
 
+  aes128_ctx_release(&ctx128);
+  aes192_ctx_release(&ctx192);
+  aes256_ctx_release(&ctx256);
+
   return r;
 }
