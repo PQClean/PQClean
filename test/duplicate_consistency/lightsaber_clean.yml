@@ -1,0 +1,31 @@
+consistency_checks:
+- source:
+    scheme: saber
+    implementation: clean
+  files:
+    - cbd.h
+    - kem.c
+    - pack_unpack.c
+    - pack_unpack.h
+    - poly.c
+    - poly.h
+    - poly_mul.c
+    - poly_mul.h
+    - SABER_indcpa.h
+    - verify.c
+    - verify.h 
+- source:
+    scheme: firesaber
+    implementation: clean
+  files:
+    - cbd.h
+    - kem.c
+    - pack_unpack.c
+    - pack_unpack.h
+    - poly.c
+    - poly.h
+    - poly_mul.c
+    - poly_mul.h
+    - SABER_indcpa.h
+    - verify.c
+    - verify.h 
