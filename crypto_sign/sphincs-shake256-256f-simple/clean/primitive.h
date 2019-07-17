@@ -2,6 +2,6 @@
 #define SPX_PRIMITIVE_H
 
 
-#define hash_state const int
+#define hash_state int
 
 #endif
