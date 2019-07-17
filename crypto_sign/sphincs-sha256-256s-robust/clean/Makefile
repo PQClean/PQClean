@@ -2,7 +2,7 @@
 
 LIB=libsphincs-sha256-256s-robust_clean.a
 
-HEADERS = params.h address.h wots.h utils.h fors.h api.h  hash.h thash.h sha256.h
+HEADERS = params.h address.h wots.h utils.h fors.h api.h hash.h hash_state.h thash.h sha256.h
 OBJECTS =          address.o wots.o utils.o fors.o sign.o hash_sha256.o thash_sha256_robust.o sha256.o
 
 CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)

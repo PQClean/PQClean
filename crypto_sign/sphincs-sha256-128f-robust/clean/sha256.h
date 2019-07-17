@@ -16,8 +16,6 @@ void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_mgf1(
     unsigned char *out, unsigned long outlen,
     unsigned char *input_plus_four_bytes, unsigned long inlen);
 
-extern sha256ctx PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_state_seeded;
-
-void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_seed_state(const unsigned char *pub_seed);
+void PQCLEAN_SPHINCSSHA256128FROBUST_CLEAN_seed_state(sha256ctx *hash_state_seeded, const unsigned char *pub_seed);
 
 #endif

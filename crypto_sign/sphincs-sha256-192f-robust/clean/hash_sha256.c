@@ -12,8 +12,9 @@
 /* For SHA256, there is no immediate reason to initialize at the start,
    so this function is an empty operation. */
 void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_initialize_hash_function(
+    hash_state *hash_state_seeded,
     const unsigned char *pub_seed, const unsigned char *sk_seed) {
-    PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_seed_state(pub_seed);
+    PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_seed_state(hash_state_seeded, pub_seed);
     (void)sk_seed; /* Suppress an 'unused parameter' warning. */
 }
 
@@ -21,7 +22,8 @@ void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_initialize_hash_function(
  * Computes PRF(key, addr), given a secret key of SPX_N bytes and an address
  */
 void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_prf_addr(
-    unsigned char *out, const unsigned char *key, const uint32_t addr[8]) {
+    unsigned char *out, const unsigned char *key, const uint32_t addr[8],
+    const hash_state *hash_state_seeded) {
     unsigned char buf[SPX_N + SPX_SHA256_ADDR_BYTES];
     unsigned char outbuf[SPX_SHA256_OUTPUT_BYTES];
 
@@ -30,6 +32,8 @@ void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_prf_addr(
 
     sha256(outbuf, buf, SPX_N + SPX_SHA256_ADDR_BYTES);
     memcpy(out, outbuf, SPX_N);
+
+    (void)hash_state_seeded; /* Prevent unused parameter warning. */
 }
 
 /**
@@ -43,7 +47,7 @@ void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_prf_addr(
 void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_gen_message_random(
     unsigned char *R,
     const unsigned char *sk_prf, const unsigned char *optrand,
-    const unsigned char *m, size_t mlen) {
+    const unsigned char *m, size_t mlen, const hash_state *hash_state_seeded) {
     unsigned char buf[SPX_SHA256_BLOCK_BYTES + SPX_SHA256_OUTPUT_BYTES];
     sha256ctx state;
     int i;
@@ -82,6 +86,8 @@ void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_gen_message_random(
 
     sha256(buf, buf, SPX_SHA256_BLOCK_BYTES + SPX_SHA256_OUTPUT_BYTES);
     memcpy(R, buf, SPX_N);
+
+    (void)hash_state_seeded; /* Prevent unused parameter warning. */
 }
 
 /**
@@ -92,7 +98,8 @@ void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_gen_message_random(
 void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_hash_message(
     unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
     const unsigned char *R, const unsigned char *pk,
-    const unsigned char *m, size_t mlen) {
+    const unsigned char *m, size_t mlen,
+    const hash_state *hash_state_seeded) {
 #define SPX_TREE_BITS (SPX_TREE_HEIGHT * (SPX_D - 1))
 #define SPX_TREE_BYTES ((SPX_TREE_BITS + 7) / 8)
 #define SPX_LEAF_BITS SPX_TREE_HEIGHT
@@ -145,4 +152,6 @@ void PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_hash_message(
     *leaf_idx = (uint32_t)PQCLEAN_SPHINCSSHA256192FROBUST_CLEAN_bytes_to_ull(
                     bufp, SPX_LEAF_BYTES);
     *leaf_idx &= (~(uint32_t)0) >> (32 - SPX_LEAF_BITS);
+
+    (void)hash_state_seeded; /* Prevent unused parameter warning. */
 }

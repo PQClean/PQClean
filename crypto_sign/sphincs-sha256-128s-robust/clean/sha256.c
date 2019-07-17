@@ -50,13 +50,12 @@ void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_mgf1(
     }
 }
 
-sha256ctx PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_state_seeded;
 
 /**
  * Absorb the constant pub_seed using one round of the compression function
- * This initializes state_seeded, which can then be reused in thash
+ * This initializes hash_state_seeded, which can then be reused in thash
  **/
-void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_seed_state(const unsigned char *pub_seed) {
+void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_seed_state(sha256ctx *hash_state_seeded, const unsigned char *pub_seed) {
     uint8_t block[SPX_SHA256_BLOCK_BYTES];
     size_t i;
 
@@ -67,6 +66,6 @@ void PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_seed_state(const unsigned char *pub_s
         block[i] = 0;
     }
 
-    sha256_inc_init(&PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_state_seeded);
-    sha256_inc_blocks(&PQCLEAN_SPHINCSSHA256128SROBUST_CLEAN_state_seeded, block, 1);
+    sha256_inc_init(hash_state_seeded);
+    sha256_inc_blocks(hash_state_seeded, block, 1);
 }
