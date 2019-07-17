@@ -2,7 +2,7 @@
 #define SPX_WOTS_H
 
 #include "params.h"
-#include "primitive.h"
+#include "hash_state.h"
 #include <stdint.h>
 
 /**
@@ -16,7 +16,7 @@
 void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_wots_gen_pk(
     unsigned char *pk, const unsigned char *sk_seed,
     const unsigned char *pub_seed, uint32_t addr[8],
-    hash_state *state_seeded);
+    const hash_state *hash_state_seeded);
 
 /**
  * Takes a n-byte message and the 32-byte seed for the private key to compute a
@@ -25,7 +25,7 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_wots_gen_pk(
 void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_wots_sign(
     unsigned char *sig, const unsigned char *msg,
     const unsigned char *sk_seed, const unsigned char *pub_seed,
-    uint32_t addr[8], hash_state *state_seeded);
+    uint32_t addr[8], const hash_state *hash_state_seeded);
 
 /**
  * Takes a WOTS signature and an n-byte message, computes a WOTS public key.
@@ -36,6 +36,6 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_wots_pk_from_sig(
     unsigned char *pk,
     const unsigned char *sig, const unsigned char *msg,
     const unsigned char *pub_seed, uint32_t addr[8],
-    hash_state *state_seeded);
+    const hash_state *hash_state_seeded);
 
 #endif

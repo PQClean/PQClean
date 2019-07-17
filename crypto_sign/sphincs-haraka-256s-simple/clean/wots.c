@@ -4,7 +4,7 @@
 #include "address.h"
 #include "hash.h"
 #include "params.h"
-#include "primitive.h"
+#include "hash_state.h"
 #include "thash.h"
 #include "utils.h"
 #include "wots.h"
@@ -19,12 +19,12 @@
  */
 static void wots_gen_sk(unsigned char *sk, const unsigned char *sk_seed,
                         uint32_t wots_addr[8],
-                        const hash_state *state_seeded) {
+                        const hash_state *hash_state_seeded) {
     /* Make sure that the hash address is actually zeroed. */
     PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_set_hash_addr(wots_addr, 0);
 
     /* Generate sk element. */
-    PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_prf_addr(sk, sk_seed, wots_addr, state_seeded);
+    PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_prf_addr(sk, sk_seed, wots_addr, hash_state_seeded);
 }
 
 /**
@@ -37,7 +37,7 @@ static void wots_gen_sk(unsigned char *sk, const unsigned char *sk_seed,
 static void gen_chain(unsigned char *out, const unsigned char *in,
                       unsigned int start, unsigned int steps,
                       const unsigned char *pub_seed, uint32_t addr[8],
-                      hash_state *state_seeded) {
+                      const hash_state *hash_state_seeded) {
     uint32_t i;
 
     /* Initialize out with the value at position 'start'. */
@@ -47,7 +47,7 @@ static void gen_chain(unsigned char *out, const unsigned char *in,
     for (i = start; i < (start + steps) && i < SPX_WOTS_W; i++) {
         PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_set_hash_addr(addr, i);
         PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_thash_1(
-            out, out, pub_seed, addr, state_seeded);
+            out, out, pub_seed, addr, hash_state_seeded);
     }
 }
 
@@ -113,14 +113,14 @@ static void chain_lengths(unsigned int *lengths, const unsigned char *msg) {
 void PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_wots_gen_pk(
     unsigned char *pk, const unsigned char *sk_seed,
     const unsigned char *pub_seed, uint32_t addr[8],
-    hash_state *state_seeded) {
+    const hash_state *hash_state_seeded) {
     uint32_t i;
 
     for (i = 0; i < SPX_WOTS_LEN; i++) {
         PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_set_chain_addr(addr, i);
-        wots_gen_sk(pk + i * SPX_N, sk_seed, addr, state_seeded);
+        wots_gen_sk(pk + i * SPX_N, sk_seed, addr, hash_state_seeded);
         gen_chain(pk + i * SPX_N, pk + i * SPX_N,
-                  0, SPX_WOTS_W - 1, pub_seed, addr, state_seeded);
+                  0, SPX_WOTS_W - 1, pub_seed, addr, hash_state_seeded);
     }
 }
 
@@ -130,7 +130,7 @@ void PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_wots_gen_pk(
 void PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_wots_sign(
     unsigned char *sig, const unsigned char *msg,
     const unsigned char *sk_seed, const unsigned char *pub_seed,
-    uint32_t addr[8], hash_state *state_seeded) {
+    uint32_t addr[8], const hash_state *hash_state_seeded) {
     unsigned int lengths[SPX_WOTS_LEN];
     uint32_t i;
 
@@ -138,8 +138,8 @@ void PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_wots_sign(
 
     for (i = 0; i < SPX_WOTS_LEN; i++) {
         PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_set_chain_addr(addr, i);
-        wots_gen_sk(sig + i * SPX_N, sk_seed, addr, state_seeded);
-        gen_chain(sig + i * SPX_N, sig + i * SPX_N, 0, lengths[i], pub_seed, addr, state_seeded);
+        wots_gen_sk(sig + i * SPX_N, sk_seed, addr, hash_state_seeded);
+        gen_chain(sig + i * SPX_N, sig + i * SPX_N, 0, lengths[i], pub_seed, addr, hash_state_seeded);
     }
 }
 
@@ -152,7 +152,7 @@ void PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_wots_pk_from_sig(
     unsigned char *pk,
     const unsigned char *sig, const unsigned char *msg,
     const unsigned char *pub_seed, uint32_t addr[8],
-    hash_state *state_seeded) {
+    const hash_state *hash_state_seeded) {
     unsigned int lengths[SPX_WOTS_LEN];
     uint32_t i;
 
@@ -162,6 +162,6 @@ void PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_wots_pk_from_sig(
         PQCLEAN_SPHINCSHARAKA256SSIMPLE_CLEAN_set_chain_addr(addr, i);
         gen_chain(pk + i * SPX_N, sig + i * SPX_N,
                   lengths[i], SPX_WOTS_W - 1 - lengths[i], pub_seed, addr,
-                  state_seeded);
+                  hash_state_seeded);
     }
 }

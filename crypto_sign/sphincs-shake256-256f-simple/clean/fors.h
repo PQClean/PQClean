@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "params.h"
-#include "primitive.h"
+#include "hash_state.h"
 
 /**
  * Signs a message m, deriving the secret key from sk_seed and the FTS address.
@@ -14,7 +14,7 @@ void PQCLEAN_SPHINCSSHAKE256256FSIMPLE_CLEAN_fors_sign(
     unsigned char *sig, unsigned char *pk,
     const unsigned char *m,
     const unsigned char *sk_seed, const unsigned char *pub_seed,
-    const uint32_t fors_addr[8], hash_state *state_seeded);
+    const uint32_t fors_addr[8], const hash_state *hash_state_seeded);
 
 /**
  * Derives the FORS public key from a signature.
@@ -27,6 +27,6 @@ void PQCLEAN_SPHINCSSHAKE256256FSIMPLE_CLEAN_fors_pk_from_sig(
     unsigned char *pk,
     const unsigned char *sig, const unsigned char *m,
     const unsigned char *pub_seed, const uint32_t fors_addr[8],
-    hash_state *state_seeded);
+    const hash_state *hash_state_seeded);
 
 #endif
