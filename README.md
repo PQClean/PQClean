@@ -146,7 +146,9 @@ While we run extensive automatic testing on [Circle CI][circleci-pqc] (Linux bui
 To do this, make sure the following is installed:
 
 * Python 3.5+
-* `nosetests` or `nose2` (either for Python 3)
+* `pytest` for python 3.
+
+We also recommend installing ``pytest-xdist`` to allow running tests in parallel.
 
 You will also need to make sure the submodules are initialized by running:
 
@@ -154,8 +156,7 @@ You will also need to make sure the submodules are initialized by running:
 git submodule update --init
 ```
 
-Run the Python-based tests by going into the `test` directory and running `nosetests -v` or `nose2 -B -v`, depending on what you installed.
-If you have the `rednose` plugin for `nosetests` installed, run `nosetests --rednose` to get colored output.
+Run the Python-based tests by going into the `test` directory and running `pytest -v` or (recommended) `pytest -n=auto` for parallel testing.
 
 You may also run `python3 <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
 

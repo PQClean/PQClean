@@ -2,6 +2,7 @@ import os
 from glob import glob
 import sys
 import unittest
+import pytest
 
 import pqclean
 import helpers
@@ -9,15 +10,14 @@ import helpers
 additional_flags = []
 
 
-def test_clang_tidy():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_tidy, implementation
-
-
-@helpers.filtered_test
+@pytest.mark.parametrize(
+    'implementation',
+    pqclean.Scheme.all_implementations(),
+    ids=str,
+)
 @helpers.skip_windows()
-def check_tidy(implementation: pqclean.Implementation):
+@helpers.filtered_test
+def test_clang_tidy(implementation: pqclean.Implementation):
     helpers.ensure_available('clang-tidy')
     cfiles = implementation.cfiles()
     common_files = glob(os.path.join('..', 'common', '*.c'))
@@ -45,10 +45,8 @@ if __name__ == "__main__":
     # allow a user to specify --fix-errors, to immediately fix errors
     if len(sys.argv) >= 2 and sys.argv[1] == '-fix-errors':
         additional_flags = ['-fix-errors']
-        sys.argv = sys.argv[0:1] + sys.argv[2:]
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+        del sys.argv[1]
+
+    import pytest
+    import sys
+    pytest.main(sys.argv)
