@@ -10,7 +10,7 @@
 #include "common.h"
 #include "params.h"
 
-static uint16_t CDF_TABLE[CDF_TABLE_LEN] = CDF_TABLE_DATA;
+static const uint16_t CDF_TABLE[CDF_TABLE_LEN] = CDF_TABLE_DATA;
 
 void PQCLEAN_FRODOKEM640SHAKE_OPT_sample_n(uint16_t *s, size_t n) {
     // Fills vector s with n samples from the noise distribution which requires 16 bits to sample.
