@@ -4,6 +4,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 #include "sha2.h"
 
@@ -526,6 +527,10 @@ void sha512_inc_init(sha512ctx *state) {
     for (size_t i = 64; i < 72; ++i) {
         state->ctx[i] = 0;
     }
+}
+
+void sha256_inc_dupe_state(sha256ctx *stateout, const sha256ctx *statein) {
+    memcpy(stateout, statein, sizeof(sha256ctx));
 }
 
 void sha256_inc_blocks(sha256ctx *state, const uint8_t *in, size_t inblocks) {

@@ -30,6 +30,7 @@ void sha224_inc_finalize(uint8_t *out, sha224ctx *state, const uint8_t *in, size
 void sha224(uint8_t *out, const uint8_t *in, size_t inlen);
 
 void sha256_inc_init(sha256ctx *state);
+void sha256_inc_dupe_state(sha256ctx *stateout, const sha256ctx *statein);
 void sha256_inc_blocks(sha256ctx *state, const uint8_t *in, size_t inblocks);
 void sha256_inc_finalize(uint8_t *out, sha256ctx *state, const uint8_t *in, size_t inlen);
 void sha256(uint8_t *out, const uint8_t *in, size_t inlen);
