@@ -75,7 +75,7 @@ PQCLEAN_FALCON512_CLEAN_modq_encode(
 size_t
 PQCLEAN_FALCON512_CLEAN_modq_decode(
     uint16_t *x, unsigned logn,
-    const void *in, size_t in_max_len) {
+    const void *in, size_t max_in_len) {
     size_t n, in_len, u;
     const uint8_t *buf;
     uint32_t acc;
@@ -83,7 +83,7 @@ PQCLEAN_FALCON512_CLEAN_modq_decode(
 
     n = (size_t)1 << logn;
     in_len = ((n * 14) + 7) >> 3;
-    if (in_len > in_max_len) {
+    if (in_len > max_in_len) {
         return 0;
     }
     buf = in;
@@ -132,7 +132,8 @@ PQCLEAN_FALCON512_CLEAN_trim_i16_encode(
     out_len = ((n * bits) + 7) >> 3;
     if (out == NULL) {
         return out_len;
-    } else if (out_len > max_out_len) {
+    }
+    if (out_len > max_out_len) {
         return 0;
     }
     buf = out;
@@ -157,7 +158,7 @@ PQCLEAN_FALCON512_CLEAN_trim_i16_encode(
 size_t
 PQCLEAN_FALCON512_CLEAN_trim_i16_decode(
     int16_t *x, unsigned logn, unsigned bits,
-    const void *in, size_t in_max_len) {
+    const void *in, size_t max_in_len) {
     size_t n, in_len;
     const uint8_t *buf;
     size_t u;
@@ -166,7 +167,7 @@ PQCLEAN_FALCON512_CLEAN_trim_i16_decode(
 
     n = (size_t)1 << logn;
     in_len = ((n * bits) + 7) >> 3;
-    if (in_len > in_max_len) {
+    if (in_len > max_in_len) {
         return 0;
     }
     buf = in;
@@ -225,7 +226,8 @@ PQCLEAN_FALCON512_CLEAN_trim_i8_encode(
     out_len = ((n * bits) + 7) >> 3;
     if (out == NULL) {
         return out_len;
-    } else if (out_len > max_out_len) {
+    }
+    if (out_len > max_out_len) {
         return 0;
     }
     buf = out;
@@ -250,7 +252,7 @@ PQCLEAN_FALCON512_CLEAN_trim_i8_encode(
 size_t
 PQCLEAN_FALCON512_CLEAN_trim_i8_decode(
     int8_t *x, unsigned logn, unsigned bits,
-    const void *in, size_t in_max_len) {
+    const void *in, size_t max_in_len) {
     size_t n, in_len;
     const uint8_t *buf;
     size_t u;
@@ -259,7 +261,7 @@ PQCLEAN_FALCON512_CLEAN_trim_i8_decode(
 
     n = (size_t)1 << logn;
     in_len = ((n * bits) + 7) >> 3;
-    if (in_len > in_max_len) {
+    if (in_len > max_in_len) {
         return 0;
     }
     buf = in;
@@ -395,7 +397,7 @@ PQCLEAN_FALCON512_CLEAN_comp_encode(
 size_t
 PQCLEAN_FALCON512_CLEAN_comp_decode(
     int16_t *x, unsigned logn,
-    const void *in, size_t in_max_len) {
+    const void *in, size_t max_in_len) {
     const uint8_t *buf;
     size_t n, u, v;
     uint32_t acc;
@@ -413,7 +415,7 @@ PQCLEAN_FALCON512_CLEAN_comp_decode(
          * Get next eight bits: sign and low seven bits of the
          * absolute value.
          */
-        if (v >= in_max_len) {
+        if (v >= max_in_len) {
             return 0;
         }
         acc = (acc << 8) | (uint32_t)buf[v ++];
@@ -426,7 +428,7 @@ PQCLEAN_FALCON512_CLEAN_comp_decode(
          */
         for (;;) {
             if (acc_len == 0) {
-                if (v >= in_max_len) {
+                if (v >= max_in_len) {
                     return 0;
                 }
                 acc = (acc << 8) | (uint32_t)buf[v ++];

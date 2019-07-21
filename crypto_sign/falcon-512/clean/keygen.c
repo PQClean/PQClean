@@ -2183,7 +2183,7 @@ get_rng_u64(shake256_context *rng) {
      * We enforce little-endian representation.
      */
 
-    unsigned char tmp[8];
+    uint8_t tmp[8];
 
     shake256_extract(rng, tmp, sizeof tmp);
     return (uint64_t)tmp[0]
@@ -2414,7 +2414,7 @@ poly_small_sqnorm(const int8_t *f, unsigned logn) {
  */
 static fpr *
 align_fpr(void *base, void *data) {
-    unsigned char *cb, *cd;
+    uint8_t *cb, *cd;
     size_t k, km;
 
     cb = base;
@@ -2433,7 +2433,7 @@ align_fpr(void *base, void *data) {
  */
 static uint32_t *
 align_u32(void *base, void *data) {
-    unsigned char *cb, *cd;
+    uint8_t *cb, *cd;
     size_t k, km;
 
     cb = base;

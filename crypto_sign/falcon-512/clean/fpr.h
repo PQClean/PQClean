@@ -243,8 +243,7 @@ static inline int64_t
 fpr_rint(fpr x) {
     uint64_t m, d;
     int e;
-    uint32_t s, dd;
-    unsigned f;
+    uint32_t s, dd, f;
 
     /*
      * We assume that the value fits in -(2^63-1)..+(2^63-1). We can
@@ -278,7 +277,7 @@ fpr_rint(fpr x) {
      */
     d = fpr_ulsh(m, 63 - e);
     dd = (uint32_t)d | ((uint32_t)(d >> 32) & 0x1FFFFFFF);
-    f = (unsigned)(d >> 61) | (unsigned)((dd | -dd) >> 31);
+    f = (uint32_t)(d >> 61) | ((dd | -dd) >> 31);
     m = fpr_ursh(m, e) + (uint64_t)((0xC8U >> f) & 1U);
 
     /*

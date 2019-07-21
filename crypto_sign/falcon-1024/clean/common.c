@@ -237,7 +237,7 @@ PQCLEAN_FALCON1024_CLEAN_is_short(
 /* see inner.h */
 int
 PQCLEAN_FALCON1024_CLEAN_is_short_half(
-    uint32_t sqn, const int16_t *a, unsigned logn) {
+    uint32_t sqn, const int16_t *s2, unsigned logn) {
     size_t n, u;
     uint32_t ng;
 
@@ -246,7 +246,7 @@ PQCLEAN_FALCON1024_CLEAN_is_short_half(
     for (u = 0; u < n; u ++) {
         int32_t z;
 
-        z = a[u];
+        z = s2[u];
         sqn += (uint32_t)(z * z);
         ng |= sqn;
     }

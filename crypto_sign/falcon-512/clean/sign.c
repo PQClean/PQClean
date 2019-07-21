@@ -224,46 +224,46 @@ skoff_tree(unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512_CLEAN_expand_privkey(fpr *restrict sk,
-                                       const int8_t *f_src, const int8_t *g_src,
-                                       const int8_t *F_src, const int8_t *G_src,
+PQCLEAN_FALCON512_CLEAN_expand_privkey(fpr *restrict expanded_key,
+                                       const int8_t *f, const int8_t *g,
+                                       const int8_t *F, const int8_t *G,
                                        unsigned logn, uint8_t *restrict tmp) {
     size_t n;
-    fpr *f, *g, *F, *G;
+    fpr *rf, *rg, *rF, *rG;
     fpr *b00, *b01, *b10, *b11;
     fpr *g00, *g01, *g11, *gxx;
     fpr *tree;
 
     n = MKN(logn);
-    b00 = sk + skoff_b00(logn);
-    b01 = sk + skoff_b01(logn);
-    b10 = sk + skoff_b10(logn);
-    b11 = sk + skoff_b11(logn);
-    tree = sk + skoff_tree(logn);
+    b00 = expanded_key + skoff_b00(logn);
+    b01 = expanded_key + skoff_b01(logn);
+    b10 = expanded_key + skoff_b10(logn);
+    b11 = expanded_key + skoff_b11(logn);
+    tree = expanded_key + skoff_tree(logn);
 
     /*
      * We load the private key elements directly into the B0 matrix,
      * since B0 = [[g, -f], [G, -F]].
      */
-    f = b01;
-    g = b00;
-    F = b11;
-    G = b10;
+    rf = b01;
+    rg = b00;
+    rF = b11;
+    rG = b10;
 
-    smallints_to_fpr(f, f_src, logn);
-    smallints_to_fpr(g, g_src, logn);
-    smallints_to_fpr(F, F_src, logn);
-    smallints_to_fpr(G, G_src, logn);
+    smallints_to_fpr(rf, f, logn);
+    smallints_to_fpr(rg, g, logn);
+    smallints_to_fpr(rF, F, logn);
+    smallints_to_fpr(rG, G, logn);
 
     /*
      * Compute the FFT for the key elements, and negate f and F.
      */
-    PQCLEAN_FALCON512_CLEAN_FFT(f, logn);
-    PQCLEAN_FALCON512_CLEAN_FFT(g, logn);
-    PQCLEAN_FALCON512_CLEAN_FFT(F, logn);
-    PQCLEAN_FALCON512_CLEAN_FFT(G, logn);
-    PQCLEAN_FALCON512_CLEAN_poly_neg(f, logn);
-    PQCLEAN_FALCON512_CLEAN_poly_neg(F, logn);
+    PQCLEAN_FALCON512_CLEAN_FFT(rf, logn);
+    PQCLEAN_FALCON512_CLEAN_FFT(rg, logn);
+    PQCLEAN_FALCON512_CLEAN_FFT(rF, logn);
+    PQCLEAN_FALCON512_CLEAN_FFT(rG, logn);
+    PQCLEAN_FALCON512_CLEAN_poly_neg(rf, logn);
+    PQCLEAN_FALCON512_CLEAN_poly_neg(rF, logn);
 
     /*
      * The Gram matrix is G = B·B*. Formulas are:

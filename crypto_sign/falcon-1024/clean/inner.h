@@ -343,12 +343,12 @@ int PQCLEAN_FALCON1024_CLEAN_get_seed(void *seed, size_t seed_len);
  */
 typedef struct {
     union {
-        unsigned char d[512]; /* MUST be 512, exactly */
+        uint8_t d[512]; /* MUST be 512, exactly */
         uint64_t dummy_u64;
     } buf;
     size_t ptr;
     union {
-        unsigned char d[256];
+        uint8_t d[256];
         uint64_t dummy_u64;
     } state;
     int type;
@@ -567,7 +567,7 @@ void PQCLEAN_FALCON1024_CLEAN_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l1
  * f = f0(x^2) + x*f1(x^2), for half-size polynomials f0 and f1
  * (polynomials modulo X^(N/2)+1). f0, f1 and f MUST NOT overlap.
  */
-void PQCLEAN_FALCON1024_CLEAN_poly_split_fft(fpr *restrict t0, fpr *restrict t1,
+void PQCLEAN_FALCON1024_CLEAN_poly_split_fft(fpr *restrict f0, fpr *restrict f1,
         const fpr *restrict f, unsigned logn);
 
 /*
