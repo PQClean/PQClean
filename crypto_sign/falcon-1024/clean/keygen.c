@@ -928,7 +928,7 @@ static const uint16_t REV10[] = {
  * p must be a prime such that p = 1 mod 2048.
  */
 static void
-modp_mkgm2(uint32_t *restrict gm, uint32_t *restrict igm, unsigned logn,
+modp_mkgm2(uint32_t *gm, uint32_t *igm, unsigned logn,
            uint32_t g, uint32_t p, uint32_t p0i) {
     size_t u, n;
     unsigned k;
@@ -1129,7 +1129,7 @@ modp_poly_rec_res(uint32_t *f, unsigned logn,
  * still performed, and the carry is computed and returned.
  */
 static uint32_t
-zint_sub(uint32_t *restrict a, const uint32_t *restrict b, size_t len,
+zint_sub(uint32_t *a, const uint32_t *b, size_t len,
          uint32_t ctl) {
     size_t u;
     uint32_t cc, m;
@@ -1225,8 +1225,8 @@ zint_mod_small_signed(const uint32_t *d, size_t dlen,
  * not overlap.
  */
 static void
-zint_add_mul_small(uint32_t *restrict x,
-                   const uint32_t *restrict y, size_t len, uint32_t s) {
+zint_add_mul_small(uint32_t *x,
+                   const uint32_t *y, size_t len, uint32_t s) {
     size_t u;
     uint32_t cc;
 
@@ -1250,7 +1250,7 @@ zint_add_mul_small(uint32_t *restrict x,
  * untouched. The two integers x and p are encoded over the same length.
  */
 static void
-zint_norm_zero(uint32_t *restrict x, const uint32_t *restrict p, size_t len) {
+zint_norm_zero(uint32_t *x, const uint32_t *p, size_t len) {
     size_t u;
     uint32_t r, bb;
 
@@ -1310,9 +1310,9 @@ zint_norm_zero(uint32_t *restrict x, const uint32_t *restrict p, size_t len) {
  * small prime moduli); two's complement is used for negative values.
  */
 static void
-zint_rebuild_CRT(uint32_t *restrict xx, size_t xlen, size_t xstride,
+zint_rebuild_CRT(uint32_t *xx, size_t xlen, size_t xstride,
                  size_t num, const small_prime *primes, int normalize_signed,
-                 uint32_t *restrict tmp) {
+                 uint32_t *tmp) {
     size_t u;
     uint32_t *x;
 
@@ -1554,9 +1554,9 @@ zint_co_reduce_mod(uint32_t *a, uint32_t *b, const uint32_t *m, size_t len,
  * each other, or with either x or y.
  */
 static int
-zint_bezout(uint32_t *restrict u, uint32_t *restrict v,
-            const uint32_t *restrict x, const uint32_t *restrict y,
-            size_t len, uint32_t *restrict tmp) {
+zint_bezout(uint32_t *u, uint32_t *v,
+            const uint32_t *x, const uint32_t *y,
+            size_t len, uint32_t *tmp) {
     /*
      * Algorithm is an extended binary GCD. We maintain 6 values
      * a, b, u0, u1, v0 and v1 with the following invariants:
@@ -1879,8 +1879,8 @@ zint_bezout(uint32_t *restrict u, uint32_t *restrict v,
  * negative values.
  */
 static void
-zint_add_scaled_mul_small(uint32_t *restrict x, size_t xlen,
-                          const uint32_t *restrict y, size_t ylen, int32_t k,
+zint_add_scaled_mul_small(uint32_t *x, size_t xlen,
+                          const uint32_t *y, size_t ylen, int32_t k,
                           uint32_t sch, uint32_t scl) {
     size_t u;
     uint32_t ysign, tw;
@@ -1939,8 +1939,8 @@ zint_add_scaled_mul_small(uint32_t *restrict x, size_t xlen,
  * negative values.
  */
 static void
-zint_sub_scaled(uint32_t *restrict x, size_t xlen,
-                const uint32_t *restrict y, size_t ylen, uint32_t sch, uint32_t scl) {
+zint_sub_scaled(uint32_t *x, size_t xlen,
+                const uint32_t *y, size_t ylen, uint32_t sch, uint32_t scl) {
     size_t u;
     uint32_t ysign, tw;
     uint32_t cc;
@@ -2073,9 +2073,9 @@ poly_big_to_small(int8_t *d, const uint32_t *s, int lim, unsigned logn) {
  * high degree.
  */
 static void
-poly_sub_scaled(uint32_t *restrict F, size_t Flen, size_t Fstride,
-                const uint32_t *restrict f, size_t flen, size_t fstride,
-                const int32_t *restrict k, uint32_t sch, uint32_t scl, unsigned logn) {
+poly_sub_scaled(uint32_t *F, size_t Flen, size_t Fstride,
+                const uint32_t *f, size_t flen, size_t fstride,
+                const int32_t *k, uint32_t sch, uint32_t scl, unsigned logn) {
     size_t n, u;
 
     n = MKN(logn);
@@ -2109,10 +2109,10 @@ poly_sub_scaled(uint32_t *restrict F, size_t Flen, size_t Fstride,
  * The value sc is provided as sch = sc / 31 and scl = sc % 31.
  */
 static void
-poly_sub_scaled_ntt(uint32_t *restrict F, size_t Flen, size_t Fstride,
-                    const uint32_t *restrict f, size_t flen, size_t fstride,
-                    const int32_t *restrict k, uint32_t sch, uint32_t scl, unsigned logn,
-                    uint32_t *restrict tmp) {
+poly_sub_scaled_ntt(uint32_t *F, size_t Flen, size_t Fstride,
+                    const uint32_t *f, size_t flen, size_t fstride,
+                    const int32_t *k, uint32_t sch, uint32_t scl, unsigned logn,
+                    uint32_t *tmp) {
     uint32_t *gm, *igm, *fk, *t1, *x;
     const uint32_t *y;
     size_t n, u, tlen;

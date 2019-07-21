@@ -345,7 +345,7 @@ PQCLEAN_FALCON512_CLEAN_iFFT(fpr *f, unsigned logn) {
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_add(
-    fpr *restrict a, const fpr *restrict b, unsigned logn) {
+    fpr *a, const fpr *b, unsigned logn) {
     size_t n, u;
 
     n = (size_t)1 << logn;
@@ -357,7 +357,7 @@ PQCLEAN_FALCON512_CLEAN_poly_add(
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_sub(
-    fpr *restrict a, const fpr *restrict b, unsigned logn) {
+    fpr *a, const fpr *b, unsigned logn) {
     size_t n, u;
 
     n = (size_t)1 << logn;
@@ -391,7 +391,7 @@ PQCLEAN_FALCON512_CLEAN_poly_adj_fft(fpr *a, unsigned logn) {
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_mul_fft(
-    fpr *restrict a, const fpr *restrict b, unsigned logn) {
+    fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -410,7 +410,7 @@ PQCLEAN_FALCON512_CLEAN_poly_mul_fft(
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_muladj_fft(
-    fpr *restrict a, const fpr *restrict b, unsigned logn) {
+    fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -461,7 +461,7 @@ PQCLEAN_FALCON512_CLEAN_poly_mulconst(fpr *a, fpr x, unsigned logn) {
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_div_fft(
-    fpr *restrict a, const fpr *restrict b, unsigned logn) {
+    fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -479,8 +479,8 @@ PQCLEAN_FALCON512_CLEAN_poly_div_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512_CLEAN_poly_invnorm2_fft(fpr *restrict d,
-        const fpr *restrict a, const fpr *restrict b, unsigned logn) {
+PQCLEAN_FALCON512_CLEAN_poly_invnorm2_fft(fpr *d,
+        const fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -501,9 +501,9 @@ PQCLEAN_FALCON512_CLEAN_poly_invnorm2_fft(fpr *restrict d,
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512_CLEAN_poly_add_muladj_fft(fpr *restrict d,
-        const fpr *restrict F, const fpr *restrict G,
-        const fpr *restrict f, const fpr *restrict g, unsigned logn) {
+PQCLEAN_FALCON512_CLEAN_poly_add_muladj_fft(fpr *d,
+        const fpr *F, const fpr *G,
+        const fpr *f, const fpr *g, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -532,7 +532,7 @@ PQCLEAN_FALCON512_CLEAN_poly_add_muladj_fft(fpr *restrict d,
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_mul_autoadj_fft(
-    fpr *restrict a, const fpr *restrict b, unsigned logn) {
+    fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -546,7 +546,7 @@ PQCLEAN_FALCON512_CLEAN_poly_mul_autoadj_fft(
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_div_autoadj_fft(
-    fpr *restrict a, const fpr *restrict b, unsigned logn) {
+    fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -563,8 +563,8 @@ PQCLEAN_FALCON512_CLEAN_poly_div_autoadj_fft(
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_LDL_fft(
-    const fpr *restrict g00,
-    fpr *restrict g01, fpr *restrict g11, unsigned logn) {
+    const fpr *g00,
+    fpr *g01, fpr *g11, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -590,9 +590,9 @@ PQCLEAN_FALCON512_CLEAN_poly_LDL_fft(
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_LDLmv_fft(
-    fpr *restrict d11, fpr *restrict l10,
-    const fpr *restrict g00, const fpr *restrict g01,
-    const fpr *restrict g11, unsigned logn) {
+    fpr *d11, fpr *l10,
+    const fpr *g00, const fpr *g01,
+    const fpr *g11, unsigned logn) {
     size_t n, hn, u;
 
     n = (size_t)1 << logn;
@@ -618,8 +618,8 @@ PQCLEAN_FALCON512_CLEAN_poly_LDLmv_fft(
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_split_fft(
-    fpr *restrict f0, fpr *restrict f1,
-    const fpr *restrict f, unsigned logn) {
+    fpr *f0, fpr *f1,
+    const fpr *f, unsigned logn) {
     /*
      * The FFT representation we use is in bit-reversed order
      * (element i contains f(w^(rev(i))), where rev() is the
@@ -666,8 +666,8 @@ PQCLEAN_FALCON512_CLEAN_poly_split_fft(
 /* see inner.h */
 void
 PQCLEAN_FALCON512_CLEAN_poly_merge_fft(
-    fpr *restrict f,
-    const fpr *restrict f0, const fpr *restrict f1, unsigned logn) {
+    fpr *f,
+    const fpr *f0, const fpr *f1, unsigned logn) {
     size_t n, hn, qn, u;
 
     n = (size_t)1 << logn;

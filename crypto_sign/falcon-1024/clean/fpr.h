@@ -287,7 +287,7 @@ fpr_rint(fpr x) {
     return ((int64_t)m ^ -(int64_t)s) + (int64_t)s;
 }
 
-static inline long
+static inline int64_t
 fpr_floor(fpr x) {
     uint64_t t;
     int64_t xi;

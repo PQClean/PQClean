@@ -71,8 +71,8 @@ ffLDL_treesize(unsigned logn) {
  * tmp[] must have room for at least one polynomial.
  */
 static void
-ffLDL_fft_inner(fpr *restrict tree,
-                fpr *restrict g0, fpr *restrict g1, unsigned logn, fpr *restrict tmp) {
+ffLDL_fft_inner(fpr *tree,
+                fpr *g0, fpr *g1, unsigned logn, fpr *tmp) {
     size_t n, hn;
 
     n = MKN(logn);
@@ -120,9 +120,9 @@ ffLDL_fft_inner(fpr *restrict tree,
  * polynomials of 2^logn elements each.
  */
 static void
-ffLDL_fft(fpr *restrict tree, const fpr *restrict g00,
-          const fpr *restrict g01, const fpr *restrict g11,
-          unsigned logn, fpr *restrict tmp) {
+ffLDL_fft(fpr *tree, const fpr *g00,
+          const fpr *g01, const fpr *g11,
+          unsigned logn, fpr *tmp) {
     size_t n, hn;
     fpr *d00, *d11;
 
@@ -224,10 +224,10 @@ skoff_tree(unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024_CLEAN_expand_privkey(fpr *restrict expanded_key,
+PQCLEAN_FALCON1024_CLEAN_expand_privkey(fpr *expanded_key,
                                         const int8_t *f, const int8_t *g,
                                         const int8_t *F, const int8_t *G,
-                                        unsigned logn, uint8_t *restrict tmp) {
+                                        unsigned logn, uint8_t *tmp) {
     size_t n;
     fpr *rf, *rg, *rF, *rG;
     fpr *b00, *b01, *b10, *b11;
@@ -319,9 +319,9 @@ typedef int (*samplerZ)(void *ctx, fpr mu, fpr sigma);
  */
 static void
 ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
-                       fpr *restrict t0, fpr *restrict t1,
-                       fpr *restrict g00, fpr *restrict g01, fpr *restrict g11,
-                       unsigned logn, fpr *restrict tmp) {
+                       fpr *t0, fpr *t1,
+                       fpr *g00, fpr *g01, fpr *g11,
+                       unsigned logn, fpr *tmp) {
     size_t n, hn;
     fpr *z0, *z1;
 
@@ -410,10 +410,10 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
  */
 static void
 ffSampling_fft(samplerZ samp, void *samp_ctx,
-               fpr *restrict z0, fpr *restrict z1,
-               const fpr *restrict tree,
-               const fpr *restrict t0, const fpr *restrict t1, unsigned logn,
-               fpr *restrict tmp) {
+               fpr *z0, fpr *z1,
+               const fpr *tree,
+               const fpr *t0, const fpr *t1, unsigned logn,
+               fpr *tmp) {
     size_t n, hn;
     const fpr *tree0, *tree1;
 
@@ -471,9 +471,9 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
  */
 static uint32_t
 do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
-             const fpr *restrict expanded_key,
+             const fpr *expanded_key,
              const uint16_t *hm,
-             unsigned logn, fpr *restrict tmp) {
+             unsigned logn, fpr *tmp) {
     size_t n, u;
     fpr *t0, *t1, *tx, *ty;
     const fpr *b00, *b01, *b10, *b11, *tree;
@@ -568,9 +568,9 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
  */
 static uint32_t
 do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
-            const int8_t *restrict f, const int8_t *restrict g,
-            const int8_t *restrict F, const int8_t *restrict G,
-            const uint16_t *hm, unsigned logn, fpr *restrict tmp) {
+            const int8_t *f, const int8_t *g,
+            const int8_t *F, const int8_t *G,
+            const uint16_t *hm, unsigned logn, fpr *tmp) {
     size_t n, u;
     fpr *t0, *t1, *tx, *ty;
     fpr *b00, *b01, *b10, *b11, *g00, *g01, *g11;
@@ -965,7 +965,7 @@ sampler(void *ctx, fpr mu, fpr isigma) {
 /* see inner.h */
 void
 PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
-                                   const fpr *restrict expanded_key,
+                                   const fpr *expanded_key,
                                    const uint16_t *hm, unsigned logn, uint8_t *tmp) {
     fpr *ftmp;
 
@@ -1019,8 +1019,8 @@ PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
 /* see inner.h */
 void
 PQCLEAN_FALCON1024_CLEAN_sign_dyn(int16_t *sig, shake256_context *rng,
-                                  const int8_t *restrict f, const int8_t *restrict g,
-                                  const int8_t *restrict F, const int8_t *restrict G,
+                                  const int8_t *f, const int8_t *g,
+                                  const int8_t *F, const int8_t *G,
                                   const uint16_t *hm, unsigned logn, uint8_t *tmp) {
     fpr *ftmp;
 
