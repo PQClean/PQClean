@@ -140,7 +140,7 @@ PQCLEAN_FALCON1024_CLEAN_hash_to_point(
         v = 0;
         for (u = 0; u < m; u ++) {
             uint16_t *s, *d;
-            unsigned j, sv, dv, m;
+            unsigned j, sv, dv, mk;
 
             if (u < n) {
                 s = &x[u];
@@ -160,11 +160,11 @@ PQCLEAN_FALCON1024_CLEAN_hash_to_point(
             /*
              * We increment v for the next iteration, but
              * only if the source value is valid. The mask
-             * 'm' is -1 if the value is valid, 0 otherwise,
-             * so we _subtract_ m.
+             * 'mk' is -1 if the value is valid, 0 otherwise,
+             * so we _subtract_ mk.
              */
-            m = (sv >> 15) - 1U;
-            v -= m;
+            mk = (sv >> 15) - 1U;
+            v -= mk;
 
             /*
              * In this loop we consider jumps by p slots; if
@@ -190,10 +190,10 @@ PQCLEAN_FALCON1024_CLEAN_hash_to_point(
              * The swap should be performed only if the source
              * is valid AND the jump j has its 'p' bit set.
              */
-            m &= -(((j & p) + 0x1FF) >> 9);
+            mk &= -(((j & p) + 0x1FF) >> 9);
 
-            *s = (uint16_t)(sv ^ (m & (sv ^ dv)));
-            *d = (uint16_t)(dv ^ (m & (sv ^ dv)));
+            *s = (uint16_t)(sv ^ (mk & (sv ^ dv)));
+            *d = (uint16_t)(dv ^ (mk & (sv ^ dv)));
         }
     }
 
