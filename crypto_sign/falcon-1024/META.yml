@@ -1,0 +1,23 @@
+name: Falcon-1024
+type: signature
+claimed-nist-level: 5
+length-public-key: 1793
+length-secret-key: 2305
+length-signature: 1330
+nistkat-sha256: ad3d17869fdc05deae13ffa2ef26bde125b42f61b2dcd861a1ae20adcb2accc5
+testvectors-sha256: bd8076c13722d8c555c68fc6bd7763e1a9dd5483ee7c8d1c74dd2df459c72a40
+principal-submitters:
+  - Thomas Prest
+auxiliary-submitters:
+  - Pierre-Alain Fouque
+  - Jeffrey Hoffstein
+  - Paul Kirchner
+  - Vadim Lyubashevsky
+  - Thomas Pornin
+  - Thomas Ricosset
+  - Gregor Seiler
+  - William Whyte
+  - Zhenfei Zhang
+implementations:
+    - name: clean
+      version: round two

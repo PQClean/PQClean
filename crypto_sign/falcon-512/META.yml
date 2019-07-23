@@ -1,0 +1,23 @@
+name: Falcon-512
+type: signature
+claimed-nist-level: 1
+length-public-key: 897
+length-secret-key: 1281
+length-signature: 690
+nistkat-sha256: abc62e7be3d7c1db757ba3cbb771cfdc89c6b36fb5efc885593db89ec2ea8bc4
+testvectors-sha256: 1a1b170fc9e4623e7ff519c15ec7a2dda55e94a175756b7c72429451bd226b09
+principal-submitters:
+  - Thomas Prest
+auxiliary-submitters:
+  - Pierre-Alain Fouque
+  - Jeffrey Hoffstein
+  - Paul Kirchner
+  - Vadim Lyubashevsky
+  - Thomas Pornin
+  - Thomas Ricosset
+  - Gregor Seiler
+  - William Whyte
+  - Zhenfei Zhang
+implementations:
+    - name: clean
+      version: round two
