@@ -4,8 +4,8 @@ claimed-nist-level: 5
 length-public-key: 64
 length-secret-key: 128
 length-signature: 49216
-nistkat-sha256: c2d6cebdf902e168ad27d8a942b36bc6909ea643e0f2b9ab78fd474dbdc0d373
-testvectors-sha256: b5e3a1c1dbb45751f2a4c9323a5d900b30f38e4c7e2943e234a5b9526de1146c
+testvectors-sha256: 7cc4c9a8720401ed53bc2fa9a0dd9e316dca3a715b3c730d1e0c4822dfdfd0b5
+nistkat-sha256: b31c6a00604e5f1eed1534c0f8ab29ceb0c831397075ca93c43c5a2a73e2649c
 principal-submitters:
   - Andreas Hülsing
 auxiliary-submitters:
