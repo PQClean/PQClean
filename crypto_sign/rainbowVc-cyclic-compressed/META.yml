@@ -1,0 +1,18 @@
+name: Rainbow-Vc-cyclic-compressed
+type: signature
+claimed-nist-level: 5
+length-public-key: 491936
+length-secret-key: 64
+length-signature: 204
+nistkat-sha256: 7bc9f57b718843d525d893fc361d97417de0b06e954f2687f808bebaaf2c762c
+testvectors-sha256: acd054aed76af99bf0b31438226bdcca8ac34efde180cf80732c30bc00a63a9c
+principal-submitters:
+  - Jintai Ding
+auxiliary-submitters:
+  - Ming-Shing Chen
+  - Albrecht Petzoldt
+  - Dieter Schmidt
+  - Bo-Yin Yang
+implementations:
+    - name: clean
+      version: https://github.com/fast-crypto-lab/rainbow-submission-round2/commit/af826fcb78f6af51a02d0352cff28a9690467bfd

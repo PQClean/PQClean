@@ -1,0 +1,101 @@
+consistency_checks:
+- source:
+    scheme: rainbowIa-cyclic
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.h
+    - blas_u32.c
+    - blas_u32.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+    - rainbow_config.h
+    - utils_hash.c
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h
+- source:
+    scheme: rainbowIa-cyclic-compressed
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.h
+    - blas_u32.c
+    - blas_u32.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+    - rainbow_config.h
+    - utils_hash.c
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h
+- source:
+    scheme: rainbowIIIc-classic
+    implementation: clean
+  files:
+    - parallel_matrix_op.h
+    - rainbow.c
+    - rainbow.h
+    - rainbow_keypair.c
+    - rainbow_keypair_computation.c
+    - rainbow_keypair_computation.h
+    - rainbow_keypair.h
+    - sign.c
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h
+- source:
+    scheme: rainbowIIIc-cyclic
+    implementation: clean
+  files:
+    - parallel_matrix_op.h
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h
+- source:
+    scheme: rainbowIIIc-cyclic-compressed
+    implementation: clean
+  files:
+    - parallel_matrix_op.h
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h
+- source:
+    scheme: rainbowVc-classic
+    implementation: clean
+  files:
+    - parallel_matrix_op.h
+    - rainbow.c
+    - rainbow.h
+    - rainbow_keypair.c
+    - rainbow_keypair_computation.c
+    - rainbow_keypair_computation.h
+    - rainbow_keypair.h
+    - sign.c
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h
+- source:
+    scheme: rainbowVc-cyclic
+    implementation: clean
+  files:
+    - parallel_matrix_op.h
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h
+- source:
+    scheme: rainbowVc-cyclic-compressed
+    implementation: clean
+  files:
+    - parallel_matrix_op.h
+    - utils_hash.h
+    - utils_prng.c
+    - utils_prng.h

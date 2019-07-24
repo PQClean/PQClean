@@ -1,0 +1,21 @@
+consistency_checks:
+- source:
+    scheme: rainbowIIIc-cyclic
+    implementation: clean
+  files:
+    - rainbow.c
+    - rainbow.h
+    - rainbow_keypair.c
+    - rainbow_keypair_computation.c
+    - rainbow_keypair_computation.h
+    - rainbow_keypair.h
+- source:
+    scheme: rainbowVc-cyclic
+    implementation: clean
+  files:
+    - rainbow.c
+    - rainbow.h
+    - rainbow_keypair.c
+    - rainbow_keypair_computation.c
+    - rainbow_keypair_computation.h
+    - rainbow_keypair.h
