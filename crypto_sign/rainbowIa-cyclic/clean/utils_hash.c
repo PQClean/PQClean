@@ -3,19 +3,17 @@
 ///
 ///
 
+#include "utils_hash.h"
 #include "rainbow_config.h"
 #include "sha2.h"
-#include "utils_hash.h"
 
-static inline
-int _hash( unsigned char *digest, const unsigned char *m, size_t mlen ) {
+static inline int _hash(unsigned char *digest, const unsigned char *m, size_t mlen) {
     sha256(digest, m, mlen);
     return 0;
 }
 
-static inline
-int expand_hash(unsigned char *digest, size_t n_digest, const unsigned char *hash) {
-    if ( _HASH_LEN >= n_digest ) {
+static inline int expand_hash(unsigned char *digest, size_t n_digest, const unsigned char *hash) {
+    if (_HASH_LEN >= n_digest) {
         for (size_t i = 0; i < n_digest; i++) {
             digest[i] = hash[i];
         }
@@ -26,16 +24,15 @@ int expand_hash(unsigned char *digest, size_t n_digest, const unsigned char *has
     }
     n_digest -= _HASH_LEN;
 
-
-    while (_HASH_LEN <= n_digest ) {
-        _hash( digest + _HASH_LEN, digest, _HASH_LEN );
+    while (_HASH_LEN <= n_digest) {
+        _hash(digest + _HASH_LEN, digest, _HASH_LEN);
 
         n_digest -= _HASH_LEN;
         digest += _HASH_LEN;
     }
     unsigned char temp[_HASH_LEN];
-    if ( n_digest ) {
-        _hash( temp, digest, _HASH_LEN );
+    if (n_digest) {
+        _hash(temp, digest, _HASH_LEN);
         for (size_t i = 0; i < n_digest; i++) {
             digest[_HASH_LEN + i] = temp[i];
         }
@@ -51,5 +48,3 @@ int PQCLEAN_RAINBOWIACYCLIC_CLEAN_hash_msg(unsigned char *digest,
     _hash(buf, m, mlen);
     return expand_hash(digest, len_digest, buf);
 }
-
-

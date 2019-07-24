@@ -12,31 +12,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-int
-PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char *sk) {
+int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char *sk) {
     unsigned char sk_seed[LEN_SKSEED] = {0};
-    randombytes( sk_seed, LEN_SKSEED );
+    randombytes(sk_seed, LEN_SKSEED);
 
-    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_generate_keypair( (pk_t *) pk, (sk_t *) sk, sk_seed );
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_generate_keypair((pk_t *)pk, (sk_t *)sk, sk_seed);
     return 0;
 }
 
-int
-PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign(unsigned char *sm, size_t *smlen, const unsigned char *m, size_t mlen, const unsigned char *sk) {
+int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign(unsigned char *sm, size_t *smlen, const unsigned char *m, size_t mlen, const unsigned char *sk) {
     unsigned char digest[_HASH_LEN];
 
-    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_hash_msg(digest, _HASH_LEN, m, mlen);
 
-    memcpy( sm, m, mlen );
+    memcpy(sm, m, mlen);
     smlen[0] = mlen + _SIGNATURE_BYTE;
 
-    return PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_sign( sm + mlen, (const sk_t *)sk, digest );
+    return PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_sign(sm + mlen, (const sk_t *)sk, digest);
 }
 
-int
-PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_open(unsigned char *m, size_t *mlen, const unsigned char *sm, size_t smlen, const unsigned char *pk) {
+int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_open(unsigned char *m, size_t *mlen, const unsigned char *sm, size_t smlen, const unsigned char *pk) {
     int rc;
-    if ( _SIGNATURE_BYTE > smlen ) {
+    if (_SIGNATURE_BYTE > smlen) {
         rc = -1;
     } else {
         *mlen = smlen - _SIGNATURE_BYTE;
@@ -47,7 +44,7 @@ PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_open(unsigned char *m, size_t *mlen
         rc = PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_verify(digest, sm + mlen[0], (const pk_t *)pk);
     }
     if (!rc) {
-        memcpy( m, sm, smlen - _SIGNATURE_BYTE );
+        memcpy(m, sm, smlen - _SIGNATURE_BYTE);
     } else { // bad signature
         *mlen = (size_t) -1;
         memset(m, 0, smlen);
@@ -60,9 +57,9 @@ int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_signature(
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
     unsigned char digest[_HASH_LEN];
 
-    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_hash_msg(digest, _HASH_LEN, m, mlen);
     *siglen = _SIGNATURE_BYTE;
-    return PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_sign( sig, (const sk_t *)sk, digest );
+    return PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_sign(sig, (const sk_t *)sk, digest);
 }
 
 int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_verify(
@@ -72,6 +69,6 @@ int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_verify(
         return -1;
     }
     unsigned char digest[_HASH_LEN];
-    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
-    return PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_verify( digest, sig, (const pk_t *)pk );
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_hash_msg(digest, _HASH_LEN, m, mlen);
+    return PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_verify(digest, sig, (const pk_t *)pk);
 }

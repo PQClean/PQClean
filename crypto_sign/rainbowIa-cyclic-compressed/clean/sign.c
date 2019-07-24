@@ -12,33 +12,30 @@
 #include <stdlib.h>
 #include <string.h>
 
-int
-PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char *sk) {
+int PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char *sk) {
     unsigned char sk_seed[LEN_SKSEED] = {0};
-    randombytes( sk_seed, LEN_SKSEED );
+    randombytes(sk_seed, LEN_SKSEED);
 
     unsigned char pk_seed[LEN_PKSEED] = {0};
-    randombytes( pk_seed, LEN_PKSEED );
-    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_generate_compact_keypair_cyclic( (cpk_t *) pk, (csk_t *) sk, pk_seed, sk_seed );
+    randombytes(pk_seed, LEN_PKSEED);
+    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_generate_compact_keypair_cyclic((cpk_t *)pk, (csk_t *)sk, pk_seed, sk_seed);
     return 0;
 }
 
-int
-PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign(unsigned char *sm, size_t *smlen, const unsigned char *m, size_t mlen, const unsigned char *sk) {
+int PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign(unsigned char *sm, size_t *smlen, const unsigned char *m, size_t mlen, const unsigned char *sk) {
     unsigned char digest[_HASH_LEN];
 
-    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
+    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_hash_msg(digest, _HASH_LEN, m, mlen);
 
-    memcpy( sm, m, mlen );
+    memcpy(sm, m, mlen);
     smlen[0] = mlen + _SIGNATURE_BYTE;
 
-    return PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_sign_cyclic( sm + mlen, (const csk_t *)sk, digest );
+    return PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_sign_cyclic(sm + mlen, (const csk_t *)sk, digest);
 }
 
-int
-PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_open(unsigned char *m, size_t *mlen, const unsigned char *sm, size_t smlen, const unsigned char *pk) {
+int PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_open(unsigned char *m, size_t *mlen, const unsigned char *sm, size_t smlen, const unsigned char *pk) {
     int rc;
-    if ( _SIGNATURE_BYTE > smlen ) {
+    if (_SIGNATURE_BYTE > smlen) {
         rc = -1;
     } else {
         *mlen = smlen - _SIGNATURE_BYTE;
@@ -49,7 +46,7 @@ PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_open(unsigned char *m, size_
         rc = PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_verify_cyclic(digest, sm + mlen[0], (const cpk_t *)pk);
     }
     if (!rc) {
-        memcpy( m, sm, smlen - _SIGNATURE_BYTE );
+        memcpy(m, sm, smlen - _SIGNATURE_BYTE);
     } else { // bad signature
         *mlen = (size_t) -1;
         memset(m, 0, smlen);
@@ -62,9 +59,9 @@ int PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_signature(
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
     unsigned char digest[_HASH_LEN];
 
-    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
+    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_hash_msg(digest, _HASH_LEN, m, mlen);
     *siglen = _SIGNATURE_BYTE;
-    return PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_sign_cyclic( sig, (const csk_t *)sk, digest );
+    return PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_sign_cyclic(sig, (const csk_t *)sk, digest);
 }
 
 int PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_verify(
@@ -74,6 +71,6 @@ int PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_verify(
         return -1;
     }
     unsigned char digest[_HASH_LEN];
-    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_hash_msg( digest, _HASH_LEN, m, mlen );
-    return PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_verify_cyclic( digest, sig, (const cpk_t *)pk );
+    PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_hash_msg(digest, _HASH_LEN, m, mlen);
+    return PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_verify_cyclic(digest, sig, (const cpk_t *)pk);
 }

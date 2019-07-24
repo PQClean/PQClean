@@ -7,7 +7,6 @@
 #include "rainbow_config.h"
 #include <stdint.h>
 
-
 /// @brief set a vector to 0.
 ///
 /// @param[in,out]   b      - the vector b.
@@ -72,5 +71,4 @@ unsigned PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_inv(uint8_t *inv_a, con
 void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_prod(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_byte, unsigned n_A_width, const uint8_t *b);
 
 
-#endif  // _BLAS_COMM_H_
-
+#endif // _BLAS_COMM_H_

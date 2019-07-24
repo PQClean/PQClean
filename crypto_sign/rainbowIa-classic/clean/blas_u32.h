@@ -17,4 +17,3 @@ uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_dot_u32(const uint8_t *a, const uin
 
 
 #endif // _BLAS_U32_H_
-

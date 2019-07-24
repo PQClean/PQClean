@@ -16,4 +16,3 @@ void PQCLEAN_RAINBOWIIICCYCLICCOMPRESSED_CLEAN_gf256v_madd_u32(uint8_t *accu_c, 
 
 
 #endif // _BLAS_U32_H_
-

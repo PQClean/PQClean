@@ -2,12 +2,12 @@
 #include "gf.h"
 
 void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_predicated_add_u32(uint8_t *accu_b, uint8_t predicate, const uint8_t *a, unsigned _num_byte) {
-    uint32_t pr_u32 = ((uint32_t) 0) - ((uint32_t) predicate);
+    uint32_t pr_u32 = ((uint32_t)0) - ((uint32_t)predicate);
     uint8_t pr_u8 = pr_u32 & 0xff;
 
     unsigned n_u32 = _num_byte >> 2;
-    uint32_t *b_u32 = (uint32_t *) accu_b;
-    const uint32_t *a_u32 = (const uint32_t *) a;
+    uint32_t *b_u32 = (uint32_t *)accu_b;
+    const uint32_t *a_u32 = (const uint32_t *)a;
     for (unsigned i = 0; i < n_u32; i++) {
         b_u32[i] ^= (a_u32[i] & pr_u32);
     }
@@ -22,8 +22,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_predicated_add_u32(uint8_t *
 
 void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_add_u32(uint8_t *accu_b, const uint8_t *a, unsigned _num_byte) {
     unsigned n_u32 = _num_byte >> 2;
-    uint32_t *b_u32 = (uint32_t *) accu_b;
-    const uint32_t *a_u32 = (const uint32_t *) a;
+    uint32_t *b_u32 = (uint32_t *)accu_b;
+    const uint32_t *a_u32 = (const uint32_t *)a;
     for (unsigned i = 0; i < n_u32; i++) {
         b_u32[i] ^= a_u32[i];
     }
@@ -37,11 +37,9 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_add_u32(uint8_t *accu_b, con
 }
 
 
-
-
 void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_mul_scalar_u32(uint8_t *a, uint8_t b, unsigned _num_byte) {
     unsigned n_u32 = _num_byte >> 2;
-    uint32_t *a_u32 = (uint32_t *) a;
+    uint32_t *a_u32 = (uint32_t *)a;
     for (unsigned i = 0; i < n_u32; i++) {
         a_u32[i] = PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_mul_u32(a_u32[i], b);
     }
@@ -62,11 +60,10 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_mul_scalar_u32(uint8_t *a, u
     }
 }
 
-
 void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_madd_u32(uint8_t *accu_c, const uint8_t *a, uint8_t gf256_b, unsigned _num_byte) {
     unsigned n_u32 = _num_byte >> 2;
-    uint32_t *c_u32 = (uint32_t *) accu_c;
-    const uint32_t *a_u32 = (const uint32_t *) a;
+    uint32_t *c_u32 = (uint32_t *)accu_c;
+    const uint32_t *a_u32 = (const uint32_t *)a;
     for (unsigned i = 0; i < n_u32; i++) {
         c_u32[i] ^= PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256v_mul_u32(a_u32[i], gf256_b);
     }

@@ -18,4 +18,3 @@
 
 
 #endif // _BLAS_H_
-

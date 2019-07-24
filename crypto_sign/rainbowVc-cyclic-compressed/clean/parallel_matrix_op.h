@@ -7,7 +7,6 @@
 
 ////////////////  Section:  triangle matrix <-> rectangle matrix   ///////////////////////////////////
 
-
 ///
 /// @brief  Calculate the corresponding index in an array for an upper-triangle(UT) matrix.
 ///
@@ -16,7 +15,7 @@
 /// @param[in]  dim       - the dimension of the upper-triangle matrix, i.e., an dim x dim matrix.
 /// @return  the corresponding index in an array storage.
 ///
-unsigned PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_idx_of_trimat( unsigned i_row, unsigned j_col, unsigned dim );
+unsigned PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_idx_of_trimat(unsigned i_row, unsigned j_col, unsigned dim);
 
 ///
 /// @brief  Upper trianglize a rectangle matrix to the corresponding upper-trangle matrix.
@@ -26,14 +25,9 @@ unsigned PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_idx_of_trimat( unsigned i_row, 
 /// @param[in]   bwidth   - the width of the batched matrix A, i.e., A is a Awidth x Awidth matrix.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_UpperTrianglize( unsigned char *btriC, const unsigned char *bA, unsigned Awidth, unsigned size_batch );
-
-
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_UpperTrianglize(unsigned char *btriC, const unsigned char *bA, unsigned Awidth, unsigned size_batch);
 
 ////////////////////  Section:  matrix multiplications  ///////////////////////////////
-
-
 
 ///
 /// @brief  bC += btriA * B  , in GF(16)
@@ -46,8 +40,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_UpperTrianglize( unsigned char *btr
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimat_madd_gf16( unsigned char *bC, const unsigned char *btriA,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimat_madd_gf16(unsigned char *bC, const unsigned char *btriA,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += btriA * B  , in GF(256)
@@ -60,9 +54,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimat_madd_gf16( unsigned ch
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimat_madd_gf256( unsigned char *bC, const unsigned char *btriA,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimat_madd_gf256(unsigned char *bC, const unsigned char *btriA,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += btriA^Tr * B  , in GF(16)
@@ -75,8 +68,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimat_madd_gf256( unsigned c
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimatTr_madd_gf16( unsigned char *bC, const unsigned char *btriA,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimatTr_madd_gf16(unsigned char *bC, const unsigned char *btriA,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += btriA^Tr * B  , in GF(256)
@@ -89,10 +82,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimatTr_madd_gf16( unsigned 
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimatTr_madd_gf256( unsigned char *bC, const unsigned char *btriA,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
-
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimatTr_madd_gf256(unsigned char *bC, const unsigned char *btriA,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC +=  (btriA + btriA^Tr) *B  , in GF(16)
@@ -105,8 +96,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_trimatTr_madd_gf256( unsigned
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_2trimat_madd_gf16( unsigned char *bC, const unsigned char *btriA,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_2trimat_madd_gf16(unsigned char *bC, const unsigned char *btriA,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC +=  (btriA + btriA^Tr) *B  , in GF(256)
@@ -119,10 +110,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_2trimat_madd_gf16( unsigned c
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_2trimat_madd_gf256( unsigned char *bC, const unsigned char *btriA,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
-
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_2trimat_madd_gf256(unsigned char *bC, const unsigned char *btriA,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += A^Tr * bB  , in GF(16)
@@ -136,9 +125,9 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_2trimat_madd_gf256( unsigned 
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_matTr_madd_gf16( unsigned char *bC,
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_matTr_madd_gf16(unsigned char *bC,
         const unsigned char *A_to_tr, unsigned Aheight, unsigned size_Acolvec, unsigned Awidth,
-        const unsigned char *bB, unsigned Bwidth, unsigned size_batch );
+        const unsigned char *bB, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += A^Tr * bB  , in GF(256)
@@ -152,10 +141,9 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_matTr_madd_gf16( unsigned cha
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_matTr_madd_gf256( unsigned char *bC,
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_matTr_madd_gf256(unsigned char *bC,
         const unsigned char *A_to_tr, unsigned Aheight, unsigned size_Acolvec, unsigned Awidth,
-        const unsigned char *bB, unsigned Bwidth, unsigned size_batch );
-
+        const unsigned char *bB, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += bA^Tr * B  , in GF(16)
@@ -169,8 +157,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_matTr_madd_gf256( unsigned ch
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_bmatTr_madd_gf16( unsigned char *bC, const unsigned char *bA_to_tr, unsigned Awidth_before_tr,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_bmatTr_madd_gf16(unsigned char *bC, const unsigned char *bA_to_tr, unsigned Awidth_before_tr,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += bA^Tr * B  , in GF(256)
@@ -184,8 +172,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_bmatTr_madd_gf16( unsigned ch
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_bmatTr_madd_gf256( unsigned char *bC, const unsigned char *bA_to_tr, unsigned Awidth_before_tr,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_bmatTr_madd_gf256(unsigned char *bC, const unsigned char *bA_to_tr, unsigned Awidth_before_tr,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += bA * B  , in GF(16)
@@ -199,8 +187,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_bmatTr_madd_gf256( unsigned c
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_mat_madd_gf16( unsigned char *bC, const unsigned char *bA, unsigned Aheight,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_mat_madd_gf16(unsigned char *bC, const unsigned char *bA, unsigned Aheight,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ///
 /// @brief  bC += bA * B  , in GF(256)
@@ -214,13 +202,10 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_mat_madd_gf16( unsigned char 
 /// @param[in]   Bwidth           - the width of B.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_mat_madd_gf256( unsigned char *bC, const unsigned char *bA, unsigned Aheight,
-        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch );
-
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_mat_madd_gf256(unsigned char *bC, const unsigned char *bA, unsigned Aheight,
+        const unsigned char *B, unsigned Bheight, unsigned size_Bcolvec, unsigned Bwidth, unsigned size_batch);
 
 ////////////////////  Section: "quadratric" matrix evaluation  ///////////////////////////////
-
 
 ///
 /// @brief  y =  x^Tr * trimat * x  , in GF(16)
@@ -231,7 +216,7 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_mat_madd_gf256( unsigned char
 /// @param[in]   dim        - the dimension of matrix trimat (and x).
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_trimat_eval_gf16( unsigned char *y, const unsigned char *trimat, const unsigned char *x, unsigned dim, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_trimat_eval_gf16(unsigned char *y, const unsigned char *trimat, const unsigned char *x, unsigned dim, unsigned size_batch);
 
 ///
 /// @brief  y =  x^Tr * trimat * x  , in GF(256)
@@ -242,8 +227,7 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_trimat_eval_gf16( unsign
 /// @param[in]   dim        - the dimension of matrix trimat (and x).
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_trimat_eval_gf256( unsigned char *y, const unsigned char *trimat, const unsigned char *x, unsigned dim, unsigned size_batch );
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_trimat_eval_gf256(unsigned char *y, const unsigned char *trimat, const unsigned char *x, unsigned dim, unsigned size_batch);
 
 ///
 /// @brief  z =  y^Tr * mat * x  , in GF(16)
@@ -256,8 +240,8 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_trimat_eval_gf256( unsig
 /// @param[in]   dim_x        - the length of x.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_recmat_eval_gf16( unsigned char *z, const unsigned char *y, unsigned dim_y,
-        const unsigned char *mat, const unsigned char *x, unsigned dim_x, unsigned size_batch );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_recmat_eval_gf16(unsigned char *z, const unsigned char *y, unsigned dim_y,
+        const unsigned char *mat, const unsigned char *x, unsigned dim_x, unsigned size_batch);
 
 ///
 /// @brief  z =  y^Tr * mat * x  , in GF(256)
@@ -270,13 +254,7 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_recmat_eval_gf16( unsign
 /// @param[in]   dim_x        - the length of x.
 /// @param[in]   size_batch - number of the batched elements in the corresponding position of the matrix.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_recmat_eval_gf256( unsigned char *z, const unsigned char *y, unsigned dim_y,
-        const unsigned char *mat, const unsigned char *x, unsigned dim_x, unsigned size_batch );
-
-
-
-
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_batch_quad_recmat_eval_gf256(unsigned char *z, const unsigned char *y, unsigned dim_y,
+        const unsigned char *mat, const unsigned char *x, unsigned dim_x, unsigned size_batch);
 
 #endif // _P_MATRIX_OP_H_
-

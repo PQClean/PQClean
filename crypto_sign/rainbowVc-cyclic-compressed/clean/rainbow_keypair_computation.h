@@ -7,8 +7,6 @@
 /// Functions for calculating pk/sk for key generation.
 ///
 
-
-
 #include "rainbow_keypair.h"
 
 /// @brief The (internal use) public key for rainbow
@@ -17,8 +15,7 @@
 /// polynomials are divided into l1_Q1, l1_Q2, ... l1_Q9,
 /// l2_Q1, .... , l2_Q9.
 ///
-typedef
-struct rainbow_extend_publickey {
+typedef struct rainbow_extend_publickey {
     unsigned char l1_Q1[_O1_BYTE * N_TRIANGLE_TERMS(_V1)];
     unsigned char l1_Q2[_O1_BYTE * _V1 * _O1];
     unsigned char l1_Q3[_O1_BYTE * _V1 * _O2];
@@ -34,15 +31,13 @@ struct rainbow_extend_publickey {
     unsigned char l2_Q9[_O2_BYTE * N_TRIANGLE_TERMS(_O2)];
 } ext_cpk_t;
 
-
-
 ///
 /// @brief converting formats of public keys : from ext_cpk_t version to pk_t
 ///
 /// @param[out] pk       - the classic public key.
 /// @param[in]  cpk      - the internel public key.
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_extcpk_to_pk( pk_t *pk, const ext_cpk_t *cpk );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_extcpk_to_pk(pk_t *pk, const ext_cpk_t *cpk);
 /////////////////////////////////////////////////
 
 ///
@@ -52,9 +47,7 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_extcpk_to_pk( pk_t *pk, const ext_c
 /// @param[in]  Fs       - parts of the secret key: l1_F1, l1_F2, l2_F1, l2_F2, l2_F3, l2_F5, l2_F6
 /// @param[in]  Ts       - parts of the secret key: T1, T4, T3
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts );
-
-
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_Q_from_F(ext_cpk_t *Qs, const sk_t *Fs, const sk_t *Ts);
 
 
 ///
@@ -64,7 +57,7 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_Q_from_F( ext_cpk_t *Qs, 
 /// @param[in]  Qs       - parts of the pk: l1_Q1, l1_Q2, l2_Q1, l2_Q2, l2_Q3, l2_Q5, l2_Q6
 /// @param[in]  Ts       - parts of the sk: T1, T4, T3
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_F_from_Q( sk_t *Fs, const sk_t *Qs, sk_t *Ts );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_F_from_Q(sk_t *Fs, const sk_t *Qs, sk_t *Ts);
 
 ///
 /// @brief Computing parts of the pk from the secret key
@@ -73,7 +66,6 @@ void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_F_from_Q( sk_t *Fs, const
 /// @param[in]  Fs       - parts of the sk: l1_F1, l1_F2, l2_F1, l2_F2, l2_F3, l2_F5, l2_F6
 /// @param[in]  Ts       - parts of the sk: T1, T4, T3
 ///
-void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_Q_from_F_cyclic( cpk_t *Qs, const sk_t *Fs, const sk_t *Ts );
+void PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_calculate_Q_from_F_cyclic(cpk_t *Qs, const sk_t *Fs, const sk_t *Ts);
 
-#endif  // _RAINBOW_KEYPAIR_COMP_H_
-
+#endif // _RAINBOW_KEYPAIR_COMP_H_

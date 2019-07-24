@@ -16,4 +16,3 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd_u32(uint8_t *accu_c, const uin
 
 
 #endif // _BLAS_U32_H_
-

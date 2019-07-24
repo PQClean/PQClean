@@ -2,14 +2,13 @@
 /// @brief The standard implementations for blas_comm.h
 ///
 
-#include "blas.h"
 #include "blas_comm.h"
+#include "blas.h"
 #include "gf.h"
 #include "rainbow_config.h"
 
 #include <stdint.h>
 #include <string.h>
-
 
 void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf256v_set_zero(uint8_t *b, unsigned _num_byte) {
     gf256v_add(b, b, _num_byte);
@@ -26,7 +25,7 @@ uint8_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_get_ele(const uint8_t *a, 
     uint8_t r0 = r & 0xf;
     uint8_t r1 = r >> 4;
     uint8_t m = (uint8_t)(-((int8_t)i & 1));
-    return (uint8_t)((r1 & m) | ((~m)&r0));
+    return (uint8_t)((r1 & m) | ((~m) & r0));
 }
 
 /// @brief set an element for a GF(16) vector .
@@ -37,9 +36,9 @@ uint8_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_get_ele(const uint8_t *a, 
 /// @return  the value of the element.
 ///
 static uint8_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_set_ele(uint8_t *a, unsigned i, uint8_t v) {
-    uint8_t m = (uint8_t) (0xf ^ (-((int8_t)i & 1))); ///  1--> 0xf0 , 0--> 0x0f
-    uint8_t ai_remaining = (uint8_t) (a[i >> 1] & (~m)); /// erase
-    a[i >> 1] = (uint8_t) (ai_remaining | (m & (v << 4)) | (m & v & 0xf)); /// set
+    uint8_t m = (uint8_t)(0xf ^ (-((int8_t)i & 1)));                      ///  1--> 0xf0 , 0--> 0x0f
+    uint8_t ai_remaining = (uint8_t)(a[i >> 1] & (~m));                   /// erase
+    a[i >> 1] = (uint8_t)(ai_remaining | (m & (v << 4)) | (m & v & 0xf)); /// set
     return v;
 }
 
@@ -65,8 +64,7 @@ void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_mul(uint8_t *c, const uint8
     }
 }
 
-static
-unsigned gf16mat_gauss_elim_ref(uint8_t *mat, unsigned h, unsigned w) {
+static unsigned gf16mat_gauss_elim_ref(uint8_t *mat, unsigned h, unsigned w) {
     unsigned n_w_byte = (w + 1) / 2;
     unsigned r8 = 1;
     for (unsigned i = 0; i < h; i++) {
@@ -92,8 +90,7 @@ unsigned gf16mat_gauss_elim_ref(uint8_t *mat, unsigned h, unsigned w) {
     return r8;
 }
 
-static
-unsigned gf16mat_solve_linear_eq_ref(uint8_t *sol, const uint8_t *inp_mat, const uint8_t *c_terms, unsigned n) {
+static unsigned gf16mat_solve_linear_eq_ref(uint8_t *sol, const uint8_t *inp_mat, const uint8_t *c_terms, unsigned n) {
     uint8_t mat[64 * 33];
     unsigned n_byte = (n + 1) >> 1;
     for (unsigned i = 0; i < n; i++) {
@@ -133,28 +130,21 @@ unsigned PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_inv(uint8_t *inv_a, con
     return r8;
 }
 
-
-
-
 // choosing the implementations depends on the macros _BLAS_AVX2_ and _BLAS_SSE
 
-#define gf16mat_prod_impl             gf16mat_prod_ref
-#define gf16mat_gauss_elim_impl       gf16mat_gauss_elim_ref
-#define gf16mat_solve_linear_eq_impl  gf16mat_solve_linear_eq_ref
-
-
+#define gf16mat_prod_impl gf16mat_prod_ref
+#define gf16mat_gauss_elim_impl gf16mat_gauss_elim_ref
+#define gf16mat_solve_linear_eq_impl gf16mat_solve_linear_eq_ref
 
 void PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_prod(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_byte, unsigned n_A_width, const uint8_t *b) {
-    gf16mat_prod_impl( c, matA, n_A_vec_byte, n_A_width, b);
+    gf16mat_prod_impl(c, matA, n_A_vec_byte, n_A_width, b);
 }
-
 
 unsigned PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_gauss_elim(uint8_t *mat, unsigned h, unsigned w) {
-    return gf16mat_gauss_elim_impl( mat, h, w);
+    return gf16mat_gauss_elim_impl(mat, h, w);
 }
 
-unsigned PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_solve_linear_eq( uint8_t *sol, const uint8_t *inp_mat, const uint8_t *c_terms, unsigned n ) {
-    return gf16mat_solve_linear_eq_impl( sol, inp_mat, c_terms, n );
+unsigned PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16mat_solve_linear_eq(uint8_t *sol, const uint8_t *inp_mat, const uint8_t *c_terms, unsigned n) {
+    return gf16mat_solve_linear_eq_impl(sol, inp_mat, c_terms, n);
 }
-
 
