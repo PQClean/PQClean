@@ -69,8 +69,8 @@ static inline uint32_t _gf4v_mul_u32_u32(uint32_t a0, uint32_t a1, uint32_t b0, 
 }
 
 uint8_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16_is_nonzero(uint8_t a) {
-    unsigned a4 = a & 0xf;
-    unsigned r = ((unsigned)0) - a4;
+    unsigned int a4 = a & 0xf;
+    unsigned int r = ((unsigned int)0) - a4;
     r >>= 4;
     return r & 1;
 }

@@ -30,17 +30,17 @@ int PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign(uint8_t *signature, const sk_t *s
     uint8_t prng_seed[_HASH_LEN];
     PQCLEAN_RAINBOWIACYCLIC_CLEAN_hash_msg(prng_seed, _HASH_LEN, prng_preseed, _HASH_LEN + LEN_SKSEED);
     PQCLEAN_RAINBOWIACYCLIC_CLEAN_prng_set(&prng_sign, prng_seed, _HASH_LEN); // seed = H( sk_seed || digest )
-    for (unsigned i = 0; i < LEN_SKSEED + _HASH_LEN; i++) {
+    for (unsigned int i = 0; i < LEN_SKSEED + _HASH_LEN; i++) {
         prng_preseed[i] ^= prng_preseed[i]; // clean
     }
-    for (unsigned i = 0; i < _HASH_LEN; i++) {
+    for (unsigned int i = 0; i < _HASH_LEN; i++) {
         prng_seed[i] ^= prng_seed[i]; // clean
     }
 
     // roll vinegars.
     uint8_t vinegar[_V1_BYTE];
-    unsigned n_attempt = 0;
-    unsigned l1_succ = 0;
+    unsigned int n_attempt = 0;
+    unsigned int l1_succ = 0;
     while (!l1_succ) {
         if (MAX_ATTEMPT_FRMAT <= n_attempt) {
             break;
@@ -73,7 +73,7 @@ int PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_sign(uint8_t *signature, const sk_t *s
     uint8_t *salt = digest_salt + _HASH_LEN;
 
     uint8_t temp_o[_MAX_O_BYTE + 32] = {0};
-    unsigned succ = 0;
+    unsigned int succ = 0;
     while (!succ) {
         if (MAX_ATTEMPT_FRMAT <= n_attempt) {
             break;
@@ -160,7 +160,7 @@ int PQCLEAN_RAINBOWIACYCLIC_CLEAN_rainbow_verify(const uint8_t *digest, const ui
 
     // check consistancy.
     unsigned char cc = 0;
-    for (unsigned i = 0; i < _PUB_M_BYTE; i++) {
+    for (unsigned int i = 0; i < _PUB_M_BYTE; i++) {
         cc |= (digest_ck[i] ^ correct[i]);
     }
     return (0 == cc) ? 0 : -1;

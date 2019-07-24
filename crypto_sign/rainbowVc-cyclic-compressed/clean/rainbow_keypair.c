@@ -22,8 +22,8 @@ static void generate_S_T(unsigned char *s_and_t, prng_t *prng0) {
     PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_prng_gen(prng0, s_and_t, _O1_BYTE * _O2); // T3
 }
 
-static unsigned generate_l1_F12(unsigned char *sk, prng_t *prng0) {
-    unsigned n_byte_generated = 0;
+static unsigned int generate_l1_F12(unsigned char *sk, prng_t *prng0) {
+    unsigned int n_byte_generated = 0;
     PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_prng_gen(prng0, sk, _O1_BYTE * N_TRIANGLE_TERMS(_V1)); // l1_F1
     sk += _O1_BYTE * N_TRIANGLE_TERMS(_V1);
     n_byte_generated += _O1_BYTE * N_TRIANGLE_TERMS(_V1);
@@ -33,8 +33,8 @@ static unsigned generate_l1_F12(unsigned char *sk, prng_t *prng0) {
     return n_byte_generated;
 }
 
-static unsigned generate_l2_F12356(unsigned char *sk, prng_t *prng0) {
-    unsigned n_byte_generated = 0;
+static unsigned int generate_l2_F12356(unsigned char *sk, prng_t *prng0) {
+    unsigned int n_byte_generated = 0;
 
     PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_prng_gen(prng0, sk, _O2_BYTE * N_TRIANGLE_TERMS(_V1)); // l2_F1
     sk += _O2_BYTE * N_TRIANGLE_TERMS(_V1);
@@ -67,7 +67,7 @@ static void calculate_t4(unsigned char *t2_to_t4, const unsigned char *t1, const
     //  t4 = T_sk.t1 * T_sk.t3 - T_sk.t2
     unsigned char temp[_V1_BYTE + 32];
     unsigned char *t4 = t2_to_t4;
-    for (unsigned i = 0; i < _O2; i++) { /// t3 width
+    for (unsigned int i = 0; i < _O2; i++) { /// t3 width
         gfmat_prod(temp, t1, _V1_BYTE, _O1, t3);
         gf256v_add(t4, temp, _V1_BYTE);
         t4 += _V1_BYTE;
@@ -75,7 +75,7 @@ static void calculate_t4(unsigned char *t2_to_t4, const unsigned char *t1, const
     }
 }
 
-static void obsfucate_l1_polys(unsigned char *l1_polys, const unsigned char *l2_polys, unsigned n_terms, const unsigned char *s1) {
+static void obsfucate_l1_polys(unsigned char *l1_polys, const unsigned char *l2_polys, unsigned int n_terms, const unsigned char *s1) {
     unsigned char temp[_O1_BYTE + 32];
     while (n_terms--) {
         gfmat_prod(temp, s1, _O1_BYTE, _O2, l2_polys);

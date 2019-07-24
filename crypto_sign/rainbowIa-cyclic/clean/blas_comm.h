@@ -12,7 +12,7 @@
 /// @param[in,out]   b      - the vector b.
 /// @param[in]  _num_byte   - number of bytes for the vector b.
 ///
-void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf256v_set_zero(uint8_t *b, unsigned _num_byte);
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf256v_set_zero(uint8_t *b, unsigned int _num_byte);
 
 /// @brief get an element from GF(16) vector .
 ///
@@ -20,7 +20,7 @@ void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf256v_set_zero(uint8_t *b, unsigned _num_byt
 /// @param[in]  i         - the index in the vector a.
 /// @return  the value of the element.
 ///
-uint8_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_get_ele(const uint8_t *a, unsigned i);
+uint8_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_get_ele(const uint8_t *a, unsigned int i);
 
 /// @brief matrix-matrix multiplication:  c = a * b , in GF(16)
 ///
@@ -29,7 +29,7 @@ uint8_t PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16v_get_ele(const uint8_t *a, unsigned i
 /// @param[in]   b         - a matrix b.
 /// @param[in]   len_vec   - the length of column vectors.
 ///
-void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_mul(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned len_vec);
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_mul(uint8_t *c, const uint8_t *a, const uint8_t *b, unsigned int len_vec);
 
 /// @brief Gauss elimination for a matrix, in GF(16)
 ///
@@ -38,7 +38,7 @@ void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_mul(uint8_t *c, const uint8_t *a, con
 /// @param[in]   w         - the width of the matrix.
 /// @return   1(true) if success. 0(false) if the matrix is singular.
 ///
-unsigned PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_gauss_elim(uint8_t *mat, unsigned h, unsigned w);
+unsigned int PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_gauss_elim(uint8_t *mat, unsigned int h, unsigned int w);
 
 /// @brief Solving linear equations, in GF(16)
 ///
@@ -48,7 +48,7 @@ unsigned PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_gauss_elim(uint8_t *mat, unsigned
 /// @param[in]   n         - the number of equations.
 /// @return   1(true) if success. 0(false) if the matrix is singular.
 ///
-unsigned PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_solve_linear_eq(uint8_t *sol, const uint8_t *inp_mat, const uint8_t *c_terms, unsigned n);
+unsigned int PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_solve_linear_eq(uint8_t *sol, const uint8_t *inp_mat, const uint8_t *c_terms, unsigned int n);
 
 /// @brief Computing the inverse matrix, in GF(16)
 ///
@@ -58,7 +58,7 @@ unsigned PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_solve_linear_eq(uint8_t *sol, con
 /// @param[in]   buffer    - The buffer for computations. it has to be as large as 2 input matrixes.
 /// @return   1(true) if success. 0(false) if the matrix is singular.
 ///
-unsigned PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_inv(uint8_t *inv_a, const uint8_t *a, unsigned H, uint8_t *buffer);
+unsigned int PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_inv(uint8_t *inv_a, const uint8_t *a, unsigned int H, uint8_t *buffer);
 
 /// @brief matrix-vector multiplication:  c = matA * b , in GF(16)
 ///
@@ -68,7 +68,7 @@ unsigned PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_inv(uint8_t *inv_a, const uint8_t
 /// @param[in]   n_A_width   - the width of matrix A.
 /// @param[in]   b          - the vector b.
 ///
-void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_prod(uint8_t *c, const uint8_t *matA, unsigned n_A_vec_byte, unsigned n_A_width, const uint8_t *b);
+void PQCLEAN_RAINBOWIACYCLIC_CLEAN_gf16mat_prod(uint8_t *c, const uint8_t *matA, unsigned int n_A_vec_byte, unsigned int n_A_width, const uint8_t *b);
 
 
 #endif // _BLAS_COMM_H_

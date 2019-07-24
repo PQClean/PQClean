@@ -61,8 +61,8 @@ uint32_t PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf16v_mul_u32(uint32_t a, uint8
 }
 
 uint8_t PQCLEAN_RAINBOWVCCYCLICCOMPRESSED_CLEAN_gf256_is_nonzero(uint8_t a) {
-    unsigned a8 = a;
-    unsigned r = ((unsigned)0) - a8;
+    unsigned int a8 = a;
+    unsigned int r = ((unsigned int)0) - a8;
     r >>= 8;
     return r & 1;
 }
