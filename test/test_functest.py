@@ -14,15 +14,15 @@ import pqclean
 
 
 @pytest.mark.parametrize(
-    'implementation,test_dir,impl_path, initializer, destructor',
+    'implementation,test_dir,impl_path, init, destr',
     [(impl, *helpers.isolate_test_files(impl.path(), 'test_functest_'))
      for impl in pqclean.Scheme.all_implementations()],
     ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
 )
 @helpers.filtered_test
 def test_functest(implementation, impl_path, test_dir,
-                  initializer, destructor):
-    initializer()
+                  init, destr):
+    init()
     dest_dir = os.path.join(test_dir, 'bin')
     helpers.make('functest',
                  TYPE=implementation.scheme.type,
@@ -38,11 +38,11 @@ def test_functest(implementation, impl_path, test_dir,
             '.exe' if os.name == 'nt' else ''
         ))],
     )
-    destructor()
+    destr()
 
 
 @pytest.mark.parametrize(
-    'implementation,test_dir,impl_path, initializer, destructor',
+    'implementation,test_dir,impl_path, init, destr',
     [(impl,
       *helpers.isolate_test_files(impl.path(), 'test_functest_sanitizers_'))
      for impl in pqclean.Scheme.all_implementations()],
