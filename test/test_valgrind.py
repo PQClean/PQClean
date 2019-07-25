@@ -18,6 +18,7 @@ import pqclean
      for impl in pqclean.Scheme.all_implementations()],
     ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
 )
+@helpers.slow_test
 @helpers.filtered_test
 def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
                   init, destr):
