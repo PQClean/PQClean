@@ -3,9 +3,11 @@ Checks that files duplicated across schemes/implementations are consistent.
 """
 
 import os
-import pqclean
-import helpers
+
 import yaml
+
+import helpers
+import pqclean
 
 
 def pytest_generate_tests(metafunc):

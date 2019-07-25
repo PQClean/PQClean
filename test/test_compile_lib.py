@@ -2,10 +2,10 @@
 Checks that the archive library can be successfully built for every
 scheme/implementation.
 """
-import pqclean
-import helpers
-
 import pytest
+
+import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -23,6 +23,5 @@ def test_compile_lib(implementation, test_dir, impl_dir, init, destr):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

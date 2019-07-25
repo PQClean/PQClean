@@ -1,9 +1,10 @@
 import json
 import os
 
-import pqclean
-import helpers
 import pytest
+
+import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -47,6 +48,5 @@ def test_metadata_sizes(implementation, impl_path, test_dir, init, destr):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

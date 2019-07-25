@@ -1,6 +1,7 @@
+import pytest
+
 import helpers
 import pqclean
-import pytest
 
 
 @pytest.mark.parametrize(
@@ -19,10 +20,9 @@ def test_format(implementation: pqclean.Implementation):
          '--options=../.astylerc',
          *cfiles,
          *hfiles])
-    assert(not('Formatted' in result))
+    assert 'Formatted' not in result
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

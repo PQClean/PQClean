@@ -6,9 +6,10 @@ import os
 import platform
 import unittest
 
-import pqclean
-import helpers
 import pytest
+
+import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -40,6 +41,5 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

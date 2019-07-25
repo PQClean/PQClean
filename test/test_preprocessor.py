@@ -1,6 +1,7 @@
-import pqclean
-import helpers
 import pytest
+
+import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -28,6 +29,5 @@ def test_preprocessor(implementation: pqclean.Implementation):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

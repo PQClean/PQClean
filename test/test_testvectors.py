@@ -5,9 +5,11 @@ the one provided in the META file for every scheme/implementation.
 
 import hashlib
 import os
-import pqclean
-import helpers
+
 import pytest
+
+import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -42,6 +44,5 @@ def test_testvectors(implementation, impl_path, test_dir, init, destr):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

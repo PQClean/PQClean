@@ -1,10 +1,10 @@
 import os
 import re
+
 import pytest
 
-import pqclean
 import helpers
-
+import pqclean
 
 pattern = re.compile(r'^\s*#include\s*"')
 
@@ -29,6 +29,5 @@ def test_api_h(implementation: pqclean.Implementation):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

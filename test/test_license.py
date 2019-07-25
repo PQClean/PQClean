@@ -4,9 +4,11 @@ implementation of the specified scheme.
 """
 
 import os
-import pqclean
+
 import pytest
+
 import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -22,6 +24,5 @@ def test_license(implementation):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

@@ -5,11 +5,12 @@ and executed for every scheme/implementation.
 
 import os
 import platform
-import pytest
 import unittest
 
-import pqclean
+import pytest
+
 import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -51,7 +52,7 @@ def test_functest(implementation, impl_path, test_dir,
 @helpers.filtered_test
 @helpers.slow_test
 def test_functest_sanitizers(implementation, impl_path, test_dir,
-                             initializer, destructor):
+                             init, destr):
     dest_dir = os.path.join(test_dir, 'bin')
     env = None
     if platform.machine() == 'ppc' and os.environ.get('CC', 'gcc') == 'clang':
@@ -63,7 +64,7 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
     else:
         print("Supported platform: {}".format(platform.machine()))
 
-    initializer()
+    init()
 
     helpers.make('clean-scheme', 'functest',
                  TYPE=implementation.scheme.type,
@@ -82,10 +83,9 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
         ))],
         env=env,
     )
-    destructor()
+    destr()
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

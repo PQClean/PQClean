@@ -3,12 +3,14 @@ Checks that every .c and .h file in an implementation is present as a
 dependency of that scheme's Makefile.
 """
 
-import os
-import pqclean
-import helpers
-import glob
 import datetime
+import glob
+import os
+
 import pytest
+
+import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -79,6 +81,5 @@ def check_makefile_dependencies(implementation, impl_path, file):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

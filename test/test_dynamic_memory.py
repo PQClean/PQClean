@@ -2,9 +2,10 @@
 Checks that no dynamic memory functions are used
 """
 
-import pqclean
-import helpers
 import pytest
+
+import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -38,6 +39,5 @@ def test_dynamic_memory(implementation, test_dir, impl_path, init, destr):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

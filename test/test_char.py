@@ -4,12 +4,13 @@ Checks that the implementation does not make use of the `char` type.
 This is ambiguous; compilers can freely choose `signed` or `unsigned` char.
 """
 
-import pqclean
-import pycparser
 import os
-import helpers
 
 import pytest
+
+import helpers
+import pqclean
+import pycparser
 
 
 def setup_module():
@@ -63,3 +64,8 @@ def test_char(implementation):
             "Prohibited use of char without explicit signed/unsigned" +
             "".join(errors)
         )
+
+
+if __name__ == "__main__":
+    import sys
+    pytest.main(sys.argv)

@@ -4,9 +4,11 @@ Verify the metadata specified in the META.yml files.
 
 import copy
 import itertools
-import pqclean
+
 import pytest
+
 import helpers
+import pqclean
 
 
 @pytest.mark.parametrize(
@@ -139,6 +141,5 @@ def check_element(field, element, props):
 
 
 if __name__ == '__main__':
-    import pytest
     import sys
     pytest.main(sys.argv)

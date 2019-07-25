@@ -1,23 +1,23 @@
+import atexit
 import functools
+import logging
 import os
-import subprocess
-import unittest
 import shutil
+import subprocess
 import sys
+import tempfile
+import unittest
 
 import pqclean
-
-import atexit
-import logging
-import tempfile
 
 
 @atexit.register
 def cleanup_testcases():
+    """Clean up any remaining isolated test dirs"""
     print("Cleaning up testcases directory",
           file=sys.stderr)
-    for dir in TEST_TEMPDIRS:
-        shutil.rmtree(dir, ignore_errors=True)
+    for dir_ in TEST_TEMPDIRS:
+        shutil.rmtree(dir_, ignore_errors=True)
 
 
 TEST_TEMPDIRS = []
@@ -51,6 +51,7 @@ def isolate_test_files(impl_path, test_prefix,
     new_impl_dir = os.path.abspath(os.path.join(nested_dir, 'impl'))
 
     def initializer():
+        """Isolate the files to be tested"""
         shutil.copytree(
             os.path.join('..', 'common'), os.path.join(test_dir, 'common'))
         # Copy makefiles
@@ -68,6 +69,7 @@ def isolate_test_files(impl_path, test_prefix,
         shutil.copytree(impl_path, new_impl_dir)
 
     def destructor():
+        """Clean up the isolated files"""
         shutil.rmtree(test_dir)
 
     return (test_dir, new_impl_dir, initializer, destructor)
@@ -84,7 +86,7 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
         env = env_
 
     # Note we need to capture stdout/stderr from the subprocess,
-    # then print it, which nose/unittest will then capture and
+    # then print it, which the unittest will then capture and
     # buffer appropriately
     print(working_dir + " > " + " ".join(command))
     result = subprocess.run(
