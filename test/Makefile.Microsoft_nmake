@@ -11,6 +11,7 @@ IMPLEMENTATION_UPPERCASE=CLEAN
 
 SCHEME_DIR=..\crypto_$(TYPE)\$(SCHEME)\$(IMPLEMENTATION)
 
+TEST_COMMON_DIR=..\test\common
 COMMON_DIR=..\common
 COMMON_OBJECTS=$(COMMON_DIR)\aes.obj $(COMMON_DIR)\fips202.obj $(COMMON_DIR)\sha2.obj $(COMMON_DIR)\sp800-185.obj
 COMMON_OBJECTS_NOPATH=aes.obj fips202.obj sha2.obj sp800-185.obj
@@ -45,7 +46,7 @@ $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJE
     $(CC) /c crypto_$(TYPE)\functest.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
     LINK.EXE /STACK:8192000 /OUT:$@ functest.obj $(COMMON_OBJECTS_NOPATH) randombytes.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib Advapi32.lib
 
-$(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\notrandombytes.obj
+$(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(TEST_COMMON_DIR)\notrandombytes.obj
     -MKDIR $(DEST_DIR)
     -DEL testvectors.obj
     $(CC) /c crypto_$(TYPE)\testvectors.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
@@ -57,7 +58,7 @@ $(DEST_DIR)\printparams_$(SCHEME)_$(IMPLEMENTATION).exe: crypto_$(TYPE)\printpar
     $(CC) /c crypto_$(TYPE)\printparams.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
     LINK.EXE /OUT:$@ printparams.obj
 
-$(DEST_DIR)\nistkat_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(COMMON_DIR)\nistkatrng.obj
+$(DEST_DIR)\nistkat_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(TEST_COMMON_DIR)\nistkatrng.obj
     -MKDIR $(DEST_DIR)
     -DEL nistkat.obj
     $(CC) /c crypto_$(TYPE)\nistkat.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
