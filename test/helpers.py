@@ -52,6 +52,7 @@ def isolate_test_files(impl_path, test_prefix,
 
     def initializer():
         """Isolate the files to be tested"""
+        # Copy common files (randombytes.c, aes.c, ...)
         shutil.copytree(
             os.path.join('..', 'common'), os.path.join(test_dir, 'common'))
         # Copy makefiles
@@ -60,7 +61,7 @@ def isolate_test_files(impl_path, test_prefix,
         shutil.copy(os.path.join('..', 'test', 'Makefile.Microsoft_nmake'),
                     os.path.join(test_dir, 'test', 'Makefile.Microsoft_nmake'))
         # Copy directories with support files
-        for d in ['common', 'crypto_sign', 'crypto_kem']:
+        for d in ['common', 'test_common', 'crypto_sign', 'crypto_kem']:
             shutil.copytree(
                 os.path.join('..', 'test', d),
                 os.path.join(test_dir, 'test', d)
