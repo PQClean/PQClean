@@ -3,18 +3,20 @@ Checks that no implementation makes use of symbolic links.
 """
 
 import os
-import pqclean
+
+import pytest
+
 import helpers
+import pqclean
 
 
-def test_no_symlinks():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_no_symlinks, implementation
-
-
+@pytest.mark.parametrize(
+    'implementation',
+    pqclean.Scheme.all_implementations(),
+    ids=str,
+)
 @helpers.filtered_test
-def check_no_symlinks(implementation):
+def test_no_symlinks(implementation):
     for file in os.listdir(implementation.path()):
         fpath = os.path.join(implementation.path(), file)
         if os.path.islink(fpath):
@@ -22,9 +24,5 @@ def check_no_symlinks(implementation):
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    import sys
+    pytest.main(sys.argv)

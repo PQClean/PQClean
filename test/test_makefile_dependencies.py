@@ -3,35 +3,36 @@ Checks that every .c and .h file in an implementation is present as a
 dependency of that scheme's Makefile.
 """
 
-import os
-import pqclean
-import helpers
-import glob
 import datetime
-import unittest
+import glob
+import os
+
+import pytest
+
+import helpers
+import pqclean
 
 
-def _skipped_test(*args, **kwargs):
-    """Used to indicate skipped tests"""
-    raise unittest.SkipTest("Skipped makefile dependencies test")
-
-
-def test_makefile_dependencies():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            if not helpers.permit_test(
-                    'makefile_dependencies', implementation):
-                yield _skipped_test, implementation
-                continue
-
-            # initial build - want to have *all* files in place at beginning
-            helpers.make('clean', working_dir=implementation.path())
-            helpers.make(working_dir=implementation.path())
-            # test case for each candidate file
-            cfiles = glob.glob(os.path.join(implementation.path(), '*.c'))
-            hfiles = glob.glob(os.path.join(implementation.path(), '*.h'))
-            for file in (cfiles + hfiles):
-                yield (check_makefile_dependencies, implementation, file)
+@pytest.mark.parametrize(
+    'implementation,test_dir,impl_path, init, destr',
+    [(impl,
+      *helpers.isolate_test_files(impl.path(), 'test_makefile_deps_'))
+     for impl in pqclean.Scheme.all_implementations()],
+    ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
+)
+@helpers.filtered_test
+def test_makefile_dependencies(implementation, impl_path, test_dir,
+                               init, destr):
+    init()
+    # initial build - want to have *all* files in place at beginning
+    helpers.make('clean', working_dir=impl_path)
+    helpers.make(working_dir=impl_path)
+    # test case for each candidate file
+    cfiles = glob.glob(os.path.join(impl_path, '*.c'))
+    hfiles = glob.glob(os.path.join(impl_path, '*.h'))
+    for file in (cfiles + hfiles):
+        check_makefile_dependencies(implementation, impl_path, file)
+    destr()
 
 
 def touch(time, *files):
@@ -49,12 +50,14 @@ def make_check(path, expect_error=False):
                  expected_returncode=expected_returncode)
 
 
-def check_makefile_dependencies(implementation, file):
-    cfiles = implementation.cfiles()
-    hfiles = implementation.hfiles()
-    ofiles = implementation.ofiles()
+def check_makefile_dependencies(implementation, impl_path, file):
+    cfiles = glob.glob(os.path.join(impl_path, '*.c'))
+    hfiles = glob.glob(os.path.join(impl_path, '*.h'))
+    ofiles = glob.glob(
+        os.path.join(impl_path,
+                     '*.o' if os.name != 'nt' else '*.obj'))
 
-    libfile = os.path.join(implementation.path(), implementation.libname())
+    libfile = os.path.join(impl_path, implementation.libname())
 
     # modification time-based calculations is tricky on a sub-second basis
     # so we reset all the modification times to a known and "sensible" order
@@ -68,19 +71,15 @@ def check_makefile_dependencies(implementation, file):
     touch(ago5, libfile)
 
     # Sanity check: the scheme is up to date
-    make_check(implementation.path())
+    make_check(impl_path)
 
     # touch the candidate .c / .h file
     touch(now, file)
 
     # check if it needs to be rebuilt using make -q
-    make_check(implementation.path(), expect_error=True)
+    make_check(impl_path, expect_error=True)
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    import sys
+    pytest.main(sys.argv)

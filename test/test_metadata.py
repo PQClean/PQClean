@@ -3,18 +3,21 @@ Verify the metadata specified in the META.yml files.
 """
 
 import copy
-import helpers
 import itertools
+
+import pytest
+
+import helpers
 import pqclean
 
 
-def test_metadata():
-    for scheme in pqclean.Scheme.all_schemes():
-        yield check_metadata, scheme
-
-
+@pytest.mark.parametrize(
+    'scheme',
+    pqclean.Scheme.all_schemes(),
+    ids=str,
+)
 @helpers.filtered_test
-def check_metadata(scheme):
+def test_metadata(scheme):
     metadata = scheme.metadata()
 
     specification = EXPECTED_FIELDS.items()
@@ -49,7 +52,8 @@ EXPECTED_FIELDS = {
     'length-secret-key': {'type': int, 'min': 1},
     'nistkat-sha256': {'type': str, 'length': 64},
     'principal-submitters': {'type': list, 'elements': {'type': str}},
-    'auxiliary-submitters': {'type': list, 'elements': {'type': str}, 'optional' : True},
+    'auxiliary-submitters': {
+        'type': list, 'elements': {'type': str}, 'optional': True},
     'implementations': {
         'type': list,
         'elements': {
@@ -63,7 +67,7 @@ EXPECTED_FIELDS = {
 }
 
 KEM_FIELDS = {
-    'claimed-security' : {'type' : str, 'values' : ['IND-CPA', 'IND-CCA2'] },
+    'claimed-security': {'type': str, 'values': ['IND-CPA', 'IND-CCA2']},
     'length-ciphertext': {'type': int, 'min': 1},
     'length-shared-secret': {'type': int, 'min': 1},
 }
@@ -128,7 +132,6 @@ def check_element(field, element, props):
             raise ValueError("'{}' should be in {}"
                              .format(element, props['values']))
 
-
     if type_ == list:  # recursively check the elements
         for el in element:
             check_element('element of {}'.format(field), el, props['elements'])
@@ -138,9 +141,5 @@ def check_element(field, element, props):
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    import sys
+    pytest.main(sys.argv)

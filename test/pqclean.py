@@ -1,5 +1,6 @@
-import os
 import glob
+import os
+
 import yaml
 
 
@@ -31,9 +32,9 @@ class Scheme:
 
     @staticmethod
     def all_implementations():
-        implementations = dict()
-        for scheme in Scheme.all_schemes().values():
-            implementations.extend(scheme.all_implementations())
+        implementations = []
+        for scheme in Scheme.all_schemes():
+            implementations.extend(scheme.implementations)
         return implementations
 
     @staticmethod
@@ -142,4 +143,4 @@ class Signature(Scheme):
 
     @staticmethod
     def all_sigs():
-        return Scheme.all_schemes_of_type('sig')
+        return Scheme.all_schemes_of_type('sign')

@@ -1,24 +1,26 @@
 import os
 import re
 
+import pytest
+
 import helpers
 import pqclean
 
-
-def test_api_h():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_api_h, implementation
+pattern = re.compile(r'^\s*#include\s*"')
 
 
+@pytest.mark.parametrize(
+    'implementation',
+    pqclean.Scheme.all_implementations(),
+    ids=str,
+)
 @helpers.filtered_test
-def check_api_h(implementation: pqclean.Implementation):
+def test_api_h(implementation: pqclean.Implementation):
     apipath = os.path.join(implementation.path(), 'api.h')
     errors = []
-    p = re.compile(r'^\s*#include\s*"')
     with open(apipath) as f:
         for i, line in enumerate(f):
-            if p.match(line):
+            if pattern.match(line):
                 errors.append("\n at {}:{}".format(apipath, i+1))
     if errors:
         raise AssertionError(
@@ -26,10 +28,6 @@ def check_api_h(implementation: pqclean.Implementation):
         )
 
 
-if __name__ == "__main__":
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+if __name__ == '__main__':
+    import sys
+    pytest.main(sys.argv)

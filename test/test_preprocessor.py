@@ -1,15 +1,16 @@
-import pqclean
+import pytest
+
 import helpers
+import pqclean
 
 
-def test_preprocessor():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_preprocessor, implementation
-
-
+@pytest.mark.parametrize(
+    'implementation',
+    pqclean.Scheme.all_implementations(),
+    ids=str,
+)
 @helpers.filtered_test
-def check_preprocessor(implementation: pqclean.Implementation):
+def test_preprocessor(implementation: pqclean.Implementation):
     cfiles = implementation.cfiles()
     hfiles = implementation.hfiles()
     errors = []
@@ -27,10 +28,6 @@ def check_preprocessor(implementation: pqclean.Implementation):
         )
 
 
-if __name__ == "__main__":
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+if __name__ == '__main__':
+    import sys
+    pytest.main(sys.argv)

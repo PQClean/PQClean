@@ -2,27 +2,26 @@
 Checks that the archive library can be successfully built for every
 scheme/implementation.
 """
+import pytest
 
-import pqclean
 import helpers
+import pqclean
 
 
-def test_compile_lib():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_compile_lib, implementation
-
-
+@pytest.mark.parametrize(
+    'implementation,test_dir,impl_dir, init, destr',
+    [(impl, *helpers.isolate_test_files(impl.path(), 'test_functest_'))
+     for impl in pqclean.Scheme.all_implementations()],
+    ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
+)
 @helpers.filtered_test
-def check_compile_lib(implementation):
-    helpers.make('clean', working_dir=implementation.path())
-    helpers.make(working_dir=implementation.path())
+def test_compile_lib(implementation, test_dir, impl_dir, init, destr):
+    init()
+    helpers.make('clean', working_dir=impl_dir)
+    helpers.make(working_dir=impl_dir)
+    destr()
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    import sys
+    pytest.main(sys.argv)

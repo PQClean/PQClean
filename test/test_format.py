@@ -1,15 +1,16 @@
+import pytest
+
 import helpers
 import pqclean
 
 
-def test_formatting():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_format, implementation
-
-
+@pytest.mark.parametrize(
+    'implementation',
+    pqclean.Scheme.all_implementations(),
+    ids=str,
+)
 @helpers.filtered_test
-def check_format(implementation: pqclean.Implementation):
+def test_format(implementation: pqclean.Implementation):
     helpers.ensure_available('astyle')
     cfiles = implementation.cfiles()
     hfiles = implementation.hfiles()
@@ -19,13 +20,9 @@ def check_format(implementation: pqclean.Implementation):
          '--options=../.astylerc',
          *cfiles,
          *hfiles])
-    assert(not('Formatted' in result))
+    assert 'Formatted' not in result
 
 
-if __name__ == "__main__":
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+if __name__ == '__main__':
+    import sys
+    pytest.main(sys.argv)

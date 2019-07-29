@@ -1,4 +1,4 @@
 PyYAML
-nose
-rednose
+pytest
+pytest-xdist
 pycparser

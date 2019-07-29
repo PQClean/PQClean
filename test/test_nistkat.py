@@ -1,5 +1,5 @@
 """
-Checks that (hash of the) KATs (in NIST format) produced on this platform matches
+Checks that (hash of the) KATs (in NIST format) produced on this platform match
 the one provided in the META file for every scheme/implementation.
 
 Note that this only uses the first test case from the NIST-format KAT files.
@@ -10,40 +10,42 @@ using the command:
 
 import hashlib
 import os
-import pqclean
+
+import pytest
+
 import helpers
-import unittest
+import pqclean
 
 
-def test_nistkat():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_nistkat, implementation
-
-
+@pytest.mark.parametrize(
+    'implementation,test_dir,impl_path, init, destr',
+    [(impl, *helpers.isolate_test_files(impl.path(), 'test_functest_'))
+     for impl in pqclean.Scheme.all_implementations()],
+    ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
+)
 @helpers.filtered_test
-def check_nistkat(implementation):
+def test_nistkat(implementation, impl_path, test_dir, init, destr):
+    init()
+    dest_path = os.path.join(test_dir, 'bin')
     helpers.make('nistkat',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
-                 working_dir=os.path.join('..', 'test'))
+                 SCHEME_DIR=impl_path,
+                 DEST_DIR=dest_path,
+                 working_dir=os.path.join(test_dir, 'test'))
     out = helpers.run_subprocess(
-        [os.path.join('..', 'bin', 'nistkat_{}_{}{}'.format(
+        [os.path.join(dest_path, 'nistkat_{}_{}{}'.format(
             implementation.scheme.name,
             implementation.name,
             '.exe' if os.name == 'nt' else ''
         ))],
-        os.path.join('..', 'bin'),
     ).replace('\r', '')
     assert(implementation.scheme.metadata()['nistkat-sha256'].lower()
            == hashlib.sha256(out.encode('utf-8')).hexdigest().lower())
+    destr()
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    import sys
+    pytest.main(sys.argv)

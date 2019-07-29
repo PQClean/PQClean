@@ -3,24 +3,18 @@ Checks that files duplicated across schemes/implementations are consistent.
 """
 
 import os
-import pqclean
-import helpers
-import unittest
+
 import yaml
 
+import helpers
+import pqclean
 
-def _skipped_test(*args, **kwargs):
-    raise unittest.SkipTest("Skipped consistency check")
 
-
-def test_duplicate_consistency():
+def pytest_generate_tests(metafunc):
+    ids = []
+    argvalues = []
     for scheme in pqclean.Scheme.all_schemes():
         for implementation in scheme.implementations:
-            if not helpers.permit_test('duplicate_consistency',
-                                       implementation):
-                yield _skipped_test, implementation
-                continue
-
             if os.path.isfile(
                     os.path.join(
                         'duplicate_consistency',
@@ -35,8 +29,14 @@ def test_duplicate_consistency():
                                 group['source']['scheme'],
                                 group['source']['implementation'])
                         for file in group['files']:
-                            yield (check_duplicate_consistency, implementation,
-                                   source, file)
+                            argvalues.append((implementation, source, file))
+                            ids.append(
+                                "{scheme.name}-{source.scheme.name}: {file}"
+                                .format(scheme=scheme, source=source,
+                                        file=file))
+    metafunc.parametrize(('implementation', 'source', 'file'),
+                         argvalues,
+                         ids=ids)
 
 
 def file_get_contents(filename):
@@ -45,7 +45,8 @@ def file_get_contents(filename):
 
 
 @helpers.skip_windows()
-def check_duplicate_consistency(implementation, source, file):
+@helpers.filtered_test
+def test_duplicate_consistency(implementation, source, file):
     transformed_src = helpers.run_subprocess(
         ['sed', '-e', 's/{}/{}/g'.format(source.namespace_prefix(),
          implementation.namespace_prefix()), os.path.join(source.path(), file)]
@@ -57,9 +58,6 @@ def check_duplicate_consistency(implementation, source, file):
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    import pytest
+    import sys
+    pytest.main(sys.argv)

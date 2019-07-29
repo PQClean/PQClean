@@ -3,26 +3,31 @@ Checks that the all exported symbols are properly namespaced, i.e., all
 start with "PQCLEAN_SCHEMENAME_".
 """
 
-import pqclean
-import helpers
 import sys
 import unittest
 
+import pytest
 
-def test_symbol_namespace():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_symbol_namespace, implementation
+import helpers
+import pqclean
 
 
+@pytest.mark.parametrize(
+    'implementation,test_dir,impl_path,init,destr',
+    [(impl,
+      *helpers.isolate_test_files(impl.path(), 'test_symbol_ns_'))
+     for impl in pqclean.Scheme.all_implementations()],
+    ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
+)
 @helpers.filtered_test
-def check_symbol_namespace(implementation):
+def test_symbol_namespaces(implementation, impl_path, test_dir, init, destr):
     if sys.platform not in ['linux', 'darwin']:
         raise unittest.SkipTest("Unsupported platform")
-    helpers.make(working_dir=implementation.path())
+    init()
+    helpers.make(working_dir=impl_path)
     out = helpers.run_subprocess(
         ['nm', '-g', implementation.libname()],
-        implementation.path()
+        impl_path,
     )
 
     lines = out.strip().split("\n")
@@ -46,13 +51,10 @@ def check_symbol_namespace(implementation):
         print("Missing namespace literal {}".format(namespace))
         for symbol in non_namespaced:
             print("\ttype: {}, symbol: {}".format(symtype, symbol))
-        assert(False)
+
+    assert not non_namespaced, "Literals with missing namespaces"
+    destr()
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    pytest.main(sys.argv)

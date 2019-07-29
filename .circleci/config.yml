@@ -22,7 +22,8 @@ version: 2.1
           export CC=${CC} &&
           pip3 install -r requirements.txt &&
           mkdir test-results &&
-          cd test && python3 -m nose --rednose --verbose --with-xunit --xunit-file=../test-results/nosetests.xml"
+          cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto"
+        no_output_timeout: 2h
     - store_test_results:
         path: test-results
 
@@ -42,7 +43,8 @@ version: 2.1
           pip3 install -r requirements.txt
           mkdir test-results
           cd test
-          python3 -m nose --rednose --verbose --with-xunit --xunit-file=../test-results/nosetests.xml
+          python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto
+        no_output_timeout: 2h
     - store_test_results:
         path: test-results
 

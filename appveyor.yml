@@ -25,12 +25,23 @@ init:
 build_script:
   - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
   - git fetch --all
-  - git checkout %APPVEYOR_REPO_BRANCH%
-  - git reset --hard %APPVEYOR_REPO_COMMIT%
+  - sh: |
+      COMMIT=$(git rev-parse HEAD)
+      git checkout $APPVEYOR_REPO_BRANCH
+      git reset --hard $COMMIT
   - git diff --name-only origin/master
   - python -m pip install -r requirements.txt
   - cd test
     # Download Astyle to local folder because putting it in PATH doesn't work
   - ps: Invoke-WebRequest -OutFile "astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
     # Run tests
-  - python -m nose -v --rednose
+  - python -m pytest --verbose --numprocesses=auto --junitxml=results.xml
+
+on_finish:
+  - ps: |
+      Try {
+          $wc = New-Object 'System.Net.WebClient'
+          $wc.UploadFile("https://ci.appveyor.com/api/testresults/junit/$($env:APPVEYOR_JOB_ID)", (Resolve-Path .\results.xml))
+      } Catch {
+          Write-Warning "$($error[0])"
+      }

@@ -1,13 +1,79 @@
+import atexit
 import functools
+import logging
 import os
-import subprocess
-import unittest
 import shutil
+import subprocess
 import sys
+import tempfile
+import unittest
 
 import pqclean
 
-import logging
+
+@atexit.register
+def cleanup_testcases():
+    """Clean up any remaining isolated test dirs"""
+    print("Cleaning up testcases directory",
+          file=sys.stderr)
+    for dir_ in TEST_TEMPDIRS:
+        shutil.rmtree(dir_, ignore_errors=True)
+
+
+TEST_TEMPDIRS = []
+
+
+def isolate_test_files(impl_path, test_prefix,
+                       dir=os.path.join('..', 'testcases')):
+    """Isolates the test files in a separate directory, to help parallelise.
+
+    Especially Windows is problematic and needs isolation of all test files:
+    its build process will create .obj files EVERYWHERE.
+    """
+    try:
+        os.mkdir(dir)
+    except FileExistsError:
+        pass
+    test_dir = tempfile.mkdtemp(prefix=test_prefix, dir=dir)
+    test_dir = os.path.abspath(test_dir)
+    TEST_TEMPDIRS.append(test_dir)
+
+    # Create layers in folder structure
+    nested_dir = os.path.join(test_dir, 'crypto_bla')
+    os.mkdir(nested_dir)
+    nested_dir = os.path.join(nested_dir, 'scheme')
+    os.mkdir(nested_dir)
+
+    # Create test dependencies structure
+    os.mkdir(os.path.join(test_dir, 'test'))
+
+    # the implementation will go here.
+    new_impl_dir = os.path.abspath(os.path.join(nested_dir, 'impl'))
+
+    def initializer():
+        """Isolate the files to be tested"""
+        # Copy common files (randombytes.c, aes.c, ...)
+        shutil.copytree(
+            os.path.join('..', 'common'), os.path.join(test_dir, 'common'))
+        # Copy makefiles
+        shutil.copy(os.path.join('..', 'test', 'Makefile'),
+                    os.path.join(test_dir, 'test', 'Makefile'))
+        shutil.copy(os.path.join('..', 'test', 'Makefile.Microsoft_nmake'),
+                    os.path.join(test_dir, 'test', 'Makefile.Microsoft_nmake'))
+        # Copy directories with support files
+        for d in ['common', 'test_common', 'crypto_sign', 'crypto_kem']:
+            shutil.copytree(
+                os.path.join('..', 'test', d),
+                os.path.join(test_dir, 'test', d)
+            )
+
+        shutil.copytree(impl_path, new_impl_dir)
+
+    def destructor():
+        """Clean up the isolated files"""
+        shutil.rmtree(test_dir)
+
+    return (test_dir, new_impl_dir, initializer, destructor)
 
 
 def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
@@ -21,7 +87,7 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
         env = env_
 
     # Note we need to capture stdout/stderr from the subprocess,
-    # then print it, which nose/unittest will then capture and
+    # then print it, which the unittest will then capture and
     # buffer appropriately
     print(working_dir + " > " + " ".join(command))
     result = subprocess.run(
@@ -116,7 +182,12 @@ def ensure_available(executable):
     raise AssertionError("{} not available on CI".format(executable))
 
 
-def permit_test(testname, thing, *args, **kwargs):
+def permit_test(testname, *args, **kwargs):
+    if len(args) == 0:
+        thing = list(kwargs.values())[0]
+    else:
+        thing = args[0]
+
     if 'PQCLEAN_ONLY_TESTS' in os.environ:
         if not(testname.lower() in os.environ['PQCLEAN_ONLY_TESTS'].lower().split(',')):
             return False
@@ -192,7 +263,7 @@ def permit_test(testname, thing, *args, **kwargs):
 
 
 def filtered_test(func):
-    funcname = func.__name__[len("check_"):]
+    funcname = func.__name__[len("test_"):]
 
     @functools.wraps(func)
     def wrapper(*args, **kwargs):

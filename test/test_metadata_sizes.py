@@ -1,25 +1,27 @@
 import json
 import os
 
-import pqclean
+import pytest
+
 import helpers
+import pqclean
 
 
-def test_metadata_sizes():
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_metadata_sizes, implementation
-
-
+@pytest.mark.parametrize(
+    'implementation,test_dir,impl_path, init, destr',
+    [(impl, *helpers.isolate_test_files(impl.path(), 'test_functest_'))
+     for impl in pqclean.Scheme.all_implementations()],
+    ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
+)
 @helpers.filtered_test
-def check_metadata_sizes(implementation):
+def test_metadata_sizes(implementation, impl_path, test_dir, init, destr):
+    init()
     metadata = implementation.scheme.metadata()
-    impl_meta = next((impl for impl in metadata['implementations']
-                      if impl['name'] == implementation.name), None)
     helpers.make('printparams',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
+                 SCHEME_DIR=impl_path,
                  working_dir=os.path.join('..', 'test'))
 
     out = helpers.run_subprocess(
@@ -42,12 +44,9 @@ def check_metadata_sizes(implementation):
         assert parsed['CRYPTO_BYTES'] == metadata['length-shared-secret']
     else:
         assert parsed['CRYPTO_BYTES'] == metadata['length-signature']
+    destr()
 
 
 if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+    import sys
+    pytest.main(sys.argv)

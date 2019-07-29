@@ -4,20 +4,18 @@ Checks that the implementation does not make use of the `char` type.
 This is ambiguous; compilers can freely choose `signed` or `unsigned` char.
 """
 
+import os
+
+import pytest
+
+import helpers
 import pqclean
 import pycparser
-import os
-import helpers
 
 
-def test_char():
+def setup_module():
     if not(os.path.exists(os.path.join('pycparser', '.git'))):
-        helpers.run_subprocess(
-            ['git', 'submodule', 'update', '--init']
-        )
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            yield check_char, implementation
+        print("Please run `git submodule update --init`")
 
 
 def walk_tree(ast):
@@ -29,9 +27,14 @@ def walk_tree(ast):
         yield from walk_tree(child)  # recursively yield prohibited nodes
 
 
+@pytest.mark.parametrize(
+    'implementation',
+    pqclean.Scheme.all_implementations(),
+    ids=str,
+)
 @helpers.filtered_test
 @helpers.skip_windows()
-def check_char(implementation):
+def test_char(implementation):
     errors = []
     for fname in os.listdir(implementation.path()):
         if not fname.endswith(".c"):
@@ -63,10 +66,6 @@ def check_char(implementation):
         )
 
 
-if __name__ == '__main__':
-    try:
-        import nose2
-        nose2.main()
-    except ImportError:
-        import nose
-        nose.runmodule()
+if __name__ == "__main__":
+    import sys
+    pytest.main(sys.argv)
