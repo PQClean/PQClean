@@ -1,4 +1,5 @@
 import os
+import platform
 import unittest
 from glob import glob
 
@@ -18,6 +19,8 @@ additional_flags = []
 @helpers.skip_windows()
 @helpers.filtered_test
 def test_clang_tidy(implementation: pqclean.Implementation):
+    if platform.machine() in ['i386']:
+        raise unittest.SkipTest("Clang-tidy has false-positives on i386")
     helpers.ensure_available('clang-tidy')
     cfiles = implementation.cfiles()
     common_files = glob(os.path.join('..', 'common', '*.c'))
