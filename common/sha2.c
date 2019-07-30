@@ -529,7 +529,7 @@ void sha512_inc_init(sha512ctx *state) {
     }
 }
 
-void sha256_inc_dupe_state(sha256ctx *stateout, const sha256ctx *statein) {
+void sha256_inc_clone_state(sha256ctx *stateout, const sha256ctx *statein) {
     memcpy(stateout, statein, sizeof(sha256ctx));
 }
 
