@@ -28,7 +28,7 @@ static void PQCLEAN_SPHINCSSHA256256SROBUST_CLEAN_thash(
     PQCLEAN_SPHINCSSHA256256SROBUST_CLEAN_mgf1(bitmask, inblocks * SPX_N, buf, SPX_N + SPX_SHA256_ADDR_BYTES);
 
     /* Retrieve precomputed state containing pub_seed */
-    memcpy(&sha2_state, hash_state_seeded, sizeof(sha256ctx));
+    sha256_inc_clone_state(&sha2_state, hash_state_seeded);
 
     for (i = 0; i < inblocks * SPX_N; i++) {
         buf[SPX_N + SPX_SHA256_ADDR_BYTES + i] = in[i] ^ bitmask[i];
