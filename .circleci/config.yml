@@ -47,6 +47,8 @@ version: 2.1
         no_output_timeout: 2h
     - store_test_results:
         path: test-results
+    - store_artifacts:
+        path: test-results
 
 jobs:
   arm64-gcc:
