@@ -461,15 +461,16 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
 }
 
 /*
- * Compute a signature: the signature contains two vectors, s1 and s2;
- * the caller must still check that they comply with the signature
- * bound, and try again if that is not the case. The s1 vector is not
- * returned; instead, its squared norm (saturated) is returned. This
- * function uses an expanded key.
+ * Compute a signature: the signature contains two vectors, s1 and s2.
+ * The s1 vector is not returned. The squared norm of (s1,s2) is
+ * computed, and if it is short enough, then s2 is returned into the
+ * s2[] buffer, and 1 is returned; otherwise, s2[] is untouched and 0 is
+ * returned; the caller should then try again. This function uses an
+ * expanded key.
  *
  * tmp[] must have room for at least six polynomials.
  */
-static uint32_t
+static int
 do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
              const fpr *expanded_key,
              const uint16_t *hm,
@@ -479,6 +480,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
     const fpr *b00, *b01, *b10, *b11, *tree;
     fpr ni;
     uint32_t sqn, ng;
+    int16_t *s2tmp;
 
     n = MKN(logn);
     t0 = tmp;
@@ -550,23 +552,37 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
         ng |= sqn;
     }
     sqn |= -(ng >> 31);
+
+    /*
+     * With "normal" degrees (e.g. 512 or 1024), it is very
+     * improbable that the computed vector is not short enough;
+     * however, it may happen in practice for the very reduced
+     * versions (e.g. degree 16 or below). In that case, the caller
+     * will loop, and we must not write anything into s2[] because
+     * s2[] may overlap with the hashed message hm[] and we need
+     * hm[] for the next iteration.
+     */
+    s2tmp = (int16_t *)tmp;
     for (u = 0; u < n; u ++) {
-        s2[u] = (int16_t) - fpr_rint(t1[u]);
+        s2tmp[u] = (int16_t) - fpr_rint(t1[u]);
     }
-    return sqn;
+    if (PQCLEAN_FALCON1024_CLEAN_is_short_half(sqn, s2tmp, logn)) {
+        memcpy(s2, s2tmp, n * sizeof * s2);
+        return 1;
+    }
+    return 0;
 }
 
 /*
- * Compute a signature: the signature contains two vectors, s1 and s2;
- * the caller must still check that they comply with the signature
- * bound, and try again if that is not the case. The s1 vector is not
- * returned; instead, its squared norm (saturated) is returned. This
- * function uses a raw key and recomputes the B0 matrix and LDL tree
- * dynamically.
+ * Compute a signature: the signature contains two vectors, s1 and s2.
+ * The s1 vector is not returned. The squared norm of (s1,s2) is
+ * computed, and if it is short enough, then s2 is returned into the
+ * s2[] buffer, and 1 is returned; otherwise, s2[] is untouched and 0 is
+ * returned; the caller should then try again.
  *
  * tmp[] must have room for at least nine polynomials.
  */
-static uint32_t
+static int
 do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
             const int8_t *f, const int8_t *g,
             const int8_t *F, const int8_t *G,
@@ -576,6 +592,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     fpr *b00, *b01, *b10, *b11, *g00, *g01, *g11;
     fpr ni;
     uint32_t sqn, ng;
+    int16_t *s2tmp;
 
     n = MKN(logn);
 
@@ -738,10 +755,25 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
         ng |= sqn;
     }
     sqn |= -(ng >> 31);
+
+    /*
+     * With "normal" degrees (e.g. 512 or 1024), it is very
+     * improbable that the computed vector is not short enough;
+     * however, it may happen in practice for the very reduced
+     * versions (e.g. degree 16 or below). In that case, the caller
+     * will loop, and we must not write anything into s2[] because
+     * s2[] may overlap with the hashed message hm[] and we need
+     * hm[] for the next iteration.
+     */
+    s2tmp = (int16_t *)tmp;
     for (u = 0; u < n; u ++) {
-        s2[u] = (int16_t) - fpr_rint(t1[u]);
+        s2tmp[u] = (int16_t) - fpr_rint(t1[u]);
     }
-    return sqn;
+    if (PQCLEAN_FALCON1024_CLEAN_is_short_half(sqn, s2tmp, logn)) {
+        memcpy(s2, s2tmp, n * sizeof * s2);
+        return 1;
+    }
+    return 0;
 }
 
 /*
@@ -984,7 +1016,6 @@ PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
         sampler_context spc;
         samplerZ samp;
         void *samp_ctx;
-        uint32_t sqn;
 
         /*
          * Normal sampling. We use a fast PRNG seeded from our
@@ -1000,17 +1031,8 @@ PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
         /*
          * Do the actual signature.
          */
-        sqn = do_sign_tree(samp, samp_ctx, sig,
-                           expanded_key, hm, logn, ftmp);
-
-        /*
-         * Check that the norm is correct. With our chosen
-         * acceptance bound, this should almost always be true.
-         * With a tighter bound, it may happen sometimes that we
-         * end up with an invalidly large signature, in which
-         * case we just loop.
-         */
-        if (PQCLEAN_FALCON1024_CLEAN_is_short_half(sqn, sig, logn)) {
+        if (do_sign_tree(samp, samp_ctx, sig,
+                         expanded_key, hm, logn, ftmp)) {
             break;
         }
     }
@@ -1039,7 +1061,6 @@ PQCLEAN_FALCON1024_CLEAN_sign_dyn(int16_t *sig, shake256_context *rng,
         sampler_context spc;
         samplerZ samp;
         void *samp_ctx;
-        uint32_t sqn;
 
         /*
          * Normal sampling. We use a fast PRNG seeded from our
@@ -1055,17 +1076,8 @@ PQCLEAN_FALCON1024_CLEAN_sign_dyn(int16_t *sig, shake256_context *rng,
         /*
          * Do the actual signature.
          */
-        sqn = do_sign_dyn(samp, samp_ctx, sig,
-                          f, g, F, G, hm, logn, ftmp);
-
-        /*
-         * Check that the norm is correct. With our chosen
-         * acceptance bound, this should almost always be true.
-         * With a tighter bound, it may happen sometimes that we
-         * end up with an invalidly large signature, in which
-         * case we just loop.
-         */
-        if (PQCLEAN_FALCON1024_CLEAN_is_short_half(sqn, sig, logn)) {
+        if (do_sign_dyn(samp, samp_ctx, sig,
+                        f, g, F, G, hm, logn, ftmp)) {
             break;
         }
     }

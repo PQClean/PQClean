@@ -4069,7 +4069,7 @@ PQCLEAN_FALCON1024_CLEAN_keygen(shake256_context *rng,
      *    and Res(g,phi) are not prime to each other.
      */
     size_t n, u;
-    uint16_t *tmp2;
+    uint16_t *h2, *tmp2;
 
     n = MKN(logn);
 
@@ -4176,12 +4176,13 @@ PQCLEAN_FALCON1024_CLEAN_keygen(shake256_context *rng,
          * fails, we must restart.
          */
         if (h == NULL) {
-            h = (uint16_t *)tmp;
-            tmp2 = h + n;
+            h2 = (uint16_t *)tmp;
+            tmp2 = h2 + n;
         } else {
+            h2 = h;
             tmp2 = (uint16_t *)tmp;
         }
-        if (!PQCLEAN_FALCON1024_CLEAN_compute_public(h, f, g, logn, (uint8_t *)tmp2)) {
+        if (!PQCLEAN_FALCON1024_CLEAN_compute_public(h2, f, g, logn, (uint8_t *)tmp2)) {
             continue;
         }
 
