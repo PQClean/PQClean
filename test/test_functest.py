@@ -24,7 +24,7 @@ def test_functest(implementation, impl_path, test_dir,
                   init, destr):
     init()
     dest_dir = os.path.join(test_dir, 'bin')
-    helpers.make('functest',
+    helpers.make('clean-scheme', 'functest',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,

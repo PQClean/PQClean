@@ -2,6 +2,7 @@ import atexit
 import functools
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -120,9 +121,13 @@ def make(*args, working_dir='.', env=None, expected_returncode=0, **kwargs):
         for envvar in ['IMPLEMENTATION', 'SCHEME']:
             if envvar in kwargs:
                 kwargs['{}_UPPERCASE'.format(envvar)] = (
-                        kwargs[envvar].upper().replace('-', ''))
+                    kwargs[envvar].upper().replace('-', ''))
     else:
         make_command = ['make']
+
+    if supports_cast_align_strict():
+        kwargs['EXTRAFLAGS'] = (
+            kwargs.get('EXTRAFLAGS', '') + ' -Wcast-align=strict')
 
     return run_subprocess(
         [
@@ -272,3 +277,22 @@ def filtered_test(func):
         else:
             raise unittest.SkipTest("Test disabled by filter")
     return wrapper
+
+
+def supports_cast_align_strict():
+    """Tells us if this version of GCC supports -Wcast-align=strict
+
+    This is true if gcc >= 8
+    """
+    if os.name == 'nt':
+        return False
+    try:
+        gcc_version = subprocess.check_output(
+            ['gcc', '--version']).split(b'\n')[0]
+        version_number = re.match(r'gcc \(.*\) (\d)\.\d+\.\d+$',
+                                  gcc_version.decode())
+        if version_number:
+            return int(version_number.group(1)) >= 8
+    except subprocess.CalledProcessError:
+        pass
+    return False
