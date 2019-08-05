@@ -8,7 +8,7 @@ import pytest
 import helpers
 import pqclean
 
-additional_flags = []
+additional_flags = [] #['-fix-errors']
 
 
 @pytest.mark.parametrize(
@@ -46,9 +46,4 @@ def test_clang_tidy(implementation: pqclean.Implementation):
 
 if __name__ == "__main__":
     import sys
-    # allow a user to specify --fix-errors, to immediately fix errors
-    if len(sys.argv) >= 2 and sys.argv[1] == '-fix-errors':
-        additional_flags = ['-fix-errors']
-        del sys.argv[1]
-
     pytest.main(sys.argv)
