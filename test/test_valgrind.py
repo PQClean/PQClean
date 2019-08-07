@@ -38,7 +38,12 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
                  working_dir=os.path.join(test_dir, 'test'))
     functest_name = './functest_{}_{}'.format(implementation.scheme.name,
                                               implementation.name)
-    helpers.run_subprocess(['valgrind', functest_name], dest_dir)
+    helpers.run_subprocess(
+        ['valgrind',
+         '--error-exitcode=1',
+         '--max-stackframe=20933064',
+         functest_name],
+        dest_dir)
     destr()
 
 
