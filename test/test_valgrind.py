@@ -2,14 +2,26 @@
 Runs the test files under valgrind to detect memory problems
 """
 
+import functools
 import os
 import platform
+import re
 import unittest
 
 import pytest
 
 import helpers
 import pqclean
+
+
+@functools.lru_cache()
+def valgrind_supports_exit_early():
+    """Checks if we support early exit from valgrind"""
+    version = helpers.run_subprocess(['valgrind', '--version'])
+    match = re.match(r'valgrind-(\d)\.(\d+).*', version)
+    if match:
+        return int(match.group(2)) >= 14
+    return False
 
 
 @pytest.mark.parametrize(
@@ -41,6 +53,9 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
     helpers.run_subprocess(
         ['valgrind',
          '--error-exitcode=1',
+         *(['--exit-on-first-error=yes']
+           if valgrind_supports_exit_early()
+           else []),
          '--max-stackframe=20933064',
          functest_name],
         dest_dir)
