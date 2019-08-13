@@ -18,13 +18,20 @@ def setup_module():
         print("Please run `git submodule update --init`")
 
 
-def walk_tree(ast):
+def walk_tree(ast, parent=[]):
     if type(ast) is pycparser.c_ast.IdentifierType:
         if ast.names == ['char']:
+            # allow casts in certain function calls
+            try:
+                if parent[-5].name.name in ['_mm256_set1_epi8']:
+                    return
+            except:
+                pass
             yield ast
 
     for (_, child) in ast.children():
-        yield from walk_tree(child)  # recursively yield prohibited nodes
+        # recursively yield prohibited nodes
+        yield from walk_tree(child, parent=parent + [ast])
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,39 @@
+consistency_checks:
+- source:
+    scheme: kyber512
+    implementation: clean
+  files:
+    - LICENSE
+    - cbd.h
+    - indcpa.h
+    - params.h
+    - polyvec.h
+    - symmetric-fips202.c
+    - verify.h
+- source:
+    scheme: kyber768
+    implementation: avx2
+  files:
+    - cbd.c
+    - cbd.h
+    - consts.c
+    - consts.h
+    - fips202x4.c
+    - fips202x4.h
+    - fq.inc
+    - fq.s
+    - indcpa.h
+    - invntt.s
+    - ntt.h
+    - ntt.s
+    - poly.h
+    - polyvec.h
+    - reduce.h
+    - rejsample.c
+    - rejsample.h
+    - shuffle.inc
+    - shuffle.s
+    - symmetric-fips202.c
+    - symmetric.h
+    - verify.c
+    - verify.h

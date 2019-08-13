@@ -1,5 +1,4 @@
 #include "cbd.h"
-
 #include "params.h"
 
 #include <stdint.h>
@@ -10,11 +9,11 @@
 * Description: load bytes into a 32-bit integer
 *              in little-endian order
 *
-* Arguments:   - const unsigned char *x: pointer to input byte array
+* Arguments:   - const uint8_t *x: pointer to input byte array
 *
 * Returns 32-bit unsigned integer loaded from x
 **************************************************/
-static uint32_t load32_littleendian(const unsigned char *x) {
+static uint32_t load32_littleendian(const uint8_t *x) {
     uint32_t r;
     r  = (uint32_t)x[0];
     r |= (uint32_t)x[1] << 8;
@@ -32,9 +31,9 @@ static uint32_t load32_littleendian(const unsigned char *x) {
 *              specialized for KYBER_ETA=2
 *
 * Arguments:   - poly *r:                  pointer to output polynomial
-*              - const unsigned char *buf: pointer to input byte array
+*              - const uint8_t *buf: pointer to input byte array
 **************************************************/
-void PQCLEAN_KYBER1024_CLEAN_cbd(poly *r, const unsigned char *buf) {
+void PQCLEAN_KYBER1024_CLEAN_cbd(poly *r, const uint8_t *buf) {
     uint32_t d, t;
     int16_t a, b;
     int i, j;

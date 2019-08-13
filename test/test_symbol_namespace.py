@@ -41,10 +41,13 @@ def test_symbol_namespaces(implementation, impl_path, test_dir, init, destr):
     for symbolstr in symbols:
         *_, symtype, symbol = symbolstr.split()
         if symtype in 'TR':
-            if (not symbol.startswith(namespace) and
+            if not (symbol.startswith(namespace) or
+                    symbol.startswith('_' + namespace) or
+                    # KeccakP-1600 for AVX2
+                    symbol.startswith('KeccakF1600times4') or
+                    symbol.startswith('KeccakP1600times4') or
                     # weird things on i386
-                    not symbol.startswith('__x86.get_pc_thunk.') and
-                    not symbol.startswith('_' + namespace)):
+                    symbol.startswith('__x86.get_pc_thunk.')):
                 non_namespaced.append(symbol)
 
     if non_namespaced:

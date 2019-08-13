@@ -1,5 +1,4 @@
 #include "ntt.h"
-
 #include "params.h"
 #include "reduce.h"
 
@@ -44,7 +43,7 @@ void init_ntt() {
 }
 
 */
-int16_t PQCLEAN_KYBER1024_CLEAN_zetas[128] = {
+const int16_t PQCLEAN_KYBER1024_CLEAN_zetas[128] = {
     2285, 2571, 2970, 1812, 1493, 1422, 287, 202, 3158, 622, 1577, 182, 962, 2127, 1855, 1468,
     573, 2004, 264, 383, 2500, 1458, 1727, 3199, 2648, 1017, 732, 608, 1787, 411, 3124, 1758,
     1223, 652, 2777, 1015, 2036, 1491, 3047, 1785, 516, 3321, 3009, 2663, 1711, 2167, 126, 1469,
@@ -55,7 +54,7 @@ int16_t PQCLEAN_KYBER1024_CLEAN_zetas[128] = {
     2144, 1799, 2051, 794, 1819, 2475, 2459, 478, 3221, 3021, 996, 991, 958, 1869, 1522, 1628
 };
 
-int16_t PQCLEAN_KYBER1024_CLEAN_zetas_inv[128] = {
+const int16_t PQCLEAN_KYBER1024_CLEAN_zetas_inv[128] = {
     1701, 1807, 1460, 2371, 2338, 2333, 308, 108, 2851, 870, 854, 1510, 2535, 1278, 1530, 1185,
     1659, 1187, 3109, 874, 1335, 2111, 136, 1215, 2945, 1465, 1285, 2007, 2719, 2726, 2232, 2512,
     75, 156, 3000, 2911, 2980, 872, 2685, 1590, 2210, 602, 1846, 777, 147, 2170, 2551, 246,
@@ -87,9 +86,9 @@ static int16_t fqmul(int16_t a, int16_t b) {
 * Description: Inplace number-theoretic transform (NTT) in Rq
 *              input is in standard order, output is in bitreversed order
 *
-* Arguments:   - int16_t *poly: pointer to input/output vector of 256 elements of Zq
+* Arguments:   - int16_t poly[256]: pointer to input/output vector of elements of Zq
 **************************************************/
-void PQCLEAN_KYBER1024_CLEAN_ntt(int16_t *poly) {
+void PQCLEAN_KYBER1024_CLEAN_ntt(int16_t poly[256]) {
     unsigned int len, start, j, k;
     int16_t t, zeta;
 
@@ -112,9 +111,9 @@ void PQCLEAN_KYBER1024_CLEAN_ntt(int16_t *poly) {
 * Description: Inplace inverse number-theoretic transform in Rq
 *              input is in bitreversed order, output is in standard order
 *
-* Arguments:   - int16_t *poly: pointer to input/output vector of 256 elements of Zq
+* Arguments:   - int16_t poly[256]: pointer to input/output vector of elements of Zq
 **************************************************/
-void PQCLEAN_KYBER1024_CLEAN_invntt(int16_t *poly) {
+void PQCLEAN_KYBER1024_CLEAN_invntt(int16_t poly[256]) {
     unsigned int start, len, j, k;
     int16_t t, zeta;
 
@@ -137,7 +136,7 @@ void PQCLEAN_KYBER1024_CLEAN_invntt(int16_t *poly) {
 }
 
 /*************************************************
-* Name:        PQCLEAN_KYBER1024_CLEAN_basemul
+* Name:        basemul
 *
 * Description: Multiplication of polynomials in Zq[X]/((X^2-zeta))
 *              used for multiplication of elements in Rq in NTT domain
