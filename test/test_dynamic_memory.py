@@ -11,8 +11,8 @@ import pqclean
 @pytest.mark.parametrize(
     'implementation,test_dir,impl_path, init, destr',
     [(impl, *helpers.isolate_test_files(impl.path(), 'test_functest_'))
-     for impl in pqclean.Scheme.all_implementations()],
-    ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
+     for impl in pqclean.Scheme.all_supported_implementations()],
+    ids=[str(impl) for impl in pqclean.Scheme.all_supported_implementations()],
 )
 @helpers.skip_windows()
 @helpers.filtered_test

@@ -5,6 +5,7 @@ the one provided in the META file for every scheme/implementation.
 
 import hashlib
 import os
+import unittest
 
 import pytest
 
@@ -22,6 +23,8 @@ import pqclean
 )
 @helpers.filtered_test
 def test_testvectors(implementation, impl_path, test_dir, init, destr):
+    if not implementation.supported_on_current_platform():
+        raise unittest.SkipTest("Not supported on current platform")
     init()
     dest_dir = os.path.join(test_dir, 'bin')
     helpers.make('testvectors',

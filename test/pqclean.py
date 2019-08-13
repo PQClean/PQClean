@@ -2,6 +2,9 @@ import glob
 import os
 
 import yaml
+import cpuinfo
+
+CPUINFO = cpuinfo.get_cpu_info()
 
 
 class Scheme:
@@ -36,6 +39,11 @@ class Scheme:
         for scheme in Scheme.all_schemes():
             implementations.extend(scheme.implementations)
         return implementations
+
+    @staticmethod
+    def all_supported_implementations():
+        return [impl for impl in Scheme.all_implementations()
+                if impl.supported_on_current_platform()]
 
     @staticmethod
     def all_schemes_of_type(type: str) -> list:
@@ -111,9 +119,24 @@ class Implementation:
                 implementations.append(Implementation(scheme, d))
         return implementations
 
+    @staticmethod
+    def all_supported_implementations(scheme: Scheme) -> list:
+        return [impl for impl in Implementation.all_implementations(scheme)
+                if impl.supported_on_current_platform()]
+
     def namespace_prefix(self):
         return '{}{}_'.format(self.scheme.namespace_prefix(),
                               self.name.upper()).replace('-', '')
+
+    def supported_on_current_platform(self):
+        if 'supported_platforms' not in self.metadata():
+            return True
+        for platform in self.metadata().get('supported_platforms'):
+            if platform['architecture'] == CPUINFO['arch'].lower():
+                if all([flag in CPUINFO['flags']
+                        for flag in platform['required_flags']]):
+                    return True
+        return False
 
     def __str__(self):
         return "{} implementation of {}".format(self.name, self.scheme.name)

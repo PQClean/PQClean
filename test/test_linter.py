@@ -13,7 +13,7 @@ additional_flags = [] #['-fix-errors']
 
 @pytest.mark.parametrize(
     'implementation',
-    pqclean.Scheme.all_implementations(),
+    pqclean.Scheme.all_supported_implementations(),
     ids=str,
 )
 @helpers.skip_windows()
