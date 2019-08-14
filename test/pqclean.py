@@ -2,9 +2,7 @@ import glob
 import os
 
 import yaml
-import cpuinfo
-
-CPUINFO = cpuinfo.get_cpu_info()
+import platform
 
 
 class Scheme:
@@ -129,12 +127,18 @@ class Implementation:
                               self.name.upper()).replace('-', '')
 
     def supported_on_current_platform(self):
+        if platform.machine() == 'ppc':
+            return 'supported_platforms' in self.metadata()
+
+        import cpuinfo
+        CPUINFO = cpuinfo.get_cpu_info()
+
         if 'supported_platforms' not in self.metadata():
             return True
-        for platform in self.metadata().get('supported_platforms'):
-            if platform['architecture'] == CPUINFO['arch'].lower():
+        for platform_ in self.metadata().get('supported_platforms'):
+            if platform_['architecture'] == CPUINFO['arch'].lower():
                 if all([flag in CPUINFO['flags']
-                        for flag in platform['required_flags']]):
+                        for flag in platform_['required_flags']]):
                     return True
         return False
 
