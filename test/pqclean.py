@@ -126,7 +126,7 @@ class Implementation:
         return '{}{}_'.format(self.scheme.namespace_prefix(),
                               self.name.upper()).replace('-', '')
 
-    def supported_on_current_platform(self):
+    def supported_on_current_platform(self) -> bool:
         if 'supported_platforms' not in self.metadata():
             return True
 
@@ -139,7 +139,7 @@ class Implementation:
 
         CPUINFO = Implementation.CPUINFO
 
-        for platform_ in self.metadata().get('supported_platforms'):
+        for platform_ in self.metadata()['supported_platforms']:
             if platform_['architecture'] == CPUINFO['arch'].lower():
                 # Detect actually running on emulated i386
                 if (platform_['architecture'] == 'x86_64' and
