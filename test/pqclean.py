@@ -127,16 +127,24 @@ class Implementation:
                               self.name.upper()).replace('-', '')
 
     def supported_on_current_platform(self):
-        if platform.machine() == 'ppc':
-            return 'supported_platforms' in self.metadata()
-
-        import cpuinfo
-        CPUINFO = cpuinfo.get_cpu_info()
-
         if 'supported_platforms' not in self.metadata():
             return True
+
+        if platform.machine() == 'ppc':
+            return 'supported_platforms' not in self.metadata()
+
+        if not hasattr(Implementation, 'CPUINFO'):
+            import cpuinfo
+            Implementation.CPUINFO = cpuinfo.get_cpu_info()
+
+        CPUINFO = Implementation.CPUINFO
+
         for platform_ in self.metadata().get('supported_platforms'):
             if platform_['architecture'] == CPUINFO['arch'].lower():
+                # Detect actually running on emulated i386
+                if (platform_['architecture'] == 'x86_64' and
+                        platform.architecture()[0] == '32bit'):
+                    continue
                 if all([flag in CPUINFO['flags']
                         for flag in platform_['required_flags']]):
                     return True
