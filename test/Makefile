@@ -2,8 +2,8 @@
 
 # override as desired
 TYPE=kem
-SCHEME=kyber768
-IMPLEMENTATION=clean
+SCHEME=ledakemlt12
+IMPLEMENTATION=leaktime
 
 SCHEME_DIR="../crypto_$(TYPE)/$(SCHEME)/$(IMPLEMENTATION)"
 SCHEME_UPPERCASE=$(shell echo $(SCHEME) | tr a-z A-Z | sed 's/-//g')

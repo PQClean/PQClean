@@ -2,7 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libledakemlt32_leaktime.lib
-OBJECTS=bf_decoding.obj dfr_test.obj gf2x_arith_mod_xPplusOne.obj gf2x_arith.obj H_Q_matrices_generation.obj kem.obj niederreiter.obj rng.obj
+OBJECTS=bf_decoding.obj dfr_test.obj gf2x_arith_mod_xPplusOne.obj gf2x_arith.obj H_Q_matrices_generation.obj kem.obj niederreiter.obj rng.obj sort.obj
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
 

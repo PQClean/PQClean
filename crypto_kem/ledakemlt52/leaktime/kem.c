@@ -5,6 +5,7 @@
 
 #include <string.h>
 
+/*
 static void pack_pk(uint8_t *pk_bytes, publicKeyNiederreiter_t *pk) {
     size_t i;
     for (i = 0; i < N0 - 1; i++) {
@@ -36,57 +37,113 @@ static void pack_error(uint8_t *error_bytes, DIGIT *error_digits) {
                 error_digits + i * NUM_DIGITS_GF2X_ELEMENT);
     }
 }
+*/
 
-/* Generates a keypair - pk is the public key and sk is the secret key. */
-int PQCLEAN_LEDAKEMLT52_LEAKTIME_crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
-    AES_XOF_struct niederreiter_keys_expander;
-    publicKeyNiederreiter_t pk_nie;
+/* IND-CCA2 Keygen */
+int PQCLEAN_LEDAKEMLT52_LEAKTIME_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
 
-    randombytes(((privateKeyNiederreiter_t *)sk)->prng_seed, TRNG_BYTE_LENGTH);
-    PQCLEAN_LEDAKEMLT52_LEAKTIME_seedexpander_from_trng(&niederreiter_keys_expander, ((privateKeyNiederreiter_t *)sk)->prng_seed);
-    PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_keygen(&pk_nie, (privateKeyNiederreiter_t *) sk, &niederreiter_keys_expander);
-
-    pack_pk(pk, &pk_nie);
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_keygen((publicKeyNiederreiter_t *) pk,
+            (privateKeyNiederreiter_t *) sk);
 
     return 0;
 }
 
-/* Encrypt - pk is the public key, ct is a key encapsulation message
-  (ciphertext), ss is the shared secret.*/
-int PQCLEAN_LEDAKEMLT52_LEAKTIME_crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk) {
-    AES_XOF_struct niederreiter_encap_key_expander;
-    unsigned char encapsulated_key_seed[TRNG_BYTE_LENGTH];
+/* IND-CCA2 Encapsulation */
+int PQCLEAN_LEDAKEMLT52_LEAKTIME_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk) {
+    AES_XOF_struct hashedAndTruncatedSeed_expander;
+    POSITION_T errorPos[NUM_ERRORS_T];
     DIGIT error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
-    uint8_t error_bytes[N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B];
-    DIGIT syndrome[NUM_DIGITS_GF2X_ELEMENT];
-    publicKeyNiederreiter_t pk_nie;
+    uint8_t seed[TRNG_BYTE_LENGTH];
+    uint8_t ss_input[2 * TRNG_BYTE_LENGTH] = {0};
+    uint8_t hashedSeed[HASH_BYTE_LENGTH];
+    uint8_t hashedAndTruncatedSeed[TRNG_BYTE_LENGTH] = {0};
+    uint8_t hashedErrorVector[HASH_BYTE_LENGTH];
+    uint8_t hashedAndTruncatedErrorVector[TRNG_BYTE_LENGTH] = {0};
+    uint8_t maskedSeed[TRNG_BYTE_LENGTH];
 
-    randombytes(encapsulated_key_seed, TRNG_BYTE_LENGTH);
-    unpack_pk(&pk_nie, pk);
+    randombytes(seed, TRNG_BYTE_LENGTH);
+    memcpy(ss_input, seed, TRNG_BYTE_LENGTH);
+    HASH_FUNCTION(ss, ss_input, 2 * TRNG_BYTE_LENGTH);
+    HASH_FUNCTION(hashedSeed, seed, TRNG_BYTE_LENGTH);
 
-    PQCLEAN_LEDAKEMLT52_LEAKTIME_seedexpander_from_trng(&niederreiter_encap_key_expander, encapsulated_key_seed);
-    PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_circulant_blocks_sequence(error_vector, &niederreiter_encap_key_expander);
-    pack_error(error_bytes, error_vector);
-    HASH_FUNCTION(ss, error_bytes, (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
-    PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_encrypt(syndrome, &pk_nie, error_vector);
+    memcpy(hashedAndTruncatedSeed, hashedSeed, TRNG_BYTE_LENGTH);
 
-    pack_ct(ct, syndrome);
+    memset(&hashedAndTruncatedSeed_expander, 0x00, sizeof(AES_XOF_struct));
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_seedexpander_from_trng(&hashedAndTruncatedSeed_expander, hashedAndTruncatedSeed);
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_error_pos(errorPos, &hashedAndTruncatedSeed_expander);
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_expand_error(error_vector, errorPos);
 
+    HASH_FUNCTION(hashedErrorVector, (const uint8_t *) error_vector, (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
+
+    memcpy(hashedAndTruncatedErrorVector, hashedErrorVector, TRNG_BYTE_LENGTH);
+
+    for (int i = 0; i < TRNG_BYTE_LENGTH; ++i) {
+        maskedSeed[i] = seed[i] ^ hashedAndTruncatedErrorVector[i];
+    }
+
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_encrypt((DIGIT *) ct, (const publicKeyNiederreiter_t *)pk, error_vector);
+
+    memcpy(ct + (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B), maskedSeed, TRNG_BYTE_LENGTH);
     return 0;
 }
 
 
-/* Decrypt - ct is a key encapsulation message (ciphertext), sk is the private
-   key, ss is the shared secret */
-int PQCLEAN_LEDAKEMLT52_LEAKTIME_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk) {
+/* INDCCA2 Decapsulation  */
+int PQCLEAN_LEDAKEMLT52_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk) {
+    AES_XOF_struct hashedAndTruncatedSeed_expander;
+    POSITION_T reconstructed_errorPos[NUM_ERRORS_T];
+    DIGIT reconstructed_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
     DIGIT decoded_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
-    uint8_t decoded_error_bytes[N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B];
-    DIGIT syndrome[NUM_DIGITS_GF2X_ELEMENT];
+    uint8_t hashedErrorVector[HASH_BYTE_LENGTH];
+    uint8_t hashedAndTruncatedErrorVector[TRNG_BYTE_LENGTH] = {0};
+    uint8_t decoded_seed[TRNG_BYTE_LENGTH];
+    uint8_t hashed_decoded_seed[HASH_BYTE_LENGTH];
+    uint8_t hashedAndTruncated_decoded_seed[TRNG_BYTE_LENGTH] = {0};
+    uint8_t ss_input[2 * TRNG_BYTE_LENGTH], tail[TRNG_BYTE_LENGTH] = {0};
 
-    unpack_ct(syndrome, ct);
-    PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_decrypt(decoded_error_vector, (privateKeyNiederreiter_t *)sk, syndrome);
-    pack_error(decoded_error_bytes, decoded_error_vector);
-    HASH_FUNCTION(ss, decoded_error_bytes, (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
+    int decode_ok = PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_decrypt(decoded_error_vector,
+                    (const privateKeyNiederreiter_t *)sk,
+                    (DIGIT *)ct);
+
+    HASH_FUNCTION(hashedErrorVector,
+                  (const uint8_t *) decoded_error_vector,
+                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
+
+    memcpy(hashedAndTruncatedErrorVector, hashedErrorVector, TRNG_BYTE_LENGTH);
+
+    for (int i = 0; i < TRNG_BYTE_LENGTH; ++i) {
+        decoded_seed[i] = ct[(NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B) + i] ^
+                          hashedAndTruncatedErrorVector[i];
+    }
+
+    HASH_FUNCTION(hashed_decoded_seed, decoded_seed, TRNG_BYTE_LENGTH);
+
+    memcpy(hashedAndTruncated_decoded_seed, hashed_decoded_seed, TRNG_BYTE_LENGTH);
+
+    memset(&hashedAndTruncatedSeed_expander, 0x00, sizeof(AES_XOF_struct));
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_seedexpander_from_trng(&hashedAndTruncatedSeed_expander,
+            hashed_decoded_seed);
+
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_error_pos(reconstructed_errorPos, &hashedAndTruncatedSeed_expander);
+
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_expand_error(reconstructed_error_vector, reconstructed_errorPos);
+
+    int equal = (0 == memcmp((const uint8_t *) decoded_error_vector,
+                             (const uint8_t *) reconstructed_error_vector,
+                             N0 * NUM_DIGITS_GF2X_ELEMENT));
+    // equal == 1, if the reconstructed error vector match !!!
+
+    int decryptOk = (decode_ok == 1 && equal == 1);
+
+    memcpy(ss_input, decoded_seed, TRNG_BYTE_LENGTH);
+
+    if (decryptOk == 1) {
+        memcpy(ss_input + sizeof(decoded_seed), tail, TRNG_BYTE_LENGTH);
+    } else { // decryption failure
+        memcpy(ss_input + sizeof(decoded_seed), ((const privateKeyNiederreiter_t *)sk)->decryption_failure_secret, TRNG_BYTE_LENGTH);
+    }
+
+    HASH_FUNCTION(ss, ss_input, 2 * TRNG_BYTE_LENGTH);
 
     return 0;
 }
