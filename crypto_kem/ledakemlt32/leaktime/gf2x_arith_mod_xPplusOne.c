@@ -74,16 +74,6 @@ static void gf2x_mod(DIGIT out[],  const DIGIT in[]) {
     out[0] &= ((DIGIT)1 << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS) - 1;
 }
 
-static void left_bit_shift(const int length, DIGIT in[]) {
-
-    int j;
-    for (j = 0; j < length - 1; j++) {
-        in[j] <<= 1;                    /* logical shift does not need clearing */
-        in[j] |= in[j + 1] >> (DIGIT_SIZE_b - 1);
-    }
-    in[j] <<= 1;
-}
-
 static void right_bit_shift(unsigned int length, DIGIT in[]) {
 
     unsigned int j;
@@ -93,7 +83,6 @@ static void right_bit_shift(unsigned int length, DIGIT in[]) {
     }
     in[j] >>= 1;
 }
-
 
 /* shifts by whole digits */
 static void left_DIGIT_shift_n(unsigned int length, DIGIT in[], unsigned int amount) {
@@ -151,17 +140,6 @@ void PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_transpose_in_place(DIGIT A[]) {
     A[NUM_DIGITS_GF2X_ELEMENT - 1] = (A[NUM_DIGITS_GF2X_ELEMENT - 1] & (~mask)) | a00;
 }
 
-static void rotate_bit_left(DIGIT in[]) { /*  equivalent to x * in(x) mod x^P+1 */
-
-    DIGIT mask, rotated_bit;
-    int msb_offset_in_digit = MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS - 1;
-    mask = ((DIGIT)0x1) << msb_offset_in_digit;
-    rotated_bit = !!(in[0] & mask);
-    in[0] &= ~mask;
-    left_bit_shift(NUM_DIGITS_GF2X_ELEMENT, in);
-    in[NUM_DIGITS_GF2X_ELEMENT - 1] |= rotated_bit;
-}
-
 static void rotate_bit_right(DIGIT in[]) { /*  x^{-1} * in(x) mod x^P+1 */
 
     DIGIT rotated_bit = in[NUM_DIGITS_GF2X_ELEMENT - 1] & ((DIGIT)0x1);
@@ -171,87 +149,90 @@ static void rotate_bit_right(DIGIT in[]) { /*  x^{-1} * in(x) mod x^P+1 */
     in[0] |= rotated_bit;
 }
 
-static void gf2x_swap(const int length, DIGIT f[], DIGIT s[]) {
+/* cond swap: swaps digits A and B if swap_mask == -1 */
+static void gf2x_cswap(DIGIT *a, DIGIT *b, int swap_mask) {
+    int i;
     DIGIT t;
-    for (int i = length - 1; i >= 0; i--) {
-        t = f[i];
-        f[i] = s[i];
-        s[i] = t;
+    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+        t = swap_mask & (a[i] ^ b[i]);
+        a[i] ^= t;
+        b[i] ^= t;
     }
 }
 
-/*
- * Optimized extended GCD algorithm to compute the multiplicative inverse of
- * a non-zero element in GF(2)[x] mod x^P+1, in polyn. representation.
- *
- * H. Brunner, A. Curiger, and M. Hofstetter. 1993.
- * On Computing Multiplicative Inverses in GF(2^m).
- * IEEE Trans. Comput. 42, 8 (August 1993), 1010-1015.
- * DOI=http://dx.doi.org/10.1109/12.238496
- *
- *
- * Henri Cohen, Gerhard Frey, Roberto Avanzi, Christophe Doche, Tanja Lange,
- * Kim Nguyen, and Frederik Vercauteren. 2012.
- * Handbook of Elliptic and Hyperelliptic Curve Cryptography,
- * Second Edition (2nd ed.). Chapman & Hall/CRC.
- * (Chapter 11 -- Algorithm 11.44 -- pag 223)
- *
- */
-int PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {   /* in^{-1} mod x^P-1 */
+/* returns -1 mask if x != 0, otherwise 0 */
+static inline int nonzero(DIGIT x) {
+    DIGIT t = x;
+    t = -t;
+    t >>= DIGIT_SIZE_b - 1;
+    return -(int)t;
+}
 
-    int i;
-    int delta = 0;
-    DIGIT u[NUM_DIGITS_GF2X_ELEMENT] = {0};
-    DIGIT v[NUM_DIGITS_GF2X_ELEMENT] = {0};
-    DIGIT s[NUM_DIGITS_GF2X_MODULUS] = {0};
-    DIGIT f[NUM_DIGITS_GF2X_MODULUS] = {0}; // alignas(32)?
+/* returns -1 mask if x < 0 else 0 */
+static inline int negative(int x) {
+    uint32_t u = x;
+    u >>= 31;
+    return -(int)u;
+}
 
-    DIGIT mask;
-    u[NUM_DIGITS_GF2X_ELEMENT - 1] = 0x1;
-    v[NUM_DIGITS_GF2X_ELEMENT - 1] = 0x0;
+/* return f(0) as digit */
+static inline DIGIT lsb(const DIGIT *p) {
+    DIGIT mask = (DIGIT)1;
+    return p[NUM_DIGITS_GF2X_ELEMENT - 1] & mask;
+}
 
-    s[NUM_DIGITS_GF2X_MODULUS - 1] = 0x1;
+/* multiply poly with scalar and accumulate, expects s all-zero of all-one mask */
+static void gf2x_mult_scalar_acc(DIGIT *f, const DIGIT *g, const DIGIT s) {
+    for (size_t i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+        f[i] = f[i] ^ (s & g[i]);
+    }
+}
 
-    mask = (((DIGIT)0x1) << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
-    s[0] |= mask;
+/* constant-time inverse, source: gcd.cr.yp.to */
+int PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {
+    int i, loop, swap, delta = 1;
+    DIGIT g0_mask;
 
-    for (i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0 && in[i] == 0; i--) { };
-    if (i < 0) {
-        return 0;
+    DIGIT f[NUM_DIGITS_GF2X_MODULUS] = {0}; // f = x^P + 1
+    DIGIT g[NUM_DIGITS_GF2X_ELEMENT];       // g = in
+    DIGIT *v = out;                         // v = 0, save space
+    DIGIT r[NUM_DIGITS_GF2X_ELEMENT] = {0}; // r = 1
+
+    f[NUM_DIGITS_GF2X_MODULUS - 1] = 1;
+    f[0] |= ((DIGIT)1 << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
+
+    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+        g[i] = in[i];
     }
 
-    for (i = NUM_DIGITS_GF2X_MODULUS - 1; i >= 0 ; i--) {
-        f[i] = in[i];
+    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+        v[i] = 0;
     }
 
-    for (i = 1; i <= 2 * P; i++) {
-        if ( (f[0] & mask) == 0 ) {
-            left_bit_shift(NUM_DIGITS_GF2X_MODULUS, f);
-            rotate_bit_left(u);
-            delta += 1;
-        } else {
-            if ( (s[0] & mask) != 0) {
-                PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_add(s, s, f, NUM_DIGITS_GF2X_MODULUS);
-                PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_mod_add(v, v, u);
-            }
-            left_bit_shift(NUM_DIGITS_GF2X_MODULUS, s);
-            if ( delta == 0 ) {
-                gf2x_swap(NUM_DIGITS_GF2X_MODULUS, f, s);
-                gf2x_swap(NUM_DIGITS_GF2X_ELEMENT, u, v);
-                rotate_bit_left(u);
-                delta = 1;
-            } else {
-                rotate_bit_right(u);
-                delta = delta - 1;
-            }
-        }
+    r[NUM_DIGITS_GF2X_ELEMENT - 1] = 1;
+
+    for (loop = 0; loop < 2 * P - 1; ++loop) {
+
+        swap = negative(-delta) & nonzero(lsb(g));              // swap = -1 if -delta < 0 AND g(0) != 0
+        delta ^= swap & (delta ^ -delta);                       // cond swap delta with -delta if swap
+        delta++;
+
+        gf2x_cswap(f, g, swap);
+        gf2x_cswap(v, r, swap);
+
+        g0_mask = -lsb(g);
+
+        // g = (g - g0 * f) / x
+        gf2x_mult_scalar_acc(g, f, g0_mask);
+        right_bit_shift(NUM_DIGITS_GF2X_ELEMENT, g);
+
+        // r = (r - g0 * v) / x
+        gf2x_mult_scalar_acc(r, v, g0_mask);
+        rotate_bit_right(r);
+
     }
 
-    for (i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0 ; i--) {
-        out[i] = u[i];
-    }
-
-    return (delta == 0);
+    return nonzero(delta); // -1 if fail, 0 if success
 }
 
 void PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[]) {
