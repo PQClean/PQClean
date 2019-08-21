@@ -13,6 +13,8 @@ consistency_checks:
     - niederreiter.c
     - niederreiter.h
     - rng.h
+    - utils.c
+    - utils.h
 - source:
     scheme: ledakemlt32
     implementation: leaktime
@@ -28,3 +30,6 @@ consistency_checks:
     - niederreiter.c
     - niederreiter.h
     - rng.h
+    - utils.c
+    - utils.h
+
