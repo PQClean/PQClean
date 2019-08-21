@@ -257,9 +257,7 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_mod_inverse(DIGIT out[], const DIGIT in[])
 void PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[]) {
 
     DIGIT aux[2 * NUM_DIGITS_GF2X_ELEMENT];
-    GF2X_MUL(2 * NUM_DIGITS_GF2X_ELEMENT, aux,
-             NUM_DIGITS_GF2X_ELEMENT, A,
-             NUM_DIGITS_GF2X_ELEMENT, B);
+    PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_mul(aux, A, B, NUM_DIGITS_GF2X_ELEMENT);
     gf2x_mod(Res, aux);
 
 }
