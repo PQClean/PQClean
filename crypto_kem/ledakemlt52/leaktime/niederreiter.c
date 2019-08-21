@@ -182,11 +182,9 @@ int PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_decrypt(DIGIT *err, const privateK
     memset(((unsigned char *) err_mockup) + (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B) + TRNG_BYTE_LENGTH, 0x00,
            (N0 - 1)*NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B - TRNG_BYTE_LENGTH);
 
-    if (!decryptOk) {
-        memcpy(err, err_mockup, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
-    } else {
-        memcpy(err, err_computed, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
-    }
+    memcpy(err, err_computed, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
+    // Overwrite on decryption failure
+    PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_cmov(err, err_mockup, N0 * NUM_DIGITS_GF2X_ELEMENT, !decryptOk);
 
     return decryptOk;
 }

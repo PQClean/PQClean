@@ -2,6 +2,7 @@
 #include "niederreiter.h"
 #include "randombytes.h"
 #include "rng.h"
+#include "utils.h"
 
 #include <string.h>
 
@@ -128,20 +129,19 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
 
     PQCLEAN_LEDAKEMLT32_LEAKTIME_expand_error(reconstructed_error_vector, reconstructed_errorPos);
 
-    int equal = (0 == memcmp((const uint8_t *) decoded_error_vector,
-                             (const uint8_t *) reconstructed_error_vector,
-                             N0 * NUM_DIGITS_GF2X_ELEMENT));
-    // equal == 1, if the reconstructed error vector match !!!
+    int equal = PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_verify(decoded_error_vector, reconstructed_error_vector, N0 * NUM_DIGITS_GF2X_ELEMENT);
+    // equal == 0, if the reconstructed error vector match !!!
 
-    int decryptOk = (decode_ok == 1 && equal == 1);
+    int decryptOk = (decode_ok == 1 && equal == 0);
 
     memcpy(ss_input, decoded_seed, TRNG_BYTE_LENGTH);
+    memcpy(ss_input + sizeof(decoded_seed), tail, TRNG_BYTE_LENGTH);
 
-    if (decryptOk == 1) {
-        memcpy(ss_input + sizeof(decoded_seed), tail, TRNG_BYTE_LENGTH);
-    } else { // decryption failure
-        memcpy(ss_input + sizeof(decoded_seed), ((const privateKeyNiederreiter_t *)sk)->decryption_failure_secret, TRNG_BYTE_LENGTH);
-    }
+    // Overwrite on failure
+    PQCLEAN_LEDAKEMLT32_LEAKTIME_cmov(ss_input + sizeof(decoded_seed),
+                                      ((const privateKeyNiederreiter_t *) sk)->decryption_failure_secret,
+                                      TRNG_BYTE_LENGTH,
+                                      !decryptOk);
 
     HASH_FUNCTION(ss, ss_input, 2 * TRNG_BYTE_LENGTH);
 
