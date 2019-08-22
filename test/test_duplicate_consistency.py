@@ -50,23 +50,20 @@ def file_get_contents(filename):
 @helpers.skip_windows()
 @helpers.filtered_test
 def test_duplicate_consistency(implementation, source, file):
-    transformed_src = helpers.run_subprocess(
-        ['sed', '-e', 's/{}/{}/g'.format(source.namespace_prefix(),
-         implementation.namespace_prefix()), os.path.join(source.path(), file)],
-        print_result=False,
-    )
     target_path = os.path.join(source.path(), file)
+    this_path = os.path.join(implementation.path(), file)
     target_src = file_get_contents(target_path)
-    this_src = file_get_contents(os.path.join(implementation.path(), file))
-    this_transformed_src = this_src.replace(implementation.namespace_prefix(), '')
+    this_src = file_get_contents(this_path)
+    this_transformed_src = this_src.replace(
+        implementation.namespace_prefix(), '')
     target_transformed_src = target_src.replace(source.namespace_prefix(), '')
 
     if not this_transformed_src == target_transformed_src:
         diff = difflib.unified_diff(
                 this_transformed_src.splitlines(keepends=True),
                 target_transformed_src.splitlines(keepends=True),
-                fromfile=os.path.join(source.path(), file),
-                tofile=os.path.join(implementation.path(), file))
+                fromfile=this_path,
+                tofile=target_path)
         raise AssertionError(
             "Files differed:\n"
             + ''.join(diff))
