@@ -2,7 +2,9 @@
 Checks that files duplicated across schemes/implementations are consistent.
 """
 
+import difflib
 import os
+import sys
 
 import yaml
 
@@ -31,8 +33,9 @@ def pytest_generate_tests(metafunc):
                         for file in group['files']:
                             argvalues.append((implementation, source, file))
                             ids.append(
-                                "{scheme.name}-{source.scheme.name}: {file}"
+                                "{scheme.name} {implementation.name} {source.scheme.name}: {file}"
                                 .format(scheme=scheme, source=source,
+                                        implementation=implementation,
                                         file=file))
     metafunc.parametrize(('implementation', 'source', 'file'),
                          argvalues,
@@ -49,15 +52,26 @@ def file_get_contents(filename):
 def test_duplicate_consistency(implementation, source, file):
     transformed_src = helpers.run_subprocess(
         ['sed', '-e', 's/{}/{}/g'.format(source.namespace_prefix(),
-         implementation.namespace_prefix()), os.path.join(source.path(), file)]
+         implementation.namespace_prefix()), os.path.join(source.path(), file)],
+        print_result=False,
     )
+    target_path = os.path.join(source.path(), file)
+    target_src = file_get_contents(target_path)
     this_src = file_get_contents(os.path.join(implementation.path(), file))
-    print(os.path.join(implementation.path(), file))
-    print(this_src)
-    assert(transformed_src == this_src)
+    this_transformed_src = this_src.replace(implementation.namespace_prefix(), '')
+    target_transformed_src = target_src.replace(source.namespace_prefix(), '')
+
+    if not this_transformed_src == target_transformed_src:
+        diff = difflib.unified_diff(
+                this_transformed_src.splitlines(keepends=True),
+                target_transformed_src.splitlines(keepends=True),
+                fromfile=os.path.join(source.path(), file),
+                tofile=os.path.join(implementation.path(), file))
+        raise AssertionError(
+            "Files differed:\n"
+            + ''.join(diff))
 
 
 if __name__ == '__main__':
     import pytest
-    import sys
     pytest.main(sys.argv)
