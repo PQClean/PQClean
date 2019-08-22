@@ -25,7 +25,7 @@ void PQCLEAN_LEDAKEMLT32_LEAKTIME_right_bit_shift_n(int length, DIGIT in[], unsi
     unsigned int j;
     DIGIT mask;
     mask = ((DIGIT)0x01 << amount) - 1;
-    for (j = length - 1; j > 0 ; j--) {
+    for (j = length - 1; j > 0; j--) {
         in[j] >>= amount;
         in[j] |=  (in[j - 1] & mask) << (DIGIT_SIZE_b - amount);
     }
@@ -40,44 +40,35 @@ void PQCLEAN_LEDAKEMLT32_LEAKTIME_left_bit_shift_n(int length, DIGIT in[], unsig
     int j;
     DIGIT mask;
     mask = ~(((DIGIT)0x01 << (DIGIT_SIZE_b - amount)) - 1);
-    for (j = 0 ; j < length - 1 ; j++) {
+    for (j = 0 ; j < length - 1; j++) {
         in[j] <<= amount;
         in[j] |=  (in[j + 1] & mask) >> (DIGIT_SIZE_b - amount);
     }
     in[j] <<= amount;
 }
 
-static void gf2x_mul_comb(int nr, DIGIT Res[],
-                          int na, const DIGIT A[],
-                          int nb, const DIGIT B[]) {
 
-    int i, j, k;
-    DIGIT u, h;
+static void gf2x_mul1(DIGIT *R, const DIGIT A, const DIGIT B) {
+    DIGIT tmp;
 
-    memset(Res, 0x00, nr * sizeof(DIGIT));
-
-    for (k = DIGIT_SIZE_b - 1; k > 0; k--) {
-        for (i = na - 1; i >= 0; i--) {
-            if ( A[i] & (((DIGIT)0x1) << k) ) {
-                for (j = nb - 1; j >= 0; j--) {
-                    Res[i + j + 1] ^= B[j];
-                }
-            }
-        }
-
-        u = Res[na + nb - 1];
-        Res[na + nb - 1] = u << 0x1;
-        for (j = 1; j < na + nb; ++j) {
-            h = u >> (DIGIT_SIZE_b - 1);
-            u = Res[na + nb - 1 - j];
-            Res[na + nb - 1 - j] = h ^ (u << 0x1);
-        }
+    R[0] = 0;
+    R[1] = (A & 1) * B;
+    for (unsigned i = 1; i < DIGIT_SIZE_b; i++) {
+        tmp = ((A >> i) & 1) * B;
+        R[1] ^= tmp << i;
+        R[0] ^= tmp >> (DIGIT_SIZE_b - i);
     }
-    for (i = na - 1; i >= 0; i--) {
-        if ( A[i] & ((DIGIT)0x1) ) {
-            for (j = nb - 1; j >= 0; j--) {
-                Res[i + j + 1] ^= B[j];
-            }
+}
+
+static void gf2x_mul_n(DIGIT *R, const DIGIT *A, const DIGIT *B, size_t n) {
+    DIGIT tmp[2];
+
+    memset(R, 0x00, 2 * n * sizeof(DIGIT));
+    for (size_t i = 0; i < n; i++) {
+        for (size_t j = 0; j < n; j++) {
+            gf2x_mul1(tmp, A[i], B[j]);
+            R[i + j] ^= tmp[0];
+            R[i + j + 1] ^= tmp[1];
         }
     }
 }
@@ -96,8 +87,8 @@ static void gf2x_cpy(DIGIT *R, const DIGIT *A, size_t len) {
  * first operand must be the bigger one.
  * aligns last array elements */
 static inline void gf2x_add_asymm(DIGIT *R,
-                                  int na, const DIGIT *A,
-                                  int nb, const DIGIT *B) {
+                                  size_t na, const DIGIT *A,
+                                  size_t nb, const DIGIT *B) {
     size_t delta = na - nb;
     gf2x_cpy(R, A, delta);
     PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_add(R + delta, A + delta, B, nb);;
@@ -105,8 +96,8 @@ static inline void gf2x_add_asymm(DIGIT *R,
 
 /* aligns first array elements */
 static inline void gf2x_add_asymm2(DIGIT *R,
-                                   int na, const DIGIT *A,
-                                   int nb, const DIGIT *B) {
+                                   size_t na, const DIGIT *A,
+                                   size_t nb, const DIGIT *B) {
     size_t delta = na - nb;
     PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_add(R, A, B, nb);
     gf2x_cpy(R + nb, A + nb, delta);
@@ -121,7 +112,7 @@ static void gf2x_mul_kar(DIGIT *R,
                          DIGIT *stack) {
 
     if (n < MIN_KAR_DIGITS) {
-        gf2x_mul_comb(2 * n, R, n, A, n, B);
+        gf2x_mul_n(R, A, B, n);
         return;
     }
 

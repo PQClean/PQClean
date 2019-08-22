@@ -84,6 +84,7 @@ static void right_bit_shift(unsigned int length, DIGIT in[]) {
     in[j] >>= 1;
 }
 
+
 /* shifts by whole digits */
 static void left_DIGIT_shift_n(unsigned int length, DIGIT in[], unsigned int amount) {
     unsigned int j;
@@ -291,15 +292,17 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_transpose_in_place_sparse(int sizeA, POSI
 
 }
 
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_sparse(int sizeR, POSITION_T Res[],
-        int sizeA, const POSITION_T A[],
-        int sizeB, const POSITION_T B[]) {
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T Res[],
+        size_t sizeA, const POSITION_T A[],
+        size_t sizeB, const POSITION_T B[]) {
+
+    POSITION_T prod;
 
     /* compute all the coefficients, filling invalid positions with P*/
-    int lastFilledPos = 0;
-    for (int i = 0 ; i < sizeA ; i++) {
-        for (int j = 0 ; j < sizeB ; j++) {
-            uint32_t prod = ((uint32_t) A[i]) + ((uint32_t) B[j]);
+    size_t lastFilledPos = 0;
+    for (size_t i = 0 ; i < sizeA ; i++) {
+        for (size_t j = 0 ; j < sizeB ; j++) {
+            prod = A[i] + B[j];
             prod = ( (prod >= P) ? prod - P : prod);
             if ((A[i] != INVALID_POS_VALUE) &&
                     (B[j] != INVALID_POS_VALUE)) {
@@ -317,9 +320,9 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_sparse(int sizeR, POSITION_T Res[
     PQCLEAN_LEDAKEMLT52_LEAKTIME_uint32_sort(Res, sizeR);
     /* eliminate duplicates */
     POSITION_T lastReadPos = Res[0];
-    int duplicateCount;
-    int write_idx = 0;
-    int read_idx = 0;
+    size_t duplicateCount;
+    size_t write_idx = 0;
+    size_t read_idx = 0;
     while (read_idx < sizeR  && Res[read_idx] != INVALID_POS_VALUE) {
         lastReadPos = Res[read_idx];
         read_idx++;
@@ -443,16 +446,15 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_circulant_sparse_block(POSITION_T *pos_on
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_circulant_blocks_sequence(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
         AES_XOF_struct *seed_expander_ctx) {
 
-    int rndPos[NUM_ERRORS_T],  duplicated, counter = 0;
-    int p, polyIndex, exponent;
+    size_t polyIndex, duplicated, counter = 0;
+    POSITION_T p, exponent, rndPos[NUM_ERRORS_T];
 
     memset(sequence, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
 
     while (counter < NUM_ERRORS_T) {
-        p = rand_range(N0 * NUM_BITS_GF2X_ELEMENT, P_BITS,
-                       seed_expander_ctx);
+        p = rand_range(N0 * NUM_BITS_GF2X_ELEMENT, P_BITS, seed_expander_ctx);
         duplicated = 0;
-        for (int j = 0; j < counter; j++) {
+        for (size_t j = 0; j < counter; j++) {
             if (rndPos[j] == p) {
                 duplicated = 1;
             }
@@ -462,7 +464,7 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_circulant_blocks_sequence(DIGIT sequence[
             counter++;
         }
     }
-    for (int j = 0; j < counter; j++) {
+    for (size_t j = 0; j < counter; j++) {
         polyIndex = rndPos[j] / P;
         exponent = rndPos[j] % P;
         PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_set_coeff( sequence + NUM_DIGITS_GF2X_ELEMENT * polyIndex, exponent,
@@ -475,14 +477,17 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_circulant_blocks_sequence(DIGIT sequence[
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_error_pos(POSITION_T errorPos[NUM_ERRORS_T],
         AES_XOF_struct *seed_expander_ctx) {
 
-    int duplicated, counter = 0;
+    int duplicated;
+    size_t counter = 0;
 
     while (counter < NUM_ERRORS_T) {
-        uint32_t  p = rand_range(N0 * NUM_BITS_GF2X_ELEMENT, P_BITS, seed_expander_ctx);
+        POSITION_T p = rand_range(N0 * NUM_BITS_GF2X_ELEMENT, P_BITS, seed_expander_ctx);
         duplicated = 0;
-        for (int j = 0; j < counter; j++) if (errorPos[j] == p) {
+        for (size_t j = 0; j < counter; j++) {
+            if (errorPos[j] == p) {
                 duplicated = 1;
             }
+        }
         if (duplicated == 0) {
             errorPos[counter] = p;
             counter++;
@@ -491,13 +496,15 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_error_pos(POSITION_T errorPos[NUM_ERRORS_
 }
 
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_expand_error(DIGIT sequence[N0 * NUM_DIGITS_GF2X_ELEMENT],
-        POSITION_T errorPos[NUM_ERRORS_T]) {
+        const POSITION_T errorPos[NUM_ERRORS_T]) {
+
+    size_t polyIndex;
+    POSITION_T exponent;
 
     memset(sequence, 0x00, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
-
     for (int j = 0; j < NUM_ERRORS_T; j++) {
-        int polyIndex = errorPos[j] / P;
-        int exponent = errorPos[j] % P;
+        polyIndex = errorPos[j] / P;
+        exponent = errorPos[j] % P;
         PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_set_coeff( sequence + NUM_DIGITS_GF2X_ELEMENT * polyIndex, exponent,
                 ( (DIGIT) 1));
     }

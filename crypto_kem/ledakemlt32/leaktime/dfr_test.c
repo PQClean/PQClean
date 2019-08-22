@@ -10,9 +10,9 @@
 int PQCLEAN_LEDAKEMLT32_LEAKTIME_DFR_test(POSITION_T LSparse[N0][DV * M], uint8_t *secondIterThreshold) {
 
     POSITION_T LSparse_loc[N0][DV * M]; /* vector of N_0 sparse blocks */
-    int gamma[N0][N0][P] = {{{0}}};
-    int maxMut[N0], maxMutMinusOne[N0];
-    int allBlockMaxSumst, allBlockMaxSumstMinusOne;
+    unsigned int gamma[N0][N0][P] = {{{0}}};
+    unsigned int maxMut[N0], maxMutMinusOne[N0];
+    unsigned int allBlockMaxSumst, allBlockMaxSumstMinusOne;
     unsigned int gammaHist[N0][DV * M + 1] = {{0}};
 
     for (int i = 0; i < N0; i++) {
