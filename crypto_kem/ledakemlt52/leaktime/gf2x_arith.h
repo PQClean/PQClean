@@ -54,10 +54,15 @@ typedef uint64_t DIGIT;
 #define STACK_KAR_ONLY      7137
 #define STACK_WORDS         8401
 
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], int nr);
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], size_t n);
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_cmov(DIGIT *r, const DIGIT *a, size_t len, int c);
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_right_bit_shift_n(int length, DIGIT in[], unsigned int amount);
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_left_bit_shift_n(int length, DIGIT in[], unsigned int amount);
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_right_bit_shift_n(size_t length, DIGIT in[], size_t amount);
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_left_bit_shift_n(size_t length, DIGIT in[], size_t amount);
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mul(DIGIT *R, const DIGIT *A, const DIGIT *B, size_t n);
+
+
+
+
+
 
 #endif

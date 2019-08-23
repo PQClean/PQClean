@@ -80,7 +80,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_DFR_test(POSITION_T LSparse[N0][DV * M], uint8_
                                    allBlockMaxSumstMinusOne;
     }
     if (DV * M > (allBlockMaxSumstMinusOne + allBlockMaxSumst)) {
-        *secondIterThreshold = allBlockMaxSumst + 1;
+        *secondIterThreshold = (uint8_t) (allBlockMaxSumst + 1);
         return 1;
     }
     return 0;

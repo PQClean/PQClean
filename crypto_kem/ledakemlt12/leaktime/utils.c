@@ -7,13 +7,14 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_verify(const DIGIT *a, const DIGIT *b, siz
     for (size_t i = 0; i < len; i++) {
         x |= a[i] ^ b[i];
     }
-    x = (-x) >> (DIGIT_SIZE_b - 1);
+    x = (~x) + 1;
+    x >>= (DIGIT_SIZE_b - 1);
     return (int)x;
 }
 
 /* conditionally move a into r if cond */
 void PQCLEAN_LEDAKEMLT12_LEAKTIME_cmov(uint8_t *r, const uint8_t *a, size_t len, int cond) {
-    uint8_t mask = -cond;
+    uint8_t mask = (uint8_t)(-cond);
     for (size_t i = 0; i < len; i++) {
         r[i] ^= mask & (r[i] ^ a[i]);
     }

@@ -164,16 +164,16 @@ static void gf2x_cswap(DIGIT *a, DIGIT *b, int swap_mask) {
 /* returns -1 mask if x != 0, otherwise 0 */
 static inline int nonzero(DIGIT x) {
     DIGIT t = x;
-    t = -t;
+    t = (~t) + 1;
     t >>= DIGIT_SIZE_b - 1;
-    return -(int)t;
+    return -((int)t);
 }
 
 /* returns -1 mask if x < 0 else 0 */
 static inline int negative(int x) {
     uint32_t u = x;
     u >>= 31;
-    return -(int)u;
+    return -((int)u);
 }
 
 /* return f(0) as digit */

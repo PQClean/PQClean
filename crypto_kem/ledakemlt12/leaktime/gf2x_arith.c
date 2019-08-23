@@ -2,27 +2,26 @@
 
 #include <string.h>  // memset(...)
 
-void PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], int nr) {
-    for (int i = 0; i < nr; i++) {
+void PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_add(DIGIT Res[], const DIGIT A[], const DIGIT B[], size_t n) {
+    for (size_t i = 0; i < n; i++) {
         Res[i] = A[i] ^ B[i];
     }
 }
 
 /* copies len digits from a to r if b == 1 */
 void PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_cmov(DIGIT *r, const DIGIT *a, size_t len, int c) {
-    size_t i;
-    DIGIT mask = -(DIGIT)c;
-    for (i = 0; i < len; i++) {
+    DIGIT mask = (DIGIT)(-c);
+    for (size_t i = 0; i < len; i++) {
         r[i] ^= mask & (a[i] ^ r[i]);
     }
 }
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void PQCLEAN_LEDAKEMLT12_LEAKTIME_right_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
+void PQCLEAN_LEDAKEMLT12_LEAKTIME_right_bit_shift_n(size_t length, DIGIT in[], size_t amount) {
     if ( amount == 0 ) {
         return;
     }
-    unsigned int j;
+    size_t j;
     DIGIT mask;
     mask = ((DIGIT)0x01 << amount) - 1;
     for (j = length - 1; j > 0; j--) {
@@ -33,11 +32,11 @@ void PQCLEAN_LEDAKEMLT12_LEAKTIME_right_bit_shift_n(int length, DIGIT in[], unsi
 }
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void PQCLEAN_LEDAKEMLT12_LEAKTIME_left_bit_shift_n(int length, DIGIT in[], unsigned int amount) {
+void PQCLEAN_LEDAKEMLT12_LEAKTIME_left_bit_shift_n(size_t length, DIGIT in[], size_t amount) {
     if ( amount == 0 ) {
         return;
     }
-    int j;
+    size_t j;
     DIGIT mask;
     mask = ~(((DIGIT)0x01 << (DIGIT_SIZE_b - amount)) - 1);
     for (j = 0 ; j < length - 1; j++) {
@@ -91,7 +90,7 @@ static inline void gf2x_add_asymm(DIGIT *R,
                                   size_t nb, const DIGIT *B) {
     size_t delta = na - nb;
     gf2x_cpy(R, A, delta);
-    PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_add(R + delta, A + delta, B, nb);;
+    gf2x_add(R + delta, A + delta, B, nb);;
 }
 
 /* aligns first array elements */
@@ -99,7 +98,7 @@ static inline void gf2x_add_asymm2(DIGIT *R,
                                    size_t na, const DIGIT *A,
                                    size_t nb, const DIGIT *B) {
     size_t delta = na - nb;
-    PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_add(R, A, B, nb);
+    gf2x_add(R, A, B, nb);
     gf2x_cpy(R + nb, A + nb, delta);
 }
 

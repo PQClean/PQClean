@@ -20,7 +20,7 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_keygen(publicKeyNiederreiter_t *p
     DIGIT Ln0dense[NUM_DIGITS_GF2X_ELEMENT] = {0};
     DIGIT Ln0Inv[NUM_DIGITS_GF2X_ELEMENT] = {0};
     int is_L_full;
-    int isDFRok;
+    int isDFRok = 0;
 
     memset(&keys_expander, 0x00, sizeof(AES_XOF_struct));
     randombytes(sk->prng_seed, TRNG_BYTE_LENGTH);
