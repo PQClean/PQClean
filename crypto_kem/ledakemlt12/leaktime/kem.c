@@ -6,6 +6,10 @@
 
 #include <string.h>
 
+
+#define pack_ct(sk_bytes, ct) PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_tobytes(sk_bytes, ct);
+#define unpack_ct(ct, ct_bytes) PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_frombytes(ct, ct_bytes)
+
 static void pack_pk(uint8_t *pk_bytes, publicKeyNiederreiter_t *pk) {
     for (size_t i = 0; i < N0 - 1; i++) {
         PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_tobytes(pk_bytes + i * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B,
@@ -20,17 +24,13 @@ static void unpack_pk(publicKeyNiederreiter_t *pk, const uint8_t *pk_bytes) {
     }
 }
 
-#define pack_ct(sk_bytes, ct) PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_tobytes(sk_bytes, ct);
-#define unpack_ct(ct, ct_bytes) PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_frombytes(ct, ct_bytes)
-
-/*
 static void pack_error(uint8_t *error_bytes, DIGIT *error_digits) {
     size_t i;
     for (i = 0; i < N0; i++) {
         PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_tobytes(error_bytes + i * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B,
                 error_digits + i * NUM_DIGITS_GF2X_ELEMENT);
     }
-}*/
+}
 
 /* IND-CCA2 Keygen */
 int PQCLEAN_LEDAKEMLT12_LEAKTIME_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
@@ -50,6 +50,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const 
     AES_XOF_struct hashedAndTruncatedSeed_expander;
     POSITION_T errorPos[NUM_ERRORS_T];
     DIGIT error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
+    uint8_t error_bytes[N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B];
     uint8_t seed[TRNG_BYTE_LENGTH];
     uint8_t ss_input[2 * TRNG_BYTE_LENGTH] = {0};
     uint8_t hashedSeed[HASH_BYTE_LENGTH];
@@ -73,7 +74,8 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const 
     PQCLEAN_LEDAKEMLT12_LEAKTIME_rand_error_pos(errorPos, &hashedAndTruncatedSeed_expander);
     PQCLEAN_LEDAKEMLT12_LEAKTIME_expand_error(error_vector, errorPos);
 
-    HASH_FUNCTION(hashedErrorVector, (const uint8_t *) error_vector, (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
+    pack_error(error_bytes, error_vector);
+    HASH_FUNCTION(hashedErrorVector, error_bytes, (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
 
     memcpy(hashedAndTruncatedErrorVector, hashedErrorVector, TRNG_BYTE_LENGTH);
 
@@ -98,6 +100,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
     POSITION_T reconstructed_errorPos[NUM_ERRORS_T];
     DIGIT reconstructed_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
     DIGIT decoded_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
+    uint8_t decoded_error_bytes[N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B];
     uint8_t hashedErrorVector[HASH_BYTE_LENGTH];
     uint8_t hashedAndTruncatedErrorVector[TRNG_BYTE_LENGTH] = {0};
     uint8_t decoded_seed[TRNG_BYTE_LENGTH];
@@ -110,9 +113,8 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
     int decode_ok = PQCLEAN_LEDAKEMLT12_LEAKTIME_niederreiter_decrypt(decoded_error_vector,
                     (const privateKeyNiederreiter_t *)sk, syndrome);
 
-    HASH_FUNCTION(hashedErrorVector,
-                  (const uint8_t *) decoded_error_vector,
-                  (N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B));
+    pack_error(decoded_error_bytes, decoded_error_vector);
+    HASH_FUNCTION(hashedErrorVector, decoded_error_bytes, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
 
     memcpy(hashedAndTruncatedErrorVector, hashedErrorVector, TRNG_BYTE_LENGTH);
 
