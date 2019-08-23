@@ -6,51 +6,47 @@
 
 #include <string.h>
 
-/*
 static void pack_pk(uint8_t *pk_bytes, publicKeyNiederreiter_t *pk) {
-    size_t i;
-    for (i = 0; i < N0 - 1; i++) {
+    for (size_t i = 0; i < N0 - 1; i++) {
         PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_tobytes(pk_bytes + i * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B,
                 pk->Mtr + i * NUM_DIGITS_GF2X_ELEMENT);
     }
 }
 
 static void unpack_pk(publicKeyNiederreiter_t *pk, const uint8_t *pk_bytes) {
-    size_t i;
-    for (i = 0; i < N0 - 1; i++) {
+    for (size_t i = 0; i < N0 - 1; i++) {
         PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_frombytes(pk->Mtr + i * NUM_DIGITS_GF2X_ELEMENT,
                 pk_bytes + i * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
     }
 }
 
-static void pack_ct(uint8_t *sk_bytes, DIGIT *ct) {
-    PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_tobytes(sk_bytes, ct);
-}
+#define pack_ct(sk_bytes, ct) PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_tobytes(sk_bytes, ct);
+#define unpack_ct(ct, ct_bytes) PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_frombytes(ct, ct_bytes)
 
-static void unpack_ct(DIGIT *ct, const uint8_t *ct_bytes) {
-    PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_frombytes(ct, ct_bytes);
-}
-
+/*
 static void pack_error(uint8_t *error_bytes, DIGIT *error_digits) {
     size_t i;
     for (i = 0; i < N0; i++) {
         PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_tobytes(error_bytes + i * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B,
                 error_digits + i * NUM_DIGITS_GF2X_ELEMENT);
     }
-}
-*/
+}*/
 
 /* IND-CCA2 Keygen */
 int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
+    publicKeyNiederreiter_t niederreiter_pk;
 
-    PQCLEAN_LEDAKEMLT32_LEAKTIME_niederreiter_keygen((publicKeyNiederreiter_t *) pk,
-            (privateKeyNiederreiter_t *) sk);
+    PQCLEAN_LEDAKEMLT32_LEAKTIME_niederreiter_keygen(&niederreiter_pk, (privateKeyNiederreiter_t *) sk);
+
+    pack_pk(pk, &niederreiter_pk);
 
     return 0;
 }
 
 /* IND-CCA2 Encapsulation */
 int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk) {
+    publicKeyNiederreiter_t niederreiter_pk;
+    DIGIT syndrome[NUM_DIGITS_GF2X_ELEMENT];
     AES_XOF_struct hashedAndTruncatedSeed_expander;
     POSITION_T errorPos[NUM_ERRORS_T];
     DIGIT error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
@@ -62,8 +58,11 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const 
     uint8_t hashedAndTruncatedErrorVector[TRNG_BYTE_LENGTH] = {0};
     uint8_t maskedSeed[TRNG_BYTE_LENGTH];
 
+    unpack_pk(&niederreiter_pk, pk);
+
     randombytes(seed, TRNG_BYTE_LENGTH);
     memcpy(ss_input, seed, TRNG_BYTE_LENGTH);
+
     HASH_FUNCTION(ss, ss_input, 2 * TRNG_BYTE_LENGTH);
     HASH_FUNCTION(hashedSeed, seed, TRNG_BYTE_LENGTH);
 
@@ -78,19 +77,23 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const 
 
     memcpy(hashedAndTruncatedErrorVector, hashedErrorVector, TRNG_BYTE_LENGTH);
 
-    for (int i = 0; i < TRNG_BYTE_LENGTH; ++i) {
+    for (size_t i = 0; i < TRNG_BYTE_LENGTH; ++i) {
         maskedSeed[i] = seed[i] ^ hashedAndTruncatedErrorVector[i];
     }
 
-    PQCLEAN_LEDAKEMLT32_LEAKTIME_niederreiter_encrypt((DIGIT *) ct, (const publicKeyNiederreiter_t *)pk, error_vector);
+    PQCLEAN_LEDAKEMLT32_LEAKTIME_niederreiter_encrypt(syndrome,
+            (const publicKeyNiederreiter_t *) &niederreiter_pk, error_vector);
 
+    pack_ct(ct, syndrome);
     memcpy(ct + (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B), maskedSeed, TRNG_BYTE_LENGTH);
+
     return 0;
 }
 
 
-/* INDCCA2 Decapsulation  */
+/* IND-CCA2 Decapsulation  */
 int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk) {
+    DIGIT syndrome[NUM_DIGITS_GF2X_ELEMENT];
     AES_XOF_struct hashedAndTruncatedSeed_expander;
     POSITION_T reconstructed_errorPos[NUM_ERRORS_T];
     DIGIT reconstructed_error_vector[N0 * NUM_DIGITS_GF2X_ELEMENT];
@@ -102,9 +105,10 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
     uint8_t hashedAndTruncated_decoded_seed[TRNG_BYTE_LENGTH] = {0};
     uint8_t ss_input[2 * TRNG_BYTE_LENGTH], tail[TRNG_BYTE_LENGTH] = {0};
 
+    unpack_ct(syndrome, ct);
+
     int decode_ok = PQCLEAN_LEDAKEMLT32_LEAKTIME_niederreiter_decrypt(decoded_error_vector,
-                    (const privateKeyNiederreiter_t *)sk,
-                    (DIGIT *)ct);
+                    (const privateKeyNiederreiter_t *)sk, syndrome);
 
     HASH_FUNCTION(hashedErrorVector,
                   (const uint8_t *) decoded_error_vector,
@@ -129,7 +133,8 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
 
     PQCLEAN_LEDAKEMLT32_LEAKTIME_expand_error(reconstructed_error_vector, reconstructed_errorPos);
 
-    int equal = PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_verify(decoded_error_vector, reconstructed_error_vector, N0 * NUM_DIGITS_GF2X_ELEMENT);
+    int equal = PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_verify(decoded_error_vector,
+                reconstructed_error_vector, N0 * NUM_DIGITS_GF2X_ELEMENT);
     // equal == 0, if the reconstructed error vector match !!!
 
     int decryptOk = (decode_ok == 1 && equal == 0);
