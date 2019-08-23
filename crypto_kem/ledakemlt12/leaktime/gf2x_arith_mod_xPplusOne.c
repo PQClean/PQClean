@@ -223,7 +223,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_mod_inverse(DIGIT out[], const DIGIT in[])
         gf2x_cswap(f, g, swap);
         gf2x_cswap(v, r, swap);
 
-        g0_mask = -lsb(g);
+        g0_mask = ~lsb(g) + 1;
 
         // g = (g - g0 * f) / x
         gf2x_mult_scalar_acc(g, f, g0_mask);
