@@ -107,18 +107,19 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
     uint8_t hashed_decoded_seed[HASH_BYTE_LENGTH];
     uint8_t hashedAndTruncated_decoded_seed[TRNG_BYTE_LENGTH] = {0};
     uint8_t ss_input[2 * TRNG_BYTE_LENGTH], tail[TRNG_BYTE_LENGTH] = {0};
+    int decode_ok, decrypt_ok, equal;
 
     unpack_ct(syndrome, ct);
 
-    int decode_ok = PQCLEAN_LEDAKEMLT32_LEAKTIME_niederreiter_decrypt(decoded_error_vector,
-                    (const privateKeyNiederreiter_t *)sk, syndrome);
+    decode_ok = PQCLEAN_LEDAKEMLT32_LEAKTIME_niederreiter_decrypt(decoded_error_vector,
+                (const privateKeyNiederreiter_t *)sk, syndrome);
 
     pack_error(decoded_error_bytes, decoded_error_vector);
     HASH_FUNCTION(hashedErrorVector, decoded_error_bytes, N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B);
 
     memcpy(hashedAndTruncatedErrorVector, hashedErrorVector, TRNG_BYTE_LENGTH);
 
-    for (int i = 0; i < TRNG_BYTE_LENGTH; ++i) {
+    for (size_t i = 0; i < TRNG_BYTE_LENGTH; ++i) {
         decoded_seed[i] = ct[(NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B) + i] ^
                           hashedAndTruncatedErrorVector[i];
     }
@@ -135,11 +136,11 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
 
     PQCLEAN_LEDAKEMLT32_LEAKTIME_expand_error(reconstructed_error_vector, reconstructed_errorPos);
 
-    int equal = PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_verify(decoded_error_vector,
-                reconstructed_error_vector, N0 * NUM_DIGITS_GF2X_ELEMENT);
+    equal = PQCLEAN_LEDAKEMLT32_LEAKTIME_gf2x_verify(decoded_error_vector,
+            reconstructed_error_vector, N0 * NUM_DIGITS_GF2X_ELEMENT);
     // equal == 0, if the reconstructed error vector match !!!
 
-    int decryptOk = (decode_ok == 1 && equal == 0);
+    decrypt_ok = (decode_ok == 1 && equal == 0);
 
     memcpy(ss_input, decoded_seed, TRNG_BYTE_LENGTH);
     memcpy(ss_input + sizeof(decoded_seed), tail, TRNG_BYTE_LENGTH);
@@ -148,7 +149,7 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
     PQCLEAN_LEDAKEMLT32_LEAKTIME_cmov(ss_input + sizeof(decoded_seed),
                                       ((const privateKeyNiederreiter_t *) sk)->decryption_failure_secret,
                                       TRNG_BYTE_LENGTH,
-                                      !decryptOk);
+                                      !decrypt_ok);
 
     HASH_FUNCTION(ss, ss_input, 2 * TRNG_BYTE_LENGTH);
 

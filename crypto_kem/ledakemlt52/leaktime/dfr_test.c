@@ -14,47 +14,49 @@ int PQCLEAN_LEDAKEMLT52_LEAKTIME_DFR_test(POSITION_T LSparse[N0][DV * M], uint8_
     unsigned int maxMut[N0], maxMutMinusOne[N0];
     unsigned int allBlockMaxSumst, allBlockMaxSumstMinusOne;
     unsigned int gammaHist[N0][DV * M + 1] = {{0}};
+    unsigned int toAdd;
+    size_t histIdx;
 
-    for (int i = 0; i < N0; i++) {
-        for (int j = 0; j < DV * M; j++) {
+    for (size_t i = 0; i < N0; i++) {
+        for (size_t j = 0; j < DV * M; j++) {
             if (LSparse[i][j] != 0) {
-                LSparse_loc[i][j] = (P - LSparse[i][j]) ;
+                LSparse_loc[i][j] = (P - LSparse[i][j]);
             }
         }
         PQCLEAN_LEDAKEMLT52_LEAKTIME_uint32_sort(LSparse_loc[i], DV * M);
     }
 
 
-    for (int i = 0; i < N0; i++ ) {
-        for (int j = 0; j < N0; j++ ) {
-            for (int k = 0; k < (DV * M); k++) {
-                for (int l = 0; l < (DV * M); l++) {
-                    gamma[i][j][ (P + LSparse_loc[i][k] - LSparse_loc[j][l]) % P ]++;
+    for (size_t i = 0; i < N0; i++ ) {
+        for (size_t j = 0; j < N0; j++) {
+            for (size_t k = 0; k < (DV * M); k++) {
+                for (size_t l = 0; l < (DV * M); l++) {
+                    gamma[i][j][(P + LSparse_loc[i][k] - LSparse_loc[j][l]) % P]++;
                 }
             }
         }
     }
 
-    for (int i = 0; i < N0; i++ ) {
-        for (int j = 0; j < N0; j++ ) {
+    for (size_t i = 0; i < N0; i++ ) {
+        for (size_t j = 0; j < N0; j++ ) {
             gamma[i][j][0] = 0;
         }
     }
 
     /* build histogram of values in gamma */
-    for (int i = 0; i < N0; i++ ) {
-        for (int j = 0; j < N0; j++ ) {
-            for (int k = 0; k < P; k++) {
+    for (size_t i = 0; i < N0; i++ ) {
+        for (size_t j = 0; j < N0; j++ ) {
+            for (size_t k = 0; k < P; k++) {
                 gammaHist[i][gamma[i][j][k]]++;
             }
         }
     }
 
 
-    for (int gammaBlockRowIdx = 0; gammaBlockRowIdx < N0; gammaBlockRowIdx++) {
-        unsigned int toAdd = T_BAR - 1;
+    for (size_t gammaBlockRowIdx = 0; gammaBlockRowIdx < N0; gammaBlockRowIdx++) {
         maxMutMinusOne[gammaBlockRowIdx] = 0;
-        unsigned int histIdx = DV * M;
+        histIdx = DV * M;
+        toAdd = T_BAR - 1;
         while ( (histIdx > 0) && (toAdd > 0)) {
             if (gammaHist[gammaBlockRowIdx][histIdx] > toAdd ) {
                 maxMutMinusOne[gammaBlockRowIdx] += histIdx * toAdd;
@@ -71,7 +73,7 @@ int PQCLEAN_LEDAKEMLT52_LEAKTIME_DFR_test(POSITION_T LSparse[N0][DV * M], uint8_
     /*seek max values across all gamma blocks */
     allBlockMaxSumst = maxMut[0];
     allBlockMaxSumstMinusOne = maxMutMinusOne[0];
-    for (int gammaBlockRowIdx = 0; gammaBlockRowIdx < N0 ; gammaBlockRowIdx++) {
+    for (size_t gammaBlockRowIdx = 0; gammaBlockRowIdx < N0 ; gammaBlockRowIdx++) {
         allBlockMaxSumst = allBlockMaxSumst < maxMut[gammaBlockRowIdx] ?
                            maxMut[gammaBlockRowIdx] :
                            allBlockMaxSumst;

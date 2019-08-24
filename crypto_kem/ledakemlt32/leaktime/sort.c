@@ -5,6 +5,17 @@
     Source: https://sorting.cr.yp.to
 */
 
+#define int32_MINMAX(a,b) \
+    do { \
+        int32 ab = (b) ^ (a); \
+        int32 c = (b) - (a); \
+        c ^= ab & (c ^ (b)); \
+        c >>= 31; \
+        c &= ab; \
+        (a) ^= c; \
+        (b) ^= c; \
+    } while(0)
+
 static void int32_sort(int32 *x, size_t n) {
     size_t top, p, q, r, i, j;
 

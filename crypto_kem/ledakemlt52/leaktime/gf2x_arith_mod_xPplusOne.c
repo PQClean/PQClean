@@ -5,39 +5,39 @@
 #include <string.h>  // memcpy(...), memset(...)
 
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_copy(DIGIT dest[], const DIGIT in[]) {
-    for (int i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0; i--) {
+    for (size_t i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
         dest[i] = in[i];
     }
 }
 
 /* returns the coefficient of the x^exponent term as the LSB of a digit */
-DIGIT PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_get_coeff(const DIGIT poly[], unsigned int exponent) {
-    unsigned int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
-    unsigned int digitIdx = straightIdx / DIGIT_SIZE_b;
-    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
+DIGIT PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_get_coeff(const DIGIT poly[], size_t exponent) {
+    size_t straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
+    size_t digitIdx = straightIdx / DIGIT_SIZE_b;
+    size_t inDigitIdx = straightIdx % DIGIT_SIZE_b;
     return (poly[digitIdx] >> (DIGIT_SIZE_b - 1 - inDigitIdx)) & ((DIGIT) 1) ;
 }
 
 /* sets the coefficient of the x^exponent term as the LSB of a digit */
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_set_coeff(DIGIT poly[], unsigned int exponent, DIGIT value) {
-    unsigned int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
-    unsigned int digitIdx = straightIdx / DIGIT_SIZE_b;
-    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_set_coeff(DIGIT poly[], size_t exponent, DIGIT value) {
+    size_t straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
+    size_t digitIdx = straightIdx / DIGIT_SIZE_b;
+    size_t inDigitIdx = straightIdx % DIGIT_SIZE_b;
 
     /* clear given coefficient */
-    DIGIT mask = ~( ((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
+    DIGIT mask = ~(((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
     poly[digitIdx] = poly[digitIdx] & mask;
-    poly[digitIdx] = poly[digitIdx] | (( value & ((DIGIT) 1)) << (DIGIT_SIZE_b - 1 - inDigitIdx));
+    poly[digitIdx] = poly[digitIdx] | ((value & ((DIGIT) 1)) << (DIGIT_SIZE_b - 1 - inDigitIdx));
 }
 
 /* toggles (flips) the coefficient of the x^exponent term as the LSB of a digit */
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_toggle_coeff(DIGIT poly[], unsigned int exponent) {
-    unsigned int straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
-    unsigned int digitIdx = straightIdx / DIGIT_SIZE_b;
-    unsigned int inDigitIdx = straightIdx % DIGIT_SIZE_b;
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_toggle_coeff(DIGIT poly[], size_t exponent) {
+    size_t straightIdx = (NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - 1) - exponent;
+    size_t digitIdx = straightIdx / DIGIT_SIZE_b;
+    size_t inDigitIdx = straightIdx % DIGIT_SIZE_b;
 
     /* clear given coefficient */
-    DIGIT mask = ( ((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
+    DIGIT mask = (((DIGIT) 1) << (DIGIT_SIZE_b - 1 - inDigitIdx));
     poly[digitIdx] = poly[digitIdx] ^ mask;
 }
 
@@ -51,7 +51,7 @@ static int popcount_uint64t(uint64_t x) {
 }
 
 /* population count for a single polynomial */
-int PQCLEAN_LEDAKEMLT52_LEAKTIME_population_count(DIGIT *poly) {
+int PQCLEAN_LEDAKEMLT52_LEAKTIME_population_count(const DIGIT *poly) {
     int ret = 0;
     for (int i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0; i--) {
         ret += popcount_uint64t(poly[i]);
@@ -74,10 +74,9 @@ static void gf2x_mod(DIGIT out[],  const DIGIT in[]) {
     out[0] &= ((DIGIT)1 << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS) - 1;
 }
 
-static void right_bit_shift(unsigned int length, DIGIT in[]) {
-
-    unsigned int j;
-    for (j = length - 1; j > 0 ; j--) {
+static void right_bit_shift(size_t length, DIGIT in[]) {
+    size_t j;
+    for (j = length - 1; j > 0; j--) {
         in[j] >>= 1;
         in[j] |=  (in[j - 1] & (DIGIT)0x01) << (DIGIT_SIZE_b - 1);
     }
@@ -86,8 +85,8 @@ static void right_bit_shift(unsigned int length, DIGIT in[]) {
 
 
 /* shifts by whole digits */
-static void left_DIGIT_shift_n(unsigned int length, DIGIT in[], unsigned int amount) {
-    unsigned int j;
+static void left_DIGIT_shift_n(size_t length, DIGIT in[], size_t amount) {
+    size_t j;
     for (j = 0; (j + amount) < length; j++) {
         in[j] = in[j + amount];
     }
@@ -97,7 +96,7 @@ static void left_DIGIT_shift_n(unsigned int length, DIGIT in[], unsigned int amo
 }
 
 /* may shift by an arbitrary amount*/
-static void left_bit_shift_wide_n(const int length, DIGIT in[], unsigned int amount) {
+static void left_bit_shift_wide_n(size_t length, DIGIT in[], size_t amount) {
     left_DIGIT_shift_n(length, in, amount / DIGIT_SIZE_b);
     PQCLEAN_LEDAKEMLT52_LEAKTIME_left_bit_shift_n(length, in, amount % DIGIT_SIZE_b);
 }
@@ -123,16 +122,20 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_transpose_in_place(DIGIT A[]) {
 
     DIGIT mask = (DIGIT)0x1;
     DIGIT rev1, rev2, a00;
-    int i, slack_bits_amount = NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - P;
+    int slack_bits_amount = NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_b - P;
 
     a00 = A[NUM_DIGITS_GF2X_ELEMENT - 1] & mask;
     right_bit_shift(NUM_DIGITS_GF2X_ELEMENT, A);
 
-    for (i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= (NUM_DIGITS_GF2X_ELEMENT + 1) / 2; i--) {
+    for (size_t i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= (NUM_DIGITS_GF2X_ELEMENT + 1) / 2; i--) {
         rev1 = reverse_digit(A[i]);
         rev2 = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT - 1 - i]);
         A[i] = rev2;
         A[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = rev1;
+    }
+
+    if (NUM_DIGITS_GF2X_ELEMENT % 2 == 1) {
+        A[NUM_DIGITS_GF2X_ELEMENT / 2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT / 2]);
     }
 
     if (slack_bits_amount) {
@@ -151,10 +154,9 @@ static void rotate_bit_right(DIGIT in[]) { /*  x^{-1} * in(x) mod x^P+1 */
 }
 
 /* cond swap: swaps digits A and B if swap_mask == -1 */
-static void gf2x_cswap(DIGIT *a, DIGIT *b, int swap_mask) {
-    int i;
+static void gf2x_cswap(DIGIT *a, DIGIT *b, int32_t swap_mask) {
     DIGIT t;
-    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+    for (size_t i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
         t = swap_mask & (a[i] ^ b[i]);
         a[i] ^= t;
         b[i] ^= t;
@@ -162,18 +164,18 @@ static void gf2x_cswap(DIGIT *a, DIGIT *b, int swap_mask) {
 }
 
 /* returns -1 mask if x != 0, otherwise 0 */
-static inline int nonzero(DIGIT x) {
+static inline int32_t nonzero(DIGIT x) {
     DIGIT t = x;
     t = (~t) + 1;
     t >>= DIGIT_SIZE_b - 1;
-    return -((int)t);
+    return -((int32_t)t);
 }
 
 /* returns -1 mask if x < 0 else 0 */
-static inline int negative(int x) {
+static inline int32_t negative(int x) {
     uint32_t u = x;
     u >>= 31;
-    return -((int)u);
+    return -((int32_t)u);
 }
 
 /* return f(0) as digit */
@@ -191,7 +193,7 @@ static void gf2x_mult_scalar_acc(DIGIT *f, const DIGIT *g, const DIGIT s) {
 
 /* constant-time inverse, source: gcd.cr.yp.to */
 int PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_inverse(DIGIT out[], const DIGIT in[]) {
-    int i, loop, swap, delta = 1;
+    int32_t swap, delta = 1;
     DIGIT g0_mask;
 
     DIGIT f[NUM_DIGITS_GF2X_MODULUS] = {0}; // f = x^P + 1
@@ -202,17 +204,17 @@ int PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_inverse(DIGIT out[], const DIGIT in[])
     f[NUM_DIGITS_GF2X_MODULUS - 1] = 1;
     f[0] |= ((DIGIT)1 << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
 
-    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+    for (size_t i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
         g[i] = in[i];
     }
 
-    for (i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
+    for (size_t i = 0; i < NUM_DIGITS_GF2X_ELEMENT; i++) {
         v[i] = 0;
     }
 
     r[NUM_DIGITS_GF2X_ELEMENT - 1] = 1;
 
-    for (loop = 0; loop < 2 * P - 1; ++loop) {
+    for (int loop = 0; loop < 2 * P - 1; ++loop) {
 
         swap = negative(-delta) & nonzero(lsb(g));              // swap = -1 if -delta < 0 AND g(0) != 0
         delta ^= swap & (delta ^ -delta);                       // cond swap delta with -delta if swap
@@ -247,7 +249,7 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul(DIGIT Res[], const DIGIT A[], con
 /*PRE: the representation of the sparse coefficients is sorted in increasing
  order of the coefficients themselves */
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_dense_to_sparse(DIGIT Res[], const DIGIT dense[],
-        POSITION_T sparse[], unsigned int nPos) {
+        POSITION_T sparse[], size_t nPos) {
 
     DIGIT aux[2 * NUM_DIGITS_GF2X_ELEMENT] = {0x00};
     DIGIT resDouble[2 * NUM_DIGITS_GF2X_ELEMENT] = {0x00};
@@ -258,7 +260,7 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_dense_to_sparse(DIGIT Res[], cons
         left_bit_shift_wide_n(2 * NUM_DIGITS_GF2X_ELEMENT, resDouble, sparse[0]);
         left_bit_shift_wide_n(2 * NUM_DIGITS_GF2X_ELEMENT, aux, sparse[0]);
 
-        for (unsigned int i = 1; i < nPos; i++) {
+        for (size_t i = 1; i < nPos; i++) {
             if (sparse[i] != INVALID_POS_VALUE) {
                 left_bit_shift_wide_n(2 * NUM_DIGITS_GF2X_ELEMENT, aux, (sparse[i] - sparse[i - 1]) );
                 PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_add(resDouble, aux, resDouble, 2 * NUM_DIGITS_GF2X_ELEMENT);
@@ -270,10 +272,9 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_dense_to_sparse(DIGIT Res[], cons
 
 }
 
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[]) {
-
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_transpose_in_place_sparse(size_t sizeA, POSITION_T A[]) {
     POSITION_T t;
-    int i = 0, j;
+    size_t i = 0, j;
 
     if (A[i] == 0) {
         i = 1;
@@ -297,6 +298,9 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T R
         size_t sizeB, const POSITION_T B[]) {
 
     POSITION_T prod;
+    POSITION_T lastReadPos;
+    size_t duplicateCount;
+    size_t write_idx, read_idx;
 
     /* compute all the coefficients, filling invalid positions with P*/
     size_t lastFilledPos = 0;
@@ -317,12 +321,11 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T R
         Res[lastFilledPos] = INVALID_POS_VALUE;
         lastFilledPos++;
     }
+
     PQCLEAN_LEDAKEMLT52_LEAKTIME_uint32_sort(Res, sizeR);
+
     /* eliminate duplicates */
-    POSITION_T lastReadPos = Res[0];
-    size_t duplicateCount;
-    size_t write_idx = 0;
-    size_t read_idx = 0;
+    write_idx = read_idx = 0;
     while (read_idx < sizeR  && Res[read_idx] != INVALID_POS_VALUE) {
         lastReadPos = Res[read_idx];
         read_idx++;
@@ -344,13 +347,12 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_mul_sparse(size_t sizeR, POSITION_T R
 
 /* the implementation is safe even in case A or B alias with the result
  * PRE: A and B should be sorted, disjunct arrays ending with INVALID_POS_VALUE */
-void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_add_sparse(
-    int sizeR, POSITION_T Res[],
-    int sizeA, const POSITION_T A[],
-    int sizeB, const POSITION_T B[]) {
+void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_mod_add_sparse(size_t sizeR, POSITION_T Res[],
+        size_t sizeA, const POSITION_T A[],
+        size_t sizeB, const POSITION_T B[]) {
 
     POSITION_T tmpRes[DV * M];
-    int idxA = 0, idxB = 0, idxR = 0;
+    size_t idxA = 0, idxB = 0, idxR = 0;
     while ( idxA < sizeA  &&
             idxB < sizeB  &&
             A[idxA] != INVALID_POS_VALUE &&
@@ -419,18 +421,18 @@ static uint32_t rand_range(const unsigned int n, const int logn, AES_XOF_struct 
 /* Obtains fresh randomness and seed-expands it until all the required positions
  * for the '1's in the circulant block are obtained */
 void PQCLEAN_LEDAKEMLT52_LEAKTIME_rand_circulant_sparse_block(POSITION_T *pos_ones,
-        int countOnes,
+        size_t countOnes,
         AES_XOF_struct *seed_expander_ctx) {
 
-    int duplicated, placedOnes = 0;
-    uint32_t p;
+    size_t duplicated, placedOnes = 0;
+    POSITION_T p;
 
     while (placedOnes < countOnes) {
         p = rand_range(NUM_BITS_GF2X_ELEMENT,
                        P_BITS,
                        seed_expander_ctx);
         duplicated = 0;
-        for (int j = 0; j < placedOnes; j++) {
+        for (size_t j = 0; j < placedOnes; j++) {
             if (pos_ones[j] == p) {
                 duplicated = 1;
             }

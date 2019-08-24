@@ -52,7 +52,7 @@ static void gf2x_mul1(DIGIT *R, const DIGIT A, const DIGIT B) {
 
     R[0] = 0;
     R[1] = (A & 1) * B;
-    for (unsigned i = 1; i < DIGIT_SIZE_b; i++) {
+    for (uint8_t i = 1; i < DIGIT_SIZE_b; i++) {
         tmp = ((A >> i) & 1) * B;
         R[1] ^= tmp << i;
         R[0] ^= tmp >> (DIGIT_SIZE_b - i);
