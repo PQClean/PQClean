@@ -7,7 +7,6 @@ consistency_checks:
     - dfr_test.c
     - dfr_test.h
     - gf2x_arith.c
-    - gf2x_arith_mod_xPplusOne.c
     - H_Q_matrices_generation.c
     - H_Q_matrices_generation.h
     - kem.c
@@ -25,7 +24,6 @@ consistency_checks:
     - dfr_test.c
     - dfr_test.h
     - gf2x_arith.c
-    - gf2x_arith_mod_xPplusOne.c
     - H_Q_matrices_generation.c
     - H_Q_matrices_generation.h
     - kem.c
