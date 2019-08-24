@@ -13,7 +13,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_bf_decoding(DIGIT err[],
     uint8_t unsatParityChecks[N0 * P];
     POSITION_T currQBlkPos[M], currQBitPos[M];
     POSITION_T syndromePosToFlip, tmp;
-    unsigned int correlation, corrt_syndrome_based;
+    uint32_t correlation, corrt_syndrome_based;
     size_t currQoneIdx, endQblockIdx, currblockoffset;
     int check;
     int iteration = 0;
@@ -22,7 +22,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_bf_decoding(DIGIT err[],
         PQCLEAN_LEDAKEMLT12_LEAKTIME_gf2x_copy(currSyndrome, privateSyndrome);
         memset(unsatParityChecks, 0x00, N0 * P * sizeof(uint8_t));
         for (size_t i = 0; i < N0; i++) {
-            for (size_t valueIdx = 0; valueIdx < P; valueIdx++) {
+            for (POSITION_T valueIdx = 0; valueIdx < P; valueIdx++) {
                 for (size_t HtrOneIdx = 0; HtrOneIdx < DV; HtrOneIdx++) {
                     tmp = (HtrPosOnes[i][HtrOneIdx] + valueIdx) >= P ?
                           (HtrPosOnes[i][HtrOneIdx] + valueIdx) - P :
@@ -39,7 +39,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_bf_decoding(DIGIT err[],
 
         // Computation of correlation  with a full Q matrix
         for (size_t i = 0; i < N0; i++) {
-            for (size_t j = 0; j < P; j++) {
+            for (POSITION_T j = 0; j < P; j++) {
                 currQoneIdx =  endQblockIdx = 0;
                 correlation = 0;
 
@@ -50,7 +50,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_bf_decoding(DIGIT err[],
                         tmp = QtrPosOnes[i][currQoneIdx] + j;
                         tmp = tmp >= P ? tmp - P : tmp;
                         currQBitPos[currQoneIdx] = tmp;
-                        currQBlkPos[currQoneIdx] = blockIdx;
+                        currQBlkPos[currQoneIdx] = (POSITION_T)blockIdx;
                         correlation += unsatParityChecks[tmp + currblockoffset];
                     }
                 }

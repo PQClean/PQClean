@@ -10,12 +10,11 @@
 int PQCLEAN_LEDAKEMLT32_LEAKTIME_DFR_test(POSITION_T LSparse[N0][DV * M], uint8_t *secondIterThreshold) {
 
     POSITION_T LSparse_loc[N0][DV * M]; /* vector of N_0 sparse blocks */
-    unsigned int gamma[N0][N0][P] = {{{0}}};
-    unsigned int maxMut[N0], maxMutMinusOne[N0];
-    unsigned int allBlockMaxSumst, allBlockMaxSumstMinusOne;
-    unsigned int gammaHist[N0][DV * M + 1] = {{0}};
-    unsigned int toAdd;
-    size_t histIdx;
+    uint8_t gamma[N0][N0][P] = {{{0}}};
+    uint32_t gammaHist[N0][DV * M + 1] = {{0}};
+    size_t maxMut[N0], maxMutMinusOne[N0];
+    size_t allBlockMaxSumst, allBlockMaxSumstMinusOne;
+    size_t histIdx, toAdd;
 
     for (size_t i = 0; i < N0; i++) {
         for (size_t j = 0; j < DV * M; j++) {
@@ -73,7 +72,7 @@ int PQCLEAN_LEDAKEMLT32_LEAKTIME_DFR_test(POSITION_T LSparse[N0][DV * M], uint8_
     /*seek max values across all gamma blocks */
     allBlockMaxSumst = maxMut[0];
     allBlockMaxSumstMinusOne = maxMutMinusOne[0];
-    for (size_t gammaBlockRowIdx = 0; gammaBlockRowIdx < N0 ; gammaBlockRowIdx++) {
+    for (size_t gammaBlockRowIdx = 0; gammaBlockRowIdx < N0; gammaBlockRowIdx++) {
         allBlockMaxSumst = allBlockMaxSumst < maxMut[gammaBlockRowIdx] ?
                            maxMut[gammaBlockRowIdx] :
                            allBlockMaxSumst;

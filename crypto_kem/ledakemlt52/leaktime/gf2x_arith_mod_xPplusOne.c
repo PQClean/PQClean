@@ -134,10 +134,6 @@ void PQCLEAN_LEDAKEMLT52_LEAKTIME_gf2x_transpose_in_place(DIGIT A[]) {
         A[NUM_DIGITS_GF2X_ELEMENT - 1 - i] = rev1;
     }
 
-    if (NUM_DIGITS_GF2X_ELEMENT % 2 == 1) {
-        A[NUM_DIGITS_GF2X_ELEMENT / 2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT / 2]);
-    }
-
     if (slack_bits_amount) {
         PQCLEAN_LEDAKEMLT52_LEAKTIME_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A, slack_bits_amount);
     }
