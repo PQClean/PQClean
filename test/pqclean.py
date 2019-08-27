@@ -1,5 +1,6 @@
 import glob
 import os
+from typing import Optional
 
 import yaml
 import platform
@@ -126,12 +127,30 @@ class Implementation:
         return '{}{}_'.format(self.scheme.namespace_prefix(),
                               self.name.upper()).replace('-', '')
 
+    def supported_on_os(self, os: Optional[str] = None) -> bool:
+        """Check if we support the OS
+
+        If no OS is specified, then we run on the current OS
+        """
+        if os is None:
+            os = platform.system()
+
+        for platform_ in self.metadata().get('supported_platforms', []):
+            if 'operating_systems' in platform_:
+                if os not in platform_['operating_systems']:
+                    return False
+
+        return True
+
     def supported_on_current_platform(self) -> bool:
         if 'supported_platforms' not in self.metadata():
             return True
 
         if platform.machine() == 'ppc':
-            return 'supported_platforms' not in self.metadata()
+            return False
+
+        if not self.supported_on_os():
+            return False
 
         if not hasattr(Implementation, 'CPUINFO'):
             import cpuinfo

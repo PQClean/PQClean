@@ -75,6 +75,14 @@ EXPECTED_FIELDS = {
                                 'optional': True,
                                 'elements': {'type': str},
                             },
+                            'operating_systems': {
+                                'type': list,
+                                'optional': True,
+                                'elements': {
+                                    'type': str,
+                                    'values': ['Linux', 'Windows', 'Darwin'],
+                                },
+                            },
                         },
                     },
                 },
