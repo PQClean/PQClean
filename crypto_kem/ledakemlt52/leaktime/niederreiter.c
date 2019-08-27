@@ -109,8 +109,8 @@ int PQCLEAN_LEDAKEMLT52_LEAKTIME_niederreiter_decrypt(DIGIT *err, const privateK
     POSITION_T QtrPosOnes[N0][M];
     POSITION_T auxSparse[DV * M];
     POSITION_T Ln0trSparse[DV * M];
-    DIGIT err_computed[N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B] = {0};
-    DIGIT err_mockup[N0 * NUM_DIGITS_GF2X_ELEMENT * DIGIT_SIZE_B];
+    DIGIT err_computed[N0 * NUM_DIGITS_GF2X_ELEMENT] = {0};
+    DIGIT err_mockup[N0 * NUM_DIGITS_GF2X_ELEMENT];
     DIGIT privateSyndrome[NUM_DIGITS_GF2X_ELEMENT];
     uint8_t processedQOnes[N0];
     int rejections = sk->rejections;
