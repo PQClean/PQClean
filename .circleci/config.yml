@@ -17,7 +17,7 @@ version: 2.1
     - run:
         name: Run the tests in a container
         command: |
-          docker run -e CI=true -e PQCLEAN_ONLY_DIFF=1 -e PQCLEAN_SKIP_SCHEMES=sphincs-haraka-128f-robust,sphincs-haraka-192s-robust,sphincs-sha256-128f-robust,sphincs-sha256-192s-robust,sphincs-shake256-128f-robust,sphincs-shake256-192s-robust,sphincs-haraka-128f-simple,sphincs-haraka-192s-simple,sphincs-sha256-128f-simple,sphincs-sha256-192s-simple,sphincs-shake256-128f-simple,sphincs-shake256-192s-simple,sphincs-haraka-128s-robust,sphincs-haraka-256f-robust,sphincs-sha256-128s-robust,sphincs-sha256-256f-robust,sphincs-shake256-128s-robust,sphincs-shake256-256f-robust,sphincs-haraka-128s-simple,sphincs-haraka-256f-simple,sphincs-sha256-128s-simple,sphincs-sha256-256f-simple,sphincs-shake256-128s-simple,sphincs-shake256-256f-simple,sphincs-haraka-192f-robust,sphincs-haraka-256s-robust,sphincs-sha256-192f-robust,sphincs-sha256-256s-robust,sphincs-shake256-192f-robust,sphincs-shake256-256s-robust,sphincs-haraka-192f-simple,sphincs-haraka-256s-simple,sphincs-sha256-192f-simple,sphincs-sha256-256s-simple,sphincs-shake256-192f-simple,sphincs-shake256-256s-simple --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
+          docker run -e CI=true -e PQCLEAN_ONLY_TYPES -e PQCLEAN_ONLY_DIFF=1 -e PQCLEAN_SKIP_SCHEMES=sphincs-haraka-128f-robust,sphincs-haraka-192s-robust,sphincs-sha256-128f-robust,sphincs-sha256-192s-robust,sphincs-shake256-128f-robust,sphincs-shake256-192s-robust,sphincs-haraka-128f-simple,sphincs-haraka-192s-simple,sphincs-sha256-128f-simple,sphincs-sha256-192s-simple,sphincs-shake256-128f-simple,sphincs-shake256-192s-simple,sphincs-haraka-128s-robust,sphincs-haraka-256f-robust,sphincs-sha256-128s-robust,sphincs-sha256-256f-robust,sphincs-shake256-128s-robust,sphincs-shake256-256f-robust,sphincs-haraka-128s-simple,sphincs-haraka-256f-simple,sphincs-sha256-128s-simple,sphincs-sha256-256f-simple,sphincs-shake256-128s-simple,sphincs-shake256-256f-simple,sphincs-haraka-192f-robust,sphincs-haraka-256s-robust,sphincs-sha256-192f-robust,sphincs-sha256-256s-robust,sphincs-shake256-192f-robust,sphincs-shake256-256s-robust,sphincs-haraka-192f-simple,sphincs-haraka-256s-simple,sphincs-sha256-192f-simple,sphincs-sha256-256s-simple,sphincs-shake256-192f-simple,sphincs-shake256-256s-simple --rm -v `pwd`:`pwd` -w `pwd` "pqclean/ci-container:$ARCH" /bin/bash -c "
           uname -a &&
           export CC=${CC} &&
           pip3 install -r requirements.txt &&
@@ -51,145 +51,332 @@ version: 2.1
         path: test/test-results
 
 jobs:
-  arm64-gcc:
+  # First the KEM jobs
+  arm64-gcc-kem:
     <<: *defaultjob
     environment:
       CC: gcc
       ARCH: arm64
-  arm64-clang:
+      PQCLEAN_ONLY_TYPES: kem
+  arm64-clang-kem:
     <<: *defaultjob
     environment:
       CC: clang
       ARCH: arm64
-  arm32-gcc:
+      PQCLEAN_ONLY_TYPES: kem
+  arm32-gcc-kem:
     <<: *defaultjob
     environment:
       CC: gcc
       ARCH: armhf
-  arm32-clang:
+      PQCLEAN_ONLY_TYPES: kem
+  arm32-clang-kem:
     <<: *defaultjob
     environment:
       CC: clang
       ARCH: armhf
-  ppc-clang:
+      PQCLEAN_ONLY_TYPES: kem
+  ppc-clang-kem:
     <<: *defaultjob
     environment:
       CC: clang
       ARCH: unstable-ppc
-  ppc-gcc:
+      PQCLEAN_ONLY_TYPES: kem
+  ppc-gcc-kem:
     <<: *defaultjob
     environment:
       CC: gcc
       ARCH: unstable-ppc
-  amd64-gcc:
+      PQCLEAN_ONLY_TYPES: kem
+  amd64-gcc-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: amd64
-  amd64-clang:
+      PQCLEAN_ONLY_TYPES: kem
+  amd64-clang-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: amd64
-  i386-gcc:
+      PQCLEAN_ONLY_TYPES: kem
+  i386-gcc-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: i386
-  i386-clang:
+      PQCLEAN_ONLY_TYPES: kem
+  i386-clang-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: i386
+      PQCLEAN_ONLY_TYPES: kem
   # These are for the scheduled builds
-  arm64-gcc-slow:
+  arm64-gcc-slow-kem:
     <<: *defaultjob
     environment:
       CC: gcc
       ARCH: arm64
+      PQCLEAN_ONLY_TYPES: kem
       RUN_SLOW: 1
-  arm64-clang-slow:
+  arm64-clang-slow-kem:
     <<: *defaultjob
     environment:
       CC: clang
       ARCH: arm64
+      PQCLEAN_ONLY_TYPES: kem
       RUN_SLOW: 1
-  arm32-gcc-slow:
+  arm32-gcc-slow-kem:
     <<: *defaultjob
     environment:
       CC: gcc
       ARCH: armhf
       RUN_SLOW: 1
-  arm32-clang-slow:
+      PQCLEAN_ONLY_TYPES: kem
+  arm32-clang-slow-kem:
     <<: *defaultjob
     environment:
       CC: clang
       ARCH: armhf
       RUN_SLOW: 1
-  ppc-clang-slow:
+      PQCLEAN_ONLY_TYPES: kem
+  ppc-clang-slow-kem:
     <<: *defaultjob
     environment:
       CC: clang
       ARCH: unstable-ppc
       RUN_SLOW: 1
-  ppc-gcc-slow:
+      PQCLEAN_ONLY_TYPES: kem
+  ppc-gcc-slow-kem:
     <<: *defaultjob
     environment:
       CC: gcc
       ARCH: unstable-ppc
       RUN_SLOW: 1
-  amd64-gcc-slow:
+      PQCLEAN_ONLY_TYPES: kem
+  amd64-gcc-slow-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: amd64
       RUN_SLOW: 1
-  amd64-clang-slow:
+      PQCLEAN_ONLY_TYPES: kem
+  amd64-clang-slow-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: amd64
       RUN_SLOW: 1
-  i386-gcc-slow:
+      PQCLEAN_ONLY_TYPES: kem
+  i386-gcc-slow-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: i386
       RUN_SLOW: 1
-  i386-clang-slow:
+      PQCLEAN_ONLY_TYPES: kem
+  i386-clang-slow-kem:
     <<: *nativejob
     environment:
       CC: gcc
       ARCH: i386
       RUN_SLOW: 1
-
+      PQCLEAN_ONLY_TYPES: kem
+  # the Sign jobs
+  arm64-gcc-sign:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: arm64
+      PQCLEAN_ONLY_TYPES: sign
+  arm64-clang-sign:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: arm64
+      PQCLEAN_ONLY_TYPES: sign
+  arm32-gcc-sign:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: armhf
+      PQCLEAN_ONLY_TYPES: sign
+  arm32-clang-sign:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: armhf
+      PQCLEAN_ONLY_TYPES: sign
+  ppc-clang-sign:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: unstable-ppc
+      PQCLEAN_ONLY_TYPES: sign
+  ppc-gcc-sign:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: unstable-ppc
+      PQCLEAN_ONLY_TYPES: sign
+  amd64-gcc-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+      PQCLEAN_ONLY_TYPES: sign
+  amd64-clang-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+      PQCLEAN_ONLY_TYPES: sign
+  i386-gcc-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+      PQCLEAN_ONLY_TYPES: sign
+  i386-clang-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+      PQCLEAN_ONLY_TYPES: sign
+  # These are for the scheduled builds
+  arm64-gcc-slow-sign:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: arm64
+      PQCLEAN_ONLY_TYPES: sign
+      RUN_SLOW: 1
+  arm64-clang-slow-sign:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: arm64
+      PQCLEAN_ONLY_TYPES: sign
+      RUN_SLOW: 1
+  arm32-gcc-slow-sign:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: armhf
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
+  arm32-clang-slow-sign:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: armhf
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
+  ppc-clang-slow-sign:
+    <<: *defaultjob
+    environment:
+      CC: clang
+      ARCH: unstable-ppc
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
+  ppc-gcc-slow-sign:
+    <<: *defaultjob
+    environment:
+      CC: gcc
+      ARCH: unstable-ppc
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
+  amd64-gcc-slow-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
+  amd64-clang-slow-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: amd64
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
+  i386-gcc-slow-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
+  i386-clang-slow-sign:
+    <<: *nativejob
+    environment:
+      CC: gcc
+      ARCH: i386
+      RUN_SLOW: 1
+      PQCLEAN_ONLY_TYPES: sign
 
 workflows:
   version: 2
   build:
     jobs:
-      - arm64-gcc:
+      # AMD64
+      - amd64-gcc-kem
+      - amd64-clang-kem
+      - amd64-gcc-sign
+      - amd64-clang-sign
+      # i386
+      - i386-gcc-kem: &i386
           requires:
-            - amd64-gcc
-      - arm64-clang:
+            - amd64-gcc-kem
+            - amd64-gcc-sign
+            - amd64-clang-kem
+            - amd64-clang-sign
+      - i386-clang-kem:
+          <<: *i386
+      - i386-gcc-sign:
+          <<: *i386
+      - i386-clang-sign:
+          <<: *i386
+      # ARMv8
+      - arm64-gcc-kem: &arm64
           requires:
-            - amd64-clang
-      - arm32-gcc:
+            - i386-gcc-kem
+            - i386-gcc-sign
+            - i386-clang-sign
+            - i386-clang-kem
+      - arm64-gcc-sign:
+          <<: *arm64
+      - arm64-clang-kem:
+          <<: *arm64
+      - arm64-clang-sign:
+          <<: *arm64
+      # ARM 32 bit
+      - arm32-gcc-kem: &arm32
           requires:
-            - i386-gcc
-      - arm32-clang:
+            - arm64-gcc-kem
+            - arm64-gcc-sign
+            - arm64-clang-kem
+            - arm64-clang-sign
+      - arm32-clang-kem:
+          <<: *arm32
+      - arm32-gcc-sign:
+          <<: *arm32
+      - arm32-clang-sign:
+          <<: *arm32
+      # PPC
+      - ppc-gcc-kem: &ppc
           requires:
-            - i386-clang
-      - ppc-gcc:
-          requires:
-            - arm32-gcc
-      - ppc-clang:
-          requires:
-            - arm32-clang
-      - amd64-gcc
-      - amd64-clang
-      - i386-gcc
-      - i386-clang
+            - arm32-gcc-kem
+            - arm32-clang-kem
+            - arm32-gcc-sign
+            - arm32-clang-sign
+      - ppc-clang-kem:
+          <<: *ppc
+      - ppc-gcc-sign:
+          <<: *ppc
+      - ppc-clang-sign:
+          <<: *ppc
   scheduled:
     triggers:
       - schedule:
@@ -198,17 +385,28 @@ workflows:
             branches:
               only: master
     jobs:
-      - arm64-gcc-slow
-      - arm64-gcc-slow
-      - arm64-clang-slow
-      - arm32-gcc-slow
-      - arm32-clang-slow
-      - ppc-gcc-slow
-      - ppc-clang-slow
-      - amd64-gcc-slow
-      - amd64-clang-slow
-      - i386-gcc-slow
-      - i386-clang-slow
+      - amd64-clang-slow-kem
+      - amd64-clang-slow-sign
+      - amd64-gcc-slow-kem
+      - amd64-gcc-slow-sign
+      - arm32-clang-slow-kem
+      - arm32-clang-slow-sign
+      - arm32-gcc-slow-kem
+      - arm32-gcc-slow-sign
+      - arm64-clang-slow-kem
+      - arm64-clang-slow-sign
+      - arm64-gcc-slow-kem
+      - arm64-gcc-slow-kem
+      - arm64-gcc-slow-sign
+      - arm64-gcc-slow-sign
+      - i386-clang-slow-kem
+      - i386-clang-slow-sign
+      - i386-gcc-slow-kem
+      - i386-gcc-slow-sign
+      - ppc-clang-slow-kem
+      - ppc-clang-slow-sign
+      - ppc-gcc-slow-kem
+      - ppc-gcc-slow-sign
 
 #  vim: set ft=yaml ts=2 sw=2 tw=0 et :
 
