@@ -3,10 +3,10 @@ type: kem
 claimed-nist-level: 1
 claimed-security: IND-CCA2
 length-public-key: 6520
-length-secret-key: 26
-length-ciphertext: 6520
+length-secret-key: 50
+length-ciphertext: 6544
 length-shared-secret: 32
-nistkat-sha256: c49a3f0ff5f3e7d6b41995649d7003daf7c06d9539fc28cb3b93ed02dcbe09d4
+nistkat-sha256: c0bd75093e2bbae8bf5717939c59c3c695ee9a60d765fcf6fb06d8db385b04c7
 principal-submitters:
   - Marco Baldi
 auxiliary-submitters:
@@ -16,4 +16,4 @@ auxiliary-submitters:
   - Paolo Santini
 implementations:
   - name: leaktime
-    version: 2.?
+    version: 2.1

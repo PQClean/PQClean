@@ -3,10 +3,10 @@
 LIB=libledakemlt12_leaktime.a
 HEADERS=api.h bf_decoding.h dfr_test.h gf2x_arith_mod_xPplusOne.h \
 		gf2x_arith.h H_Q_matrices_generation.h \
-		niederreiter.h qc_ldpc_parameters.h rng.h
+		niederreiter.h qc_ldpc_parameters.h rng.h sort.h utils.h
 
 OBJECTS=bf_decoding.o dfr_test.o gf2x_arith_mod_xPplusOne.o \
-		gf2x_arith.o H_Q_matrices_generation.o kem.o niederreiter.o rng.o
+		gf2x_arith.o H_Q_matrices_generation.o kem.o niederreiter.o rng.o sort.o utils.o
 
 CFLAGS=-O3 -Wall -Werror -Wextra -Wvla -Wpedantic -Wmissing-prototypes -std=c99 \
 		-I../../../common $(EXTRAFLAGS)

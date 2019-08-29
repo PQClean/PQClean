@@ -13,8 +13,8 @@
  maxlen         - maximum number of bytes (less than 2**32) generated under this seed and diversifier
  */
 static void seedexpander_init(AES_XOF_struct *ctx,
-                              unsigned char *seed,
-                              unsigned char *diversifier,
+                              uint8_t *seed,
+                              uint8_t *diversifier,
                               size_t maxlen) {
 
     ctx->length_remaining = maxlen;
@@ -38,13 +38,13 @@ static void seedexpander_init(AES_XOF_struct *ctx,
 }
 
 void PQCLEAN_LEDAKEMLT12_LEAKTIME_seedexpander_from_trng(AES_XOF_struct *ctx,
-        const unsigned char *trng_entropy
+        const uint8_t *trng_entropy
         /* TRNG_BYTE_LENGTH wide buffer */) {
 
     /*the NIST seedexpander will however access 32B from this buffer */
     unsigned int prng_buffer_size = TRNG_BYTE_LENGTH < 32 ? 32 : TRNG_BYTE_LENGTH;
-    unsigned char prng_buffer[TRNG_BYTE_LENGTH < 32 ? 32 : TRNG_BYTE_LENGTH] = { 0x00 };
-    unsigned char diversifier[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+    uint8_t prng_buffer[TRNG_BYTE_LENGTH < 32 ? 32 : TRNG_BYTE_LENGTH] = {0x00};
+    uint8_t diversifier[8] = {0};
 
     memcpy(prng_buffer,
            trng_entropy,
@@ -61,7 +61,7 @@ void PQCLEAN_LEDAKEMLT12_LEAKTIME_seedexpander_from_trng(AES_XOF_struct *ctx,
     x    - returns the XOF data
     xlen - number of bytes to return
  */
-int PQCLEAN_LEDAKEMLT12_LEAKTIME_seedexpander(AES_XOF_struct *ctx, unsigned char *x, size_t xlen) {
+int PQCLEAN_LEDAKEMLT12_LEAKTIME_seedexpander(AES_XOF_struct *ctx, uint8_t *x, size_t xlen) {
     size_t offset;
     aes256ctx ctx256;
 
