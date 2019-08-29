@@ -12,7 +12,13 @@ environment:
   PQCLEAN_SKIP_SCHEMES: sphincs-haraka-128f-robust,sphincs-haraka-192s-robust,sphincs-sha256-128f-robust,sphincs-sha256-192s-robust,sphincs-shake256-128f-robust,sphincs-shake256-192s-robust,sphincs-haraka-128f-simple,sphincs-haraka-192s-simple,sphincs-sha256-128f-simple,sphincs-sha256-192s-simple,sphincs-shake256-128f-simple,sphincs-shake256-192s-simple,sphincs-haraka-128s-robust,sphincs-haraka-256f-robust,sphincs-sha256-128s-robust,sphincs-sha256-256f-robust,sphincs-shake256-128s-robust,sphincs-shake256-256f-robust,sphincs-haraka-128s-simple,sphincs-haraka-256f-simple,sphincs-sha256-128s-simple,sphincs-sha256-256f-simple,sphincs-shake256-128s-simple,sphincs-shake256-256f-simple,sphincs-haraka-192f-robust,sphincs-haraka-256s-robust,sphincs-sha256-192f-robust,sphincs-sha256-256s-robust,sphincs-shake256-192f-robust,sphincs-shake256-256s-robust,sphincs-haraka-192f-simple,sphincs-haraka-256s-simple,sphincs-sha256-192f-simple,sphincs-sha256-256s-simple,sphincs-shake256-192f-simple,sphincs-shake256-256s-simple
   matrix:
     - BITS: 64
+      PQCLEAN_ONLY_TYPES: kem
     - BITS: 32
+      PQCLEAN_ONLY_TYPES: kem
+    - BITS: 64
+      PQCLEAN_ONLY_TYPES: sign
+    - BITS: 32
+      PQCLEAN_ONLY_TYPES: sign
 
 init:
   - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars%BITS%.bat"
