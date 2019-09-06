@@ -57,6 +57,7 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
            if valgrind_supports_exit_early()
            else []),
          '--max-stackframe=20933064',
+         '--vex-guest-max-insns=25',
          functest_name],
         dest_dir)
     destr()
