@@ -95,13 +95,11 @@ static void keccak_squeezeblocks4x(uint8_t *h0,
                                    size_t nblocks,
                                    __m256i *s,
                                    unsigned int r) {
-    unsigned int i;
-
     unsigned long long *ss = (unsigned long long *)s;
 
     while (nblocks > 0) {
         KeccakF1600_StatePermute4x(s);
-        for (i = 0; i < (r >> 3); i++) {
+        for (size_t i = 0; i < (r >> 3); i++) {
             store64(h0 + 8 * i, ss[4 * i + 0]);
             store64(h1 + 8 * i, ss[4 * i + 1]);
             store64(h2 + 8 * i, ss[4 * i + 2]);
@@ -121,10 +119,9 @@ void PQCLEAN_KYBER768_AVX2_kyber_shake128x4_absorb(keccak4x_state *state,
         uint16_t nonce1,
         uint16_t nonce2,
         uint16_t nonce3) {
-    unsigned int i;
     uint8_t extseed[4][KYBER_SYMBYTES + 2];
 
-    for (i = 0; i < KYBER_SYMBYTES; ++i) {
+    for (size_t i = 0; i < KYBER_SYMBYTES; ++i) {
         extseed[0][i] = seed[i];
         extseed[1][i] = seed[i];
         extseed[2][i] = seed[i];
@@ -140,7 +137,7 @@ void PQCLEAN_KYBER768_AVX2_kyber_shake128x4_absorb(keccak4x_state *state,
     extseed[3][KYBER_SYMBYTES + 1] = (uint8_t)(nonce3 >> 8);
 
     /* zero state */
-    for (i = 0; i < 25; i++) {
+    for (size_t i = 0; i < 25; i++) {
         state->s[i] = _mm256_xor_si256(state->s[i], state->s[i]);
     }
 
@@ -170,10 +167,9 @@ static void shake256x4(uint8_t *out0,
     uint8_t t1[SHAKE256_RATE];
     uint8_t t2[SHAKE256_RATE];
     uint8_t t3[SHAKE256_RATE];
-    size_t i;
 
     /* zero state */
-    for (i = 0; i < 25; i++) {
+    for (size_t i = 0; i < 25; i++) {
         s[i] = _mm256_xor_si256(s[i], s[i]);
     }
 
@@ -190,7 +186,7 @@ static void shake256x4(uint8_t *out0,
 
     if (outlen % SHAKE256_RATE) {
         keccak_squeezeblocks4x(t0, t1, t2, t3, 1, s, SHAKE256_RATE);
-        for (i = 0; i < outlen % SHAKE256_RATE; i++) {
+        for (size_t i = 0; i < outlen % SHAKE256_RATE; i++) {
             out0[i] = t0[i];
             out1[i] = t1[i];
             out2[i] = t2[i];
@@ -209,10 +205,9 @@ void PQCLEAN_KYBER768_AVX2_shake256x4_prf(uint8_t *out0,
         uint8_t nonce1,
         uint8_t nonce2,
         uint8_t nonce3) {
-    unsigned int i;
     uint8_t extseed[4][KYBER_SYMBYTES + 1];
 
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
+    for (size_t i = 0; i < KYBER_SYMBYTES; i++) {
         extseed[0][i] = key[i];
         extseed[1][i] = key[i];
         extseed[2][i] = key[i];

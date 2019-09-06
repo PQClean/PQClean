@@ -19,9 +19,8 @@
 *              const uint8_t *seed: pointer to the input public seed
 **************************************************/
 static void pack_pk(uint8_t *r, polyvec *pk, const uint8_t *seed) {
-    int i;
     PQCLEAN_KYBER1024_AVX2_polyvec_tobytes(r, pk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
+    for (size_t i = 0; i < KYBER_SYMBYTES; i++) {
         r[i + KYBER_POLYVECBYTES] = seed[i];
     }
 }
@@ -37,9 +36,8 @@ static void pack_pk(uint8_t *r, polyvec *pk, const uint8_t *seed) {
 *              - const uint8_t *packedpk: pointer to input serialized public key
 **************************************************/
 static void unpack_pk(polyvec *pk, uint8_t *seed, const uint8_t *packedpk) {
-    int i;
     PQCLEAN_KYBER1024_AVX2_polyvec_frombytes(pk, packedpk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
+    for (size_t i = 0; i < KYBER_SYMBYTES; i++) {
         seed[i] = packedpk[i + KYBER_POLYVECBYTES];
     }
 }
@@ -100,7 +98,7 @@ static void unpack_ciphertext(polyvec *b, poly *v, const uint8_t *c) {
     PQCLEAN_KYBER1024_AVX2_poly_decompress(v, c + KYBER_POLYVECCOMPRESSEDBYTES);
 }
 
-static unsigned int rej_uniform_ref(int16_t *r, unsigned int len, const uint8_t *buf, unsigned int buflen) {
+static size_t rej_uniform_ref(int16_t *r, size_t len, const uint8_t *buf, size_t buflen) {
     unsigned int ctr, pos;
     uint16_t val;
 
@@ -136,7 +134,7 @@ static unsigned int rej_uniform_ref(int16_t *r, unsigned int len, const uint8_t 
 #define  GEN_MATRIX_MAXNBLOCKS ((530+XOF_BLOCKBYTES)/XOF_BLOCKBYTES)    /* 530 is expected number of required bytes */
 static void gen_matrix(polyvec *a, const uint8_t *seed, int transposed) {
     uint16_t i;
-    unsigned int ctr0, ctr1, ctr2, ctr3, bufbytes;
+    size_t ctr0, ctr1, ctr2, ctr3, bufbytes;
     union {
         uint8_t x[4][XOF_BLOCKBYTES * GEN_MATRIX_MAXNBLOCKS];
         __m256i _dummy;
@@ -145,12 +143,15 @@ static void gen_matrix(polyvec *a, const uint8_t *seed, int transposed) {
 
     for (i = 0; i < 4; i++) {
         if (transposed) {
-            PQCLEAN_KYBER1024_AVX2_kyber_shake128x4_absorb(&state, seed, i + 0, i + 256, i + 512, i + 768);
+            PQCLEAN_KYBER1024_AVX2_kyber_shake128x4_absorb(
+                &state, seed, i + 0, i + 256, i + 512, i + 768);
         } else {
-            PQCLEAN_KYBER1024_AVX2_kyber_shake128x4_absorb(&state, seed, 256 * i + 0, 256 * i + 1, 256 * i + 2, 256 * i + 3);
+            PQCLEAN_KYBER1024_AVX2_kyber_shake128x4_absorb(
+                &state, seed, 256 * i + 0, 256 * i + 1, 256 * i + 2, 256 * i + 3);
         }
 
-        PQCLEAN_KYBER1024_AVX2_shake128x4_squeezeblocks(buf.x[0], buf.x[1], buf.x[2], buf.x[3], GEN_MATRIX_MAXNBLOCKS, &state);
+        PQCLEAN_KYBER1024_AVX2_shake128x4_squeezeblocks(
+            buf.x[0], buf.x[1], buf.x[2], buf.x[3], GEN_MATRIX_MAXNBLOCKS, &state);
         bufbytes = GEN_MATRIX_MAXNBLOCKS * XOF_BLOCKBYTES;
 
         ctr0 = PQCLEAN_KYBER1024_AVX2_rej_uniform(a[i].vec[0].coeffs, KYBER_N, buf.x[0], bufbytes);
@@ -185,7 +186,6 @@ static void gen_matrix(polyvec *a, const uint8_t *seed, int transposed) {
 *              - uint8_t *sk: pointer to output private key (of length KYBER_INDCPA_SECRETKEYBYTES bytes)
 **************************************************/
 void PQCLEAN_KYBER1024_AVX2_indcpa_keypair(uint8_t *pk, uint8_t *sk) {
-    int i;
     polyvec a[KYBER_K], skpv, e, pkpv;
     uint8_t buf[2 * KYBER_SYMBYTES];
     const uint8_t *publicseed = buf;
@@ -204,7 +204,7 @@ void PQCLEAN_KYBER1024_AVX2_indcpa_keypair(uint8_t *pk, uint8_t *sk) {
     PQCLEAN_KYBER1024_AVX2_polyvec_ntt(&e);
 
     // matrix-vector multiplication
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER1024_AVX2_polyvec_pointwise_acc(pkpv.vec + i, a + i, &skpv);
         PQCLEAN_KYBER1024_AVX2_poly_frommont(pkpv.vec + i);
     }
@@ -232,7 +232,6 @@ void PQCLEAN_KYBER1024_AVX2_indcpa_enc(uint8_t *c,
                                        const uint8_t *m,
                                        const uint8_t *pk,
                                        const uint8_t *coins) {
-    int i;
     polyvec at[KYBER_K], pkpv, sp, ep, bp;
     poly k, v, epp;
     uint8_t seed[KYBER_SYMBYTES];
@@ -249,7 +248,7 @@ void PQCLEAN_KYBER1024_AVX2_indcpa_enc(uint8_t *c,
     PQCLEAN_KYBER1024_AVX2_polyvec_ntt(&sp);
 
     // matrix-vector multiplication
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER1024_AVX2_polyvec_pointwise_acc(bp.vec + i, at + i, &sp);
     }
 

@@ -19,10 +19,9 @@
 *              const poly *pk:            pointer to the input public-key polynomial
 *              const uint8_t *seed: pointer to the input public seed
 **************************************************/
-static void pack_pk(uint8_t *r, polyvec *pk, const unsigned char *seed) {
-    int i;
+static void pack_pk(uint8_t *r, polyvec *pk, const uint8_t *seed) {
     PQCLEAN_KYBER768_CLEAN_polyvec_tobytes(r, pk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
+    for (size_t i = 0; i < KYBER_SYMBYTES; i++) {
         r[i + KYBER_POLYVECBYTES] = seed[i];
     }
 }
@@ -37,10 +36,9 @@ static void pack_pk(uint8_t *r, polyvec *pk, const unsigned char *seed) {
 *              - uint8_t *seed:           pointer to output seed to generate matrix A
 *              - const uint8_t *packedpk: pointer to input serialized public key
 **************************************************/
-static void unpack_pk(polyvec *pk, uint8_t *seed, const unsigned char *packedpk) {
-    int i;
+static void unpack_pk(polyvec *pk, uint8_t *seed, const uint8_t *packedpk) {
     PQCLEAN_KYBER768_CLEAN_polyvec_frombytes(pk, packedpk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
+    for (size_t i = 0; i < KYBER_SYMBYTES; i++) {
         seed[i] = packedpk[i + KYBER_POLYVECBYTES];
     }
 }
@@ -108,14 +106,14 @@ static void unpack_ciphertext(polyvec *b, poly *v, const uint8_t *c) {
 *              uniform random integers mod q
 *
 * Arguments:   - int16_t *r:               pointer to output buffer
-*              - unsigned int len:         requested number of 16-bit integers (uniform mod q)
-*              - const uint8_t *buf: pointer to input buffer (assumed to be uniform random bytes)
-*              - unsigned int buflen:      length of input buffer in bytes
+*              - size_t len:               requested number of 16-bit integers (uniform mod q)
+*              - const uint8_t *buf:       pointer to input buffer (assumed to be uniform random bytes)
+*              - size_t buflen:            length of input buffer in bytes
 *
 * Returns number of sampled 16-bit integers (at most len)
 **************************************************/
-static unsigned int rej_uniform(int16_t *r, unsigned int len, const uint8_t *buf, unsigned int buflen) {
-    unsigned int ctr, pos;
+static size_t rej_uniform(int16_t *r, size_t len, const uint8_t *buf, size_t buflen) {
+    size_t ctr, pos;
     uint16_t val;
 
     ctr = pos = 0;
@@ -124,7 +122,7 @@ static unsigned int rej_uniform(int16_t *r, unsigned int len, const uint8_t *buf
         pos += 2;
 
         if (val < 19 * KYBER_Q) {
-            val -= (val >> 12) * KYBER_Q; // Barrett reduction
+            val -= (uint16_t)((val >> 12) * KYBER_Q); // Barrett reduction
             r[ctr++] = (int16_t)val;
         }
     }
@@ -149,7 +147,7 @@ static unsigned int rej_uniform(int16_t *r, unsigned int len, const uint8_t *buf
 **************************************************/
 #define MAXNBLOCKS ((530+XOF_BLOCKBYTES)/XOF_BLOCKBYTES) /* 530 is expected number of required bytes */
 static void gen_matrix(polyvec *a, const uint8_t *seed, int transposed) {
-    unsigned int ctr;
+    size_t ctr;
     uint8_t i, j;
     uint8_t buf[XOF_BLOCKBYTES * MAXNBLOCKS + 1];
     xof_state state;
@@ -187,7 +185,6 @@ void PQCLEAN_KYBER768_CLEAN_indcpa_keypair(uint8_t *pk, unsigned char *sk) {
     uint8_t buf[2 * KYBER_SYMBYTES];
     uint8_t *publicseed = buf;
     uint8_t *noiseseed = buf + KYBER_SYMBYTES;
-    int i;
     uint8_t nonce = 0;
 
     randombytes(buf, KYBER_SYMBYTES);
@@ -195,10 +192,10 @@ void PQCLEAN_KYBER768_CLEAN_indcpa_keypair(uint8_t *pk, unsigned char *sk) {
 
     gen_a(a, publicseed);
 
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER768_CLEAN_poly_getnoise(skpv.vec + i, noiseseed, nonce++);
     }
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER768_CLEAN_poly_getnoise(e.vec + i, noiseseed, nonce++);
     }
 
@@ -206,7 +203,7 @@ void PQCLEAN_KYBER768_CLEAN_indcpa_keypair(uint8_t *pk, unsigned char *sk) {
     PQCLEAN_KYBER768_CLEAN_polyvec_ntt(&e);
 
     // matrix-vector multiplication
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER768_CLEAN_polyvec_pointwise_acc(&pkpv.vec[i], &a[i], &skpv);
         PQCLEAN_KYBER768_CLEAN_poly_frommont(&pkpv.vec[i]);
     }
@@ -237,17 +234,16 @@ void PQCLEAN_KYBER768_CLEAN_indcpa_enc(uint8_t *c,
     polyvec sp, pkpv, ep, at[KYBER_K], bp;
     poly v, k, epp;
     uint8_t seed[KYBER_SYMBYTES];
-    int i;
     uint8_t nonce = 0;
 
     unpack_pk(&pkpv, seed, pk);
     PQCLEAN_KYBER768_CLEAN_poly_frommsg(&k, m);
     gen_at(at, seed);
 
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER768_CLEAN_poly_getnoise(sp.vec + i, coins, nonce++);
     }
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER768_CLEAN_poly_getnoise(ep.vec + i, coins, nonce++);
     }
     PQCLEAN_KYBER768_CLEAN_poly_getnoise(&epp, coins, nonce++);
@@ -255,7 +251,7 @@ void PQCLEAN_KYBER768_CLEAN_indcpa_enc(uint8_t *c,
     PQCLEAN_KYBER768_CLEAN_polyvec_ntt(&sp);
 
     // matrix-vector multiplication
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER768_CLEAN_polyvec_pointwise_acc(&bp.vec[i], &at[i], &sp);
     }
 

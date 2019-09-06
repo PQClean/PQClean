@@ -13,18 +13,16 @@
 *              - const polyvec *a: pointer to input vector of polynomials
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_polyvec_compress(uint8_t *r, polyvec *a) {
-    int i, j, k;
-
     PQCLEAN_KYBER512_AVX2_polyvec_csubq(a);
 
     uint16_t t[4];
-    for (i = 0; i < KYBER_K; i++) {
-        for (j = 0; j < KYBER_N / 4; j++) {
-            for (k = 0; k < 4; k++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
+        for (size_t j = 0; j < KYBER_N / 4; j++) {
+            for (size_t k = 0; k < 4; k++) {
                 t[k] = ((((uint32_t)a->vec[i].coeffs[4 * j + k] << 10) + KYBER_Q / 2) / KYBER_Q) & 0x3ff;
             }
 
-            r[5 * j + 0] = (uint8_t)( t[0] & 0xff);
+            r[5 * j + 0] = (uint8_t)t[0];
             r[5 * j + 1] = (uint8_t)((t[0] >>  8) | ((t[1] & 0x3f) << 2));
             r[5 * j + 2] = (uint8_t)((t[1] >>  6) | ((t[2] & 0x0f) << 4));
             r[5 * j + 3] = (uint8_t)((t[2] >>  4) | ((t[3] & 0x03) << 6));
@@ -44,9 +42,8 @@ void PQCLEAN_KYBER512_AVX2_polyvec_compress(uint8_t *r, polyvec *a) {
 *              - uint8_t *a: pointer to input byte array
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_polyvec_decompress(polyvec *r, const uint8_t *a) {
-    int i, j;
-    for (i = 0; i < KYBER_K; i++) {
-        for (j = 0; j < KYBER_N / 4; j++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
+        for (size_t j = 0; j < KYBER_N / 4; j++) {
             r->vec[i].coeffs[4 * j + 0] = (int16_t)( (((a[5 * j + 0]       | (((uint32_t)a[5 * j + 1] & 0x03) << 8)) * KYBER_Q) + 512) >> 10);
             r->vec[i].coeffs[4 * j + 1] = (int16_t)(((((a[5 * j + 1] >> 2) | (((uint32_t)a[5 * j + 2] & 0x0f) << 6)) * KYBER_Q) + 512) >> 10);
             r->vec[i].coeffs[4 * j + 2] = (int16_t)(((((a[5 * j + 2] >> 4) | (((uint32_t)a[5 * j + 3] & 0x3f) << 4)) * KYBER_Q) + 512) >> 10);
@@ -65,8 +62,7 @@ void PQCLEAN_KYBER512_AVX2_polyvec_decompress(polyvec *r, const uint8_t *a) {
 *              - const polyvec *a: pointer to input vector of polynomials
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_polyvec_tobytes(uint8_t *r, polyvec *a) {
-    int i;
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AVX2_poly_tobytes(r + i * KYBER_POLYBYTES, &a->vec[i]);
     }
 }
@@ -81,8 +77,7 @@ void PQCLEAN_KYBER512_AVX2_polyvec_tobytes(uint8_t *r, polyvec *a) {
 *              - const polyvec *a: pointer to input vector of polynomials
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_polyvec_frombytes(polyvec *r, const uint8_t *a) {
-    int i;
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AVX2_poly_frombytes(&r->vec[i], a + i * KYBER_POLYBYTES);
     }
 }
@@ -95,8 +90,7 @@ void PQCLEAN_KYBER512_AVX2_polyvec_frombytes(polyvec *r, const uint8_t *a) {
 * Arguments:   - polyvec *r: pointer to in/output vector of polynomials
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_polyvec_ntt(polyvec *r) {
-    int i;
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AVX2_poly_ntt(&r->vec[i]);
     }
 }
@@ -109,8 +103,7 @@ void PQCLEAN_KYBER512_AVX2_polyvec_ntt(polyvec *r) {
 * Arguments:   - polyvec *r: pointer to in/output vector of polynomials
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_polyvec_invntt(polyvec *r) {
-    int i;
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AVX2_poly_invntt(&r->vec[i]);
     }
 }
@@ -145,16 +138,14 @@ void PQCLEAN_KYBER512_AVX2_polyvec_pointwise_acc(poly *r, const polyvec *a, cons
 
 // FIXME
 void PQCLEAN_KYBER512_AVX2_polyvec_reduce(polyvec *r) {
-    int i;
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AVX2_poly_reduce(&r->vec[i]);
     }
 }
 
 // FIXME
 void PQCLEAN_KYBER512_AVX2_polyvec_csubq(polyvec *r) {
-    int i;
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AVX2_poly_csubq(&r->vec[i]);
     }
 }
@@ -169,8 +160,7 @@ void PQCLEAN_KYBER512_AVX2_polyvec_csubq(polyvec *r) {
 *            - const polyvec *b: pointer to second input vector of polynomials
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_polyvec_add(polyvec *r, const polyvec *a, const polyvec *b) {
-    int i;
-    for (i = 0; i < KYBER_K; i++) {
+    for (size_t i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AVX2_poly_add(&r->vec[i], &a->vec[i], &b->vec[i]);
     }
 }

@@ -2,6 +2,7 @@
 #include "params.h"
 #include "reduce.h"
 
+#include <stddef.h>
 #include <stdint.h>
 
 /* Code to generate zetas and zetas_inv used in the number-theoretic transform:
@@ -89,12 +90,11 @@ static int16_t fqmul(int16_t a, int16_t b) {
 * Arguments:   - int16_t poly[256]: pointer to input/output vector of elements of Zq
 **************************************************/
 void PQCLEAN_KYBER512_CLEAN_ntt(int16_t poly[256]) {
-    unsigned int len, start, j, k;
+    size_t j, k = 1;
     int16_t t, zeta;
 
-    k = 1;
-    for (len = 128; len >= 2; len >>= 1) {
-        for (start = 0; start < 256; start = j + len) {
+    for (size_t len = 128; len >= 2; len >>= 1) {
+        for (size_t start = 0; start < 256; start = j + len) {
             zeta = PQCLEAN_KYBER512_CLEAN_zetas[k++];
             for (j = start; j < start + len; ++j) {
                 t = fqmul(zeta, poly[j + len]);
@@ -114,16 +114,15 @@ void PQCLEAN_KYBER512_CLEAN_ntt(int16_t poly[256]) {
 * Arguments:   - int16_t poly[256]: pointer to input/output vector of elements of Zq
 **************************************************/
 void PQCLEAN_KYBER512_CLEAN_invntt(int16_t poly[256]) {
-    unsigned int start, len, j, k;
+    size_t j, k = 0;
     int16_t t, zeta;
 
-    k = 0;
-    for (len = 2; len <= 128; len <<= 1) {
-        for (start = 0; start < 256; start = j + len) {
+    for (size_t len = 2; len <= 128; len <<= 1) {
+        for (size_t start = 0; start < 256; start = j + len) {
             zeta = PQCLEAN_KYBER512_CLEAN_zetas_inv[k++];
             for (j = start; j < start + len; ++j) {
                 t = poly[j];
-                poly[j] = PQCLEAN_KYBER512_CLEAN_barrett_reduce(t + poly[j + len]);
+                poly[j]       = PQCLEAN_KYBER512_CLEAN_barrett_reduce(t + poly[j + len]);
                 poly[j + len] = t - poly[j + len];
                 poly[j + len] = fqmul(zeta, poly[j + len]);
             }

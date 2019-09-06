@@ -27,7 +27,7 @@ void PQCLEAN_KYBER1024_AVX2_poly_compress(uint8_t *r, poly *a) {
             t[j] = (uint8_t)(((((uint32_t)a->coeffs[i + j] << 5) + KYBER_Q / 2) / KYBER_Q) & 31);
         }
 
-        r[k]   = (uint8_t)( t[0]       | (t[1] << 5));
+        r[k]     = (uint8_t)( t[0]       | (t[1] << 5));
         r[k + 1] = (uint8_t)((t[1] >> 3) | (t[2] << 2) | (t[3] << 7));
         r[k + 2] = (uint8_t)((t[3] >> 1) | (t[4] << 4));
         r[k + 3] = (uint8_t)((t[4] >> 4) | (t[5] << 1) | (t[6] << 6));
@@ -210,10 +210,9 @@ void PQCLEAN_KYBER1024_AVX2_poly_csubq(poly *r) {
 *            - const poly *b: pointer to second input polynomial
 **************************************************/
 void PQCLEAN_KYBER1024_AVX2_poly_add(poly *r, const poly *a, const poly *b) {
-    int i;
     __m256i vec0, vec1;
 
-    for (i = 0; i < KYBER_N; i += 16) {
+    for (size_t i = 0; i < KYBER_N; i += 16) {
         vec0 = _mm256_load_si256((__m256i *)&a->coeffs[i]);
         vec1 = _mm256_load_si256((__m256i *)&b->coeffs[i]);
         vec0 = _mm256_add_epi16(vec0, vec1);
@@ -231,10 +230,9 @@ void PQCLEAN_KYBER1024_AVX2_poly_add(poly *r, const poly *a, const poly *b) {
 *            - const poly *b: pointer to second input polynomial
 **************************************************/
 void PQCLEAN_KYBER1024_AVX2_poly_sub(poly *r, const poly *a, const poly *b) {
-    int i;
     __m256i vec0, vec1;
 
-    for (i = 0; i < KYBER_N; i += 16) {
+    for (size_t i = 0; i < KYBER_N; i += 16) {
         vec0 = _mm256_load_si256((__m256i *)&a->coeffs[i]);
         vec1 = _mm256_load_si256((__m256i *)&b->coeffs[i]);
         vec0 = _mm256_sub_epi16(vec0, vec1);
@@ -251,7 +249,6 @@ void PQCLEAN_KYBER1024_AVX2_poly_sub(poly *r, const poly *a, const poly *b) {
 *              - const uint8_t *msg: pointer to input message
 **************************************************/
 void PQCLEAN_KYBER1024_AVX2_poly_frommsg(poly *r, const uint8_t msg[KYBER_SYMBYTES]) {
-    int i;
     __m128i tmp;
     __m256i a[4], d0, d1, d2, d3;
     const __m256i shift = _mm256_set_epi32(7, 6, 5, 4, 3, 2, 1, 0);
@@ -260,12 +257,12 @@ void PQCLEAN_KYBER1024_AVX2_poly_frommsg(poly *r, const uint8_t msg[KYBER_SYMBYT
     const __m256i hqs = _mm256_set1_epi32((KYBER_Q + 1) / 2);
 
     tmp = _mm_loadu_si128((__m128i *)msg);
-    for (i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++) {
         a[i] = _mm256_broadcastd_epi32(tmp);
         tmp = _mm_srli_si128(tmp, 4);
     }
 
-    for (i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++) {
         d0 = _mm256_srlv_epi32(a[i], shift);
         d1 = _mm256_srli_epi32(d0, 8);
         d2 = _mm256_srli_epi32(d0, 16);
@@ -295,12 +292,12 @@ void PQCLEAN_KYBER1024_AVX2_poly_frommsg(poly *r, const uint8_t msg[KYBER_SYMBYT
     }
 
     tmp = _mm_loadu_si128((__m128i *)&msg[16]);
-    for (i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++) {
         a[i] = _mm256_broadcastd_epi32(tmp);
         tmp = _mm_srli_si128(tmp, 4);
     }
 
-    for (i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++) {
         d0 = _mm256_srlv_epi32(a[i], shift);
         d1 = _mm256_srli_epi32(d0, 8);
         d2 = _mm256_srli_epi32(d0, 16);
@@ -339,12 +336,12 @@ void PQCLEAN_KYBER1024_AVX2_poly_frommsg(poly *r, const uint8_t msg[KYBER_SYMBYT
 *              - const poly *a:      pointer to input polynomial
 **************************************************/
 void PQCLEAN_KYBER1024_AVX2_poly_tomsg(uint8_t msg[KYBER_SYMBYTES], poly *a) {
-    uint32_t i, small;
+    uint32_t small;
     __m256i vec, tmp;
     const __m256i hqs = _mm256_set1_epi16((KYBER_Q - 1) / 2);
     const __m256i hhqs = _mm256_set1_epi16((KYBER_Q - 5) / 4);
 
-    for (i = 0; i < KYBER_N / 16; i++) {
+    for (size_t i = 0; i < KYBER_N / 16; i++) {
         vec = _mm256_load_si256((__m256i *)&a->coeffs[16 * i]);
         vec = _mm256_sub_epi16(hqs, vec);
         tmp = _mm256_srai_epi16(vec, 15);

@@ -268,11 +268,11 @@ static const uint8_t idx[256][8] = {
 #define _mm256_cmpge_epu16(a, b)  _mm256_cmpeq_epi16(_mm256_max_epu16(a, b), a)
 #define _mm_cmpge_epu16(a, b)  _mm_cmpeq_epi16(_mm_max_epu16(a, b), a)
 
-unsigned int PQCLEAN_KYBER512_AVX2_rej_uniform(int16_t *r,
-        unsigned int len,
+size_t PQCLEAN_KYBER512_AVX2_rej_uniform(int16_t *r,
+        size_t len,
         const uint8_t *buf,
-        unsigned int buflen) {
-    unsigned int ctr, pos;
+        size_t buflen) {
+    size_t ctr, pos;
     uint16_t val;
     uint32_t good0, good1, good2;
     const __m256i bound  = _mm256_set1_epi16((int16_t)(19 * KYBER_Q - 1)); // -1 to use cheaper >= instead of > comparison
