@@ -22,14 +22,14 @@ void PQCLEAN_KYBER1024_CLEAN_polyvec_compress(uint8_t *r, polyvec *a) {
                 t[k] = ((((uint32_t)a->vec[i].coeffs[8 * j + k] << 11) + KYBER_Q / 2) / KYBER_Q) & 0x7ff;
             }
 
-            r[11 * j + 0] = (uint8_t)( t[0] & 0xff);
+            r[11 * j + 0] = (uint8_t)t[0];
             r[11 * j + 1] = (uint8_t)((t[0] >>  8) | ((t[1] & 0x1f) << 3));
             r[11 * j + 2] = (uint8_t)((t[1] >>  5) | ((t[2] & 0x03) << 6));
-            r[11 * j + 3] = (uint8_t)((t[2] >>  2) & 0xff);
+            r[11 * j + 3] = (uint8_t)((t[2] >>  2));
             r[11 * j + 4] = (uint8_t)((t[2] >> 10) | ((t[3] & 0x7f) << 1));
             r[11 * j + 5] = (uint8_t)((t[3] >>  7) | ((t[4] & 0x0f) << 4));
             r[11 * j + 6] = (uint8_t)((t[4] >>  4) | ((t[5] & 0x01) << 7));
-            r[11 * j + 7] = (uint8_t)((t[5] >>  1) & 0xff);
+            r[11 * j + 7] = (uint8_t)((t[5] >>  1));
             r[11 * j + 8] = (uint8_t)((t[5] >>  9) | ((t[6] & 0x3f) << 2));
             r[11 * j + 9] = (uint8_t)((t[6] >>  6) | ((t[7] & 0x07) << 5));
             r[11 * j + 10] = (uint8_t)((t[7] >>  3));
