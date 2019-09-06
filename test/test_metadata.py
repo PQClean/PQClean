@@ -61,6 +61,31 @@ EXPECTED_FIELDS = {
             'spec': {
                 'name': {'type': str},
                 'version': {'type': str},
+                'supported_platforms': {
+                    'type': list,
+                    'optional': True,
+                    'elements': {
+                        'type': dict,
+                        'spec': {
+                            'architecture': {
+                                'type': str,
+                                'values': ['x86', 'x86_64', 'aarch64']},
+                            'required_flags': {
+                                'type': list,
+                                'optional': True,
+                                'elements': {'type': str},
+                            },
+                            'operating_systems': {
+                                'type': list,
+                                'optional': True,
+                                'elements': {
+                                    'type': str,
+                                    'values': ['Linux', 'Windows', 'Darwin'],
+                                },
+                            },
+                        },
+                    },
+                },
             },
         },
     },

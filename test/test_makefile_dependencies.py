@@ -17,8 +17,8 @@ import pqclean
     'implementation,test_dir,impl_path, init, destr',
     [(impl,
       *helpers.isolate_test_files(impl.path(), 'test_makefile_deps_'))
-     for impl in pqclean.Scheme.all_implementations()],
-    ids=[str(impl) for impl in pqclean.Scheme.all_implementations()],
+     for impl in pqclean.Scheme.all_supported_implementations()],
+    ids=[str(impl) for impl in pqclean.Scheme.all_supported_implementations()],
 )
 @helpers.filtered_test
 def test_makefile_dependencies(implementation, impl_path, test_dir,

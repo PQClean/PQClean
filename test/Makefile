@@ -69,7 +69,7 @@ $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(TEST_COMMON_DIR)/notrandombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
-$(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION): build-scheme crypto_$(TYPE)/printparams.c
+$(DEST_DIR)/printparams_$(SCHEME)_$(IMPLEMENTATION): crypto_$(TYPE)/printparams.c
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/printparams.c -o $@
 

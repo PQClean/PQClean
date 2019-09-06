@@ -1,7 +1,9 @@
 import glob
 import os
+from typing import Optional
 
 import yaml
+import platform
 
 
 class Scheme:
@@ -36,6 +38,11 @@ class Scheme:
         for scheme in Scheme.all_schemes():
             implementations.extend(scheme.implementations)
         return implementations
+
+    @staticmethod
+    def all_supported_implementations():
+        return [impl for impl in Scheme.all_implementations()
+                if impl.supported_on_current_platform()]
 
     @staticmethod
     def all_schemes_of_type(type: str) -> list:
@@ -111,9 +118,56 @@ class Implementation:
                 implementations.append(Implementation(scheme, d))
         return implementations
 
+    @staticmethod
+    def all_supported_implementations(scheme: Scheme) -> list:
+        return [impl for impl in Implementation.all_implementations(scheme)
+                if impl.supported_on_current_platform()]
+
     def namespace_prefix(self):
         return '{}{}_'.format(self.scheme.namespace_prefix(),
                               self.name.upper()).replace('-', '')
+
+    def supported_on_os(self, os: Optional[str] = None) -> bool:
+        """Check if we support the OS
+
+        If no OS is specified, then we run on the current OS
+        """
+        if os is None:
+            os = platform.system()
+
+        for platform_ in self.metadata().get('supported_platforms', []):
+            if 'operating_systems' in platform_:
+                if os not in platform_['operating_systems']:
+                    return False
+
+        return True
+
+    def supported_on_current_platform(self) -> bool:
+        if 'supported_platforms' not in self.metadata():
+            return True
+
+        if platform.machine() == 'ppc':
+            return False
+
+        if not self.supported_on_os():
+            return False
+
+        if not hasattr(Implementation, 'CPUINFO'):
+            import cpuinfo
+            Implementation.CPUINFO = cpuinfo.get_cpu_info()
+
+        CPUINFO = Implementation.CPUINFO
+
+        for platform_ in self.metadata()['supported_platforms']:
+            if platform_['architecture'] == CPUINFO['arch'].lower():
+                # Detect actually running on emulated i386
+                if (platform_['architecture'] == 'x86_64' and
+                        platform.architecture()[0] == '32bit'):
+                    continue
+                if all([flag in CPUINFO['flags']
+                        for flag in platform_['required_flags']]):
+                    return True
+        return False
 
     def __str__(self):
         return "{} implementation of {}".format(self.name, self.scheme.name)
