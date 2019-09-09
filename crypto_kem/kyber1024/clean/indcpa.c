@@ -180,7 +180,7 @@ static void gen_matrix(polyvec *a, const uint8_t *seed, int transposed) {
 * Arguments:   - uint8_t *pk: pointer to output public key (of length KYBER_INDCPA_PUBLICKEYBYTES bytes)
 *              - uint8_t *sk: pointer to output private key (of length KYBER_INDCPA_SECRETKEYBYTES bytes)
 **************************************************/
-void PQCLEAN_KYBER1024_CLEAN_indcpa_keypair(uint8_t *pk, unsigned char *sk) {
+void PQCLEAN_KYBER1024_CLEAN_indcpa_keypair(uint8_t *pk, uint8_t *sk) {
     polyvec a[KYBER_K], e, pkpv, skpv;
     uint8_t buf[2 * KYBER_SYMBYTES];
     uint8_t *publicseed = buf;

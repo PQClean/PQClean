@@ -17,7 +17,7 @@
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_KYBER512_CLEAN_crypto_kem_keypair(uint8_t *pk, unsigned char *sk) {
+int PQCLEAN_KYBER512_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
     size_t i;
     PQCLEAN_KYBER512_CLEAN_indcpa_keypair(pk, sk);
     for (i = 0; i < KYBER_INDCPA_PUBLICKEYBYTES; i++) {
@@ -40,7 +40,7 @@ int PQCLEAN_KYBER512_CLEAN_crypto_kem_keypair(uint8_t *pk, unsigned char *sk) {
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_KYBER512_CLEAN_crypto_kem_enc(uint8_t *ct, unsigned char *ss, const unsigned char *pk) {
+int PQCLEAN_KYBER512_CLEAN_crypto_kem_enc(uint8_t *ct, uint8_t *ss, const uint8_t *pk) {
     uint8_t  kr[2 * KYBER_SYMBYTES];                                   /* Will contain key, coins */
     uint8_t buf[2 * KYBER_SYMBYTES];
 
@@ -71,7 +71,7 @@ int PQCLEAN_KYBER512_CLEAN_crypto_kem_enc(uint8_t *ct, unsigned char *ss, const 
 *
 * On failure, ss will contain a pseudo-random value.
 **************************************************/
-int PQCLEAN_KYBER512_CLEAN_crypto_kem_dec(uint8_t *ss, const unsigned char *ct, const unsigned char *sk) {
+int PQCLEAN_KYBER512_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, const uint8_t *sk) {
     size_t i;
     uint8_t fail;
     uint8_t cmp[KYBER_CIPHERTEXTBYTES];
