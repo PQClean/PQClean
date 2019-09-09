@@ -1,0 +1,18 @@
+name: Rainbow-IIIc-classic
+type: signature
+claimed-nist-level: 3
+length-public-key: 710640
+length-secret-key: 511448
+length-signature: 156
+nistkat-sha256: 199cf313d96a4fbb481c50e568ac0222ec955b3e20551d0fadbb6c5e97bd1ada
+testvectors-sha256: e738081bcc34228184645dd79237daabc89b7ed22172637b6c10f51dd1e417d9
+principal-submitters:
+  - Jintai Ding
+auxiliary-submitters:
+  - Ming-Shing Chen
+  - Albrecht Petzoldt
+  - Dieter Schmidt
+  - Bo-Yin Yang
+implementations:
+    - name: clean
+      version: https://github.com/fast-crypto-lab/rainbow-submission-round2/commit/af826fcb78f6af51a02d0352cff28a9690467bfd
