@@ -29,10 +29,17 @@ def test_makefile_dependencies(implementation, impl_path, test_dir,
     helpers.make(working_dir=impl_path)
     # test case for each candidate file
     cfiles = glob.glob(os.path.join(impl_path, '*.c'))
+    sfiles = glob.glob(os.path.join(impl_path, '*.[sS]'))
+    incfiles = glob.glob(os.path.join(impl_path, '*.inc'))
     hfiles = glob.glob(os.path.join(impl_path, '*.h'))
-    for file in (cfiles + hfiles):
-        check_makefile_dependencies(implementation, impl_path, file)
-    destr()
+    try:
+        for file in (cfiles + hfiles + sfiles + incfiles):
+            check_makefile_dependencies(implementation, impl_path, file)
+    except Exception as e:
+        print("Affected file: {}".format(file))
+        raise e
+    finally:
+        destr()
 
 
 def touch(time, *files):
@@ -52,10 +59,16 @@ def make_check(path, expect_error=False):
 
 def check_makefile_dependencies(implementation, impl_path, file):
     cfiles = glob.glob(os.path.join(impl_path, '*.c'))
+    sfiles = glob.glob(os.path.join(impl_path, '*.[sS]'))
     hfiles = glob.glob(os.path.join(impl_path, '*.h'))
+    incfiles = glob.glob(os.path.join(impl_path, '*.inc'))
     ofiles = glob.glob(
         os.path.join(impl_path,
                      '*.o' if os.name != 'nt' else '*.obj'))
+    # handle dependency o-files
+    commondir = os.path.join(impl_path, '..', '..', '..', 'common')
+    ofiles += glob.glob(os.path.join(commondir, '*.o'))
+    ofiles += glob.glob(os.path.join(commondir, '**', '*.o'))
 
     libfile = os.path.join(impl_path, implementation.libname())
 
@@ -66,7 +79,7 @@ def check_makefile_dependencies(implementation, impl_path, file):
     ago10 = now - datetime.timedelta(minutes=10)
     ago5 = now - datetime.timedelta(minutes=5)
 
-    touch(ago15, *cfiles, *hfiles)
+    touch(ago15, *cfiles, *sfiles, *hfiles, *incfiles)
     touch(ago10, *ofiles)
     touch(ago5, libfile)
 

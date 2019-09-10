@@ -1,0 +1,20 @@
+consistency_checks:
+- source:
+    scheme: kyber768
+    implementation: clean
+  files:
+    - LICENSE
+    - cbd.c
+    - cbd.h
+    - indcpa.h
+    - kem.c
+    - ntt.c
+    - ntt.h
+    - poly.h
+    - polyvec.h
+    - reduce.c
+    - reduce.h
+    - symmetric-fips202.c
+    - symmetric.h
+    - verify.c
+    - verify.h
