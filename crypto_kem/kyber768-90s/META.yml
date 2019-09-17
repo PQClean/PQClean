@@ -1,12 +1,12 @@
-name: Kyber1024
+name: Kyber768-90s
 type: kem
-claimed-nist-level: 5
+claimed-nist-level: 3
 claimed-security: IND-CCA2
-length-public-key: 1568
-length-ciphertext: 1568
-length-secret-key: 3168
+length-public-key: 1184
+length-ciphertext: 1088
+length-secret-key: 2400
 length-shared-secret: 32
-nistkat-sha256: b4b4fc1c2cbbb182252d2822ccb8cb704bcfe876122635c5dfa48ddc09b6e73f
+nistkat-sha256: 57fa080a0b2295044b128f1e4f7d978a7863ec6c99ebd6239fba747525a3d451
 principal-submitters:
   - Peter Schwabe
 auxiliary-submitters:
