@@ -34,10 +34,74 @@
  * @author   Thomas Pornin <thomas.pornin@nccgroup.com>
  */
 
+/*
+ * IMPORTANT API RULES
+ * -------------------
+ *
+ * This API has some non-trivial usage rules:
+ *
+ *
+ *  - All public functions (i.e. the non-static ones) must be referenced
+ *    with the PQCLEAN_FALCON512_CLEAN_ macro (e.g. PQCLEAN_FALCON512_CLEAN_verify_raw for the verify_raw()
+ *    function). That macro adds a prefix to the name, which is
+ *    configurable with the FALCON_PREFIX macro. This allows compiling
+ *    the code into a specific "namespace" and potentially including
+ *    several versions of this code into a single application (e.g. to
+ *    have an AVX2 and a non-AVX2 variants and select the one to use at
+ *    runtime based on availability of AVX2 opcodes).
+ *
+ *  - Functions that need temporary buffers expects them as a final
+ *    tmp[] array of type uint8_t*, with a size which is documented for
+ *    each function. However, most have some alignment requirements,
+ *    because they will use the array to store 16-bit, 32-bit or 64-bit
+ *    values (e.g. uint64_t or double). The caller must ensure proper
+ *    alignment. What happens on unaligned access depends on the
+ *    underlying architecture, ranging from a slight time penalty
+ *    to immediate termination of the process.
+ *
+ *  - Some functions rely on specific rounding rules and precision for
+ *    floating-point numbers. On some systems (in particular 32-bit x86
+ *    with the 387 FPU), this requires setting an hardware control
+ *    word. The caller MUST use set_fpu_cw() to ensure proper precision:
+ *
+ *      oldcw = set_fpu_cw(2);
+ *      PQCLEAN_FALCON512_CLEAN_sign_dyn(...);
+ *      set_fpu_cw(oldcw);
+ *
+ *    On systems where the native floating-point precision is already
+ *    proper, or integer-based emulation is used, the set_fpu_cw()
+ *    function does nothing, so it can be called systematically.
+ */
+
 
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+
+
+
+
+
+/*
+ * Some computations with floating-point elements, in particular
+ * rounding to the nearest integer, rely on operations using _exactly_
+ * the precision of IEEE-754 binary64 type (i.e. 52 bits). On 32-bit
+ * x86, the 387 FPU may be used (depending on the target OS) and, in
+ * that case, may use more precision bits (i.e. 64 bits, for an 80-bit
+ * total type length); to prevent miscomputations, we define an explicit
+ * function that modifies the precision in the FPU control word.
+ *
+ * set_fpu_cw() sets the precision to the provided value, and returns
+ * the previously set precision; callers are supposed to restore the
+ * previous precision on exit. The correct (52-bit) precision is
+ * configured with the value "2". On unsupported compilers, or on
+ * targets other than 32-bit x86, or when the native 'double' type is
+ * not used, the set_fpu_cw() function does nothing at all.
+ */
+static inline unsigned
+set_fpu_cw(unsigned x) {
+    return x;
+}
 
 
 
@@ -47,17 +111,17 @@
  * SHAKE256 implementation (shake.c).
  *
  * API is defined to be easily replaced with the fips202.h API defined
- * as part of PQ Clean.
+ * as part of PQClean.
  */
 
 
 #include "fips202.h"
 
-#define shake256_context                 shake256incctx
-#define shake256_init(sc)                shake256_inc_init(sc)
-#define shake256_inject(sc, in, len)     shake256_inc_absorb(sc, in, len)
-#define shake256_flip(sc)                shake256_inc_finalize(sc)
-#define shake256_extract(sc, out, len)   shake256_inc_squeeze(out, len, sc)
+#define inner_shake256_context                shake256incctx
+#define inner_shake256_init(sc)               shake256_inc_init(sc)
+#define inner_shake256_inject(sc, in, len)    shake256_inc_absorb(sc, in, len)
+#define inner_shake256_flip(sc)               shake256_inc_finalize(sc)
+#define inner_shake256_extract(sc, out, len)  shake256_inc_squeeze(out, len, sc)
 
 
 /* ==================================================================== */
@@ -140,9 +204,22 @@ extern const uint8_t PQCLEAN_FALCON512_CLEAN_max_sig_bits[];
 
 /*
  * From a SHAKE256 context (must be already flipped), produce a new
- * point. The temporary buffer (tmp) must have room for 2*2^logn bytes.
+ * point. This is the non-constant-time version, which may leak enough
+ * information to serve as a stop condition on a brute force attack on
+ * the hashed message (provided that the nonce value is known).
  */
-void PQCLEAN_FALCON512_CLEAN_hash_to_point(shake256_context *sc,
+void PQCLEAN_FALCON512_CLEAN_hash_to_point_vartime(inner_shake256_context *sc,
+        uint16_t *x, unsigned logn);
+
+/*
+ * From a SHAKE256 context (must be already flipped), produce a new
+ * point. The temporary buffer (tmp) must have room for 2*2^logn bytes.
+ * This function is constant-time but is typically more expensive than
+ * PQCLEAN_FALCON512_CLEAN_hash_to_point_vartime().
+ *
+ * tmp[] must have 16-bit alignment.
+ */
+void PQCLEAN_FALCON512_CLEAN_hash_to_point_ct(inner_shake256_context *sc,
         uint16_t *x, unsigned logn, uint8_t *tmp);
 
 /*
@@ -184,6 +261,8 @@ void PQCLEAN_FALCON512_CLEAN_to_ntt_monty(uint16_t *h, unsigned logn);
  *   logn      is the degree log
  *   tmp[]     temporary, must have at least 2*2^logn bytes
  * Returned value is 1 on success, 0 on error.
+ *
+ * tmp[] must have 16-bit alignment.
  */
 int PQCLEAN_FALCON512_CLEAN_verify_raw(const uint16_t *c0, const int16_t *s2,
                                        const uint16_t *h, unsigned logn, uint8_t *tmp);
@@ -195,6 +274,7 @@ int PQCLEAN_FALCON512_CLEAN_verify_raw(const uint16_t *c0, const int16_t *s2,
  * reported if f is not invertible mod phi mod q).
  *
  * The tmp[] array must have room for at least 2*2^logn elements.
+ * tmp[] must have 16-bit alignment.
  */
 int PQCLEAN_FALCON512_CLEAN_compute_public(uint16_t *h,
         const int8_t *f, const int8_t *g, unsigned logn, uint8_t *tmp);
@@ -208,9 +288,51 @@ int PQCLEAN_FALCON512_CLEAN_compute_public(uint16_t *h,
  * The tmp[] array must have room for at least 4*2^logn bytes.
  *
  * Returned value is 1 in success, 0 on error (f not invertible).
+ * tmp[] must have 16-bit alignment.
  */
 int PQCLEAN_FALCON512_CLEAN_complete_private(int8_t *G,
         const int8_t *f, const int8_t *g, const int8_t *F,
+        unsigned logn, uint8_t *tmp);
+
+/*
+ * Test whether a given polynomial is invertible modulo phi and q.
+ * Polynomial coefficients are small integers.
+ *
+ * tmp[] must have 16-bit alignment.
+ */
+int PQCLEAN_FALCON512_CLEAN_is_invertible(
+    const int16_t *s2, unsigned logn, uint8_t *tmp);
+
+/*
+ * Count the number of elements of value zero in the NTT representation
+ * of the given polynomial: this is the number of primitive 2n-th roots
+ * of unity (modulo q = 12289) that are roots of the provided polynomial
+ * (taken modulo q).
+ *
+ * tmp[] must have 16-bit alignment.
+ */
+int PQCLEAN_FALCON512_CLEAN_count_nttzero(const int16_t *sig, unsigned logn, uint8_t *tmp);
+
+/*
+ * Internal signature verification with public key recovery:
+ *   h[]       receives the public key (NOT in NTT/Montgomery format)
+ *   c0[]      contains the hashed nonce+message
+ *   s1[]      is the first signature half
+ *   s2[]      is the second signature half
+ *   logn      is the degree log
+ *   tmp[]     temporary, must have at least 2*2^logn bytes
+ * Returned value is 1 on success, 0 on error. Success is returned if
+ * the signature is a short enough vector; in that case, the public
+ * key has been written to h[]. However, the caller must still
+ * verify that h[] is the correct value (e.g. with regards to a known
+ * hash of the public key).
+ *
+ * h[] may not overlap with any of the other arrays.
+ *
+ * tmp[] must have 16-bit alignment.
+ */
+int PQCLEAN_FALCON512_CLEAN_verify_recover(uint16_t *h,
+        const uint16_t *c0, const int16_t *s1, const int16_t *s2,
         unsigned logn, uint8_t *tmp);
 
 /* ==================================================================== */
@@ -358,7 +480,7 @@ typedef struct {
  * Instantiate a PRNG. That PRNG will feed over the provided SHAKE256
  * context (in "flipped" state) to obtain its initial state.
  */
-void PQCLEAN_FALCON512_CLEAN_prng_init(prng *p, shake256_context *src);
+void PQCLEAN_FALCON512_CLEAN_prng_init(prng *p, inner_shake256_context *src);
 
 /*
  * Refill the PRNG buffer. This is normally invoked automatically, and
@@ -586,6 +708,9 @@ void PQCLEAN_FALCON512_CLEAN_poly_merge_fft(fpr *f,
 
 /*
  * Required sizes of the temporary buffer (in bytes).
+ *
+ * This size is 28*2^logn bytes, except for degrees 2 and 4 (logn = 1
+ * or 2) where it is slightly greater.
  */
 #define FALCON_KEYGEN_TEMP_1      136
 #define FALCON_KEYGEN_TEMP_2      272
@@ -608,8 +733,11 @@ void PQCLEAN_FALCON512_CLEAN_poly_merge_fft(fpr *f,
  * public key is written in h. Either or both of G and h may be NULL,
  * in which case the corresponding element is not returned (they can
  * be recomputed from f, g and F).
+ *
+ * tmp[] must have 64-bit alignment.
+ * This function uses floating-point rounding (see set_fpu_cw()).
  */
-void PQCLEAN_FALCON512_CLEAN_keygen(shake256_context *rng,
+void PQCLEAN_FALCON512_CLEAN_keygen(inner_shake256_context *rng,
                                     int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
                                     unsigned logn, uint8_t *tmp);
 
@@ -624,6 +752,9 @@ void PQCLEAN_FALCON512_CLEAN_keygen(shake256_context *rng,
  * a total of (8*logn+40)*2^logn bytes.
  *
  * The tmp[] array must have room for at least 48*2^logn bytes.
+ *
+ * tmp[] must have 64-bit alignment.
+ * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON512_CLEAN_expand_privkey(fpr *expanded_key,
         const int8_t *f, const int8_t *g, const int8_t *F, const int8_t *G,
@@ -636,9 +767,15 @@ void PQCLEAN_FALCON512_CLEAN_expand_privkey(fpr *expanded_key,
  *
  * The sig[] and hm[] buffers may overlap.
  *
+ * On successful output, the start of the tmp[] buffer contains the s1
+ * vector (as int16_t elements).
+ *
  * The minimal size (in bytes) of tmp[] is 48*2^logn bytes.
+ *
+ * tmp[] must have 64-bit alignment.
+ * This function uses floating-point rounding (see set_fpu_cw()).
  */
-void PQCLEAN_FALCON512_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
+void PQCLEAN_FALCON512_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rng,
                                        const fpr *expanded_key,
                                        const uint16_t *hm, unsigned logn, uint8_t *tmp);
 
@@ -651,12 +788,46 @@ void PQCLEAN_FALCON512_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
  *
  * The sig[] and hm[] buffers may overlap.
  *
+ * On successful output, the start of the tmp[] buffer contains the s1
+ * vector (as int16_t elements).
+ *
  * The minimal size (in bytes) of tmp[] is 72*2^logn bytes.
+ *
+ * tmp[] must have 64-bit alignment.
+ * This function uses floating-point rounding (see set_fpu_cw()).
  */
-void PQCLEAN_FALCON512_CLEAN_sign_dyn(int16_t *sig, shake256_context *rng,
+void PQCLEAN_FALCON512_CLEAN_sign_dyn(int16_t *sig, inner_shake256_context *rng,
                                       const int8_t *f, const int8_t *g,
                                       const int8_t *F, const int8_t *G,
                                       const uint16_t *hm, unsigned logn, uint8_t *tmp);
+
+/*
+ * Internal sampler engine. Exported for tests.
+ *
+ * sampler_context wraps around a source of random numbers (PRNG) and
+ * the sigma_min value (nominally dependent on the degree).
+ *
+ * sampler() takes as parameters:
+ *   ctx      pointer to the sampler_context structure
+ *   mu       center for the distribution
+ *   isigma   inverse of the distribution standard deviation
+ * It returns an integer sampled along the Gaussian distribution centered
+ * on mu and of standard deviation sigma = 1/isigma.
+ *
+ * gaussian0_sampler() takes as parameter a pointer to a PRNG, and
+ * returns an integer sampled along a half-Gaussian with standard
+ * deviation sigma0 = 1.8205 (center is 0, returned value is
+ * nonnegative).
+ */
+
+typedef struct {
+    prng p;
+    fpr sigma_min;
+} sampler_context;
+
+int PQCLEAN_FALCON512_CLEAN_sampler(void *ctx, fpr mu, fpr isigma);
+
+int PQCLEAN_FALCON512_CLEAN_gaussian0_sampler(prng *p);
 
 /* ==================================================================== */
 

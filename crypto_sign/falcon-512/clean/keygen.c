@@ -2171,6 +2171,9 @@ poly_sub_scaled_ntt(uint32_t *F, size_t Flen, size_t Fstride,
 
 /* ==================================================================== */
 
+
+#define RNG_CONTEXT   inner_shake256_context
+
 /*
  * Get a random 8-byte integer from a SHAKE-based RNG. This function
  * ensures consistent interpretation of the SHAKE output so that
@@ -2178,14 +2181,14 @@ poly_sub_scaled_ntt(uint32_t *F, size_t Flen, size_t Fstride,
  * a known seed is used.
  */
 static inline uint64_t
-get_rng_u64(shake256_context *rng) {
+get_rng_u64(inner_shake256_context *rng) {
     /*
      * We enforce little-endian representation.
      */
 
     uint8_t tmp[8];
 
-    shake256_extract(rng, tmp, sizeof tmp);
+    inner_shake256_extract(rng, tmp, sizeof tmp);
     return (uint64_t)tmp[0]
            | ((uint64_t)tmp[1] << 8)
            | ((uint64_t)tmp[2] << 16)
@@ -2195,6 +2198,7 @@ get_rng_u64(shake256_context *rng) {
            | ((uint64_t)tmp[6] << 48)
            | ((uint64_t)tmp[7] << 56);
 }
+
 
 /*
  * Table below incarnates a discrete Gaussian distribution:
@@ -2227,7 +2231,7 @@ static const uint64_t gauss_1024_12289[] = {
  * together for lower dimensions.
  */
 static int
-mkgauss(shake256_context *rng, unsigned logn) {
+mkgauss(RNG_CONTEXT *rng, unsigned logn) {
     unsigned u, g;
     int val;
 
@@ -3156,6 +3160,7 @@ solve_NTRU_intermediate(unsigned logn_top,
             fpr xv;
 
             xv = fpr_mul(rt2[u], pdc);
+
             /*
              * Sometimes the values can be out-of-bounds if
              * the algorithm fails; we must not call
@@ -4006,7 +4011,7 @@ solve_NTRU(unsigned logn, int8_t *F, int8_t *G,
  * also makes sure that the resultant of the polynomial with phi is odd.
  */
 static void
-poly_small_mkgauss(shake256_context *rng, int8_t *f, unsigned logn) {
+poly_small_mkgauss(RNG_CONTEXT *rng, int8_t *f, unsigned logn) {
     size_t n, u;
     unsigned mod2;
 
@@ -4046,7 +4051,7 @@ restart:
 
 /* see falcon.h */
 void
-PQCLEAN_FALCON512_CLEAN_keygen(shake256_context *rng,
+PQCLEAN_FALCON512_CLEAN_keygen(inner_shake256_context *rng,
                                int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
                                unsigned logn, uint8_t *tmp) {
     /*
@@ -4070,8 +4075,10 @@ PQCLEAN_FALCON512_CLEAN_keygen(shake256_context *rng,
      */
     size_t n, u;
     uint16_t *h2, *tmp2;
+    RNG_CONTEXT *rc;
 
     n = MKN(logn);
+    rc = rng;
 
     /*
      * We need to generate f and g randomly, until we find values
@@ -4104,8 +4111,8 @@ PQCLEAN_FALCON512_CLEAN_keygen(shake256_context *rng,
          * (i.e. the resultant of the polynomial with phi
          * will be odd).
          */
-        poly_small_mkgauss(rng, f, logn);
-        poly_small_mkgauss(rng, g, logn);
+        poly_small_mkgauss(rc, f, logn);
+        poly_small_mkgauss(rc, g, logn);
 
         /*
          * Verify that all coefficients are within the bounds

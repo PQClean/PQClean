@@ -232,6 +232,8 @@ static const fpr fpr_zero = 0;
 static const fpr fpr_one = 4607182418800017408;
 static const fpr fpr_two = 4611686018427387904;
 static const fpr fpr_onehalf = 4602678819172646912;
+static const fpr fpr_invsqrt2 = 4604544271217802189;
+static const fpr fpr_invsqrt8 = 4600040671590431693;
 static const fpr fpr_ptwo31 = 4746794007248502784;
 static const fpr fpr_ptwo31m1 = 4746794007244308480;
 static const fpr fpr_mtwo31m1 = 13970166044099084288U;
@@ -444,7 +446,7 @@ fpr_lt(fpr x, fpr y) {
  * bits or so.
  */
 #define fpr_expm_p63   PQCLEAN_FALCON1024_CLEAN_fpr_expm_p63
-uint64_t fpr_expm_p63(fpr x);
+uint64_t fpr_expm_p63(fpr x, fpr ccs);
 
 #define fpr_gm_tab   PQCLEAN_FALCON1024_CLEAN_fpr_gm_tab
 extern const fpr fpr_gm_tab[];

@@ -507,7 +507,7 @@ fpr_sqrt(fpr x) {
 
 
 uint64_t
-fpr_expm_p63(fpr x) {
+fpr_expm_p63(fpr x, fpr ccs) {
     /*
      * Polynomial approximation of exp(-x) is taken from FACCT:
      *   https://eprint.iacr.org/2018/1234
@@ -539,6 +539,8 @@ fpr_expm_p63(fpr x) {
 
     uint64_t z, y;
     unsigned u;
+    uint32_t z0, z1, y0, y1;
+    uint64_t a, b;
 
     y = C[0];
     z = (uint64_t)fpr_trunc(fpr_mul(x, fpr_ptwo63)) << 1;
@@ -554,8 +556,7 @@ fpr_expm_p63(fpr x) {
          * also have appropriate IEEE754 floating-point support,
          * which is better.
          */
-        uint32_t z0, z1, y0, y1;
-        uint64_t a, b, c;
+        uint64_t c;
 
         z0 = (uint32_t)z;
         z1 = (uint32_t)(z >> 32);
@@ -569,6 +570,24 @@ fpr_expm_p63(fpr x) {
         c += (uint64_t)z1 * (uint64_t)y1;
         y = C[u] - c;
     }
+
+    /*
+     * The scaling factor must be applied at the end. Since y is now
+     * in fixed-point notation, we have to convert the factor to the
+     * same format, and do an extra integer multiplication.
+     */
+    z = (uint64_t)fpr_trunc(fpr_mul(ccs, fpr_ptwo63)) << 1;
+    z0 = (uint32_t)z;
+    z1 = (uint32_t)(z >> 32);
+    y0 = (uint32_t)y;
+    y1 = (uint32_t)(y >> 32);
+    a = ((uint64_t)z0 * (uint64_t)y1)
+        + (((uint64_t)z0 * (uint64_t)y0) >> 32);
+    b = ((uint64_t)z1 * (uint64_t)y0);
+    y = (a >> 32) + (b >> 32);
+    y += (((uint64_t)(uint32_t)a + (uint64_t)(uint32_t)b) >> 32);
+    y += (uint64_t)z1 * (uint64_t)y1;
+
     return y;
 }
 
