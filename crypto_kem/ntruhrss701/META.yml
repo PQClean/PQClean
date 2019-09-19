@@ -1,4 +1,4 @@
-name: ntru-hrss701
+name: NTRU-HRSS701
 type: kem
 claimed-nist-level: 3
 claimed-security: IND-CCA2

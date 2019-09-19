@@ -1,4 +1,4 @@
-name: LEDAcryptKEMLT12
+name: LEDAKEMLT12
 type: kem
 claimed-nist-level: 1
 claimed-security: IND-CCA2

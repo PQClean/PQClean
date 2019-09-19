@@ -37,6 +37,7 @@ def test_metadata_sizes(implementation, impl_path, test_dir, init, destr):
 
     assert parsed['CRYPTO_SECRETKEYBYTES'] == metadata['length-secret-key']
     assert parsed['CRYPTO_PUBLICKEYBYTES'] == metadata['length-public-key']
+    assert parsed['CRYPTO_ALGNAME'] == metadata['name']
 
     if implementation.scheme.type == 'kem':
         assert (
