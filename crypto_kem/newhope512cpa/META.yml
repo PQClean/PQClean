@@ -1,4 +1,4 @@
-name: NewHope512CPA
+name: NewHope512-CPAKEM
 type: kem
 claimed-nist-level: 1
 claimed-security: IND-CPA

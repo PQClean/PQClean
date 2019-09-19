@@ -1,4 +1,4 @@
-name: NewHope512CCA
+name: NewHope512-CCAKEM
 type: kem
 claimed-nist-level: 1
 claimed-security: IND-CCA2

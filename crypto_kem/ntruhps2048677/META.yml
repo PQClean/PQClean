@@ -1,4 +1,4 @@
-name: ntru-hps2048677
+name: NTRU-HPS2048677
 type: kem
 claimed-nist-level: 3
 claimed-security: IND-CCA2
