@@ -1122,7 +1122,7 @@ PQCLEAN_FALCON1024_CLEAN_sampler(void *ctx, fpr mu, fpr isigma) {
          *    centered on 0.
          */
         z0 = PQCLEAN_FALCON1024_CLEAN_gaussian0_sampler(&spc->p);
-        b = prng_get_u8(&spc->p) & 1;
+        b = (int)prng_get_u8(&spc->p) & 1;
         z = b + ((b << 1) - 1) * z0;
 
         /*

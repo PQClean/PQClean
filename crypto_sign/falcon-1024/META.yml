@@ -20,4 +20,4 @@ auxiliary-submitters:
   - Zhenfei Zhang
 implementations:
     - name: clean
-      version: round two
+      version: 20190920
