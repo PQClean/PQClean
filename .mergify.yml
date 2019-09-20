@@ -1,0 +1,14 @@
+pull_request_rules:
+  - name: Automatic merge
+    conditions:
+      - base=master
+      - "#approved-reviews-by>=1"
+      - "#changes-requested-reviews-by=0"
+      - status-success=Travis CI - Pull Request
+      - status-success=Travis CI - Branch
+      - status-success=continuous-integration/appveyor/branch
+      - status-success=continuous-integration/appveyor/pr
+      - status-success=build
+    actions:
+      merge:
+        strict: smart
