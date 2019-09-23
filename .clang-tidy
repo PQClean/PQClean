@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration'
+Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration,-readability-uppercase-literal-suffix'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
