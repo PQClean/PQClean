@@ -41,9 +41,9 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_UpperTrianglize(unsigned char *btriC, cons
     for (unsigned int i = 0; i < Aheight; i++) {
         for (unsigned int j = 0; j < i; j++) {
             unsigned int idx = PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_idx_of_trimat(j, i, Aheight);
-            gf256v_add(btriC + idx * size_batch, bA + size_batch * (i * Awidth + j), size_batch);
+            PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(btriC + idx * size_batch, bA + size_batch * (i * Awidth + j), size_batch);
         }
-        gf256v_add(runningC, bA + size_batch * (i * Awidth + i), size_batch * (Aheight - i));
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(runningC, bA + size_batch * (i * Awidth + i), size_batch * (Aheight - i));
         runningC += size_batch * (Aheight - i);
     }
 }
@@ -58,7 +58,7 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_trimat_madd_gf256(unsigned char *bC,
                 if (k < i) {
                     continue;
                 }
-                gf256v_madd(bC, &btriA[(k - i) * size_batch], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
+                PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(bC, &btriA[(k - i) * size_batch], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
             }
             bC += size_batch;
         }
@@ -75,7 +75,7 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_trimatTr_madd_gf256(unsigned char *b
                 if (i < k) {
                     continue;
                 }
-                gf256v_madd(bC, &btriA[size_batch * (PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_idx_of_trimat(k, i, Aheight))], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
+                PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(bC, &btriA[size_batch * (PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_idx_of_trimat(k, i, Aheight))], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
             }
             bC += size_batch;
         }
@@ -91,7 +91,7 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_2trimat_madd_gf256(unsigned char *bC
                 if (i == k) {
                     continue;
                 }
-                gf256v_madd(bC, &btriA[size_batch * (idx_of_2trimat(i, k, Aheight))], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
+                PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(bC, &btriA[size_batch * (idx_of_2trimat(i, k, Aheight))], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
             }
             bC += size_batch;
         }
@@ -104,7 +104,7 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_matTr_madd_gf256(unsigned char *bC, 
     unsigned int Atr_width = Aheight;
     for (unsigned int i = 0; i < Atr_height; i++) {
         for (unsigned int j = 0; j < Atr_width; j++) {
-            gf256v_madd(bC, &bB[j * Bwidth * size_batch], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&A_to_tr[size_Acolvec * i], j), size_batch * Bwidth);
+            PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(bC, &bB[j * Bwidth * size_batch], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&A_to_tr[size_Acolvec * i], j), size_batch * Bwidth);
         }
         bC += size_batch * Bwidth;
     }
@@ -117,7 +117,7 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_bmatTr_madd_gf256(unsigned char *bC,
     for (unsigned int i = 0; i < Aheight; i++) {
         for (unsigned int j = 0; j < Bwidth; j++) {
             for (unsigned int k = 0; k < Bheight; k++) {
-                gf256v_madd(bC, &bA[size_batch * (i + k * Aheight)], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
+                PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(bC, &bA[size_batch * (i + k * Aheight)], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
             }
             bC += size_batch;
         }
@@ -130,7 +130,7 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_mat_madd_gf256(unsigned char *bC, co
     for (unsigned int i = 0; i < Aheight; i++) {
         for (unsigned int j = 0; j < Bwidth; j++) {
             for (unsigned int k = 0; k < Bheight; k++) {
-                gf256v_madd(bC, &bA[k * size_batch], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
+                PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(bC, &bA[k * size_batch], PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_get_ele(&B[j * size_Bcolvec], k), size_batch);
             }
             bC += size_batch;
         }
@@ -150,10 +150,10 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_quad_trimat_eval_gf256(unsigned char
     for (unsigned int i = 0; i < dim; i++) {
         PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_set_zero(tmp, size_batch);
         for (unsigned int j = i; j < dim; j++) {
-            gf256v_madd(tmp, trimat, _x[j], size_batch);
+            PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(tmp, trimat, _x[j], size_batch);
             trimat += size_batch;
         }
-        gf256v_madd(y, tmp, _x[i], size_batch);
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(y, tmp, _x[i], size_batch);
     }
 }
 
@@ -174,10 +174,10 @@ void PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_batch_quad_recmat_eval_gf256(unsigned char
     for (unsigned int i = 0; i < dim_y; i++) {
         PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_set_zero(tmp, size_batch);
         for (unsigned int j = 0; j < dim_x; j++) {
-            gf256v_madd(tmp, mat, _x[j], size_batch);
+            PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(tmp, mat, _x[j], size_batch);
             mat += size_batch;
         }
-        gf256v_madd(z, tmp, _y[i], size_batch);
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_madd(z, tmp, _y[i], size_batch);
     }
 }
 

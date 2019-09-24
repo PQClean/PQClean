@@ -2,8 +2,9 @@
 /// @brief The standard implementations for functions in rainbow.h
 ///
 
-#include "rainbow.h"
 #include "blas.h"
+#include "parallel_matrix_op.h"
+#include "rainbow.h"
 #include "rainbow_blas.h"
 #include "rainbow_config.h"
 #include "rainbow_keypair.h"
@@ -86,25 +87,25 @@ int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_sign(uint8_t *signature, const sk_t
         //  y = S^-1 * z
         memcpy(y, _z, _PUB_M_BYTE); // identity part of S
         gfmat_prod(temp_o, sk->s1, _O1_BYTE, _O2, _z + _O1_BYTE);
-        gf256v_add(y, temp_o, _O1_BYTE);
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(y, temp_o, _O1_BYTE);
 
         // Central Map:
         // layer 1: calculate x_o1
         memcpy(temp_o, r_l1_F1, _O1_BYTE);
-        gf256v_add(temp_o, y, _O1_BYTE);
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(temp_o, y, _O1_BYTE);
         gfmat_prod(x_o1, mat_l1, _O1_BYTE, _O1, temp_o);
 
         // layer 2: calculate x_o2
         PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_set_zero(temp_o, _O2_BYTE);
         gfmat_prod(temp_o, mat_l2_F2, _O2_BYTE, _O1, x_o1);             // F2
         batch_quad_trimat_eval(mat_l2, sk->l2_F5, x_o1, _O1, _O2_BYTE); // F5
-        gf256v_add(temp_o, mat_l2, _O2_BYTE);
-        gf256v_add(temp_o, r_l2_F1, _O2_BYTE); // F1
-        gf256v_add(temp_o, y + _O1_BYTE, _O2_BYTE);
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(temp_o, mat_l2, _O2_BYTE);
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(temp_o, r_l2_F1, _O2_BYTE); // F1
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(temp_o, y + _O1_BYTE, _O2_BYTE);
 
         // generate the linear equations of the 2nd layer
         gfmat_prod(mat_l2, sk->l2_F6, _O2 * _O2_BYTE, _O1, x_o1); // F6
-        gf256v_add(mat_l2, mat_l2_F3, _O2 * _O2_BYTE);            // F3
+        PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(mat_l2, mat_l2_F3, _O2 * _O2_BYTE);            // F3
         succ = gfmat_inv(mat_l2, mat_l2, _O2, mat_buffer);
         gfmat_prod(x_o2, mat_l2, _O2_BYTE, _O2, temp_o); // solve l2 eqs
 
@@ -118,13 +119,13 @@ int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_sign(uint8_t *signature, const sk_t
     memcpy(w + _V2_BYTE, x_o2, _O2_BYTE);
     // Computing the t1 part.
     gfmat_prod(y, sk->t1, _V1_BYTE, _O1, x_o1);
-    gf256v_add(w, y, _V1_BYTE);
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(w, y, _V1_BYTE);
     // Computing the t4 part.
     gfmat_prod(y, sk->t4, _V1_BYTE, _O2, x_o2);
-    gf256v_add(w, y, _V1_BYTE);
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(w, y, _V1_BYTE);
     // Computing the t3 part.
     gfmat_prod(y, sk->t3, _O1_BYTE, _O2, x_o2);
-    gf256v_add(w + _V1_BYTE, y, _O1_BYTE);
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(w + _V1_BYTE, y, _O1_BYTE);
 
     memset(signature, 0, _SIGNATURE_BYTE); // set the output 0
     // clean
@@ -142,8 +143,8 @@ int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_sign(uint8_t *signature, const sk_t
     if (MAX_ATTEMPT_FRMAT <= n_attempt) {
         return -1;
     }
-    gf256v_add(signature, w, _PUB_N_BYTE);
-    gf256v_add(signature + _PUB_N_BYTE, salt, _SALT_BYTE);
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(signature, w, _PUB_N_BYTE);
+    PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_gf256v_add(signature + _PUB_N_BYTE, salt, _SALT_BYTE);
     return 0;
 }
 

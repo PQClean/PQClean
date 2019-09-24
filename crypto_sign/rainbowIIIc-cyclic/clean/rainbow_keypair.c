@@ -69,7 +69,7 @@ static void calculate_t4(unsigned char *t2_to_t4, const unsigned char *t1, const
     unsigned char *t4 = t2_to_t4;
     for (unsigned int i = 0; i < _O2; i++) { /// t3 width
         gfmat_prod(temp, t1, _V1_BYTE, _O1, t3);
-        gf256v_add(t4, temp, _V1_BYTE);
+        PQCLEAN_RAINBOWIIICCYCLIC_CLEAN_gf256v_add(t4, temp, _V1_BYTE);
         t4 += _V1_BYTE;
         t3 += _O1_BYTE;
     }
@@ -79,7 +79,7 @@ static void obsfucate_l1_polys(unsigned char *l1_polys, const unsigned char *l2_
     unsigned char temp[_O1_BYTE + 32];
     while (n_terms--) {
         gfmat_prod(temp, s1, _O1_BYTE, _O2, l2_polys);
-        gf256v_add(l1_polys, temp, _O1_BYTE);
+        PQCLEAN_RAINBOWIIICCYCLIC_CLEAN_gf256v_add(l1_polys, temp, _O1_BYTE);
         l1_polys += _O1_BYTE;
         l2_polys += _O2_BYTE;
     }

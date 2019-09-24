@@ -8,13 +8,11 @@
 /// @brief Library for arithmetics in GF(16) and GF(256)
 ///
 
-uint32_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_mul_u32(uint32_t a, uint8_t b);
+uint8_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16_mul(uint8_t a, uint8_t b);
 
 
 uint8_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16_is_nonzero(uint8_t a);
 uint8_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16_inv(uint8_t a);
-uint32_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_mul_u32_u32(uint32_t a, uint32_t b);
-uint8_t PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_gf16v_reduce_u32(uint32_t a);
 
 
 #endif // _GF16_H_

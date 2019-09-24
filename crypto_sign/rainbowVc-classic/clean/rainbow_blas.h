@@ -6,6 +6,7 @@
 ///  Defining the functions used in rainbow.c acconding to the definitions in rainbow_config.h
 
 #include "blas.h"
+#include "blas_comm.h"
 #include "parallel_matrix_op.h"
 #include "rainbow_config.h"
 

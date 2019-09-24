@@ -2,7 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=librainbowIIIc-cyclic_clean.lib
-OBJECTS =  blas_comm.obj parallel_matrix_op.obj rainbow.obj rainbow_keypair.obj rainbow_keypair_computation.obj sign.obj utils_hash.obj utils_prng.obj blas_u32.obj gf.obj
+OBJECTS =  blas_comm.obj parallel_matrix_op.obj rainbow.obj rainbow_keypair.obj rainbow_keypair_computation.obj sign.obj utils_hash.obj utils_prng.obj blas.obj gf.obj
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
 

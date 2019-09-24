@@ -1,20 +1,20 @@
 #ifndef _BLAS_H_
 #define _BLAS_H_
 /// @file blas.h
-/// @brief Defining the implementations for linear algebra functions depending on the machine architecture.
+/// @brief Functions for implementing basic linear algebra functions.
 ///
 
-#include "blas_comm.h"
-#include "blas_u32.h"
 #include "rainbow_config.h"
+#include <stddef.h>
+#include <stdint.h>
 
-#define gf256v_predicated_add PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_predicated_add_u32
-#define gf256v_add PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_add_u32
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_predicated_add(uint8_t *accu_b, uint8_t predicate, const uint8_t *a, size_t _num_byte);
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf256v_add(uint8_t *accu_b, const uint8_t *a, size_t _num_byte);
 
 
-#define gf16v_mul_scalar PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_mul_scalar_u32
-#define gf16v_madd PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_madd_u32
-#define gf16v_dot PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_dot_u32
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_madd(uint8_t *accu_c, const uint8_t *a, uint8_t gf16_b, size_t _num_byte);
+void PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_mul_scalar(uint8_t *a, uint8_t gf16_b, size_t _num_byte);
+uint8_t PQCLEAN_RAINBOWIACLASSIC_CLEAN_gf16v_dot(const uint8_t *a, const uint8_t *b, size_t _num_byte);
 
 
 #endif // _BLAS_H_
