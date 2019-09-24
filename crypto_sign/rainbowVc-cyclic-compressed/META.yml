@@ -1,4 +1,4 @@
-name: Rainbow-Vc-cyclic-compressed
+name: "RAINBOW(256,92,48,48) - cyclic compressed"
 type: signature
 claimed-nist-level: 5
 length-public-key: 491936

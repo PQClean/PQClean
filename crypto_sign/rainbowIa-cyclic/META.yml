@@ -1,4 +1,4 @@
-name: Rainbow-Ia-cyclic
+name: "RAINBOW(16,32,32,32) - cyclic"
 type: signature
 claimed-nist-level: 1
 length-public-key: 58144
