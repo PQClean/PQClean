@@ -1,0 +1,69 @@
+consistency_checks:
+- source:
+    scheme: kyber1024
+    implementation: clean
+  files:
+    - LICENSE
+    - cbd.h
+    - indcpa.h
+    - params.h
+    - polyvec.h
+    - verify.h
+- source:
+    scheme: kyber768
+    implementation: avx2
+  files:
+    - cbd.c
+    - cbd.h
+    - consts.c
+    - consts.h
+    - fq.inc
+    - fq.s
+    - indcpa.h
+    - invntt.s
+    - ntt.h
+    - ntt.s
+    - polyvec.h
+    - reduce.h
+    - rejsample.c
+    - rejsample.h
+    - shuffle.inc
+    - shuffle.s
+    - verify.c
+    - verify.h
+- source:
+    scheme: kyber1024-90s
+    implementation: clean
+  files:
+    - LICENSE
+    - cbd.h
+    - indcpa.h
+    - params.h
+    - polyvec.h
+    - verify.h
+- source:
+    scheme: kyber768-90s
+    implementation: avx2
+  files:
+    - aes256ctr.c
+    - aes256ctr.h
+    - cbd.c
+    - cbd.h
+    - consts.c
+    - consts.h
+    - fq.inc
+    - fq.s
+    - indcpa.h
+    - invntt.s
+    - ntt.h
+    - ntt.s
+    - poly.h
+    - polyvec.h
+    - reduce.h
+    - rejsample.c
+    - rejsample.h
+    - shuffle.inc
+    - shuffle.s
+    - symmetric.h
+    - verify.c
+    - verify.h
