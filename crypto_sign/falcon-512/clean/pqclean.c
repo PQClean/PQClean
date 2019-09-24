@@ -51,16 +51,16 @@ PQCLEAN_FALCON512_CLEAN_crypto_sign_keypair(
     int8_t f[512], g[512], F[512];
     uint16_t h[512];
     unsigned char seed[48];
-    shake256_context rng;
+    inner_shake256_context rng;
     size_t u, v;
 
     /*
      * Generate key pair.
      */
     randombytes(seed, sizeof seed);
-    shake256_init(&rng);
-    shake256_inject(&rng, seed, sizeof seed);
-    shake256_flip(&rng);
+    inner_shake256_init(&rng);
+    inner_shake256_inject(&rng, seed, sizeof seed);
+    inner_shake256_flip(&rng);
     PQCLEAN_FALCON512_CLEAN_keygen(&rng, f, g, F, NULL, h, 9, tmp.b);
 
     /*
@@ -135,7 +135,7 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
         uint16_t hm[512];
     } r;
     unsigned char seed[48];
-    shake256_context sc;
+    inner_shake256_context sc;
     size_t u, v;
 
     /*
@@ -181,19 +181,19 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
     /*
      * Hash message nonce + message into a vector.
      */
-    shake256_init(&sc);
-    shake256_inject(&sc, nonce, NONCELEN);
-    shake256_inject(&sc, m, mlen);
-    shake256_flip(&sc);
-    PQCLEAN_FALCON512_CLEAN_hash_to_point(&sc, r.hm, 9, tmp.b);
+    inner_shake256_init(&sc);
+    inner_shake256_inject(&sc, nonce, NONCELEN);
+    inner_shake256_inject(&sc, m, mlen);
+    inner_shake256_flip(&sc);
+    PQCLEAN_FALCON512_CLEAN_hash_to_point_ct(&sc, r.hm, 9, tmp.b);
 
     /*
      * Initialize a RNG.
      */
     randombytes(seed, sizeof seed);
-    shake256_init(&sc);
-    shake256_inject(&sc, seed, sizeof seed);
-    shake256_flip(&sc);
+    inner_shake256_init(&sc);
+    inner_shake256_inject(&sc, seed, sizeof seed);
+    inner_shake256_flip(&sc);
 
     /*
      * Compute and return the signature. This loops until a signature
@@ -225,7 +225,7 @@ do_verify(
     } tmp;
     uint16_t h[512], hm[512];
     int16_t sig[512];
-    shake256_context sc;
+    inner_shake256_context sc;
 
     /*
      * Decode public key.
@@ -253,11 +253,11 @@ do_verify(
     /*
      * Hash nonce + message into a vector.
      */
-    shake256_init(&sc);
-    shake256_inject(&sc, nonce, NONCELEN);
-    shake256_inject(&sc, m, mlen);
-    shake256_flip(&sc);
-    PQCLEAN_FALCON512_CLEAN_hash_to_point(&sc, hm, 9, tmp.b);
+    inner_shake256_init(&sc);
+    inner_shake256_inject(&sc, nonce, NONCELEN);
+    inner_shake256_inject(&sc, m, mlen);
+    inner_shake256_flip(&sc);
+    PQCLEAN_FALCON512_CLEAN_hash_to_point_ct(&sc, hm, 9, tmp.b);
 
     /*
      * Verify signature.

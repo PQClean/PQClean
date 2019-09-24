@@ -4,8 +4,8 @@ claimed-nist-level: 5
 length-public-key: 1793
 length-secret-key: 2305
 length-signature: 1330
-nistkat-sha256: ad3d17869fdc05deae13ffa2ef26bde125b42f61b2dcd861a1ae20adcb2accc5
-testvectors-sha256: bd8076c13722d8c555c68fc6bd7763e1a9dd5483ee7c8d1c74dd2df459c72a40
+nistkat-sha256: ef2104e326221515621638ca03cd99802271bdd9907e2ae5fc7b8d19d696c584
+testvectors-sha256: 14ee0e3f0ea4b9b25193a54eed9100b1bb1cf5dbc7813fd9dc9180c1ea1a1042
 principal-submitters:
   - Thomas Prest
 auxiliary-submitters:
@@ -20,4 +20,4 @@ auxiliary-submitters:
   - Zhenfei Zhang
 implementations:
     - name: clean
-      version: round two
+      version: 20190920

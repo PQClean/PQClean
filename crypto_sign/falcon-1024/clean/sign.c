@@ -417,8 +417,170 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
     size_t n, hn;
     const fpr *tree0, *tree1;
 
-    n = (size_t)1 << logn;
-    if (n == 1) {
+    /*
+     * When logn == 2, we inline the last two recursion levels.
+     */
+    if (logn == 2) {
+        fpr x0, x1, y0, y1, w0, w1, w2, w3, sigma;
+        fpr a_re, a_im, b_re, b_im, c_re, c_im;
+
+        tree0 = tree + 4;
+        tree1 = tree + 8;
+
+        /*
+         * We split t1 into w*, then do the recursive invocation,
+         * with output in w*. We finally merge back into z1.
+         */
+        a_re = t1[0];
+        a_im = t1[2];
+        b_re = t1[1];
+        b_im = t1[3];
+        c_re = fpr_add(a_re, b_re);
+        c_im = fpr_add(a_im, b_im);
+        w0 = fpr_half(c_re);
+        w1 = fpr_half(c_im);
+        c_re = fpr_sub(a_re, b_re);
+        c_im = fpr_sub(a_im, b_im);
+        w2 = fpr_mul(fpr_add(c_re, c_im), fpr_invsqrt8);
+        w3 = fpr_mul(fpr_sub(c_im, c_re), fpr_invsqrt8);
+
+        x0 = w2;
+        x1 = w3;
+        sigma = tree1[3];
+        w2 = fpr_of(samp(samp_ctx, x0, sigma));
+        w3 = fpr_of(samp(samp_ctx, x1, sigma));
+        a_re = fpr_sub(x0, w2);
+        a_im = fpr_sub(x1, w3);
+        b_re = tree1[0];
+        b_im = tree1[1];
+        c_re = fpr_sub(fpr_mul(a_re, b_re), fpr_mul(a_im, b_im));
+        c_im = fpr_add(fpr_mul(a_re, b_im), fpr_mul(a_im, b_re));
+        x0 = fpr_add(c_re, w0);
+        x1 = fpr_add(c_im, w1);
+        sigma = tree1[2];
+        w0 = fpr_of(samp(samp_ctx, x0, sigma));
+        w1 = fpr_of(samp(samp_ctx, x1, sigma));
+
+        a_re = w0;
+        a_im = w1;
+        b_re = w2;
+        b_im = w3;
+        c_re = fpr_mul(fpr_sub(b_re, b_im), fpr_invsqrt2);
+        c_im = fpr_mul(fpr_add(b_re, b_im), fpr_invsqrt2);
+        z1[0] = w0 = fpr_add(a_re, c_re);
+        z1[2] = w2 = fpr_add(a_im, c_im);
+        z1[1] = w1 = fpr_sub(a_re, c_re);
+        z1[3] = w3 = fpr_sub(a_im, c_im);
+
+        /*
+         * Compute tb0 = t0 + (t1 - z1) * L. Value tb0 ends up in w*.
+         */
+        w0 = fpr_sub(t1[0], w0);
+        w1 = fpr_sub(t1[1], w1);
+        w2 = fpr_sub(t1[2], w2);
+        w3 = fpr_sub(t1[3], w3);
+
+        a_re = w0;
+        a_im = w2;
+        b_re = tree[0];
+        b_im = tree[2];
+        w0 = fpr_sub(fpr_mul(a_re, b_re), fpr_mul(a_im, b_im));
+        w2 = fpr_add(fpr_mul(a_re, b_im), fpr_mul(a_im, b_re));
+        a_re = w1;
+        a_im = w3;
+        b_re = tree[1];
+        b_im = tree[3];
+        w1 = fpr_sub(fpr_mul(a_re, b_re), fpr_mul(a_im, b_im));
+        w3 = fpr_add(fpr_mul(a_re, b_im), fpr_mul(a_im, b_re));
+
+        w0 = fpr_add(w0, t0[0]);
+        w1 = fpr_add(w1, t0[1]);
+        w2 = fpr_add(w2, t0[2]);
+        w3 = fpr_add(w3, t0[3]);
+
+        /*
+         * Second recursive invocation.
+         */
+        a_re = w0;
+        a_im = w2;
+        b_re = w1;
+        b_im = w3;
+        c_re = fpr_add(a_re, b_re);
+        c_im = fpr_add(a_im, b_im);
+        w0 = fpr_half(c_re);
+        w1 = fpr_half(c_im);
+        c_re = fpr_sub(a_re, b_re);
+        c_im = fpr_sub(a_im, b_im);
+        w2 = fpr_mul(fpr_add(c_re, c_im), fpr_invsqrt8);
+        w3 = fpr_mul(fpr_sub(c_im, c_re), fpr_invsqrt8);
+
+        x0 = w2;
+        x1 = w3;
+        sigma = tree0[3];
+        w2 = y0 = fpr_of(samp(samp_ctx, x0, sigma));
+        w3 = y1 = fpr_of(samp(samp_ctx, x1, sigma));
+        a_re = fpr_sub(x0, y0);
+        a_im = fpr_sub(x1, y1);
+        b_re = tree0[0];
+        b_im = tree0[1];
+        c_re = fpr_sub(fpr_mul(a_re, b_re), fpr_mul(a_im, b_im));
+        c_im = fpr_add(fpr_mul(a_re, b_im), fpr_mul(a_im, b_re));
+        x0 = fpr_add(c_re, w0);
+        x1 = fpr_add(c_im, w1);
+        sigma = tree0[2];
+        w0 = fpr_of(samp(samp_ctx, x0, sigma));
+        w1 = fpr_of(samp(samp_ctx, x1, sigma));
+
+        a_re = w0;
+        a_im = w1;
+        b_re = w2;
+        b_im = w3;
+        c_re = fpr_mul(fpr_sub(b_re, b_im), fpr_invsqrt2);
+        c_im = fpr_mul(fpr_add(b_re, b_im), fpr_invsqrt2);
+        z0[0] = fpr_add(a_re, c_re);
+        z0[2] = fpr_add(a_im, c_im);
+        z0[1] = fpr_sub(a_re, c_re);
+        z0[3] = fpr_sub(a_im, c_im);
+
+        return;
+    }
+
+    /*
+     * Case logn == 1 is reachable only when using Falcon-2 (the
+     * smallest size for which Falcon is mathematically defined, but
+     * of course way too insecure to be of any use).
+     */
+    if (logn == 1) {
+        fpr x0, x1, y0, y1, sigma;
+        fpr a_re, a_im, b_re, b_im, c_re, c_im;
+
+        x0 = t1[0];
+        x1 = t1[1];
+        sigma = tree[3];
+        z1[0] = y0 = fpr_of(samp(samp_ctx, x0, sigma));
+        z1[1] = y1 = fpr_of(samp(samp_ctx, x1, sigma));
+        a_re = fpr_sub(x0, y0);
+        a_im = fpr_sub(x1, y1);
+        b_re = tree[0];
+        b_im = tree[1];
+        c_re = fpr_sub(fpr_mul(a_re, b_re), fpr_mul(a_im, b_im));
+        c_im = fpr_add(fpr_mul(a_re, b_im), fpr_mul(a_im, b_re));
+        x0 = fpr_add(c_re, t0[0]);
+        x1 = fpr_add(c_im, t0[1]);
+        sigma = tree[2];
+        z0[0] = fpr_of(samp(samp_ctx, x0, sigma));
+        z0[1] = fpr_of(samp(samp_ctx, x1, sigma));
+
+        return;
+    }
+
+    /*
+     * Normal end of recursion is for logn == 0. Since the last
+     * steps of the recursions were inlined in the blocks above
+     * (when logn == 1 or 2), this case is not reachable, and is
+     * retained here only for documentation purposes.
+
+    if (logn == 0) {
         fpr x0, x1, sigma;
 
         x0 = t0[0];
@@ -429,6 +591,13 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
         return;
     }
 
+     */
+
+    /*
+     * General recursive case (logn >= 3).
+     */
+
+    n = (size_t)1 << logn;
     hn = n >> 1;
     tree0 = tree + n;
     tree1 = tree + n + ffLDL_treesize(logn - 1);
@@ -480,7 +649,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
     const fpr *b00, *b01, *b10, *b11, *tree;
     fpr ni;
     uint32_t sqn, ng;
-    int16_t *s2tmp;
+    int16_t *s1tmp, *s2tmp;
 
     n = MKN(logn);
     t0 = tmp;
@@ -542,6 +711,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
     /*
      * Compute the signature.
      */
+    s1tmp = (int16_t *)tx;
     sqn = 0;
     ng = 0;
     for (u = 0; u < n; u ++) {
@@ -550,6 +720,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
         z = (int32_t)hm[u] - (int32_t)fpr_rint(t0[u]);
         sqn += (uint32_t)(z * z);
         ng |= sqn;
+        s1tmp[u] = (int16_t)z;
     }
     sqn |= -(ng >> 31);
 
@@ -568,6 +739,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
     }
     if (PQCLEAN_FALCON1024_CLEAN_is_short_half(sqn, s2tmp, logn)) {
         memcpy(s2, s2tmp, n * sizeof * s2);
+        memcpy(tmp, s1tmp, n * sizeof * s1tmp);
         return 1;
     }
     return 0;
@@ -592,7 +764,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     fpr *b00, *b01, *b10, *b11, *g00, *g01, *g11;
     fpr ni;
     uint32_t sqn, ng;
-    int16_t *s2tmp;
+    int16_t *s1tmp, *s2tmp;
 
     n = MKN(logn);
 
@@ -745,6 +917,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     PQCLEAN_FALCON1024_CLEAN_iFFT(t0, logn);
     PQCLEAN_FALCON1024_CLEAN_iFFT(t1, logn);
 
+    s1tmp = (int16_t *)tx;
     sqn = 0;
     ng = 0;
     for (u = 0; u < n; u ++) {
@@ -753,6 +926,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
         z = (int32_t)hm[u] - (int32_t)fpr_rint(t0[u]);
         sqn += (uint32_t)(z * z);
         ng |= sqn;
+        s1tmp[u] = (int16_t)z;
     }
     sqn |= -(ng >> 31);
 
@@ -771,6 +945,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     }
     if (PQCLEAN_FALCON1024_CLEAN_is_short_half(sqn, s2tmp, logn)) {
         memcpy(s2, s2tmp, n * sizeof * s2);
+        memcpy(tmp, s1tmp, n * sizeof * s1tmp);
         return 1;
     }
     return 0;
@@ -780,29 +955,28 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
  * Sample an integer value along a half-gaussian distribution centered
  * on zero and standard deviation 1.8205, with a precision of 72 bits.
  */
-static int
-gaussian0_sampler(prng *p) {
+int
+PQCLEAN_FALCON1024_CLEAN_gaussian0_sampler(prng *p) {
 
     static const uint32_t dist[] = {
-        6031371U, 13708371U, 13035518U,
-        5186761U,  1487980U, 12270720U,
-        3298653U,  4688887U,  5511555U,
-        1551448U,  9247616U,  9467675U,
-        539632U, 14076116U,  5909365U,
-        138809U, 10836485U, 13263376U,
-        26405U, 15335617U, 16601723U,
-        3714U, 14514117U, 13240074U,
-        386U,  8324059U,  3276722U,
-        29U, 12376792U,  7821247U,
-        1U, 11611789U,  3398254U,
-        0U,  1194629U,  4532444U,
-        0U,    37177U,  2973575U,
-        0U,      855U, 10369757U,
-        0U,       14U,  9441597U,
-        0U,        0U,  3075302U,
-        0U,        0U,    28626U,
-        0U,        0U,      197U,
-        0U,        0U,        1U
+        10745844u,  3068844u,  3741698u,
+        5559083u,  1580863u,  8248194u,
+        2260429u, 13669192u,  2736639u,
+        708981u,  4421575u, 10046180u,
+        169348u,  7122675u,  4136815u,
+        30538u, 13063405u,  7650655u,
+        4132u, 14505003u,  7826148u,
+        417u, 16768101u, 11363290u,
+        31u,  8444042u,  8086568u,
+        1u, 12844466u,   265321u,
+        0u,  1232676u, 13644283u,
+        0u,    38047u,  9111839u,
+        0u,      870u,  6138264u,
+        0u,       14u, 12545723u,
+        0u,        0u,  3104126u,
+        0u,        0u,    28824u,
+        0u,        0u,      198u,
+        0u,        0u,        1u
     };
 
     uint32_t v0, v1, v2, hi;
@@ -843,7 +1017,7 @@ gaussian0_sampler(prng *p) {
  * Sample a bit with probability exp(-x) for some x >= 0.
  */
 static int
-BerExp(prng *p, fpr x) {
+BerExp(prng *p, fpr x, fpr ccs) {
     int s, i;
     fpr r;
     uint32_t sw, w;
@@ -880,7 +1054,7 @@ BerExp(prng *p, fpr x) {
      * case). The bias is negligible since fpr_expm_p63() only computes
      * with 51 bits of precision or so.
      */
-    z = ((fpr_expm_p63(r) << 1) - 1) >> s;
+    z = ((fpr_expm_p63(r, ccs) << 1) - 1) >> s;
 
     /*
      * Sample a bit with probability exp(-x). Since x = s*log(2) + r,
@@ -896,11 +1070,6 @@ BerExp(prng *p, fpr x) {
     return (int)(w >> 31);
 }
 
-typedef struct {
-    prng p;
-    fpr sigma_min;
-} sampler_context;
-
 /*
  * The sampler produces a random integer that follows a discrete Gaussian
  * distribution, centered on mu, and with standard deviation sigma. The
@@ -909,8 +1078,8 @@ typedef struct {
  * The value of sigma MUST lie between 1 and 2 (i.e. isigma lies between
  * 0.5 and 1); in Falcon, sigma should always be between 1.2 and 1.9.
  */
-static int
-sampler(void *ctx, fpr mu, fpr isigma) {
+int
+PQCLEAN_FALCON1024_CLEAN_sampler(void *ctx, fpr mu, fpr isigma) {
     sampler_context *spc;
     int s;
     fpr r, dss, ccs;
@@ -952,7 +1121,7 @@ sampler(void *ctx, fpr mu, fpr isigma) {
          *  - b = 0: z <= 0 and sampled against a Gaussian
          *    centered on 0.
          */
-        z0 = gaussian0_sampler(&spc->p);
+        z0 = PQCLEAN_FALCON1024_CLEAN_gaussian0_sampler(&spc->p);
         b = (int)prng_get_u8(&spc->p) & 1;
         z = b + ((b << 1) - 1) * z0;
 
@@ -983,8 +1152,7 @@ sampler(void *ctx, fpr mu, fpr isigma) {
          */
         x = fpr_mul(fpr_sqr(fpr_sub(fpr_of(z), r)), dss);
         x = fpr_sub(x, fpr_mul(fpr_of(z0 * z0), fpr_inv_2sqrsigma0));
-        x = fpr_mul(x, ccs);
-        if (BerExp(&spc->p, x)) {
+        if (BerExp(&spc->p, x, ccs)) {
             /*
              * Rejection sampling was centered on r, but the
              * actual center is mu = s + r.
@@ -996,7 +1164,7 @@ sampler(void *ctx, fpr mu, fpr isigma) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
+PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rng,
                                    const fpr *expanded_key,
                                    const uint16_t *hm, unsigned logn, uint8_t *tmp) {
     fpr *ftmp;
@@ -1025,7 +1193,7 @@ PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
                         ? fpr_sigma_min_10
                         : fpr_sigma_min_9;
         PQCLEAN_FALCON1024_CLEAN_prng_init(&spc.p, rng);
-        samp = sampler;
+        samp = PQCLEAN_FALCON1024_CLEAN_sampler;
         samp_ctx = &spc;
 
         /*
@@ -1040,7 +1208,7 @@ PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, shake256_context *rng,
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024_CLEAN_sign_dyn(int16_t *sig, shake256_context *rng,
+PQCLEAN_FALCON1024_CLEAN_sign_dyn(int16_t *sig, inner_shake256_context *rng,
                                   const int8_t *f, const int8_t *g,
                                   const int8_t *F, const int8_t *G,
                                   const uint16_t *hm, unsigned logn, uint8_t *tmp) {
@@ -1070,7 +1238,7 @@ PQCLEAN_FALCON1024_CLEAN_sign_dyn(int16_t *sig, shake256_context *rng,
                         ? fpr_sigma_min_10
                         : fpr_sigma_min_9;
         PQCLEAN_FALCON1024_CLEAN_prng_init(&spc.p, rng);
-        samp = sampler;
+        samp = PQCLEAN_FALCON1024_CLEAN_sampler;
         samp_ctx = &spc;
 
         /*

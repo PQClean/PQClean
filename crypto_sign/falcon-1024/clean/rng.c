@@ -36,7 +36,7 @@
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024_CLEAN_prng_init(prng *p, shake256_context *src) {
+PQCLEAN_FALCON1024_CLEAN_prng_init(prng *p, inner_shake256_context *src) {
     /*
      * To ensure reproducibility for a given seed, we
      * must enforce little-endian interpretation of
@@ -46,7 +46,7 @@ PQCLEAN_FALCON1024_CLEAN_prng_init(prng *p, shake256_context *src) {
     uint64_t th, tl;
     int i;
 
-    shake256_extract(src, tmp, 56);
+    inner_shake256_extract(src, tmp, 56);
     for (i = 0; i < 14; i ++) {
         uint32_t w;
 

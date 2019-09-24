@@ -33,10 +33,43 @@
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512_CLEAN_hash_to_point(
-    shake256_context *sc,
-    uint16_t *x, unsigned logn, uint8_t *tmp) {
+PQCLEAN_FALCON512_CLEAN_hash_to_point_vartime(
+    inner_shake256_context *sc,
+    uint16_t *x, unsigned logn) {
+    /*
+     * This is the straightforward per-the-spec implementation. It
+     * is not constant-time, thus it might reveal information on the
+     * plaintext (at least, enough to check the plaintext against a
+     * list of potential plaintexts) in a scenario where the
+     * attacker does not have access to the signature value or to
+     * the public key, but knows the nonce (without knowledge of the
+     * nonce, the hashed output cannot be matched against potential
+     * plaintexts).
+     */
+    size_t n;
 
+    n = (size_t)1 << logn;
+    while (n > 0) {
+        uint8_t buf[2];
+        uint32_t w;
+
+        inner_shake256_extract(sc, (void *)buf, sizeof buf);
+        w = ((unsigned)buf[0] << 8) | (unsigned)buf[1];
+        if (w < 61445) {
+            while (w >= 12289) {
+                w -= 12289;
+            }
+            *x ++ = (uint16_t)w;
+            n --;
+        }
+    }
+}
+
+/* see inner.h */
+void
+PQCLEAN_FALCON512_CLEAN_hash_to_point_ct(
+    inner_shake256_context *sc,
+    uint16_t *x, unsigned logn, uint8_t *tmp) {
     /*
      * Each 16-bit sample is a value in 0..65535. The value is
      * kept if it falls in 0..61444 (because 61445 = 5*12289)
@@ -97,7 +130,7 @@ PQCLEAN_FALCON512_CLEAN_hash_to_point(
         uint8_t buf[2];
         uint32_t w, wr;
 
-        shake256_extract(sc, buf, sizeof buf);
+        inner_shake256_extract(sc, buf, sizeof buf);
         w = ((uint32_t)buf[0] << 8) | (uint32_t)buf[1];
         wr = w - ((uint32_t)24578 & (((w - 24578) >> 31) - 1));
         wr = wr - ((uint32_t)24578 & (((wr - 24578) >> 31) - 1));
@@ -196,7 +229,6 @@ PQCLEAN_FALCON512_CLEAN_hash_to_point(
             *d = (uint16_t)(dv ^ (mk & (sv ^ dv)));
         }
     }
-
 }
 
 /* see inner.h */
