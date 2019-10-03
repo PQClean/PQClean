@@ -1,12 +1,15 @@
 #ifndef AES256CTR_H
 #define AES256CTR_H
 
+#include "aes.h"
+
 #include <stddef.h>
 #include <stdint.h>
 
 typedef struct {
-    uint64_t sk_exp[120];
-    uint32_t ivw[16];
+    aes256ctx sk_exp;
+    uint8_t iv[12];
+    uint32_t ctr;
 } aes256xof_ctx;
 
 void PQCLEAN_KYBER51290S_CLEAN_aes256_prf(uint8_t *output, size_t outlen, const uint8_t *key, uint8_t nonce);
