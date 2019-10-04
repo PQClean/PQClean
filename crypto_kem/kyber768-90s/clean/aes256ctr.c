@@ -4,34 +4,29 @@
 #include <stdint.h>
 #include <string.h>
 
-static inline uint32_t br_swap32(uint32_t x) {
-    x = ((x & (uint32_t)0x00FF00FF) << 8)
-        | ((x >> 8) & (uint32_t)0x00FF00FF);
-    return (x << 16) | (x >> 16);
-}
-
-
-static inline void inc1_be(uint32_t *x) {
-    uint32_t t = br_swap32(*x) + 1;
-    *x = br_swap32(t);
+static inline void br_enc32be(unsigned char *dst, uint32_t x) {
+    dst[3] = (unsigned char)x;
+    dst[2] = (unsigned char)(x >> 8);
+    dst[1] = (unsigned char)(x >> 16);
+    dst[0] = (unsigned char)(x >> 24);
 }
 
 static void aes256_ctr_xof(unsigned char *out, size_t outlen, const unsigned char *iv, uint32_t ctr, const aes256ctx *ctx) {
-    uint32_t ivw[4] = {0};
-    ivw[3] = br_swap32(ctr);
+    uint8_t ivw[16];
     uint8_t buf[AES_BLOCKBYTES];
     size_t i;
 
     memcpy(ivw, iv, AESCTR_NONCEBYTES);
+    br_enc32be(ivw + AESCTR_NONCEBYTES, ctr);
 
     while (outlen > AES_BLOCKBYTES) {
-        aes256_ecb(out, (uint8_t *) ivw, 1, ctx);
-        inc1_be(ivw + 3);
+        aes256_ecb(out, ivw, 1, ctx);
+        br_enc32be(ivw + AESCTR_NONCEBYTES, ++ctr);
         out += AES_BLOCKBYTES;
         outlen -= AES_BLOCKBYTES;
     }
     if (outlen > 0) {
-        aes256_ecb(buf, (uint8_t *) ivw, 1, ctx);
+        aes256_ecb(buf, ivw, 1, ctx);
         for (i = 0; i < outlen; i++) {
             out[i] = buf[i];
         }
