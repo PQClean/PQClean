@@ -4,9 +4,9 @@
 * Abstract: NTT, modular reduction and polynomial functions
 **************************************************************************************/
 
-#include "poly.h"
-#include "sha3/fips202.h"
 #include "api.h"
+#include "poly.h"
+#include "sp800-185.h"
 
 extern poly zeta;
 extern poly zetainv;
@@ -17,15 +17,21 @@ void poly_uniform(poly_k a, const unsigned char *seed)
   unsigned int pos=0, i=0, nbytes = (PARAM_Q_LOG+7)/8;
   unsigned int nblocks=PARAM_GEN_A;
   uint32_t val1, val2, val3, val4, mask = (uint32_t)(1<<PARAM_Q_LOG)-1;
-  unsigned char buf[SHAKE128_RATE*PARAM_GEN_A];
+  unsigned char buf[SHAKE_RATE*PARAM_GEN_A];
   uint16_t dmsp=0;
-
-  cshake128_simple(buf, SHAKE128_RATE*PARAM_GEN_A, dmsp++, seed, CRYPTO_RANDOMBYTES);    
+  uint8_t dmsp_bytes[2];
+  dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
+  dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
+  cSHAKE(buf, SHAKE_RATE*PARAM_GEN_A, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);    
+  ++dmsp;
      
   while (i < PARAM_K*PARAM_N) {   
-    if (pos > SHAKE128_RATE*nblocks - 4*nbytes) {
+    if (pos > SHAKE_RATE*nblocks - 4*nbytes) {
       nblocks = 1;
-      cshake128_simple(buf, SHAKE128_RATE*nblocks, dmsp++, seed, CRYPTO_RANDOMBYTES);    
+      dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
+      dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
+      cSHAKE(buf, SHAKE_RATE*nblocks, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);    
+      ++dmsp;
       pos = 0;
     } 
     val1  = (*(uint32_t*)(buf+pos)) & mask;
@@ -75,15 +81,9 @@ void ntt(poly a, const poly w)
     for (jFirst=0; jFirst<PARAM_N; jFirst=j+NumoProblems) {
       sdigit_t W = (sdigit_t)w[jTwiddle++];
       for (j=jFirst; j<jFirst+NumoProblems; j++) {
-#if defined(_qTESLA_p_I_)
         int64_t temp = reduce((int64_t)W * a[j+NumoProblems]);
         a[j + NumoProblems] = a[j] + (PARAM_Q - temp);
         a[j] = temp + a[j];
-#else
-        int64_t temp = barr_reduce(reduce((int64_t)W* a[j + NumoProblems]));
-        a[j + NumoProblems] = barr_reduce(a[j] +(2LL*PARAM_Q - temp));
-        a[j] = barr_reduce(temp + a[j]);
-#endif
       }
     }
   }
@@ -99,7 +99,6 @@ void nttinv(poly a, const poly w)
       sdigit_t W = (sdigit_t)w[jTwiddle++];
       for (j=jFirst; j<jFirst+NumoProblems; j++) {
         int64_t temp = a[j];
-#if defined(_qTESLA_p_I_)
         a[j] = (temp + a[j + NumoProblems]);
         a[j + NumoProblems] = reduce((int64_t)W * (temp + (2*PARAM_Q - a[j + NumoProblems])));
       }
@@ -111,17 +110,13 @@ void nttinv(poly a, const poly w)
         int64_t temp = a[j];
         a[j] = barr_reduce(temp + a[j + NumoProblems]);
         a[j + NumoProblems] = reduce((int64_t)W * (temp + (2*PARAM_Q - a[j + NumoProblems])));
-#else
-        a[j] = barr_reduce((temp + a[j + NumoProblems]));
-        a[j + NumoProblems] = barr_reduce(reduce((int64_t)W * (temp + (2LL*PARAM_Q - a[j + NumoProblems]))));
-#endif
       }
     }
   }
 }
 
 
-void poly_pointwise(poly result, const poly x, const poly y)
+static void poly_pointwise(poly result, const poly x, const poly y)
 { // Pointwise polynomial multiplication result = x.y
 
   for (int i=0; i<PARAM_N; i++)
@@ -188,7 +183,7 @@ void poly_sub(poly result, const poly x, const poly y)
 *********************************************************************************************/
 void sparse_mul8(poly prod, const unsigned char *s, const uint32_t pos_list[PARAM_H], const int16_t sign_list[PARAM_H])
 {
-  int i, j, pos;
+  size_t i, j, pos;
   int8_t *t = (int8_t*)s;
 
   for (i=0; i<PARAM_N; i++)
@@ -218,7 +213,7 @@ void sparse_mul8(poly prod, const unsigned char *s, const uint32_t pos_list[PARA
 *********************************************************************************************/
 void sparse_mul32(poly prod, const int32_t *pk, const uint32_t pos_list[PARAM_H], const int16_t sign_list[PARAM_H])
 {
-  int i, j, pos;
+  size_t i, j, pos;
 
   for (i=0; i<PARAM_N; i++)
     prod[i] = 0;

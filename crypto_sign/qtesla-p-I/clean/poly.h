@@ -1,8 +1,8 @@
-#ifndef POLY_H
-#define POLY_H
+#ifndef PQCLEAN_QTESLAPI_CLEAN_POLY_H
+#define PQCLEAN_QTESLAPI_CLEAN_POLY_H
 
-#include "params.h"
 #include "config.h"
+#include "params.h"
 #include <stdint.h>
 
 typedef	int64_t poly[PARAM_N];

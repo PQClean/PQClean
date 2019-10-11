@@ -1,42 +1,42 @@
+#ifndef PQCLEAN_QTESLAPI_CLEAN_API_H
+#define PQCLEAN_QTESLAPI_CLEAN_API_H
+
 /*************************************************************************************
 * qTESLA: an efficient post-quantum signature scheme based on the R-LWE problem
 *
 * Abstract: API header file
 **************************************************************************************/
 
-#include "params.h"
+#include <stddef.h>
 #include <stdint.h>
 
+#define PQCLEAN_QTESLAPI_CLEAN_CRYPTO_SECRETKEYBYTES 5184
+#define PQCLEAN_QTESLAPI_CLEAN_CRYPTO_PUBLICKEYBYTES 14880
+#define PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES 2592
+#define PQCLEAN_QTESLAPI_CLEAN_CRYPTO_ALGNAME "qTesla-p-I"
 
-#define CRYPTO_ALGNAME "qTesla-p-I"
+int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_keypair(
+    uint8_t *pk, uint8_t *sk);
 
-#define CRYPTO_RANDOMBYTES 32
-#define CRYPTO_SEEDBYTES 32
-#define CRYPTO_C_BYTES 32
-#define HM_BYTES 64
+int PQCLEAN_QTESLAPI_CLEAN_crypto_sign(
+    uint8_t *sm, size_t *smlen,
+    const uint8_t *msg, size_t len,
+    const uint8_t *sk);
 
-// Contains signature (z,c). z is a polynomial bounded by B, c is the output of a hashed string
-#define CRYPTO_BYTES ((PARAM_N*(PARAM_B_BITS+1)+7)/8 + CRYPTO_C_BYTES)
-// Contains polynomial s and e, and seeds seed_a and seed_y
-#define CRYPTO_SECRETKEYBYTES (sizeof(int8_t)*PARAM_N + sizeof(int8_t)*PARAM_N*PARAM_K + 2*CRYPTO_SEEDBYTES)
-// Contains seed_a and polynomials t
-#define CRYPTO_PUBLICKEYBYTES ((PARAM_Q_LOG*PARAM_N*PARAM_K+7)/8 + CRYPTO_SEEDBYTES)
-
-int crypto_sign_keypair(
-    unsigned char *,
-    unsigned char *
+int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_open(
+    uint8_t *m, size_t *mlen,
+    const uint8_t *sm, size_t smlen,
+    const uint8_t *pk
     );
 
-int crypto_sign(
-    unsigned char *,unsigned long long *,
-    const unsigned char *,unsigned long long,
-    const unsigned char *
-    );
+int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_signature(
+    uint8_t *sig, size_t *siglen,
+    const uint8_t *m, size_t mlen,
+    const uint8_t *sk);
 
-int crypto_sign_open(
-    unsigned char *,unsigned long long *,
-    const unsigned char *,unsigned long long,
-    const unsigned char *
-    );
+int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_verify(
+    const uint8_t *sig, size_t siglen,
+    const uint8_t *m, size_t mlen,
+    const uint8_t *pk);
 
-
+#endif

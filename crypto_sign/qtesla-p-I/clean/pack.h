@@ -1,5 +1,5 @@
-#ifndef PACK_H
-#define PACK_H
+#ifndef PQCLEAN_QTESLAPI_CLEAN_PACK_H
+#define PQCLEAN_QTESLAPI_CLEAN_PACK_H
 
 #include "poly.h"
 #include <stdint.h>

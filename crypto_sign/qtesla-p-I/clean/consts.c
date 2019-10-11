@@ -4,9 +4,9 @@
 * Abstract: constants for the NTT
 **************************************************************************************/
 
-#include <stdint.h>
 #include "params.h"
 #include "poly.h"
+#include <stdint.h>
 
 
 poly zeta = {

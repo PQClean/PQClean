@@ -1,11 +1,11 @@
+#ifndef PQCLEAN_QTESLAPI_CLEAN_PARAMS_H
+#define PQCLEAN_QTESLAPI_CLEAN_PARAMS_H
+
 /*************************************************************************************
 * qTESLA: an efficient post-quantum signature scheme based on the R-LWE problem
 *
 * Abstract: provably-secure qTESLA parameters
 **************************************************************************************/
-
-#ifndef PARAMS_H
-#define PARAMS_H
 
 #define PARAM_N 1024
 #define PARAM_N_LOG 10
@@ -29,8 +29,14 @@
 #define PARAM_S PARAM_KEYGEN_BOUND_S
 #define PARAM_R2_INVN 13632409
 #define PARAM_R 172048372
+
 #define SHAKE shake128
-#define cSHAKE cshake128_simple
+#define cSHAKE cshake128
 #define SHAKE_RATE SHAKE128_RATE
+
+#define CRYPTO_RANDOMBYTES 32
+#define CRYPTO_SEEDBYTES 32
+#define CRYPTO_C_BYTES 32
+#define HM_BYTES 64
 
 #endif

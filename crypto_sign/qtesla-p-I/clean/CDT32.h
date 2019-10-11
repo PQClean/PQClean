@@ -1,15 +1,14 @@
+#ifndef PQCLEAN_QTESLAPI_CLEAN_CDTSAMP
+#define PQCLEAN_QTESLAPI_CLEAN_CDTSAMP
+
 /*************************************************************************************
 * qTESLA: an efficient post-quantum signature scheme based on the R-LWE problem
 *
 * Abstract: CDT constants for the Gaussian sampler
 **************************************************************************************/
 
-#ifndef CDTSAMP
-#define CDTSAMP
-
-#include <stdint.h>
 #include "params.h"
-
+#include <stdint.h>
 
 // Sigma = 8.5, 64-bit precision
 
