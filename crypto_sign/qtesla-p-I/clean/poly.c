@@ -33,10 +33,10 @@ static int64_t barr_reduce(int64_t a) {
 
 static void ntt(poly a, const poly w) {
     // Forward NTT transform
-    int NumoProblems = PARAM_N >> 1, jTwiddle = 0;
+    size_t NumoProblems = PARAM_N >> 1, jTwiddle = 0;
 
     for (; NumoProblems > 0; NumoProblems >>= 1) {
-        int jFirst, j = 0;
+        size_t jFirst, j = 0;
         for (jFirst = 0; jFirst < PARAM_N; jFirst = j + NumoProblems) {
             sdigit_t W = (sdigit_t)w[jTwiddle++];
             for (j = jFirst; j < jFirst + NumoProblems; j++) {
@@ -51,9 +51,9 @@ static void ntt(poly a, const poly w) {
 
 static void nttinv(poly a, const poly w) {
     // Inverse NTT transform
-    int NumoProblems = 1, jTwiddle = 0;
-    for (NumoProblems = 1; NumoProblems < PARAM_N; NumoProblems *= 2) {
-        int jFirst, j = 0;
+    size_t NumoProblems = 1, jTwiddle = 0;
+    for (; NumoProblems < PARAM_N; NumoProblems *= 2) {
+        size_t jFirst, j = 0;
         for (jFirst = 0; jFirst < PARAM_N; jFirst = j + NumoProblems) {
             sdigit_t W = (sdigit_t)w[jTwiddle++];
             for (j = jFirst; j < jFirst + NumoProblems; j++) {
@@ -78,7 +78,7 @@ static void nttinv(poly a, const poly w) {
 static void poly_pointwise(poly result, const poly x, const poly y) {
     // Pointwise polynomial multiplication result = x.y
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         result[i] = reduce(x[i] * y[i]);
     }
 }
@@ -86,7 +86,7 @@ static void poly_pointwise(poly result, const poly x, const poly y) {
 void PQCLEAN_QTESLAPI_CLEAN_poly_ntt(poly x_ntt, const poly x) {
     // Call to NTT function. Avoids input destruction
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         x_ntt[i] = x[i];
     }
     ntt(x_ntt, PQCLEAN_QTESLAPI_CLEAN_zeta);
@@ -105,7 +105,7 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_mul(poly result, const poly x, const poly y) {
 void PQCLEAN_QTESLAPI_CLEAN_poly_add(poly result, const poly x, const poly y) {
     // Polynomial addition result = x+y
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         result[i] = x[i] + y[i];
     }
 }
@@ -114,7 +114,7 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_add(poly result, const poly x, const poly y) {
 void PQCLEAN_QTESLAPI_CLEAN_poly_add_correct(poly result, const poly x, const poly y) {
     // Polynomial addition result = x+y with correction
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         result[i] = x[i] + y[i];
         result[i] -= PARAM_Q;
         result[i] += (result[i] >> (RADIX32 - 1)) & PARAM_Q;  // If result[i] >= q then subtract q
@@ -125,7 +125,7 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_add_correct(poly result, const poly x, const po
 void PQCLEAN_QTESLAPI_CLEAN_poly_sub(poly result, const poly x, const poly y) {
     // Polynomial subtraction result = x-y
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         result[i] = barr_reduce(x[i] - y[i]);
     }
 }
@@ -134,7 +134,7 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_sub(poly result, const poly x, const poly y) {
 * Name:        sparse_mul8
 * Description: performs sparse polynomial multiplication
 * Parameters:  inputs:
-*              - const unsigned char* s: part of the secret key
+*              - const uint8_t *s: part of the secret key
 *              - const uint32_t pos_list[PARAM_H]: list of indices of nonzero elements in c
 *              - const int16_t sign_list[PARAM_H]: list of signs of nonzero elements in c
 *              outputs:
@@ -142,7 +142,7 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_sub(poly result, const poly x, const poly y) {
 *
 * Note: pos_list[] and sign_list[] contain public information since c is public
 *********************************************************************************************/
-void PQCLEAN_QTESLAPI_CLEAN_sparse_mul8(poly prod, const unsigned char *s, const uint32_t pos_list[PARAM_H], const int16_t sign_list[PARAM_H]) {
+void PQCLEAN_QTESLAPI_CLEAN_sparse_mul8(poly prod, const uint8_t *s, const uint32_t pos_list[PARAM_H], const int16_t sign_list[PARAM_H]) {
     size_t i, j, pos;
     int8_t *t = (int8_t *)s;
 
@@ -194,10 +194,10 @@ void PQCLEAN_QTESLAPI_CLEAN_sparse_mul32(poly prod, const int32_t *pk, const uin
 
 void PQCLEAN_QTESLAPI_CLEAN_poly_uniform(poly_k a, const unsigned char *seed) {
     // Generation of polynomials "a_i"
-    unsigned int pos = 0, i = 0, nbytes = (PARAM_Q_LOG + 7) / 8;
-    unsigned int nblocks = PARAM_GEN_A;
+    size_t pos = 0, i = 0, nbytes = (PARAM_Q_LOG + 7) / 8;
+    size_t nblocks = PARAM_GEN_A;
     uint32_t val1, val2, val3, val4, mask = (uint32_t)(1 << PARAM_Q_LOG) - 1;
-    unsigned char buf[SHAKE_RATE * PARAM_GEN_A];
+    uint8_t buf[SHAKE_RATE * PARAM_GEN_A];
     uint16_t dmsp = 0;
     uint8_t dmsp_bytes[2];
     dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);

@@ -10,27 +10,27 @@
 #include "poly.h"
 #include <string.h>
 
-void PQCLEAN_QTESLAPI_CLEAN_pack_sk(unsigned char *sk, const poly s, const poly_k e, unsigned char *seeds) {
+void PQCLEAN_QTESLAPI_CLEAN_pack_sk(uint8_t *sk, const poly s, const poly_k e, uint8_t *seeds) {
     // Pack secret key sk
-    unsigned int i, k;
+    size_t i, k;
 
     for (i = 0; i < PARAM_N; i++) {
-        sk[i] = (unsigned char)s[i];
+        sk[i] = (uint8_t)s[i];
     }
 
     sk += PARAM_N;
     for (k = 0; k < PARAM_K; k++) {
         for (i = 0; i < PARAM_N; i++) {
-            sk[k * PARAM_N + i] = (unsigned char)e[k * PARAM_N + i];
+            sk[k * PARAM_N + i] = (uint8_t)e[k * PARAM_N + i];
         }
     }
 
     memcpy(&sk[PARAM_K * PARAM_N], seeds, 2 * CRYPTO_SEEDBYTES);
 }
 
-void PQCLEAN_QTESLAPI_CLEAN_encode_pk(unsigned char *pk, const poly_k t, const unsigned char *seedA) {
+void PQCLEAN_QTESLAPI_CLEAN_encode_pk(uint8_t *pk, const poly_k t, const uint8_t *seedA) {
     // Encode public key pk
-    unsigned int i, j = 0;
+    size_t i, j = 0;
     uint32_t *pt = (uint32_t *)pk;
 
     for (i = 0; i < (PARAM_N * PARAM_K * PARAM_Q_LOG / 32); i += PARAM_Q_LOG) {
@@ -69,9 +69,9 @@ void PQCLEAN_QTESLAPI_CLEAN_encode_pk(unsigned char *pk, const poly_k t, const u
 }
 
 
-void PQCLEAN_QTESLAPI_CLEAN_decode_pk(int32_t *pk, unsigned char *seedA, const unsigned char *pk_in) {
+void PQCLEAN_QTESLAPI_CLEAN_decode_pk(int32_t *pk, uint8_t *seedA, const uint8_t *pk_in) {
     // Decode public key pk
-    unsigned int i, j = 0;
+    size_t i, j = 0;
     uint32_t *pt = (uint32_t *)pk_in, *pp = (uint32_t *)pk, mask29 = (1 << PARAM_Q_LOG) - 1;
 
     for (i = 0; i < PARAM_N * PARAM_K; i += 32) {
@@ -115,22 +115,22 @@ void PQCLEAN_QTESLAPI_CLEAN_decode_pk(int32_t *pk, unsigned char *seedA, const u
 
 #define maskb1 ((1<<(PARAM_B_BITS+1))-1)
 
-void PQCLEAN_QTESLAPI_CLEAN_encode_sig(unsigned char *sm, unsigned char *c, const poly z) {
+void PQCLEAN_QTESLAPI_CLEAN_encode_sig(uint8_t *sm, uint8_t *c, const poly z) {
     // Encode signature sm
-    unsigned int i, j = 0;
+    size_t i, j = 0;
     const uint64_t *t = (const uint64_t *)z;
     uint32_t *pt = (uint32_t *)sm;
 
     for (i = 0; i < (PARAM_N * (PARAM_B_BITS + 1) / 32); i += 10) {
-        pt[i   ] = (uint32_t)( (t[j   ]        & ((1 << 20) - 1)) | ( t[j + 1]           << 20));
-        pt[i + 1] = (uint32_t)(((t[j + 1] >> 12) & ((1 << 8) - 1)) | ((t[j + 2] & maskb1) <<  8) | (t[j + 3] << 28));
-        pt[i + 2] = (uint32_t)(((t[j + 3] >>  4) & ((1 << 16) - 1)) | ( t[j + 4]           << 16));
-        pt[i + 3] = (uint32_t)(((t[j + 4] >> 16) & ((1 << 4) - 1)) | ((t[j + 5] & maskb1) <<  4) | (t[j + 6] << 24));
-        pt[i + 4] = (uint32_t)(((t[j + 6] >>  8) & ((1 << 12) - 1)) | ( t[j + 7]           << 12));
-        pt[i + 5] = (uint32_t)( (t[j + 8]        & ((1 << 20) - 1)) | ( t[j + 9]           << 20));
-        pt[i + 6] = (uint32_t)(((t[j + 9] >> 12) & ((1 << 8) - 1)) | ((t[j + 10] & maskb1) <<  8) | (t[j + 11] << 28));
+        pt[i    ] = (uint32_t)( (t[j     ]        & ((1 << 20) - 1)) | ( t[j + 1 ]           << 20));
+        pt[i + 1] = (uint32_t)(((t[j +  1] >> 12) & ((1 << 8 ) - 1)) | ((t[j + 2 ] & maskb1) <<  8) | (t[j + 3] << 28));
+        pt[i + 2] = (uint32_t)(((t[j +  3] >>  4) & ((1 << 16) - 1)) | ( t[j + 4 ]           << 16));
+        pt[i + 3] = (uint32_t)(((t[j +  4] >> 16) & ((1 << 4 ) - 1)) | ((t[j + 5 ] & maskb1) <<  4) | (t[j + 6] << 24));
+        pt[i + 4] = (uint32_t)(((t[j +  6] >>  8) & ((1 << 12) - 1)) | ( t[j + 7 ]           << 12));
+        pt[i + 5] = (uint32_t)( (t[j +  8]        & ((1 << 20) - 1)) | ( t[j + 9 ]           << 20));
+        pt[i + 6] = (uint32_t)(((t[j +  9] >> 12) & ((1 << 8 ) - 1)) | ((t[j + 10] & maskb1) <<  8) | (t[j + 11] << 28));
         pt[i + 7] = (uint32_t)(((t[j + 11] >>  4) & ((1 << 16) - 1)) | ( t[j + 12]           << 16));
-        pt[i + 8] = (uint32_t)(((t[j + 12] >> 16) & ((1 << 4) - 1)) | ((t[j + 13] & maskb1) <<  4) | (t[j + 14] << 24));
+        pt[i + 8] = (uint32_t)(((t[j + 12] >> 16) & ((1 << 4 ) - 1)) | ((t[j + 13] & maskb1) <<  4) | (t[j + 14] << 24));
         pt[i + 9] = (uint32_t)(((t[j + 14] >>  8) & ((1 << 12) - 1)) | ( t[j + 15]           << 12));
         j += 16;
     }
@@ -138,22 +138,22 @@ void PQCLEAN_QTESLAPI_CLEAN_encode_sig(unsigned char *sm, unsigned char *c, cons
 }
 
 
-void PQCLEAN_QTESLAPI_CLEAN_decode_sig(unsigned char *c, poly z, const unsigned char *sm) {
+void PQCLEAN_QTESLAPI_CLEAN_decode_sig(uint8_t *c, poly z, const uint8_t *sm) {
     // Decode signature sm
-    unsigned int i, j = 0;
+    size_t i, j = 0;
     uint32_t *pt = (uint32_t *)sm;
 
     for (i = 0; i < PARAM_N; i += 16) {
-        z[i   ] = ((int32_t) pt[j + 0] << 12) >> 12;
-        z[i + 1] =  (int32_t)(pt[j + 0] >> 20) | ((int32_t)(pt[j + 1] << 24) >> 12);
-        z[i + 2] = ((int32_t) pt[j + 1] <<  4) >> 12;
-        z[i + 3] =  (int32_t)(pt[j + 1] >> 28) | ((int32_t)(pt[j + 2] << 16) >> 12);
-        z[i + 4] =  (int32_t)(pt[j + 2] >> 16) | ((int32_t)(pt[j + 3] << 28) >> 12);
-        z[i + 5] = ((int32_t) pt[j + 3] <<  8) >> 12;
-        z[i + 6] =  (int32_t)(pt[j + 3] >> 24) | ((int32_t)(pt[j + 4] << 20) >> 12);
-        z[i + 7] =  (int32_t) pt[j + 4]        >> 12;
-        z[i + 8] = ((int32_t) pt[j + 5] << 12) >> 12;
-        z[i + 9] =  (int32_t)(pt[j + 5] >> 20) | ((int32_t)(pt[j + 6] << 24) >> 12);
+        z[i     ] = ((int32_t) pt[j + 0] << 12) >> 12;
+        z[i +  1] =  (int32_t)(pt[j + 0] >> 20) | ((int32_t)(pt[j + 1] << 24) >> 12);
+        z[i +  2] = ((int32_t) pt[j + 1] <<  4) >> 12;
+        z[i +  3] =  (int32_t)(pt[j + 1] >> 28) | ((int32_t)(pt[j + 2] << 16) >> 12);
+        z[i +  4] =  (int32_t)(pt[j + 2] >> 16) | ((int32_t)(pt[j + 3] << 28) >> 12);
+        z[i +  5] = ((int32_t) pt[j + 3] <<  8) >> 12;
+        z[i +  6] =  (int32_t)(pt[j + 3] >> 24) | ((int32_t)(pt[j + 4] << 20) >> 12);
+        z[i +  7] =  (int32_t) pt[j + 4]        >> 12;
+        z[i +  8] = ((int32_t) pt[j + 5] << 12) >> 12;
+        z[i +  9] =  (int32_t)(pt[j + 5] >> 20) | ((int32_t)(pt[j + 6] << 24) >> 12);
         z[i + 10] = ((int32_t) pt[j + 6] <<  4) >> 12;
         z[i + 11] =  (int32_t)(pt[j + 6] >> 28) | ((int32_t)(pt[j + 7] << 16) >> 12);
         z[i + 12] =  (int32_t)(pt[j + 7] >> 16) | ((int32_t)(pt[j + 8] << 28) >> 12);

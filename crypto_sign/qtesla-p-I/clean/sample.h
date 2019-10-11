@@ -5,7 +5,7 @@
 #include "poly.h"
 #include <stdint.h>
 
-void PQCLEAN_QTESLAPI_CLEAN_sample_y(poly y, const unsigned char *seed, int nonce);
-void PQCLEAN_QTESLAPI_CLEAN_encode_c(uint32_t *pos_list, int16_t *sign_list, unsigned char *c_bin);
+void PQCLEAN_QTESLAPI_CLEAN_sample_y(poly y, const uint8_t *seed, uint16_t nonce);
+void PQCLEAN_QTESLAPI_CLEAN_encode_c(uint32_t *pos_list, int16_t *sign_list, uint8_t *c_bin);
 
 #endif

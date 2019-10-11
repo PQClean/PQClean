@@ -8,6 +8,6 @@
 
 #define CHUNK_SIZE 512   // Fix chunk size for sampling
 
-void PQCLEAN_QTESLAPI_CLEAN_sample_gauss_poly(poly z, const unsigned char *seed, uint16_t nonce);
+void PQCLEAN_QTESLAPI_CLEAN_sample_gauss_poly(poly z, const uint8_t *seed, uint16_t nonce);
 
 #endif

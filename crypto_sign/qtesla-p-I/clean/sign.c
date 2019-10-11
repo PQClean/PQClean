@@ -15,11 +15,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void hash_H(unsigned char *c_bin, const poly_k v, const unsigned char *hm) {
+static void hash_H(uint8_t *c_bin, const poly_k v, const uint8_t *hm) {
     // Hash-based function H to generate c'
-    unsigned char t[PARAM_K * PARAM_N + HM_BYTES];
+    uint8_t t[PARAM_K * PARAM_N + HM_BYTES];
     int32_t mask, cL, temp;
-    unsigned int i, k, index;
+    size_t i, k, index;
 
     for (k = 0; k < PARAM_K; k++) {
         index = k * PARAM_N;
@@ -33,7 +33,7 @@ static void hash_H(unsigned char *c_bin, const poly_k v, const unsigned char *hm
             // If cL > 2^(d-1) then cL -= 2^d
             mask = ((1 << (PARAM_D - 1)) - cL) >> (RADIX32 - 1);
             cL = ((cL - (1 << PARAM_D)) & mask) | (cL & ~mask);
-            t[index++] = (unsigned char)((temp - cL) >> PARAM_D);
+            t[index++] = (uint8_t)((temp - cL) >> PARAM_D);
         }
     }
     memcpy(&t[PARAM_K * PARAM_N], hm, HM_BYTES);
@@ -54,7 +54,7 @@ static int test_rejection(const poly z) {
     // This function does not leak any information about the coefficient that fails the test.
     uint32_t valid = 0;
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         valid |= (PARAM_B - PARAM_S) - (uint32_t)Abs((int32_t)z[i]);
     }
     return (int)(valid >> 31);
@@ -68,7 +68,7 @@ static int test_correctness(const poly v) {
     int32_t mask, left, val;
     uint32_t t0, t1;
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         // If v[i] > PARAM_Q/2 then v[i] -= PARAM_Q
         mask = (int32_t)(PARAM_Q / 2 - v[i]) >> (RADIX32 - 1);
         val = (int32_t)(((v[i] - PARAM_Q) & mask) | (v[i] & ~mask));
@@ -93,7 +93,7 @@ static int test_z(const poly z) {
     // Check bounds for signature vector z during signature verification
     // Returns 0 if valid, otherwise outputs 1 if invalid (rejected)
 
-    for (int i = 0; i < PARAM_N; i++) {
+    for (size_t i = 0; i < PARAM_N; i++) {
         if (z[i] < -(PARAM_B - PARAM_S) || z[i] > (PARAM_B - PARAM_S)) {
             return 1;
         }
@@ -105,7 +105,8 @@ static int test_z(const poly z) {
 static int check_ES(poly p, unsigned int bound) {
     // Checks the generated polynomial e or s
     // Returns 0 if ok, otherwise returns 1
-    unsigned int i, j, sum = 0, limit = PARAM_N;
+    unsigned int sum = 0;
+    size_t i, j, limit = PARAM_N;
     int32_t temp, mask, list[PARAM_N];
 
     for (j = 0; j < PARAM_N; j++) {
@@ -136,15 +137,15 @@ static int check_ES(poly p, unsigned int bound) {
 * Description: generates a public and private key pair
 * Parameters:  inputs:  none
 *              outputs:
-*              - unsigned char *pk: public key
-*              - unsigned char *sk: secret key
+*              - uint8_t *pk: public key
+*              - uint8_t *sk: secret key
 * Returns:     0 for successful execution
 **********************************************************/
-int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char *sk) {
-    unsigned char randomness[CRYPTO_RANDOMBYTES], randomness_extended[(PARAM_K + 3)*CRYPTO_SEEDBYTES];
+int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
+    uint8_t randomness[CRYPTO_RANDOMBYTES], randomness_extended[(PARAM_K + 3)*CRYPTO_SEEDBYTES];
     poly s, s_ntt;
     poly_k e, a, t;
-    int k;  // Initialize domain separator for error and secret polynomials
+    size_t k;  // Initialize domain separator for error and secret polynomials
     uint16_t nonce = 0;
 
     // Get randomness_extended <- seed_e, seed_s, seed_a, seed_y
@@ -192,13 +193,14 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char 
 * Returns:     0 for successful execution
 ***************************************************************/
 int PQCLEAN_QTESLAPI_CLEAN_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
-    unsigned char c[CRYPTO_C_BYTES], randomness[CRYPTO_SEEDBYTES], randomness_input[CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES + HM_BYTES];
+    uint8_t c[CRYPTO_C_BYTES], randomness[CRYPTO_SEEDBYTES], randomness_input[CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES + HM_BYTES];
     uint32_t pos_list[PARAM_H];
     int16_t sign_list[PARAM_H];
     poly y, y_ntt, Sc, z;
     poly_k v, Ec, a;
     size_t k;
-    int rsp, nonce = 0;  // Initialize domain separator for sampling y
+    int rsp;
+    uint16_t nonce = 0;  // Initialize domain separator for sampling y
 
     // Get H(seed_y, r, H(m)) to sample y
     randombytes(randomness_input + CRYPTO_RANDOMBYTES, CRYPTO_RANDOMBYTES);
@@ -236,7 +238,7 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t
         }
 
         // Copy message to signature package, and pack signature
-        for (unsigned long long i = 0; i < mlen; i++) {
+        for (size_t i = 0; i < mlen; i++) {
             sm[PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES + i] = m[i];
         }
         *smlen = PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES + mlen;
@@ -261,13 +263,13 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t
 *              <0 for invalid signature
 ************************************************************/
 int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk) {
-    unsigned char c[CRYPTO_C_BYTES], c_sig[CRYPTO_C_BYTES], seed[CRYPTO_SEEDBYTES], hm[HM_BYTES];
+    uint8_t c[CRYPTO_C_BYTES], c_sig[CRYPTO_C_BYTES], seed[CRYPTO_SEEDBYTES], hm[HM_BYTES];
     uint32_t pos_list[PARAM_H];
     int16_t sign_list[PARAM_H];
     int32_t pk_t[PARAM_N * PARAM_K];
     poly_k w, a, Tc;
     poly z, z_ntt;
-    int k;
+    size_t k;
 
     if (smlen < PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES) {
         return -1;
@@ -296,7 +298,7 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_open(uint8_t *m, size_t *mlen, const uint
     }
 
     *mlen = smlen - PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES;
-    for (unsigned long long i = 0; i < *mlen; i++) {
+    for (size_t i = 0; i < *mlen; i++) {
         m[i] = sm[PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES + i];
     }
 
@@ -307,13 +309,14 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
     const uint8_t *m, size_t mlen,
     const uint8_t *sk) {
-    unsigned char c[CRYPTO_C_BYTES], randomness[CRYPTO_SEEDBYTES], randomness_input[CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES + HM_BYTES];
+    uint8_t c[CRYPTO_C_BYTES], randomness[CRYPTO_SEEDBYTES], randomness_input[CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES + HM_BYTES];
     uint32_t pos_list[PARAM_H];
     int16_t sign_list[PARAM_H];
     poly y, y_ntt, Sc, z;
     poly_k v, Ec, a;
     size_t k;
-    int rsp, nonce = 0;  // Initialize domain separator for sampling y
+    int rsp;
+    uint16_t nonce = 0;  // Initialize domain separator for sampling y
 
     // Get H(seed_y, r, H(m)) to sample y
     randombytes(randomness_input + CRYPTO_RANDOMBYTES, CRYPTO_RANDOMBYTES);
@@ -362,13 +365,13 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
     const uint8_t *m, size_t mlen,
     const uint8_t *pk) {
-    unsigned char c[CRYPTO_C_BYTES], c_sig[CRYPTO_C_BYTES], seed[CRYPTO_SEEDBYTES], hm[HM_BYTES];
+    uint8_t c[CRYPTO_C_BYTES], c_sig[CRYPTO_C_BYTES], seed[CRYPTO_SEEDBYTES], hm[HM_BYTES];
     uint32_t pos_list[PARAM_H];
     int16_t sign_list[PARAM_H];
     int32_t pk_t[PARAM_N * PARAM_K];
     poly_k w, a, Tc;
     poly z, z_ntt;
-    int k;
+    size_t k;
 
     if (siglen < PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES) {
         return -1;

@@ -13,11 +13,11 @@
 #define BPLUS1BYTES       (((PARAM_B_BITS+1)+7)/8)
 
 
-void PQCLEAN_QTESLAPI_CLEAN_sample_y(poly y, const unsigned char *seed, int nonce) {
+void PQCLEAN_QTESLAPI_CLEAN_sample_y(poly y, const uint8_t *seed, uint16_t nonce) {
     // Sample polynomial y, such that each coefficient is in the range [-B,B]
-    unsigned int i = 0, pos = 0, nblocks = PARAM_N;
-    unsigned char buf[PARAM_N * BPLUS1BYTES + 1];
-    unsigned int nbytes = BPLUS1BYTES;
+    size_t i = 0, pos = 0, nblocks = PARAM_N;
+    uint8_t buf[PARAM_N * BPLUS1BYTES + 1];
+    size_t nbytes = BPLUS1BYTES;
     uint16_t dmsp = (uint16_t)(nonce << 8);
     uint8_t dmsp_bytes[2];
 
@@ -45,11 +45,11 @@ void PQCLEAN_QTESLAPI_CLEAN_sample_y(poly y, const unsigned char *seed, int nonc
 }
 
 
-void PQCLEAN_QTESLAPI_CLEAN_encode_c(uint32_t *pos_list, int16_t *sign_list, unsigned char *c_bin) {
+void PQCLEAN_QTESLAPI_CLEAN_encode_c(uint32_t *pos_list, int16_t *sign_list, uint8_t *c_bin) {
     // Encoding of c' by mapping the output of the hash function H to an N-element vector with entries {-1,0,1}
     size_t i, pos, cnt = 0;
     int16_t c[PARAM_N];
-    unsigned char r[SHAKE_RATE];
+    uint8_t r[SHAKE_RATE];
     uint16_t dmsp = 0;
     uint8_t dmsp_bytes[2];
 
