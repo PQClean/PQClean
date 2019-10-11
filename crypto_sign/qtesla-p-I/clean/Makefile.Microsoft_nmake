@@ -1,8 +1,8 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIBRARY=librainbowIa-classic_clean.lib
-OBJECTS =  blas_comm.obj parallel_matrix_op.obj rainbow.obj rainbow_keypair.obj rainbow_keypair_computation.obj sign.obj utils_hash.obj utils_prng.obj blas.obj gf.obj
+LIBRARY=libqtesla-p-I_clean.lib
+OBJECTS = consts.o gauss.o pack.o poly.o sample.o sign.o
 
 CFLAGS=/nologo /I ..\..\..\common /W4 /WX
 

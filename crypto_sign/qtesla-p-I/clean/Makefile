@@ -2,7 +2,7 @@
 
 LIB=libqtesla-p-I_clean.a
 
-HEADERS = api.h config.h gauss.h pack.h params.h poly.h sample.h
+HEADERS = api.h CDT32.h config.h gauss.h pack.h params.h poly.h sample.h
 OBJECTS = consts.o gauss.o pack.o poly.o sample.o sign.o
 
 CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
