@@ -15,7 +15,7 @@
 #define CDT_ROWS 78
 #define CDT_COLS 2
 
-static const int32_t cdt_v[CDT_ROWS*CDT_COLS] = {
+static const int32_t cdt_v[CDT_ROWS * CDT_COLS] = {
     0x00000000L, 0x00000000L, // 0
     0x0601F22AL, 0x280663D4L, // 1
     0x11F09FFAL, 0x162FE23DL, // 2
@@ -106,4 +106,4 @@ static const int32_t cdt_v[CDT_ROWS*CDT_COLS] = {
 //       32 samples:  1320 bytes
 // table alone: 624 bytes
 
-#endif 
+#endif

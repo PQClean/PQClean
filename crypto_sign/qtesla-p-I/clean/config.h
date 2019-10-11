@@ -5,7 +5,7 @@
 * qTESLA: an efficient post-quantum signature scheme based on the R-LWE problem
 *
 * Abstract: configuration file
-**************************************************************************************/  
+**************************************************************************************/
 
 #include <stdbool.h>
 #include <stddef.h>
