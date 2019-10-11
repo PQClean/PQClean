@@ -5,7 +5,7 @@ length-public-key: 14880
 length-secret-key: 5184
 length-signature: 2592
 nistkat-sha256: e6bc42e0281cd95865e9707181a381b81f84c85957cd8e46a7889179769707dd
-testvectors-sha256: TODO
+testvectors-sha256: b2ebe8cc08c43a46648b3801236aeb6691e0bf2e683e77c3820dd22ee7fd9574
 principal-submitters:
   - Nina Bindel
 auxiliary-submitters:
