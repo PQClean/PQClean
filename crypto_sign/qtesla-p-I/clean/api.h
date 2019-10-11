@@ -20,7 +20,7 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_keypair(
 
 int PQCLEAN_QTESLAPI_CLEAN_crypto_sign(
     uint8_t *sm, size_t *smlen,
-    const uint8_t *msg, size_t len,
+    const uint8_t *m, size_t mlen,
     const uint8_t *sk);
 
 int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_open(

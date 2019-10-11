@@ -10,7 +10,7 @@
 #include "poly.h"
 #include <string.h>
 
-void pack_sk(unsigned char *sk, poly s, poly_k e, unsigned char *seeds) {
+void PQCLEAN_QTESLAPI_CLEAN_pack_sk(unsigned char *sk, const poly s, const poly_k e, unsigned char *seeds) {
     // Pack secret key sk
     unsigned int i, k;
 
@@ -19,15 +19,16 @@ void pack_sk(unsigned char *sk, poly s, poly_k e, unsigned char *seeds) {
     }
 
     sk += PARAM_N;
-    for (k = 0; k < PARAM_K; k++)
+    for (k = 0; k < PARAM_K; k++) {
         for (i = 0; i < PARAM_N; i++) {
             sk[k * PARAM_N + i] = (unsigned char)e[k * PARAM_N + i];
         }
+    }
 
     memcpy(&sk[PARAM_K * PARAM_N], seeds, 2 * CRYPTO_SEEDBYTES);
 }
 
-void encode_pk(unsigned char *pk, const poly_k t, const unsigned char *seedA) {
+void PQCLEAN_QTESLAPI_CLEAN_encode_pk(unsigned char *pk, const poly_k t, const unsigned char *seedA) {
     // Encode public key pk
     unsigned int i, j = 0;
     uint32_t *pt = (uint32_t *)pk;
@@ -68,7 +69,7 @@ void encode_pk(unsigned char *pk, const poly_k t, const unsigned char *seedA) {
 }
 
 
-void decode_pk(int32_t *pk, unsigned char *seedA, const unsigned char *pk_in) {
+void PQCLEAN_QTESLAPI_CLEAN_decode_pk(int32_t *pk, unsigned char *seedA, const unsigned char *pk_in) {
     // Decode public key pk
     unsigned int i, j = 0;
     uint32_t *pt = (uint32_t *)pk_in, *pp = (uint32_t *)pk, mask29 = (1 << PARAM_Q_LOG) - 1;
@@ -114,10 +115,10 @@ void decode_pk(int32_t *pk, unsigned char *seedA, const unsigned char *pk_in) {
 
 #define maskb1 ((1<<(PARAM_B_BITS+1))-1)
 
-void encode_sig(unsigned char *sm, unsigned char *c, poly z) {
+void PQCLEAN_QTESLAPI_CLEAN_encode_sig(unsigned char *sm, unsigned char *c, const poly z) {
     // Encode signature sm
     unsigned int i, j = 0;
-    uint64_t *t = (uint64_t *)z;
+    const uint64_t *t = (const uint64_t *)z;
     uint32_t *pt = (uint32_t *)sm;
 
     for (i = 0; i < (PARAM_N * (PARAM_B_BITS + 1) / 32); i += 10) {
@@ -137,7 +138,7 @@ void encode_sig(unsigned char *sm, unsigned char *c, poly z) {
 }
 
 
-void decode_sig(unsigned char *c, poly z, const unsigned char *sm) {
+void PQCLEAN_QTESLAPI_CLEAN_decode_sig(unsigned char *c, poly z, const unsigned char *sm) {
     // Decode signature sm
     unsigned int i, j = 0;
     uint32_t *pt = (uint32_t *)sm;

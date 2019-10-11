@@ -4,11 +4,11 @@
 #include "poly.h"
 #include <stdint.h>
 
-void hash_H(unsigned char *c_bin, poly v, const unsigned char *hm);
-void pack_sk(unsigned char *sk, poly s, poly_k e, unsigned char *seeds);
-void encode_pk(unsigned char *pk, const poly_k t, const unsigned char *seedA);
-void decode_pk(int32_t *pk, unsigned char *seedA, const unsigned char *pk_in);
-void encode_sig(unsigned char *sm, unsigned char *c, poly z);
-void decode_sig(unsigned char *c, poly z, const unsigned char *sm);
+//void PQCLEAN_QTESLAPI_CLEAN_hash_H(unsigned char *c_bin, poly v, const unsigned char *hm);
+void PQCLEAN_QTESLAPI_CLEAN_pack_sk(unsigned char *sk, const poly s, const poly_k e, unsigned char *seeds);
+void PQCLEAN_QTESLAPI_CLEAN_encode_pk(unsigned char *pk, const poly_k t, const unsigned char *seedA);
+void PQCLEAN_QTESLAPI_CLEAN_decode_pk(int32_t *pk, unsigned char *seedA, const unsigned char *pk_in);
+void PQCLEAN_QTESLAPI_CLEAN_encode_sig(unsigned char *sm, unsigned char *c, const poly z);
+void PQCLEAN_QTESLAPI_CLEAN_decode_sig(unsigned char *c, poly z, const unsigned char *sm);
 
 #endif

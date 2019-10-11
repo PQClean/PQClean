@@ -10,7 +10,7 @@
 #include "sp800-185.h"
 #include <string.h>
 
-void sample_gauss_poly(poly z, const unsigned char *seed, uint16_t nonce) {
+void PQCLEAN_QTESLAPI_CLEAN_sample_gauss_poly(poly z, const unsigned char *seed, uint16_t nonce) {
     uint16_t dmsp = (uint16_t)(nonce << 8);
     int32_t samp[CHUNK_SIZE * CDT_COLS], c[CDT_COLS], borrow, sign;
     const int32_t mask = (int32_t)((uint32_t)(-1) >> 1);

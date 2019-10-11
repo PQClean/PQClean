@@ -5,17 +5,17 @@
 **************************************************************************************/
 
 #include "api.h"
+#include "fips202.h"
 #include "gauss.h"
 #include "pack.h"
 #include "params.h"
 #include "poly.h"
-#include "sample.h"
-#include "fips202.h"
 #include "randombytes.h"
+#include "sample.h"
 #include <stdlib.h>
 #include <string.h>
 
-void hash_H(unsigned char *c_bin, poly_k v, const unsigned char *hm) {
+static void hash_H(unsigned char *c_bin, const poly_k v, const unsigned char *hm) {
     // Hash-based function H to generate c'
     unsigned char t[PARAM_K * PARAM_N + HM_BYTES];
     int32_t mask, cL, temp;
@@ -41,7 +41,7 @@ void hash_H(unsigned char *c_bin, poly_k v, const unsigned char *hm) {
 }
 
 
-static __inline int32_t Abs(int32_t value) {
+static inline int32_t Abs(int32_t value) {
     // Compute absolute value
 
     int32_t mask = value >> (RADIX32 - 1);
@@ -49,7 +49,7 @@ static __inline int32_t Abs(int32_t value) {
 }
 
 
-static int test_rejection(poly z) {
+static int test_rejection(const poly z) {
     // Check bounds for signature vector z during signing. Returns 0 if valid, otherwise outputs 1 if invalid (rejected).
     // This function does not leak any information about the coefficient that fails the test.
     uint32_t valid = 0;
@@ -61,7 +61,7 @@ static int test_rejection(poly z) {
 }
 
 
-static int test_correctness(poly v) {
+static int test_correctness(const poly v) {
     // Check bounds for w = v - ec during signature verification. Returns 0 if valid, otherwise outputs 1 if invalid (rejected).
     // This function leaks the position of the coefficient that fails the test (but this is independent of the secret data).
     // It does not leak the sign of the coefficients.
@@ -89,7 +89,7 @@ static int test_correctness(poly v) {
 }
 
 
-static int test_z(poly z) {
+static int test_z(const poly z) {
     // Check bounds for signature vector z during signature verification
     // Returns 0 if valid, otherwise outputs 1 if invalid (rejected)
 
@@ -153,27 +153,27 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_keypair(unsigned char *pk, unsigned char 
 
     for (k = 0; k < PARAM_K; k++) {
         do {  // Sample the error polynomials
-            sample_gauss_poly(&e[k * PARAM_N], &randomness_extended[k * CRYPTO_SEEDBYTES], ++nonce);
+            PQCLEAN_QTESLAPI_CLEAN_sample_gauss_poly(&e[k * PARAM_N], &randomness_extended[k * CRYPTO_SEEDBYTES], ++nonce);
         } while (check_ES(&e[k * PARAM_N], PARAM_KEYGEN_BOUND_E) != 0);
     }
 
     do {  // Sample the secret polynomial
-        sample_gauss_poly(s, &randomness_extended[PARAM_K * CRYPTO_SEEDBYTES], ++nonce);
+        PQCLEAN_QTESLAPI_CLEAN_sample_gauss_poly(s, &randomness_extended[PARAM_K * CRYPTO_SEEDBYTES], ++nonce);
     } while (check_ES(s, PARAM_KEYGEN_BOUND_S) != 0);
 
     // Generate uniform polynomial "a"
-    poly_uniform(a, &randomness_extended[(PARAM_K + 1)*CRYPTO_SEEDBYTES]);
-    poly_ntt(s_ntt, s);
+    PQCLEAN_QTESLAPI_CLEAN_poly_uniform(a, &randomness_extended[(PARAM_K + 1)*CRYPTO_SEEDBYTES]);
+    PQCLEAN_QTESLAPI_CLEAN_poly_ntt(s_ntt, s);
 
     // Compute the public key t = as+e
     for (k = 0; k < PARAM_K; k++) {
-        poly_mul(&t[k * PARAM_N], &a[k * PARAM_N], s_ntt);
-        poly_add_correct(&t[k * PARAM_N], &t[k * PARAM_N], &e[k * PARAM_N]);
+        PQCLEAN_QTESLAPI_CLEAN_poly_mul(&t[k * PARAM_N], &a[k * PARAM_N], s_ntt);
+        PQCLEAN_QTESLAPI_CLEAN_poly_add_correct(&t[k * PARAM_N], &t[k * PARAM_N], &e[k * PARAM_N]);
     }
 
     // Pack public and private keys
-    pack_sk(sk, s, e, &randomness_extended[(PARAM_K + 1)*CRYPTO_SEEDBYTES]);
-    encode_pk(pk, t, &randomness_extended[(PARAM_K + 1)*CRYPTO_SEEDBYTES]);
+    PQCLEAN_QTESLAPI_CLEAN_pack_sk(sk, s, e, &randomness_extended[(PARAM_K + 1)*CRYPTO_SEEDBYTES]);
+    PQCLEAN_QTESLAPI_CLEAN_encode_pk(pk, t, &randomness_extended[(PARAM_K + 1)*CRYPTO_SEEDBYTES]);
 
     return 0;
 }
@@ -206,26 +206,26 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t
     SHAKE(randomness_input + CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES, HM_BYTES, m, mlen);
     SHAKE(randomness, CRYPTO_SEEDBYTES, randomness_input, CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES + HM_BYTES);
 
-    poly_uniform(a, &sk[PQCLEAN_QTESLAPI_CLEAN_CRYPTO_SECRETKEYBYTES - 2 * CRYPTO_SEEDBYTES]);
+    PQCLEAN_QTESLAPI_CLEAN_poly_uniform(a, &sk[PQCLEAN_QTESLAPI_CLEAN_CRYPTO_SECRETKEYBYTES - 2 * CRYPTO_SEEDBYTES]);
 
     while (1) {
-        sample_y(y, randomness, ++nonce);           // Sample y uniformly at random from [-B,B]
-        poly_ntt (y_ntt, y);
+        PQCLEAN_QTESLAPI_CLEAN_sample_y(y, randomness, ++nonce);           // Sample y uniformly at random from [-B,B]
+        PQCLEAN_QTESLAPI_CLEAN_poly_ntt (y_ntt, y);
         for (k = 0; k < PARAM_K; k++) {
-            poly_mul(&v[k * PARAM_N], &a[k * PARAM_N], y_ntt);
+            PQCLEAN_QTESLAPI_CLEAN_poly_mul(&v[k * PARAM_N], &a[k * PARAM_N], y_ntt);
         }
         hash_H(c, v, randomness_input + CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES);
-        encode_c(pos_list, sign_list, c);           // Generate c = Enc(c'), where c' is the hashing of v together with m
-        sparse_mul8(Sc, sk, pos_list, sign_list);
-        poly_add(z, y, Sc);                         // Compute z = y + sc
+        PQCLEAN_QTESLAPI_CLEAN_encode_c(pos_list, sign_list, c);           // Generate c = Enc(c'), where c' is the hashing of v together with m
+        PQCLEAN_QTESLAPI_CLEAN_sparse_mul8(Sc, sk, pos_list, sign_list);
+        PQCLEAN_QTESLAPI_CLEAN_poly_add(z, y, Sc);                         // Compute z = y + sc
 
         if (test_rejection(z) != 0) {               // Rejection sampling
             continue;
         }
 
         for (k = 0; k < PARAM_K; k++) {
-            sparse_mul8(&Ec[k * PARAM_N], sk + (sizeof(int8_t)*PARAM_N * (k + 1)), pos_list, sign_list);
-            poly_sub(&v[k * PARAM_N], &v[k * PARAM_N], &Ec[k * PARAM_N]);
+            PQCLEAN_QTESLAPI_CLEAN_sparse_mul8(&Ec[k * PARAM_N], sk + (sizeof(int8_t)*PARAM_N * (k + 1)), pos_list, sign_list);
+            PQCLEAN_QTESLAPI_CLEAN_poly_sub(&v[k * PARAM_N], &v[k * PARAM_N], &Ec[k * PARAM_N]);
             rsp = test_correctness(&v[k * PARAM_N]);
             if (rsp != 0) {
                 break;
@@ -240,7 +240,7 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t
             sm[PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES + i] = m[i];
         }
         *smlen = PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES + mlen;
-        encode_sig(sm, c, z);
+        PQCLEAN_QTESLAPI_CLEAN_encode_sig(sm, c, z);
 
         return 0;
     }
@@ -273,25 +273,25 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_open(uint8_t *m, size_t *mlen, const uint
         return -1;
     }
 
-    decode_sig(c, z, sm);
+    PQCLEAN_QTESLAPI_CLEAN_decode_sig(c, z, sm);
     if (test_z(z) != 0) {
         return -2;    // Check norm of z
     }
-    decode_pk(pk_t, seed, pk);
-    poly_uniform(a, seed);
-    encode_c(pos_list, sign_list, c);
-    poly_ntt(z_ntt, z);
+    PQCLEAN_QTESLAPI_CLEAN_decode_pk(pk_t, seed, pk);
+    PQCLEAN_QTESLAPI_CLEAN_poly_uniform(a, seed);
+    PQCLEAN_QTESLAPI_CLEAN_encode_c(pos_list, sign_list, c);
+    PQCLEAN_QTESLAPI_CLEAN_poly_ntt(z_ntt, z);
 
     for (k = 0; k < PARAM_K; k++) {  // Compute w = az - tc
-        sparse_mul32(&Tc[k * PARAM_N], &pk_t[k * PARAM_N], pos_list, sign_list);
-        poly_mul(&w[k * PARAM_N], &a[k * PARAM_N], z_ntt);
-        poly_sub(&w[k * PARAM_N], &w[k * PARAM_N], &Tc[k * PARAM_N]);
+        PQCLEAN_QTESLAPI_CLEAN_sparse_mul32(&Tc[k * PARAM_N], &pk_t[k * PARAM_N], pos_list, sign_list);
+        PQCLEAN_QTESLAPI_CLEAN_poly_mul(&w[k * PARAM_N], &a[k * PARAM_N], z_ntt);
+        PQCLEAN_QTESLAPI_CLEAN_poly_sub(&w[k * PARAM_N], &w[k * PARAM_N], &Tc[k * PARAM_N]);
     }
     SHAKE(hm, HM_BYTES, sm + PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES, smlen - PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES);
     hash_H(c_sig, w, hm);
 
     // Check if the calculated c matches c from the signature
-    if (memcmp(c, c_sig, CRYPTO_C_BYTES)) {
+    if (memcmp(c, c_sig, CRYPTO_C_BYTES) != 0) {
         return -3;
     }
 
@@ -321,26 +321,26 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_signature(
     SHAKE(randomness_input + CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES, HM_BYTES, m, mlen);
     SHAKE(randomness, CRYPTO_SEEDBYTES, randomness_input, CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES + HM_BYTES);
 
-    poly_uniform(a, &sk[PQCLEAN_QTESLAPI_CLEAN_CRYPTO_SECRETKEYBYTES - 2 * CRYPTO_SEEDBYTES]);
+    PQCLEAN_QTESLAPI_CLEAN_poly_uniform(a, &sk[PQCLEAN_QTESLAPI_CLEAN_CRYPTO_SECRETKEYBYTES - 2 * CRYPTO_SEEDBYTES]);
 
     while (1) {
-        sample_y(y, randomness, ++nonce);           // Sample y uniformly at random from [-B,B]
-        poly_ntt (y_ntt, y);
+        PQCLEAN_QTESLAPI_CLEAN_sample_y(y, randomness, ++nonce);           // Sample y uniformly at random from [-B,B]
+        PQCLEAN_QTESLAPI_CLEAN_poly_ntt (y_ntt, y);
         for (k = 0; k < PARAM_K; k++) {
-            poly_mul(&v[k * PARAM_N], &a[k * PARAM_N], y_ntt);
+            PQCLEAN_QTESLAPI_CLEAN_poly_mul(&v[k * PARAM_N], &a[k * PARAM_N], y_ntt);
         }
         hash_H(c, v, randomness_input + CRYPTO_RANDOMBYTES + CRYPTO_SEEDBYTES);
-        encode_c(pos_list, sign_list, c);           // Generate c = Enc(c'), where c' is the hashing of v together with m
-        sparse_mul8(Sc, sk, pos_list, sign_list);
-        poly_add(z, y, Sc);                         // Compute z = y + sc
+        PQCLEAN_QTESLAPI_CLEAN_encode_c(pos_list, sign_list, c);           // Generate c = Enc(c'), where c' is the hashing of v together with m
+        PQCLEAN_QTESLAPI_CLEAN_sparse_mul8(Sc, sk, pos_list, sign_list);
+        PQCLEAN_QTESLAPI_CLEAN_poly_add(z, y, Sc);                         // Compute z = y + sc
 
         if (test_rejection(z) != 0) {               // Rejection sampling
             continue;
         }
 
         for (k = 0; k < PARAM_K; k++) {
-            sparse_mul8(&Ec[k * PARAM_N], sk + (sizeof(int8_t)*PARAM_N * (k + 1)), pos_list, sign_list);
-            poly_sub(&v[k * PARAM_N], &v[k * PARAM_N], &Ec[k * PARAM_N]);
+            PQCLEAN_QTESLAPI_CLEAN_sparse_mul8(&Ec[k * PARAM_N], sk + (sizeof(int8_t)*PARAM_N * (k + 1)), pos_list, sign_list);
+            PQCLEAN_QTESLAPI_CLEAN_poly_sub(&v[k * PARAM_N], &v[k * PARAM_N], &Ec[k * PARAM_N]);
             rsp = test_correctness(&v[k * PARAM_N]);
             if (rsp != 0) {
                 break;
@@ -352,7 +352,7 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_signature(
 
         // pack signature
         *siglen = PQCLEAN_QTESLAPI_CLEAN_CRYPTO_BYTES;
-        encode_sig(sig, c, z);
+        PQCLEAN_QTESLAPI_CLEAN_encode_sig(sig, c, z);
 
         return 0;
     }
@@ -374,25 +374,25 @@ int PQCLEAN_QTESLAPI_CLEAN_crypto_sign_verify(
         return -1;
     }
 
-    decode_sig(c, z, sig);
+    PQCLEAN_QTESLAPI_CLEAN_decode_sig(c, z, sig);
     if (test_z(z) != 0) {
         return -2;    // Check norm of z
     }
-    decode_pk(pk_t, seed, pk);
-    poly_uniform(a, seed);
-    encode_c(pos_list, sign_list, c);
-    poly_ntt(z_ntt, z);
+    PQCLEAN_QTESLAPI_CLEAN_decode_pk(pk_t, seed, pk);
+    PQCLEAN_QTESLAPI_CLEAN_poly_uniform(a, seed);
+    PQCLEAN_QTESLAPI_CLEAN_encode_c(pos_list, sign_list, c);
+    PQCLEAN_QTESLAPI_CLEAN_poly_ntt(z_ntt, z);
 
     for (k = 0; k < PARAM_K; k++) {  // Compute w = az - tc
-        sparse_mul32(&Tc[k * PARAM_N], &pk_t[k * PARAM_N], pos_list, sign_list);
-        poly_mul(&w[k * PARAM_N], &a[k * PARAM_N], z_ntt);
-        poly_sub(&w[k * PARAM_N], &w[k * PARAM_N], &Tc[k * PARAM_N]);
+        PQCLEAN_QTESLAPI_CLEAN_sparse_mul32(&Tc[k * PARAM_N], &pk_t[k * PARAM_N], pos_list, sign_list);
+        PQCLEAN_QTESLAPI_CLEAN_poly_mul(&w[k * PARAM_N], &a[k * PARAM_N], z_ntt);
+        PQCLEAN_QTESLAPI_CLEAN_poly_sub(&w[k * PARAM_N], &w[k * PARAM_N], &Tc[k * PARAM_N]);
     }
     SHAKE(hm, HM_BYTES, m, mlen);
     hash_H(c_sig, w, hm);
 
     // Check if the calculated c matches c from the signature
-    if (memcmp(c, c_sig, CRYPTO_C_BYTES)) {
+    if (memcmp(c, c_sig, CRYPTO_C_BYTES) != 0) {
         return -3;
     }
 
