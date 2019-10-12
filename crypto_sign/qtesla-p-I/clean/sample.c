@@ -49,14 +49,14 @@ void PQCLEAN_QTESLAPI_CLEAN_encode_c(uint32_t *pos_list, int16_t *sign_list, uin
     // Encoding of c' by mapping the output of the hash function H to an N-element vector with entries {-1,0,1}
     size_t i, pos, cnt = 0;
     int16_t c[PARAM_N];
-    uint8_t r[SHAKE_RATE];
+    uint8_t r[SHAKE128_RATE];
     uint16_t dmsp = 0;
     uint8_t dmsp_bytes[2];
 
     // Use the hash value as key to generate some randomness
     dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
     dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
-    cSHAKE(r, SHAKE_RATE, (uint8_t *)NULL, 0, dmsp_bytes, 2, c_bin, CRYPTO_RANDOMBYTES);
+    cshake128(r, SHAKE128_RATE, (uint8_t *)NULL, 0, dmsp_bytes, 2, c_bin, CRYPTO_RANDOMBYTES);
     ++dmsp;
 
     // Use rejection sampling to determine positions to be set in the new vector
@@ -65,10 +65,10 @@ void PQCLEAN_QTESLAPI_CLEAN_encode_c(uint32_t *pos_list, int16_t *sign_list, uin
     }
 
     for (i = 0; i < PARAM_H;) { // Sample a unique position k times. Use two bytes
-        if (cnt > (SHAKE_RATE - 3)) {
+        if (cnt > (SHAKE128_RATE - 3)) {
             dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
             dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
-            cSHAKE(r, SHAKE_RATE, (uint8_t *)NULL, 0, dmsp_bytes, 2, c_bin, CRYPTO_RANDOMBYTES);
+            cshake128(r, SHAKE128_RATE, (uint8_t *)NULL, 0, dmsp_bytes, 2, c_bin, CRYPTO_RANDOMBYTES);
             ++dmsp;
             cnt = 0;
         }

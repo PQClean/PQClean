@@ -197,20 +197,20 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_uniform(poly_k a, const unsigned char *seed) {
     size_t pos = 0, i = 0, nbytes = (PARAM_Q_LOG + 7) / 8;
     size_t nblocks = PARAM_GEN_A;
     uint32_t val1, val2, val3, val4, mask = (uint32_t)(1 << PARAM_Q_LOG) - 1;
-    uint8_t buf[SHAKE_RATE * PARAM_GEN_A];
+    uint8_t buf[SHAKE128_RATE * PARAM_GEN_A];
     uint16_t dmsp = 0;
     uint8_t dmsp_bytes[2];
     dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
     dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
-    cSHAKE(buf, SHAKE_RATE * PARAM_GEN_A, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
+    cshake128(buf, SHAKE128_RATE * PARAM_GEN_A, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
     ++dmsp;
 
     while (i < PARAM_K * PARAM_N) {
-        if (pos > SHAKE_RATE * nblocks - 4 * nbytes) {
+        if (pos > SHAKE128_RATE * nblocks - 4 * nbytes) {
             nblocks = 1;
             dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
             dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
-            cSHAKE(buf, SHAKE_RATE * nblocks, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
+            cshake128(buf, SHAKE128_RATE * nblocks, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
             ++dmsp;
             pos = 0;
         }
