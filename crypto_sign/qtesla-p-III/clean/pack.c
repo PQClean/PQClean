@@ -30,110 +30,79 @@ void PQCLEAN_QTESLAPIII_CLEAN_pack_sk(uint8_t *sk, const poly s, const poly_k e,
 
 void PQCLEAN_QTESLAPIII_CLEAN_encode_pk(uint8_t *pk, const poly_k t, const uint8_t *seedA) {
     // Encode public key pk
-    size_t i, j = 0;
-    uint32_t *pt = (uint32_t *)pk;
+    size_t i, j;
 
-    for (i = 0; i < (PARAM_N * PARAM_K * PARAM_Q_LOG / 32); i += 15) {
-        pt[i + 0] = (uint32_t)( t[j + 0]        | (t[j + 1] << 30));
-        pt[i + 1] = (uint32_t)((t[j + 1] >>  2) | (t[j + 2] << 28));
-        pt[i + 2] = (uint32_t)((t[j + 2] >>  4) | (t[j + 3] << 26));
-        pt[i + 3] = (uint32_t)((t[j + 3] >>  6) | (t[j + 4] << 24));
-        pt[i + 4] = (uint32_t)((t[j + 4] >>  8) | (t[j + 5] << 22));
-        pt[i + 5] = (uint32_t)((t[j + 5] >> 10) | (t[j + 6] << 20));
-        pt[i + 6] = (uint32_t)((t[j + 6] >> 12) | (t[j + 7] << 18));
-        pt[i + 7] = (uint32_t)((t[j + 7] >> 14) | (t[j + 8] << 16));
-        pt[i + 8] = (uint32_t)((t[j + 8] >> 16) | (t[j + 9] << 14));
-        pt[i + 9] = (uint32_t)((t[j + 9] >> 18) | (t[j + 10] << 12));
-        pt[i + 10] = (uint32_t)((t[j + 10] >> 20) | (t[j + 11] << 10));
-        pt[i + 11] = (uint32_t)((t[j + 11] >> 22) | (t[j + 12] <<  8));
-        pt[i + 12] = (uint32_t)((t[j + 12] >> 24) | (t[j + 13] <<  6));
-        pt[i + 13] = (uint32_t)((t[j + 13] >> 26) | (t[j + 14] <<  4));
-        pt[i + 14] = (uint32_t)((t[j + 14] >> 28) | (t[j + 15] <<  2));
-        j += 16;
+    for (i = 0, j = 0; i < PARAM_N * PARAM_K; i += 4, j += 15) {
+        pk[j   ] = (uint8_t)( t[i  ]     );
+        pk[j + 1] = (uint8_t)( t[i  ] >> 8 );
+        pk[j + 2] = (uint8_t)( t[i  ] >> 16 );
+        pk[j + 3] = (uint8_t)((t[i  ] >> 24) | (t[i + 1] << 6));
+        pk[j + 4] = (uint8_t)( t[i + 1] >> 2 );
+        pk[j + 5] = (uint8_t)( t[i + 1] >> 10 );
+        pk[j + 6] = (uint8_t)( t[i + 1] >> 18 );
+        pk[j + 7] = (uint8_t)((t[i + 1] >> 26) | (t[i + 2] << 4));
+        pk[j + 8] = (uint8_t)( t[i + 2] >> 4 );
+        pk[j + 9] = (uint8_t)( t[i + 2] >> 12 );
+        pk[j + 10] = (uint8_t)( t[i + 2] >> 20 );
+        pk[j + 11] = (uint8_t)((t[i + 2] >> 28) | (t[i + 3] << 2));
+        pk[j + 12] = (uint8_t)( t[i + 3] >> 6 );
+        pk[j + 13] = (uint8_t)( t[i + 3] >> 14 );
+        pk[j + 14] = (uint8_t)( t[i + 3] >> 22 );
     }
-    memcpy(&pk[PARAM_N * PARAM_K * PARAM_Q_LOG / 8], seedA, CRYPTO_SEEDBYTES);
+
+    memcpy(&pk[j], seedA, CRYPTO_SEEDBYTES);
 }
 
-
-#define maskq ((1<<PARAM_Q_LOG)-1)
 
 void PQCLEAN_QTESLAPIII_CLEAN_decode_pk(int32_t *pk, uint8_t *seedA, const uint8_t *pk_in) {
     // Decode public key pk
-    size_t i, j = 0;
-    uint32_t *pt = (uint32_t *)pk_in, *t = (uint32_t *)pk;
+    size_t i, j;
+    int32_t mask30 = (1 << PARAM_Q_LOG) - 1;
+    const uint8_t *a = pk_in;
 
-    for (i = 0; i < PARAM_N * PARAM_K; i += 16) {
-        t[i + 0] = ( pt[j + 0]       ) & maskq;
-        t[i + 1] = ((pt[j + 0] >> 30) | (pt[j + 1] <<  2)) & maskq;
-        t[i + 2] = ((pt[j + 1] >> 28) | (pt[j + 2] <<  4)) & maskq;
-        t[i + 3] = ((pt[j + 2] >> 26) | (pt[j + 3] <<  6)) & maskq;
-        t[i + 4] = ((pt[j + 3] >> 24) | (pt[j + 4] <<  8)) & maskq;
-        t[i + 5] = ((pt[j + 4] >> 22) | (pt[j + 5] << 10)) & maskq;
-        t[i + 6] = ((pt[j + 5] >> 20) | (pt[j + 6] << 12)) & maskq;
-        t[i + 7] = ((pt[j + 6] >> 18) | (pt[j + 7] << 14)) & maskq;
-        t[i + 8] = ((pt[j + 7] >> 16) | (pt[j + 8] << 16)) & maskq;
-        t[i + 9] = ((pt[j + 8] >> 14) | (pt[j + 9] << 18)) & maskq;
-        t[i + 10] = ((pt[j + 9] >> 12) | (pt[j + 10] << 20)) & maskq;
-        t[i + 11] = ((pt[j + 10] >> 10) | (pt[j + 11] << 22)) & maskq;
-        t[i + 12] = ((pt[j + 11] >>  8) | (pt[j + 12] << 24)) & maskq;
-        t[i + 13] = ((pt[j + 12] >>  6) | (pt[j + 13] << 26)) & maskq;
-        t[i + 14] = ((pt[j + 13] >>  4) | (pt[j + 14] << 28)) & maskq;
-        t[i + 15] = ((pt[j + 14] >>  2)) & maskq;
-        j += 15;
+    for (i = 0, j = 0; i < PARAM_N * PARAM_K; i += 4, j += 15) {
+        pk[i  ] = (int32_t)(( a[j   ]     | (a[j + 1] << 8) | (a[j + 2] << 16) | (a[j + 3] << 24)                ) & mask30);
+        pk[i + 1] = (int32_t)(((a[j + 3] >> 6) | (a[j + 4] << 2) | (a[j + 5] << 10) | (a[j + 6] << 18) | (a[j + 7] << 26)) & mask30);
+        pk[i + 2] = (int32_t)(((a[j + 7] >> 4) | (a[j + 8] << 4) | (a[j + 9] << 12) | (a[j + 10] << 20) | (a[j + 11] << 28)) & mask30);
+        pk[i + 3] = (int32_t)( (a[j + 11] >> 2) | (a[j + 12] << 6) | (a[j + 13] << 14) | (a[j + 14] << 22)                          );
     }
-    memcpy(seedA, &pk_in[PARAM_N * PARAM_K * PARAM_Q_LOG / 8], CRYPTO_SEEDBYTES);
+
+    memcpy(seedA, &pk_in[j], CRYPTO_SEEDBYTES);
 }
 
 
-#define maskb1 ((1<<(PARAM_B_BITS+1))-1)
-
 void PQCLEAN_QTESLAPIII_CLEAN_encode_sig(uint8_t *sm, uint8_t *c, const poly z) {
     // Encode signature sm
-    size_t i, j = 0;
-    const uint64_t *t = (const uint64_t *)z;
-    uint32_t *pt = (uint32_t *)sm;
+    size_t i, j;
 
-    for (i = 0; i < (PARAM_N * (PARAM_B_BITS + 1) / 32); i += 11) {
-        pt[i + 0] = (uint32_t)( (t[j + 0]        & ((1 << 22) - 1)) |  (t[j + 1] << 22));
-        pt[i + 1] = (uint32_t)(((t[j + 1] >> 10) & ((1 << 12) - 1)) |  (t[j + 2] << 12));
-        pt[i + 2] = (uint32_t)(((t[j + 2] >> 20) & ((1 << 2) - 1)) | ((t[j + 3] & maskb1) <<  2) |  (t[j + 4] << 24));
-        pt[i + 3] = (uint32_t)(((t[j + 4] >>  8) & ((1 << 14) - 1)) |  (t[j + 5] << 14));
-        pt[i + 4] = (uint32_t)(((t[j + 5] >> 18) & ((1 << 4) - 1)) | ((t[j + 6] & maskb1) <<  4) |  (t[j + 7] << 26));
-        pt[i + 5] = (uint32_t)(((t[j + 7] >>  6) & ((1 << 16) - 1)) |  (t[j + 8] << 16));
-        pt[i + 6] = (uint32_t)(((t[j + 8] >> 16) & ((1 << 6) - 1)) | ((t[j + 9] & maskb1) <<  6) |  (t[j + 10] << 28));
-        pt[i + 7] = (uint32_t)(((t[j + 10] >>  4) & ((1 << 18) - 1)) |  (t[j + 11] << 18));
-        pt[i + 8] = (uint32_t)(((t[j + 11] >> 14) & ((1 << 8) - 1)) | ((t[j + 12] & maskb1) <<  8) |  (t[j + 13] << 30));
-        pt[i + 9] = (uint32_t)(((t[j + 13] >>  2) & ((1 << 20) - 1)) |  (t[j + 14] << 20));
-        pt[i + 10] = (uint32_t)(((t[j + 14] >> 12) & ((1 << 10) - 1)) |  (t[j + 15] << 10));
-        j += 16;
+    for (i = 0, j = 0; i < PARAM_N; i += 4, j += 11) {
+        sm[j   ] = (uint8_t)(  z[i  ]    );
+        sm[j + 1] = (uint8_t)(  z[i  ] >> 8);
+        sm[j + 2] = (uint8_t)(((z[i  ] >> 16) & 0x3F) | (z[i + 1] << 6));
+        sm[j + 3] = (uint8_t)(  z[i + 1] >> 2);
+        sm[j + 4] = (uint8_t)(  z[i + 1] >> 10);
+        sm[j + 5] = (uint8_t)(((z[i + 1] >> 18) & 0x0F) | (z[i + 2] << 4));
+        sm[j + 6] = (uint8_t)(  z[i + 2] >> 4);
+        sm[j + 7] = (uint8_t)(  z[i + 2] >> 12);
+        sm[j + 8] = (uint8_t)(((z[i + 2] >> 20) & 0x03) | (z[i + 3] << 2));
+        sm[j + 9] = (uint8_t)(  z[i + 3] >> 6);
+        sm[j + 10] = (uint8_t)(  z[i + 3] >> 14);
     }
-    memcpy(&sm[PARAM_N * (PARAM_B_BITS + 1) / 8], c, CRYPTO_C_BYTES);
+
+    memcpy(&sm[j], c, CRYPTO_C_BYTES);
 }
 
 
 void PQCLEAN_QTESLAPIII_CLEAN_decode_sig(uint8_t *c, poly z, const uint8_t *sm) {
     // Decode signature sm
-    size_t i, j = 0;
-    uint32_t *pt = (uint32_t *)sm;
+    size_t i, j;
 
-    for (i = 0; i < PARAM_N; i += 16) {
-        z[i + 0] = ((int32_t) pt[j + 0] << 10) >> 10;
-        z[i + 1] =  (int32_t)(pt[j + 0] >> 22) | ((int32_t)(pt[j + 1] << 20) >> 10);
-        z[i + 2] =  (int32_t)(pt[j + 1] >> 12) | ((int32_t)(pt[j + 2] << 30) >> 10);
-        z[i + 3] = ((int32_t) pt[j + 2] <<  8) >> 10;
-        z[i + 4] =  (int32_t)(pt[j + 2] >> 24) | ((int32_t)(pt[j + 3] << 18) >> 10);
-        z[i + 5] =  (int32_t)(pt[j + 3] >> 14) | ((int32_t)(pt[j + 4] << 28) >> 10);
-        z[i + 6] = ((int32_t) pt[j + 4] <<  6) >> 10;
-        z[i + 7] =  (int32_t)(pt[j + 4] >> 26) | ((int32_t)(pt[j + 5] << 16) >> 10);
-        z[i + 8] =  (int32_t)(pt[j + 5] >> 16) | ((int32_t)(pt[j + 6] << 26) >> 10);
-        z[i + 9] = ((int32_t) pt[j + 6] <<  4) >> 10;
-        z[i + 10] =  (int32_t)(pt[j + 6] >> 28) | ((int32_t)(pt[j + 7] << 14) >> 10);
-        z[i + 11] =  (int32_t)(pt[j + 7] >> 18) | ((int32_t)(pt[j + 8] << 24) >> 10);
-        z[i + 12] = ((int32_t) pt[j + 8] <<  2) >> 10;
-        z[i + 13] =  (int32_t)(pt[j + 8] >> 30) | ((int32_t)(pt[j + 9] << 12) >> 10);
-        z[i + 14] =  (int32_t)(pt[j + 9] >> 20) | ((int32_t)(pt[j + 10] << 22) >> 10);
-        z[i + 15] =  (int32_t) pt[j + 10] >> 10;
-        j += 11;
+    for (i = 0, j = 0; i < PARAM_N; i += 4, j += 11) {
+        z[i  ] =  sm[j  ]     | (sm[j + 1] << 8) |                 (((int64_t)sm[j + 2] << 58) >> 42);
+        z[i + 1] = (sm[j + 2] >> 6) | (sm[j + 3] << 2) | (sm[j + 4] << 10) | (((int64_t)sm[j + 5] << 60) >> 42);
+        z[i + 2] = (sm[j + 5] >> 4) | (sm[j + 6] << 4) | (sm[j + 7] << 12) | (((int64_t)sm[j + 8] << 62) >> 42);
+        z[i + 3] = (sm[j + 8] >> 2) | (sm[j + 9] << 6) |                 (((int64_t)sm[j + 10] << 56) >> 42);
     }
-    memcpy(c, &sm[PARAM_N * (PARAM_B_BITS + 1) / 8], CRYPTO_C_BYTES);
+
+    memcpy(c, &sm[j], CRYPTO_C_BYTES);
 }

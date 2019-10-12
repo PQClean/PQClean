@@ -17,30 +17,29 @@ void PQCLEAN_QTESLAPIII_CLEAN_sample_y(poly y, const uint8_t *seed, uint16_t non
     // Sample polynomial y, such that each coefficient is in the range [-B,B]
     size_t i = 0, pos = 0, nblocks = PARAM_N;
     uint8_t buf[PARAM_N * BPLUS1BYTES + 1];
-    size_t nbytes = BPLUS1BYTES;
     uint16_t dmsp = (uint16_t)(nonce << 8);
     uint8_t dmsp_bytes[2];
 
     dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
     dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
-    cSHAKE((uint8_t *)buf, PARAM_N * nbytes, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
+    cSHAKE(buf, PARAM_N * BPLUS1BYTES, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
     ++dmsp;
 
     while (i < PARAM_N) {
-        if (pos >= nblocks * nbytes) {
+        if (pos >= nblocks * BPLUS1BYTES) {
             nblocks = NBLOCKS_SHAKE;
             dmsp_bytes[0] = (uint8_t)(dmsp & 0xff);
             dmsp_bytes[1] = (uint8_t)(dmsp >> 8);
-            cSHAKE((uint8_t *)buf, SHAKE_RATE, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
+            cSHAKE(buf, SHAKE_RATE, (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
             ++dmsp;
             pos = 0;
         }
-        y[i]  = (*(uint32_t *)(buf + pos)) & ((1 << (PARAM_B_BITS + 1)) - 1);
+        y[i] = (uint32_t)((buf[pos] | (buf[pos + 1] << 8) | (buf[pos + 2] << 16)) & ((1 << (PARAM_B_BITS + 1)) - 1));
         y[i] -= PARAM_B;
         if (y[i] != (1 << PARAM_B_BITS)) {
             i++;
         }
-        pos += nbytes;
+        pos += BPLUS1BYTES;
     }
 }
 

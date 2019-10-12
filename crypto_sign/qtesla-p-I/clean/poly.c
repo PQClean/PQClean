@@ -192,7 +192,7 @@ void PQCLEAN_QTESLAPI_CLEAN_sparse_mul32(poly prod, const int32_t *pk, const uin
     }
 }
 
-void PQCLEAN_QTESLAPI_CLEAN_poly_uniform(poly_k a, const unsigned char *seed) {
+void PQCLEAN_QTESLAPI_CLEAN_poly_uniform(poly_k a, const uint8_t *seed) {
     // Generation of polynomials "a_i"
     size_t pos = 0, i = 0, nbytes = (PARAM_Q_LOG + 7) / 8;
     size_t nblocks = PARAM_GEN_A;
@@ -214,13 +214,29 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_uniform(poly_k a, const unsigned char *seed) {
             ++dmsp;
             pos = 0;
         }
-        val1  = (*(uint32_t *)(buf + pos)) & mask;
+        val1 = ((uint32_t)(buf[pos])
+                |  (uint32_t)(buf[pos + 1] << 8)
+                |  (uint32_t)(buf[pos + 2] << 16)
+                |  (uint32_t)(buf[pos + 3] << 24))
+               & mask;
         pos += nbytes;
-        val2  = (*(uint32_t *)(buf + pos)) & mask;
+        val2 = ((uint32_t)(buf[pos])
+                |  (uint32_t)(buf[pos + 1] << 8)
+                |  (uint32_t)(buf[pos + 2] << 16)
+                |  (uint32_t)(buf[pos + 3] << 24))
+               & mask;
         pos += nbytes;
-        val3  = (*(uint32_t *)(buf + pos)) & mask;
+        val3 = ((uint32_t)(buf[pos])
+                |  (uint32_t)(buf[pos + 1] << 8)
+                |  (uint32_t)(buf[pos + 2] << 16)
+                |  (uint32_t)(buf[pos + 3] << 24))
+               & mask;
         pos += nbytes;
-        val4  = (*(uint32_t *)(buf + pos)) & mask;
+        val4 = ((uint32_t)(buf[pos])
+                |  (uint32_t)(buf[pos + 1] << 8)
+                |  (uint32_t)(buf[pos + 2] << 16)
+                |  (uint32_t)(buf[pos + 3] << 24))
+               & mask;
         pos += nbytes;
         if (val1 < PARAM_Q && i < PARAM_K * PARAM_N) {
             a[i++] = reduce((int64_t)val1 * PARAM_R2_INVN);
