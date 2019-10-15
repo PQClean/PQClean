@@ -538,7 +538,7 @@ fpr_expm_p63(fpr x, fpr ccs) {
     };
 
     uint64_t z, y;
-    unsigned u;
+    size_t u;
     uint32_t z0, z1, y0, y1;
     uint64_t a, b;
 
