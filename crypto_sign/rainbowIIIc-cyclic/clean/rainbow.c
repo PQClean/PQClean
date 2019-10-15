@@ -15,8 +15,6 @@
 #include <string.h>
 
 #define MAX_ATTEMPT_FRMAT 128
-#define _MAX_O ((_O1 > _O2) ? _O1 : _O2)
-#define _MAX_O_BYTE ((_O1_BYTE > _O2_BYTE) ? _O1_BYTE : _O2_BYTE)
 
 int PQCLEAN_RAINBOWIIICCYCLIC_CLEAN_rainbow_sign(uint8_t *signature, const sk_t *sk, const uint8_t *_digest) {
     uint8_t mat_l1[_O1 * _O1_BYTE];
