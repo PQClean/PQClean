@@ -91,5 +91,5 @@ void PQCLEAN_KYBER102490S_CLEAN_aes256xof_absorb(aes256xof_ctx *s, const uint8_t
 **************************************************/
 void PQCLEAN_KYBER102490S_CLEAN_aes256xof_squeezeblocks(uint8_t *out, size_t nblocks, aes256xof_ctx *s) {
     aes256_ctr_xof(out, nblocks * 64, s->iv, s->ctr, &s->sk_exp);
-    s->ctr += 4 * nblocks;
+    s->ctr += (uint32_t) (4 * nblocks);
 }
