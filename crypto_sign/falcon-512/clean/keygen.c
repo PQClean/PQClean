@@ -2275,8 +2275,8 @@ mkgauss(RNG_CONTEXT *rng, unsigned logn) {
         v = 0;
         r = get_rng_u64(rng);
         r &= ~((uint64_t)1 << 63);
-        for (k = 1; k < (sizeof gauss_1024_12289)
-                / (sizeof gauss_1024_12289[0]); k ++) {
+        for (k = 1; k < (uint32_t)((sizeof gauss_1024_12289)
+                                   / (sizeof gauss_1024_12289[0])); k ++) {
             uint32_t t;
 
             t = (uint32_t)((r - gauss_1024_12289[k]) >> 63) ^ 1;
