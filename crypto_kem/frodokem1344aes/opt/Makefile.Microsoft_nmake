@@ -4,7 +4,7 @@
 LIBRARY=libfrodokem1344aes_opt.lib
 OBJECTS=kem.obj matrix_aes.obj noise.obj util.obj
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 

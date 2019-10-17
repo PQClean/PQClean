@@ -4,7 +4,7 @@
 LIBRARY=libsphincs-sha256-192f-simple_clean.lib
 OBJECTS=address.obj wots.obj utils.obj fors.obj sign.obj hash_sha256.obj thash_sha256_simple.obj sha256.obj
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 

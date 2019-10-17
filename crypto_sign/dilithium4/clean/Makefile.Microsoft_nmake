@@ -3,7 +3,7 @@
 
 LIBRARY=libdilithium4_clean.lib
 OBJECTS=sign.obj polyvec.obj poly.obj packing.obj ntt.obj reduce.obj rounding.obj symmetric.obj
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 

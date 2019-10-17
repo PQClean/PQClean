@@ -4,7 +4,7 @@
 LIBRARY=libnewhope1024cpa_clean.lib
 OBJECTS=cpapke.obj kem.obj ntt.obj poly.obj precomp.obj reduce.obj verify.obj
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 

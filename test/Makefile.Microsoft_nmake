@@ -18,7 +18,7 @@ COMMON_OBJECTS_NOPATH=aes.obj fips202.obj sha2.obj sp800-185.obj
 
 DEST_DIR=..\bin
 
-CFLAGS=/nologo /I $(COMMON_DIR) /W4 /WX
+CFLAGS=/nologo /O2 /I $(COMMON_DIR) /W4 /WX
 
 all: $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).EXE $(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).EXE
 

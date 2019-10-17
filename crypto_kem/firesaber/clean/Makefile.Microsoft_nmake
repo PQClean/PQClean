@@ -4,7 +4,7 @@
 LIBRARY=libfiresaber_clean.lib
 OBJECTS=cbd.obj kem.obj pack_unpack.obj poly.obj poly_mul.obj SABER_indcpa.obj verify.obj 
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 
