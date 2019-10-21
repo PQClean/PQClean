@@ -25,7 +25,7 @@ version: 2.1
           cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto"
         no_output_timeout: 2h
     - store_test_results:
-        path: test-results
+        path: test/test-results
 
 .native_job: &nativejob
   docker:
