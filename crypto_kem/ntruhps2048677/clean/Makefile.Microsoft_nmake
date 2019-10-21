@@ -4,7 +4,7 @@
 LIBRARY=libntruhps2048677_clean.lib
 OBJECTS=crypto_sort.obj kem.obj owcpa.obj pack3.obj packq.obj poly.obj sample.obj verify.obj
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 

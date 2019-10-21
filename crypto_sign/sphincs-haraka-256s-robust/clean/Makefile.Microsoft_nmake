@@ -4,7 +4,7 @@
 LIBRARY=libsphincs-haraka-256s-robust_clean.lib
 OBJECTS=address.obj wots.obj utils.obj fors.obj sign.obj hash_haraka.obj thash_haraka_robust.obj haraka.obj
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 

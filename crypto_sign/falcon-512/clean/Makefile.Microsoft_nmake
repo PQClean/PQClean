@@ -8,7 +8,7 @@ OBJECTS=codec.obj common.obj fft.obj fpr.obj keygen.obj pqclean.obj rng.obj sign
 # unsigned type; this has nonetheless been standard and portable for as
 # long as there has been a C standard, and we do that a lot, especially
 # for constant-time computations. Thus, we disable that spurious warning.
-CFLAGS=/nologo /I ..\..\..\common /W4 /wd4146 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /wd4146 /WX
 
 all: $(LIBRARY)
 
