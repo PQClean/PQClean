@@ -1,0 +1,25 @@
+name: qTESLA-p-I
+type: signature
+claimed-nist-level: 1
+length-public-key: 14880
+length-secret-key: 5184
+length-signature: 2592
+nistkat-sha256: e6bc42e0281cd95865e9707181a381b81f84c85957cd8e46a7889179769707dd
+testvectors-sha256: b2ebe8cc08c43a46648b3801236aeb6691e0bf2e683e77c3820dd22ee7fd9574
+principal-submitters:
+  - Nina Bindel
+auxiliary-submitters:
+  - Sedat Akleylek
+  - Erdem Alkim
+  - Paulo S. L. M. Barreto
+  - Johannes Buchmann
+  - Edward Eaton
+  - Gus Gutoski
+  - Juliane Krämer
+  - Patrick Longa
+  - Harun Polat
+  - Jefferson E. Ricardini
+  - Gustavo Zanon
+implementations:
+  - name: clean
+    version: https://qtesla.org/wp-content/uploads/2019/08/qTESLA_NIST_update_08.19.2019.zip

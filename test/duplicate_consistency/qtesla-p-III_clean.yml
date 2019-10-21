@@ -1,0 +1,13 @@
+consistency_checks:
+- source:
+    scheme: qtesla-p-I
+    implementation: clean
+  files:
+    - config.h
+    - gauss.c
+    - gauss.h
+    - pack.h
+    - poly.h
+    - sample.c
+    - sample.h
+    - sign.c
