@@ -4,7 +4,7 @@ matrix:
   include:
     - name: "KEMs: MacOS + Clang"
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11.2
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
@@ -25,15 +25,15 @@ matrix:
         homebrew:
           packages:
             - astyle
-    - name: "KEMs: MacOS + GCC8"
+    - name: "KEMs: MacOS + GCC9"
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11.2
       compiler: gcc
       addons:
         homebrew:
           packages:
             - astyle
-            - gcc@8
+            - gcc@9
       env:
         PQCLEAN_ONLY_TYPES: kem
         PQCLEAN_ONLY_DIFF: 1
@@ -47,14 +47,14 @@ matrix:
         - pip3 install -r requirements.txt
         - brew link gcc
         - export PATH="/usr/local/bin:$PATH"
-        - ln -s /usr/local/bin/gcc-8 /usr/local/bin/gcc
+        - ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
         - gcc --version
       script:
         # Use travis-wait to allow slower tests to run
         - "cd test && travis_wait 60 python3 -m pytest --numprocesses=auto"
     - name: "SIGs on MacOS + Clang"
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11.2
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
@@ -75,15 +75,15 @@ matrix:
         homebrew:
           packages:
             - astyle
-    - name: "SIGs on MacOS + GCC8"
+    - name: "SIGs on MacOS + GCC9"
       os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11.2
       compiler: gcc
       addons:
         homebrew:
           packages:
             - astyle
-            - gcc@8
+            - gcc@9
       env:
         PQCLEAN_ONLY_TYPES: sign
         PQCLEAN_ONLY_DIFF: 1
@@ -97,7 +97,7 @@ matrix:
         - pip3 install -r requirements.txt
         - brew link gcc
         - export PATH="/usr/local/bin:$PATH"
-        - ln -s /usr/local/bin/gcc-8 /usr/local/bin/gcc
+        - ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
         - gcc --version
       script:
         # Use travis-wait to allow slower tests to run
