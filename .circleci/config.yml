@@ -52,18 +52,6 @@ version: 2.1
 
 jobs:
   # First the KEM jobs
-  arm64-gcc-kem:
-    <<: *defaultjob
-    environment:
-      CC: gcc
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: kem
-  arm64-clang-kem:
-    <<: *defaultjob
-    environment:
-      CC: clang
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: kem
   arm32-gcc-kem:
     <<: *defaultjob
     environment:
@@ -113,20 +101,6 @@ jobs:
       ARCH: i386
       PQCLEAN_ONLY_TYPES: kem
   # These are for the scheduled builds
-  arm64-gcc-slow-kem:
-    <<: *defaultjob
-    environment:
-      CC: gcc
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: kem
-      RUN_SLOW: 1
-  arm64-clang-slow-kem:
-    <<: *defaultjob
-    environment:
-      CC: clang
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: kem
-      RUN_SLOW: 1
   arm32-gcc-slow-kem:
     <<: *defaultjob
     environment:
@@ -184,18 +158,6 @@ jobs:
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: kem
   # the Sign jobs
-  arm64-gcc-sign:
-    <<: *defaultjob
-    environment:
-      CC: gcc
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: sign
-  arm64-clang-sign:
-    <<: *defaultjob
-    environment:
-      CC: clang
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: sign
   arm32-gcc-sign:
     <<: *defaultjob
     environment:
@@ -245,20 +207,6 @@ jobs:
       ARCH: i386
       PQCLEAN_ONLY_TYPES: sign
   # These are for the scheduled builds
-  arm64-gcc-slow-sign:
-    <<: *defaultjob
-    environment:
-      CC: gcc
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: sign
-      RUN_SLOW: 1
-  arm64-clang-slow-sign:
-    <<: *defaultjob
-    environment:
-      CC: clang
-      ARCH: arm64
-      PQCLEAN_ONLY_TYPES: sign
-      RUN_SLOW: 1
   arm32-gcc-slow-sign:
     <<: *defaultjob
     environment:
@@ -338,26 +286,13 @@ workflows:
           <<: *i386
       - i386-clang-sign:
           <<: *i386
-      # ARMv8
-      - arm64-gcc-kem: &arm64
-          requires:
-            - i386-gcc-kem
-            - i386-gcc-sign
-            - i386-clang-sign
-            - i386-clang-kem
-      - arm64-gcc-sign:
-          <<: *arm64
-      - arm64-clang-kem:
-          <<: *arm64
-      - arm64-clang-sign:
-          <<: *arm64
       # ARM 32 bit
       - arm32-gcc-kem: &arm32
           requires:
-            - arm64-gcc-kem
-            - arm64-gcc-sign
-            - arm64-clang-kem
-            - arm64-clang-sign
+            - i386-gcc-kem
+            - i386-gcc-sign
+            - i386-clang-kem
+            - i386-clang-sign
       - arm32-clang-kem:
           <<: *arm32
       - arm32-gcc-sign:
@@ -393,12 +328,6 @@ workflows:
       - arm32-clang-slow-sign
       - arm32-gcc-slow-kem
       - arm32-gcc-slow-sign
-      - arm64-clang-slow-kem
-      - arm64-clang-slow-sign
-      - arm64-gcc-slow-kem
-      - arm64-gcc-slow-kem
-      - arm64-gcc-slow-sign
-      - arm64-gcc-slow-sign
       - i386-clang-slow-kem
       - i386-clang-slow-sign
       - i386-gcc-slow-kem
