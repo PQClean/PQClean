@@ -19,4 +19,3 @@ consistency_checks:
     - ring.c
     - ring.h
     - threebears.c
-
