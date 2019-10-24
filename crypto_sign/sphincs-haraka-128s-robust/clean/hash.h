@@ -10,6 +10,9 @@ void PQCLEAN_SPHINCSHARAKA128SROBUST_CLEAN_initialize_hash_function(
     hash_state *hash_state_seeded,
     const unsigned char *pub_seed, const unsigned char *sk_seed);
 
+void PQCLEAN_SPHINCSHARAKA128SROBUST_CLEAN_destroy_hash_function(
+    hash_state *state);
+
 void PQCLEAN_SPHINCSHARAKA128SROBUST_CLEAN_prf_addr(
     unsigned char *out, const unsigned char *key, const uint32_t addr[8],
     const hash_state *hash_state_seeded);

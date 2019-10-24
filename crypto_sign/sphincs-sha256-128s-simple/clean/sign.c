@@ -104,6 +104,8 @@ int PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_crypto_sign_seed_keypair(
         sk + 3 * SPX_N, auth_path, sk, sk + 2 * SPX_N, 0, 0,
         wots_gen_leaf, top_tree_addr, &hash_state_seeded);
 
+    PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_destroy_hash_function(&hash_state_seeded);
+
     memcpy(pk + SPX_N, sk + 3 * SPX_N, SPX_N);
 
     return 0;
@@ -204,6 +206,8 @@ int PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_crypto_sign_signature(
         tree = tree >> SPX_TREE_HEIGHT;
     }
 
+    PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_destroy_hash_function(&hash_state_seeded);
+
     *siglen = SPX_BYTES;
 
     return 0;
@@ -296,6 +300,8 @@ int PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_crypto_sign_verify(
         idx_leaf = (tree & ((1 << SPX_TREE_HEIGHT) - 1));
         tree = tree >> SPX_TREE_HEIGHT;
     }
+
+    PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_destroy_hash_function(&hash_state_seeded);
 
     /* Check if the root node equals the root node in the public key. */
     if (memcmp(root, pub_root, SPX_N) != 0) {

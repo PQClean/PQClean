@@ -28,6 +28,7 @@ static void PQCLEAN_SPHINCSSHA256192FSIMPLE_CLEAN_thash(
     PQCLEAN_SPHINCSSHA256192FSIMPLE_CLEAN_compress_address(buf, addr);
     memcpy(buf + SPX_SHA256_ADDR_BYTES, in, inblocks * SPX_N);
 
+    /* Note: finalize is expected to destroy the hash context */
     sha256_inc_finalize(outbuf, &sha2_state, buf, SPX_SHA256_ADDR_BYTES + inblocks * SPX_N);
     memcpy(out, outbuf, SPX_N);
 }

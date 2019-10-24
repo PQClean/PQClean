@@ -14,6 +14,11 @@ void PQCLEAN_SPHINCSHARAKA256FSIMPLE_CLEAN_initialize_hash_function(
     PQCLEAN_SPHINCSHARAKA256FSIMPLE_CLEAN_tweak_constants(hash_state_seeded, pub_seed, sk_seed, SPX_N);
 }
 
+void PQCLEAN_SPHINCSHARAKA256FSIMPLE_CLEAN_destroy_hash_function(
+    hash_state *state) { // NOLINT(readability-non-const-parameter)
+    (void)state; /* Suppress an 'unused parameter' warning. */
+}
+
 /*
  * Computes PRF(key, addr), given a secret key of SPX_N bytes and an address
  */

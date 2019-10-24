@@ -33,7 +33,7 @@ static void PQCLEAN_SPHINCSSHA256192SROBUST_CLEAN_thash(
     for (i = 0; i < inblocks * SPX_N; i++) {
         buf[SPX_N + SPX_SHA256_ADDR_BYTES + i] = in[i] ^ bitmask[i];
     }
-
+    /* Note: finalize is expected to destroy the hash context */
     sha256_inc_finalize(outbuf, &sha2_state, buf + SPX_N,
                         SPX_SHA256_ADDR_BYTES + inblocks * SPX_N);
     memcpy(out, outbuf, SPX_N);

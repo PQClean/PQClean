@@ -18,6 +18,12 @@ void PQCLEAN_SPHINCSSHAKE256192FROBUST_CLEAN_initialize_hash_function(
     (void)sk_seed; /* Suppress an 'unused parameter' warning. */
 }
 
+/** No initialization done at the start - nothing to clean up here. */
+void PQCLEAN_SPHINCSSHAKE256192FROBUST_CLEAN_destroy_hash_function(
+    hash_state *state) { // NOLINT(readability-non-const-parameter)
+    (void)state; /* Suppress an 'unused parameter' warning. */
+}
+
 /*
  * Computes PRF(key, addr), given a secret key of SPX_N bytes and an address
  */

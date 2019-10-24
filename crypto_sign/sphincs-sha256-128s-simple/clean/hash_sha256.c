@@ -9,13 +9,24 @@
 #include "sha2.h"
 #include "sha256.h"
 
-/* For SHA256, there is no immediate reason to initialize at the start,
-   so this function is an empty operation. */
+/**
+ * Initialize hash_state_seeded by precomputing the SHA-256 state
+ * after absorbing the given public seed pub_seed.
+ */
 void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_initialize_hash_function(
     hash_state *hash_state_seeded,
     const unsigned char *pub_seed, const unsigned char *sk_seed) {
     PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_seed_state(hash_state_seeded, pub_seed);
     (void)sk_seed; /* Suppress an 'unused parameter' warning. */
+}
+
+/**
+ * Destroy the hash state instance created in the initialization
+ * function.
+ */
+void PQCLEAN_SPHINCSSHA256128SSIMPLE_CLEAN_destroy_hash_function(
+    hash_state *state) {
+    sha256_inc_destroy(state);
 }
 
 /*
