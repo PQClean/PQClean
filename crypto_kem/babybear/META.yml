@@ -11,4 +11,4 @@ principal-submitters:
   - Mike Hamburg
 implementations:
     - name: clean
-    - version: https://sourceforge.net/p/threebears/code/ci/f4ce0ebfc84a5e01a75bfc8297b6d175e993cfa4/ 
+      version: https://sourceforge.net/p/threebears/code/ci/f4ce0ebfc84a5e01a75bfc8297b6d175e993cfa4/ 

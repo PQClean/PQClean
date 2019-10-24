@@ -194,7 +194,6 @@ void PQCLEAN_MAMABEAR_CLEAN_decapsulate(
     PQCLEAN_MAMABEAR_CLEAN_melas_fec_correct(seed, ENC_SEED_BYTES, &seed[ENC_SEED_BYTES]);
 
     /* Re-encapsulate and check; encapsulate will compute the shared secret */
-    //pk[PUBLIC_KEY_BYTES], capsule2[CAPSULE_BYTES];
     PQCLEAN_MAMABEAR_CLEAN_get_pubkey(pk, sk);
     memcpy(&seed[ENC_SEED_BYTES], &lpr_data[(ENC_BITS * LPR_BITS + 7) / 8], IV_BYTES);
     PQCLEAN_MAMABEAR_CLEAN_encapsulate(shared_secret, capsule2, pk, seed);

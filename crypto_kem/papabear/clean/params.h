@@ -17,9 +17,9 @@
 #define PRF_KEY_BYTES        PRIVATE_KEY_BYTES
 
 #define BEAR_NAME   "PapaBear"
-#define encapsulate PapaBear_encapsulate
-#define decapsulate PapaBear_decapsulate
-#define get_pubkey  PapaBear_get_pubkey
+#define encapsulate PQCLEAN_PAPABEAR_CLEAN_encapsulate
+#define decapsulate PQCLEAN_PAPABEAR_CLEAN_decapsulate
+#define get_pubkey  PQCLEAN_PAPABEAR_CLEAN_get_pubkey
 
 #define GF_BYTES ((LGX*DIGITS+7)/8)
 #define PUBLIC_KEY_BYTES (MATRIX_SEED_BYTES + DIM*GF_BYTES)

@@ -17,7 +17,7 @@
  * @param[out] pk The public key.
  * @param[in] sk The private key, which must be uniformly random.
  */
-void PapaBear_get_pubkey (
+void PQCLEAN_PAPABEAR_CLEAN_get_pubkey (
     uint8_t pk[PAPABEAR_PUBLIC_KEY_BYTES],
     const uint8_t sk[PAPABEAR_PRIVATE_KEY_BYTES]
 );
@@ -32,7 +32,7 @@ void PapaBear_get_pubkey (
  * @param[in] pk The other party's public key.
  * @param[in] seed A random seed.
  */
-void PapaBear_encapsulate (
+void PQCLEAN_PAPABEAR_CLEAN_encapsulate (
     uint8_t shared_secret[PAPABEAR_SHARED_SECRET_BYTES],
     uint8_t capsule[PAPABEAR_CAPSULE_BYTES],
     const uint8_t pk[PAPABEAR_PUBLIC_KEY_BYTES],
@@ -49,7 +49,7 @@ void PapaBear_encapsulate (
  * @param[in] capsule The capsule produced by encapsulate_cca2.
  * @param[in] sk The private key.
  */
-void PapaBear_decapsulate (
+void PQCLEAN_PAPABEAR_CLEAN_decapsulate (
     uint8_t shared_secret[PAPABEAR_SHARED_SECRET_BYTES],
     const uint8_t capsule[PAPABEAR_CAPSULE_BYTES],
     const uint8_t sk[PAPABEAR_PRIVATE_KEY_BYTES]
