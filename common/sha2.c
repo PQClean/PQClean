@@ -571,6 +571,22 @@ void sha384_inc_blocks(sha384ctx *state, const uint8_t *in, size_t inblocks) {
     sha512_inc_blocks((sha512ctx*) state, in, inblocks);
 }
 
+void sha224_inc_destroy(sha224ctx *state) {
+    (void)state;
+}
+
+void sha256_inc_destroy(sha256ctx *state) {
+    (void)state;
+}
+
+void sha384_inc_destroy(sha384ctx *state) {
+    (void)state;
+}
+
+void sha512_inc_destroy(sha512ctx *state) {
+    (void)state;
+}
+
 void sha256_inc_finalize(uint8_t *out, sha256ctx *state, const uint8_t *in, size_t inlen) {
     uint8_t padded[128];
     uint64_t bytes = load_bigendian_64(state->ctx + 32) + inlen;
