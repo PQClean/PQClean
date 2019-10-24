@@ -1,0 +1,15 @@
+name: BabyBear
+type: kem
+claimed-nist-level: 1
+claimed-security: IND-CCA2
+length-public-key: 804 
+length-ciphertext: 917
+length-secret-key: 40
+length-shared-secret: 32
+nistkat-sha256: b8442ffaad8e74c6ebfd75d02e13f8db017a7a6dd8458f5d1a5011de6057d775 
+principal-submitters:
+  - Mike Hamburg
+implementations:
+    - name: clean
+      version: round2 
+

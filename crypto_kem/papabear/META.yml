@@ -1,0 +1,15 @@
+name: PapaBear
+type: kem
+claimed-nist-level: 5
+claimed-security: IND-CCA2
+length-public-key: 1584 
+length-ciphertext: 1697
+length-secret-key: 40
+length-shared-secret: 32
+nistkat-sha256: 977429507fa60a24a608193a507e39f4d9deaf4c6359f94f36b2d9ca0897c997 
+principal-submitters:
+  - Mike Hamburg
+implementations:
+    - name: clean
+      version: round2 
+
