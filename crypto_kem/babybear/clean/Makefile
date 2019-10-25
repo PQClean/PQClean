@@ -6,7 +6,7 @@ HEADERS = api.h melas_fec.h params.h ring.h threebears.h
 OBJECTS = kem.o melas_fec.o ring.o threebears.o 
 
 
-CFLAGS=-O3 -Wcast-align=strict -Wall -Wconversion -Wextra -Werror -Wpedantic -Wvla -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 
