@@ -24,8 +24,6 @@ void PQCLEAN_MAMABEAR_CLEAN_mac(gf_t c, const gf_t a, const gf_t b);
 void PQCLEAN_MAMABEAR_CLEAN_canon(gf_t c);
 
 /** Return the i'th limb of the modulus */
-static inline limb_t modulus(size_t i) {
-    return (i == DIGITS / 2) ? LMASK - 1 : LMASK;
-}
+limb_t PQCLEAN_MAMABEAR_CLEAN_modulus(size_t i);
 
 #endif

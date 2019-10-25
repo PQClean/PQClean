@@ -61,7 +61,7 @@ static void noise(gf_t x, const shake256incctx *ctx, uint8_t iv) {
     cshake256_inc_finalize(&ctx2);
     cshake256_inc_squeeze(c, DIGITS, &ctx2);
     for (size_t i = 0; i < DIGITS; i++) {
-        x[i] = (limb_t)(psi(c[i]) + modulus(i));
+        x[i] = (limb_t)(psi(c[i]) + PQCLEAN_PAPABEAR_CLEAN_modulus(i));
     }
 }
 

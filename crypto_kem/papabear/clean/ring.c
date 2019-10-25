@@ -1,6 +1,11 @@
 /** Ring arithmetic implementation */
 #include "ring.h"
 
+/** Return the i'th limb of the modulus */
+limb_t PQCLEAN_PAPABEAR_CLEAN_modulus(size_t i) {
+    return (i == DIGITS / 2) ? LMASK - 1 : LMASK;
+}
+
 /** Multiply and accumulate c += a*b */
 void PQCLEAN_PAPABEAR_CLEAN_mac(gf_t c, const gf_t a, const gf_t b) {
     /* Reference non-Karatsuba MAC */
@@ -57,7 +62,7 @@ void PQCLEAN_PAPABEAR_CLEAN_canon(gf_t c) {
     /* Strong reduce.  First subtract modulus */
     scarry = hi >> LGX;
     for (size_t i = 0; i < DIGITS; i++) {
-        scarry = scarry + (slimb_t)c[i] - modulus(i);
+        scarry = scarry + (slimb_t)c[i] - PQCLEAN_PAPABEAR_CLEAN_modulus(i);
         c[i] = scarry & LMASK;
         scarry >>= LGX;
     }
@@ -65,7 +70,7 @@ void PQCLEAN_PAPABEAR_CLEAN_canon(gf_t c) {
     /* add it back */
     carry = 0;
     for (size_t i = 0; i < DIGITS; i++) {
-        carry = carry + c[i] + ((dlimb_t)scarry & modulus(i));
+        carry = carry + c[i] + ((dlimb_t)scarry & PQCLEAN_PAPABEAR_CLEAN_modulus(i));
         c[i] = carry & LMASK;
         carry >>= LGX;
     }
