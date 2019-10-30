@@ -10,6 +10,7 @@
 #define _V1 32
 #define _O1 32
 #define _O2 32
+#define _MAX_O 32
 #define _HASH_LEN 32
 
 
@@ -28,6 +29,7 @@
 #define _V2_BYTE (_V2 / 2)
 #define _O1_BYTE (_O1 / 2)
 #define _O2_BYTE (_O2 / 2)
+#define _MAX_O_BYTE (_MAX_O / 2)
 #define _PUB_N_BYTE (_PUB_N / 2)
 #define _PUB_M_BYTE (_PUB_M / 2)
 
