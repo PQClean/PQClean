@@ -1,0 +1,21 @@
+consistency_checks:
+- source:
+    scheme: mamabear
+    implementation: clean
+  files:
+    - kem.c
+    - melas_fec.c
+    - melas_fec.h
+    - ring.c
+    - ring.h
+    - threebears.c
+- source:
+    scheme: papabear
+    implementation: clean
+  files:
+    - kem.c
+    - melas_fec.c
+    - melas_fec.h
+    - ring.c
+    - ring.h
+    - threebears.c

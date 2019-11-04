@@ -1,0 +1,14 @@
+name: MamaBear
+type: kem
+claimed-nist-level: 3
+claimed-security: IND-CCA2
+length-public-key: 1194 
+length-ciphertext: 1307
+length-secret-key: 40
+length-shared-secret: 32
+nistkat-sha256: 2161de5015dc0477106b71ba17498982f77fae127fce724496c8a587803b1839 
+principal-submitters:
+  - Mike Hamburg
+implementations:
+    - name: clean
+      version: https://sourceforge.net/p/threebears/code/ci/f4ce0ebfc84a5e01a75bfc8297b6d175e993cfa4/
