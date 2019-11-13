@@ -46,7 +46,7 @@ int PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_crypto_sign_open(unsigned char *m, s
         rc = PQCLEAN_RAINBOWIACYCLICCOMPRESSED_CLEAN_rainbow_verify_cyclic(digest, sm + mlen[0], (const cpk_t *)pk);
     }
     if (!rc) {
-        memcpy(m, sm, smlen - _SIGNATURE_BYTE);
+        memmove(m, sm, smlen - _SIGNATURE_BYTE);
     } else { // bad signature
         *mlen = (size_t) -1;
         memset(m, 0, smlen);

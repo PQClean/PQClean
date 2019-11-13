@@ -44,7 +44,7 @@ int PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_crypto_sign_open(unsigned char *m, size_t *
         rc = PQCLEAN_RAINBOWIIICCLASSIC_CLEAN_rainbow_verify(digest, sm + mlen[0], (const pk_t *)pk);
     }
     if (!rc) {
-        memcpy(m, sm, smlen - _SIGNATURE_BYTE);
+        memmove(m, sm, smlen - _SIGNATURE_BYTE);
     } else { // bad signature
         *mlen = (size_t) -1;
         memset(m, 0, smlen);
