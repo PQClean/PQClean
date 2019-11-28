@@ -4,7 +4,6 @@
 
 <!-- If you are not submitting a new scheme, we suggest removing the following lines -->
 #### Manually checked properties
-<!-- These checkboxes serve for the maintainers of PQClean to verify your submission. Please do not check them yourself. -->
 
 * [ ] No stringification macros
 * [ ] Output-parameter pointers in functions are on the left
