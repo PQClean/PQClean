@@ -46,6 +46,8 @@ void sha224_inc_blocks(sha224ctx *state, const uint8_t *in, size_t inblocks);
 
 /**
  * Finalize and obtain the digest
+ *
+ * If applicable, this function will free the memory associated with the sha224ctx.
  */
 void sha224_inc_finalize(uint8_t *out, sha224ctx *state, const uint8_t *in, size_t inlen);
 
@@ -78,6 +80,8 @@ void sha256_inc_blocks(sha256ctx *state, const uint8_t *in, size_t inblocks);
 
 /**
  * Finalize and obtain the digest
+ *
+ * If applicable, this function will free the memory associated with the sha256ctx.
  */
 void sha256_inc_finalize(uint8_t *out, sha256ctx *state, const uint8_t *in, size_t inlen);
 
@@ -109,7 +113,9 @@ void sha384_inc_clone_state(sha384ctx *stateout, const sha384ctx *statein);
 void sha384_inc_blocks(sha384ctx *state, const uint8_t *in, size_t inblocks);
 
 /**
- * Finalize and obtain the digest
+ * Finalize and obtain the digest.
+ *
+ * If applicable, this function will free the memory associated with the sha384ctx.
  */
 void sha384_inc_finalize(uint8_t *out, sha384ctx *state, const uint8_t *in, size_t inlen);
 
@@ -143,6 +149,8 @@ void sha512_inc_blocks(sha512ctx *state, const uint8_t *in, size_t inblocks);
 
 /**
  * Finalize and obtain the digest
+ *
+ * If applicable, this function will free the memory associated with the sha512ctx.
  */
 void sha512_inc_finalize(uint8_t *out, sha512ctx *state, const uint8_t *in, size_t inlen);
 

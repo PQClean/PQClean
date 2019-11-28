@@ -30,7 +30,6 @@ static void PQCLEAN_SPHINCSSHA256256FSIMPLE_AVX2_thash(
 
     sha256_inc_finalize(outbuf, &sha2_state, buf, PQCLEAN_SPHINCSSHA256256FSIMPLE_AVX2_SHA256_ADDR_BYTES + inblocks * PQCLEAN_SPHINCSSHA256256FSIMPLE_AVX2_N);
     memcpy(out, outbuf, PQCLEAN_SPHINCSSHA256256FSIMPLE_AVX2_N);
-    sha256_inc_destroy(&sha2_state);
 }
 
 /* The wrappers below ensure that we use fixed-size buffers on the stack */
