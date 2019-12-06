@@ -121,18 +121,18 @@ int PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_crypto_sign_keypair(
 
     // guarantee alignment of pk
     union {
-        __m128 *_x;
+        __m128 _x[PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_CRYPTO_PUBLICKEYBYTES / 16];
         uint8_t pk[PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_CRYPTO_PUBLICKEYBYTES];
     } aligned_pk;
 
     // guarantee alignment of sk
     union {
-        __m128 *_x;
+        __m128 _x[PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_CRYPTO_SECRETKEYBYTES / 16];
         uint8_t sk[PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_CRYPTO_SECRETKEYBYTES];
     } aligned_sk;
 
     union {
-        __m128 *_x;
+        __m128 _x[PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_CRYPTO_SEEDBYTES / 16];
         uint8_t seed[PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_CRYPTO_SEEDBYTES];
     } aligned_seed;
     randombytes(aligned_seed.seed, PQCLEAN_SPHINCSSHAKE256128FROBUST_AVX2_CRYPTO_SEEDBYTES);

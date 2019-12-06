@@ -64,9 +64,9 @@ Plain C implementation of the Haraka256 and Haraka512 permutations.
 
 #define TRUNCSTORE(out, s0, s1, s2, s3) \
     _mm_storeu_si128((u128 *)(out), \
-                     (__m128i)_mm_shuffle_pd((__m128d)(s0), (__m128d)(s1), 3)); \
+                     _mm_castpd_si128(_mm_shuffle_pd(_mm_castsi128_pd(s0), _mm_castsi128_pd(s1), 3))); \
     _mm_storeu_si128((u128 *)((out) + 16), \
-                     (__m128i)_mm_shuffle_pd((__m128d)(s2), (__m128d)(s3), 0));
+                     _mm_castpd_si128(_mm_shuffle_pd(_mm_castsi128_pd(s2), _mm_castsi128_pd(s3), 0)));
 
 static void load_haraka_constants(u128 rc[40]) {
     rc[ 0] = _mm_set_epi32((int)0x0684704c, (int)0xe620c00a, (int)0xb2c5fef0, (int)0x75817b9d);

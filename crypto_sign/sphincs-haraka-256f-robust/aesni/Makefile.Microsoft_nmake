@@ -4,7 +4,11 @@
 LIBRARY=libsphincs-haraka-256f-robust_aesni.lib
 OBJECTS=address.obj wots.obj utils.obj fors.obj sign.obj hash_haraka.obj thash_haraka_robust.obj hash_harakax4.obj thash_haraka_robustx4.obj haraka.obj
 
-CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
+# We ignore warning C4127: in thash_haraka_*x4.c we use a conditional
+# that when the macro is generated for inblocks = 1 results in a case
+# with `if (1 == 1)`. The compiler should just optimise this away, but
+# on MSVC we get a compiler complaint.
+CFLAGS=/nologo /arch:AVX /O2 /I ..\..\..\common /W4 /WX /wd4127
 
 all: $(LIBRARY)
 
