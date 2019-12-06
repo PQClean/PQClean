@@ -1,9 +1,10 @@
-#ifndef POLYVEC_H
-#define POLYVEC_H
+#ifndef PQCLEAN_DILITHIUM3_CLEAN_POLYVEC_H
+#define PQCLEAN_DILITHIUM3_CLEAN_POLYVEC_H
+
+#include <stdint.h>
 
 #include "params.h"
 #include "poly.h"
-#include <stdint.h>
 
 /* Vectors of polynomials of length L */
 typedef struct {
@@ -46,6 +47,6 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_decompose(polyveck *v1, polyveck *v0, con
 unsigned int PQCLEAN_DILITHIUM3_CLEAN_polyveck_make_hint(polyveck *h,
         const polyveck *v0,
         const polyveck *v1);
-void PQCLEAN_DILITHIUM3_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h);
+void PQCLEAN_DILITHIUM3_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h);
 
 #endif

@@ -17,4 +17,13 @@ auxiliary-submitters:
   - Damien Stehlé
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/dilithium/commit/40f79645879b5c69835cd91d06945d7c24f39922
+      version: https://github.com/pq-crystals/dilithium/commit/c1b40fd599e71f65aa18be64dd6c3fc8e84b0c08
+    - name: avx2
+      version: https://github.com/pq-crystals/dilithium/commit/c1b40fd599e71f65aa18be64dd6c3fc8e84b0c08
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+            required_flags:
+                - avx2
+                - bmi2

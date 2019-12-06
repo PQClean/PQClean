@@ -1,14 +1,15 @@
+#include <stdint.h>
+
 #include "params.h"
 #include "poly.h"
 #include "polyvec.h"
-#include <stdint.h>
 
 /**************************************************************/
 /************ Vectors of polynomials of length L **************/
 /**************************************************************/
 
 /*************************************************
-* Name:        polyvecl_freeze
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyvecl_freeze
 *
 * Description: Reduce coefficients of polynomials in vector of length L
 *              to standard representatives.
@@ -24,7 +25,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_freeze(polyvecl *v) {
 }
 
 /*************************************************
-* Name:        polyvecl_add
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyvecl_add
 *
 * Description: Add vectors of polynomials of length L.
 *              No modular reduction is performed.
@@ -42,7 +43,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_add(polyvecl *w, const polyvecl *u, const
 }
 
 /*************************************************
-* Name:        polyvecl_ntt
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyvecl_ntt
 *
 * Description: Forward NTT of all polynomials in vector of length L. Output
 *              coefficients can be up to 16*Q larger than input coefficients.
@@ -58,7 +59,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_ntt(polyvecl *v) {
 }
 
 /*************************************************
-* Name:        polyvecl_pointwise_acc_invmontgomery
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyvecl_pointwise_acc_invmontgomery
 *
 * Description: Pointwise multiply vectors of polynomials of length L, multiply
 *              resulting vector by 2^{-32} and add (accumulate) polynomials
@@ -85,7 +86,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_pointwise_acc_invmontgomery(poly *w,
 }
 
 /*************************************************
-* Name:        polyvecl_chknorm
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyvecl_chknorm
 *
 * Description: Check infinity norm of polynomials in vector of length L.
 *              Assumes input coefficients to be standard representatives.
@@ -96,14 +97,15 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_pointwise_acc_invmontgomery(poly *w,
 * Returns 0 if norm of all polynomials is strictly smaller than B and 1
 * otherwise.
 **************************************************/
-int PQCLEAN_DILITHIUM3_CLEAN_polyvecl_chknorm(const polyvecl *v, uint32_t bound)  {
+int PQCLEAN_DILITHIUM3_CLEAN_polyvecl_chknorm(const polyvecl *v, uint32_t B)  {
     unsigned int i;
 
     for (i = 0; i < L; ++i) {
-        if (PQCLEAN_DILITHIUM3_CLEAN_poly_chknorm(&v->vec[i], bound)) {
+        if (PQCLEAN_DILITHIUM3_CLEAN_poly_chknorm(&v->vec[i], B)) {
             return 1;
         }
     }
+
     return 0;
 }
 
@@ -113,7 +115,7 @@ int PQCLEAN_DILITHIUM3_CLEAN_polyvecl_chknorm(const polyvecl *v, uint32_t bound)
 
 
 /*************************************************
-* Name:        polyveck_reduce
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_reduce
 *
 * Description: Reduce coefficients of polynomials in vector of length K
 *              to representatives in [0,2*Q[.
@@ -129,7 +131,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_reduce(polyveck *v) {
 }
 
 /*************************************************
-* Name:        polyveck_csubq
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_csubq
 *
 * Description: For all coefficients of polynomials in vector of length K
 *              subtract Q if coefficient is bigger than Q.
@@ -145,7 +147,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_csubq(polyveck *v) {
 }
 
 /*************************************************
-* Name:        polyveck_freeze
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_freeze
 *
 * Description: Reduce coefficients of polynomials in vector of length K
 *              to standard representatives.
@@ -161,7 +163,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_freeze(polyveck *v)  {
 }
 
 /*************************************************
-* Name:        polyveck_add
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_add
 *
 * Description: Add vectors of polynomials of length K.
 *              No modular reduction is performed.
@@ -179,7 +181,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_add(polyveck *w, const polyveck *u, const
 }
 
 /*************************************************
-* Name:        polyveck_sub
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_sub
 *
 * Description: Subtract vectors of polynomials of length K.
 *              Assumes coefficients of polynomials in second input vector
@@ -199,7 +201,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_sub(polyveck *w, const polyveck *u, const
 }
 
 /*************************************************
-* Name:        polyveck_shiftl
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_shiftl
 *
 * Description: Multiply vector of polynomials of Length K by 2^D without modular
 *              reduction. Assumes input coefficients to be less than 2^{32-D}.
@@ -215,7 +217,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_shiftl(polyveck *v) {
 }
 
 /*************************************************
-* Name:        polyveck_ntt
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_ntt
 *
 * Description: Forward NTT of all polynomials in vector of length K. Output
 *              coefficients can be up to 16*Q larger than input coefficients.
@@ -231,7 +233,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_ntt(polyveck *v) {
 }
 
 /*************************************************
-* Name:        polyveck_invntt_montgomery
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_invntt_montgomery
 *
 * Description: Inverse NTT and multiplication by 2^{32} of polynomials
 *              in vector of length K. Input coefficients need to be less
@@ -248,7 +250,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_invntt_montgomery(polyveck *v) {
 }
 
 /*************************************************
-* Name:        polyveck_chknorm
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_chknorm
 *
 * Description: Check infinity norm of polynomials in vector of length K.
 *              Assumes input coefficients to be standard representatives.
@@ -259,19 +261,20 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_invntt_montgomery(polyveck *v) {
 * Returns 0 if norm of all polynomials are strictly smaller than B and 1
 * otherwise.
 **************************************************/
-int PQCLEAN_DILITHIUM3_CLEAN_polyveck_chknorm(const polyveck *v, uint32_t bound) {
+int PQCLEAN_DILITHIUM3_CLEAN_polyveck_chknorm(const polyveck *v, uint32_t B) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {
-        if (PQCLEAN_DILITHIUM3_CLEAN_poly_chknorm(&v->vec[i], bound)) {
+        if (PQCLEAN_DILITHIUM3_CLEAN_poly_chknorm(&v->vec[i], B)) {
             return 1;
         }
     }
+
     return 0;
 }
 
 /*************************************************
-* Name:        polyveck_power2round
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_power2round
 *
 * Description: For all coefficients a of polynomials in vector of length K,
 *              compute a0, a1 such that a mod Q = a1*2^D + a0
@@ -293,7 +296,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_power2round(polyveck *v1, polyveck *v0, c
 }
 
 /*************************************************
-* Name:        polyveck_decompose
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_decompose
 *
 * Description: For all coefficients a of polynomials in vector of length K,
 *              compute high and low bits a0, a1 such a mod Q = a1*ALPHA + a0
@@ -316,7 +319,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_decompose(polyveck *v1, polyveck *v0, con
 }
 
 /*************************************************
-* Name:        polyveck_make_hint
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_make_hint
 *
 * Description: Compute hint vector.
 *
@@ -339,19 +342,19 @@ unsigned int PQCLEAN_DILITHIUM3_CLEAN_polyveck_make_hint(polyveck *h,
 }
 
 /*************************************************
-* Name:        polyveck_use_hint
+* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_use_hint
 *
 * Description: Use hint vector to correct the high bits of input vector.
 *
 * Arguments:   - polyveck *w: pointer to output vector of polynomials with
 *                             corrected high bits
-*              - const polyveck *u: pointer to input vector
+*              - const polyveck *v: pointer to input vector
 *              - const polyveck *h: pointer to input hint vector
 **************************************************/
-void PQCLEAN_DILITHIUM3_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h) {
+void PQCLEAN_DILITHIUM3_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUM3_CLEAN_poly_use_hint(&w->vec[i], &u->vec[i], &h->vec[i]);
+        PQCLEAN_DILITHIUM3_CLEAN_poly_use_hint(&w->vec[i], &v->vec[i], &h->vec[i]);
     }
 }

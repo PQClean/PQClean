@@ -17,7 +17,8 @@ consistency_checks:
     - rounding.h
     - sign.c
     - sign.h
-    - symmetric.c
+    - stream.c
+    - stream.h
     - symmetric.h
 - source:
     scheme: dilithium4
@@ -36,5 +37,18 @@ consistency_checks:
     - rounding.h
     - sign.c
     - sign.h
-    - symmetric.c
+    - stream.c
+    - stream.h
+    - symmetric.h
+- source:
+    scheme: dilithium2
+    implementation: avx2
+  files:
+    - api.h
+    - packing.c
+    - packing.h
+    - polyvec.h
+    - params.h
+    - stream.c
+    - stream.h
     - symmetric.h
