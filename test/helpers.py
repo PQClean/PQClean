@@ -71,7 +71,7 @@ def isolate_test_files(impl_path, test_prefix,
 
     def destructor():
         """Clean up the isolated files"""
-        shutil.rmtree(test_dir)
+        shutil.rmtree(test_dir, ignore_errors=True)
 
     return (test_dir, new_impl_dir, initializer, destructor)
 
