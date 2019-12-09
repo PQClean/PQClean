@@ -1,5 +1,4 @@
 #include <immintrin.h>
-#include <stdint.h>
 
 #include "params.h"
 #include "rejsample.h"
@@ -263,20 +262,19 @@ static const uint8_t idx[256][8] = {
     { 0,  1,  2,  3,  4,  5,  6,  7}
 };
 
-unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_uniform(
+uint32_t PQCLEAN_DILITHIUM2_AVX2_rej_uniform(
     uint32_t *r,
-    unsigned int len,
-    const unsigned char *buf,
-    unsigned int buflen) {
-    unsigned int i, ctr, pos;
-    uint32_t vec[8];
+    size_t len,
+    const uint8_t *buf,
+    size_t buflen) {
+    uint32_t ctr, pos, vec[8];
     __m256i d, tmp;
     uint32_t good;
     const __m256i bound = _mm256_set1_epi32(Q);
 
     ctr = pos = 0;
     while (ctr + 8 <= len && pos + 24 <= buflen) {
-        for (i = 0; i < 8; i++) {
+        for (size_t i = 0; i < 8; i++) {
             vec[i]  = buf[pos++];
             vec[i] |= (uint32_t)buf[pos++] << 8;
             vec[i] |= (uint32_t)buf[pos++] << 16;
@@ -308,12 +306,12 @@ unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_uniform(
     return ctr;
 }
 
-unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_eta(
+uint32_t PQCLEAN_DILITHIUM2_AVX2_rej_eta(
     uint32_t *r,
-    unsigned int len,
-    const unsigned char *buf,
-    unsigned int buflen) {
-    unsigned int i, ctr, pos;
+    size_t len,
+    const uint8_t *buf,
+    size_t buflen) {
+    uint32_t ctr, pos;
     uint8_t vec[32];
     __m256i tmp0, tmp1;
     __m128i d0, d1, rid;
@@ -323,7 +321,7 @@ unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_eta(
 
     ctr = pos = 0;
     while (ctr + 32 <= len && pos + 16 <= buflen) {
-        for (i = 0; i < 16; i++) {
+        for (size_t i = 0; i < 16; i++) {
             vec[2 * i + 0] = buf[pos] & 0x0F;
             vec[2 * i + 1] = buf[pos++] >> 4;
         }
@@ -380,12 +378,12 @@ unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_eta(
     return ctr;
 }
 
-unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_gamma1m1(
+uint32_t PQCLEAN_DILITHIUM2_AVX2_rej_gamma1m1(
     uint32_t *r,
-    unsigned int len,
-    const unsigned char *buf,
-    unsigned int buflen) {
-    unsigned int i, ctr, pos;
+    size_t len,
+    const uint8_t *buf,
+    size_t buflen) {
+    uint32_t ctr, pos;
     uint32_t vec[8];
     __m256i d, tmp;
     uint32_t good;
@@ -394,7 +392,7 @@ unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_gamma1m1(
 
     ctr = pos = 0;
     while (ctr + 8 <= len && pos + 20 <= buflen) {
-        for (i = 0; i < 4; i++) {
+        for (size_t i = 0; i < 4; i++) {
             vec[2 * i + 0]  = buf[pos + 0];
             vec[2 * i + 0] |= (uint32_t)buf[pos + 1] << 8;
             vec[2 * i + 0] |= (uint32_t)buf[pos + 2] << 16;

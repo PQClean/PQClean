@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 #include "ntt.h"
 #include "params.h"
 #include "poly.h"
@@ -190,8 +188,8 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_decompose(poly *a1, poly *a0, const poly *a) 
 *
 * Returns number of 1 bits.
 **************************************************/
-unsigned int PQCLEAN_DILITHIUM4_CLEAN_poly_make_hint(poly *h, const poly *a0, const poly *a1) {
-    unsigned int s = 0;
+uint32_t PQCLEAN_DILITHIUM4_CLEAN_poly_make_hint(poly *h, const poly *a0, const poly *a1) {
+    uint32_t s = 0;
     for (size_t i = 0; i < N; ++i) {
         h->coeffs[i] = PQCLEAN_DILITHIUM4_CLEAN_make_hint(a0->coeffs[i], a1->coeffs[i]);
         s += h->coeffs[i];
@@ -250,18 +248,19 @@ int PQCLEAN_DILITHIUM4_CLEAN_poly_chknorm(const poly *a, uint32_t B) {
 *              performing rejection sampling using array of random bytes.
 *
 * Arguments:   - uint32_t *a: pointer to output array (allocated)
-*              - unsigned int len: number of coefficients to be sampled
+*              - size_t len: number of coefficients to be sampled
 *              - const uint8_t *buf: array of random bytes
-*              - unsigned int buflen: length of array of random bytes
+*              - size_t buflen: length of array of random bytes
 *
 * Returns number of sampled coefficients. Can be smaller than len if not enough
 * random bytes were given.
 **************************************************/
-static unsigned int rej_uniform(uint32_t *a,
-                                unsigned int len,
-                                const uint8_t *buf,
-                                size_t buflen) {
-    unsigned int ctr, pos;
+static size_t rej_uniform(
+    uint32_t *a,
+    size_t len,
+    const uint8_t *buf,
+    size_t buflen) {
+    size_t ctr, pos;
     uint32_t t;
 
     ctr = pos = 0;
@@ -325,18 +324,19 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform(poly *a,
 *              performing rejection sampling using array of random bytes.
 *
 * Arguments:   - uint32_t *a: pointer to output array (allocated)
-*              - unsigned int len: number of coefficients to be sampled
+*              - size_t len: number of coefficients to be sampled
 *              - const uint8_t *buf: array of random bytes
-*              - unsigned int buflen: length of array of random bytes
+*              - size_t buflen: length of array of random bytes
 *
 * Returns number of sampled coefficients. Can be smaller than len if not enough
 * random bytes were given.
 **************************************************/
-static unsigned int rej_eta(uint32_t *a,
-                            unsigned int len,
-                            const uint8_t *buf,
-                            unsigned int buflen) {
-    unsigned int ctr, pos;
+static size_t rej_eta(
+    uint32_t *a,
+    size_t len,
+    const uint8_t *buf,
+    size_t buflen) {
+    size_t ctr, pos;
     uint32_t t0, t1;
 
     ctr = pos = 0;
@@ -372,7 +372,7 @@ static unsigned int rej_eta(uint32_t *a,
 void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform_eta(poly *a,
         const uint8_t *seed,
         uint16_t nonce) {
-    unsigned int ctr;
+    size_t ctr;
     uint8_t buf[POLY_UNIFORM_ETA_BUFLEN];
     stream128_state state;
 
@@ -395,18 +395,20 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform_eta(poly *a,
 *              using array of random bytes.
 *
 * Arguments:   - uint32_t *a: pointer to output array (allocated)
-*              - unsigned int len: number of coefficients to be sampled
+*              - size_t len: number of coefficients to be sampled
 *              - const uint8_t *buf: array of random bytes
-*              - unsigned int buflen: length of array of random bytes
+*              - size_t buflen: length of array of random bytes
 *
 * Returns number of sampled coefficients. Can be smaller than len if not enough
 * random bytes were given.
 **************************************************/
-static unsigned int rej_gamma1m1(uint32_t *a,
-                                 unsigned int len,
-                                 const uint8_t *buf,
-                                 unsigned int buflen) {
-    unsigned int ctr, pos;
+static size_t rej_gamma1m1(
+    uint32_t *a,
+    size_t len,
+    const uint8_t *buf,
+    size_t buflen) {
+
+    size_t ctr, pos;
     uint32_t t0, t1;
 
     ctr = pos = 0;
@@ -450,8 +452,8 @@ static unsigned int rej_gamma1m1(uint32_t *a,
 void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform_gamma1m1(poly *a,
         const uint8_t seed[CRHBYTES],
         uint16_t nonce) {
-    unsigned int i, ctr, off;
-    unsigned int buflen = POLY_UNIFORM_GAMMA1M1_BUFLEN;
+    size_t ctr, off;
+    size_t buflen = POLY_UNIFORM_GAMMA1M1_BUFLEN;
     uint8_t buf[POLY_UNIFORM_GAMMA1M1_BUFLEN + 4];
     stream256_state state;
 
@@ -462,7 +464,7 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform_gamma1m1(poly *a,
 
     while (ctr < N) {
         off = buflen % 5;
-        for (i = 0; i < off; ++i) {
+        for (size_t i = 0; i < off; ++i) {
             buf[i] = buf[buflen - off + i];
         }
 
@@ -483,10 +485,9 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform_gamma1m1(poly *a,
 *              - const poly *a: pointer to input polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM4_CLEAN_polyeta_pack(uint8_t *r, const poly *a) {
-    unsigned int i;
     uint8_t t[8];
 
-    for (i = 0; i < N / 8; ++i) {
+    for (size_t i = 0; i < N / 8; ++i) {
         t[0] = (uint8_t)(Q + ETA - a->coeffs[8 * i + 0]);
         t[1] = (uint8_t)(Q + ETA - a->coeffs[8 * i + 1]);
         t[2] = (uint8_t)(Q + ETA - a->coeffs[8 * i + 2]);
@@ -512,9 +513,7 @@ void PQCLEAN_DILITHIUM4_CLEAN_polyeta_pack(uint8_t *r, const poly *a) {
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM4_CLEAN_polyeta_unpack(poly *r, const uint8_t *a) {
-    unsigned int i;
-
-    for (i = 0; i < N / 8; ++i) {
+    for (size_t i = 0; i < N / 8; ++i) {
         r->coeffs[8 * i + 0] = a[3 * i + 0] & 0x07;
         r->coeffs[8 * i + 1] = (a[3 * i + 0] >> 3) & 0x07;
         r->coeffs[8 * i + 2] = (uint32_t)((a[3 * i + 0] >> 6) | (a[3 * i + 1] << 2)) & 0x07;
@@ -547,9 +546,8 @@ void PQCLEAN_DILITHIUM4_CLEAN_polyeta_unpack(poly *r, const uint8_t *a) {
 *              - const poly *a: pointer to input polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM4_CLEAN_polyt1_pack(uint8_t *r, const poly *a) {
-    unsigned int i;
 
-    for (i = 0; i < N / 8; ++i) {
+    for (size_t i = 0; i < N / 8; ++i) {
         r[9 * i + 0] = (uint8_t)((a->coeffs[8 * i + 0] >> 0));
         r[9 * i + 1] = (uint8_t)((a->coeffs[8 * i + 0] >> 8) | (a->coeffs[8 * i + 1] << 1));
         r[9 * i + 2] = (uint8_t)((a->coeffs[8 * i + 1] >> 7) | (a->coeffs[8 * i + 2] << 2));

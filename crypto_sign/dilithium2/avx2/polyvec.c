@@ -18,9 +18,7 @@
 * Arguments:   - polyvecl *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyvecl_freeze(polyvecl *v) {
-    unsigned int i;
-
-    for (i = 0; i < L; ++i) {
+    for (size_t i = 0; i < L; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_freeze(&v->vec[i]);
     }
 }
@@ -36,9 +34,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyvecl_freeze(polyvecl *v) {
 *              - const polyvecl *v: pointer to second summand
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyvecl_add(polyvecl *w, const polyvecl *u, const polyvecl *v) {
-    unsigned int i;
-
-    for (i = 0; i < L; ++i) {
+    for (size_t i = 0; i < L; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_add(&w->vec[i], &u->vec[i], &v->vec[i]);
     }
 }
@@ -52,9 +48,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyvecl_add(polyvecl *w, const polyvecl *u, const 
 * Arguments:   - polyvecl *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyvecl_ntt(polyvecl *v) {
-    unsigned int i;
-
-    for (i = 0; i < L; ++i) {
+    for (size_t i = 0; i < L; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_ntt(&v->vec[i]);
     }
 }
@@ -91,9 +85,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyvecl_pointwise_acc_invmontgomery(poly *w,
 * otherwise.
 **************************************************/
 int PQCLEAN_DILITHIUM2_AVX2_polyvecl_chknorm(const polyvecl *v, uint32_t bound)  {
-    unsigned int i;
-
-    for (i = 0; i < L; ++i) {
+    for (size_t i = 0; i < L; ++i) {
         if (PQCLEAN_DILITHIUM2_AVX2_poly_chknorm(&v->vec[i], bound)) {
             return 1;
         }
@@ -116,9 +108,7 @@ int PQCLEAN_DILITHIUM2_AVX2_polyvecl_chknorm(const polyvecl *v, uint32_t bound) 
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_reduce(polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_reduce(&v->vec[i]);
     }
 }
@@ -132,9 +122,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_reduce(polyveck *v) {
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_csubq(polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_csubq(&v->vec[i]);
     }
 }
@@ -148,9 +136,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_csubq(polyveck *v) {
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_freeze(polyveck *v)  {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_freeze(&v->vec[i]);
     }
 }
@@ -166,9 +152,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_freeze(polyveck *v)  {
 *              - const polyveck *v: pointer to second summand
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_add(polyveck *w, const polyveck *u, const polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_add(&w->vec[i], &u->vec[i], &v->vec[i]);
     }
 }
@@ -186,9 +170,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_add(polyveck *w, const polyveck *u, const 
 *                                   subtracted from first input vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_sub(polyveck *w, const polyveck *u, const polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_sub(&w->vec[i], &u->vec[i], &v->vec[i]);
     }
 }
@@ -202,9 +184,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_sub(polyveck *w, const polyveck *u, const 
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_shiftl(polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_shiftl(&v->vec[i]);
     }
 }
@@ -218,9 +198,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_shiftl(polyveck *v) {
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_ntt(polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_ntt(&v->vec[i]);
     }
 }
@@ -235,9 +213,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_ntt(polyveck *v) {
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_invntt_montgomery(polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_invntt_montgomery(&v->vec[i]);
     }
 }
@@ -255,9 +231,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_invntt_montgomery(polyveck *v) {
 * otherwise.
 **************************************************/
 int PQCLEAN_DILITHIUM2_AVX2_polyveck_chknorm(const polyveck *v, uint32_t bound) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         if (PQCLEAN_DILITHIUM2_AVX2_poly_chknorm(&v->vec[i], bound)) {
             return 1;
         }
@@ -281,9 +255,7 @@ int PQCLEAN_DILITHIUM2_AVX2_polyveck_chknorm(const polyveck *v, uint32_t bound) 
 *              - const polyveck *v: pointer to input vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_power2round(polyveck *v1, polyveck *v0, const polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_power2round(&v1->vec[i], &v0->vec[i], &v->vec[i]);
     }
 }
@@ -303,10 +275,9 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_power2round(polyveck *v1, polyveck *v0, co
 *                              coefficients Q + a0
 *              - const polyveck *v: pointer to input vector
 **************************************************/
-void PQCLEAN_DILITHIUM2_AVX2_polyveck_decompose(polyveck *v1, polyveck *v0, const polyveck *v) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+void PQCLEAN_DILITHIUM2_AVX2_polyveck_decompose(
+    polyveck *v1, polyveck *v0, const polyveck *v) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_decompose(&v1->vec[i], &v0->vec[i], &v->vec[i]);
     }
 }
@@ -322,12 +293,13 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_decompose(polyveck *v1, polyveck *v0, cons
 *
 * Returns number of 1 bits.
 **************************************************/
-unsigned int PQCLEAN_DILITHIUM2_AVX2_polyveck_make_hint(polyveck *h,
-        const polyveck *v0,
-        const polyveck *v1) {
-    unsigned int i, s = 0;
+uint32_t PQCLEAN_DILITHIUM2_AVX2_polyveck_make_hint(
+    polyveck *h,
+    const polyveck *v0,
+    const polyveck *v1) {
+    uint32_t s = 0;
 
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         s += PQCLEAN_DILITHIUM2_AVX2_poly_make_hint(&h->vec[i], &v0->vec[i], &v1->vec[i]);
     }
 
@@ -345,9 +317,7 @@ unsigned int PQCLEAN_DILITHIUM2_AVX2_polyveck_make_hint(polyveck *h,
 *              - const polyveck *h: pointer to input hint vector
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h) {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
+    for (size_t i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM2_AVX2_poly_use_hint(&w->vec[i], &v->vec[i], &h->vec[i]);
     }
 }

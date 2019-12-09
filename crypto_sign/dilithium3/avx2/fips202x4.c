@@ -9,10 +9,9 @@
 #define ROL(a, offset) (((a) << (offset)) ^ ((a) >> (64 - (offset))))
 
 static uint64_t load64(const uint8_t *x) {
-    unsigned int i;
     uint64_t r = 0;
 
-    for (i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
         r |= (uint64_t)x[i] << 8 * i;
     }
 
@@ -20,9 +19,7 @@ static uint64_t load64(const uint8_t *x) {
 }
 
 static void store64(uint8_t *x, uint64_t u) {
-    unsigned int i;
-
-    for (i = 0; i < 8; ++i) {
+    for (size_t i = 0; i < 8; ++i) {
         x[i] = (uint8_t)(u >> 8 * i);
     }
 }
@@ -32,21 +29,21 @@ extern void KeccakP1600times4_PermuteAll_24rounds(__m256i *s);
 #define KeccakF1600_StatePermute4x KeccakP1600times4_PermuteAll_24rounds
 
 static void keccak_absorb4x(__m256i *s,
-                            unsigned int r,
+                            uint8_t r,
                             const uint8_t *m0,
                             const uint8_t *m1,
                             const uint8_t *m2,
                             const uint8_t *m3,
-                            unsigned long long mlen,
+                            size_t mlen,
                             uint8_t p) {
-    unsigned long long i;
+    size_t i;
     uint8_t t0[200];
     uint8_t t1[200];
     uint8_t t2[200];
     uint8_t t3[200];
     uint64_t *ss = (uint64_t *)s;
 
-    for (i = 0; i < 25; ++i) {
+    for (size_t i = 0; i < 25; ++i) {
         s[i] = _mm256_xor_si256(s[i], s[i]);
     }
 
@@ -102,15 +99,14 @@ static void keccak_squeezeblocks4x(uint8_t *h0,
                                    uint8_t *h1,
                                    uint8_t *h2,
                                    uint8_t *h3,
-                                   unsigned long nblocks,
-                                   unsigned int r,
+                                   size_t nblocks,
+                                   uint8_t r,
                                    __m256i *s) {
-    unsigned int i;
     uint64_t *ss = (uint64_t *)s;
 
     while (nblocks > 0) {
         KeccakF1600_StatePermute4x(s);
-        for (i = 0; i < r / 8; ++i) {
+        for (size_t i = 0; i < r / 8; ++i) {
             store64(h0 + 8 * i, ss[4 * i + 0]);
             store64(h1 + 8 * i, ss[4 * i + 1]);
             store64(h2 + 8 * i, ss[4 * i + 2]);
@@ -132,7 +128,7 @@ void PQCLEAN_DILITHIUM3_AVX2_shake128_absorb4x(
     const uint8_t *m1,
     const uint8_t *m2,
     const uint8_t *m3,
-    unsigned long long mlen) {
+    size_t mlen) {
     keccak_absorb4x(s, SHAKE128_RATE, m0, m1, m2, m3, mlen, 0x1F);
 }
 
@@ -141,7 +137,7 @@ void PQCLEAN_DILITHIUM3_AVX2_shake128_squeezeblocks4x(
     uint8_t *h1,
     uint8_t *h2,
     uint8_t *h3,
-    unsigned long nblocks,
+    size_t nblocks,
     __m256i *s) {
     keccak_squeezeblocks4x(h0, h1, h2, h3, nblocks, SHAKE128_RATE, s);
 }
@@ -152,7 +148,7 @@ void PQCLEAN_DILITHIUM3_AVX2_shake256_absorb4x(
     const uint8_t *m1,
     const uint8_t *m2,
     const uint8_t *m3,
-    unsigned long long mlen) {
+    size_t mlen) {
     keccak_absorb4x(s, SHAKE256_RATE, m0, m1, m2, m3, mlen, 0x1F);
 }
 
@@ -161,7 +157,7 @@ void PQCLEAN_DILITHIUM3_AVX2_shake256_squeezeblocks4x(
     uint8_t *h1,
     uint8_t *h2,
     uint8_t *h3,
-    unsigned long nblocks,
+    size_t nblocks,
     __m256i *s) {
     keccak_squeezeblocks4x(h0, h1, h2, h3, nblocks, SHAKE256_RATE, s);
 }
@@ -171,14 +167,13 @@ void PQCLEAN_DILITHIUM3_AVX2_shake128_4x(
     uint8_t *h1,
     uint8_t *h2,
     uint8_t *h3,
-    unsigned long long hlen,
+    size_t hlen,
     const uint8_t *m0,
     const uint8_t *m1,
     const uint8_t *m2,
     const uint8_t *m3,
-    unsigned long long mlen) {
-    unsigned int i;
-    unsigned long nblocks = hlen / SHAKE128_RATE;
+    size_t mlen) {
+    size_t nblocks = hlen / SHAKE128_RATE;
     uint8_t t[4][SHAKE128_RATE];
     __m256i s[25];
 
@@ -193,7 +188,7 @@ void PQCLEAN_DILITHIUM3_AVX2_shake128_4x(
 
     if (hlen) {
         PQCLEAN_DILITHIUM3_AVX2_shake128_squeezeblocks4x(t[0], t[1], t[2], t[3], 1, s);
-        for (i = 0; i < hlen; ++i) {
+        for (size_t i = 0; i < hlen; ++i) {
             h0[i] = t[0][i];
             h1[i] = t[1][i];
             h2[i] = t[2][i];
@@ -207,14 +202,13 @@ void PQCLEAN_DILITHIUM3_AVX2_shake256_4x(
     uint8_t *h1,
     uint8_t *h2,
     uint8_t *h3,
-    unsigned long long hlen,
+    size_t hlen,
     const uint8_t *m0,
     const uint8_t *m1,
     const uint8_t *m2,
     const uint8_t *m3,
-    unsigned long long mlen) {
-    unsigned int i;
-    unsigned long nblocks = hlen / SHAKE256_RATE;
+    size_t mlen) {
+    size_t nblocks = hlen / SHAKE256_RATE;
     uint8_t t[4][SHAKE256_RATE];
     __m256i s[25];
 
@@ -229,7 +223,7 @@ void PQCLEAN_DILITHIUM3_AVX2_shake256_4x(
 
     if (hlen) {
         PQCLEAN_DILITHIUM3_AVX2_shake256_squeezeblocks4x(t[0], t[1], t[2], t[3], 1, s);
-        for (i = 0; i < hlen; ++i) {
+        for (size_t i = 0; i < hlen; ++i) {
             h0[i] = t[0][i];
             h1[i] = t[1][i];
             h2[i] = t[2][i];

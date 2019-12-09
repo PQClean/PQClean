@@ -1,26 +1,25 @@
 #ifndef REJSAMPLE_H
 #define REJSAMPLE_H
 
+#include <stddef.h>
 #include <stdint.h>
 
-#include "poly.h"
-
-unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_uniform(
+uint32_t PQCLEAN_DILITHIUM2_AVX2_rej_uniform(
     uint32_t *r,
-    unsigned int len,
+    size_t len,
     const uint8_t *buf,
-    unsigned int buflen);
+    size_t buflen);
 
-unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_eta(
+uint32_t PQCLEAN_DILITHIUM2_AVX2_rej_eta(
     uint32_t *r,
-    unsigned int len,
+    size_t len,
     const uint8_t *buf,
-    unsigned int buflen);
+    size_t buflen);
 
-unsigned int PQCLEAN_DILITHIUM2_AVX2_rej_gamma1m1(
+uint32_t PQCLEAN_DILITHIUM2_AVX2_rej_gamma1m1(
     uint32_t *r,
-    unsigned int len,
+    size_t len,
     const uint8_t *buf,
-    unsigned int buflen);
+    size_t buflen);
 
 #endif
