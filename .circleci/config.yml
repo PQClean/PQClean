@@ -30,7 +30,7 @@ version: 2.1
           mkdir test-results &&
           cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto"
         no_output_timeout: 2h
-    - store_cache:
+    - save_cache:
         key: v1-ccache-${ARCH}-${CC}
         paths:
           - ~/ccache
@@ -66,9 +66,9 @@ version: 2.1
         path: test/test-results
     - store_artifacts:
         path: test/test-results
-    - store_cache:
+    - save_cache:
         key: v1-ccache-${ARCH}-${CC}
-          paths:
+        paths:
           - /ccache
 
 jobs:
