@@ -41,7 +41,7 @@ consistency_checks:
     - stream.h
     - symmetric.h
 - source:
-    scheme: dilithium2
+    scheme: dilithium3
     implementation: avx2
   files:
     - api.h

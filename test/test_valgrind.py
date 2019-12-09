@@ -26,7 +26,7 @@ def valgrind_supports_exit_early():
 
 @pytest.mark.parametrize(
     'implementation,test_dir,impl_path, init, destr',
-    [(impl, *helpers.isolate_test_files(impl.path(), 'test_functest_'))
+    [(impl, *helpers.isolate_test_files(impl.path(), 'test_valgrind_'))
      for impl in pqclean.Scheme.all_supported_implementations()],
     ids=[str(impl) for impl in pqclean.Scheme.all_supported_implementations()],
 )

@@ -296,11 +296,10 @@ static unsigned int rej_uniform(uint32_t *a,
 void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform(poly *a,
         const uint8_t seed[SEEDBYTES],
         uint16_t nonce) {
-    unsigned int i, ctr;
+    size_t ctr, off;
     size_t buflen = POLY_UNIFORM_BUFLEN;
     uint8_t buf[POLY_UNIFORM_BUFLEN + 2];
     stream128_state state;
-    size_t off;
 
     stream128_init(&state, seed, nonce);
     stream128_squeezeblocks(buf, POLY_UNIFORM_NBLOCKS, &state);
@@ -309,7 +308,7 @@ void PQCLEAN_DILITHIUM4_CLEAN_poly_uniform(poly *a,
 
     while (ctr < N) {
         off = buflen % 3;
-        for (i = 0; i < off; ++i) {
+        for (size_t i = 0; i < off; ++i) {
             buf[i] = buf[buflen - off + i];
         }
 
