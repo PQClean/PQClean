@@ -1,6 +1,6 @@
 .include "shuffle.inc"
 
-.macro butterfly l0,l1,l2,l3,h0,h1,h2,h3 z0=15,z1=3
+.macro butterfly l0,l1,l2,l3,h0,h1,h2,h3,z0=15,z1=3
 vpaddd		%ymm2,%ymm\l0,%ymm12
 vpaddd		%ymm2,%ymm\l1,%ymm13
 vpaddd		%ymm2,%ymm\l2,%ymm14
@@ -121,7 +121,7 @@ level2:
 #PQCLEAN_DILITHIUM4_AVX2_zetas
 vpmovzxdq	96(%rdx),%ymm3
 
-butterfly	4,5,6,7,8,9,10,11 3,3
+butterfly	4,5,6,7,8,9,10,11,3,3
 
 #shuffle
 shuffle4	4,5,3,5
@@ -135,7 +135,7 @@ vpbroadcastd	112(%rdx),%ymm14
 vpbroadcastd	116(%rdx),%ymm15
 vpblendd	$0xF0,%ymm15,%ymm14,%ymm10
 
-butterfly	3,4,6,8,5,7,9,11 10,10
+butterfly	3,4,6,8,5,7,9,11,10,10
 
 #shuffle
 shuffle8	3,4,10,4
@@ -147,7 +147,7 @@ level4:
 #PQCLEAN_DILITHIUM4_AVX2_zetas
 vpbroadcastd	120(%rdx),%ymm9
 
-butterfly	10,3,6,5,4,8,7,11 9,9
+butterfly	10,3,6,5,4,8,7,11,9,9
 
 #store
 vmovdqa		%ymm10,(%rdi)
@@ -233,7 +233,7 @@ level7:
 #PQCLEAN_DILITHIUM4_AVX2_zetas
 vpbroadcastd	24(%rdx),%ymm3
 
-butterfly	4,5,6,7,8,9,10,11 3,3
+butterfly	4,5,6,7,8,9,10,11,3,3
 
 #consts
 vmovdqa		_PQCLEAN_DILITHIUM4_AVX2_8xdiv(%rip),%ymm3
