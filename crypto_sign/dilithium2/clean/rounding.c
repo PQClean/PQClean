@@ -1,5 +1,3 @@
-#include <stdint.h>
-
 #include "params.h"
 #include "rounding.h"
 
@@ -77,7 +75,7 @@ uint32_t PQCLEAN_DILITHIUM2_CLEAN_decompose(uint32_t a, uint32_t *a0) {
 *
 * Returns 1 if high bits of a and b differ and 0 otherwise.
 **************************************************/
-unsigned int PQCLEAN_DILITHIUM2_CLEAN_make_hint(const uint32_t a0, const uint32_t a1) {
+unsigned int PQCLEAN_DILITHIUM2_CLEAN_make_hint(uint32_t a0, uint32_t a1) {
     if (a0 <= GAMMA2 || a0 > Q - GAMMA2 || (a0 == Q - GAMMA2 && a1 == 0)) {
         return 0;
     }
@@ -95,7 +93,7 @@ unsigned int PQCLEAN_DILITHIUM2_CLEAN_make_hint(const uint32_t a0, const uint32_
 *
 * Returns corrected high bits.
 **************************************************/
-uint32_t PQCLEAN_DILITHIUM2_CLEAN_use_hint(const uint32_t a, const unsigned int hint) {
+uint32_t PQCLEAN_DILITHIUM2_CLEAN_use_hint(uint32_t a, unsigned int hint) {
     uint32_t a0, a1;
 
     a1 = PQCLEAN_DILITHIUM2_CLEAN_decompose(a, &a0);
