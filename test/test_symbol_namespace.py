@@ -45,7 +45,9 @@ def test_symbol_namespaces(implementation, impl_path, test_dir, init, destr):
                     symbol.startswith('_' + namespace) or
                     # KeccakP-1600 for AVX2
                     symbol.startswith('KeccakF1600times4') or
+                    symbol.startswith('_KeccakF1600times4') or  # MacOS
                     symbol.startswith('KeccakP1600times4') or
+                    symbol.startswith('_KeccakP1600times4') or  # MacOS
                     # weird things on i386
                     symbol.startswith('__x86.get_pc_thunk.')):
                 non_namespaced.append(symbol)
