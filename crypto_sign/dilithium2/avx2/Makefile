@@ -24,11 +24,8 @@ KECCAK4X=$(KECCAK4XDIR)/$(KECCAK4XOBJ)
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-%.o: %.s $(HEADERS)
-	$(AS) -o $@ $<
-
 %.o: %.S $(HEADERS)
-	$(AS) -c -o $@ $<
+	$(CC) -c -o $@ $<
 
 $(LIB): $(OBJECTS) $(KECCAK4X)
 	$(AR) -r $@ $^

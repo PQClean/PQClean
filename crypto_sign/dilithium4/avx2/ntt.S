@@ -1,4 +1,5 @@
 .include "shuffle.inc"
+#include "cdecl.inc"
 
 .macro butterfly rl0,rl1,rl2,rl3,rh0,rh1,rh2,rh3,z0=3,z1=3,z2=3,z3=3
 #mul
@@ -40,15 +41,15 @@ vpsubd		%ymm14,%ymm\rh2,%ymm\rh2
 vpsubd		%ymm15,%ymm\rh3,%ymm\rh3
 .endm
 
-.global PQCLEAN_DILITHIUM2_AVX2_ntt_levels0t2_avx
-PQCLEAN_DILITHIUM2_AVX2_ntt_levels0t2_avx:
+.global cdecl(PQCLEAN_DILITHIUM4_AVX2_ntt_levels0t2_avx)
+cdecl(PQCLEAN_DILITHIUM4_AVX2_ntt_levels0t2_avx):
 #consts
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xqinv(%rip),%ymm0
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xq(%rip),%ymm1
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8x2q(%rip),%ymm2
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xq)(%rip),%ymm1
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8x2q)(%rip),%ymm2
 
 level0:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#zetas
 vpbroadcastd	(%rdx),%ymm3
 
 #load
@@ -64,14 +65,14 @@ vpmovzxdq	896(%rsi),%ymm11
 butterfly	4,5,6,7,8,9,10,11
 
 level1:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#PQCLEAN_DILITHIUM4_AVX2_zetas
 vpbroadcastd	4(%rdx),%ymm12
 vpbroadcastd	8(%rdx),%ymm13
 
 butterfly	4,5,8,9,6,7,10,11,12,12,13,13
 
 level2:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#PQCLEAN_DILITHIUM4_AVX2_zetas
 vpbroadcastd	12(%rdx),%ymm12
 vpbroadcastd	16(%rdx),%ymm13
 vpbroadcastd	20(%rdx),%ymm14
@@ -91,12 +92,12 @@ vmovdqa		%ymm11,1792(%rdi)
 
 ret
 
-.global PQCLEAN_DILITHIUM2_AVX2_ntt_levels3t8_avx
-PQCLEAN_DILITHIUM2_AVX2_ntt_levels3t8_avx:
+.global cdecl(PQCLEAN_DILITHIUM4_AVX2_ntt_levels3t8_avx)
+cdecl(PQCLEAN_DILITHIUM4_AVX2_ntt_levels3t8_avx):
 #consts
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xqinv(%rip),%ymm0
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xq(%rip),%ymm1
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8x2q(%rip),%ymm2
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xq)(%rip),%ymm1
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8x2q)(%rip),%ymm2
 
 #load
 vmovdqa		(%rsi),%ymm4
@@ -109,13 +110,13 @@ vmovdqa		192(%rsi),%ymm10
 vmovdqa		224(%rsi),%ymm11
 
 level3:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#zetas
 vpbroadcastd	(%rdx),%ymm3
 
 butterfly	4,5,6,7,8,9,10,11
 
 level4:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#PQCLEAN_DILITHIUM4_AVX2_zetas
 vpbroadcastd	4(%rdx),%ymm12
 vpbroadcastd	8(%rdx),%ymm13
 vpblendd	$0xF0,%ymm13,%ymm12,%ymm12
@@ -128,7 +129,7 @@ shuffle8	7,11,6,11
 butterfly	3,8,4,9,5,10,6,11,12,12,12,12
 
 level5:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#zetas
 vpmovzxdq	12(%rdx),%ymm12
 
 shuffle4	3,5,7,5
@@ -139,14 +140,14 @@ shuffle4	9,11,4,11
 butterfly	7,5,3,10,8,6,4,11,12,12,12,12
 
 level6:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#zetas
 vpmovzxdq	28(%rdx),%ymm12
 vpmovzxdq	44(%rdx),%ymm13
 
 butterfly	7,5,8,6,3,10,4,11,12,12,13,13
 
 level7:
-#PQCLEAN_DILITHIUM2_AVX2_zetas
+#zetas
 vpmovzxdq	60(%rdx),%ymm12
 vpmovzxdq	76(%rdx),%ymm13
 vpmovzxdq	92(%rdx),%ymm14

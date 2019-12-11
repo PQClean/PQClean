@@ -23,6 +23,7 @@ implementations:
       supported_platforms:
           - architecture: x86_64
             operating_systems:
+                - Darwin
                 - Linux
             required_flags:
                 - avx2

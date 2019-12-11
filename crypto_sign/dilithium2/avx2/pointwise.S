@@ -1,10 +1,11 @@
 #include "params.h"
+#include "cdecl.inc"
 
-.global PQCLEAN_DILITHIUM2_AVX2_pointwise_avx
-PQCLEAN_DILITHIUM2_AVX2_pointwise_avx:
+.global cdecl(PQCLEAN_DILITHIUM2_AVX2_pointwise_avx)
+cdecl(PQCLEAN_DILITHIUM2_AVX2_pointwise_avx):
 #consts
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xqinv(%rip),%ymm0
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xq(%rip),%ymm1
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm1
 
 xor		%eax,%eax
 _looptop1:
@@ -132,11 +133,11 @@ vpaddq		%ymm8,%ymm4,%ymm4
 vpaddq		%ymm9,%ymm5,%ymm5
 .endm
 
-.global PQCLEAN_DILITHIUM2_AVX2_pointwise_acc_avx
-PQCLEAN_DILITHIUM2_AVX2_pointwise_acc_avx:
+.global cdecl(PQCLEAN_DILITHIUM2_AVX2_pointwise_acc_avx)
+cdecl(PQCLEAN_DILITHIUM2_AVX2_pointwise_acc_avx):
 #consts
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xqinv(%rip),%ymm0
-vmovdqa		_PQCLEAN_DILITHIUM2_AVX2_8xq(%rip),%ymm1
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm1
 
 xor		%eax,%eax
 _looptop2:
