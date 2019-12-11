@@ -8,7 +8,7 @@ consistency_checks:
     - fips202x4.h
     - nttconsts.c
     - nttconsts.h
-    - ntt.s
+    - ntt.S
     - ntt.h
     - packing.c
     - packing.h
@@ -16,7 +16,7 @@ consistency_checks:
     - polyvec.c
     - polyvec.h
     - reduce.h
-    - reduce.s
+    - reduce.S
     - rounding.c
     - rounding.h
     - rejsample.h
@@ -33,7 +33,7 @@ consistency_checks:
     - fips202x4.h
     - nttconsts.c
     - nttconsts.h
-    - ntt.s
+    - ntt.S
     - ntt.h
     - packing.c
     - packing.h
@@ -41,7 +41,7 @@ consistency_checks:
     - polyvec.c
     - polyvec.h
     - reduce.h
-    - reduce.s
+    - reduce.S
     - rounding.c
     - rounding.h
     - rejsample.h
