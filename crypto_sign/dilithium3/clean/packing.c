@@ -13,8 +13,8 @@
 *              - const polyveck *t1: pointer to vector t1
 **************************************************/
 void PQCLEAN_DILITHIUM3_CLEAN_pack_pk(
-    uint8_t *pk,
-    const uint8_t *rho,
+    uint8_t pk[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_PUBLICKEYBYTES],
+    const uint8_t rho[SEEDBYTES],
     const polyveck *t1) {
     for (size_t i = 0; i < SEEDBYTES; ++i) {
         pk[i] = rho[i];
@@ -36,9 +36,9 @@ void PQCLEAN_DILITHIUM3_CLEAN_pack_pk(
 *              - uint8_t pk[]: byte array containing bit-packed pk
 **************************************************/
 void PQCLEAN_DILITHIUM3_CLEAN_unpack_pk(
-    uint8_t *rho,
+    uint8_t rho[SEEDBYTES],
     polyveck *t1,
-    const uint8_t *pk) {
+    const uint8_t pk[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_PUBLICKEYBYTES]) {
     for (size_t i = 0; i < SEEDBYTES; ++i) {
         rho[i] = pk[i];
     }
@@ -63,10 +63,10 @@ void PQCLEAN_DILITHIUM3_CLEAN_unpack_pk(
 *              - const polyveck *t0: pointer to vector t0
 **************************************************/
 void PQCLEAN_DILITHIUM3_CLEAN_pack_sk(
-    uint8_t *sk,
-    const uint8_t *rho,
-    const uint8_t *key,
-    const uint8_t *tr,
+    uint8_t sk[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_SECRETKEYBYTES],
+    const uint8_t rho[SEEDBYTES],
+    const uint8_t key[SEEDBYTES],
+    const uint8_t tr[CRHBYTES],
     const polyvecl *s1,
     const polyveck *s2,
     const polyveck *t0) {
@@ -114,13 +114,13 @@ void PQCLEAN_DILITHIUM3_CLEAN_pack_sk(
 *              - uint8_t sk[]: byte array containing bit-packed sk
 **************************************************/
 void PQCLEAN_DILITHIUM3_CLEAN_unpack_sk(
-    uint8_t *rho,
-    uint8_t *key,
-    uint8_t *tr,
+    uint8_t rho[SEEDBYTES],
+    uint8_t key[SEEDBYTES],
+    uint8_t tr[CRHBYTES],
     polyvecl *s1,
     polyveck *s2,
     polyveck *t0,
-    const uint8_t *sk) {
+    const uint8_t sk[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_SECRETKEYBYTES]) {
     for (size_t i = 0; i < SEEDBYTES; ++i) {
         rho[i] = sk[i];
     }
@@ -162,7 +162,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_unpack_sk(
 *              - const poly *c: pointer to challenge polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM3_CLEAN_pack_sig(
-    uint8_t *sig,
+    uint8_t sig[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_SECRETKEYBYTES],
     const polyvecl *z,
     const polyveck *h,
     const poly *c) {
@@ -228,7 +228,7 @@ int PQCLEAN_DILITHIUM3_CLEAN_unpack_sig(
     polyvecl *z,
     polyveck *h,
     poly *c,
-    const uint8_t *sig) {
+    const uint8_t sig[PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_BYTES]) {
     size_t k;
     uint64_t signs;
 
