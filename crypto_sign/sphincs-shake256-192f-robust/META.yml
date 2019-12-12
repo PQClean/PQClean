@@ -4,8 +4,8 @@ claimed-nist-level: 3
 length-public-key: 48
 length-secret-key: 96
 length-signature: 35664
-nistkat-sha256: 5cfcf998ad0bedf8e6b961c8891048f456d6422d3b4a26fcb095a913c9efd03e
 testvectors-sha256: de65b2a7b6d5e819f58b6e1a08ec4ef3308a9c36b7c962450105f82263e35e98
+nistkat-sha256: 5cfcf998ad0bedf8e6b961c8891048f456d6422d3b4a26fcb095a913c9efd03e
 principal-submitters:
   - Andreas Hülsing
 auxiliary-submitters:
@@ -27,3 +27,9 @@ auxiliary-submitters:
 implementations:
     - name: clean
       version: https://github.com/sphincs/sphincsplus/commit/77755c94d0bc744478044d6efbb888dc13156441
+    - name: avx2
+      version: https://github.com/sphincs/sphincsplus/commit/77755c94d0bc744478044d6efbb888dc13156441
+      supported_platforms:
+        - architecture: x86_64
+          required_flags:
+            - avx2

@@ -71,12 +71,13 @@ def isolate_test_files(impl_path, test_prefix,
 
     def destructor():
         """Clean up the isolated files"""
-        shutil.rmtree(test_dir)
+        shutil.rmtree(test_dir, ignore_errors=True)
 
     return (test_dir, new_impl_dir, initializer, destructor)
 
 
-def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
+def run_subprocess(command, working_dir='.', env=None, expected_returncode=0,
+                   print_output=True):
     """
     Helper function to run a shell command and report success/failure
     depending on the exit status of the shell command.
@@ -97,7 +98,8 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0):
         cwd=working_dir,
         env=env,
     )
-    print(result.stdout.decode('utf-8'))
+    if print_output:
+        print(result.stdout.decode('utf-8'))
     if expected_returncode is not None:
         assert result.returncode == expected_returncode, \
             "Got unexpected return code {}".format(result.returncode)
