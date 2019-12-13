@@ -1,0 +1,61 @@
+consistency_checks:
+  - source:
+      scheme: sphincs-shake256-256s-robust
+      implementation: clean
+    files:
+      - address.c
+      - address.h
+      - fors.c
+      - fors.h
+      - hash.h
+      - sign.c
+      - thash.h
+      - utils.c
+      - utils.h
+      - wots.c
+      - wots.h
+  - source:
+      scheme: sphincs-sha256-128s-robust
+      implementation: clean
+    files:
+      - hash_state.h
+      - sha256.c
+      - sha256.h
+      - hash_sha256.c
+      - thash_sha256_robust.c
+  - source:
+      scheme: sphincs-sha256-128f-robust
+      implementation: clean
+    files:
+      - hash_state.h
+      - sha256.c
+      - sha256.h
+      - hash_sha256.c
+      - thash_sha256_robust.c
+  - source:
+      scheme: sphincs-sha256-192f-robust
+      implementation: clean
+    files:
+      - hash_state.h
+      - sha256.c
+      - sha256.h
+      - hash_sha256.c
+      - thash_sha256_robust.c
+  - source:
+      scheme: sphincs-sha256-256s-robust
+      implementation: clean
+    files:
+      - hash_state.h
+      - sha256.c
+      - sha256.h
+      - hash_sha256.c
+      - thash_sha256_robust.c
+  - source:
+      scheme: sphincs-sha256-256f-robust
+      implementation: clean
+    files:
+      - hash_state.h
+      - sha256.c
+      - sha256.h
+      - hash_sha256.c
+      - thash_sha256_robust.c
