@@ -1,0 +1,63 @@
+consistency_checks:
+- source:
+    scheme: dilithium2
+    implementation: avx2
+  files:
+    - alignment.h
+    - fips202x4.c
+    - fips202x4.h
+    - nttconsts.c
+    - nttconsts.h
+    - ntt.S
+    - ntt.h
+    - packing.c
+    - packing.h
+    - poly.h
+    - polyvec.c
+    - polyvec.h
+    - reduce.h
+    - reduce.S
+    - rounding.c
+    - rounding.h
+    - rejsample.h
+    - sign.h
+    - stream.c
+    - stream.h
+    - symmetric.h
+- source:
+    scheme: dilithium3
+    implementation: avx2
+  files:
+    - alignment.h
+    - fips202x4.c
+    - fips202x4.h
+    - nttconsts.c
+    - nttconsts.h
+    - ntt.S
+    - ntt.h
+    - packing.c
+    - packing.h
+    - poly.h
+    - polyvec.c
+    - polyvec.h
+    - reduce.h
+    - reduce.S
+    - rounding.c
+    - rounding.h
+    - rejsample.h
+    - sign.h
+    - stream.c
+    - stream.h
+    - symmetric.h
+- source:
+    scheme: dilithium4
+    implementation: clean
+  files:
+    - api.h
+    - packing.c
+    - packing.h
+    - polyvec.h
+    - params.h
+    - stream.c
+    - stream.h
+    - symmetric.h
