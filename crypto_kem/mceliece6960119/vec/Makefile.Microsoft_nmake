@@ -1,0 +1,25 @@
+# This Makefile can be used with GNU Make or BSD Make
+
+LIBRARY = libmceliece6960119_vec.lib
+
+OBJECTS = aes256ctr.obj benes.obj bm.obj controlbits.obj decrypt.obj \
+		  encrypt.obj fft.obj fft_tr.obj gf.obj operations.obj pk_gen.obj \
+		  sk_gen.obj transpose.obj util.obj vec.obj
+
+# Warning C4146 is raised when a unary minus operator is applied to an
+# unsigned type; this has nonetheless been standard and portable for as
+# long as there has been a C standard, and we do that a lot, especially
+# for constant-time computations. Thus, we disable that spurious warning.
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /wd4146 /WX
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h *.inc
+
+$(LIBRARY): $(OBJECTS)
+	LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+	-DEL $(OBJECTS)
+	-DEL $(LIBRARY)

@@ -23,7 +23,7 @@ int PQCLEAN_MCELIECE6688128F_CLEAN_crypto_kem_enc(
     uint8_t *e = two_e + 1;
     uint8_t one_ec[ 1 + SYS_N / 8 + (SYND_BYTES + 32) ] = {1};
 
-    PQCLEAN_MCELIECE6688128F_CLEAN_encrypt(c, pk, e);
+    PQCLEAN_MCELIECE6688128F_CLEAN_encrypt(c, e, pk);
 
     crypto_hash_32b(c + SYND_BYTES, two_e, sizeof(two_e));
 
@@ -55,7 +55,7 @@ int PQCLEAN_MCELIECE6688128F_CLEAN_crypto_kem_dec(
 
     //
 
-    ret_decrypt = PQCLEAN_MCELIECE6688128F_CLEAN_decrypt(e, sk + SYS_N / 8, c);
+    ret_decrypt = (uint8_t)PQCLEAN_MCELIECE6688128F_CLEAN_decrypt(e, sk + SYS_N / 8, c);
 
     crypto_hash_32b(conf, two_e, sizeof(two_e));
 
@@ -121,7 +121,7 @@ int PQCLEAN_MCELIECE6688128F_CLEAN_crypto_kem_keypair
         for (i = 0; i < SYS_T;   i++) {
             PQCLEAN_MCELIECE6688128F_CLEAN_store2(sk + SYS_N / 8 + i * 2, irr[i]);
         }
-        if (PQCLEAN_MCELIECE6688128F_CLEAN_pk_gen(pk, sk + SYS_N / 8, perm)) {
+        if (PQCLEAN_MCELIECE6688128F_CLEAN_pk_gen(pk, perm, sk + SYS_N / 8)) {
             continue;
         }
 

@@ -1,11 +1,15 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIBRARY = libmceliece_clean.lib
+LIBRARY = libmceliece6688128f_clean.lib
 
-OBJECTS = aes256ctr.lib benes.lib bm.lib controlbits.lib decrypt.lib encrypt.lib gf.lib \
-	  operations.lib pk_gen.lib root.lib sk_gen.lib synd.lib transpose.lib util.lib
+OBJECTS = aes256ctr.obj benes.obj bm.obj controlbits.obj decrypt.obj encrypt.obj gf.obj \
+	  operations.obj pk_gen.obj root.obj sk_gen.obj synd.obj transpose.obj util.obj
 
-CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
+# Warning C4146 is raised when a unary minus operator is applied to an
+# unsigned type; this has nonetheless been standard and portable for as
+# long as there has been a C standard, and we do that a lot, especially
+# for constant-time computations. Thus, we disable that spurious warning.
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /wd4146 /WX
 
 all: $(LIBRARY)
 

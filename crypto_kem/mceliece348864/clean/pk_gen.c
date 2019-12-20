@@ -2,11 +2,11 @@
   This file is for public-key generation
 */
 
-#include <stdint.h>
 #include <string.h>
 
-#include "controlbits.h"
 #include "benes.h"
+#include "controlbits.h"
+#include "gf.h"
 #include "params.h"
 #include "pk_gen.h"
 #include "root.h"
@@ -14,7 +14,7 @@
 
 /* input: secret key sk */
 /* output: public key pk */
-int PQCLEAN_MCELIECE348864_CLEAN_pk_gen(uint8_t *pk, uint8_t *sk, uint32_t *perm) {
+int PQCLEAN_MCELIECE348864_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8_t *sk) {
     int i, j, k;
     int row, c;
 
@@ -50,7 +50,7 @@ int PQCLEAN_MCELIECE348864_CLEAN_pk_gen(uint8_t *pk, uint8_t *sk, uint32_t *perm
         perm[i] = buf[i] & GFMASK;
     }
     for (i = 0; i < SYS_N;         i++) {
-        L[i] = PQCLEAN_MCELIECE348864_CLEAN_bitrev(perm[i]);
+        L[i] = PQCLEAN_MCELIECE348864_CLEAN_bitrev((gf)perm[i]);
     }
 
     // filling the matrix

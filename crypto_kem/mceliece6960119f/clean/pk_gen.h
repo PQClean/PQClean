@@ -5,9 +5,9 @@
 */
 
 
-#include "gf.h"
+#include <stdint.h>
 
-int PQCLEAN_MCELIECE6960119F_CLEAN_pk_gen(unsigned char * /*pk*/, unsigned char * /*sk*/, uint32_t * /*perm*/);
+int PQCLEAN_MCELIECE6960119F_CLEAN_pk_gen(uint8_t * /*pk*/, uint32_t * /*perm*/, const uint8_t * /*sk*/);
 
 #endif
 

@@ -16,7 +16,7 @@
 
 /* input: secret key sk */
 /* output: public key pk */
-int PQCLEAN_MCELIECE6960119_CLEAN_pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
+int PQCLEAN_MCELIECE6960119_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8_t *sk) {
     unsigned char *pk_ptr = pk;
 
     int i, j, k;
@@ -54,7 +54,7 @@ int PQCLEAN_MCELIECE6960119_CLEAN_pk_gen(unsigned char *pk, unsigned char *sk, u
         perm[i] = buf[i] & GFMASK;
     }
     for (i = 0; i < SYS_N;         i++) {
-        L[i] = PQCLEAN_MCELIECE6960119_CLEAN_bitrev(perm[i]);
+        L[i] = PQCLEAN_MCELIECE6960119_CLEAN_bitrev((gf)perm[i]);
     }
 
     // filling the matrix

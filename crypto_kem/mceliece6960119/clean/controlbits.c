@@ -19,7 +19,7 @@ static bit is_smaller(uint32_t a, uint32_t b) {
     ret = a - b;
     ret >>= 31;
 
-    return ret;
+    return (bit)ret;
 }
 
 static bit is_smaller_63b(uint64_t a, uint64_t b) {
@@ -28,7 +28,7 @@ static bit is_smaller_63b(uint64_t a, uint64_t b) {
     ret = a - b;
     ret >>= 63;
 
-    return ret;
+    return (bit)ret;
 }
 
 static void cswap(uint32_t *x, uint32_t *y, bit swap) {

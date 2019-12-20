@@ -15,7 +15,7 @@
 
 #include "gf.h"
 
-static inline uint32_t same_mask(uint16_t x, uint16_t y) {
+static inline uint8_t same_mask(uint16_t x, uint16_t y) {
     uint32_t mask;
 
     mask = x ^ y;
@@ -23,22 +23,23 @@ static inline uint32_t same_mask(uint16_t x, uint16_t y) {
     mask >>= 31;
     mask = -mask;
 
-    return mask;
+    return (uint8_t)mask;
 }
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
-    int i, j, eq;
+    size_t i, j;
+    int eq;
 
     uint16_t ind[ SYS_T ];
     uint8_t *ind8 = (uint8_t *)ind;
-    unsigned char mask;
+    uint8_t mask;
     unsigned char val[ SYS_T ];
 
     while (1) {
         randombytes(ind8, sizeof(ind));
         // Copy to uint16_t ind in a little-endian way
-        for (size_t i = 0; i < sizeof(ind); i += 2) {
+        for (i = 0; i < sizeof(ind); i += 2) {
             ind[i / 2] = ind8[i + 1] << 8 | ind8[i];
         }
 
@@ -71,7 +72,7 @@ static void gen_e(unsigned char *e) {
         e[i] = 0;
 
         for (j = 0; j < SYS_T; j++) {
-            mask = same_mask(i, (ind[j] >> 3));
+            mask = same_mask((uint16_t)i, (ind[j] >> 3));
 
             e[i] |= val[j] & mask;
         }
@@ -117,7 +118,7 @@ static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned c
     }
 }
 
-void PQCLEAN_MCELIECE8192128_CLEAN_encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e) {
+void PQCLEAN_MCELIECE8192128_CLEAN_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk) {
     gen_e(e);
 
     syndrome(s, pk, e);

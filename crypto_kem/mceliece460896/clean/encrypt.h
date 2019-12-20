@@ -5,7 +5,7 @@
 */
 
 
-void PQCLEAN_MCELIECE460896_CLEAN_encrypt(unsigned char * /*s*/, const unsigned char * /*pk*/, unsigned char * /*e*/);
+void PQCLEAN_MCELIECE460896_CLEAN_encrypt(unsigned char * /*s*/, unsigned char * /*e*/, const unsigned char * /*pk*/);
 
 #endif
 

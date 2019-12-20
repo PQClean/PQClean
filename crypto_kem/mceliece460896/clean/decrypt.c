@@ -75,7 +75,7 @@ int PQCLEAN_MCELIECE460896_CLEAN_decrypt(unsigned char *e, const unsigned char *
 
     //
 
-    check = w;
+    check = (uint16_t)w;
     check ^= SYS_T;
 
     for (i = 0; i < SYS_T * 2; i++) {

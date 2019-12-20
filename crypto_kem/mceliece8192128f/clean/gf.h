@@ -14,6 +14,7 @@ gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_add(gf in0, gf in1);
 gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_mul(gf in0, gf in1);
 gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_frac(gf den, gf num);
 gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_inv(gf in);
+uint64_t PQCLEAN_MCELIECE8192128F_CLEAN_gf_mul2(gf a, gf b0, gf b1);
 
 void PQCLEAN_MCELIECE8192128F_CLEAN_GF_mul(gf *out, const gf *in0, const gf *in1);
 

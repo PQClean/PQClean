@@ -104,7 +104,7 @@ static int mov_columns(uint8_t mat[][ SYS_N / 8 ], uint32_t *perm) {
         }
 
         if (t == 0) {
-            return -1; // return if buf is not full rank
+            return -1;    // return if buf is not full rank
         }
 
         ctz_list[i] = s = ctz(t);
@@ -131,7 +131,7 @@ static int mov_columns(uint8_t mat[][ SYS_N / 8 ], uint32_t *perm) {
     for (j = 0;   j < 32; j++) {
         for (k = j + 1; k < 64; k++) {
             d = perm[ row + j ] ^ perm[ row + k ];
-            d &= same_mask(k, ctz_list[j]);
+            d &= same_mask((uint16_t)k, (uint16_t)ctz_list[j]);
             perm[ row + j ] ^= d;
             perm[ row + k ] ^= d;
         }
@@ -157,7 +157,7 @@ static int mov_columns(uint8_t mat[][ SYS_N / 8 ], uint32_t *perm) {
         for (j = 0; j < 32; j++) {
             for (k = j + 1; k < 64; k++) {
                 d = buf[ j ] ^ buf[ k ];
-                d &= same_mask(k, ctz_list[j]);
+                d &= same_mask((uint16_t)k, (uint16_t)ctz_list[j]);
                 buf[ j ] ^= d;
                 buf[ k ] ^= d;
             }
@@ -182,7 +182,7 @@ static int mov_columns(uint8_t mat[][ SYS_N / 8 ], uint32_t *perm) {
 
 /* input: secret key sk */
 /* output: public key pk */
-int PQCLEAN_MCELIECE6960119F_CLEAN_pk_gen(unsigned char *pk, unsigned char *sk, uint32_t *perm) {
+int PQCLEAN_MCELIECE6960119F_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8_t *sk) {
     unsigned char *pk_ptr = pk;
 
     int i, j, k;
@@ -220,7 +220,7 @@ int PQCLEAN_MCELIECE6960119F_CLEAN_pk_gen(unsigned char *pk, unsigned char *sk, 
         perm[i] = buf[i] & GFMASK;
     }
     for (i = 0; i < SYS_N;         i++) {
-        L[i] = PQCLEAN_MCELIECE6960119F_CLEAN_bitrev(perm[i]);
+        L[i] = PQCLEAN_MCELIECE6960119F_CLEAN_bitrev((gf)perm[i]);
     }
 
     // filling the matrix

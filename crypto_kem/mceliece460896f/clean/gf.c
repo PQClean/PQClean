@@ -33,7 +33,7 @@ gf PQCLEAN_MCELIECE460896F_CLEAN_gf_mul(gf in0, gf in1) {
     tmp = t0 * (t1 & 1);
 
     for (i = 1; i < GFBITS; i++) {
-        tmp ^= (t0 * (t1 & (1 << i)));
+        tmp ^= (t0 * (t1 & ((uint64_t)1 << i)));
     }
 
     //
