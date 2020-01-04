@@ -55,6 +55,4 @@ void PQCLEAN_BABYBEAR_CLEAN_decapsulate (
     const uint8_t sk[BABYBEAR_PRIVATE_KEY_BYTES]
 );
 
-void PQCLEAN_BABYBEAR_CLEAN_secure_bzero (void *s, size_t size);
-
 #endif
