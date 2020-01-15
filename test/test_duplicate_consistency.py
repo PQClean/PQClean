@@ -47,7 +47,6 @@ def file_get_contents(filename):
         return f.read()
 
 
-@helpers.skip_windows()
 @helpers.filtered_test
 def test_duplicate_consistency(implementation, source, file):
     target_path = os.path.join(source.path(), file)
