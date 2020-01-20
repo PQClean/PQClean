@@ -1,4 +1,4 @@
-name: Classic McEliece 348854
+name: Classic McEliece 348864
 type: kem
 claimed-nist-level: 1
 claimed-security: IND-CCA2
@@ -26,3 +26,13 @@ implementations:
       version: SUPERCOP-20191221
     - name: vec
       version: SUPERCOP-20191221
+    - name: sse
+      version: SUPERCOP-20191221
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+            - Linux
+            - Darwin
+          required_flags:
+            - sse4_1
+            - popcnt

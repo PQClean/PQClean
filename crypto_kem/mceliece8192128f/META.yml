@@ -26,3 +26,14 @@ implementations:
       version: SUPERCOP-20191221
     - name: vec
       version: SUPERCOP-20191221
+    - name: sse
+      version: SUPERCOP-20191221
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+            - Linux
+            - Darwin
+          required_flags:
+            - sse4_1
+            - popcnt
+            - bmi
