@@ -131,7 +131,7 @@ static uint16_t synd_cmp(vec s0[][ GFBITS ], vec s1[][ GFBITS ]) {
 
 /* Niederreiter decryption with the Berlekamp decoder */
 /* intput: sk, secret key */
-/*         s, ciphertext (syndrome) */
+/*         c, ciphertext (syndrome) */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
 int PQCLEAN_MCELIECE6688128F_VEC_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {

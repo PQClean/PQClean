@@ -25,7 +25,6 @@ static void gen_e(unsigned char *e) {
     int eq, count;
 
     uint16_t ind[ SYS_T * 2 ];
-    uint8_t *ind8 = (uint8_t *)ind;
     uint32_t ind32[ SYS_T * 2 ];
     uint64_t e_int[ (SYS_N + 63) / 64 ];
     uint64_t one = 1;
@@ -34,9 +33,6 @@ static void gen_e(unsigned char *e) {
 
     while (1) {
         randombytes((unsigned char *) ind, sizeof(ind));
-        for (i = 0; i < sizeof(ind); i += 2) {
-            ind[i / 2] = (uint16_t)ind8[i + 1] << 8 | ind8[i];
-        }
 
         for (i = 0; i < SYS_T * 2; i++) {
             ind[i] &= GFMASK;

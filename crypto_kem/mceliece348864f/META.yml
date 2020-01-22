@@ -37,3 +37,14 @@ implementations:
             - sse4_1
             - bmi1
             - popcnt
+    - name: avx
+      version: SUPERCOP-20191221
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+            - Linux
+            - Darwin
+          required_flags:
+            - avx2
+            - popcnt
+            - bmi2
