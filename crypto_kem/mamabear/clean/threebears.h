@@ -55,6 +55,4 @@ void PQCLEAN_MAMABEAR_CLEAN_decapsulate (
     const uint8_t sk[MAMABEAR_PRIVATE_KEY_BYTES]
 );
 
-void PQCLEAN_MAMABEAR_CLEAN_secure_bzero (void *s, size_t size);
-
 #endif
