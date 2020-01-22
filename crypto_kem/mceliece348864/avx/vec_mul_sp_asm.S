@@ -181,8 +181,6 @@
 
 # qhasm: enter vec_mul_sp_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE348864_AVX_vec_mul_sp_asm
-.hidden PQCLEAN_MCELIECE348864_AVX_vec_mul_sp_asm
 .global _PQCLEAN_MCELIECE348864_AVX_vec_mul_sp_asm
 .global PQCLEAN_MCELIECE348864_AVX_vec_mul_sp_asm
 _PQCLEAN_MCELIECE348864_AVX_vec_mul_sp_asm:

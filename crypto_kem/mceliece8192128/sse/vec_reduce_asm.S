@@ -39,8 +39,6 @@
 
 # qhasm: enter vec_reduce_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE8192128_SSE_vec_reduce_asm
-.hidden PQCLEAN_MCELIECE8192128_SSE_vec_reduce_asm
 .global _PQCLEAN_MCELIECE8192128_SSE_vec_reduce_asm
 .global PQCLEAN_MCELIECE8192128_SSE_vec_reduce_asm
 _PQCLEAN_MCELIECE8192128_SSE_vec_reduce_asm:

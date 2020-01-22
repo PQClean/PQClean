@@ -69,8 +69,6 @@
 
 # qhasm: enter syndrome_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE6960119F_AVX_syndrome_asm
-.hidden PQCLEAN_MCELIECE6960119F_AVX_syndrome_asm
 .global _PQCLEAN_MCELIECE6960119F_AVX_syndrome_asm
 .global PQCLEAN_MCELIECE6960119F_AVX_syndrome_asm
 _PQCLEAN_MCELIECE6960119F_AVX_syndrome_asm:

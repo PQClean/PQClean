@@ -71,8 +71,6 @@
 
 # qhasm: enter transpose_64x128_sp_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE6688128F_AVX_transpose_64x128_sp_asm
-.hidden PQCLEAN_MCELIECE6688128F_AVX_transpose_64x128_sp_asm
 .global _PQCLEAN_MCELIECE6688128F_AVX_transpose_64x128_sp_asm
 .global PQCLEAN_MCELIECE6688128F_AVX_transpose_64x128_sp_asm
 _PQCLEAN_MCELIECE6688128F_AVX_transpose_64x128_sp_asm:

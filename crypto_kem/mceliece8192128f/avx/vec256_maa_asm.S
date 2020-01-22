@@ -113,8 +113,6 @@
 
 # qhasm: enter vec256_maa_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE8192128F_AVX_vec256_maa_asm
-.hidden PQCLEAN_MCELIECE8192128F_AVX_vec256_maa_asm
 .global _PQCLEAN_MCELIECE8192128F_AVX_vec256_maa_asm
 .global PQCLEAN_MCELIECE8192128F_AVX_vec256_maa_asm
 _PQCLEAN_MCELIECE8192128F_AVX_vec256_maa_asm:

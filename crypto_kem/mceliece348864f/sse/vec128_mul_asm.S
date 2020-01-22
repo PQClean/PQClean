@@ -107,8 +107,6 @@
 
 # qhasm: enter vec128_mul_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE348864F_SSE_vec128_mul_asm
-.hidden PQCLEAN_MCELIECE348864F_SSE_vec128_mul_asm
 .global _PQCLEAN_MCELIECE348864F_SSE_vec128_mul_asm
 .global PQCLEAN_MCELIECE348864F_SSE_vec128_mul_asm
 _PQCLEAN_MCELIECE348864F_SSE_vec128_mul_asm:

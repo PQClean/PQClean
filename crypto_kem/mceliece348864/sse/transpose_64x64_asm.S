@@ -73,8 +73,6 @@
 
 # qhasm: enter transpose_64x64_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE348864_SSE_transpose_64x64_asm
-.hidden PQCLEAN_MCELIECE348864_SSE_transpose_64x64_asm
 .global _PQCLEAN_MCELIECE348864_SSE_transpose_64x64_asm
 .global PQCLEAN_MCELIECE348864_SSE_transpose_64x64_asm
 _PQCLEAN_MCELIECE348864_SSE_transpose_64x64_asm:

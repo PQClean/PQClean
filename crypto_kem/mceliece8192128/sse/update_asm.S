@@ -37,8 +37,6 @@
 
 # qhasm: enter update_asm
 .p2align 5
-.hidden _PQCLEAN_MCELIECE8192128_SSE_update_asm
-.hidden PQCLEAN_MCELIECE8192128_SSE_update_asm
 .global _PQCLEAN_MCELIECE8192128_SSE_update_asm
 .global PQCLEAN_MCELIECE8192128_SSE_update_asm
 _PQCLEAN_MCELIECE8192128_SSE_update_asm:
