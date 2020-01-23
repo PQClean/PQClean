@@ -105,7 +105,7 @@ jobs:
   amd64-clang-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       PQCLEAN_ONLY_TYPES: kem
   i386-gcc-kem:
@@ -117,7 +117,7 @@ jobs:
   i386-clang-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       PQCLEAN_ONLY_TYPES: kem
   # These are for the scheduled builds
@@ -159,7 +159,7 @@ jobs:
   amd64-clang-slow-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: kem
@@ -173,7 +173,7 @@ jobs:
   i386-clang-slow-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: kem
@@ -211,7 +211,7 @@ jobs:
   amd64-clang-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       PQCLEAN_ONLY_TYPES: sign
   i386-gcc-sign:
@@ -223,7 +223,7 @@ jobs:
   i386-clang-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       PQCLEAN_ONLY_TYPES: sign
   # These are for the scheduled builds
@@ -265,7 +265,7 @@ jobs:
   amd64-clang-slow-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: sign
@@ -279,7 +279,7 @@ jobs:
   i386-clang-slow-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: sign
