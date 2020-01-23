@@ -152,7 +152,8 @@ class Implementation:
         if not self.supported_on_os():
             return False
 
-        if not hasattr(Implementation, 'CPUINFO'):
+        while (not hasattr(Implementation, 'CPUINFO')
+                or 'flags' not in Implementation.CPUINFO):
             import cpuinfo
             Implementation.CPUINFO = cpuinfo.get_cpu_info()
 
