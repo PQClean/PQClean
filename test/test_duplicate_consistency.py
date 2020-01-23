@@ -11,6 +11,8 @@ import yaml
 import helpers
 import pqclean
 
+sys.tracebacklimit = 0
+
 
 def pytest_generate_tests(metafunc):
     ids = []
@@ -28,45 +30,49 @@ def pytest_generate_tests(metafunc):
                     metadata = yaml.safe_load(f.read())
                     for group in metadata['consistency_checks']:
                         source = pqclean.Implementation.by_name(
-                                group['source']['scheme'],
-                                group['source']['implementation'])
-                        for file in group['files']:
-                            argvalues.append((implementation, source, file))
-                            ids.append(
-                                "{scheme.name} {implementation.name} {source.scheme.name}: {file}"
-                                .format(scheme=scheme, source=source,
-                                        implementation=implementation,
-                                        file=file))
-    metafunc.parametrize(('implementation', 'source', 'file'),
+                            group['source']['scheme'],
+                            group['source']['implementation'])
+                        argvalues.append(
+                            (implementation, source, group['files']))
+                        ids.append(
+                            "{metafile}: {scheme.name} {implementation.name}"
+                            .format(scheme=scheme,
+                                    implementation=implementation,
+                                    metafile=metafile))
+    metafunc.parametrize(('implementation', 'source', 'files'),
                          argvalues,
                          ids=ids)
 
 
 def file_get_contents(filename):
-    with open(filename) as f:
-        return f.read()
+    with open(filename) as file:
+        return file.read()
 
 
 @helpers.skip_windows()
 @helpers.filtered_test
-def test_duplicate_consistency(implementation, source, file):
-    target_path = os.path.join(source.path(), file)
-    this_path = os.path.join(implementation.path(), file)
-    target_src = file_get_contents(target_path)
-    this_src = file_get_contents(this_path)
-    this_transformed_src = this_src.replace(
-        implementation.namespace_prefix(), '')
-    target_transformed_src = target_src.replace(source.namespace_prefix(), '')
+def test_duplicate_consistency(implementation, source, files):
+    """Test sets of files to be identical modulo namespacing"""
+    messages = []
+    for file in files:
+        target_path = os.path.join(source.path(), file)
+        this_path = os.path.join(implementation.path(), file)
+        target_src = file_get_contents(target_path)
+        this_src = file_get_contents(this_path)
+        this_transformed_src = this_src.replace(
+            implementation.namespace_prefix(), '')
+        target_transformed_src = target_src.replace(
+            source.namespace_prefix(), '')
 
-    if not this_transformed_src == target_transformed_src:
-        diff = difflib.unified_diff(
+        if not this_transformed_src == target_transformed_src:
+            diff = difflib.unified_diff(
                 this_transformed_src.splitlines(keepends=True),
                 target_transformed_src.splitlines(keepends=True),
                 fromfile=this_path,
                 tofile=target_path)
-        raise AssertionError(
-            "Files differed:\n"
-            + ''.join(diff))
+            messages.append("{} differed:\n{}".format(file, ''.join(diff)))
+    if messages:
+        raise AssertionError("Files differed:\n{}".format('\n'.join(messages)))
 
 
 if __name__ == '__main__':
