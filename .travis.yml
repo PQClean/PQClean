@@ -116,7 +116,7 @@ matrix:
       before_script:
         - export CCACHE_NOSTATS=1
         - export CCACHE_SLOPPINESS=include_file_mtime
-          #- export PATH="/usr/local/opt/ccache/libexec:$PATH"
+        - export PATH="/usr/local/opt/ccache/libexec:$PATH"
         - export COMMIT=$(git rev-parse HEAD)
         - git config --replace-all remote.origin.fetch +refs/heads/*:refs/remotes/origin/*
         - git fetch --unshallow
@@ -159,7 +159,7 @@ matrix:
         - pip3 install -r requirements.txt
         - brew link gcc
         - export PATH="/usr/local/bin:$PATH"
-        #- export CC="ccache gcc"
+        - export CC="ccache gcc"
         - ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
         - gcc --version
       script:
@@ -179,7 +179,7 @@ matrix:
         - git fetch --unshallow
         - git checkout $TRAVIS_BRANCH
         - git reset --hard $COMMIT
-          #- export PATH="/usr/local/opt/ccache/libexec:$PATH"
+        - export PATH="/usr/local/opt/ccache/libexec:$PATH"
       script:
         # Use travis-wait to allow slower tests to run
         - "cd test && travis_wait 60 python3 -m pytest --numprocesses=auto"
@@ -217,7 +217,7 @@ matrix:
         - pip3 install -r requirements.txt
         - brew link gcc
         - export PATH="/usr/local/bin:$PATH"
-        #- export CC="ccache gcc"
+        - export CC="ccache gcc"
         - ln -s /usr/local/bin/gcc-9 /usr/local/bin/gcc
         - gcc --version
       script:
