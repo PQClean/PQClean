@@ -4,6 +4,7 @@ from typing import Optional
 
 import yaml
 import platform
+import helpers
 
 
 class Scheme:
@@ -152,20 +153,15 @@ class Implementation:
         if not self.supported_on_os():
             return False
 
-        while (not hasattr(Implementation, 'CPUINFO')
-                or 'flags' not in Implementation.CPUINFO):
-            import cpuinfo
-            Implementation.CPUINFO = cpuinfo.get_cpu_info()
-
-        CPUINFO = Implementation.CPUINFO
+        cpuinfo = helpers.get_cpu_info()
 
         for platform_ in self.metadata()['supported_platforms']:
-            if platform_['architecture'] == CPUINFO['arch'].lower():
+            if platform_['architecture'] == cpuinfo['arch'].lower():
                 # Detect actually running on emulated i386
                 if (platform_['architecture'] == 'x86_64' and
                         platform.architecture()[0] == '32bit'):
                     continue
-                if all([flag in CPUINFO['flags']
+                if all([flag in cpuinfo['flags']
                         for flag in platform_['required_flags']]):
                     return True
         return False
