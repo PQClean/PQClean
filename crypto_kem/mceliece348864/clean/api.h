@@ -1,6 +1,8 @@
 #ifndef PQCLEAN_MCELIECE348864_CLEAN_API_H
 #define PQCLEAN_MCELIECE348864_CLEAN_API_H
 
+#include <stdint.h>
+
 #define PQCLEAN_MCELIECE348864_CLEAN_CRYPTO_ALGNAME "Classic McEliece 348864"
 #define PQCLEAN_MCELIECE348864_CLEAN_CRYPTO_PUBLICKEYBYTES 261120
 #define PQCLEAN_MCELIECE348864_CLEAN_CRYPTO_SECRETKEYBYTES 6452
@@ -9,21 +11,21 @@
 
 
 int PQCLEAN_MCELIECE348864_CLEAN_crypto_kem_enc(
-    unsigned char *c,
-    unsigned char *key,
-    const unsigned char *pk
+    uint8_t *c,
+    uint8_t *key,
+    const uint8_t *pk
 );
 
 int PQCLEAN_MCELIECE348864_CLEAN_crypto_kem_dec(
-    unsigned char *key,
-    const unsigned char *c,
-    const unsigned char *sk
+    uint8_t *key,
+    const uint8_t *c,
+    const uint8_t *sk
 );
 
 int PQCLEAN_MCELIECE348864_CLEAN_crypto_kem_keypair
 (
-    unsigned char *pk,
-    unsigned char *sk
+    uint8_t *pk,
+    uint8_t *sk
 );
 
 #endif
