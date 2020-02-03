@@ -11,7 +11,7 @@ SOURCES = aes256ctr.c benes.c bm.c controlbits.c decrypt.c encrypt.c fft.c \
 		  vec256_ama_asm.S vec256_maa_asm.S vec256_mul_asm.S vec_reduce_asm.S
 
 HEADERS = aes256ctr.h api.h benes.h bm.h controlbits.h crypto_hash.h \
-		  decrypt.h encrypt.h fft.h fft_tr.h gf.h int32_sort.h operations.h \
+		  decrypt.h encrypt.h fft.h fft_tr.h gf.h int32_sort.h \
 		  params.h pk_gen.h sk_gen.h transpose.h uint32_sort.h util.h vec128.h \
 		  vec256.h \
 		  consts.inc scalars_2x.inc scalars_4x.inc

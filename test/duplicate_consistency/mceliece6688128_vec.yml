@@ -8,7 +8,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -26,7 +25,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -45,7 +43,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -63,7 +60,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -90,7 +86,6 @@ consistency_checks:
   - fft_tr.h
   - gf.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - scalars_2x.inc
   - scalars_4x.inc
@@ -100,6 +95,7 @@ consistency_checks:
   - transpose.h
   - util.c
   - vec.c
+  - vec.h
   source:
     implementation: vec
     scheme: mceliece460896
@@ -112,7 +108,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -136,7 +131,6 @@ consistency_checks:
   - fft_tr.h
   - gf.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - scalars_2x.inc
   - scalars_4x.inc
@@ -147,6 +141,7 @@ consistency_checks:
   - util.c
   - util.h
   - vec.c
+  - vec.h
   source:
     implementation: vec
     scheme: mceliece460896f
@@ -159,7 +154,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -176,7 +170,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - params.h
   - pk_gen.h
   - sk_gen.c
@@ -207,7 +200,6 @@ consistency_checks:
   - gf.c
   - gf.h
   - operations.c
-  - operations.h
   - params.h
   - pk_gen.h
   - powers.inc
@@ -234,7 +226,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - params.h
   - pk_gen.h
   - sk_gen.c
@@ -257,7 +248,6 @@ consistency_checks:
   - fft.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - scalars_2x.inc
   - scalars_4x.inc
   - sk_gen.c
@@ -279,7 +269,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -301,7 +290,6 @@ consistency_checks:
   - fft.h
   - fft_tr.h
   - operations.c
-  - operations.h
   - scalars_2x.inc
   - scalars_4x.inc
   - sk_gen.c
@@ -323,7 +311,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -345,7 +332,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.c
   - operations.c
-  - operations.h
   - powers.inc
   - scalars_2x.inc
   - scalars_4x.inc
@@ -366,7 +352,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h
@@ -388,7 +373,6 @@ consistency_checks:
   - encrypt.h
   - fft_tr.c
   - operations.c
-  - operations.h
   - powers.inc
   - scalars_2x.inc
   - scalars_4x.inc
@@ -409,7 +393,6 @@ consistency_checks:
   - decrypt.h
   - encrypt.h
   - operations.c
-  - operations.h
   - pk_gen.h
   - sk_gen.c
   - sk_gen.h

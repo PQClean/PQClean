@@ -9,7 +9,7 @@ SOURCES = aes256ctr.c benes.c bm.c controlbits.c decrypt.c encrypt.c fft.c \
 		  vec_mul_asm.S vec_reduce_asm.S
 
 HEADERS = aes256ctr.h api.h benes.h bm.h controlbits.h crypto_hash.h \
-		  decrypt.h encrypt.h fft.h fft_tr.h gf.h operations.h params.h \
+		  decrypt.h encrypt.h fft.h fft_tr.h gf.h params.h \
 		  pk_gen.h sk_gen.h transpose.h util.h vec128.h vec.h \
 		  consts.inc powers.inc scalars_2x.inc scalars.inc
 
