@@ -1,5 +1,5 @@
-#ifndef BENES_H
-#define BENES_H
+#ifndef PQCLEAN_MCELIECE8192128_SSE_BENES_H
+#define PQCLEAN_MCELIECE8192128_SSE_BENES_H
 /*
   This file is for Benes network related functions
 */

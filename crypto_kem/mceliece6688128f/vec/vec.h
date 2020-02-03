@@ -1,5 +1,5 @@
-#ifndef VEC_H
-#define VEC_H
+#ifndef PQCLEAN_MCELIECE6688128F_VEC_VEC_H
+#define PQCLEAN_MCELIECE6688128F_VEC_VEC_H
 
 #include "params.h"
 

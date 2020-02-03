@@ -1,5 +1,5 @@
-#ifndef PK_GEN_H
-#define PK_GEN_H
+#ifndef PQCLEAN_MCELIECE6960119_AVX_PK_GEN_H
+#define PQCLEAN_MCELIECE6960119_AVX_PK_GEN_H
 /*
   This file is for public-key generation
 */

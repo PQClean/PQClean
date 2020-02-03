@@ -1,5 +1,5 @@
-#ifndef VEC256_H
-#define VEC256_H
+#ifndef PQCLEAN_MCELIECE6688128_AVX_VEC256_H
+#define PQCLEAN_MCELIECE6688128_AVX_VEC256_H
 /*
   This file is for functions related to 256-bit vectors
   including functions for bitsliced field operations

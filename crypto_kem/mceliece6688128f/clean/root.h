@@ -1,5 +1,5 @@
-#ifndef ROOT_H
-#define ROOT_H
+#ifndef PQCLEAN_MCELIECE6688128F_CLEAN_ROOT_H
+#define PQCLEAN_MCELIECE6688128F_CLEAN_ROOT_H
 /*
   This file is for evaluating a polynomial at one or more field elements
 */

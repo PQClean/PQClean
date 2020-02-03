@@ -1,5 +1,5 @@
-#ifndef ENCRYPT_H
-#define ENCRYPT_H
+#ifndef PQCLEAN_MCELIECE348864F_VEC_ENCRYPT_H
+#define PQCLEAN_MCELIECE348864F_VEC_ENCRYPT_H
 /*
   This file is for Niederreiter encryption
 */

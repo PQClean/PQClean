@@ -1,5 +1,5 @@
-#ifndef FFT_H
-#define FFT_H
+#ifndef PQCLEAN_MCELIECE348864_AVX_FFT_H
+#define PQCLEAN_MCELIECE348864_AVX_FFT_H
 
 /*
   This file is for the Gao-Mateer FFT

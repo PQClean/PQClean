@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef PQCLEAN_MCELIECE8192128F_VEC_UTIL_H
+#define PQCLEAN_MCELIECE8192128F_VEC_UTIL_H
 /*
   This file is for loading/storing data in a little-endian fashion
 */

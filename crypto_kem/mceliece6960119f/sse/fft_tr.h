@@ -1,5 +1,5 @@
-#ifndef FFT_TR_H
-#define FFT_TR_H
+#ifndef PQCLEAN_MCELIECE6960119F_SSE_FFT_TR_H
+#define PQCLEAN_MCELIECE6960119F_SSE_FFT_TR_H
 /*
   This file is for transpose of the Gao-Mateer FFT
 */

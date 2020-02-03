@@ -1,5 +1,5 @@
-#ifndef ENCRYPT_H
-#define ENCRYPT_H
+#ifndef PQCLEAN_MCELIECE6688128F_SSE_ENCRYPT_H
+#define PQCLEAN_MCELIECE6688128F_SSE_ENCRYPT_H
 /*
   This file is for Niederreiter encryption
 */

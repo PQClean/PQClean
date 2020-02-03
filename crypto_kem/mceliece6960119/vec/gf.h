@@ -1,5 +1,5 @@
-#ifndef GF_H
-#define GF_H
+#ifndef PQCLEAN_MCELIECE6960119_VEC_GF_H
+#define PQCLEAN_MCELIECE6960119_VEC_GF_H
 /*
   This file is for functions for field arithmetic
 */

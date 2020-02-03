@@ -1,5 +1,5 @@
-#ifndef TRANSPOSE_H
-#define TRANSPOSE_H
+#ifndef PQCLEAN_MCELIECE8192128_SSE_TRANSPOSE_H
+#define PQCLEAN_MCELIECE8192128_SSE_TRANSPOSE_H
 /*
   This file is for matrix transposition
 */

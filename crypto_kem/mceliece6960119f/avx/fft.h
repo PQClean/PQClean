@@ -1,5 +1,5 @@
-#ifndef FFT_H
-#define FFT_H
+#ifndef PQCLEAN_MCELIECE6960119F_AVX_FFT_H
+#define PQCLEAN_MCELIECE6960119F_AVX_FFT_H
 /*
   This file is for the Gao-Mateer FFT
   sse http://www.math.clemson.edu/~sgao/papers/GM10.pdf

@@ -1,5 +1,5 @@
-#ifndef uint32_sort_h
-#define uint32_sort_h
+#ifndef PQCLEAN_MCELIECE460896F_AVX_UINT32_SORT_H
+#define PQCLEAN_MCELIECE460896F_AVX_UINT32_SORT_H
 
 #include <stddef.h>
 #include <stdint.h>
