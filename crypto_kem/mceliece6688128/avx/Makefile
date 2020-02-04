@@ -5,7 +5,7 @@ LIB = libmceliece6688128_avx.a
 
 SOURCES = aes256ctr.c benes.c bm.c controlbits.c decrypt.c encrypt.c fft.c \
 		  fft_tr.c gf.c int32_sort.c operations.c pk_gen.c sk_gen.c \
-		  uint32_sort.c util.c vec256.c \
+		  transpose.c uint32_sort.c util.c vec128.c vec256.c \
 		  consts.S syndrome_asm.S transpose_64x128_sp_asm.S \
 		  transpose_64x256_sp_asm.S update_asm.S vec128_mul_asm.S \
 		  vec256_ama_asm.S vec256_maa_asm.S vec256_mul_asm.S vec_reduce_asm.S
@@ -19,7 +19,7 @@ HEADERS = aes256ctr.h api.h benes.h bm.h controlbits.h crypto_hash.h \
 
 OBJECTS = aes256ctr.o benes.o bm.o controlbits.o decrypt.o encrypt.o fft.o \
 		  fft_tr.o gf.o int32_sort.o operations.o pk_gen.o sk_gen.o \
-		  uint32_sort.o util.o vec256.o \
+		  transpose.o uint32_sort.o util.o vec128.o vec256.o \
 		  consts.o syndrome_asm.o transpose_64x128_sp_asm.o \
 		  transpose_64x256_sp_asm.o update_asm.o vec128_mul_asm.o \
 		  vec256_ama_asm.o vec256_maa_asm.o vec256_mul_asm.o vec_reduce_asm.o

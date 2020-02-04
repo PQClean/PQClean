@@ -36,13 +36,13 @@ static inline void vec128_cmov(vec128 *out, vec128 *in, uint16_t mask) {
 
     vec128 v0, v1;
 
-    vec128 m0 = vec128_set1_16b( mask);
-    vec128 m1 = vec128_set1_16b(~mask);
+    vec128 m0 = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b( mask);
+    vec128 m1 = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(~mask);
 
     for (i = 0; i < GFBITS; i++) {
-        v0 = vec128_and(in[i], m0);
-        v1 = vec128_and(out[i], m1);
-        out[i] = vec128_or(v0, v1);
+        v0 = PQCLEAN_MCELIECE6960119_SSE_vec128_and(in[i], m0);
+        v1 = PQCLEAN_MCELIECE6960119_SSE_vec128_and(out[i], m1);
+        out[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_or(v0, v1);
     }
 }
 
@@ -51,11 +51,11 @@ static inline void interleave(vec128 *in, int idx0, int idx1, vec128 *mask, int 
 
     vec128 x, y;
 
-    x = vec128_or(vec128_and(in[idx0], mask[0]),
-                  vec128_sll_2x(vec128_and(in[idx1], mask[0]), s));
+    x = PQCLEAN_MCELIECE6960119_SSE_vec128_or(PQCLEAN_MCELIECE6960119_SSE_vec128_and(in[idx0], mask[0]),
+            PQCLEAN_MCELIECE6960119_SSE_vec128_sll_2x(PQCLEAN_MCELIECE6960119_SSE_vec128_and(in[idx1], mask[0]), s));
 
-    y = vec128_or(vec128_srl_2x(vec128_and(in[idx0], mask[1]), s),
-                  vec128_and(in[idx1], mask[1]));
+    y = PQCLEAN_MCELIECE6960119_SSE_vec128_or(PQCLEAN_MCELIECE6960119_SSE_vec128_srl_2x(PQCLEAN_MCELIECE6960119_SSE_vec128_and(in[idx0], mask[1]), s),
+            PQCLEAN_MCELIECE6960119_SSE_vec128_and(in[idx1], mask[1]));
 
     in[idx0] = x;
     in[idx1] = y;
@@ -73,17 +73,17 @@ static inline void get_coefs(gf *out, vec128 *in) {
         buf[i] = in[i];
     }
     for (i = 13; i < 16; i++) {
-        buf[i] = vec128_setzero();
+        buf[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_setzero();
     }
 
-    mask[0][0] = vec128_set1_16b(0x5555);
-    mask[0][1] = vec128_set1_16b(0xAAAA);
-    mask[1][0] = vec128_set1_16b(0x3333);
-    mask[1][1] = vec128_set1_16b(0xCCCC);
-    mask[2][0] = vec128_set1_16b(0x0F0F);
-    mask[2][1] = vec128_set1_16b(0xF0F0);
-    mask[3][0] = vec128_set1_16b(0x00FF);
-    mask[3][1] = vec128_set1_16b(0xFF00);
+    mask[0][0] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0x5555);
+    mask[0][1] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0xAAAA);
+    mask[1][0] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0x3333);
+    mask[1][1] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0xCCCC);
+    mask[2][0] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0x0F0F);
+    mask[2][1] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0xF0F0);
+    mask[3][0] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0x00FF);
+    mask[3][1] = PQCLEAN_MCELIECE6960119_SSE_vec128_set1_16b(0xFF00);
 
     interleave(buf,  0,  8, mask[3], 3);
     interleave(buf,  1,  9, mask[3], 3);
@@ -123,8 +123,8 @@ static inline void get_coefs(gf *out, vec128 *in) {
 
     for (i = 0; i < 16; i++) {
         for (k = 0; k <  4; k++) {
-            out[ (4 * 0 + k) * 16 + i ] = (vec128_extract(buf[i], 0) >> (k * 16)) & GFMASK;
-            out[ (4 * 1 + k) * 16 + i ] = (vec128_extract(buf[i], 1) >> (k * 16)) & GFMASK;
+            out[ (4 * 0 + k) * 16 + i ] = (PQCLEAN_MCELIECE6960119_SSE_vec128_extract(buf[i], 0) >> (k * 16)) & GFMASK;
+            out[ (4 * 1 + k) * 16 + i ] = (PQCLEAN_MCELIECE6960119_SSE_vec128_extract(buf[i], 1) >> (k * 16)) & GFMASK;
         }
     }
 }
@@ -152,11 +152,11 @@ void PQCLEAN_MCELIECE6960119_SSE_bm(vec128 *out, vec128 in[][ GFBITS ]) {
     get_coefs(&coefs[  0], in[0]);
     get_coefs(&coefs[128], in[1]);
 
-    C[0] = vec128_set2x(0, one << 63);
-    B[0] = vec128_set2x(0, one << 62);
+    C[0] = PQCLEAN_MCELIECE6960119_SSE_vec128_set2x(0, one << 63);
+    B[0] = PQCLEAN_MCELIECE6960119_SSE_vec128_set2x(0, one << 62);
 
     for (i = 1; i < GFBITS; i++) {
-        C[i] = B[i] = vec128_setzero();
+        C[i] = B[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_setzero();
     }
 
     b = 1;
@@ -165,29 +165,29 @@ void PQCLEAN_MCELIECE6960119_SSE_bm(vec128 *out, vec128 in[][ GFBITS ]) {
     //
 
     for (i = 0; i < GFBITS; i++) {
-        interval[i] = vec128_setzero();
+        interval[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_setzero();
     }
 
     for (N = 0; N < SYS_T * 2; N++) {
         PQCLEAN_MCELIECE6960119_SSE_update_asm(interval, coefs[N]);
-        vec128_mul(prod, C, (vec128 *) interval);
+        PQCLEAN_MCELIECE6960119_SSE_vec128_mul(prod, C, (vec128 *) interval);
         d = PQCLEAN_MCELIECE6960119_SSE_vec_reduce_asm(prod);
 
         mask = mask_nonzero(d) & mask_leq(L * 2, N);
 
         for (i = 0; i < GFBITS; i++) {
-            dd[i] = vec128_setbits((d >> i) & 1);
-            bb[i] = vec128_setbits((b >> i) & 1);
+            dd[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_setbits((d >> i) & 1);
+            bb[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_setbits((b >> i) & 1);
         }
 
-        vec128_mul(B_tmp, dd, B);
-        vec128_mul(C_tmp, bb, C);
+        PQCLEAN_MCELIECE6960119_SSE_vec128_mul(B_tmp, dd, B);
+        PQCLEAN_MCELIECE6960119_SSE_vec128_mul(C_tmp, bb, C);
 
         vec128_cmov(B, C, mask);
         PQCLEAN_MCELIECE6960119_SSE_update_asm(B, 0);
 
         for (i = 0; i < GFBITS; i++) {
-            C[i] = vec128_xor(B_tmp[i], C_tmp[i]);
+            C[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_xor(B_tmp[i], C_tmp[i]);
         }
 
         b = (d & mask) | (b & ~mask);
@@ -195,10 +195,10 @@ void PQCLEAN_MCELIECE6960119_SSE_bm(vec128 *out, vec128 in[][ GFBITS ]) {
     }
 
     for (i = 0; i < GFBITS; i++) {
-        v[0] = vec128_extract(C[i], 0);
-        v[1] = vec128_extract(C[i], 1);
+        v[0] = PQCLEAN_MCELIECE6960119_SSE_vec128_extract(C[i], 0);
+        v[1] = PQCLEAN_MCELIECE6960119_SSE_vec128_extract(C[i], 1);
 
-        out[i] = vec128_set2x((v[0] >> 8) | (v[1] << 56), v[1] >> 8);
+        out[i] = PQCLEAN_MCELIECE6960119_SSE_vec128_set2x((v[0] >> 8) | (v[1] << 56), v[1] >> 8);
     }
 }
 

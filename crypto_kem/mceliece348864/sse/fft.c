@@ -35,7 +35,7 @@ static void radix_conversions(uint64_t *in) {
             }
         }
 
-        vec_mul(in, in, s[j]); // scaling
+        PQCLEAN_MCELIECE348864_SSE_vec_mul(in, in, s[j]); // scaling
     }
 }
 
@@ -75,14 +75,14 @@ static void butterflies(vec128 out[][ GFBITS ], const uint64_t *in) {
             t1 = (in[i] >> reversal[j + 2]) & 1;
             t1 = -t1;
 
-            out[j / 2 + 0][i] = vec128_set2x(t0, t1);
+            out[j / 2 + 0][i] = PQCLEAN_MCELIECE348864_SSE_vec128_set2x(t0, t1);
 
             t0 = (in[i] >> reversal[j + 1]) & 1;
             t0 = -t0;
             t1 = (in[i] >> reversal[j + 3]) & 1;
             t1 = -t1;
 
-            out[j / 2 + 1][i] = vec128_set2x(t0, t1);
+            out[j / 2 + 1][i] = PQCLEAN_MCELIECE348864_SSE_vec128_set2x(t0, t1);
         }
     }
 
@@ -90,7 +90,7 @@ static void butterflies(vec128 out[][ GFBITS ], const uint64_t *in) {
 
 
     for (i = 0; i < 32; i += 2) {
-        vec128_mul(tmp, out[i + 1], consts[ 0 ]);
+        PQCLEAN_MCELIECE348864_SSE_vec128_mul(tmp, out[i + 1], consts[ 0 ]);
 
         for (b = 0; b < GFBITS; b++) {
             out[i + 0][b] ^= tmp[b];
@@ -100,10 +100,10 @@ static void butterflies(vec128 out[][ GFBITS ], const uint64_t *in) {
         }
 
         for (b = 0; b < GFBITS; b++) {
-            x[b] = vec128_unpack_low(out[i + 0][b], out[i + 1][b]);
+            x[b] = PQCLEAN_MCELIECE348864_SSE_vec128_unpack_low(out[i + 0][b], out[i + 1][b]);
         }
         for (b = 0; b < GFBITS; b++) {
-            y[b] = vec128_unpack_high(out[i + 0][b], out[i + 1][b]);
+            y[b] = PQCLEAN_MCELIECE348864_SSE_vec128_unpack_high(out[i + 0][b], out[i + 1][b]);
         }
 
         for (b = 0; b < GFBITS; b++) {
@@ -121,7 +121,7 @@ static void butterflies(vec128 out[][ GFBITS ], const uint64_t *in) {
 
         for (j = 0; j < 32; j += 2 * s) {
             for (k = j; k < j + s; k++) {
-                vec128_mul(tmp, out[k + s], consts[ consts_ptr + (k - j) ]);
+                PQCLEAN_MCELIECE348864_SSE_vec128_mul(tmp, out[k + s], consts[ consts_ptr + (k - j) ]);
 
                 for (b = 0; b < GFBITS; b++) {
                     out[k][b] ^= tmp[b];

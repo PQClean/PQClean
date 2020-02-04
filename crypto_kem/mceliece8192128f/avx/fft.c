@@ -19,24 +19,24 @@ static void radix_conversions(vec128 *in) {
 
     const vec128 mask[5][2] = {
         {
-            vec128_set2x(0x8888888888888888, 0x8888888888888888),
-            vec128_set2x(0x4444444444444444, 0x4444444444444444)
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0x8888888888888888, 0x8888888888888888),
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0x4444444444444444, 0x4444444444444444)
         },
         {
-            vec128_set2x(0xC0C0C0C0C0C0C0C0, 0xC0C0C0C0C0C0C0C0),
-            vec128_set2x(0x3030303030303030, 0x3030303030303030)
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0xC0C0C0C0C0C0C0C0, 0xC0C0C0C0C0C0C0C0),
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0x3030303030303030, 0x3030303030303030)
         },
         {
-            vec128_set2x(0xF000F000F000F000, 0xF000F000F000F000),
-            vec128_set2x(0x0F000F000F000F00, 0x0F000F000F000F00)
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0xF000F000F000F000, 0xF000F000F000F000),
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0x0F000F000F000F00, 0x0F000F000F000F00)
         },
         {
-            vec128_set2x(0xFF000000FF000000, 0xFF000000FF000000),
-            vec128_set2x(0x00FF000000FF0000, 0x00FF000000FF0000)
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0xFF000000FF000000, 0xFF000000FF000000),
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0x00FF000000FF0000, 0x00FF000000FF0000)
         },
         {
-            vec128_set2x(0xFFFF000000000000, 0xFFFF000000000000),
-            vec128_set2x(0x0000FFFF00000000, 0x0000FFFF00000000)
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0xFFFF000000000000, 0xFFFF000000000000),
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0x0000FFFF00000000, 0x0000FFFF00000000)
         }
     };
 
@@ -48,27 +48,27 @@ static void radix_conversions(vec128 *in) {
 
     for (j = 0; j <= 5; j++) {
         for (i = 0; i < GFBITS; i++) {
-            v1 = vec128_extract(in[i], 1);
+            v1 = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[i], 1);
             v1 ^= v1 >> 32;
-            v0 = vec128_extract(in[i], 0);
+            v0 = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[i], 0);
             v0 ^= v1 << 32;
-            in[i] = vec128_set2x(v0, v1);
+            in[i] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(v0, v1);
         }
 
         for (i = 0; i < GFBITS; i++) {
             for (k = 4; k >= j; k--) {
-                t = vec128_and(in[i], mask[k][0]);
-                t = vec128_srl_2x(t, 1 << k);
-                in[i] = vec128_xor(in[i], t);
+                t = PQCLEAN_MCELIECE8192128F_AVX_vec128_and(in[i], mask[k][0]);
+                t = PQCLEAN_MCELIECE8192128F_AVX_vec128_srl_2x(t, 1 << k);
+                in[i] = PQCLEAN_MCELIECE8192128F_AVX_vec128_xor(in[i], t);
 
-                t = vec128_and(in[i], mask[k][1]);
-                t = vec128_srl_2x(t, 1 << k);
-                in[i] = vec128_xor(in[i], t);
+                t = PQCLEAN_MCELIECE8192128F_AVX_vec128_and(in[i], mask[k][1]);
+                t = PQCLEAN_MCELIECE8192128F_AVX_vec128_srl_2x(t, 1 << k);
+                in[i] = PQCLEAN_MCELIECE8192128F_AVX_vec128_xor(in[i], t);
             }
         }
 
         if (j < 5) {
-            vec128_mul(in, in, s[j]);    // scaling
+            PQCLEAN_MCELIECE8192128F_AVX_vec128_mul(in, in, s[j]);    // scaling
         }
     }
 }
@@ -121,7 +121,7 @@ static void butterflies(vec256 out[][ GFBITS ], vec128 *in) {
     // boradcast
 
     for (j = 0; j < GFBITS; j++) {
-        t[j] = vec128_unpack_high(in[j], in[j]);
+        t[j] = PQCLEAN_MCELIECE8192128F_AVX_vec128_unpack_high(in[j], in[j]);
     }
 
     for (i = 0; i < 8; i += 2) {
@@ -131,22 +131,22 @@ static void butterflies(vec256 out[][ GFBITS ], vec128 *in) {
             v1 = (beta[i + 1] >> j) & 1;
             v1 = -v1;
 
-            tmp[j] = vec128_set2x(v0, v1);
+            tmp[j] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(v0, v1);
         }
 
-        vec128_mul(tmp, t, tmp);
+        PQCLEAN_MCELIECE8192128F_AVX_vec128_mul(tmp, t, tmp);
 
         for (j = 0; j < GFBITS; j++) {
-            pre.v[i + 0][j] = vec128_unpack_low(tmp[j], tmp[j]);
-            pre.v[i + 1][j] = vec128_unpack_high(tmp[j], tmp[j]);
+            pre.v[i + 0][j] = PQCLEAN_MCELIECE8192128F_AVX_vec128_unpack_low(tmp[j], tmp[j]);
+            pre.v[i + 1][j] = PQCLEAN_MCELIECE8192128F_AVX_vec128_unpack_high(tmp[j], tmp[j]);
         }
     }
 
     for (i = 0; i < GFBITS; i += 2) {
         if (i != GFBITS - 1) {
-            buf.v[0][1] = vec128_unpack_low(in[i + 1], in[i + 1] ^ pre.v[6][i + 1]);
+            buf.v[0][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_unpack_low(in[i + 1], in[i + 1] ^ pre.v[6][i + 1]);
         }
-        buf.v[0][0] = vec128_unpack_low(in[i + 0], in[i + 0] ^ pre.v[6][i + 0]);
+        buf.v[0][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_unpack_low(in[i + 0], in[i + 0] ^ pre.v[6][i + 0]);
 
         buf.V[1] = vec256_xor(buf.V[0], pre.V[0][i / 2]);
         buf.V[16] = vec256_xor(buf.V[0], pre.V[4][i / 2]);

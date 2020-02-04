@@ -9,17 +9,9 @@
 
 #include <stdint.h>
 
-extern void PQCLEAN_MCELIECE348864F_AVX_transpose_64x64_asm(uint64_t *);
 
-static inline void PQCLEAN_MCELIECE348864F_AVX_transpose_64x64(uint64_t *in) {
-    PQCLEAN_MCELIECE348864F_AVX_transpose_64x64_asm(in);
-}
-
-extern void PQCLEAN_MCELIECE348864F_AVX_transpose_64x256_sp_asm(vec256 *);
-
-static inline void PQCLEAN_MCELIECE348864F_AVX_transpose_64x256_sp(vec256 *in) {
-    PQCLEAN_MCELIECE348864F_AVX_transpose_64x256_sp_asm(in);
-}
+void PQCLEAN_MCELIECE348864F_AVX_transpose_64x64(uint64_t *in);
+void PQCLEAN_MCELIECE348864F_AVX_transpose_64x256_sp(vec256 *in);
 
 #endif
 

@@ -40,13 +40,13 @@ static inline void vec128_cmov(vec128 out[][2], uint16_t mask) {
 
     vec128 v0, v1;
 
-    vec128 m0 = vec128_set1_16b( mask);
-    vec128 m1 = vec128_set1_16b(~mask);
+    vec128 m0 = PQCLEAN_MCELIECE460896F_AVX_vec128_set1_16b( mask);
+    vec128 m1 = PQCLEAN_MCELIECE460896F_AVX_vec128_set1_16b(~mask);
 
     for (i = 0; i < GFBITS; i++) {
-        v0 = vec128_and(out[i][1], m0);
-        v1 = vec128_and(out[i][0], m1);
-        out[i][0] = vec128_or(v0, v1);
+        v0 = PQCLEAN_MCELIECE460896F_AVX_vec128_and(out[i][1], m0);
+        v1 = PQCLEAN_MCELIECE460896F_AVX_vec128_and(out[i][0], m1);
+        out[i][0] = PQCLEAN_MCELIECE460896F_AVX_vec128_or(v0, v1);
     }
 }
 
@@ -55,11 +55,11 @@ static inline void interleave(vec256 *in, int idx0, int idx1, vec256 *mask, int 
 
     vec256 x, y;
 
-    x = vec256_or(vec256_and(in[idx0], mask[0]),
-                  vec256_sll_4x(vec256_and(in[idx1], mask[0]), s));
+    x = PQCLEAN_MCELIECE460896F_AVX_vec256_or(PQCLEAN_MCELIECE460896F_AVX_vec256_and(in[idx0], mask[0]),
+            PQCLEAN_MCELIECE460896F_AVX_vec256_sll_4x(PQCLEAN_MCELIECE460896F_AVX_vec256_and(in[idx1], mask[0]), s));
 
-    y = vec256_or(vec256_srl_4x(vec256_and(in[idx0], mask[1]), s),
-                  vec256_and(in[idx1], mask[1]));
+    y = PQCLEAN_MCELIECE460896F_AVX_vec256_or(PQCLEAN_MCELIECE460896F_AVX_vec256_srl_4x(PQCLEAN_MCELIECE460896F_AVX_vec256_and(in[idx0], mask[1]), s),
+            PQCLEAN_MCELIECE460896F_AVX_vec256_and(in[idx1], mask[1]));
 
     in[idx0] = x;
     in[idx1] = y;
@@ -77,17 +77,17 @@ static inline void get_coefs(gf *out, vec256 *in) {
         buf[i] = in[i];
     }
     for (i = 13; i < 16; i++) {
-        buf[i] = vec256_setzero();
+        buf[i] = PQCLEAN_MCELIECE460896F_AVX_vec256_setzero();
     }
 
-    mask[0][0] = vec256_set1_16b(0x5555);
-    mask[0][1] = vec256_set1_16b(0xAAAA);
-    mask[1][0] = vec256_set1_16b(0x3333);
-    mask[1][1] = vec256_set1_16b(0xCCCC);
-    mask[2][0] = vec256_set1_16b(0x0F0F);
-    mask[2][1] = vec256_set1_16b(0xF0F0);
-    mask[3][0] = vec256_set1_16b(0x00FF);
-    mask[3][1] = vec256_set1_16b(0xFF00);
+    mask[0][0] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0x5555);
+    mask[0][1] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0xAAAA);
+    mask[1][0] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0x3333);
+    mask[1][1] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0xCCCC);
+    mask[2][0] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0x0F0F);
+    mask[2][1] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0xF0F0);
+    mask[3][0] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0x00FF);
+    mask[3][1] = PQCLEAN_MCELIECE460896F_AVX_vec256_set1_16b(0xFF00);
 
     interleave(buf,  0,  8, mask[3], 3);
     interleave(buf,  1,  9, mask[3], 3);
@@ -127,10 +127,10 @@ static inline void get_coefs(gf *out, vec256 *in) {
 
     for (i = 0; i < 16; i++) {
         for (k = 0; k <  4; k++) {
-            out[ (4 * 0 + k) * 16 + i ] = (vec256_extract(buf[i], 0) >> (k * 16)) & GFMASK;
-            out[ (4 * 1 + k) * 16 + i ] = (vec256_extract(buf[i], 1) >> (k * 16)) & GFMASK;
-            out[ (4 * 2 + k) * 16 + i ] = (vec256_extract(buf[i], 2) >> (k * 16)) & GFMASK;
-            out[ (4 * 3 + k) * 16 + i ] = (vec256_extract(buf[i], 3) >> (k * 16)) & GFMASK;
+            out[ (4 * 0 + k) * 16 + i ] = (PQCLEAN_MCELIECE460896F_AVX_vec256_extract(buf[i], 0) >> (k * 16)) & GFMASK;
+            out[ (4 * 1 + k) * 16 + i ] = (PQCLEAN_MCELIECE460896F_AVX_vec256_extract(buf[i], 1) >> (k * 16)) & GFMASK;
+            out[ (4 * 2 + k) * 16 + i ] = (PQCLEAN_MCELIECE460896F_AVX_vec256_extract(buf[i], 2) >> (k * 16)) & GFMASK;
+            out[ (4 * 3 + k) * 16 + i ] = (PQCLEAN_MCELIECE460896F_AVX_vec256_extract(buf[i], 3) >> (k * 16)) & GFMASK;
         }
     }
 }
@@ -158,11 +158,11 @@ void PQCLEAN_MCELIECE460896F_AVX_bm(vec128 *out, vec256 *in) {
 
     get_coefs(coefs, in);
 
-    BC[0][0] = vec128_set2x(0, one << 62);
-    BC[0][1] = vec128_set2x(0, one << 63);
+    BC[0][0] = PQCLEAN_MCELIECE460896F_AVX_vec128_set2x(0, one << 62);
+    BC[0][1] = PQCLEAN_MCELIECE460896F_AVX_vec128_set2x(0, one << 63);
 
     for (i = 1; i < GFBITS; i++) {
-        BC[i][0] = BC[i][1] = vec128_setzero();
+        BC[i][0] = BC[i][1] = PQCLEAN_MCELIECE460896F_AVX_vec128_setzero();
     }
 
     b = 1;
@@ -171,7 +171,7 @@ void PQCLEAN_MCELIECE460896F_AVX_bm(vec128 *out, vec256 *in) {
     //
 
     for (i = 0; i < GFBITS; i++) {
-        interval[i] = vec128_setzero();
+        interval[i] = PQCLEAN_MCELIECE460896F_AVX_vec128_setzero();
     }
 
     for (N = 0; N < SYS_T * 2; N++) {
@@ -183,17 +183,17 @@ void PQCLEAN_MCELIECE460896F_AVX_bm(vec128 *out, vec256 *in) {
         mask = mask_nonzero(d) & mask_leq(L * 2, N);
 
         for (i = 0; i < GFBITS; i++) {
-            db[i][0] = vec128_setbits((d >> i) & 1);
-            db[i][1] = vec128_setbits((b >> i) & 1);
+            db[i][0] = PQCLEAN_MCELIECE460896F_AVX_vec128_setbits((d >> i) & 1);
+            db[i][1] = PQCLEAN_MCELIECE460896F_AVX_vec128_setbits((b >> i) & 1);
         }
 
-        vec256_mul((vec256 *) BC_tmp, (vec256 *) db, (vec256 *) BC);
+        PQCLEAN_MCELIECE460896F_AVX_vec256_mul((vec256 *) BC_tmp, (vec256 *) db, (vec256 *) BC);
 
         vec128_cmov(BC, mask);
         PQCLEAN_MCELIECE460896F_AVX_update_asm(BC, 0, 32);
 
         for (i = 0; i < GFBITS; i++) {
-            BC[i][1] = vec128_xor(BC_tmp[i][0], BC_tmp[i][1]);
+            BC[i][1] = PQCLEAN_MCELIECE460896F_AVX_vec128_xor(BC_tmp[i][0], BC_tmp[i][1]);
         }
 
         b = (d & mask) | (b & ~mask);
@@ -201,10 +201,10 @@ void PQCLEAN_MCELIECE460896F_AVX_bm(vec128 *out, vec256 *in) {
     }
 
     for (i = 0; i < GFBITS; i++) {
-        v[0] = vec128_extract(BC[i][1], 0);
-        v[1] = vec128_extract(BC[i][1], 1);
+        v[0] = PQCLEAN_MCELIECE460896F_AVX_vec128_extract(BC[i][1], 0);
+        v[1] = PQCLEAN_MCELIECE460896F_AVX_vec128_extract(BC[i][1], 1);
 
-        out[i] = vec128_set2x((v[0] >> 31) | (v[1] << 33), v[1] >> 31);
+        out[i] = PQCLEAN_MCELIECE460896F_AVX_vec128_set2x((v[0] >> 31) | (v[1] << 33), v[1] >> 31);
     }
 }
 

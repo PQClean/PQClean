@@ -22,22 +22,22 @@ static void de_bitslicing(uint64_t *out, vec256 in[][GFBITS]) {
 
     for (i = 0; i < 32; i++) {
         for (j = GFBITS - 1; j >= 0; j--) {
-            u = vec256_extract(in[i][j], 0);
+            u = PQCLEAN_MCELIECE460896_AVX_vec256_extract(in[i][j], 0);
             for (r = 0; r < 64; r++) {
                 out[i * 256 + 0 * 64 + r] <<= 1;
                 out[i * 256 + 0 * 64 + r] |= (u >> r) & 1;
             }
-            u = vec256_extract(in[i][j], 1);
+            u = PQCLEAN_MCELIECE460896_AVX_vec256_extract(in[i][j], 1);
             for (r = 0; r < 64; r++) {
                 out[i * 256 + 1 * 64 + r] <<= 1;
                 out[i * 256 + 1 * 64 + r] |= (u >> r) & 1;
             }
-            u = vec256_extract(in[i][j], 2);
+            u = PQCLEAN_MCELIECE460896_AVX_vec256_extract(in[i][j], 2);
             for (r = 0; r < 64; r++) {
                 out[i * 256 + 2 * 64 + r] <<= 1;
                 out[i * 256 + 2 * 64 + r] |= (u >> r) & 1;
             }
-            u = vec256_extract(in[i][j], 3);
+            u = PQCLEAN_MCELIECE460896_AVX_vec256_extract(in[i][j], 3);
             for (r = 0; r < 64; r++) {
                 out[i * 256 + 3 * 64 + r] <<= 1;
                 out[i * 256 + 3 * 64 + r] |= (u >> r) & 1;
@@ -59,7 +59,7 @@ static void to_bitslicing_2x(vec256 out0[][GFBITS], vec256 out1[][GFBITS], const
                 }
             }
 
-            out1[i][j] = vec256_set4x(u[0], u[1], u[2], u[3]);
+            out1[i][j] = PQCLEAN_MCELIECE460896_AVX_vec256_set4x(u[0], u[1], u[2], u[3]);
         }
 
         for (j = GFBITS - 1; j >= 0; j--) {
@@ -70,7 +70,7 @@ static void to_bitslicing_2x(vec256 out0[][GFBITS], vec256 out1[][GFBITS], const
                 }
             }
 
-            out0[i][GFBITS - 1 - j] = vec256_set4x(u[0], u[1], u[2], u[3]);
+            out0[i][GFBITS - 1 - j] = PQCLEAN_MCELIECE460896_AVX_vec256_set4x(u[0], u[1], u[2], u[3]);
         }
     }
 }
@@ -107,20 +107,20 @@ int PQCLEAN_MCELIECE460896_AVX_pk_gen(unsigned char *pk, uint32_t *perm, const u
 
     PQCLEAN_MCELIECE460896_AVX_fft(eval, sk_int);
 
-    vec256_copy(prod[0], eval[0]);
+    PQCLEAN_MCELIECE460896_AVX_vec256_copy(prod[0], eval[0]);
 
     for (i = 1; i < 32; i++) {
-        vec256_mul(prod[i], prod[i - 1], eval[i]);
+        PQCLEAN_MCELIECE460896_AVX_vec256_mul(prod[i], prod[i - 1], eval[i]);
     }
 
     PQCLEAN_MCELIECE460896_AVX_vec256_inv(tmp, prod[31]);
 
     for (i = 30; i >= 0; i--) {
-        vec256_mul(prod[i + 1], prod[i], tmp);
-        vec256_mul(tmp, tmp, eval[i + 1]);
+        PQCLEAN_MCELIECE460896_AVX_vec256_mul(prod[i + 1], prod[i], tmp);
+        PQCLEAN_MCELIECE460896_AVX_vec256_mul(tmp, tmp, eval[i + 1]);
     }
 
-    vec256_copy(prod[0], tmp);
+    PQCLEAN_MCELIECE460896_AVX_vec256_copy(prod[0], tmp);
 
     // fill matrix
 
@@ -142,22 +142,22 @@ int PQCLEAN_MCELIECE460896_AVX_pk_gen(unsigned char *pk, uint32_t *perm, const u
 
     for (j = 0; j < NBLOCKS2_I; j++) {
         for (k = 0; k < GFBITS; k++) {
-            mat[ k ][ 4 * j + 0 ] = vec256_extract(prod[ j ][ k ], 0);
-            mat[ k ][ 4 * j + 1 ] = vec256_extract(prod[ j ][ k ], 1);
-            mat[ k ][ 4 * j + 2 ] = vec256_extract(prod[ j ][ k ], 2);
-            mat[ k ][ 4 * j + 3 ] = vec256_extract(prod[ j ][ k ], 3);
+            mat[ k ][ 4 * j + 0 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 0);
+            mat[ k ][ 4 * j + 1 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 1);
+            mat[ k ][ 4 * j + 2 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 2);
+            mat[ k ][ 4 * j + 3 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 3);
         }
     }
 
     for (i = 1; i < SYS_T; i++) {
         for (j = 0; j < NBLOCKS2_I; j++) {
-            vec256_mul(prod[j], prod[j], consts[j]);
+            PQCLEAN_MCELIECE460896_AVX_vec256_mul(prod[j], prod[j], consts[j]);
 
             for (k = 0; k < GFBITS; k++) {
-                mat[ i * GFBITS + k ][ 4 * j + 0 ] = vec256_extract(prod[ j ][ k ], 0);
-                mat[ i * GFBITS + k ][ 4 * j + 1 ] = vec256_extract(prod[ j ][ k ], 1);
-                mat[ i * GFBITS + k ][ 4 * j + 2 ] = vec256_extract(prod[ j ][ k ], 2);
-                mat[ i * GFBITS + k ][ 4 * j + 3 ] = vec256_extract(prod[ j ][ k ], 3);
+                mat[ i * GFBITS + k ][ 4 * j + 0 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 0);
+                mat[ i * GFBITS + k ][ 4 * j + 1 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 1);
+                mat[ i * GFBITS + k ][ 4 * j + 2 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 2);
+                mat[ i * GFBITS + k ][ 4 * j + 3 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 3);
             }
         }
     }
@@ -231,22 +231,22 @@ int PQCLEAN_MCELIECE460896_AVX_pk_gen(unsigned char *pk, uint32_t *perm, const u
 
     for (j = NBLOCKS2_I; j < NBLOCKS2_H; j++) {
         for (k = 0; k < GFBITS; k++) {
-            mat[ k ][ 4 * j + 0 ] = vec256_extract(prod[ j ][ k ], 0);
-            mat[ k ][ 4 * j + 1 ] = vec256_extract(prod[ j ][ k ], 1);
-            mat[ k ][ 4 * j + 2 ] = vec256_extract(prod[ j ][ k ], 2);
-            mat[ k ][ 4 * j + 3 ] = vec256_extract(prod[ j ][ k ], 3);
+            mat[ k ][ 4 * j + 0 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 0);
+            mat[ k ][ 4 * j + 1 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 1);
+            mat[ k ][ 4 * j + 2 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 2);
+            mat[ k ][ 4 * j + 3 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 3);
         }
     }
 
     for (i = 1; i < SYS_T; i++) {
         for (j = NBLOCKS2_I; j < NBLOCKS2_H; j++) {
-            vec256_mul(prod[j], prod[j], consts[j]);
+            PQCLEAN_MCELIECE460896_AVX_vec256_mul(prod[j], prod[j], consts[j]);
 
             for (k = 0; k < GFBITS; k++) {
-                mat[ i * GFBITS + k ][ 4 * j + 0 ] = vec256_extract(prod[ j ][ k ], 0);
-                mat[ i * GFBITS + k ][ 4 * j + 1 ] = vec256_extract(prod[ j ][ k ], 1);
-                mat[ i * GFBITS + k ][ 4 * j + 2 ] = vec256_extract(prod[ j ][ k ], 2);
-                mat[ i * GFBITS + k ][ 4 * j + 3 ] = vec256_extract(prod[ j ][ k ], 3);
+                mat[ i * GFBITS + k ][ 4 * j + 0 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 0);
+                mat[ i * GFBITS + k ][ 4 * j + 1 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 1);
+                mat[ i * GFBITS + k ][ 4 * j + 2 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 2);
+                mat[ i * GFBITS + k ][ 4 * j + 3 ] = PQCLEAN_MCELIECE460896_AVX_vec256_extract(prod[ j ][ k ], 3);
             }
         }
     }

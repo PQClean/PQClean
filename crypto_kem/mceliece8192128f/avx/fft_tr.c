@@ -341,10 +341,10 @@ static void butterflies_tr(vec256 *out, vec256 in[][ GFBITS ]) {
     //
 
     for (j = 0; j < GFBITS; j++) {
-        tmp[j] = vec128_setbits((beta[0] >> j) & 1);
+        tmp[j] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((beta[0] >> j) & 1);
     }
 
-    vec128_mul(tmp, pre.v[0], tmp);
+    PQCLEAN_MCELIECE8192128F_AVX_vec128_mul(tmp, pre.v[0], tmp);
 
     for (b = 0; b < GFBITS; b++) {
         out128[b][1] = tmp[b];
@@ -352,21 +352,21 @@ static void butterflies_tr(vec256 *out, vec256 in[][ GFBITS ]) {
 
     for (i = 1; i < 6; i++) {
         for (j = 0; j < GFBITS; j++) {
-            tmp[j] = vec128_setbits((beta[i] >> j) & 1);
+            tmp[j] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((beta[i] >> j) & 1);
         }
 
-        vec128_mul(tmp, pre.v[i], tmp);
+        PQCLEAN_MCELIECE8192128F_AVX_vec128_mul(tmp, pre.v[i], tmp);
 
         for (b = 0; b < GFBITS; b++) {
-            out128[b][1] = vec128_xor(out128[b][1], tmp[b]);
+            out128[b][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_xor(out128[b][1], tmp[b]);
         }
     }
 
     for (b = 0; b < GFBITS; b++) {
-        v[0] = vec128_extract(out128[b][0], 0);
-        v[1] = vec128_extract(out128[b][0], 1);
-        v[2] = vec128_extract(out128[b][1], 0);
-        v[3] = vec128_extract(out128[b][1], 1);
+        v[0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(out128[b][0], 0);
+        v[1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(out128[b][0], 1);
+        v[2] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(out128[b][1], 0);
+        v[3] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(out128[b][1], 1);
 
         out[b] = vec256_set4x(v[0], v[1], v[2], v[3]);
     }

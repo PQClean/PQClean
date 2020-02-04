@@ -25,12 +25,12 @@ static void de_bitslicing(uint64_t *out, vec128 in[][GFBITS]) {
 
     for (i = 0; i < 64; i++) {
         for (j = GFBITS - 1; j >= 0; j--) {
-            u = vec128_extract(in[i][j], 0);
+            u = PQCLEAN_MCELIECE460896F_SSE_vec128_extract(in[i][j], 0);
             for (r = 0; r < 64; r++) {
                 out[i * 128 + 0 * 64 + r] <<= 1;
                 out[i * 128 + 0 * 64 + r] |= (u >> r) & 1;
             }
-            u = vec128_extract(in[i][j], 1);
+            u = PQCLEAN_MCELIECE460896F_SSE_vec128_extract(in[i][j], 1);
             for (r = 0; r < 64; r++) {
                 out[i * 128 + 1 * 64 + r] <<= 1;
                 out[i * 128 + 1 * 64 + r] |= (u >> r) & 1;
@@ -52,7 +52,7 @@ static void to_bitslicing_2x(vec128 out0[][GFBITS], vec128 out1[][GFBITS], const
                 }
             }
 
-            out1[i][j] = vec128_set2x(u[0], u[1]);
+            out1[i][j] = PQCLEAN_MCELIECE460896F_SSE_vec128_set2x(u[0], u[1]);
         }
 
         for (j = GFBITS - 1; j >= 0; j--) {
@@ -63,7 +63,7 @@ static void to_bitslicing_2x(vec128 out0[][GFBITS], vec128 out1[][GFBITS], const
                 }
             }
 
-            out0[i][GFBITS - 1 - j] = vec128_set2x(u[0], u[1]);
+            out0[i][GFBITS - 1 - j] = PQCLEAN_MCELIECE460896F_SSE_vec128_set2x(u[0], u[1]);
         }
     }
 }
@@ -229,20 +229,20 @@ int PQCLEAN_MCELIECE460896F_SSE_pk_gen(unsigned char *pk, uint32_t *perm, const 
 
     PQCLEAN_MCELIECE460896F_SSE_fft(eval, irr_int);
 
-    vec128_copy(prod[0], eval[0]);
+    PQCLEAN_MCELIECE460896F_SSE_vec128_copy(prod[0], eval[0]);
 
     for (i = 1; i < 64; i++) {
-        vec128_mul(prod[i], prod[i - 1], eval[i]);
+        PQCLEAN_MCELIECE460896F_SSE_vec128_mul(prod[i], prod[i - 1], eval[i]);
     }
 
     PQCLEAN_MCELIECE460896F_SSE_vec128_inv(tmp, prod[63]);
 
     for (i = 62; i >= 0; i--) {
-        vec128_mul(prod[i + 1], prod[i], tmp);
-        vec128_mul(tmp, tmp, eval[i + 1]);
+        PQCLEAN_MCELIECE460896F_SSE_vec128_mul(prod[i + 1], prod[i], tmp);
+        PQCLEAN_MCELIECE460896F_SSE_vec128_mul(tmp, tmp, eval[i + 1]);
     }
 
-    vec128_copy(prod[0], tmp);
+    PQCLEAN_MCELIECE460896F_SSE_vec128_copy(prod[0], tmp);
 
     // fill matrix
 
@@ -264,18 +264,18 @@ int PQCLEAN_MCELIECE460896F_SSE_pk_gen(unsigned char *pk, uint32_t *perm, const 
 
     for (j = 0; j < NBLOCKS2_H; j++) {
         for (k = 0; k < GFBITS; k++) {
-            mat[ k ][ 2 * j + 0 ] = vec128_extract(prod[ j ][ k ], 0);
-            mat[ k ][ 2 * j + 1 ] = vec128_extract(prod[ j ][ k ], 1);
+            mat[ k ][ 2 * j + 0 ] = PQCLEAN_MCELIECE460896F_SSE_vec128_extract(prod[ j ][ k ], 0);
+            mat[ k ][ 2 * j + 1 ] = PQCLEAN_MCELIECE460896F_SSE_vec128_extract(prod[ j ][ k ], 1);
         }
     }
 
     for (i = 1; i < SYS_T; i++) {
         for (j = 0; j < NBLOCKS2_H; j++) {
-            vec128_mul(prod[j], prod[j], consts[j]);
+            PQCLEAN_MCELIECE460896F_SSE_vec128_mul(prod[j], prod[j], consts[j]);
 
             for (k = 0; k < GFBITS; k++) {
-                mat[ i * GFBITS + k ][ 2 * j + 0 ] = vec128_extract(prod[ j ][ k ], 0);
-                mat[ i * GFBITS + k ][ 2 * j + 1 ] = vec128_extract(prod[ j ][ k ], 1);
+                mat[ i * GFBITS + k ][ 2 * j + 0 ] = PQCLEAN_MCELIECE460896F_SSE_vec128_extract(prod[ j ][ k ], 0);
+                mat[ i * GFBITS + k ][ 2 * j + 1 ] = PQCLEAN_MCELIECE460896F_SSE_vec128_extract(prod[ j ][ k ], 1);
             }
         }
     }

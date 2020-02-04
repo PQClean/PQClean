@@ -30,26 +30,26 @@ static void scaling(vec128 out[][GFBITS], vec128 inv[][GFBITS], const unsigned c
         PQCLEAN_MCELIECE348864_SSE_vec128_sq(eval[i], eval[i]);
     }
 
-    vec128_copy(inv[0], eval[0]);
+    PQCLEAN_MCELIECE348864_SSE_vec128_copy(inv[0], eval[0]);
 
     for (i = 1; i < 32; i++) {
-        vec128_mul(inv[i], inv[i - 1], eval[i]);
+        PQCLEAN_MCELIECE348864_SSE_vec128_mul(inv[i], inv[i - 1], eval[i]);
     }
 
     PQCLEAN_MCELIECE348864_SSE_vec128_inv(tmp, inv[31]);
 
     for (i = 30; i >= 0; i--) {
-        vec128_mul(inv[i + 1], tmp, inv[i]);
-        vec128_mul(tmp, tmp, eval[i + 1]);
+        PQCLEAN_MCELIECE348864_SSE_vec128_mul(inv[i + 1], tmp, inv[i]);
+        PQCLEAN_MCELIECE348864_SSE_vec128_mul(tmp, tmp, eval[i + 1]);
     }
 
-    vec128_copy(inv[0], tmp);
+    PQCLEAN_MCELIECE348864_SSE_vec128_copy(inv[0], tmp);
 
     //
 
     for (i = 0; i < 32; i++) {
         for (j = 0; j < GFBITS; j++) {
-            out[i][j] = vec128_and(inv[i][j], recv[i]);
+            out[i][j] = PQCLEAN_MCELIECE348864_SSE_vec128_and(inv[i][j], recv[i]);
         }
     }
 }
@@ -77,8 +77,8 @@ static void postprocess(unsigned char *e, vec128 *err) {
     uint64_t v[2];
 
     for (i = 0; i < 32; i++) {
-        v[0] = vec128_extract(err[i], 0);
-        v[1] = vec128_extract(err[i], 1);
+        v[0] = PQCLEAN_MCELIECE348864_SSE_vec128_extract(err[i], 0);
+        v[1] = PQCLEAN_MCELIECE348864_SSE_vec128_extract(err[i], 1);
 
         PQCLEAN_MCELIECE348864_SSE_store8(error8 + i * 16 + 0, v[0]);
         PQCLEAN_MCELIECE348864_SSE_store8(error8 + i * 16 + 8, v[1]);
@@ -94,7 +94,7 @@ static void scaling_inv(vec128 out[][GFBITS], vec128 inv[][GFBITS], vec128 *recv
 
     for (i = 0; i < 32; i++) {
         for (j = 0; j < GFBITS; j++) {
-            out[i][j] = vec128_and(inv[i][j], recv[i]);
+            out[i][j] = PQCLEAN_MCELIECE348864_SSE_vec128_and(inv[i][j], recv[i]);
         }
     }
 }
@@ -106,8 +106,8 @@ static uint16_t weight_check(unsigned char *e, vec128 *error) {
     uint16_t check;
 
     for (i = 0; i < 32; i++) {
-        w0 += _mm_popcnt_u64( vec128_extract(error[i], 0) );
-        w0 += _mm_popcnt_u64( vec128_extract(error[i], 1) );
+        w0 += _mm_popcnt_u64( PQCLEAN_MCELIECE348864_SSE_vec128_extract(error[i], 0) );
+        w0 += _mm_popcnt_u64( PQCLEAN_MCELIECE348864_SSE_vec128_extract(error[i], 1) );
     }
 
     for (i = 0; i < SYS_N / 8; i++) {
@@ -125,13 +125,13 @@ static uint64_t synd_cmp(vec128 s0[ GFBITS ], vec128 s1[ GFBITS ]) {
     int i;
     vec128 diff;
 
-    diff = vec128_xor(s0[0], s1[0]);
+    diff = PQCLEAN_MCELIECE348864_SSE_vec128_xor(s0[0], s1[0]);
 
     for (i = 1; i < GFBITS; i++) {
-        diff = vec128_or(diff, vec128_xor(s0[i], s1[i]));
+        diff = PQCLEAN_MCELIECE348864_SSE_vec128_or(diff, PQCLEAN_MCELIECE348864_SSE_vec128_xor(s0[i], s1[i]));
     }
 
-    return vec128_testz(diff);
+    return PQCLEAN_MCELIECE348864_SSE_vec128_testz(diff);
 }
 
 /* Niederreiter decryption with the Berlekamp decoder */
@@ -178,11 +178,11 @@ int PQCLEAN_MCELIECE348864_SSE_decrypt(unsigned char *e, const unsigned char *sk
 
     // reencryption and weight check
 
-    allone = vec128_setbits(1);
+    allone = PQCLEAN_MCELIECE348864_SSE_vec128_setbits(1);
 
     for (i = 0; i < 32; i++) {
-        error[i] = vec128_or_reduce(eval[i]);
-        error[i] = vec128_xor(error[i], allone);
+        error[i] = PQCLEAN_MCELIECE348864_SSE_vec128_or_reduce(eval[i]);
+        error[i] = PQCLEAN_MCELIECE348864_SSE_vec128_xor(error[i], allone);
     }
 
     scaling_inv(scaled, inv, error);

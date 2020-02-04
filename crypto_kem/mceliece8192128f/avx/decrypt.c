@@ -67,7 +67,7 @@ static void scaling_inv(vec256 out[][GFBITS], vec256 inv[][GFBITS], vec256 *recv
 static void preprocess(vec128 *recv, const unsigned char *s) {
     int i;
 
-    recv[0] = vec128_setbits(0);
+    recv[0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits(0);
 
     for (i = 1; i < 64; i++) {
         recv[i] = recv[0];
@@ -109,10 +109,10 @@ static void reformat_128to256(vec256 *out, vec128 *in) {
     uint64_t v[4];
 
     for (i = 0; i < 32; i++) {
-        v[0] = vec128_extract(in[2 * i + 0], 0);
-        v[1] = vec128_extract(in[2 * i + 0], 1);
-        v[2] = vec128_extract(in[2 * i + 1], 0);
-        v[3] = vec128_extract(in[2 * i + 1], 1);
+        v[0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[2 * i + 0], 0);
+        v[1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[2 * i + 0], 1);
+        v[2] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[2 * i + 1], 0);
+        v[3] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[2 * i + 1], 1);
 
         out[i] = vec256_set4x(v[0], v[1], v[2], v[3]);
     }
@@ -128,8 +128,8 @@ static void reformat_256to128(vec128 *out, vec256 *in) {
         v[2] = vec256_extract(in[i], 2);
         v[3] = vec256_extract(in[i], 3);
 
-        out[2 * i + 0] = vec128_set2x(v[0], v[1]);
-        out[2 * i + 1] = vec128_set2x(v[2], v[3]);
+        out[2 * i + 0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(v[0], v[1]);
+        out[2 * i + 1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(v[2], v[3]);
     }
 }
 

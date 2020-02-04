@@ -60,7 +60,7 @@ void PQCLEAN_MCELIECE8192128F_AVX_irr_load(vec128 *out, const unsigned char *in)
             v1 |= (irr[j + 64] >> i) & 1;
         }
 
-        out[i] = vec128_set2x(v0, v1);
+        out[i] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(v0, v1);
     }
 }
 
@@ -88,10 +88,10 @@ uint64_t PQCLEAN_MCELIECE8192128F_AVX_load8(const unsigned char *in) {
 }
 
 vec128 PQCLEAN_MCELIECE8192128F_AVX_load16(const unsigned char *in) {
-    return vec128_set2x( PQCLEAN_MCELIECE8192128F_AVX_load8(in), PQCLEAN_MCELIECE8192128F_AVX_load8(in + 8) );
+    return PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x( PQCLEAN_MCELIECE8192128F_AVX_load8(in), PQCLEAN_MCELIECE8192128F_AVX_load8(in + 8) );
 }
 
 void PQCLEAN_MCELIECE8192128F_AVX_store16(unsigned char *out, vec128 in) {
-    PQCLEAN_MCELIECE8192128F_AVX_store8(out + 0, vec128_extract(in, 0));
-    PQCLEAN_MCELIECE8192128F_AVX_store8(out + 8, vec128_extract(in, 1));
+    PQCLEAN_MCELIECE8192128F_AVX_store8(out + 0, PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in, 0));
+    PQCLEAN_MCELIECE8192128F_AVX_store8(out + 8, PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in, 1));
 }

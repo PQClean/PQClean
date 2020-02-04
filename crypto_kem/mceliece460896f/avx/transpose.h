@@ -8,17 +8,8 @@
 #include "vec128.h"
 #include "vec256.h"
 
-extern void PQCLEAN_MCELIECE460896F_AVX_transpose_64x128_sp_asm(vec128 *);
-
-static inline void PQCLEAN_MCELIECE460896F_AVX_transpose_64x128_sp(vec128 *in) {
-    PQCLEAN_MCELIECE460896F_AVX_transpose_64x128_sp_asm(in);
-}
-
-extern void PQCLEAN_MCELIECE460896F_AVX_transpose_64x256_sp_asm(vec256 *);
-
-static inline void PQCLEAN_MCELIECE460896F_AVX_transpose_64x256_sp(vec256 *in) {
-    PQCLEAN_MCELIECE460896F_AVX_transpose_64x256_sp_asm(in);
-}
+void PQCLEAN_MCELIECE460896F_AVX_transpose_64x128_sp(vec128 *in);
+void PQCLEAN_MCELIECE460896F_AVX_transpose_64x256_sp(vec256 *in);
 
 #endif
 

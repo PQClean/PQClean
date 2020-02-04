@@ -97,10 +97,10 @@ gf PQCLEAN_MCELIECE348864_SSE_bitrev(gf a) {
 }
 
 vec128 PQCLEAN_MCELIECE348864_SSE_load16(const unsigned char *in) {
-    return vec128_set2x( PQCLEAN_MCELIECE348864_SSE_load8(in), PQCLEAN_MCELIECE348864_SSE_load8(in + 8) );
+    return PQCLEAN_MCELIECE348864_SSE_vec128_set2x( PQCLEAN_MCELIECE348864_SSE_load8(in), PQCLEAN_MCELIECE348864_SSE_load8(in + 8) );
 }
 
 void PQCLEAN_MCELIECE348864_SSE_store16(unsigned char *out, vec128 in) {
-    PQCLEAN_MCELIECE348864_SSE_store8(out + 0, vec128_extract(in, 0));
-    PQCLEAN_MCELIECE348864_SSE_store8(out + 8, vec128_extract(in, 1));
+    PQCLEAN_MCELIECE348864_SSE_store8(out + 0, PQCLEAN_MCELIECE348864_SSE_vec128_extract(in, 0));
+    PQCLEAN_MCELIECE348864_SSE_store8(out + 8, PQCLEAN_MCELIECE348864_SSE_vec128_extract(in, 1));
 }

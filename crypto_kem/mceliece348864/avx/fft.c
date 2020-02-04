@@ -34,7 +34,7 @@ static void radix_conversions(uint64_t *in) {
             }
         }
 
-        vec_mul(in, in, s[j]); // scaling
+        PQCLEAN_MCELIECE348864_AVX_vec_mul(in, in, s[j]); // scaling
     }
 }
 
@@ -78,7 +78,7 @@ static void butterflies(vec256 out[][ GFBITS ], const uint64_t *in) {
             t3 = (in[i] >> reversal[j + 6]) & 1;
             t3 = -t3;
 
-            out[j / 4 + 0][i] = vec256_set4x(t0, t1, t2, t3);
+            out[j / 4 + 0][i] = PQCLEAN_MCELIECE348864_AVX_vec256_set4x(t0, t1, t2, t3);
 
             t0 = (in[i] >> reversal[j + 1]) & 1;
             t0 = -t0;
@@ -89,14 +89,14 @@ static void butterflies(vec256 out[][ GFBITS ], const uint64_t *in) {
             t3 = (in[i] >> reversal[j + 7]) & 1;
             t3 = -t3;
 
-            out[j / 4 + 1][i] = vec256_set4x(t0, t1, t2, t3);
+            out[j / 4 + 1][i] = PQCLEAN_MCELIECE348864_AVX_vec256_set4x(t0, t1, t2, t3);
         }
     }
 
     //
 
     for (i = 0; i < 16; i += 2) {
-        vec256_mul(tmp256, out[i + 1], consts[ 0 ]);
+        PQCLEAN_MCELIECE348864_AVX_vec256_mul(tmp256, out[i + 1], consts[ 0 ]);
 
         for (b = 0; b < GFBITS; b++) {
             out[i + 0][b] ^= tmp256[b];
@@ -108,13 +108,13 @@ static void butterflies(vec256 out[][ GFBITS ], const uint64_t *in) {
 
     for (i = 0; i < 16; i += 2) {
         for (b = 0; b < GFBITS; b++) {
-            x[b] = vec256_unpack_low_2x(out[i + 0][b], out[i + 1][b]);
+            x[b] = PQCLEAN_MCELIECE348864_AVX_vec256_unpack_low_2x(out[i + 0][b], out[i + 1][b]);
         }
         for (b = 0; b < GFBITS; b++) {
-            y[b] = vec256_unpack_high_2x(out[i + 0][b], out[i + 1][b]);
+            y[b] = PQCLEAN_MCELIECE348864_AVX_vec256_unpack_high_2x(out[i + 0][b], out[i + 1][b]);
         }
 
-        vec256_mul(tmp256, y, consts[ 1 ]);
+        PQCLEAN_MCELIECE348864_AVX_vec256_mul(tmp256, y, consts[ 1 ]);
 
         for (b = 0; b < GFBITS; b++) {
             x[b] ^= tmp256[b];
@@ -124,10 +124,10 @@ static void butterflies(vec256 out[][ GFBITS ], const uint64_t *in) {
         }
 
         for (b = 0; b < GFBITS; b++) {
-            out[i + 0][b] = vec256_unpack_low(x[b], y[b]);
+            out[i + 0][b] = PQCLEAN_MCELIECE348864_AVX_vec256_unpack_low(x[b], y[b]);
         }
         for (b = 0; b < GFBITS; b++) {
-            out[i + 1][b] = vec256_unpack_high(x[b], y[b]);
+            out[i + 1][b] = PQCLEAN_MCELIECE348864_AVX_vec256_unpack_high(x[b], y[b]);
         }
     }
 
@@ -138,7 +138,7 @@ static void butterflies(vec256 out[][ GFBITS ], const uint64_t *in) {
 
         for (j = 0; j < 16; j += 2 * s) {
             for (k = j; k < j + s; k++) {
-                vec256_mul(tmp256, out[k + s], consts[ consts_ptr + (k - j) ]);
+                PQCLEAN_MCELIECE348864_AVX_vec256_mul(tmp256, out[k + s], consts[ consts_ptr + (k - j) ]);
 
                 for (b = 0; b < GFBITS; b++) {
                     out[k][b] ^= tmp256[b];
@@ -160,7 +160,7 @@ static void butterflies(vec256 out[][ GFBITS ], const uint64_t *in) {
 
     for (i = 0; i < 16; i++) {
         for (b = 0; b < GFBITS; b++) {
-            out[i][b] = vec256_xor(out[i][b], powers[i][b]);
+            out[i][b] = PQCLEAN_MCELIECE348864_AVX_vec256_xor(out[i][b], powers[i][b]);
         }
     }
 }

@@ -40,13 +40,13 @@ static inline void vec128_cmov(vec128 out[][2], uint16_t mask) {
 
     vec128 v0, v1;
 
-    vec128 m0 = vec128_set1_16b( mask);
-    vec128 m1 = vec128_set1_16b(~mask);
+    vec128 m0 = PQCLEAN_MCELIECE8192128F_AVX_vec128_set1_16b( mask);
+    vec128 m1 = PQCLEAN_MCELIECE8192128F_AVX_vec128_set1_16b(~mask);
 
     for (i = 0; i < GFBITS; i++) {
-        v0 = vec128_and(out[i][1], m0);
-        v1 = vec128_and(out[i][0], m1);
-        out[i][0] = vec128_or(v0, v1);
+        v0 = PQCLEAN_MCELIECE8192128F_AVX_vec128_and(out[i][1], m0);
+        v1 = PQCLEAN_MCELIECE8192128F_AVX_vec128_and(out[i][0], m1);
+        out[i][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_or(v0, v1);
     }
 }
 
@@ -157,11 +157,11 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
 
     get_coefs(coefs, in);
 
-    BC[0][0] = vec128_set2x(0, one << 63);
-    BC[0][1] = vec128_setzero();
+    BC[0][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0, one << 63);
+    BC[0][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setzero();
 
     for (i = 1; i < GFBITS; i++) {
-        BC[i][0] = BC[i][1] = vec128_setzero();
+        BC[i][0] = BC[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setzero();
     }
 
     b = 1;
@@ -170,7 +170,7 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
     //
 
     for (i = 0; i < GFBITS; i++) {
-        interval[i] = vec128_setzero();
+        interval[i] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setzero();
     }
 
     for (N = 0; N < 256; N++) {
@@ -185,8 +185,8 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
         mask = mask_nonzero(d) & mask_leq(L * 2, N);
 
         for (i = 0; i < GFBITS; i++) {
-            db[i][0] = vec128_setbits((d >> i) & 1);
-            db[i][1] = vec128_setbits((b >> i) & 1);
+            db[i][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((d >> i) & 1);
+            db[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((b >> i) & 1);
         }
 
         vec256_mul((vec256 *) BC_tmp, (vec256 *) db, (vec256 *) BC);
@@ -195,7 +195,7 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
         PQCLEAN_MCELIECE8192128F_AVX_update_asm(BC, c0 & mask, 32);
 
         for (i = 0; i < GFBITS; i++) {
-            BC[i][1] = vec128_xor(BC_tmp[i][0], BC_tmp[i][1]);
+            BC[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_xor(BC_tmp[i][0], BC_tmp[i][1]);
         }
 
         c0 = t >> 32;
@@ -206,7 +206,7 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
     c0 = PQCLEAN_MCELIECE8192128F_AVX_gf_inv(c0);
 
     for (i = 0; i < GFBITS; i++) {
-        prod[i] = vec128_setbits((c0 >> i) & 1);
+        prod[i] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((c0 >> i) & 1);
     }
 
     PQCLEAN_MCELIECE8192128F_AVX_vec128_mul_asm(out, prod, BC[0] + 1, 32);
