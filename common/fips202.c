@@ -761,6 +761,10 @@ void sha3_256_inc_ctx_clone(sha3_256incctx *dest, const sha3_256incctx *src) {
     memcpy(dest->ctx, src->ctx, PQC_SHAKEINCCTX_BYTES);
 }
 
+void sha3_256_inc_ctx_release(sha3_256incctx *state) {
+    free(state->ctx);
+}
+
 void sha3_256_inc_absorb(sha3_256incctx *state, const uint8_t *input, size_t inlen) {
     keccak_inc_absorb(state->ctx, SHA3_256_RATE, input, inlen);
 }
@@ -771,7 +775,7 @@ void sha3_256_inc_finalize(uint8_t *output, sha3_256incctx *state) {
 
     keccak_squeezeblocks(t, 1, state->ctx, SHA3_256_RATE);
 
-    free(state->ctx);
+    sha3_256_inc_ctx_release(state);
 
     for (size_t i = 0; i < 32; i++) {
         output[i] = t[i];
@@ -822,13 +826,17 @@ void sha3_384_inc_absorb(sha3_384incctx *state, const uint8_t *input, size_t inl
     keccak_inc_absorb(state->ctx, SHA3_384_RATE, input, inlen);
 }
 
+void sha3_384_inc_ctx_release(sha3_384incctx *state) {
+    free(state->ctx);
+}
+
 void sha3_384_inc_finalize(uint8_t *output, sha3_384incctx *state) {
     uint8_t t[SHA3_384_RATE];
     keccak_inc_finalize(state->ctx, SHA3_384_RATE, 0x06);
 
     keccak_squeezeblocks(t, 1, state->ctx, SHA3_384_RATE);
 
-    free(state->ctx);
+    sha3_384_inc_ctx_release(state);
 
     for (size_t i = 0; i < 48; i++) {
         output[i] = t[i];
@@ -879,13 +887,17 @@ void sha3_512_inc_absorb(sha3_512incctx *state, const uint8_t *input, size_t inl
     keccak_inc_absorb(state->ctx, SHA3_512_RATE, input, inlen);
 }
 
+void sha3_512_inc_ctx_release(sha3_512incctx *state) {
+    free(state->ctx);
+}
+
 void sha3_512_inc_finalize(uint8_t *output, sha3_512incctx *state) {
     uint8_t t[SHA3_512_RATE];
     keccak_inc_finalize(state->ctx, SHA3_512_RATE, 0x06);
 
     keccak_squeezeblocks(t, 1, state->ctx, SHA3_512_RATE);
 
-    free(state->ctx);
+    sha3_512_inc_ctx_release(state);
 
     for (size_t i = 0; i < 64; i++) {
         output[i] = t[i];
