@@ -122,6 +122,7 @@ set_fpu_cw(unsigned x) {
 #define inner_shake256_inject(sc, in, len)    shake256_inc_absorb(sc, in, len)
 #define inner_shake256_flip(sc)               shake256_inc_finalize(sc)
 #define inner_shake256_extract(sc, out, len)  shake256_inc_squeeze(out, len, sc)
+#define inner_shake256_ctx_release(sc)        shake256_inc_ctx_release(sc)
 
 
 /* ==================================================================== */

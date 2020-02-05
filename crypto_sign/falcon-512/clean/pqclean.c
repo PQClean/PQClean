@@ -62,6 +62,7 @@ PQCLEAN_FALCON512_CLEAN_crypto_sign_keypair(
     inner_shake256_inject(&rng, seed, sizeof seed);
     inner_shake256_flip(&rng);
     PQCLEAN_FALCON512_CLEAN_keygen(&rng, f, g, F, NULL, h, 9, tmp.b);
+    inner_shake256_ctx_release(&rng);
 
     /*
      * Encode private key.
@@ -186,6 +187,7 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
     inner_shake256_inject(&sc, m, mlen);
     inner_shake256_flip(&sc);
     PQCLEAN_FALCON512_CLEAN_hash_to_point_ct(&sc, r.hm, 9, tmp.b);
+    innner_shake256_ctx_release(&sc);
 
     /*
      * Initialize a RNG.
@@ -207,6 +209,7 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
             return 0;
         }
     }
+    inner_shake256_ctx_release(&sc);
 }
 
 /*
@@ -258,6 +261,7 @@ do_verify(
     inner_shake256_inject(&sc, m, mlen);
     inner_shake256_flip(&sc);
     PQCLEAN_FALCON512_CLEAN_hash_to_point_ct(&sc, hm, 9, tmp.b);
+    inner_shake256_ctx_release(&sc);
 
     /*
      * Verify signature.

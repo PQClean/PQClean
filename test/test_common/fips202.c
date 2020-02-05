@@ -1,9 +1,10 @@
-#include "fips202.h"
+#include "../../common/fips202.h"
 
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
 #include <inttypes.h>
+#include <stdlib.h>
 
 const unsigned char plaintext[44] = "The quick brown fox jumps over the lazy dog";
 const unsigned char expected[512] = {
@@ -129,12 +130,12 @@ static int test_shake128_incremental(void) {
 
     shake128_absorb(&state_combined, input, 512);
 
-    if (memcmp(&state_absorb, &state_combined, sizeof(shake128ctx)) != 0) {
+    if (memcmp(state_absorb.ctx, state_combined.ctx, PQC_SHAKECTX_BYTES) != 0) {
         printf("ERROR shake128 state after incremental absorb did not match all-at-once absorb.\n");
         returncode = 1;
     }
 
-    memcpy(&state_both, &state_absorb, sizeof(shake128incctx));
+    shake128_inc_ctx_clone(&state_both, &state_absorb);
 
     shake128_squeezeblocks(output, 3, (shake128ctx*)&state_absorb);
 
@@ -154,9 +155,13 @@ static int test_shake128_incremental(void) {
     }
 
     shake128_absorb((shake128ctx*)&state_squeeze, input, 512);
+    state_squeeze.ctx = realloc(state_squeeze.ctx, PQC_SHAKEINCCTX_BYTES);
+    if (state_squeeze.ctx == NULL) {
+        exit(111);
+    }
     state_squeeze.ctx[25] = 0;
 
-    memcpy(&state_squeeze_all, &state_squeeze, sizeof(shake128incctx));
+    shake128_inc_ctx_clone(&state_squeeze_all, &state_squeeze);
 
     shake128_inc_squeeze(output, 512, &state_squeeze_all);
 
@@ -220,6 +225,13 @@ static int test_shake128_incremental(void) {
         printf("\n");
         returncode = 1;
     }
+
+
+    shake128_inc_ctx_release(&state_absorb);
+    shake128_inc_ctx_release(&state_squeeze);
+    shake128_inc_ctx_release(&state_squeeze_all);
+    shake128_inc_ctx_release(&state_both);
+    shake128_ctx_release(&state_combined);
 
     return returncode;
 }
