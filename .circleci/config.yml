@@ -28,7 +28,7 @@ version: 2.1
           export CC=\"ccache ${CC}\" &&
           pip3 install -r requirements.txt &&
           mkdir test-results &&
-          cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto"
+          cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=2"
         no_output_timeout: 2h
     - save_cache:
         key: v1-ccache-{{ .Environment.CIRCLE_JOB }}
@@ -59,7 +59,7 @@ version: 2.1
           pip3 install -r requirements.txt
           mkdir test-results
           cd test
-          python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto
+          python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=2
         no_output_timeout: 2h
     - store_test_results:
         path: test/test-results
