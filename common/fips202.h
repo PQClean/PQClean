@@ -89,7 +89,6 @@ void shake128_inc_ctx_release(shake128incctx *state);
  * This function does not support being called multiple times
  * with the same state.
  */
-void shake128_absorb(shake128ctx *state, const uint8_t *input, size_t inlen);
 void shake256_absorb(shake256ctx *state, const uint8_t *input, size_t inlen);
 /* Squeeze output out of the sponge.
  *
