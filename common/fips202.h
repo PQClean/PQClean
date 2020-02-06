@@ -63,7 +63,7 @@ void shake128_squeezeblocks(uint8_t *output, size_t nblocks, shake128ctx *state)
 /* Free the state */
 void shake128_ctx_release(shake128ctx *state);
 /* Copy the state. */
-void shake128_ctx_clone(shake128ctx *dst, const shake128ctx *src);
+void shake128_ctx_clone(shake128ctx *dest, const shake128ctx *src);
 
 /* Initialize incremental hashing API */
 void shake128_inc_init(shake128incctx *state);
@@ -98,7 +98,7 @@ void shake256_squeezeblocks(uint8_t *output, size_t nblocks, shake256ctx *state)
 /* Free the context held by this XOF */
 void shake256_ctx_release(shake256ctx *state);
 /* Copy the context held by this XOF */
-void shake256_ctx_clone(shake256ctx *dst, const shake256ctx *src);
+void shake256_ctx_clone(shake256ctx *dest, const shake256ctx *src);
 
 /* Initialize incremental hashing API */
 void shake256_inc_init(shake256incctx *state);
