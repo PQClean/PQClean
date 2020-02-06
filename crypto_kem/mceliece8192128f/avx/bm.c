@@ -55,11 +55,11 @@ static inline void interleave(vec256 *in, int idx0, int idx1, vec256 *mask, int 
 
     vec256 x, y;
 
-    x = vec256_or(vec256_and(in[idx0], mask[0]),
-                  vec256_sll_4x(vec256_and(in[idx1], mask[0]), s));
+    x = PQCLEAN_MCELIECE8192128F_AVX_vec256_or(PQCLEAN_MCELIECE8192128F_AVX_vec256_and(in[idx0], mask[0]),
+            PQCLEAN_MCELIECE8192128F_AVX_vec256_sll_4x(PQCLEAN_MCELIECE8192128F_AVX_vec256_and(in[idx1], mask[0]), s));
 
-    y = vec256_or(vec256_srl_4x(vec256_and(in[idx0], mask[1]), s),
-                  vec256_and(in[idx1], mask[1]));
+    y = PQCLEAN_MCELIECE8192128F_AVX_vec256_or(PQCLEAN_MCELIECE8192128F_AVX_vec256_srl_4x(PQCLEAN_MCELIECE8192128F_AVX_vec256_and(in[idx0], mask[1]), s),
+            PQCLEAN_MCELIECE8192128F_AVX_vec256_and(in[idx1], mask[1]));
 
     in[idx0] = x;
     in[idx1] = y;
@@ -77,17 +77,17 @@ static inline void get_coefs(gf *out, vec256 *in) {
         buf[i] = in[i];
     }
     for (i = 13; i < 16; i++) {
-        buf[i] = vec256_setzero();
+        buf[i] = PQCLEAN_MCELIECE8192128F_AVX_vec256_setzero();
     }
 
-    mask[0][0] = vec256_set1_16b(0x5555);
-    mask[0][1] = vec256_set1_16b(0xAAAA);
-    mask[1][0] = vec256_set1_16b(0x3333);
-    mask[1][1] = vec256_set1_16b(0xCCCC);
-    mask[2][0] = vec256_set1_16b(0x0F0F);
-    mask[2][1] = vec256_set1_16b(0xF0F0);
-    mask[3][0] = vec256_set1_16b(0x00FF);
-    mask[3][1] = vec256_set1_16b(0xFF00);
+    mask[0][0] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0x5555);
+    mask[0][1] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0xAAAA);
+    mask[1][0] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0x3333);
+    mask[1][1] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0xCCCC);
+    mask[2][0] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0x0F0F);
+    mask[2][1] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0xF0F0);
+    mask[3][0] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0x00FF);
+    mask[3][1] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0xFF00);
 
     interleave(buf,  0,  8, mask[3], 3);
     interleave(buf,  1,  9, mask[3], 3);
@@ -127,13 +127,18 @@ static inline void get_coefs(gf *out, vec256 *in) {
 
     for (i = 0; i < 16; i++) {
         for (k = 0; k <  4; k++) {
-            out[ (4 * 0 + k) * 16 + i ] = (vec256_extract(buf[i], 0) >> (k * 16)) & GFMASK;
-            out[ (4 * 1 + k) * 16 + i ] = (vec256_extract(buf[i], 1) >> (k * 16)) & GFMASK;
-            out[ (4 * 2 + k) * 16 + i ] = (vec256_extract(buf[i], 2) >> (k * 16)) & GFMASK;
-            out[ (4 * 3 + k) * 16 + i ] = (vec256_extract(buf[i], 3) >> (k * 16)) & GFMASK;
+            out[ (4 * 0 + k) * 16 + i ] = (PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(buf[i], 0) >> (k * 16)) & GFMASK;
+            out[ (4 * 1 + k) * 16 + i ] = (PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(buf[i], 1) >> (k * 16)) & GFMASK;
+            out[ (4 * 2 + k) * 16 + i ] = (PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(buf[i], 2) >> (k * 16)) & GFMASK;
+            out[ (4 * 3 + k) * 16 + i ] = (PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(buf[i], 3) >> (k * 16)) & GFMASK;
         }
     }
 }
+
+typedef union {
+    vec128 as_128[GFBITS][2];
+    vec256 as_256[GFBITS];
+} aligned_double_vec128;
 
 /* input: in, sequence of field elements */
 /* output: out, minimal polynomial of in */
@@ -146,9 +151,9 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
     vec128 prod[ GFBITS ];
     vec128 interval[GFBITS];
 
-    vec128 db[ GFBITS ][ 2 ];
-    vec128 BC_tmp[ GFBITS ][ 2 ];
-    vec128 BC[ GFBITS ][ 2 ];
+    aligned_double_vec128 db;
+    aligned_double_vec128 BC_tmp;
+    aligned_double_vec128 BC;
 
     gf d, b, c0 = 1;
     gf coefs[256];
@@ -157,11 +162,11 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
 
     get_coefs(coefs, in);
 
-    BC[0][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0, one << 63);
-    BC[0][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setzero();
+    BC.as_128[0][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(0, one << 63);
+    BC.as_128[0][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setzero();
 
     for (i = 1; i < GFBITS; i++) {
-        BC[i][0] = BC[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setzero();
+        BC.as_128[i][0] = BC.as_128[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setzero();
     }
 
     b = 1;
@@ -174,7 +179,7 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
     }
 
     for (N = 0; N < 256; N++) {
-        PQCLEAN_MCELIECE8192128F_AVX_vec128_mul_asm(prod, interval, BC[0] + 1, 32);
+        PQCLEAN_MCELIECE8192128F_AVX_vec128_mul_asm(prod, interval, BC.as_128[0] + 1, 32);
         PQCLEAN_MCELIECE8192128F_AVX_update_asm(interval, coefs[N], 16);
 
         d = PQCLEAN_MCELIECE8192128F_AVX_vec_reduce_asm(prod);
@@ -185,17 +190,17 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
         mask = mask_nonzero(d) & mask_leq(L * 2, N);
 
         for (i = 0; i < GFBITS; i++) {
-            db[i][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((d >> i) & 1);
-            db[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((b >> i) & 1);
+            db.as_128[i][0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((d >> i) & 1);
+            db.as_128[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((b >> i) & 1);
         }
 
-        vec256_mul((vec256 *) BC_tmp, (vec256 *) db, (vec256 *) BC);
+        PQCLEAN_MCELIECE8192128F_AVX_vec256_mul(BC_tmp.as_256, db.as_256, BC.as_256);
 
-        vec128_cmov(BC, mask);
-        PQCLEAN_MCELIECE8192128F_AVX_update_asm(BC, c0 & mask, 32);
+        vec128_cmov(BC.as_128, mask);
+        PQCLEAN_MCELIECE8192128F_AVX_update_asm(BC.as_128, c0 & mask, 32);
 
         for (i = 0; i < GFBITS; i++) {
-            BC[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_xor(BC_tmp[i][0], BC_tmp[i][1]);
+            BC.as_128[i][1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_xor(BC_tmp.as_128[i][0], BC_tmp.as_128[i][1]);
         }
 
         c0 = t >> 32;
@@ -209,6 +214,6 @@ void PQCLEAN_MCELIECE8192128F_AVX_bm(vec128 *out, vec256 *in) {
         prod[i] = PQCLEAN_MCELIECE8192128F_AVX_vec128_setbits((c0 >> i) & 1);
     }
 
-    PQCLEAN_MCELIECE8192128F_AVX_vec128_mul_asm(out, prod, BC[0] + 1, 32);
+    PQCLEAN_MCELIECE8192128F_AVX_vec128_mul_asm(out, prod, BC.as_128[0] + 1, 32);
 }
 
