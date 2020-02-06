@@ -50,7 +50,7 @@ static void de_bitslicing(uint64_t *out, vec256 in[][GFBITS]) {
 
 static void to_bitslicing_2x(vec256 out0[][GFBITS], vec256 out1[][GFBITS], const uint64_t *in) {
     int i, j, k, r;
-    uint64_t u[4];
+    uint64_t u[4] = {0};
 
     for (i = 0; i < 32; i++) {
         for (j = GFBITS - 1; j >= 0; j--) {
