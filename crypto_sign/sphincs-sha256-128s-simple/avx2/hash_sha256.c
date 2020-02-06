@@ -25,7 +25,7 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_initialize_hash_function(
  * Cleans up the hash function states
  */
 void PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_destroy_hash_function(hash_state *hash_state_seeded) {
-    sha256_inc_destroy(&hash_state_seeded->x1);
+    sha256_inc_ctx_release(&hash_state_seeded->x1);
 }
 
 /*
@@ -87,8 +87,6 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_gen_message_random(
         mlen -= PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_SHA256_BLOCK_BYTES - PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_N;
         sha256_inc_finalize(buf + PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_SHA256_BLOCK_BYTES, &state, m, mlen);
     }
-    // Clean up SHA2 state.
-    sha256_inc_destroy(&state);
 
     for (i = 0; i < PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_N; i++) {
         buf[i] = 0x5c ^ sk_prf[i];
@@ -148,8 +146,6 @@ void PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_hash_message(
         mlen -= PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_INBLOCKS * PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_SHA256_BLOCK_BYTES - PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_N - PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_PK_BYTES;
         sha256_inc_finalize(seed, &state, m, mlen);
     }
-    // Clean up SHA2 state
-    sha256_inc_destroy(&state);
 
     /* By doing this in two steps, we prevent hashing the message twice;
        otherwise each iteration in MGF1 would hash the message again. */
