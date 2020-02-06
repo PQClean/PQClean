@@ -30,26 +30,26 @@ static void scaling(vec256 out[][GFBITS], vec256 inv[][GFBITS], const unsigned c
         PQCLEAN_MCELIECE8192128F_AVX_vec256_sq(eval[i], eval[i]);
     }
 
-    vec256_copy(inv[0], eval[0]);
+    PQCLEAN_MCELIECE8192128F_AVX_vec256_copy(inv[0], eval[0]);
 
     for (i = 1; i < 32; i++) {
-        vec256_mul(inv[i], inv[i - 1], eval[i]);
+        PQCLEAN_MCELIECE8192128F_AVX_vec256_mul(inv[i], inv[i - 1], eval[i]);
     }
 
     PQCLEAN_MCELIECE8192128F_AVX_vec256_inv(tmp, inv[31]);
 
     for (i = 30; i >= 0; i--) {
-        vec256_mul(inv[i + 1], tmp, inv[i]);
-        vec256_mul(tmp, tmp, eval[i + 1]);
+        PQCLEAN_MCELIECE8192128F_AVX_vec256_mul(inv[i + 1], tmp, inv[i]);
+        PQCLEAN_MCELIECE8192128F_AVX_vec256_mul(tmp, tmp, eval[i + 1]);
     }
 
-    vec256_copy(inv[0], tmp);
+    PQCLEAN_MCELIECE8192128F_AVX_vec256_copy(inv[0], tmp);
 
     //
 
     for (i = 0; i < 32; i++) {
         for (j = 0; j < GFBITS; j++) {
-            out[i][j] = vec256_and(inv[i][j], recv[i]);
+            out[i][j] = PQCLEAN_MCELIECE8192128F_AVX_vec256_and(inv[i][j], recv[i]);
         }
     }
 }
@@ -59,7 +59,7 @@ static void scaling_inv(vec256 out[][GFBITS], vec256 inv[][GFBITS], vec256 *recv
 
     for (i = 0; i < 32; i++) {
         for (j = 0; j < GFBITS; j++) {
-            out[i][j] = vec256_and(inv[i][j], recv[i]);
+            out[i][j] = PQCLEAN_MCELIECE8192128F_AVX_vec256_and(inv[i][j], recv[i]);
         }
     }
 }
@@ -82,10 +82,10 @@ static int weight(vec256 *v) {
     int i, w = 0;
 
     for (i = 0; i < 32; i++) {
-        w += (int)_mm_popcnt_u64( vec256_extract(v[i], 0) );
-        w += (int)_mm_popcnt_u64( vec256_extract(v[i], 1) );
-        w += (int)_mm_popcnt_u64( vec256_extract(v[i], 2) );
-        w += (int)_mm_popcnt_u64( vec256_extract(v[i], 3) );
+        w += (int)_mm_popcnt_u64( PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(v[i], 0) );
+        w += (int)_mm_popcnt_u64( PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(v[i], 1) );
+        w += (int)_mm_popcnt_u64( PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(v[i], 2) );
+        w += (int)_mm_popcnt_u64( PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(v[i], 3) );
     }
 
     return w;
@@ -95,13 +95,13 @@ static uint16_t synd_cmp(vec256 *s0, vec256 *s1) {
     int i;
     vec256 diff;
 
-    diff = vec256_xor(s0[0], s1[0]);
+    diff = PQCLEAN_MCELIECE8192128F_AVX_vec256_xor(s0[0], s1[0]);
 
     for (i = 1; i < GFBITS; i++) {
-        diff = vec256_or(diff, vec256_xor(s0[i], s1[i]));
+        diff = PQCLEAN_MCELIECE8192128F_AVX_vec256_or(diff, PQCLEAN_MCELIECE8192128F_AVX_vec256_xor(s0[i], s1[i]));
     }
 
-    return vec256_testz(diff);
+    return PQCLEAN_MCELIECE8192128F_AVX_vec256_testz(diff);
 }
 
 static void reformat_128to256(vec256 *out, vec128 *in) {
@@ -114,7 +114,7 @@ static void reformat_128to256(vec256 *out, vec128 *in) {
         v[2] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[2 * i + 1], 0);
         v[3] = PQCLEAN_MCELIECE8192128F_AVX_vec128_extract(in[2 * i + 1], 1);
 
-        out[i] = vec256_set4x(v[0], v[1], v[2], v[3]);
+        out[i] = PQCLEAN_MCELIECE8192128F_AVX_vec256_set4x(v[0], v[1], v[2], v[3]);
     }
 }
 
@@ -123,10 +123,10 @@ static void reformat_256to128(vec128 *out, vec256 *in) {
     uint64_t v[4];
 
     for (i = 0; i < 32; i++) {
-        v[0] = vec256_extract(in[i], 0);
-        v[1] = vec256_extract(in[i], 1);
-        v[2] = vec256_extract(in[i], 2);
-        v[3] = vec256_extract(in[i], 3);
+        v[0] = PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(in[i], 0);
+        v[1] = PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(in[i], 1);
+        v[2] = PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(in[i], 2);
+        v[3] = PQCLEAN_MCELIECE8192128F_AVX_vec256_extract(in[i], 3);
 
         out[2 * i + 0] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(v[0], v[1]);
         out[2 * i + 1] = PQCLEAN_MCELIECE8192128F_AVX_vec128_set2x(v[2], v[3]);
@@ -177,11 +177,11 @@ int PQCLEAN_MCELIECE8192128F_AVX_decrypt(unsigned char *e, const unsigned char *
 
     // reencryption and weight check
 
-    allone = vec256_set1_16b(0xFFFF);
+    allone = PQCLEAN_MCELIECE8192128F_AVX_vec256_set1_16b(0xFFFF);
 
     for (i = 0; i < 32; i++) {
-        error256[i] = vec256_or_reduce(eval[i]);
-        error256[i] = vec256_xor(error256[i], allone);
+        error256[i] = PQCLEAN_MCELIECE8192128F_AVX_vec256_or_reduce(eval[i]);
+        error256[i] = PQCLEAN_MCELIECE8192128F_AVX_vec256_xor(error256[i], allone);
     }
 
     check_weight = (uint16_t)(weight(error256) ^ SYS_T);
