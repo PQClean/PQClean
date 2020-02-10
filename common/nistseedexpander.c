@@ -23,10 +23,6 @@ seedexpander_init(AES_XOF_struct *ctx,
                   const uint8_t *diversifier,
                   size_t maxlen)
 {
-    if ( maxlen >= 0x100000000 ) {
-        return RNG_BAD_MAXLEN;
-    }
-
     ctx->length_remaining = maxlen;
 
     memcpy(ctx->key, seed, 32);
