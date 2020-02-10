@@ -205,11 +205,11 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
         PQCLEAN_FALCON512_CLEAN_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, 9, tmp.b);
         v = PQCLEAN_FALCON512_CLEAN_comp_encode(sigbuf, *sigbuflen, r.sig, 9);
         if (v != 0) {
+            inner_shake256_ctx_release(&sc);
             *sigbuflen = v;
             return 0;
         }
     }
-    inner_shake256_ctx_release(&sc);
 }
 
 /*
