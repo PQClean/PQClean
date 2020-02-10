@@ -119,13 +119,13 @@ static void radix_t(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uint32_
 
         size_t n = 1 << (m_f - 2);
 
-        uint16_t Q0[1 << (PARAM_FFT_T - 2)];
-        uint16_t Q1[1 << (PARAM_FFT_T - 2)];
-        uint16_t R0[1 << (PARAM_FFT_T - 2)];
-        uint16_t R1[1 << (PARAM_FFT_T - 2)];
+        uint16_t Q0[1 << (PARAM_FFT_T - 2)] = {0};
+        uint16_t Q1[1 << (PARAM_FFT_T - 2)] = {0};
+        uint16_t R0[1 << (PARAM_FFT_T - 2)] = {0};
+        uint16_t R1[1 << (PARAM_FFT_T - 2)] = {0};
 
-        uint16_t Q[1 << 2 * (PARAM_FFT_T - 2)];
-        uint16_t R[1 << 2 * (PARAM_FFT_T - 2)];
+        uint16_t Q[1 << 2 * (PARAM_FFT_T - 2)] = {0};
+        uint16_t R[1 << 2 * (PARAM_FFT_T - 2)] = {0};
 
         memcpy(Q0, f0 + n, 2 * n);
         memcpy(Q1, f1 + n, 2 * n);
@@ -163,23 +163,20 @@ static void radix_t(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uint32_
 static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
                       uint8_t m, uint32_t m_f, const uint16_t *betas) {
     size_t k = 1 << (m - 1);
-    uint16_t gammas[PARAM_M - 2];
-    uint16_t deltas[PARAM_M - 2];
+    uint16_t gammas[PARAM_M - 2] = {0};
+    uint16_t deltas[PARAM_M - 2] = {0};
     uint16_t gammas_sums[1 << (PARAM_M - 1)];
     uint16_t u[1 << (PARAM_M - 2)] = {0};
     uint16_t f0[1 << (PARAM_FFT_T - 2)] = {0};
     uint16_t f1[1 << (PARAM_FFT_T - 2)] = {0};
+    uint16_t betas_sums[1 << (PARAM_M - 1)] = {0};
 
     // Step 1
     if (m_f == 1) {
-        f[0] = 0;
         for (size_t i = 0 ; i < (1U << m) ; ++i) {
             f[0] ^= w[i];
         }
-        f[1] = 0;
 
-        uint16_t betas_sums[1 << (PARAM_M - 1)];
-        betas_sums[0] = 0;
         for (size_t j = 0 ; j < m ; ++j) {
             for (size_t k = 0 ; k < (1U << j) ; ++k) {
                 size_t index = (1 << j) + k;
@@ -410,12 +407,12 @@ static void radix(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f) {
 static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
                     uint8_t m, uint32_t m_f, const uint16_t *betas) {
 
-    uint16_t f0[1 << (PARAM_FFT - 2)];
-    uint16_t f1[1 << (PARAM_FFT - 2)];
-    uint16_t gammas[PARAM_M - 2];
-    uint16_t deltas[PARAM_M - 2];
+    uint16_t f0[1 << (PARAM_FFT - 2)] = {0};
+    uint16_t f1[1 << (PARAM_FFT - 2)] = {0};
+    uint16_t gammas[PARAM_M - 2] = {0};
+    uint16_t deltas[PARAM_M - 2] = {0};
     size_t k = 1 << (m - 1);
-    uint16_t gammas_sums[1 << (PARAM_M - 2)];
+    uint16_t gammas_sums[1 << (PARAM_M - 2)] = {0};
     uint16_t u[1 << (PARAM_M - 2)] = {0};
     uint16_t v[1 << (PARAM_M - 2)] = {0};
 
@@ -505,14 +502,14 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
  * @param[in] f_coeffs Number coefficients of f (i.e. deg(f)+1)
  */
 void PQCLEAN_HQC2562CCA2_LEAKTIME_fft(uint16_t *w, const uint16_t *f, size_t f_coeffs) {
-    uint16_t betas[PARAM_M - 1];
-    uint16_t betas_sums[1 << (PARAM_M - 1)];
-    uint16_t f0[1 << (PARAM_FFT - 1)];
-    uint16_t f1[1 << (PARAM_FFT - 1)];
+    uint16_t betas[PARAM_M - 1] = {0};
+    uint16_t betas_sums[1 << (PARAM_M - 1)] = {0};
+    uint16_t f0[1 << (PARAM_FFT - 1)] = {0};
+    uint16_t f1[1 << (PARAM_FFT - 1)] = {0};
     uint16_t deltas[PARAM_M - 1];
     size_t k = 1 << (PARAM_M - 1);
-    uint16_t u[1 << (PARAM_M - 1)];
-    uint16_t v[1 << (PARAM_M - 1)];
+    uint16_t u[1 << (PARAM_M - 1)] = {0};
+    uint16_t v[1 << (PARAM_M - 1)] = {0};
 
     // Follows Gao and Mateer algorithm
     compute_fft_betas(betas);
