@@ -29,6 +29,7 @@ static void AES256_ECB(uint8_t *key, uint8_t *ctr, uint8_t *buffer) {
     aes256ctx ctx;
     aes256_keyexp(&ctx, key);
     aes256_ecb(buffer, ctr, 1, &ctx);
+    aes256_ctx_release(&ctx);
 }
 
 void nist_kat_init(uint8_t *entropy_input, const uint8_t *personalization_string, int security_strength);

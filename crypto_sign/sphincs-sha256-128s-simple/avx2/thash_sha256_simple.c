@@ -23,7 +23,7 @@ static void PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_thash(
     (void)pub_seed; /* Suppress an 'unused parameter' warning. */
 
     /* Retrieve precomputed state containing pub_seed */
-    sha256_inc_clone_state(&sha2_state, &hash_state_seeded->x1);
+    sha256_inc_ctx_clone(&sha2_state, &hash_state_seeded->x1);
 
     PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_compress_address(buf, addr);
     memcpy(buf + PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_SHA256_ADDR_BYTES, in, inblocks * PQCLEAN_SPHINCSSHA256128SSIMPLE_AVX2_N);
