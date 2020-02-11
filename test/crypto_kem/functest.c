@@ -1,7 +1,9 @@
 #include "api.h"
 #include "randombytes.h"
+
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifndef NTESTS
@@ -30,6 +32,15 @@ static int check_canary(const uint8_t *d) {
     return 0;
 }
 
+inline static void* malloc_s(size_t size) {
+    void *ptr = malloc(size);
+    if (ptr == NULL) {
+        perror("Malloc failed!");
+        exit(1);
+    }
+    return ptr;
+}
+
 // https://stackoverflow.com/a/1489985/1711232
 #define PASTER(x, y) x##_##y
 #define EVALUATOR(x, y) PASTER(x, y)
@@ -48,7 +59,8 @@ static int check_canary(const uint8_t *d) {
 #define RETURNS_ZERO(f)                           \
     if ((f) != 0) {                               \
         puts(#f " returned non-zero returncode"); \
-        return -1;                                \
+        res = 1;                                  \
+        goto end;                                 \
     }
 
 // https://stackoverflow.com/a/55243651/248065
@@ -67,12 +79,13 @@ static int test_keys(void) {
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
      */
+    int res = 0;
 
-    uint8_t key_a_aligned[CRYPTO_BYTES + 16 + 1];
-    uint8_t key_b_aligned[CRYPTO_BYTES + 16 + 1];
-    uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
-    uint8_t sendb_aligned[CRYPTO_CIPHERTEXTBYTES + 16 + 1];
-    uint8_t sk_a_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
+    uint8_t *key_a_aligned = malloc_s(CRYPTO_BYTES + 16 + 1);
+    uint8_t *key_b_aligned = malloc_s(CRYPTO_BYTES + 16 + 1);
+    uint8_t *pk_aligned    = malloc_s(CRYPTO_PUBLICKEYBYTES + 16 + 1);
+    uint8_t *sendb_aligned = malloc_s(CRYPTO_CIPHERTEXTBYTES + 16 + 1);
+    uint8_t *sk_a_aligned  = malloc_s(CRYPTO_SECRETKEYBYTES + 16 + 1);
 
     /*
      * Make sure all pointers are odd.
@@ -117,7 +130,8 @@ static int test_keys(void) {
 
         if (memcmp(key_a + 8, key_b + 8, CRYPTO_BYTES) != 0) {
             printf("ERROR KEYS\n");
-            return -1;
+            res = 1;
+            goto end;
         }
 
         // Validate that the implementation did not touch the canary
@@ -127,20 +141,30 @@ static int test_keys(void) {
             check_canary(sendb) || check_canary(sendb + CRYPTO_CIPHERTEXTBYTES + 8 ) ||
             check_canary(sk_a) || check_canary(sk_a + CRYPTO_SECRETKEYBYTES + 8 )) {
             printf("ERROR canary overwritten\n");
-            return -1;
+            res = 1;
+            goto end;
         }
     }
 
-    return 0;
+end:
+    free(key_a_aligned);
+    free(key_b_aligned);
+    free(pk_aligned);
+    free(sendb_aligned);
+    free(sk_a_aligned);
+
+    return res;
 }
 
 static int test_invalid_sk_a(void) {
-    uint8_t sk_a[CRYPTO_SECRETKEYBYTES];
-    uint8_t key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
-    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
-    uint8_t sendb[CRYPTO_CIPHERTEXTBYTES];
+    uint8_t *sk_a  = malloc_s(CRYPTO_SECRETKEYBYTES);
+    uint8_t *key_a = malloc_s(CRYPTO_BYTES);
+    uint8_t *key_b = malloc_s(CRYPTO_BYTES);
+    uint8_t *pk    = malloc_s(CRYPTO_PUBLICKEYBYTES);
+    uint8_t *sendb = malloc_s(CRYPTO_CIPHERTEXTBYTES);
     int i;
     int returncode;
+    int res = 0;
 
     for (i = 0; i < NTESTS; i++) {
         // Alice generates a public key
@@ -157,25 +181,36 @@ static int test_invalid_sk_a(void) {
             printf("ERROR failing crypto_kem_dec returned %d instead of "
                    "negative or zero code\n",
                    returncode);
-            return -1;
+            res = 1;
+            goto end;
         }
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid sk_a\n");
-            return -1;
+            res = 1;
+            goto end;
         }
     }
 
-    return 0;
+end:
+    free(sk_a);
+    free(key_a);
+    free(key_b);
+    free(pk);
+    free(sendb);
+
+    return res;
 }
 
 static int test_invalid_ciphertext(void) {
-    uint8_t sk_a[CRYPTO_SECRETKEYBYTES];
-    uint8_t key_a[CRYPTO_BYTES], key_b[CRYPTO_BYTES];
-    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
-    uint8_t sendb[CRYPTO_CIPHERTEXTBYTES];
+    uint8_t *sk_a = malloc_s(CRYPTO_SECRETKEYBYTES);
+    uint8_t *key_a = malloc_s(CRYPTO_BYTES);
+    uint8_t *key_b = malloc_s(CRYPTO_BYTES);
+    uint8_t *pk = malloc_s(CRYPTO_PUBLICKEYBYTES);
+    uint8_t *sendb = malloc_s(CRYPTO_CIPHERTEXTBYTES);
     int i;
     int returncode;
+    int res = 0;
 
     for (i = 0; i < NTESTS; i++) {
         // Alice generates a public key
@@ -192,16 +227,24 @@ static int test_invalid_ciphertext(void) {
             printf("ERROR crypto_kem_dec should either fail (negative "
                    "returncode) or succeed (return 0) but returned %d\n",
                    returncode);
-            return -1;
+            res = 1;
+            goto end;
         }
 
         if (!memcmp(key_a, key_b, CRYPTO_BYTES)) {
             printf("ERROR invalid ciphertext\n");
-            return -1;
+            res = 1;
+            goto end;
         }
     }
+end:
+    free(sk_a);
+    free(key_a);
+    free(key_b);
+    free(pk);
+    free(sendb);
 
-    return 0;
+    return res;
 }
 
 int main(void) {
