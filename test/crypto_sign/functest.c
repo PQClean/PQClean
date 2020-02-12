@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifndef NTESTS
@@ -33,6 +34,16 @@ static int check_canary(const uint8_t *d) {
     return 0;
 }
 
+/** Safe malloc */
+inline static void* malloc_s(size_t size) {
+    void *ptr = malloc(size);
+    if (ptr == NULL) {
+        perror("Malloc failed!");
+        exit(1);
+    }
+    return ptr;
+}
+
 // https://stackoverflow.com/a/1489985/1711232
 #define PASTER(x, y) x##_##y
 #define EVALUATOR(x, y) PASTER(x, y)
@@ -52,7 +63,8 @@ static int check_canary(const uint8_t *d) {
 #define RETURNS_ZERO(f)                           \
     if ((f) != 0) {                               \
         puts("(f) returned non-zero returncode"); \
-        return -1;                                \
+        res = 1;                                  \
+        goto end;                                 \
     }
 
 // https://stackoverflow.com/a/55243651/248065
@@ -72,10 +84,10 @@ static int test_sign(void) {
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
      */
-    uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
-    uint8_t sk_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
-    uint8_t sm_aligned[MLEN + CRYPTO_BYTES + 16 + 1];
-    uint8_t m_aligned[MLEN + 16 + 1];
+    uint8_t *pk_aligned = malloc_s(CRYPTO_PUBLICKEYBYTES + 16 + 1);
+    uint8_t *sk_aligned = malloc_s(CRYPTO_SECRETKEYBYTES + 16 + 1);
+    uint8_t *sm_aligned = malloc_s(MLEN + CRYPTO_BYTES + 16 + 1);
+    uint8_t *m_aligned = malloc_s(MLEN + 16 + 1);
 
     /*
      * Make sure all pointers are odd.
@@ -91,6 +103,7 @@ static int test_sign(void) {
     size_t mlen;
     size_t smlen;
     int returncode;
+    int res = 0;
 
     int i;
     /*
@@ -122,7 +135,8 @@ static int test_sign(void) {
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0 on failure");
             }
-            return 1;
+            res = 1;
+            goto end;
         }
         // Validate that the implementation did not touch the canary
         if (check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8) ||
@@ -130,11 +144,17 @@ static int test_sign(void) {
             check_canary(sm) || check_canary(sm + MLEN + CRYPTO_BYTES + 8) ||
             check_canary(m) || check_canary(m + MLEN + 8)) {
             fprintf(stderr, "ERROR canary overwritten\n");
-            return 1;
+            res = 1;
+            goto end;
         }
     }
+end:
+    free(pk_aligned);
+    free(sk_aligned);
+    free(sm_aligned);
+    free(m_aligned);
 
-    return 0;
+    return res;
 }
 
 static int test_sign_detached(void) {
@@ -143,10 +163,10 @@ static int test_sign_detached(void) {
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
      */
-    uint8_t pk_aligned[CRYPTO_PUBLICKEYBYTES + 16 + 1];
-    uint8_t sk_aligned[CRYPTO_SECRETKEYBYTES + 16 + 1];
-    uint8_t sig_aligned[CRYPTO_BYTES + 16 + 1];
-    uint8_t m_aligned[MLEN + 16 + 1];
+    uint8_t *pk_aligned = malloc_s(CRYPTO_PUBLICKEYBYTES + 16 + 1);
+    uint8_t *sk_aligned = malloc_s(CRYPTO_SECRETKEYBYTES + 16 + 1);
+    uint8_t *sig_aligned = malloc_s(CRYPTO_BYTES + 16 + 1);
+    uint8_t *m_aligned = malloc_s(MLEN + 16 + 1);
 
     /*
      * Make sure all pointers are odd.
@@ -161,6 +181,7 @@ static int test_sign_detached(void) {
 
     size_t siglen;
     int returncode;
+    int res = 0;
 
     int i;
     /*
@@ -190,7 +211,8 @@ static int test_sign_detached(void) {
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0 on failure");
             }
-            return 1;
+            res = 1;
+            goto end;
         }
         // Validate that the implementation did not touch the canary
         if (check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8) ||
@@ -198,24 +220,31 @@ static int test_sign_detached(void) {
             check_canary(sig) || check_canary(sig + CRYPTO_BYTES + 8) ||
             check_canary(m) || check_canary(m + MLEN + 8)) {
             fprintf(stderr, "ERROR canary overwritten\n");
-            return 1;
+            res = 1;
+            goto end;
         }
     }
 
-    return 0;
+end:
+    free(pk_aligned);
+    free(sk_aligned);
+    free(sig_aligned);
+    free(m_aligned);
+
+    return res;
 }
 
 static int test_wrong_pk(void) {
-    uint8_t pk[CRYPTO_PUBLICKEYBYTES];
-    uint8_t pk2[CRYPTO_PUBLICKEYBYTES];
-    uint8_t sk[CRYPTO_SECRETKEYBYTES];
-    uint8_t sm[MLEN + CRYPTO_BYTES];
-    uint8_t m[MLEN];
+    uint8_t *pk = malloc_s(CRYPTO_PUBLICKEYBYTES);
+    uint8_t *pk2 = malloc_s(CRYPTO_PUBLICKEYBYTES);
+    uint8_t *sk = malloc_s(CRYPTO_SECRETKEYBYTES);
+    uint8_t *sm = malloc_s(MLEN + CRYPTO_BYTES);
+    uint8_t *m = malloc_s(MLEN);
 
     size_t mlen;
     size_t smlen;
 
-    int returncode;
+    int returncode, res = 0;
 
     int i;
 
@@ -235,11 +264,17 @@ static int test_wrong_pk(void) {
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0");
             }
-            return 1;
+            res = 1;
+            goto end;
         }
     }
-
-    return 0;
+end:
+    free(pk);
+    free(pk2);
+    free(sk);
+    free(sm);
+    free(m);
+    return res;
 }
 
 int main(void) {
