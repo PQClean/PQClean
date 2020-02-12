@@ -5,11 +5,12 @@
 
 #include "gf2x.h"
 #include "parameters.h"
+
 #include <stdint.h>
 #include <string.h>
 
 #define WORD_TYPE                 uint64_t
-#define WORD_TYPE_BITS            (sizeof(WORD_TYPE) << 3)
+#define WORD_TYPE_BITS            (sizeof(WORD_TYPE) * 8)
 #define UTILS_VECTOR_ARRAY_SIZE   CEIL_DIVIDE(PARAM_N, WORD_TYPE_BITS)
 
 static int vect_mul_precompute_rows(WORD_TYPE *o, const WORD_TYPE *v);
@@ -56,14 +57,14 @@ static int vect_mul_precompute_rows(WORD_TYPE *o, const WORD_TYPE *v) {
         case 2:
             o[i] = 0;
             o[i] += v[i / WORD_TYPE_BITS] >> (i % WORD_TYPE_BITS);
-            o[i] += v[0] << (PARAM_N - i);
+            o[i] += v[0] << ((PARAM_N - i) % WORD_TYPE_BITS);
             break;
 
         case 3:
             o[i] = 0;
             o[i] += v[i / WORD_TYPE_BITS] >> (i % WORD_TYPE_BITS);
             o[i] += v[(i / WORD_TYPE_BITS) + 1] << (WORD_TYPE_BITS - (i % WORD_TYPE_BITS));
-            o[i] += v[0] << (WORD_TYPE_BITS - i + (PARAM_N % WORD_TYPE_BITS));
+            o[i] += v[0] << ((WORD_TYPE_BITS - i + (PARAM_N % WORD_TYPE_BITS)) % WORD_TYPE_BITS);
             break;
 
         default:
