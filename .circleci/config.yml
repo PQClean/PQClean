@@ -28,7 +28,7 @@ version: 2.1
           export CC=\"ccache ${CC}\" &&
           pip3 install -r requirements.txt &&
           mkdir test-results &&
-          cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto"
+          cd test && python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=2"
         no_output_timeout: 2h
     - save_cache:
         key: v1-ccache-{{ .Environment.CIRCLE_JOB }}
@@ -59,7 +59,7 @@ version: 2.1
           pip3 install -r requirements.txt
           mkdir test-results
           cd test
-          python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=auto
+          python3 -m pytest --verbose --junitxml=test-results/pytest/results.xml --numprocesses=2
         no_output_timeout: 2h
     - store_test_results:
         path: test/test-results
@@ -105,7 +105,7 @@ jobs:
   amd64-clang-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       PQCLEAN_ONLY_TYPES: kem
   i386-gcc-kem:
@@ -117,7 +117,7 @@ jobs:
   i386-clang-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       PQCLEAN_ONLY_TYPES: kem
   # These are for the scheduled builds
@@ -159,7 +159,7 @@ jobs:
   amd64-clang-slow-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: kem
@@ -173,7 +173,7 @@ jobs:
   i386-clang-slow-kem:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: kem
@@ -211,7 +211,7 @@ jobs:
   amd64-clang-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       PQCLEAN_ONLY_TYPES: sign
   i386-gcc-sign:
@@ -223,7 +223,7 @@ jobs:
   i386-clang-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       PQCLEAN_ONLY_TYPES: sign
   # These are for the scheduled builds
@@ -265,7 +265,7 @@ jobs:
   amd64-clang-slow-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: amd64
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: sign
@@ -279,7 +279,7 @@ jobs:
   i386-clang-slow-sign:
     <<: *nativejob
     environment:
-      CC: gcc
+      CC: clang
       ARCH: i386
       RUN_SLOW: 1
       PQCLEAN_ONLY_TYPES: sign

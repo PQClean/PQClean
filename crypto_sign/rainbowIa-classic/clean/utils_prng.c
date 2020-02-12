@@ -32,6 +32,7 @@ static void prng_update(const unsigned char *provided_data,
             temp[i] ^= provided_data[i];
         }
     }
+    aes256_ctx_release(&ctx);
     memcpy(Key, temp, 32);
     memcpy(V, temp + 32, 16);
 }
@@ -72,6 +73,7 @@ static int randombytes_with_state(prng_t *state,
             xlen = 0;
         }
     }
+    aes256_ctx_release(&ctx);
     prng_update(NULL, state->Key, state->V);
     return 0;
 }

@@ -577,6 +577,11 @@ static void aes_ctr(unsigned char *out, size_t outlen, const unsigned char *iv, 
 void aes128_keyexp(aes128ctx *r, const unsigned char *key) {
     uint64_t skey[22];
 
+    r->sk_exp = malloc(sizeof(uint64_t) * PQC_AES128_STATESIZE);
+    if (r->sk_exp == NULL) {
+        exit(111);
+    }
+
     br_aes_ct64_keysched(skey, key, 16);
     br_aes_ct64_skey_expand(r->sk_exp, skey, 10);
 }
@@ -584,6 +589,10 @@ void aes128_keyexp(aes128ctx *r, const unsigned char *key) {
 
 void aes192_keyexp(aes192ctx *r, const unsigned char *key) {
     uint64_t skey[26];
+    r->sk_exp = malloc(sizeof(uint64_t) * PQC_AES192_STATESIZE);
+    if (r->sk_exp == NULL) {
+        exit(111);
+    }
 
     br_aes_ct64_keysched(skey, key, 24);
     br_aes_ct64_skey_expand(r->sk_exp, skey, 12);
@@ -592,6 +601,10 @@ void aes192_keyexp(aes192ctx *r, const unsigned char *key) {
 
 void aes256_keyexp(aes256ctx *r, const unsigned char *key) {
     uint64_t skey[30];
+    r->sk_exp = malloc(sizeof(uint64_t) * PQC_AES256_STATESIZE);
+    if (r->sk_exp == NULL) {
+        exit(111);
+    }
 
     br_aes_ct64_keysched(skey, key, 32);
     br_aes_ct64_skey_expand(r->sk_exp, skey, 14);
@@ -623,17 +636,14 @@ void aes256_ctr(unsigned char *out, size_t outlen, const unsigned char *iv, cons
 }
 
 void aes128_ctx_release(aes128ctx *r) {
-    // no-op for PQClean's basic AES operation
-    (void) r;
+    free(r->sk_exp);
 }
 
 void aes192_ctx_release(aes192ctx *r) {
-    // no-op for PQClean's basic AES operation
-    (void) r;
+    free(r->sk_exp);
 }
 
 void aes256_ctx_release(aes256ctx *r) {
-    // no-op for PQClean's basic AES operation
-    (void) r;
+    free(r->sk_exp);
 }
 

@@ -274,3 +274,27 @@ def filtered_test(func):
         else:
             raise unittest.SkipTest("Test disabled by filter")
     return wrapper
+
+
+__CPUINFO = None
+
+
+def get_cpu_info():
+    global __CPUINFO
+    while __CPUINFO is None or 'flags' not in __CPUINFO:
+        import cpuinfo
+        __CPUINFO = cpuinfo.get_cpu_info()
+
+        # CPUINFO is unreliable on Travis CI Macs
+        if 'CI' in os.environ and sys.platform == 'darwin':
+            __CPUINFO['flags'] = [
+                'aes', 'apic', 'avx1.0', 'clfsh', 'cmov', 'cx16', 'cx8', 'de',
+                'em64t', 'erms', 'f16c', 'fpu', 'fxsr', 'lahf', 'mca', 'mce',
+                'mmx', 'mon', 'msr', 'mtrr', 'osxsave', 'pae', 'pat', 'pcid',
+                'pclmulqdq', 'pge', 'popcnt', 'pse', 'pse36', 'rdrand',
+                'rdtscp', 'rdwrfsgs', 'sep', 'smep', 'ss', 'sse', 'sse2',
+                'sse3', 'sse4.1', 'sse4.2', 'ssse3', 'syscall', 'tsc',
+                'tsc_thread_offset', 'tsci', 'tsctmr', 'vme', 'vmm', 'x2apic',
+                'xd', 'xsave']
+
+    return __CPUINFO

@@ -174,4 +174,3 @@ void PQCLEAN_KYBER51290S_AVX2_aes256ctr_prf(uint8_t *out,
         }
     }
 }
-

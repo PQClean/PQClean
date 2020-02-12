@@ -174,4 +174,3 @@ void PQCLEAN_KYBER76890S_AVX2_aes256ctr_prf(uint8_t *out,
         }
     }
 }
-

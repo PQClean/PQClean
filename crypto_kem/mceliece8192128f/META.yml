@@ -1,0 +1,50 @@
+name: Classic McEliece 8192128f
+type: kem
+claimed-nist-level: 5
+claimed-security: IND-CCA2
+length-public-key: 1357824
+length-secret-key: 14080
+length-ciphertext: 240
+length-shared-secret: 32
+nistkat-sha256: 464f27c8eeef313c1bb024330fdc00125bbf0a28fccd9053e232a9cb0a1a0ac0
+principal-submitters:
+  - Daniel J. Bernstein
+  - Tung Chou
+  - Tanja Lange
+  - Ingo von Maurich
+  - Rafael Misoczki
+  - Ruben Niederhagen
+  - Edoardo Persichetti
+  - Christiane Peters
+  - Peter Schwabe
+  - Nicolas Sendrier
+  - Jakub Szefer
+  - Wen Wang
+auxiliary-submitters: []
+implementations:
+    - name: clean
+      version: SUPERCOP-20191221
+    - name: vec
+      version: SUPERCOP-20191221
+    - name: sse
+      version: SUPERCOP-20191221
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+            - Linux
+            - Darwin
+          required_flags:
+            - sse4_1
+            - popcnt
+            - bmi1
+    - name: avx
+      version: SUPERCOP-20191221
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+            - Linux
+            - Darwin
+          required_flags:
+            - avx2
+            - popcnt
+            - bmi1
