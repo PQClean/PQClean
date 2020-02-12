@@ -12,6 +12,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#define NISTSEEDEXPANDER_SEED_LEN 32
+
 #define RNG_SUCCESS     ( 0)
 #define RNG_BAD_MAXLEN  (-1)
 #define RNG_BAD_OUTBUF  (-2)
@@ -21,7 +23,7 @@ typedef struct {
     uint8_t buffer[16];
     size_t  buffer_pos;
     size_t  length_remaining;
-    uint8_t key[32];
+    uint8_t key[NISTSEEDEXPANDER_SEED_LEN];
     uint8_t ctr[16];
 } AES_XOF_struct;
 

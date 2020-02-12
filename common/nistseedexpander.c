@@ -26,8 +26,8 @@ seedexpander_init(AES_XOF_struct *ctx,
     ctx->length_remaining = maxlen;
 
     memcpy(ctx->key, seed, 32);
-
     memcpy(ctx->ctr, diversifier, 8);
+
     ctx->ctr[11] = maxlen % 256;
     maxlen >>= 8;
     ctx->ctr[10] = maxlen % 256;
@@ -47,6 +47,7 @@ static void AES256_ECB(uint8_t *key, uint8_t *ctr, uint8_t *buffer) {
     aes256ctx ctx;
     aes256_keyexp(&ctx, key);
     aes256_ecb(buffer, ctr, 1, &ctx);
+    aes256_ctx_release(&ctx);
 }
 
 /*
