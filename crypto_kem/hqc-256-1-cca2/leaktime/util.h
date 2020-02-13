@@ -1,7 +1,7 @@
 /* These functions should help with endianness-safe conversions */
 
-#include <stdint.h>
 #include <stddef.h>
+#include <stdint.h>
 
 void PQCLEAN_HQC2561CCA2_LEAKTIME_store8(unsigned char *out, uint64_t in);
 uint64_t PQCLEAN_HQC2561CCA2_LEAKTIME_load8(const unsigned char *in);
