@@ -425,8 +425,8 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
 
         w[0] = f[0];
         for (size_t j = 0; j < m; ++j) {
-            for (size_t k = 0; k < (1U << j); ++k) {
-                w[(1 << j) + k] = w[k] ^ tmp[j];
+            for (size_t ki = 0; ki < (1U << j); ++ki) {
+                w[(1 << j) + ki] = w[ki] ^ tmp[j];
             }
         }
 
