@@ -23,11 +23,12 @@ static void array_to_rep_codeword(uint8_t *o, const uint8_t *v);
 void PQCLEAN_HQC2561CCA2_LEAKTIME_repetition_code_encode(uint8_t *em, const uint8_t *m) {
     uint8_t tmp[PARAM_N1N2] = {0};
     uint8_t bit = 0;
+    uint32_t index;
 
     for (size_t i = 0 ; i < (VEC_N1_SIZE_BYTES - 1) ; ++i) {
         for (uint8_t j = 0 ; j < 8 ; ++j) {
             bit = (m[i] >> j) & 0x01;
-            uint32_t index = (8 * i + j) * PARAM_N2;
+            index = (8 * i + j) * PARAM_N2;
             for (uint8_t k = 0 ; k < PARAM_N2 ; ++k) {
                 tmp[index + k] = bit;
             }
@@ -35,8 +36,8 @@ void PQCLEAN_HQC2561CCA2_LEAKTIME_repetition_code_encode(uint8_t *em, const uint
     }
 
     for (uint8_t j = 0 ; j < (PARAM_N1 % 8) ; ++j) {
-        uint8_t bit = (m[VEC_N1_SIZE_BYTES - 1] >> j) & 0x01;
-        uint32_t index = (8 * (VEC_N1_SIZE_BYTES - 1) + j) * PARAM_N2;
+        bit = (m[VEC_N1_SIZE_BYTES - 1] >> j) & 0x01;
+        index = (8 * (VEC_N1_SIZE_BYTES - 1) + j) * PARAM_N2;
         for (uint8_t k = 0 ; k < PARAM_N2 ; ++k) {
             tmp[index + k] = bit;
         }

@@ -2,9 +2,13 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libhqc-128-1-cca2_leaktime.lib
-OBJECTS=bch.o fft.o gf.o gf2x.o hqc.o kem.o parsing.o repetition.o tensor.o vector.o
+OBJECTS=bch.obj fft.obj gf.obj gf2x.obj hqc.obj kem.obj parsing.obj repetition.obj tensor.obj vector.obj
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+# We ignore warning C4127: we sometimes use a conditional that depending
+# on the parameters results in a case where if (const) is the case.
+# The compiler should just optimise this away, but on MSVC we get
+# a compiler complaint.
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX /wd4127
 
 all: $(LIBRARY)
 

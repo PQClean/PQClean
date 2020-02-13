@@ -178,9 +178,9 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
         }
 
         for (size_t j = 0 ; j < m ; ++j) {
-            for (size_t k = 0 ; k < (1U << j) ; ++k) {
-                size_t index = (1 << j) + k;
-                betas_sums[index] = betas_sums[k] ^ betas[j];
+            for (size_t ki = 0 ; ki < (1U << j) ; ++ki) {
+                size_t index = (1 << j) + ki;
+                betas_sums[index] = betas_sums[ki] ^ betas[j];
                 f[1] ^= PQCLEAN_HQC1921CCA2_LEAKTIME_gf_mul(betas_sums[index], w[index]);
             }
         }
@@ -589,7 +589,7 @@ void PQCLEAN_HQC1921CCA2_LEAKTIME_fft_t_preprocess_bch_codeword(uint16_t *w, con
     // Twist and permute r adequately to obtain w
     w[0] = 0;
     w[k] = -r[0] & 1;
-    for (size_t i = 1 ; i < k ; ++i) {
+    for (i = 1 ; i < k ; ++i) {
         w[i] = -r[PQCLEAN_HQC1921CCA2_LEAKTIME_gf_log(gammas_sums[i])] & gammas_sums[i];
         w[k + i] = -r[PQCLEAN_HQC1921CCA2_LEAKTIME_gf_log(gammas_sums[i] ^ 1)] & (gammas_sums[i] ^ 1);
     }
