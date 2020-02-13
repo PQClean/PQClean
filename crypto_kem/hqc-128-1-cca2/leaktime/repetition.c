@@ -28,7 +28,7 @@ void PQCLEAN_HQC1281CCA2_LEAKTIME_repetition_code_encode(uint8_t *em, const uint
     for (size_t i = 0; i < (VEC_N1_SIZE_BYTES - 1); ++i) {
         for (uint8_t j = 0; j < 8; ++j) {
             bit = (m[i] >> j) & 0x01;
-            index = (8 * i + j) * PARAM_N2;
+            index = (8 * (uint32_t)i + j) * PARAM_N2;
             for (uint8_t k = 0; k < PARAM_N2; ++k) {
                 tmp[index + k] = bit;
             }

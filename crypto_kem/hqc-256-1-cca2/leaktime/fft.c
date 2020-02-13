@@ -50,8 +50,8 @@ static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, size
     subset_sums[0] = 0;
 
     for (size_t i = 0; i < set_size; ++i) {
-        for (size_t j = 0; j < (1U << i); ++j) {
-            subset_sums[(1 << i) + j] = set[i] ^ subset_sums[j];
+        for (size_t j = 0; j < (((size_t)1) << i); ++j) {
+            subset_sums[(((size_t)1) << i) + j] = set[i] ^ subset_sums[j];
         }
     }
 }
@@ -117,7 +117,7 @@ static void radix_t(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uint32_
     default:
         ;
 
-        size_t n = 1 << (m_f - 2);
+        size_t n = ((size_t)1) << (m_f - 2);
 
         uint16_t Q0[1 << (PARAM_FFT_T - 2)] = {0};
         uint16_t Q1[1 << (PARAM_FFT_T - 2)] = {0};
@@ -162,7 +162,7 @@ static void radix_t(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uint32_
  */
 static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
                       uint8_t m, uint32_t m_f, const uint16_t *betas) {
-    size_t k = 1 << (m - 1);
+    size_t k = ((size_t)1) << (m - 1);
     uint16_t gammas[PARAM_M - 2] = {0};
     uint16_t deltas[PARAM_M - 2] = {0};
     uint16_t gammas_sums[1 << (PARAM_M - 1)];
@@ -173,13 +173,13 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
 
     // Step 1
     if (m_f == 1) {
-        for (size_t i = 0; i < (1U << m); ++i) {
+        for (size_t i = 0; i < (((size_t)1) << m); ++i) {
             f[0] ^= w[i];
         }
 
         for (size_t j = 0; j < m; ++j) {
-            for (size_t ki = 0; ki < (1U << j); ++ki) {
-                size_t index = (1 << j) + ki;
+            for (size_t ki = 0; ki < (((size_t)1) << j); ++ki) {
+                size_t index = (((size_t)1) << j) + ki;
                 betas_sums[index] = betas_sums[ki] ^ betas[j];
                 f[1] ^= PQCLEAN_HQC2561CCA2_LEAKTIME_gf_mul(betas_sums[index], w[index]);
             }
@@ -235,7 +235,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
     // Step 2: compute f from g
     if (betas[m - 1] != 1) {
         uint16_t beta_m_pow = 1;
-        for (size_t i = 1; i < (1U << m_f); ++i) {
+        for (size_t i = 1; i < (((size_t)1) << m_f); ++i) {
             beta_m_pow = PQCLEAN_HQC2561CCA2_LEAKTIME_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC2561CCA2_LEAKTIME_gf_mul(beta_m_pow, f[i]);
         }
@@ -361,7 +361,7 @@ static void radix(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f) {
 
     default:
         ;
-        size_t n = 1 << (m_f - 2);
+        size_t n = ((size_t)1) << (m_f - 2);
 
         uint16_t Q[2 * (1 << (PARAM_FFT - 2))];
         uint16_t R[2 * (1 << (PARAM_FFT - 2))];
@@ -411,7 +411,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
     uint16_t f1[1 << (PARAM_FFT - 2)] = {0};
     uint16_t gammas[PARAM_M - 2] = {0};
     uint16_t deltas[PARAM_M - 2] = {0};
-    size_t k = 1 << (m - 1);
+    size_t k = ((size_t)1) << (m - 1);
     uint16_t gammas_sums[1 << (PARAM_M - 2)] = {0};
     uint16_t u[1 << (PARAM_M - 2)] = {0};
     uint16_t v[1 << (PARAM_M - 2)] = {0};
@@ -425,8 +425,8 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
 
         w[0] = f[0];
         for (size_t j = 0; j < m; ++j) {
-            for (size_t ki = 0; ki < (1U << j); ++ki) {
-                w[(1 << j) + ki] = w[ki] ^ tmp[j];
+            for (size_t ki = 0; ki < (((size_t)1) << j); ++ki) {
+                w[(((size_t)1) << j) + ki] = w[ki] ^ tmp[j];
             }
         }
 
@@ -436,7 +436,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
     // Step 2: compute g
     if (betas[m - 1] != 1) {
         uint16_t beta_m_pow = 1;
-        for (size_t i = 1; i < (1U << m_f); ++i) {
+        for (size_t i = 1; i < (((size_t)1) << m_f); ++i) {
             beta_m_pow = PQCLEAN_HQC2561CCA2_LEAKTIME_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC2561CCA2_LEAKTIME_gf_mul(beta_m_pow, f[i]);
         }

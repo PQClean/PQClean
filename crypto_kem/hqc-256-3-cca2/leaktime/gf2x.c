@@ -104,7 +104,7 @@ void PQCLEAN_HQC2563CCA2_LEAKTIME_vect_mul(uint8_t *o, const uint32_t *a1, const
         int32_t k = UTILS_VECTOR_ARRAY_SIZE;
 
         for (size_t j = 0; j < UTILS_VECTOR_ARRAY_SIZE - 1; ++j) {
-            index = WORD_TYPE_BITS * j - a1[i];
+            index = WORD_TYPE_BITS * (uint32_t)j - a1[i];
             if (index > PARAM_N) {
                 index += PARAM_N;
             }
