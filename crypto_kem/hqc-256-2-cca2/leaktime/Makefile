@@ -2,7 +2,7 @@
 
 LIB=libhqc-256-2-cca2_leaktime.a
 HEADERS=api.h bch.h fft.h gf.h gf2x.h hqc.h parameters.h parsing.h repetition.h tensor.h vector.h
-OBJECTS=bch.o fft.o gf.o gf2x.o hqc.o kem.o parsing.o repetition.o tensor.o vector.o
+OBJECTS=bch.o fft.o gf.o gf2x.o hqc.o kem.o parsing.o repetition.o tensor.o vector.o util.o
 
 CFLAGS=-O3 -Wall -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 

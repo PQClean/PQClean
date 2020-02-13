@@ -5,6 +5,7 @@
 
 #include "gf2x.h"
 #include "parameters.h"
+#include "util.h"
 
 #include <stdint.h>
 #include <string.h>
@@ -96,7 +97,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_mul(uint8_t *o, const uint32_t *a1, const
     WORD_TYPE row [UTILS_VECTOR_ARRAY_SIZE] = {0};
     uint32_t index;
 
-    memcpy(v1, a2, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC1922CCA2_LEAKTIME_load8_arr(v1, UTILS_VECTOR_ARRAY_SIZE, a2, VEC_N_SIZE_BYTES);
     vect_mul_precompute_rows(precomputation_array, v1);
 
     for (size_t i = 0 ; i < weight ; ++i) {
@@ -118,5 +119,5 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_mul(uint8_t *o, const uint32_t *a1, const
         }
     }
 
-    memcpy(o, res, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC1922CCA2_LEAKTIME_store8_arr(o, VEC_N_SIZE_BYTES, res, UTILS_VECTOR_ARRAY_SIZE);
 }
