@@ -37,7 +37,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_set_random_fixed_weight_by_coordinates(AE
 
     seedexpander(ctx, rand_bytes, random_bytes_size);
 
-    for (uint32_t i = 0 ; i < weight ; ++i) {
+    for (uint32_t i = 0; i < weight; ++i) {
         exist = 0;
         do {
             if (j == random_bytes_size) {
@@ -53,7 +53,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_set_random_fixed_weight_by_coordinates(AE
 
         random_data = random_data % PARAM_N;
 
-        for (uint32_t k = 0 ; k < i ; k++) {
+        for (uint32_t k = 0; k < i; k++) {
             if (v[k] == random_data) {
                 exist = 1;
             }
@@ -96,7 +96,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_set_random_fixed_weight(AES_XOF_struct *c
 
     seedexpander(ctx, rand_bytes, random_bytes_size);
 
-    for (uint32_t i = 0 ; i < weight ; ++i) {
+    for (uint32_t i = 0; i < weight; ++i) {
         exist = 0;
         do {
             if (j == random_bytes_size) {
@@ -112,7 +112,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_set_random_fixed_weight(AES_XOF_struct *c
 
         random_data = random_data % PARAM_N;
 
-        for (uint32_t k = 0 ; k < i ; k++) {
+        for (uint32_t k = 0; k < i; k++) {
             if (tmp[k] == random_data) {
                 exist = 1;
             }
@@ -125,7 +125,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_set_random_fixed_weight(AES_XOF_struct *c
         }
     }
 
-    for (uint16_t i = 0 ; i < weight ; ++i) {
+    for (uint16_t i = 0; i < weight; ++i) {
         int32_t index = tmp[i] / 8;
         int32_t pos = tmp[i] % 8;
         v[index] |= 1 << pos;
@@ -179,7 +179,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_set_random_from_randombytes(uint8_t *v) {
  * @param[in] size Integer that is the size of the vectors
  */
 void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_add(uint8_t *o, const uint8_t *v1, const uint8_t *v2, uint32_t size) {
-    for (uint32_t i = 0 ; i < size ; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         o[i] = v1[i] ^ v2[i];
     }
 }
@@ -215,7 +215,7 @@ void PQCLEAN_HQC1922CCA2_LEAKTIME_vect_resize(uint8_t *o, uint32_t size_o, const
 
         memcpy(o, v, VEC_N1N2_SIZE_BYTES);
 
-        for (int8_t i = 0 ; i < val ; ++i) {
+        for (int8_t i = 0; i < val; ++i) {
             o[VEC_N1N2_SIZE_BYTES - 1] &= (mask >> i);
         }
     } else {

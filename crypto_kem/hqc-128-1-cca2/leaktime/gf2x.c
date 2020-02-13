@@ -26,7 +26,7 @@ static int vect_mul_precompute_rows(WORD_TYPE *o, const WORD_TYPE *v);
  */
 static int vect_mul_precompute_rows(WORD_TYPE *o, const WORD_TYPE *v) {
     int8_t var;
-    for (size_t i = 0 ; i < PARAM_N ; ++i) {
+    for (size_t i = 0; i < PARAM_N; ++i) {
         var = 0;
 
         // All the bits that we need are in the same block
@@ -100,10 +100,10 @@ void PQCLEAN_HQC1281CCA2_LEAKTIME_vect_mul(uint8_t *o, const uint32_t *a1, const
     PQCLEAN_HQC1281CCA2_LEAKTIME_load8_arr(v1, UTILS_VECTOR_ARRAY_SIZE, a2, VEC_N_SIZE_BYTES);
     vect_mul_precompute_rows(precomputation_array, v1);
 
-    for (size_t i = 0 ; i < weight ; ++i) {
+    for (size_t i = 0; i < weight; ++i) {
         int32_t k = UTILS_VECTOR_ARRAY_SIZE;
 
-        for (size_t j = 0 ; j < UTILS_VECTOR_ARRAY_SIZE - 1 ; ++j) {
+        for (size_t j = 0; j < UTILS_VECTOR_ARRAY_SIZE - 1; ++j) {
             index = WORD_TYPE_BITS * j - a1[i];
             if (index > PARAM_N) {
                 index += PARAM_N;

@@ -27,13 +27,13 @@ static void compute_roots(uint8_t *error, const uint16_t *sigma);
  * @param[in] message Array of PARAM_K bytes storing the packed message
  */
 static void unpack_message(uint8_t *message_unpacked, const uint8_t *message) {
-    for (size_t i = 0 ; i < (VEC_K_SIZE_BYTES - (PARAM_K % 8 != 0)) ; ++i) {
-        for (size_t j = 0 ; j < 8 ; ++j) {
+    for (size_t i = 0; i < (VEC_K_SIZE_BYTES - (PARAM_K % 8 != 0)); ++i) {
+        for (size_t j = 0; j < 8; ++j) {
             message_unpacked[j + 8 * i] = (message[i] >> j) & 0x01;
         }
     }
 
-    for (int8_t j = 0 ; j < PARAM_K % 8 ; ++j) {
+    for (int8_t j = 0; j < PARAM_K % 8; ++j) {
         message_unpacked[j + 8 * (VEC_K_SIZE_BYTES - 1)] = (message[VEC_K_SIZE_BYTES - 1] >> j) & 0x01;
     }
 }
@@ -51,10 +51,10 @@ static void lfsr_encode(uint8_t *codeword, const uint8_t *message) {
     uint8_t bch_poly[PARAM_G] = PARAM_BCH_POLY;
 
     // Compute the Parity-check digits
-    for (int16_t i = PARAM_K - 1 ; i >= 0 ; --i) {
+    for (int16_t i = PARAM_K - 1; i >= 0; --i) {
         gate_value = message[i] ^ codeword[PARAM_N1 - PARAM_K - 1];
 
-        for (size_t j = PARAM_N1 - PARAM_K - 1 ; j ; --j) {
+        for (size_t j = PARAM_N1 - PARAM_K - 1; j; --j) {
             codeword[j] = codeword[j - 1] ^ (-gate_value & bch_poly[j]);
         }
 
@@ -74,13 +74,13 @@ static void lfsr_encode(uint8_t *codeword, const uint8_t *message) {
  * @param[in] codeword_unpacked Array of PARAM_N1 bytes storing the unpacked codeword
  */
 static void pack_codeword(uint8_t *codeword, const uint8_t *codeword_unpacked) {
-    for (size_t i = 0 ; i < (VEC_N1_SIZE_BYTES - (PARAM_N1 % 8 != 0)) ; ++i) {
-        for (size_t j = 0 ; j < 8 ; ++j) {
+    for (size_t i = 0; i < (VEC_N1_SIZE_BYTES - (PARAM_N1 % 8 != 0)); ++i) {
+        for (size_t j = 0; j < 8; ++j) {
             codeword[i] |= codeword_unpacked[j + 8 * i] << j;
         }
     }
 
-    for (size_t j = 0 ; j < PARAM_N1 % 8 ; ++j) {
+    for (size_t j = 0; j < PARAM_N1 % 8; ++j) {
         codeword[VEC_N1_SIZE_BYTES - 1] |= codeword_unpacked[j + 8 * (VEC_N1_SIZE_BYTES - 1)] << j;
     }
 }
@@ -135,13 +135,13 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     uint16_t d_p = 1;
     uint16_t d = syndromes[0];
 
-    for (size_t mu = 0 ; mu < PARAM_DELTA ; ++mu) {
+    for (size_t mu = 0; mu < PARAM_DELTA; ++mu) {
         // Save sigma in case we need it to update X_sigma_p
         memcpy(sigma_copy, sigma, 2 * (PARAM_DELTA - 1));
         deg_sigma_copy = deg_sigma;
 
         uint16_t dd = PQCLEAN_HQC1922CCA2_LEAKTIME_gf_mul(d, PQCLEAN_HQC1922CCA2_LEAKTIME_gf_inverse(d_p)); // 0 if(d == 0)
-        for (size_t i = 1 ; (i <= 2 * mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= 2 * mu + 1) && (i <= PARAM_DELTA); ++i) {
             sigma[i] ^= PQCLEAN_HQC1922CCA2_LEAKTIME_gf_mul(dd, X_sigma_p[i]);
         }
 
@@ -165,7 +165,7 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
         // Update pp, d_p and X_sigma_p if needed
         pp = (mask12 & (2 * mu)) ^ (~mask12 & pp);
         d_p = (mask12 & d) ^ (~mask12 & d_p);
-        for (size_t i = PARAM_DELTA - 1 ; i ; --i) {
+        for (size_t i = PARAM_DELTA - 1; i; --i) {
             X_sigma_p[i + 1] = (mask12 & sigma_copy[i - 1]) ^ (~mask12 & X_sigma_p[i - 1]);
         }
         X_sigma_p[1] = 0;
@@ -174,7 +174,7 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
 
         // Compute the next discrepancy
         d = syndromes[2 * mu + 2];
-        for (size_t i = 1 ; (i <= 2 * mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= 2 * mu + 1) && (i <= PARAM_DELTA); ++i) {
             d ^= PQCLEAN_HQC1922CCA2_LEAKTIME_gf_mul(sigma[i], syndromes[2 * mu + 2 - i]);
         }
     }
@@ -199,7 +199,7 @@ static void message_from_codeword(uint8_t *message, const uint8_t *codeword) {
     uint8_t mask2 = 0xff >> (8 - val % 8);
     size_t index = val / 8;
 
-    for (size_t i = 0 ; i < VEC_K_SIZE_BYTES - 1 ; ++i) {
+    for (size_t i = 0; i < VEC_K_SIZE_BYTES - 1; ++i) {
         uint8_t message1 = (codeword[index] & mask1) >> val % 8;
         uint8_t message2 = (codeword[++index] & mask2) << (8 - val % 8);
         message[i] = message1 | message2;

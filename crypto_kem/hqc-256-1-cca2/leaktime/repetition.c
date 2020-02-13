@@ -25,20 +25,20 @@ void PQCLEAN_HQC2561CCA2_LEAKTIME_repetition_code_encode(uint8_t *em, const uint
     uint8_t bit = 0;
     uint32_t index;
 
-    for (size_t i = 0 ; i < (VEC_N1_SIZE_BYTES - 1) ; ++i) {
-        for (uint8_t j = 0 ; j < 8 ; ++j) {
+    for (size_t i = 0; i < (VEC_N1_SIZE_BYTES - 1); ++i) {
+        for (uint8_t j = 0; j < 8; ++j) {
             bit = (m[i] >> j) & 0x01;
             index = (8 * i + j) * PARAM_N2;
-            for (uint8_t k = 0 ; k < PARAM_N2 ; ++k) {
+            for (uint8_t k = 0; k < PARAM_N2; ++k) {
                 tmp[index + k] = bit;
             }
         }
     }
 
-    for (uint8_t j = 0 ; j < (PARAM_N1 % 8) ; ++j) {
+    for (uint8_t j = 0; j < (PARAM_N1 % 8); ++j) {
         bit = (m[VEC_N1_SIZE_BYTES - 1] >> j) & 0x01;
         index = (8 * (VEC_N1_SIZE_BYTES - 1) + j) * PARAM_N2;
-        for (uint8_t k = 0 ; k < PARAM_N2 ; ++k) {
+        for (uint8_t k = 0; k < PARAM_N2; ++k) {
             tmp[index + k] = bit;
         }
     }
@@ -63,8 +63,8 @@ void PQCLEAN_HQC2561CCA2_LEAKTIME_repetition_code_decode(uint8_t *m, const uint8
     uint8_t k = PARAM_N2; // block counter
     uint8_t ones = 0; // number of 1 in the current block
 
-    for (size_t i = 0 ; i < VEC_N1N2_SIZE_BYTES ; ++i) {
-        for (uint8_t j = 0 ; j < 8 ; ++j) {
+    for (size_t i = 0; i < VEC_N1N2_SIZE_BYTES; ++i) {
+        for (uint8_t j = 0; j < 8; ++j) {
             ones += (em[i] >> j) & 0x01;
 
             if (--k) {
@@ -88,13 +88,13 @@ void PQCLEAN_HQC2561CCA2_LEAKTIME_repetition_code_decode(uint8_t *m, const uint8
  * @param[in] v Pointer to an array
  */
 static void array_to_rep_codeword(uint8_t *o, const uint8_t *v) {
-    for (size_t i = 0 ; i < (VEC_N1N2_SIZE_BYTES - 1) ; ++i) {
-        for (uint8_t j = 0 ; j < 8 ; ++j) {
+    for (size_t i = 0; i < (VEC_N1N2_SIZE_BYTES - 1); ++i) {
+        for (uint8_t j = 0; j < 8; ++j) {
             o[i] |= v[j + 8 * i] << j;
         }
     }
 
-    for (uint8_t j = 0 ; j < PARAM_N1N2 % 8 ; ++j) {
+    for (uint8_t j = 0; j < PARAM_N1N2 % 8; ++j) {
         o[VEC_N1N2_SIZE_BYTES - 1] |= (v[j + 8 * (VEC_N1N2_SIZE_BYTES - 1)]) << j;
     }
 }

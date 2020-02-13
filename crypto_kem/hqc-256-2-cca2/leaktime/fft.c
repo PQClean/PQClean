@@ -29,7 +29,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
  * @param[out] betas Array of size PARAM_M-1
  */
 static void compute_fft_betas(uint16_t *betas) {
-    for (size_t i = 0 ; i < PARAM_M - 1 ; ++i) {
+    for (size_t i = 0; i < PARAM_M - 1; ++i) {
         betas[i] = 1 << (PARAM_M - 1 - i);
     }
 }
@@ -49,8 +49,8 @@ static void compute_fft_betas(uint16_t *betas) {
 static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, size_t set_size) {
     subset_sums[0] = 0;
 
-    for (size_t i = 0 ; i < set_size ; ++i) {
-        for (size_t j = 0 ; j < (1U << i) ; ++j) {
+    for (size_t i = 0; i < set_size; ++i) {
+        for (size_t j = 0; j < (1U << i); ++j) {
             subset_sums[(1 << i) + j] = set[i] ^ subset_sums[j];
         }
     }
@@ -139,7 +139,7 @@ static void radix_t(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uint32_
         memcpy(f + 2 * n, R + n, 2 * n);
         memcpy(f + 3 * n, Q + n, 2 * n);
 
-        for (size_t i = 0 ; i < n ; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             f[2 * n + i] ^= Q[i];
             f[3 * n + i] ^= f[2 * n + i];
         }
@@ -173,12 +173,12 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
 
     // Step 1
     if (m_f == 1) {
-        for (size_t i = 0 ; i < (1U << m) ; ++i) {
+        for (size_t i = 0; i < (1U << m); ++i) {
             f[0] ^= w[i];
         }
 
-        for (size_t j = 0 ; j < m ; ++j) {
-            for (size_t ki = 0 ; ki < (1U << j) ; ++ki) {
+        for (size_t j = 0; j < m; ++j) {
+            for (size_t ki = 0; ki < (1U << j); ++ki) {
                 size_t index = (1 << j) + ki;
                 betas_sums[index] = betas_sums[ki] ^ betas[j];
                 f[1] ^= PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(betas_sums[index], w[index]);
@@ -189,7 +189,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
     }
 
     // Compute gammas and deltas
-    for (uint8_t i = 0 ; i < m - 1 ; ++i) {
+    for (uint8_t i = 0; i < m - 1; ++i) {
         gammas[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(betas[i], PQCLEAN_HQC2562CCA2_LEAKTIME_gf_inverse(betas[m - 1]));
         deltas[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_square(gammas[i]) ^ gammas[i];
     }
@@ -208,7 +208,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
         f1[1] = 0;
         u[0] = w[0] ^ w[k];
         f1[0] = w[k];
-        for (size_t i = 1 ; i < k ; ++i) {
+        for (size_t i = 1; i < k; ++i) {
             u[i] = w[i] ^ w[k + i];
             f1[0] ^= PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(gammas_sums[i], u[i]) ^ w[k + i];
         }
@@ -219,7 +219,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
         u[0] = w[0] ^ w[k];
         v[0] = w[k];
 
-        for (size_t i = 1 ; i < k ; ++i) {
+        for (size_t i = 1; i < k; ++i) {
             u[i] = w[i] ^ w[k + i];
             v[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(gammas_sums[i], u[i]) ^ w[k + i];
         }
@@ -235,7 +235,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs,
     // Step 2: compute f from g
     if (betas[m - 1] != 1) {
         uint16_t beta_m_pow = 1;
-        for (size_t i = 1 ; i < (1U << m_f) ; ++i) {
+        for (size_t i = 1; i < (1U << m_f); ++i) {
             beta_m_pow = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(beta_m_pow, f[i]);
         }
@@ -280,13 +280,13 @@ void PQCLEAN_HQC2562CCA2_LEAKTIME_fft_t(uint16_t *f, const uint16_t *w, size_t f
      * v[i] = G[i].w[i] + (G[i]+1).w[k+i] = G[i].u[i] + w[k+i] */
     u[0] = w[0] ^ w[k];
     v[0] = w[k];
-    for (size_t i = 1 ; i < k ; ++i) {
+    for (size_t i = 1; i < k; ++i) {
         u[i] = w[i] ^ w[k + i];
         v[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(betas_sums[i], u[i]) ^ w[k + i];
     }
 
     // Compute deltas
-    for (size_t i = 0 ; i < PARAM_M - 1 ; ++i) {
+    for (size_t i = 0; i < PARAM_M - 1; ++i) {
         deltas[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_square(betas[i]) ^ betas[i];
     }
 
@@ -375,7 +375,7 @@ static void radix(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f) {
         memcpy(Q + n, f + 3 * n, 2 * n);
         memcpy(R, f, 4 * n);
 
-        for (size_t i = 0 ; i < n ; ++i) {
+        for (size_t i = 0; i < n; ++i) {
             Q[i] ^= f[2 * n + i];
             R[n + i] ^= Q[i];
         }
@@ -419,13 +419,13 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
     // Step 1
     if (m_f == 1) {
         uint16_t tmp[PARAM_M - (PARAM_FFT - 1)];
-        for (size_t i = 0 ; i < m ; ++i) {
+        for (size_t i = 0; i < m; ++i) {
             tmp[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(betas[i], f[1]);
         }
 
         w[0] = f[0];
-        for (size_t j = 0 ; j < m ; ++j) {
-            for (size_t ki = 0 ; ki < (1U << j) ; ++ki) {
+        for (size_t j = 0; j < m; ++j) {
+            for (size_t ki = 0; ki < (1U << j); ++ki) {
                 w[(1 << j) + ki] = w[ki] ^ tmp[j];
             }
         }
@@ -436,7 +436,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
     // Step 2: compute g
     if (betas[m - 1] != 1) {
         uint16_t beta_m_pow = 1;
-        for (size_t i = 1 ; i < (1U << m_f) ; ++i) {
+        for (size_t i = 1; i < (1U << m_f); ++i) {
             beta_m_pow = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(beta_m_pow, f[i]);
         }
@@ -446,7 +446,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
     radix(f0, f1, f, m_f);
 
     // Step 4: compute gammas and deltas
-    for (uint8_t i = 0 ; i < m - 1 ; ++i) {
+    for (uint8_t i = 0; i < m - 1; ++i) {
         gammas[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(betas[i], PQCLEAN_HQC2562CCA2_LEAKTIME_gf_inverse(betas[m - 1]));
         deltas[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_square(gammas[i]) ^ gammas[i];
     }
@@ -460,7 +460,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
     if (f_coeffs <= 3) { // 3-coefficient polynomial f case: f1 is constant
         w[0] = u[0];
         w[k] = u[0] ^ f1[0];
-        for (size_t i = 1 ; i < k ; ++i) {
+        for (size_t i = 1; i < k; ++i) {
             w[i] = u[i] ^ PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(gammas_sums[i], f1[0]);
             w[k + i] = w[i] ^ f1[0];
         }
@@ -471,7 +471,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs,
         memcpy(w + k, v, 2 * k);
         w[0] = u[0];
         w[k] ^= u[0];
-        for (size_t i = 1 ; i < k ; ++i) {
+        for (size_t i = 1; i < k; ++i) {
             w[i] = u[i] ^ PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(gammas_sums[i], v[i]);
             w[k + i] ^= w[i];
         }
@@ -525,7 +525,7 @@ void PQCLEAN_HQC2562CCA2_LEAKTIME_fft(uint16_t *w, const uint16_t *f, size_t f_c
     radix(f0, f1, f, PARAM_FFT);
 
     // Step 4: Compute deltas
-    for (size_t i = 0 ; i < PARAM_M - 1 ; ++i) {
+    for (size_t i = 0; i < PARAM_M - 1; ++i) {
         deltas[i] = PQCLEAN_HQC2562CCA2_LEAKTIME_gf_square(betas[i]) ^ betas[i];
     }
 
@@ -543,7 +543,7 @@ void PQCLEAN_HQC2562CCA2_LEAKTIME_fft(uint16_t *w, const uint16_t *f, size_t f_c
     w[k] ^= u[0];
 
     // Find other roots
-    for (size_t i = 1 ; i < k ; ++i) {
+    for (size_t i = 1; i < k; ++i) {
         w[i] = u[i] ^ PQCLEAN_HQC2562CCA2_LEAKTIME_gf_mul(betas_sums[i], v[i]);
         w[k + i] ^= w[i];
     }
@@ -569,14 +569,14 @@ void PQCLEAN_HQC2562CCA2_LEAKTIME_fft_t_preprocess_bch_codeword(uint16_t *w, con
 
     // Unpack the received word vector into array r
     size_t i;
-    for (i = 0 ; i < VEC_N1_SIZE_BYTES - (PARAM_N1 % 8 != 0) ; ++i) {
-        for (size_t j = 0 ; j < 8 ; ++j) {
+    for (i = 0; i < VEC_N1_SIZE_BYTES - (PARAM_N1 % 8 != 0); ++i) {
+        for (size_t j = 0; j < 8; ++j) {
             r[8 * i + j] = (vector[i] >> j) & 1;
         }
     }
 
     // Last byte
-    for (size_t j = 0 ; j < PARAM_N1 % 8 ; ++j) {
+    for (size_t j = 0; j < PARAM_N1 % 8; ++j) {
         r[8 * i + j] = (vector[i] >> j) & 1;
     }
 
@@ -589,7 +589,7 @@ void PQCLEAN_HQC2562CCA2_LEAKTIME_fft_t_preprocess_bch_codeword(uint16_t *w, con
     // Twist and permute r adequately to obtain w
     w[0] = 0;
     w[k] = -r[0] & 1;
-    for (i = 1 ; i < k ; ++i) {
+    for (i = 1; i < k; ++i) {
         w[i] = -r[PQCLEAN_HQC2562CCA2_LEAKTIME_gf_log(gammas_sums[i])] & gammas_sums[i];
         w[k + i] = -r[PQCLEAN_HQC2562CCA2_LEAKTIME_gf_log(gammas_sums[i] ^ 1)] & (gammas_sums[i] ^ 1);
     }
@@ -616,7 +616,7 @@ void PQCLEAN_HQC2562CCA2_LEAKTIME_fft_retrieve_bch_error_poly(uint8_t *error, co
     uint8_t bit = 1 ^ ((uint16_t) - w[k] >> 15);
     error[index / 8] ^= bit << (index % 8);
 
-    for (size_t i = 1 ; i < k ; ++i) {
+    for (size_t i = 1; i < k; ++i) {
         index = PARAM_GF_MUL_ORDER - PQCLEAN_HQC2562CCA2_LEAKTIME_gf_log(gammas_sums[i]);
         bit = 1 ^ ((uint16_t) - w[i] >> 15);
         error[index / 8] ^= bit << (index % 8);
