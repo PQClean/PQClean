@@ -22,3 +22,5 @@ consistency_checks:
     - tensor.h
     - vector.c
     - vector.h
+    - util.c
+    - util.h
