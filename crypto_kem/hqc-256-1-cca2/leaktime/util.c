@@ -33,13 +33,13 @@ uint64_t PQCLEAN_HQC2561CCA2_LEAKTIME_load8(const unsigned char *in) {
     return ret;
 }
 
-void PQCLEAN_HQC2561CCA2_LEAKTIME_load8_arr(uint64_t *out64, size_t outlen, const uint8_t* in8, size_t inlen) {
+void PQCLEAN_HQC2561CCA2_LEAKTIME_load8_arr(uint64_t *out64, size_t outlen, const uint8_t *in8, size_t inlen) {
     size_t index_in = 0;
     size_t index_out = 0;
 
     // first copy by 8 bytes
     if (inlen >= 8 && outlen >= 1) {
-        while (index_out < outlen && index_in+8 <= inlen) {
+        while (index_out < outlen && index_in + 8 <= inlen) {
             out64[index_out] = PQCLEAN_HQC2561CCA2_LEAKTIME_load8(in8 + index_in);
 
             index_in += 8;
@@ -51,7 +51,7 @@ void PQCLEAN_HQC2561CCA2_LEAKTIME_load8_arr(uint64_t *out64, size_t outlen, cons
     if (index_in >= inlen || index_out >= outlen) {
         return;
     }
-    out64[index_out] = in8[inlen-1];
+    out64[index_out] = in8[inlen - 1];
     for (int8_t i = (int8_t)(inlen - index_in) - 2; i >= 0; i--) {
         out64[index_out] <<= 8;
         out64[index_out] |= in8[index_in + i];
@@ -60,7 +60,7 @@ void PQCLEAN_HQC2561CCA2_LEAKTIME_load8_arr(uint64_t *out64, size_t outlen, cons
 
 void PQCLEAN_HQC2561CCA2_LEAKTIME_store8_arr(uint8_t *out8, size_t outlen, const uint64_t *in64, size_t inlen) {
     for (size_t index_out = 0, index_in = 0; index_out < outlen && index_in < inlen;) {
-        out8[index_out] = (in64[index_in] >> ((index_out % 8)*8)) & 0xFF;
+        out8[index_out] = (in64[index_in] >> ((index_out % 8) * 8)) & 0xFF;
         index_out++;
         if (index_out % 8 == 0) {
             index_in++;
