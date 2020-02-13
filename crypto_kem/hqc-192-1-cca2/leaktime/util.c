@@ -23,10 +23,9 @@ void PQCLEAN_HQC1921CCA2_LEAKTIME_store8(unsigned char *out, uint64_t in) {
 
 
 uint64_t PQCLEAN_HQC1921CCA2_LEAKTIME_load8(const unsigned char *in) {
-    int i;
     uint64_t ret = in[7];
 
-    for (i = 6; i >= 0; i--) {
+    for (int8_t i = 6; i >= 0; i--) {
         ret <<= 8;
         ret |= in[i];
     }
@@ -53,7 +52,7 @@ void PQCLEAN_HQC1921CCA2_LEAKTIME_load8_arr(uint64_t *out64, size_t outlen, cons
         return;
     }
     out64[index_out] = in8[inlen-1];
-    for (int8_t i = (inlen - index_in) - 2; i >= 0; i--) {
+    for (int8_t i = (int8_t)(inlen - index_in) - 2; i >= 0; i--) {
         out64[index_out] <<= 8;
         out64[index_out] |= in8[index_in + i];
     }
