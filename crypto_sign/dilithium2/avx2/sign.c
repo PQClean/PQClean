@@ -201,6 +201,7 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
+    shake256_inc_ctx_release(&state);
 
     crh(rhoprime, key, SEEDBYTES + CRHBYTES);
 
@@ -350,6 +351,7 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
+    shake256_inc_ctx_release(&state);
 
     /* Matrix-vector multiplication; compute Az - c2^dt1 */
     PQCLEAN_DILITHIUM2_AVX2_expand_mat(mat, rho);
