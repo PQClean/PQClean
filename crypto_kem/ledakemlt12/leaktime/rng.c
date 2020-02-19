@@ -81,7 +81,7 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_seedexpander(AES_XOF_struct *ctx, uint8_t *x, s
             memcpy(x + offset, ctx->buffer + ctx->buffer_pos, xlen);
             ctx->buffer_pos += xlen;
 
-            return RNG_SUCCESS;
+            goto end;
         }
 
         // take what's in the buffer
@@ -103,7 +103,8 @@ int PQCLEAN_LEDAKEMLT12_LEAKTIME_seedexpander(AES_XOF_struct *ctx, uint8_t *x, s
         }
 
     }
-    aes256_ctx_release(&ctx256);
+end:
 
+    aes256_ctx_release(&ctx256);
     return RNG_SUCCESS;
 }
