@@ -245,6 +245,8 @@ def permit_test(testname, *args, **kwargs):
             assert diff_result.returncode == 0, \
                 "Got unexpected return code {}".format(diff_result.returncode)
             for diff_line in diff_result.stdout.decode('utf-8').splitlines():
+                # Git still returns UNIX-style paths on Windows, normalize
+                diff_line = os.path.normpath(diff_line)
                 # don't skip test if there are any changes outside schemes
                 if (not diff_line.startswith('crypto_kem') and
                         not diff_line.startswith('crypto_sign') and
