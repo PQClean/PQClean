@@ -221,6 +221,7 @@ void PQCLEAN_NEWHOPE512CPA_CLEAN_poly_uniform(poly *a, const unsigned char *seed
                 }
             }
         }
+        shake128_ctx_release(&state);
     }
 }
 
