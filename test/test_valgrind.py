@@ -54,6 +54,7 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
     helpers.run_subprocess(
         ['valgrind',
          '--error-exitcode=1',
+         '--leak-check=yes',
          *(['--exit-on-first-error=yes']
            if valgrind_supports_exit_early()
            else []),
