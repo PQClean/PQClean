@@ -109,7 +109,7 @@ matrix:
     # MacOS builds
     - name: "KEMs: MacOS + Clang"
       os: osx
-      osx_image: xcode11.2
+      osx_image: xcode11.3
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
@@ -136,7 +136,7 @@ matrix:
             - ccache
     - name: "KEMs: MacOS + GCC9"
       os: osx
-      osx_image: xcode11.2
+      osx_image: xcode11.3
       compiler: gcc
       addons:
         homebrew:
@@ -167,7 +167,7 @@ matrix:
         - "cd test && travis_wait 60 python3 -m pytest --numprocesses=auto"
     - name: "SIGs on MacOS + Clang"
       os: osx
-      osx_image: xcode11.2
+      osx_image: xcode11.3
       compiler: clang
       before_install:
         - pip3 install -r requirements.txt
@@ -194,7 +194,7 @@ matrix:
             - ccache
     - name: "SIGs on MacOS + GCC9"
       os: osx
-      osx_image: xcode11.2
+      osx_image: xcode11.3
       compiler: gcc
       addons:
         homebrew:
