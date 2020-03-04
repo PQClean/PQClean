@@ -107,6 +107,7 @@ void PQCLEAN_DILITHIUM3_AVX2_challenge(poly *c,
         c->coeffs[b] ^= -(signs & 1) & (1 ^ (Q - 1));
         signs >>= 1;
     }
+    shake256_ctx_release(&state);
 }
 
 /*************************************************
