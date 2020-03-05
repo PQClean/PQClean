@@ -89,7 +89,7 @@ This allows you to solve, for example, endianness problems or 32-bit problems mu
 
 You will need Docker on your computer.
 
-To run the ARM and powerpc containers you will need to run the following:
+To run the ARM and powerpc containers you will need to run the following from a Linux computer:
 
 ```sh
 docker pull multiarch/qemu-user-static:register
