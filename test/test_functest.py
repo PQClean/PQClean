@@ -70,7 +70,9 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
-                 EXTRAFLAGS='-g -fsanitize=address,undefined',
+                 EXTRAFLAGS=(
+                     '-g -fsanitize=address,undefined '
+                     '-fno-sanitize-recover=undefined'),
                  SCHEME_DIR=impl_path,
                  DEST_DIR=dest_dir,
                  working_dir=os.path.join(test_dir, 'test'),
