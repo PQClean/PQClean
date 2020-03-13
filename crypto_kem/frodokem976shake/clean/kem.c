@@ -172,7 +172,7 @@ int PQCLEAN_FRODOKEM976SHAKE_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct
     uint8_t shake_input_seedSEprime[1 + CRYPTO_BYTES];       // contains secret data
 
     for (size_t i = 0; i < PARAMS_N * PARAMS_NBAR; i++) {
-        S[i] = sk_S[2*i] | (sk_S[2*i+1] << 8);
+        S[i] = sk_S[2 * i] | (sk_S[2 * i + 1] << 8);
     }
 
     // Compute W = C - Bp*S (mod q), and decode the randomness mu
