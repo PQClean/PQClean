@@ -309,8 +309,8 @@ workflows:
       - amd64-clang-kem
       - amd64-gcc-sign
       - amd64-clang-sign
-      - amd64-clang-sanitizers-kem:
-          requires: &sanitizers
+      - amd64-clang-sanitizers-kem: &sanitizers
+          requires:
             - amd64-gcc-kem
             - amd64-gcc-sign
             - amd64-clang-kem
