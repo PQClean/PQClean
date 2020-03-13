@@ -587,7 +587,7 @@ void aes128_ecb_keyexp(aes128ctx *r, const unsigned char *key) {
 }
 
 void aes128_ctr_keyexp(aes128ctx *r, const unsigned char *key) {
-    return aes128_ecb_keyexp(r, key);
+    aes128_ecb_keyexp(r, key);
 }
 
 
@@ -604,7 +604,7 @@ void aes192_ecb_keyexp(aes192ctx *r, const unsigned char *key) {
 
 
 void aes192_ctr_keyexp(aes192ctx *r, const unsigned char *key) {
-    return aes192_ecb_keyexp(r, key);
+    aes192_ecb_keyexp(r, key);
 }
 
 
@@ -621,7 +621,7 @@ void aes256_ecb_keyexp(aes256ctx *r, const unsigned char *key) {
 
 
 void aes256_ctr_keyexp(aes256ctx *r, const unsigned char *key) {
-    return aes256_ecb_keyexp(r, key);
+    aes256_ecb_keyexp(r, key);
 }
 
 
