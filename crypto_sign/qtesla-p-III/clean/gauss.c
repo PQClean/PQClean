@@ -23,7 +23,7 @@ void PQCLEAN_QTESLAPIII_CLEAN_sample_gauss_poly(poly z, const uint8_t *seed, uin
         cSHAKE(buf, CHUNK_SIZE * CDT_COLS * sizeof(int32_t), (uint8_t *)NULL, 0, dmsp_bytes, 2, seed, CRYPTO_RANDOMBYTES);
         ++dmsp;
         for (size_t i = 0, j = 0; i < CHUNK_SIZE * CDT_COLS; i += 1, j += 4) {
-            samp[i] = (int32_t)(buf[j] | (buf[j + 1] << 8) | (buf[j + 2] << 16) | (buf[j + 3] << 24));
+            samp[i] = (int32_t)(buf[j] | (buf[j + 1] << 8) | (buf[j + 2] << 16) | (int32_t)((uint32_t)buf[j + 3] << 24));
         }
         for (size_t i = 0; i < CHUNK_SIZE; i++) {
             z[chunk + i] = 0;

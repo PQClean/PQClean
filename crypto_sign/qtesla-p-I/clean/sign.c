@@ -77,7 +77,7 @@ static int test_correctness(const poly v) {
 
         left = val;
         val = (val + (1 << (PARAM_D - 1)) - 1) >> PARAM_D;
-        val = left - (val << PARAM_D);
+        val = left - (int32_t)((uint32_t)val << PARAM_D);
         // If (Abs(val) < (1<<(PARAM_D-1))-PARAM_E) then t1 = 0, else t1 = 1
         t1 = (uint32_t)(~(Abs(val) - ((1 << (PARAM_D - 1)) - PARAM_E))) >> (RADIX32 - 1);
 
