@@ -73,6 +73,50 @@ See the section [API](#API) below.
 
 8. Open a pull request on our Github repository and process the feedback given to you by the CI environment.  The pull request will also set up a checklist for you and us to follow.  Feel free to ask us questions via the pull request.
 
+### Generating implementations
+
+It may sometimes be helpful to generate the implementations from a shared code base.
+You can find an example of how this can be done for [SPHINCS+][sphincsclean], [Dilithium][Dilithiumclean] or [Kyber][kyberclean]
+
+[sphincsclean]: https://github.com/thomwiggers/sphincsplus/tree/pqcleanup
+[dilithiumclean]: https://github.com/thomwiggers/dilithium/tree/pqclean
+[kyberclean]: https://github.com/thomwiggers/kyber-clean/
+
+### Testing your implementations locally using the PQClean test environment
+
+It can be helpful to debug issues if you run the testing environment locally.
+This allows you to solve, for example, endianness problems or 32-bit problems much quicker, without waiting for the full CI runs to complete.
+
+You will need Docker on your computer.
+
+To run the ARM and powerpc containers you will need to run the following from a Linux computer:
+
+```sh
+docker pull multiarch/qemu-user-static:register
+docker run --rm --privileged multiarch/qemu-user-static:register --reset
+```
+
+Then, to launch a specific testing environment, we suggest the following command:
+```sh
+docker run \
+    --rm --tty --interactive \
+    --volume $PWD:/pqclean \
+    --user $(id -u):$(id -g) \
+    --workdir /pqclean \
+    pqclean/ci-container:ARCHITECTURE \
+    /bin/bash
+```
+
+Replace `ARCHITECTURE` by one of the following:
+
+* armhf\*
+* arm64\*
+* i386
+* amd64
+* unstable-ppc\*
+
+Items marked with \* require the `multiarch/qemu-user-static` registation step.
+
 API
 ---
 
@@ -83,11 +127,11 @@ These items should be available in your `api.h` file.
 Functions:
 
 ```c
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_keypair(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_kem_keypair(
     uint8_t *pk, uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_enc(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_kem_enc(
     uint8_t *ct, uint8_t *ss, const uint8_t *pk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_kem_dec(
     uint8_t *ss, const uint8_t *ct, const uint8_t *sk);
 ```
 
@@ -104,21 +148,21 @@ int PQCLEAN_YOURSCHEME_CLEAN_crypto_kem_dec(
 Functions:
 
 ```c
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_keypair(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_sign_keypair(
     uint8_t *pk, uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_sign(
     uint8_t *sm, size_t *smlen,
     const uint8_t *msg, size_t len,
     const uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_open(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_sign_open(
     uint8_t *m, size_t *mlen,
     const uint8_t *sm, size_t smlen,
     const uint8_t *pk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_signature(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
     const uint8_t *m, size_t mlen,
     const uint8_t *sk);
-int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_verify(
+int PQCLEAN_YOURSCHEME_IMPLEMENTATION_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
     const uint8_t *m, size_t mlen,
     const uint8_t *pk);
@@ -126,14 +170,14 @@ int PQCLEAN_YOURSCHEME_CLEAN_crypto_sign_verify(
 
 `#define` macros:
 
-* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_SECRETKEYBYTES`
-* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_PUBLICKEYBYTES`
-* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_ALGNAME`
-* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_BYTES`
+* `PQCLEAN_YOURSCHEME_IMPLEMENTATION_CRYPTO_SECRETKEYBYTES`
+* `PQCLEAN_YOURSCHEME_IMPLEMENTATION_CRYPTO_PUBLICKEYBYTES`
+* `PQCLEAN_YOURSCHEME_IMPLEMENTATION_CRYPTO_ALGNAME`
+* `PQCLEAN_YOURSCHEME_IMPLEMENTATION_CRYPTO_BYTES`
 
 for KEMs, additionally define:
 
-* `PQCLEAN_YOURSCHEME_CLEAN_CRYPTO_CIPHERTEXTBYTES`
+* `PQCLEAN_YOURSCHEME_IMPLEMENTATION_CRYPTO_CIPHERTEXTBYTES`
 
 Please make sure your `api.h` file does not include any other files.
 
