@@ -142,10 +142,8 @@ PQCLEAN_FALCON512_CLEAN_prng_refill(prng *p) {
         for (v = 4; v < 14; v ++) {
             state[v] += d32[v - 4];
         }
-        state[14] += d32[10]
-                     ^ (uint32_t)cc;
-        state[15] += d32[11]
-                     ^ (uint32_t)(cc >> 32);
+        state[14] += d32[10] ^ (uint32_t)cc;
+        state[15] += d32[11] ^ (uint32_t)(cc >> 32);
         cc ++;
 
         /*
