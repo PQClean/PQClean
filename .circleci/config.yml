@@ -108,6 +108,22 @@ jobs:
       CC: clang
       ARCH: amd64
       PQCLEAN_ONLY_TYPES: kem
+  amd64-clang-sanitizers-kem:
+    <<: *nativejob
+    environment:
+      PQCLEAN_ONLY_TESTS: test_functest_sanitizers
+      RUN_SLOW: 1
+      CC: clang
+      ARCH: amd64
+      PQCLEAN_ONLY_TYPES: kem
+  amd64-clang-sanitizers-sign:
+    <<: *nativejob
+    environment:
+      PQCLEAN_ONLY_TESTS: test_functest_sanitizers
+      RUN_SLOW: 1
+      CC: clang
+      ARCH: amd64
+      PQCLEAN_ONLY_TYPES: sign
   i386-gcc-kem:
     <<: *nativejob
     environment:
@@ -293,6 +309,14 @@ workflows:
       - amd64-clang-kem
       - amd64-gcc-sign
       - amd64-clang-sign
+      - amd64-clang-sanitizers-kem:
+          requires: &sanitizers
+            - amd64-gcc-kem
+            - amd64-gcc-sign
+            - amd64-clang-kem
+            - amd64-clang-sign
+      - amd64-clang-sanitizers-sign:
+          <<*: *sanitizers
       # i386
       - i386-gcc-kem: &i386
           requires:
