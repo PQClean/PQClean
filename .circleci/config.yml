@@ -316,7 +316,7 @@ workflows:
             - amd64-clang-kem
             - amd64-clang-sign
       - amd64-clang-sanitizers-sign:
-          <<*: *sanitizers
+          <<: *sanitizers
       # i386
       - i386-gcc-kem: &i386
           requires:
