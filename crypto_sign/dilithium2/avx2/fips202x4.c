@@ -43,7 +43,7 @@ static void keccak_absorb4x(__m256i *s,
     uint8_t t3[200];
     uint64_t *ss = (uint64_t *)s;
 
-    for (size_t i = 0; i < 25; ++i) {
+    for (i = 0; i < 25; ++i) {
         s[i] = _mm256_xor_si256(s[i], s[i]);
     }
 

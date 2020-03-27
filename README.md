@@ -9,7 +9,7 @@ schemes that are in the
 [NIST post-quantum project](https://csrc.nist.gov/projects/post-quantum-cryptography).
 The goal of PQClean is to provide *standalone implementations* that
 
-* can easily be integrated into libraries such as [liboqs](https://openquantumsafe.org/#liboqs) or [libpqcrypto](https://libpqcrypto.org/);
+* can easily be integrated into libraries such as [liboqs](https://openquantumsafe.org/#liboqs).
 * can efficiently upstream into higher-level protocol integration efforts such as [Open Quantum Safe](https://openquantumsafe.org/#integrations);
 * can easily be integrated into benchmarking frameworks such as [SUPERCOP](https://bench.cr.yp.to/supercop.html);
 * can easily be integrated into frameworks targeting embedded platforms such as [pqm4](https://github.com/mupq/pqm4);
@@ -24,7 +24,8 @@ What PQClean is **not** aiming for is
 * including integration into higher-level applications or protocols.
 
 As a first main target, we are collecting C implementations that fulfill the requirements
-listed below.
+listed below. We also accept optimised implementations, but still requiring high-quality, tested code.
+
 Please also review our [guidelines for contributors](CONTRIBUTING.md) if you are interested in adding a scheme to PQClean.
 
 ## Requirements on C implementations that are automatically checked
@@ -40,6 +41,7 @@ _The checking of items on this list is still being developed. Checked items shou
 * [x] Consistent test vectors across runs
 * [x] Consistent test vectors on big-endian and little-endian machines
 * [x] Consistent test vectors on 32-bit and 64-bit machines
+* [x] `const` arguments are labeled as `const`
 * [x] No errors/warnings reported by valgrind
 * [x] No errors/warnings reported by address sanitizer
 * [x] Only dependencies: `fips202.c`, `sha2.c`, `aes.c`, `randombytes.c`
@@ -65,48 +67,61 @@ _The checking of items on this list is still being developed. Checked items shou
 * Minimalist Makefiles
 * No stringification macros
 * Output-parameter pointers in functions are on the left
-* `const` arguments are labeled as `const`
 * All exported symbols are namespaced in place
-* Integer types are of fixed size where relevant, using `stdint.h` types
-* Integers used for indexing memory are of size `size_t`
-* Variable declarations at the beginning (except in `for (size_t i=...`)
+* Integer types are of fixed size where relevant, using `stdint.h` types (optional, recommended)
+* Integers used for indexing memory are of size `size_t` (optional, recommended)
+* Variable declarations at the beginning (except in `for (size_t i=...`) (optional, recommended)
 
+## Schemes currently in PQClean
 
-## Clean C implementations currently in PQClean
+For the following schemes we have implementations of one or more of their parameter sets.
+For all of these schemes we have clean C code, but for some we also have optimised code.
 
-Currently, the continuous-integration and testing environment of PQClean is still work in progress
-and as a consequence PQClean does not yet have many implementations.
+### Key Encapsulation Mechanisms
 
-<!--
- Currently, PQClean includes clean C implementations of the following KEMs:
+* Classic McEliece
+* FrodoKEM
+* Kyber
+* LedaKEM
+* NTRU
+* NewHope
+* SABER
+* ThreeBears
 
- * [Kyber-512](https://pq-crystals.org/kyber/)
- * [Kyber-768](https://pq-crystals.org/kyber/)
- * [Kyber-1024](https://pq-crystals.org/kyber/)
+### Signature schemes
 
- Currently, PQClean includes clean C implementations of the following signature schemes:
-
- * [Dilithium-III](https://pq-crystals.org/dilithium/)
--->
+* Dilithium
+* Falcon
+* MQDSS
+* qTESLA
+* Rainbow
+* SPHINCS+
 
 ## API used by PQClean
 
 PQClean is essentially using the same API as required for the NIST reference implementations,
-which is also used by SUPERCOP and by libpqcrypto. The only two differences to that API are
+which is also used by SUPERCOP and by libpqcrypto. The only differences to that API are
 the following:
+* All functions are namespaced;
 * All lengths are passed as type `size_t` instead of `unsigned long long`; and
 * Signatures offer two additional functions that follow the "traditional" approach used
 in most software stacks of computing and verifying signatures instead of producing and
 recovering signed messages. Specifically, those functions have the following name and signature:
 
-```
-int crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk);
-int crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk);
+```c
+int PQCLEAN_SCHEME_IMPL_crypto_sign_signature(
+    uint8_t *sig, size_t *siglen,
+    const uint8_t *m, size_t mlen,
+    const uint8_t *sk);
+int PQCLEAN_SCHEME_IMPL_crypto_sign_verify(
+    const uint8_t *sig, size_t siglen,
+    const uint8_t *m, size_t mlen,
+    const uint8_t *pk);
 ```
 
 ## Building PQClean
 
-As noted above, PQClean is **not** meant to be built as a single library: it is a collection of source code that can be easily integrated into other libraries.  The PQClean repository includes various test programs which do build various files, but you should not use the resulting binaries for any purpose.
+As noted above, PQClean is **not** meant to be built as a single library: it is a collection of source code that can be easily integrated into other libraries.  The PQClean repository includes various test programs which do build various files, but you should not use the resulting binaries.
 
 List of required dependencies: ``gcc or clang, make, python3, python-yaml library, valgrind, astyle (>= 3.0)``.
 
@@ -116,7 +131,7 @@ Each implementation directory in PQClean (e.g., crypto\_kem/kyber768\clean) can 
 
 1. Copy the source code from the implementation's directory into your project.
 2. Add the files to your project's build system.
-3. Provide instantiations of any of the common cryptographic algorithms used by the implementation.  This likely includes `common/randombytes.h` (a cryptographic random number generator), and possibly `common/sha2.h` (the SHA-2 hash function family) and `common/fips202.h` (the SHA-3 hash function family).
+3. Provide instantiations of any of the common cryptographic algorithms used by the implementation.  This likely includes `common/randombytes.h` (a cryptographic random number generator), and possibly `common/sha2.h` (the SHA-2 hash function family), `common/aes.h` (AES implementations), `common/fips202.h` (the SHA-3 hash function family) and `common/sp800-185.h` (the cSHAKE family).
 
 Regarding #2, adding the files to your project's build system, each implementation in PQClean is accompanied by example two makefiles that show how one could build the files for that implementation:
 
