@@ -12,7 +12,7 @@ HEADERS = alignment.h api.h params.h sign.h polyvec.h poly.h packing.h ntt.h  \
 
 CFLAGS=-O3 -Wall -Wextra -Wpedantic -Wvla -Werror \
 	   -Wmissing-prototypes -Wredundant-decls -std=c99 \
-	   -Wcast-align \
+	   -Wcast-align -Werror=shadow\
 	   -mavx2 -mbmi -mpopcnt -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
