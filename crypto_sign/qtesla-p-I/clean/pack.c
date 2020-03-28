@@ -75,13 +75,13 @@ void PQCLEAN_QTESLAPI_CLEAN_decode_pk(int32_t *pk, uint8_t *seedA, const uint8_t
     const uint8_t *a = pk_in;
 
     for (i = 0, j = 0; i < PARAM_N * PARAM_K; i += 8, j += 29) {
-        pk[i  ] = (int32_t)(( a[j   ]     | (a[j + 1] << 8) | (a[j + 2] << 16) | (a[j + 3] << 24)                ) & mask29);
-        pk[i + 1] = (int32_t)(((a[j + 3] >> 5) | (a[j + 4] << 3) | (a[j + 5] << 11) | (a[j + 6] << 19) | (a[j + 7] << 27)) & mask29);
+        pk[i  ] = (int32_t)(( a[j   ]     | (a[j + 1] << 8) | (a[j + 2] << 16) | (int32_t)((uint32_t)a[j + 3] << 24)                ) & mask29);
+        pk[i + 1] = (int32_t)(((a[j + 3] >> 5) | (a[j + 4] << 3) | (a[j + 5] << 11) | (a[j + 6] << 19) | (int32_t)((uint32_t)a[j + 7] << 27)) & mask29);
         pk[i + 2] = (int32_t)(((a[j + 7] >> 2) | (a[j + 8] << 6) | (a[j + 9] << 14) | (a[j + 10] << 22)                ) & mask29);
-        pk[i + 3] = (int32_t)(((a[j + 10] >> 7) | (a[j + 11] << 1) | (a[j + 12] << 9) | (a[j + 13] << 17) | (a[j + 14] << 25)) & mask29);
-        pk[i + 4] = (int32_t)(((a[j + 14] >> 4) | (a[j + 15] << 4) | (a[j + 16] << 12) | (a[j + 17] << 20) | (a[j + 18] << 28)) & mask29);
+        pk[i + 3] = (int32_t)(((a[j + 10] >> 7) | (a[j + 11] << 1) | (a[j + 12] << 9) | (a[j + 13] << 17) | (int32_t)((uint32_t)a[j + 14] << 25)) & mask29);
+        pk[i + 4] = (int32_t)(((a[j + 14] >> 4) | (a[j + 15] << 4) | (a[j + 16] << 12) | (a[j + 17] << 20) | (int32_t)((uint32_t)a[j + 18] << 28)) & mask29);
         pk[i + 5] = (int32_t)(((a[j + 18] >> 1) | (a[j + 19] << 7) | (a[j + 20] << 15) | (a[j + 21] << 23)                ) & mask29);
-        pk[i + 6] = (int32_t)(((a[j + 21] >> 6) | (a[j + 22] << 2) | (a[j + 23] << 10) | (a[j + 24] << 18) | (a[j + 25] << 26)) & mask29);
+        pk[i + 6] = (int32_t)(((a[j + 21] >> 6) | (a[j + 22] << 2) | (a[j + 23] << 10) | (a[j + 24] << 18) | (int32_t)((uint32_t)a[j + 25] << 26)) & mask29);
         pk[i + 7] = (int32_t)( (a[j + 25] >> 3) | (a[j + 26] << 5) | (a[j + 27] << 13) | (a[j + 28] << 21)                          );
     }
 
@@ -96,7 +96,7 @@ void PQCLEAN_QTESLAPI_CLEAN_encode_sig(uint8_t *sm, uint8_t *c, const poly z) {
     for (i = 0, j = 0; i < PARAM_N; i += 2, j += 5) {
         sm[j  ] = (uint8_t)(  z[i  ]    );
         sm[j + 1] = (uint8_t)(  z[i  ] >> 8);
-        sm[j + 2] = (uint8_t)(((z[i  ] >> 16) & 0x0F) | (z[i + 1] << 4));
+        sm[j + 2] = (uint8_t)(((z[i  ] >> 16) & 0x0F) | (int64_t)((uint64_t)z[i + 1] << 4));
         sm[j + 3] = (uint8_t)(  z[i + 1] >> 4);
         sm[j + 4] = (uint8_t)(  z[i + 1] >> 12);
     }
@@ -109,8 +109,8 @@ void PQCLEAN_QTESLAPI_CLEAN_decode_sig(uint8_t *c, poly z, const uint8_t *sm) {
     size_t i, j;
 
     for (i = 0, j = 0; i < PARAM_N; i += 2, j += 5) {
-        z[i  ] =  sm[j  ]     | (sm[j + 1] << 8) | (((int64_t)sm[j + 2] << 60) >> 44);
-        z[i + 1] = (sm[j + 2] >> 4) | (sm[j + 3] << 4) | (((int64_t)sm[j + 4] << 56) >> 44);
+        z[i  ] =  sm[j  ]     | (sm[j + 1] << 8) | ((int64_t)((uint64_t)sm[j + 2] << 60) >> 44);
+        z[i + 1] = (sm[j + 2] >> 4) | (sm[j + 3] << 4) | ((int64_t)((uint64_t)sm[j + 4] << 56) >> 44);
     }
 
     memcpy(c, &sm[j], CRYPTO_C_BYTES);

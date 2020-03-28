@@ -155,7 +155,7 @@ int PQCLEAN_FRODOKEM976AES_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
     const uint8_t *ct_c2 = &ct[(PARAMS_LOGQ * PARAMS_N * PARAMS_NBAR) / 8];
     const uint8_t *sk_s = &sk[0];
     const uint8_t *sk_pk = &sk[CRYPTO_BYTES];
-    const uint16_t *sk_S = (uint16_t *) &sk[CRYPTO_BYTES + CRYPTO_PUBLICKEYBYTES];
+    const uint8_t *sk_S = &sk[CRYPTO_BYTES + CRYPTO_PUBLICKEYBYTES];
     uint16_t S[PARAMS_N * PARAMS_NBAR];                      // contains secret data
     const uint8_t *sk_pkh = &sk[CRYPTO_BYTES + CRYPTO_PUBLICKEYBYTES + 2 * PARAMS_N * PARAMS_NBAR];
     const uint8_t *pk_seedA = &sk_pk[0];
@@ -172,7 +172,7 @@ int PQCLEAN_FRODOKEM976AES_CLEAN_crypto_kem_dec(uint8_t *ss, const uint8_t *ct, 
     uint8_t shake_input_seedSEprime[1 + CRYPTO_BYTES];       // contains secret data
 
     for (size_t i = 0; i < PARAMS_N * PARAMS_NBAR; i++) {
-        S[i] = PQCLEAN_FRODOKEM976AES_CLEAN_LE_TO_UINT16(sk_S[i]);
+        S[i] = sk_S[2 * i] | (sk_S[2 * i + 1] << 8);
     }
 
     // Compute W = C - Bp*S (mod q), and decode the randomness mu

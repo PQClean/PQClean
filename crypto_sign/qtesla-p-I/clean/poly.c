@@ -215,27 +215,27 @@ void PQCLEAN_QTESLAPI_CLEAN_poly_uniform(poly_k a, const uint8_t *seed) {
             pos = 0;
         }
         val1 = ((uint32_t)(buf[pos])
-                |  (uint32_t)(buf[pos + 1] << 8)
-                |  (uint32_t)(buf[pos + 2] << 16)
-                |  (uint32_t)(buf[pos + 3] << 24))
+                |  ((uint32_t)buf[pos + 1] << 8)
+                |  ((uint32_t)buf[pos + 2] << 16)
+                |  ((uint32_t)buf[pos + 3] << 24))
                & mask;
         pos += nbytes;
         val2 = ((uint32_t)(buf[pos])
-                |  (uint32_t)(buf[pos + 1] << 8)
-                |  (uint32_t)(buf[pos + 2] << 16)
-                |  (uint32_t)(buf[pos + 3] << 24))
+                |  ((uint32_t)buf[pos + 1] << 8)
+                |  ((uint32_t)buf[pos + 2] << 16)
+                |  ((uint32_t)buf[pos + 3] << 24))
                & mask;
         pos += nbytes;
         val3 = ((uint32_t)(buf[pos])
-                |  (uint32_t)(buf[pos + 1] << 8)
-                |  (uint32_t)(buf[pos + 2] << 16)
-                |  (uint32_t)(buf[pos + 3] << 24))
+                |  ((uint32_t)buf[pos + 1] << 8)
+                |  ((uint32_t)buf[pos + 2] << 16)
+                |  ((uint32_t)buf[pos + 3] << 24))
                & mask;
         pos += nbytes;
         val4 = ((uint32_t)(buf[pos])
-                |  (uint32_t)(buf[pos + 1] << 8)
-                |  (uint32_t)(buf[pos + 2] << 16)
-                |  (uint32_t)(buf[pos + 3] << 24))
+                |  ((uint32_t)buf[pos + 1] << 8)
+                |  ((uint32_t)buf[pos + 2] << 16)
+                |  ((uint32_t)buf[pos + 3] << 24))
                & mask;
         pos += nbytes;
         if (val1 < PARAM_Q && i < PARAM_K * PARAM_N) {
