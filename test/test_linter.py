@@ -19,9 +19,6 @@ additional_flags = [] #['-fix-errors']
 @helpers.skip_windows()
 @helpers.filtered_test
 def test_clang_tidy(implementation: pqclean.Implementation):
-    if platform.machine() in ['armv7l']:
-        # armv7l: slow, not more useful than i386
-        raise unittest.SkipTest()
     helpers.ensure_available('clang-tidy')
     cfiles = implementation.cfiles()
     common_files = glob(os.path.join('..', 'common', '*.c'))
