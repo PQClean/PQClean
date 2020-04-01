@@ -1,0 +1,26 @@
+consistency_checks:
+- source:
+    scheme: hqc-192-1-cca2
+    implementation: leaktime
+  files:
+    - bch.c
+    - bch.h
+    - fft.c
+    - fft.h
+    - gf.c
+    - gf.h
+    - gf2x.c
+    - gf2x.h
+    - hqc.c
+    - hqc.h
+    - kem.c
+    - parsing.c
+    - parsing.h
+    - repetition.c
+    - repetition.h
+    - tensor.c
+    - tensor.h
+    - vector.c
+    - vector.h
+    - util.c
+    - util.h

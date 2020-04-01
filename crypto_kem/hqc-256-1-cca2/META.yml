@@ -1,0 +1,23 @@
+name: HQC_256_1_CCA2
+type: kem
+claimed-nist-level: 5
+claimed-security: IND-CCA2
+length-public-key: 7989
+length-ciphertext: 15961
+length-secret-key: 8029
+length-shared-secret: 64
+nistkat-sha256: 339bd96be8b2d6bfb12315550b16827c612b41ab7aa4585ded55d2bf87410968
+principal-submitters:
+  - Carlos Aguilar Melchor
+  - Nicolas Aragon
+  - Slim Bettaieb
+  - Loïc Bidoux
+  - Olivier Blazy
+  - Jean-Christophe Deneuville
+  - Philippe Gaborit
+  - Edoardo Persichetti
+  - Gilles Zémor
+auxiliary-submitters: []
+implementations:
+  - name: leaktime
+    version: https://pqc-hqc.org/doc/hqc-reference-implementation_2019-08-24.zip

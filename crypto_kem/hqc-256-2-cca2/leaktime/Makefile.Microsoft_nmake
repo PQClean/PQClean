@@ -1,0 +1,23 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY=libhqc-256-2-cca2_leaktime.lib
+OBJECTS=bch.obj fft.obj gf.obj gf2x.obj hqc.obj kem.obj parsing.obj repetition.obj tensor.obj vector.obj util.obj
+
+# We ignore warning C4127: we sometimes use a conditional that depending
+# on the parameters results in a case where if (const) is the case.
+# The compiler should just optimise this away, but on MSVC we get
+# a compiler complaint.
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX /wd4127
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)
