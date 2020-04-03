@@ -17,28 +17,34 @@ sys.tracebacklimit = 0
 def pytest_generate_tests(metafunc):
     ids = []
     argvalues = []
-    for scheme in pqclean.Scheme.all_schemes():
-        for implementation in scheme.implementations:
-            if os.path.isfile(
-                    os.path.join(
+    if 'duplicate_consistency' not in os.environ.get('PQCLEAN_SKIP_TESTS', '').split(','):
+        for scheme in pqclean.Scheme.all_schemes():
+            for implementation in scheme.implementations:
+                if os.path.isfile(
+                        os.path.join(
+                            'duplicate_consistency',
+                            '{}_{}.yml'.format(scheme.name, implementation.name))):
+                    metafile = os.path.join(
                         'duplicate_consistency',
-                        '{}_{}.yml'.format(scheme.name, implementation.name))):
-                metafile = os.path.join(
-                    'duplicate_consistency',
-                    '{}_{}.yml'.format(scheme.name, implementation.name))
-                with open(metafile, encoding='utf-8') as f:
-                    metadata = yaml.safe_load(f.read())
-                    for group in metadata['consistency_checks']:
-                        source = pqclean.Implementation.by_name(
-                            group['source']['scheme'],
-                            group['source']['implementation'])
-                        argvalues.append(
-                            (implementation, source, group['files']))
-                        ids.append(
-                            "{metafile}: {scheme.name} {implementation.name}"
-                            .format(scheme=scheme,
-                                    implementation=implementation,
-                                    metafile=metafile))
+                        '{}_{}.yml'.format(scheme.name, implementation.name))
+                    with open(metafile, encoding='utf-8') as f:
+                        metadata = yaml.safe_load(f.read())
+                        for group in metadata['consistency_checks']:
+                            source = pqclean.Implementation.by_name(
+                                group['source']['scheme'],
+                                group['source']['implementation'])
+                            argvalues.append(
+                                (implementation, source, group['files']))
+                            ids.append(
+                                "{metafile}: {scheme.name} {implementation.name}"
+                                .format(scheme=scheme,
+                                        implementation=implementation,
+                                        metafile=metafile))
+    else:
+        # Placeholders so we don't crash
+        ids = ['dummy']
+        argvalues = [('dummy', 'dummy', 'dummy')]
+
     metafunc.parametrize(('implementation', 'source', 'files'),
                          argvalues,
                          ids=ids)

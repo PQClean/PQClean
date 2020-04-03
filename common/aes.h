@@ -29,7 +29,9 @@ typedef struct {
 
 
 /** Initializes the context **/
-void aes128_keyexp(aes128ctx *r, const unsigned char *key);
+void aes128_ecb_keyexp(aes128ctx *r, const unsigned char *key);
+
+void aes128_ctr_keyexp(aes128ctx *r, const unsigned char *key);
 
 void aes128_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const aes128ctx *ctx);
 
@@ -40,7 +42,9 @@ void aes128_ctx_release(aes128ctx *r);
 
 
 /** Initializes the context **/
-void aes192_keyexp(aes192ctx *r, const unsigned char *key);
+void aes192_ecb_keyexp(aes192ctx *r, const unsigned char *key);
+
+void aes192_ctr_keyexp(aes192ctx *r, const unsigned char *key);
 
 void aes192_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const aes192ctx *ctx);
 
@@ -50,7 +54,9 @@ void aes192_ctx_release(aes192ctx *r);
 
 
 /** Initializes the context **/
-void aes256_keyexp(aes256ctx *r, const unsigned char *key);
+void aes256_ecb_keyexp(aes256ctx *r, const unsigned char *key);
+
+void aes256_ctr_keyexp(aes256ctx *r, const unsigned char *key);
 
 void aes256_ecb(unsigned char *out, const unsigned char *in, size_t nblocks, const aes256ctx *ctx);
 

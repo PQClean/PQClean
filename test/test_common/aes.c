@@ -51,54 +51,60 @@ int main(void)
 {
   unsigned char ct[67];
   int r = 0;
-  aes128ctx ctx128; 
-  aes192ctx ctx192; 
-  aes256ctx ctx256; 
+  aes128ctx ctx128_ecb, ctx128_ctr;
+  aes192ctx ctx192_ecb, ctx192_ctr;
+  aes256ctx ctx256_ecb, ctx256_ctr;
 
-  aes128_keyexp(&ctx128, key);
-  aes192_keyexp(&ctx192, key);
-  aes256_keyexp(&ctx256, key);
+  aes128_ecb_keyexp(&ctx128_ecb, key);
+  aes192_ecb_keyexp(&ctx192_ecb, key);
+  aes256_ecb_keyexp(&ctx256_ecb, key);
+  aes128_ctr_keyexp(&ctx128_ctr, key);
+  aes192_ctr_keyexp(&ctx192_ctr, key);
+  aes256_ctr_keyexp(&ctx256_ctr, key);
 
-  aes128_ctr(ct, 67, nonce, &ctx128);
+  aes128_ctr(ct, 67, nonce, &ctx128_ctr);
   if(memcmp(ct, stream128, 67)) {
     printf("ERROR AES128CTR output does not match test vector.\n");
     r = 1;
   }
 
-  aes192_ctr(ct, 67, nonce, &ctx192);
+  aes192_ctr(ct, 67, nonce, &ctx192_ctr);
   if(memcmp(ct, stream192, 67)) {
     printf("ERROR AES192CTR output does not match test vector.\n");
     r = 1;
   }
 
-  aes256_ctr(ct, 67, nonce, &ctx256);
+  aes256_ctr(ct, 67, nonce, &ctx256_ctr);
   if(memcmp(ct, stream256, 67)) {
     printf("ERROR AES256CTR output does not match test vector.\n");
     r = 1;
   }
 
 
-  aes128_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx128);
+  aes128_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx128_ecb);
   if(memcmp(ct, ct128, 48)) {
     printf("ERROR AES128ECB output does not match test vector.\n");
     r = 1;
   }
 
-  aes192_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx192);
+  aes192_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx192_ecb);
   if(memcmp(ct, ct192, 48)) {
     printf("ERROR AES192ECB output does not match test vector.\n");
     r = 1;
   }
 
-  aes256_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx256);
+  aes256_ecb(ct, msg, sizeof(msg) / AES_BLOCKBYTES, &ctx256_ecb);
   if(memcmp(ct, ct256, 48)) {
     printf("ERROR AES256ECB output does not match test vector.\n");
     r = 1;
   }
 
-  aes128_ctx_release(&ctx128);
-  aes192_ctx_release(&ctx192);
-  aes256_ctx_release(&ctx256);
+  aes128_ctx_release(&ctx128_ecb);
+  aes192_ctx_release(&ctx192_ecb);
+  aes256_ctx_release(&ctx256_ecb);
+  aes128_ctx_release(&ctx128_ctr);
+  aes192_ctx_release(&ctx192_ctr);
+  aes256_ctx_release(&ctx256_ctr);
 
   return r;
 }

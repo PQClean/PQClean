@@ -27,7 +27,7 @@ static void AES256_CTR_DRBG_Update(const uint8_t *provided_data, uint8_t *Key, u
 //    buffer - a 128-bit ciphertext value
 static void AES256_ECB(uint8_t *key, uint8_t *ctr, uint8_t *buffer) {
     aes256ctx ctx;
-    aes256_keyexp(&ctx, key);
+    aes256_ecb_keyexp(&ctx, key);
     aes256_ecb(buffer, ctr, 1, &ctx);
     aes256_ctx_release(&ctx);
 }

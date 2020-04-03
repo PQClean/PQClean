@@ -39,8 +39,8 @@ def walk_tree(ast, parent=[]):
     pqclean.Scheme.all_implementations(),
     ids=str,
 )
-@helpers.filtered_test
 @helpers.skip_windows()
+@helpers.filtered_test
 def test_char(implementation):
     errors = []
     for fname in os.listdir(implementation.path()):

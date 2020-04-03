@@ -58,7 +58,7 @@ See the section [API](#API) below.
     ```
     4. You may run the tests in the `tests/` folder. See the `README` for how to run the test suite.
     5. Migrate your use of AES, SHA-2, and SHA-3 to the API in the `common` directory.
-    Note that if you use the AES API, you must use the `aes128_keyexp` routine (or 192 or 256) to expand the key into a key schedule object,
+    Note that if you use the AES API, you must use the `aes128_ecb_keyexp` or aes128_ctr_keyexp` routines (or 192 or 256) to expand the key into a key schedule object,
     then use `aes128_ctx_release` to release the key schedule object once you're finished with it.
     For the SHAKE API, use the appropriate `_ctx_release` functions.
     For fixed-output functions SHA-2 and SHA-3, the `_finalize` function will free the state.

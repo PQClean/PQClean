@@ -21,7 +21,7 @@ int PQCLEAN_FRODOKEM976AES_CLEAN_mul_add_as_plus_e(uint16_t *out, const uint16_t
     int16_t A[PARAMS_N * PARAMS_N] = {0};
     aes128ctx ctx128;
 
-    aes128_keyexp(&ctx128, seed_A);
+    aes128_ecb_keyexp(&ctx128, seed_A);
     for (i = 0; i < PARAMS_N; i++) {
         for (j = 0; j < PARAMS_N; j += PARAMS_STRIPE_STEP) {
             A[i * PARAMS_N + j] = (int16_t) i;                            // Loading values in the little-endian order
@@ -62,7 +62,7 @@ int PQCLEAN_FRODOKEM976AES_CLEAN_mul_add_sa_plus_e(uint16_t *out, const uint16_t
     int16_t A[PARAMS_N * PARAMS_N] = {0};
     aes128ctx ctx128;
 
-    aes128_keyexp(&ctx128, seed_A);
+    aes128_ecb_keyexp(&ctx128, seed_A);
     for (i = 0; i < PARAMS_N; i++) {
         for (j = 0; j < PARAMS_N; j += PARAMS_STRIPE_STEP) {
             A[i * PARAMS_N + j] = (int16_t) i;                            // Loading values in the little-endian order
