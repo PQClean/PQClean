@@ -45,7 +45,7 @@ seedexpander_init(AES_XOF_struct *ctx,
 
 static void AES256_ECB(uint8_t *key, uint8_t *ctr, uint8_t *buffer) {
     aes256ctx ctx;
-    aes256_keyexp(&ctx, key);
+    aes256_ecb_keyexp(&ctx, key);
     aes256_ecb(buffer, ctr, 1, &ctx);
     aes256_ctx_release(&ctx);
 }
