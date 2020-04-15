@@ -3,9 +3,9 @@ type: signature
 claimed-nist-level: 1
 length-public-key: 46
 length-secret-key: 16
-length-signature: 20854
-nistkat-sha256: 0a3754ebeb4bc41118b488c2b46499f6652398e83cb0d6eaf2929dbfd33fc8d7
-testvectors-sha256: 3350a80ccf4316b32ef13060fca8880d6802b7e61150fd36f021d1c52d8edb98
+length-signature: 28400
+nistkat-sha256: 9ca5c44144cfbf554748a1278f1abfdc97ae2ac4615561f2004c3f234c452d82
+testvectors-sha256: 9a2413984acd79b59d7270d0c05fbd1396a933f334362638fc2a1e7271f733f2
 principal-submitters:
   - Simona Samardjiska
 auxiliary-submitters:
@@ -15,4 +15,4 @@ auxiliary-submitters:
   - Peter Schwabe
 implementations:
     - name: clean
-      version: https://github.com/joostrijneveld/MQDSS/commit/0c64d4d67a37051c1299a3049a5bb8984ca27ecc
+      version: https://github.com/joostrijneveld/MQDSS/commit/00608d7610262ff07b1834885d32bc3fd27ef5e1
