@@ -1,16 +1,6 @@
 consistency_checks:
 - source:
     scheme: mqdss-48
-    implementation: clean
-  files:
-    - gf31.c
-    - gf31.h
-    - LICENSE
-    - mq.c
-    - mq.h
-    - sign.c
-- source:
-    scheme: mqdss-64
     implementation: avx2
   files:
     - api.h
@@ -19,4 +9,12 @@ consistency_checks:
     - mq.h
     - sign.c
     - params.h
-
+- source:
+    scheme: mqdss-64
+    implementation: clean
+  files:
+    - gf31.c
+    - gf31.h
+    - LICENSE
+    - mq.c
+    - mq.h
