@@ -1,0 +1,146 @@
+on: ['push', 'pull-request']
+
+name: Test common files and sanity checks
+
+jobs:
+  test-native:
+    runs-on: ubuntu-latest
+    container:
+      image: pqclean/ci-container:${{ matrix.arch }}
+      env:
+        CC: ccache ${{ matrix.cc }}
+        CCACHE_NOSTATS: 1
+        CCACHE_DIR: /ccache
+        CCACHE_SLOPPINESS: include_file_mtime
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - i386
+        cc:
+          - gcc
+          - clang
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Cache ccache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-ccache
+        with:
+          path: /ccache
+          key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-python
+        with:
+          path: ~/.cache/pip
+          key: v1-python-pip
+      - name: Install python dependencies
+        run: |
+          python3 -m pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          cd test
+          python3 test_common.py
+          python3 test_workflows.py
+  test-emulated:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - armhf
+          - unstable-ppc
+        cc:
+          - gcc
+          - clang
+    env:
+      CC: ${{ matrix.cc }}
+    steps:
+      - name: Register qemu-user-static
+        run: |
+          docker run --rm --privileged multiarch/qemu-user-static:register --reset
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Cache ccache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-ccache
+        with:
+          path: ~/ccache
+          key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-python
+        with:
+          path: ~/.cache/pip
+          key: v1-python-pip
+
+      - name: Run tests in container
+        run: |
+          docker run --rm -e CI -e CC -e -v $PWD:$PWD -w $PWD -v ~/ccache:/ccache pqclean/ci-container:${{ matrix.arch }} /bin/bash -c "\
+          export CCACHE_NOSTATS=1 && \
+          export CCACHE_DIR=/ccache && \
+          export CCACHE_SLOPPINESS=include_file_mtime && \
+          export CC=\"ccache $CC\" && \
+          pip3 install -r requirements.txt && \
+          cd test && \
+          python3 test_common.py"
+  test-windows:
+    strategy:
+      matrix:
+        bits:
+          - 64
+          - 32
+    env:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Setup astyle
+        run: |
+          # Setup strong crypto
+          Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\.NetFramework\\v4.0.30319" -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
+          Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\.NetFramework\\v4.0.30319" -Name "SchUseStrongCrypto" -Value '1' -Type DWord
+          Invoke-WebRequest -OutFile "test\\astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
+        shell: powershell
+      - name: Install python requirements
+        run: python -m pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvars${{ matrix.bits }}.bat"
+          cd test
+          python -m pytest --verbose --numprocesses=auto
+          python3 test_common.py
+        shell: cmd
+  test-macos:
+    env:
+      CCACHE_NOSTATS: 1
+      CCACHE_SLOPPINESS: include_file_mtime
+      # XCode version
+      DEVELOPER_DIR: /Applications/Xcode_11.5.app/Contents/Developer
+    strategy:
+      matrix:
+        compiler:
+          - clang  # XCode (Apple LLVM/Clang)
+          - gcc9   # GNU (Homebrew)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Set up GCC9 compiler
+        run: 'export PATH="/usr/local/bin:$PATH" && export CC=gcc-9'
+        if: ${{ matrix.compiler == 'gcc9' }}
+      - name: Install Python dependencies
+        run: python3 -m pip install -r requirements.txt
+      - name: Run tests
+        run: |
+          cd test
+          python3 test_common.py
+

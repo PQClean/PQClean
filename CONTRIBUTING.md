@@ -71,6 +71,8 @@ See the section [API](#API) below.
 
 7. Commit everything and push it to your fork.
 
+8. Generate a Github workflow by running ``.github/workflows/generate_workflows.py``.
+
 8. Open a pull request on our Github repository and process the feedback given to you by the CI environment.  The pull request will also set up a checklist for you and us to follow.  Feel free to ask us questions via the pull request.
 
 ### Generating implementations
