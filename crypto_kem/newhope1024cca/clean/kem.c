@@ -63,7 +63,7 @@ int PQCLEAN_NEWHOPE1024CCA_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char
     buf[0] = 0x08;
     shake256(k_coins_d, 3 * NEWHOPE_SYMBYTES, buf, 2 * NEWHOPE_SYMBYTES + 1);
 
-    PQCLEAN_NEWHOPE1024CCA_CLEAN_cpapke_enc(ct, buf + 1, pk, k_coins_d + NEWHOPE_SYMBYTES);     /* coins are in k_coins_d+NEWHOPE_SYMBYTES */
+    PQCLEAN_NEWHOPE1024CCA_CLEAN_cpapke_enc(ct, buf + 1, pk, k_coins_d + NEWHOPE_SYMBYTES);      /* coins are in k_coins_d+NEWHOPE_SYMBYTES */
 
     for (i = 0; i < NEWHOPE_SYMBYTES; i++) {
         ct[i + NEWHOPE_CPAPKE_CIPHERTEXTBYTES] = k_coins_d[i + 2 * NEWHOPE_SYMBYTES];    /* copy Targhi-Unruh hash into ct */
@@ -103,7 +103,7 @@ int PQCLEAN_NEWHOPE1024CCA_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigne
     }
     shake256(k_coins_d, 3 * NEWHOPE_SYMBYTES, buf, 2 * NEWHOPE_SYMBYTES + 1);
 
-    PQCLEAN_NEWHOPE1024CCA_CLEAN_cpapke_enc(ct_cmp, buf + 1, pk, k_coins_d + NEWHOPE_SYMBYTES); /* coins are in k_coins_d+NEWHOPE_SYMBYTES */
+    PQCLEAN_NEWHOPE1024CCA_CLEAN_cpapke_enc(ct_cmp, buf + 1, pk, k_coins_d + NEWHOPE_SYMBYTES);  /* coins are in k_coins_d+NEWHOPE_SYMBYTES */
 
     for (i = 0; i < NEWHOPE_SYMBYTES; i++) {
         ct_cmp[i + NEWHOPE_CPAPKE_CIPHERTEXTBYTES] = k_coins_d[i + 2 * NEWHOPE_SYMBYTES];
