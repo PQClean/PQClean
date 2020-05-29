@@ -1,6 +1,7 @@
 import glob
 import os
 from typing import Optional
+from functools import lru_cache
 
 import yaml
 import platform
@@ -20,6 +21,7 @@ class Scheme:
         return 'PQCLEAN_{}_'.format(self.name.upper()).replace('-', '')
 
     @staticmethod
+    @lru_cache(maxsize=None)
     def by_name(scheme_name):
         for scheme in Scheme.all_schemes():
             if scheme.name == scheme_name:
@@ -27,6 +29,7 @@ class Scheme:
         raise KeyError()
 
     @staticmethod
+    @lru_cache
     def all_schemes():
         schemes = []
         schemes.extend(Scheme.all_schemes_of_type('kem'))
@@ -34,6 +37,7 @@ class Scheme:
         return schemes
 
     @staticmethod
+    @lru_cache
     def all_implementations():
         implementations = []
         for scheme in Scheme.all_schemes():
@@ -41,11 +45,13 @@ class Scheme:
         return implementations
 
     @staticmethod
+    @lru_cache
     def all_supported_implementations():
         return [impl for impl in Scheme.all_implementations()
                 if impl.supported_on_current_platform()]
 
     @staticmethod
+    @lru_cache
     def all_schemes_of_type(type: str) -> list:
         schemes = []
         p = os.path.join('..', 'crypto_' + type)
@@ -60,12 +66,13 @@ class Scheme:
                         assert('Unknown type')
         return schemes
 
+    @lru_cache(maxsize=None)
     def metadata(self):
         metafile = os.path.join(self.path(), 'META.yml')
         try:
             with open(metafile, encoding='utf-8') as f:
-                metadata = yaml.safe_load(f.read())
-                return metadata
+                metadata = yaml.safe_load(f)
+            return metadata
         except Exception as e:
             print("Can't open {}: {}".format(metafile, e))
             return None
@@ -80,6 +87,7 @@ class Implementation:
         self.scheme = scheme
         self.name = name
 
+    @lru_cache(maxsize=None)
     def metadata(self):
         for i in self.scheme.metadata()['implementations']:
             if i['name'] == self.name:
@@ -104,6 +112,7 @@ class Implementation:
                          '*.o' if os.name != 'nt' else '*.obj'))
 
     @staticmethod
+    @lru_cache(maxsize=None)
     def by_name(scheme_name, implementation_name):
         scheme = Scheme.by_name(scheme_name)
         for implementation in scheme.implementations:
@@ -112,6 +121,7 @@ class Implementation:
         raise KeyError()
 
     @staticmethod
+    @lru_cache(maxsize=None)
     def all_implementations(scheme: Scheme) -> list:
         implementations = []
         for d in os.listdir(scheme.path()):
@@ -143,6 +153,7 @@ class Implementation:
 
         return True
 
+    @lru_cache(maxsize=10000)
     def supported_on_current_platform(self) -> bool:
         if 'supported_platforms' not in self.metadata():
             return True
