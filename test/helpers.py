@@ -38,20 +38,18 @@ def isolate_test_files(impl_path, test_prefix,
     test_dir = os.path.abspath(test_dir)
     TEST_TEMPDIRS.append(test_dir)
 
-    # Create layers in folder structure
-    nested_dir = os.path.join(test_dir, 'crypto_bla')
-    os.mkdir(nested_dir)
-    nested_dir = os.path.join(nested_dir, 'scheme')
-    os.mkdir(nested_dir)
-
-    # Create test dependencies structure
-    os.mkdir(os.path.join(test_dir, 'test'))
-
     # the implementation will go here.
-    new_impl_dir = os.path.abspath(os.path.join(nested_dir, 'impl'))
+    scheme_dir = os.path.join(test_dir, 'crypto_bla', 'scheme')
+    new_impl_dir = os.path.abspath(os.path.join(scheme_dir, 'impl'))
 
     def initializer():
         """Isolate the files to be tested"""
+        # Create layers in folder structure
+        os.makedirs(scheme_dir)
+
+        # Create test dependencies structure
+        os.mkdir(os.path.join(test_dir, 'test'))
+
         # Copy common files (randombytes.c, aes.c, ...)
         shutil.copytree(
             os.path.join('..', 'common'), os.path.join(test_dir, 'common'))
