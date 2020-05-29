@@ -2,7 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libsphincs-haraka-256f-simple_aesni.lib
-OBJECTS=address.obj wots.obj utils.obj fors.obj sign.obj hash_haraka.obj thash_haraka_simple.obj hash_harakax4.obj thash_haraka_simplex4.obj haraka.obj
+OBJECTS=address.obj wots.obj utils.obj utilsx4.obj fors.obj sign.obj hash_haraka.obj thash_haraka_simple.obj hash_harakax4.obj thash_haraka_simplex4.obj haraka.obj
 
 # We ignore warning C4127: in thash_haraka_*x4.c we use a conditional
 # that when the macro is generated for inblocks = 1 results in a case
