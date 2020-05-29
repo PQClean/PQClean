@@ -29,7 +29,7 @@ class Scheme:
         raise KeyError()
 
     @staticmethod
-    @lru_cache
+    @lru_cache(maxsize=1)
     def all_schemes():
         schemes = []
         schemes.extend(Scheme.all_schemes_of_type('kem'))
@@ -37,7 +37,7 @@ class Scheme:
         return schemes
 
     @staticmethod
-    @lru_cache
+    @lru_cache(maxsize=1)
     def all_implementations():
         implementations = []
         for scheme in Scheme.all_schemes():
@@ -45,13 +45,13 @@ class Scheme:
         return implementations
 
     @staticmethod
-    @lru_cache
+    @lru_cache(maxsize=1)
     def all_supported_implementations():
         return [impl for impl in Scheme.all_implementations()
                 if impl.supported_on_current_platform()]
 
     @staticmethod
-    @lru_cache
+    @lru_cache(maxsize=32)
     def all_schemes_of_type(type: str) -> list:
         schemes = []
         p = os.path.join('..', 'crypto_' + type)
