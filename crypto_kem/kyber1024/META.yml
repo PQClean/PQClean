@@ -29,7 +29,6 @@ implementations:
           operating_systems:
             - Linux
           required_flags:
-              - aes
               - avx2
               - bmi2
               - popcnt
