@@ -166,7 +166,7 @@ def slow_test(f):
     return wrapper
 
 
-@lru_cache
+@lru_cache(maxsize=None)
 def ensure_available(executable):
     """
     Checks if a command is available.
@@ -285,7 +285,7 @@ def filtered_test(func):
     return wrapper
 
 
-@lru_cache
+@lru_cache(maxsize=1)
 def get_cpu_info():
     the_info = None
     while the_info is None or 'flags' not in the_info:
