@@ -6,7 +6,7 @@ length-public-key: 928
 length-secret-key: 896
 length-ciphertext: 1088
 length-shared-secret: 32
-nistkat-sha256: 42444446b96f45c9b7221c4fde8afd5dfc0b3c2ff05b9a88ff12ea3949fbb76c
+nistkat-sha256: 7df3eae4740483a61d13610f6bc2221f27e32c7849cf371e9770f986ce6fdb54
 principal-submitters:
   - Thomas Pöppelmann
 auxiliary-submitters:
