@@ -1,7 +1,7 @@
 import glob
 import os
-from typing import Optional
 from functools import lru_cache
+from typing import Optional, List, Union
 
 import yaml
 import platform
@@ -53,7 +53,7 @@ class Scheme:
     @staticmethod
     @lru_cache(maxsize=32)
     def all_schemes_of_type(type: str) -> list:
-        schemes = []
+        schemes: List[Union[Scheme]] = []
         p = os.path.join('..', 'crypto_' + type)
         if os.path.isdir(p):
             for d in os.listdir(p):
@@ -101,13 +101,13 @@ class Implementation:
             return "lib{}_{}.lib".format(self.scheme.name, self.name)
         return "lib{}_{}.a".format(self.scheme.name, self.name)
 
-    def cfiles(self) -> [str]:
+    def cfiles(self) -> List[str]:
         return glob.glob(os.path.join(self.path(), '*.c'))
 
-    def hfiles(self) -> [str]:
+    def hfiles(self) -> List[str]:
         return glob.glob(os.path.join(self.path(), '*.h'))
 
-    def ofiles(self) -> [str]:
+    def ofiles(self) -> List[str]:
         return glob.glob(os.path.join(self.path(),
                          '*.o' if os.name != 'nt' else '*.obj'))
 
@@ -122,7 +122,7 @@ class Implementation:
 
     @staticmethod
     @lru_cache(maxsize=None)
-    def all_implementations(scheme: Scheme) -> list:
+    def all_implementations(scheme: Scheme) -> List['Implementation']:
         implementations = []
         for d in os.listdir(scheme.path()):
             if os.path.isdir(os.path.join(scheme.path(), d)):
@@ -130,11 +130,11 @@ class Implementation:
         return implementations
 
     @staticmethod
-    def all_supported_implementations(scheme: Scheme) -> list:
+    def all_supported_implementations(scheme: Scheme) -> List['Implementation']:
         return [impl for impl in Implementation.all_implementations(scheme)
                 if impl.supported_on_current_platform()]
 
-    def namespace_prefix(self):
+    def namespace_prefix(self) -> str:
         return '{}{}_'.format(self.scheme.namespace_prefix(),
                               self.name.upper()).replace('-', '')
 
@@ -177,10 +177,10 @@ class Implementation:
                     return True
         return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "{} implementation of {}".format(self.name, self.scheme.name)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<Implementation({}, {})>".format(self.scheme.name, self.name)
 
 
@@ -192,7 +192,7 @@ class KEM(Scheme):
         self.implementations = Implementation.all_implementations(self)
 
     @staticmethod
-    def all_kems() -> list:
+    def all_kems() -> List['KEM']:
         return Scheme.all_schemes_of_type('kem')
 
 
@@ -204,5 +204,5 @@ class Signature(Scheme):
         self.implementations = Implementation.all_implementations(self)
 
     @staticmethod
-    def all_sigs():
+    def all_sigs() -> List['Signature']:
         return Scheme.all_schemes_of_type('sign')
