@@ -238,7 +238,7 @@ def export_implementation(base_dir: Path, impl: pqclean.Implementation):
         elif src_file.name == "kem.c":
             dest_file = impl_dest_dir / "pqclean_kem.c"
         elif src_file.name == "sign.c":
-            dest_file = impl_dest_dir / "pqclean_kem.c"
+            dest_file = impl_dest_dir / "pqclean_sign.c"
         else:
             dest_file = impl_dest_dir / str(src_file.name)
         supercopy(src_file, dest_file)
