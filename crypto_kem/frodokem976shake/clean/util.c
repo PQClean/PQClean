@@ -224,6 +224,30 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_unpack(uint16_t *out, size_t outlen, const u
 }
 
 
+int8_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_ct_verify(const uint16_t *a, const uint16_t *b, size_t len) {
+    // Compare two arrays in constant time.
+    // Returns 0 if the byte arrays are equal, -1 otherwise.
+    uint16_t r = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        r |= a[i] ^ b[i];
+    }
+
+    r = (-(int16_t)r) >> (8 * sizeof(uint16_t) -1);
+    return (int8_t)r;
+}
+
+
+void PQCLEAN_FRODOKEM976SHAKE_CLEAN_ct_select(uint8_t *r, const uint8_t *a, const uint8_t *b, size_t len, int8_t selector) {
+    // Select one of the two input arrays to be moved to r
+    // If (selector == 0) then load r with a, else if (selector == -1) load r with b
+
+    for (size_t i = 0; i < len; i++) {
+        r[i] = (~selector & a[i]) | (selector & b[i]);
+    }
+}
+
+
 void PQCLEAN_FRODOKEM976SHAKE_CLEAN_clear_bytes(uint8_t *mem, size_t n) {
     // Clear 8-bit bytes from memory. "n" indicates the number of bytes to be zeroed.
     // This function uses the volatile type qualifier to inform the compiler not to optimize out the memory clearing.
