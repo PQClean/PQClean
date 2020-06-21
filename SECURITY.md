@@ -24,6 +24,9 @@ Use at your own risk.
 ### 2019-XX-XX
 -->
 
+### 2020-06-19
+* A potential timing leak was present in the FrodoKEM decapsulation routine, as identified by [Guo, Johansson, and Nilsson](https://eprint.iacr.org/2020/743).  This was fixed in [PR #303](https://github.com/PQClean/PQClean/pull/303).
+
 ### 2019-09-24
 * All Falcon implementations before [PR #235][PR 235] got merged were insecure. See [EPRINT report 2019/893][2019/893].
 
