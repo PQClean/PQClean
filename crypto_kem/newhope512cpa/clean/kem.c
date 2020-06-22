@@ -39,9 +39,10 @@ int PQCLEAN_NEWHOPE512CPA_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned c
 int PQCLEAN_NEWHOPE512CPA_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk) {
     unsigned char buf[2 * NEWHOPE_SYMBYTES];
 
-    randombytes(buf, NEWHOPE_SYMBYTES);
+    buf[0] = 0x02;
+    randombytes(buf + 1, NEWHOPE_SYMBYTES);
 
-    shake256(buf, 2 * NEWHOPE_SYMBYTES, buf, NEWHOPE_SYMBYTES);                    /* Don't release system RNG output */
+    shake256(buf, 2 * NEWHOPE_SYMBYTES, buf, NEWHOPE_SYMBYTES + 1);                    /* Don't release system RNG output */
 
     PQCLEAN_NEWHOPE512CPA_CLEAN_cpapke_enc(ct, buf, pk, buf + NEWHOPE_SYMBYTES);                               /* coins are in buf+NEWHOPE_SYMBYTES */
 

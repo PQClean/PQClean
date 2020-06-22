@@ -12,6 +12,8 @@ void PQCLEAN_FRODOKEM976SHAKE_CLEAN_key_encode(uint16_t *out, const uint16_t *in
 void PQCLEAN_FRODOKEM976SHAKE_CLEAN_key_decode(uint16_t *out, const uint16_t *in);
 void PQCLEAN_FRODOKEM976SHAKE_CLEAN_pack(uint8_t *out, size_t outlen, const uint16_t *in, size_t inlen, uint8_t lsb);
 void PQCLEAN_FRODOKEM976SHAKE_CLEAN_unpack(uint16_t *out, size_t outlen, const uint8_t *in, size_t inlen, uint8_t lsb);
+int8_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_ct_verify(const uint16_t *a, const uint16_t *b, size_t len);
+void PQCLEAN_FRODOKEM976SHAKE_CLEAN_ct_select(uint8_t *r, const uint8_t *a, const uint8_t *b, size_t len, int8_t selector);
 void PQCLEAN_FRODOKEM976SHAKE_CLEAN_clear_bytes(uint8_t *mem, size_t n);
 uint16_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_LE_TO_UINT16(uint16_t n);
 uint16_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_UINT16_TO_LE(uint16_t n);
