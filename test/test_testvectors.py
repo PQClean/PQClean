@@ -40,6 +40,7 @@ def test_testvectors(implementation, impl_path, test_dir, init, destr):
             implementation.name,
             '.exe' if os.name == 'nt' else ''
         ))],
+        print_output=False,
     ).replace('\r', '')
     assert(implementation.scheme.metadata()['testvectors-sha256'].lower()
            == hashlib.sha256(out.encode('utf-8')).hexdigest().lower())
