@@ -26,17 +26,9 @@ RENAMES = {
     "hqc-256-1-cca2": "hqc2561",
     "hqc-256-2-cca2": "hqc2562",
     "hqc-256-3-cca2": "hqc2563",
-    "qtesla-p-I": "qtesla1p",
-    "qtesla-p-III": "qtesla3p",
     "lightsaber": "lightsaber2",
     "saber": "saber2",
     "firesaber": "firesaber2",
-    "babybear": "threebears624r2cca",
-    "babybear-ephem": "threebears624r2cpa",
-    "mamabear": "threebears936r2cca",
-    "mamabear-ephem": "threebears936r2cpa",
-    "papabear": "threebears1248r2cca",
-    "papabear-ephem": "threebears1248r2cpa",
 }
 
 for func, size, variant, tweak in itertools.product(
@@ -76,20 +68,12 @@ def _get_schemes() -> Iterator[pqclean.Scheme]:
         ["348864", "460896", "6688128", "6960119", "8192128"], ["", "f"]
     ):
         yield pqclean.Scheme.by_name(f"mceliece{size}{variant}")
-    # NewHope
-    # CPA variants not in SUPERCOP
-    for size, variant in itertools.product(["512", "1024"], ["cca", "cpa"]):
-        yield pqclean.Scheme.by_name(f"newhope{size}{variant}")
     # NTRU
     for variant in ["hrss701", "hps2048509", "hps2048677", "hps4096821"]:
         yield pqclean.Scheme.by_name(f"ntru{variant}")
     # SABER
     for variant in ["light", "", "fire"]:
         yield pqclean.Scheme.by_name(f"{variant}saber")
-    # Map threebears
-    for variant, ephem in itertools.product(["baby", "mama", "papa"], ["", "-ephem"]):
-        yield pqclean.Scheme.by_name(f"{variant}bear{ephem}")
-    # LEDA not included as our version is out of date
 
     # === Signature schemes ===
     # Dilithium
@@ -106,13 +90,6 @@ def _get_schemes() -> Iterator[pqclean.Scheme]:
     # Falcon
     for size in ["512", "1024"]:
         yield pqclean.Scheme.by_name(f"falcon-{size}")
-    # MQDSS: SUPERCOP version out of date
-    for size in ["48", "64"]:
-        yield pqclean.Scheme.by_name(f"mqdss-{size}")
-    # qTESLA
-    yield pqclean.Scheme.by_name("qtesla-p-I")
-    yield pqclean.Scheme.by_name("qtesla-p-III")
-
 
 def supercopy(src_path: Path, dest_path: Path):
     if src_path.name in SKIP_FILES:
