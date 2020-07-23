@@ -79,23 +79,27 @@ For all of these schemes we have clean C code, but for some we also have optimis
 
 ### Key Encapsulation Mechanisms
 
+**Finalists:**
 * Classic McEliece
-* FrodoKEM
 * Kyber
-* LedaKEM
 * NTRU
-* NewHope
 * SABER
-* ThreeBears
+
+**Alternate candidates:**
+* FrodoKEM
+* HQC
 
 ### Signature schemes
 
+**Finalists:**
 * Dilithium
 * Falcon
-* MQDSS
-* qTESLA
 * Rainbow
+
+**Alternate candidates:**
 * SPHINCS+
+
+Implementations previously available in PQClean and dropped in Round 3 of the NIST standardization effort are available in the [`round2` tag](https://github.com/PQClean/PQClean/releases/tag/round2).
 
 ## API used by PQClean
 
