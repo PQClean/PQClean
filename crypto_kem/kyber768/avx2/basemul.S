@@ -1,4 +1,5 @@
 #include "params.h"
+#include "cdecl.inc"
 
 .macro schoolbook off,sign
 #load
@@ -48,7 +49,7 @@ vpaddd		%ymm12,%ymm13,%ymm12	# y0
 vpaddd		%ymm7,%ymm8,%ymm7	# y1
 .endm
 
-.macro red a0,a1,b0,b1 x,y,z
+.macro red a0,a1,b0,b1,x,y,z
 #pack
 vpxor		%ymm\x,%ymm\x,%ymm\x
 vpblendw	$0xAA,%ymm\x,%ymm\a0,%ymm\y
@@ -73,13 +74,8 @@ vpsubw		%ymm\z,%ymm\a0,%ymm\a0
 vpsubw		%ymm\y,%ymm\b0,%ymm\b0
 .endm
 
-.global PQCLEAN_KYBER768_AVX2_basemul_acc_avx
-PQCLEAN_KYBER768_AVX2_basemul_acc_avx:
-#consts
-vmovdqa		PQCLEAN_KYBER768_AVX2_16xq(%rip),%ymm0
-vmovdqa		PQCLEAN_KYBER768_AVX2_16xqinv(%rip),%ymm1
-vmovdqu		(%rcx),%ymm2
-
+.text
+basemul64_acc_avx:
 poly0.0:
 schoolbook	0,0
 
@@ -109,7 +105,7 @@ vpaddd		%ymm7,%ymm6,%ymm6
 
 
 #reduce
-red		3,4,5,6 7,8,9
+red		3,4,5,6,7,8,9
 
 #store
 vmovdqa		%ymm3,(%rdi)
@@ -144,7 +140,7 @@ vpaddd		%ymm7,%ymm6,%ymm6
 
 
 #reduce
-red		3,4,5,6 7,8,9
+red		3,4,5,6,7,8,9
 
 #store
 vmovdqa		%ymm3,64(%rdi)
@@ -152,17 +148,40 @@ vmovdqa		%ymm5,96(%rdi)
 
 ret
 
-.global PQCLEAN_KYBER768_AVX2_basemul_avx
-PQCLEAN_KYBER768_AVX2_basemul_avx:
+.global cdecl(PQCLEAN_KYBER768_AVX2_basemul_acc_avx)
+cdecl(PQCLEAN_KYBER768_AVX2_basemul_acc_avx):
 #consts
-vmovdqa		PQCLEAN_KYBER768_AVX2_16xq(%rip),%ymm0
-vmovdqa		PQCLEAN_KYBER768_AVX2_16xqinv(%rip),%ymm1
-vmovdqu		(%rcx),%ymm2
+vmovdqa		_16XQ*2(%rcx),%ymm0
+vmovdqa		_16XQINV*2(%rcx),%ymm1
 
+vmovdqu		(_ZETAS_EXP+152)*2(%rcx),%ymm2
+call		basemul64_acc_avx
+
+vmovdqu		(_ZETAS_EXP+184)*2(%rcx),%ymm2
+add		$128,%rdi
+add		$128,%rsi
+add		$128,%rdx
+call		basemul64_acc_avx
+
+vmovdqu		(_ZETAS_EXP+348)*2(%rcx),%ymm2
+add		$128,%rdi
+add		$128,%rsi
+add		$128,%rdx
+call		basemul64_acc_avx
+
+vmovdqu		(_ZETAS_EXP+380)*2(%rcx),%ymm2
+add		$128,%rdi
+add		$128,%rsi
+add		$128,%rdx
+call		basemul64_acc_avx
+
+ret
+
+basemul64_avx:
 schoolbook	0,0
 
 #reduce
-red		14,9,12,7 8,10,11
+red		14,9,12,7,8,10,11
 
 #store
 vmovdqa		%ymm14,(%rdi)
@@ -171,10 +190,39 @@ vmovdqa		%ymm12,32(%rdi)
 schoolbook	64,1
 
 #reduce
-red		14,9,12,7 8,10,11
+red		14,9,12,7,8,10,11
 
 #store
 vmovdqa		%ymm14,64(%rdi)
 vmovdqa		%ymm12,96(%rdi)
+
+ret
+
+.global cdecl(PQCLEAN_KYBER768_AVX2_basemul_avx)
+cdecl(PQCLEAN_KYBER768_AVX2_basemul_avx):
+#consts
+vmovdqa		_16XQ*2(%rcx),%ymm0
+vmovdqa		_16XQINV*2(%rcx),%ymm1
+
+vmovdqu		(_ZETAS_EXP+152)*2(%rcx),%ymm2
+call		basemul64_avx
+
+vmovdqu		(_ZETAS_EXP+184)*2(%rcx),%ymm2
+add		$128,%rdi
+add		$128,%rsi
+add		$128,%rdx
+call		basemul64_avx
+
+vmovdqu		(_ZETAS_EXP+348)*2(%rcx),%ymm2
+add		$128,%rdi
+add		$128,%rsi
+add		$128,%rdx
+call		basemul64_avx
+
+vmovdqu		(_ZETAS_EXP+380)*2(%rcx),%ymm2
+add		$128,%rdi
+add		$128,%rsi
+add		$128,%rdx
+call		basemul64_avx
 
 ret

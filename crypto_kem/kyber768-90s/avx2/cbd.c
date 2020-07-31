@@ -1,27 +1,27 @@
-#include "cbd.h"
 #include "params.h"
-
+#include "cbd.h"
 #include <immintrin.h>
 #include <stdint.h>
 
 /*************************************************
-* Name:        cbd
+* Name:        PQCLEAN_KYBER76890S_AVX2_cbd
 *
 * Description: Given an array of uniformly random bytes, compute
 *              polynomial with coefficients distributed according to
 *              a centered binomial distribution with parameter KYBER_ETA
 *
 * Arguments:   - poly *r:                  pointer to output polynomial
-*              - const uint8_t *buf: pointer to input byte array
+*              - const unsigned char *buf: pointer to input byte array
 **************************************************/
-void PQCLEAN_KYBER76890S_AVX2_cbd(poly *r, const uint8_t *buf) {
+void PQCLEAN_KYBER76890S_AVX2_cbd(poly *restrict r, const uint8_t *restrict buf) {
+    unsigned int i = 0;
     __m256i vec0, vec1, vec2, vec3, tmp;
     const __m256i mask55 = _mm256_set1_epi32(0x55555555);
     const __m256i mask33 = _mm256_set1_epi32(0x33333333);
     const __m256i mask03 = _mm256_set1_epi32(0x03030303);
 
-    for (size_t i = 0; i < KYBER_N / 64; i++) {
-        vec0 = _mm256_loadu_si256((__m256i *)&buf[32 * i]);
+    for (i = 0; i < KYBER_N / 64; i++) {
+        vec0 = _mm256_load_si256((__m256i *)&buf[32 * i]);
 
         vec1 = _mm256_srli_epi32(vec0, 1);
         vec0 = _mm256_and_si256(mask55, vec0);

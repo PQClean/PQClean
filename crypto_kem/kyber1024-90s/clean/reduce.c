@@ -1,32 +1,32 @@
-#include "reduce.h"
-
 #include "params.h"
-
+#include "reduce.h"
 #include <stdint.h>
+
 /*************************************************
-* Name:        montgomery_reduce
+* Name:        PQCLEAN_KYBER102490S_CLEAN_montgomery_reduce
 *
 * Description: Montgomery reduction; given a 32-bit integer a, computes
 *              16-bit integer congruent to a * R^-1 mod q,
 *              where R=2^16
 *
-* Arguments:   - int32_t a: input integer to be reduced; has to be in {-q2^15,...,q2^15-1}
+* Arguments:   - int32_t a: input integer to be reduced;
+*                           has to be in {-q2^15,...,q2^15-1}
 *
 * Returns:     integer in {-q+1,...,q-1} congruent to a * R^-1 modulo q.
 **************************************************/
 int16_t PQCLEAN_KYBER102490S_CLEAN_montgomery_reduce(int32_t a) {
-    int32_t t;
-    int16_t u;
+    int32_t t = 0;
+    int16_t u = 0;
 
     u = (int16_t)(a * (int64_t)QINV);
     t = (int32_t)u * KYBER_Q;
     t = a - t;
     t >>= 16;
-    return (int16_t)t;
+    return t;
 }
 
 /*************************************************
-* Name:        barrett_reduce
+* Name:        PQCLEAN_KYBER102490S_CLEAN_barrett_reduce
 *
 * Description: Barrett reduction; given a 16-bit integer a, computes
 *              16-bit integer congruent to a mod q in {0,...,q}
@@ -36,21 +36,20 @@ int16_t PQCLEAN_KYBER102490S_CLEAN_montgomery_reduce(int32_t a) {
 * Returns:     integer in {0,...,q} congruent to a modulo q.
 **************************************************/
 int16_t PQCLEAN_KYBER102490S_CLEAN_barrett_reduce(int16_t a) {
-    int32_t t;
-    const int32_t v = (1U << 26) / KYBER_Q + 1;
+    int16_t t = 0;
+    const int16_t v = ((1U << 26) + KYBER_Q / 2) / KYBER_Q;
 
-    t = v * a;
-    t >>= 26;
+    t  = (int32_t)v * a >> 26;
     t *= KYBER_Q;
-    return a - (int16_t)t;
+    return a - t;
 }
 
 /*************************************************
-* Name:        csubq
+* Name:        PQCLEAN_KYBER102490S_CLEAN_csubq
 *
 * Description: Conditionallly subtract q
 *
-* Arguments:   - int16_t a: input integer
+* Arguments:   - int16_t x: input integer
 *
 * Returns:     a - q if a >= q, else a
 **************************************************/

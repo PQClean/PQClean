@@ -18,17 +18,16 @@ consistency_checks:
     - consts.c
     - consts.h
     - fq.inc
-    - fq.s
+    - fq.S
     - indcpa.h
-    - invntt.s
+    - invntt.S
     - ntt.h
-    - ntt.s
+    - ntt.S
     - polyvec.h
     - reduce.h
-    - rejsample.c
     - rejsample.h
     - shuffle.inc
-    - shuffle.s
+    - shuffle.S
     - verify.c
     - verify.h
 - source:
@@ -52,18 +51,18 @@ consistency_checks:
     - consts.c
     - consts.h
     - fq.inc
-    - fq.s
+    - fq.S
     - indcpa.h
-    - invntt.s
+    - invntt.S
     - ntt.h
-    - ntt.s
+    - ntt.S
     - poly.h
     - polyvec.h
     - reduce.h
     - rejsample.c
     - rejsample.h
     - shuffle.inc
-    - shuffle.s
+    - shuffle.S
     - symmetric.h
     - verify.c
     - verify.h

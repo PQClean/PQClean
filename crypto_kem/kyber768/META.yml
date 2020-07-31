@@ -20,15 +20,16 @@ auxiliary-submitters:
   - Gregor Seiler
   - Damien Stehlé
 implementations:
-    - name: clean
-      version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
-    - name: avx2
-      version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
-      supported_platforms:
-        - architecture: x86_64
-          operating_systems:
-            - Linux
-          required_flags:
-            - avx2
-            - bmi2
-            - popcnt
+  - name: clean
+    version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
+  - name: avx2
+    version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
+    supported_platforms:
+      - architecture: x86_64
+        operating_systems:
+          - Linux
+          - Darwin
+        required_flags:
+          - avx2
+          - bmi2
+          - popcnt

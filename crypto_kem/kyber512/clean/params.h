@@ -1,8 +1,5 @@
-#ifndef PARAMS_H
-#define PARAMS_H
-
-
-/* Don't change parameters below this line */
+#ifndef PQCLEAN_KYBER512_CLEAN_PARAMS_H
+#define PQCLEAN_KYBER512_CLEAN_PARAMS_H
 
 #define KYBER_N 256
 #define KYBER_Q 3329
@@ -12,9 +9,8 @@
 #define KYBER_SYMBYTES 32   /* size in bytes of hashes, and seeds */
 #define KYBER_SSBYTES  32   /* size in bytes of shared key */
 
-#define KYBER_POLYBYTES              384
-#define KYBER_POLYVECBYTES           (KYBER_K * KYBER_POLYBYTES)
-
+#define KYBER_POLYBYTES     384
+#define KYBER_POLYVECBYTES  (KYBER_K * KYBER_POLYBYTES)
 
 #define KYBER_K 2
 #define KYBER_POLYCOMPRESSEDBYTES    96
@@ -23,10 +19,14 @@
 #define KYBER_INDCPA_MSGBYTES       KYBER_SYMBYTES
 #define KYBER_INDCPA_PUBLICKEYBYTES (KYBER_POLYVECBYTES + KYBER_SYMBYTES)
 #define KYBER_INDCPA_SECRETKEYBYTES (KYBER_POLYVECBYTES)
-#define KYBER_INDCPA_BYTES          (KYBER_POLYVECCOMPRESSEDBYTES + KYBER_POLYCOMPRESSEDBYTES)
+#define KYBER_INDCPA_BYTES          (KYBER_POLYVECCOMPRESSEDBYTES \
+                                     + KYBER_POLYCOMPRESSEDBYTES)
 
 #define KYBER_PUBLICKEYBYTES  (KYBER_INDCPA_PUBLICKEYBYTES)
-#define KYBER_SECRETKEYBYTES  (KYBER_INDCPA_SECRETKEYBYTES +  KYBER_INDCPA_PUBLICKEYBYTES + 2*KYBER_SYMBYTES) /* 32 bytes of additional space to save H(pk) */
+/* 32 bytes of additional space to save H(pk) */
+#define KYBER_SECRETKEYBYTES  (KYBER_INDCPA_SECRETKEYBYTES \
+                               + KYBER_INDCPA_PUBLICKEYBYTES \
+                               + 2*KYBER_SYMBYTES)
 #define KYBER_CIPHERTEXTBYTES  KYBER_INDCPA_BYTES
 
 #endif

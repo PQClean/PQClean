@@ -1,9 +1,40 @@
 # This Makefile can be used with GNU Make or BSD Make
 
 LIB=libkyber1024-90s_avx2.a
-HEADERS=api.h params.h poly.h polyvec.h reduce.h fq.inc cbd.h consts.h ntt.h shuffle.inc verify.h indcpa.h rejsample.h symmetric.h aes256ctr.h
-OBJECTS=kem.o poly.o polyvec.o fq.o shuffle.o cbd.o ntt.o invntt.o basemul.o consts.o \
-		verify.o indcpa.o rejsample.o aes256ctr.o
+HEADERS=		   \
+	aes256ctr.h	   \
+	align.h        \
+	api.h          \
+	cbd.h          \
+	cdecl.inc      \
+	consts.h       \
+	fq.inc         \
+	indcpa.h       \
+	kem.h          \
+	ntt.h          \
+	params.h       \
+	poly.h         \
+	polyvec.h      \
+	reduce.h       \
+	rejsample.h    \
+	shuffle.inc    \
+	symmetric.h    \
+	verify.h
+OBJECTS=		   \
+	aes256ctr.o    \
+	basemul.o      \
+	cbd.o          \
+	consts.o       \
+	fq.o           \
+	indcpa.o       \
+	invntt.o       \
+	kem.o          \
+	ntt.o          \
+	poly.o         \
+	polyvec.o      \
+	rejsample.o    \
+	shuffle.o      \
+	verify.o
 
 CFLAGS=-mavx2 -maes -mbmi2 -mpopcnt -O3 -Wall -Wextra -Wpedantic -Werror \
 	   -Wmissing-prototypes -Wredundant-decls -std=c99 \
@@ -14,11 +45,8 @@ all: $(LIB)
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-%.o: %.s $(HEADERS)
-	$(AS) -o $@ $<
-
 %.o: %.S $(HEADERS)
-	$(AS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(LIB): $(OBJECTS)
 	$(AR) -r $@ $(OBJECTS)
