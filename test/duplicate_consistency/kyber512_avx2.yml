@@ -8,7 +8,7 @@ consistency_checks:
     - indcpa.h
     - params.h
     - polyvec.h
-    - symmetric-fips202.c
+    - symmetric-shake.c
     - verify.h
 - source:
     scheme: kyber768
@@ -21,19 +21,19 @@ consistency_checks:
     - fips202x4.c
     - fips202x4.h
     - fq.inc
-    - fq.s
+    - fq.S
     - indcpa.h
-    - invntt.s
+    - invntt.S
     - ntt.h
-    - ntt.s
+    - ntt.S
     - poly.h
     - polyvec.h
     - reduce.h
     - rejsample.c
     - rejsample.h
     - shuffle.inc
-    - shuffle.s
-    - symmetric-fips202.c
+    - shuffle.S
+    - symmetric-shake.c
     - symmetric.h
     - verify.c
     - verify.h

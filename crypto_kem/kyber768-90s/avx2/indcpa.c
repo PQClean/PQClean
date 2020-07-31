@@ -1,26 +1,33 @@
+#include "align.h"
 #include "cbd.h"
 #include "indcpa.h"
 #include "ntt.h"
+#include "params.h"
 #include "poly.h"
 #include "polyvec.h"
 #include "randombytes.h"
 #include "rejsample.h"
 #include "symmetric.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /*************************************************
 * Name:        pack_pk
 *
 * Description: Serialize the public key as concatenation of the
-*              compressed and serialized vector of polynomials pk
+*              serialized vector of polynomials pk
 *              and the public seed used to generate the matrix A.
 *
 * Arguments:   uint8_t *r:          pointer to the output serialized public key
-*              const poly *pk:            pointer to the input public-key polynomial
+*              polyvec *pk:         pointer to the input public-key polyvec
 *              const uint8_t *seed: pointer to the input public seed
 **************************************************/
-static void pack_pk(uint8_t *r, polyvec *pk, const uint8_t *seed) {
+static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
+                    polyvec *pk,
+                    const uint8_t seed[KYBER_SYMBYTES]) {
+    size_t i = 0;
     PQCLEAN_KYBER76890S_AVX2_polyvec_tobytes(r, pk);
-    for (size_t i = 0; i < KYBER_SYMBYTES; i++) {
+    for (i = 0; i < KYBER_SYMBYTES; i++) {
         r[i + KYBER_POLYVECBYTES] = seed[i];
     }
 }
@@ -28,16 +35,19 @@ static void pack_pk(uint8_t *r, polyvec *pk, const uint8_t *seed) {
 /*************************************************
 * Name:        unpack_pk
 *
-* Description: De-serialize and decompress public key from a byte array;
+* Description: De-serialize public key from a byte array;
 *              approximate inverse of pack_pk
 *
-* Arguments:   - polyvec *pk:                   pointer to output public-key vector of polynomials
-*              - uint8_t *seed:           pointer to output seed to generate matrix A
+* Arguments:   - polyvec *pk: pointer to output public-key polynomial vector
+*              - uint8_t *seed: pointer to output seed to generate matrix A
 *              - const uint8_t *packedpk: pointer to input serialized public key
 **************************************************/
-static void unpack_pk(polyvec *pk, uint8_t *seed, const uint8_t *packedpk) {
+static void unpack_pk(polyvec *pk,
+                      uint8_t seed[KYBER_SYMBYTES],
+                      const uint8_t packedpk[KYBER_INDCPA_PUBLICKEYBYTES]) {
+    size_t i = 0;
     PQCLEAN_KYBER76890S_AVX2_polyvec_frombytes(pk, packedpk);
-    for (size_t i = 0; i < KYBER_SYMBYTES; i++) {
+    for (i = 0; i < KYBER_SYMBYTES; i++) {
         seed[i] = packedpk[i + KYBER_POLYVECBYTES];
     }
 }
@@ -48,9 +58,9 @@ static void unpack_pk(polyvec *pk, uint8_t *seed, const uint8_t *packedpk) {
 * Description: Serialize the secret key
 *
 * Arguments:   - uint8_t *r:  pointer to output serialized secret key
-*              - const polyvec *sk: pointer to input vector of polynomials (secret key)
+*              - polyvec *sk: pointer to input vector of polynomials (secret key)
 **************************************************/
-static void pack_sk(uint8_t *r, polyvec *sk) {
+static void pack_sk(uint8_t r[KYBER_INDCPA_SECRETKEYBYTES], polyvec *sk) {
     PQCLEAN_KYBER76890S_AVX2_polyvec_tobytes(r, sk);
 }
 
@@ -60,10 +70,12 @@ static void pack_sk(uint8_t *r, polyvec *sk) {
 * Description: De-serialize the secret key;
 *              inverse of pack_sk
 *
-* Arguments:   - polyvec *sk:                   pointer to output vector of polynomials (secret key)
+* Arguments:   - polyvec *sk: pointer to output vector of polynomials
+*                (secret key)
 *              - const uint8_t *packedsk: pointer to input serialized secret key
 **************************************************/
-static void unpack_sk(polyvec *sk, const uint8_t *packedsk) {
+static void unpack_sk(polyvec *sk,
+                      const uint8_t packedsk[KYBER_INDCPA_SECRETKEYBYTES]) {
     PQCLEAN_KYBER76890S_AVX2_polyvec_frombytes(sk, packedsk);
 }
 
@@ -74,11 +86,13 @@ static void unpack_sk(polyvec *sk, const uint8_t *packedsk) {
 *              compressed and serialized vector of polynomials b
 *              and the compressed and serialized polynomial v
 *
-* Arguments:   uint8_t *r:          pointer to the output serialized ciphertext
-*              const poly *pk:            pointer to the input vector of polynomials b
-*              const uint8_t *seed: pointer to the input polynomial v
+* Arguments:   uint8_t *r: pointer to the output serialized ciphertext
+*              poly *pk:   pointer to the input vector of polynomials b
+*              poly *v:    pointer to the input polynomial v
 **************************************************/
-static void pack_ciphertext(uint8_t *r, polyvec *b, poly *v) {
+static void pack_ciphertext(uint8_t r[KYBER_INDCPA_BYTES],
+                            polyvec *b,
+                            poly *v) {
     PQCLEAN_KYBER76890S_AVX2_polyvec_compress(r, b);
     PQCLEAN_KYBER76890S_AVX2_poly_compress(r + KYBER_POLYVECCOMPRESSEDBYTES, v);
 }
@@ -89,22 +103,42 @@ static void pack_ciphertext(uint8_t *r, polyvec *b, poly *v) {
 * Description: De-serialize and decompress ciphertext from a byte array;
 *              approximate inverse of pack_ciphertext
 *
-* Arguments:   - polyvec *b:             pointer to the output vector of polynomials b
-*              - poly *v:                pointer to the output polynomial v
+* Arguments:   - polyvec *b:       pointer to the output vector of polynomials b
+*              - poly *v:          pointer to the output polynomial v
 *              - const uint8_t *c: pointer to the input serialized ciphertext
 **************************************************/
-static void unpack_ciphertext(polyvec *b, poly *v, const uint8_t *c) {
+static void unpack_ciphertext(polyvec *b,
+                              poly *v,
+                              const uint8_t c[KYBER_INDCPA_BYTES]) {
     PQCLEAN_KYBER76890S_AVX2_polyvec_decompress(b, c);
     PQCLEAN_KYBER76890S_AVX2_poly_decompress(v, c + KYBER_POLYVECCOMPRESSEDBYTES);
 }
 
-static size_t rej_uniform_ref(int16_t *r, size_t len, const uint8_t *buf, size_t buflen) {
-    unsigned int ctr, pos;
-    uint16_t val;
+/*************************************************
+* Name:        rej_uniform
+*
+* Description: Run rejection sampling on uniform random bytes to generate
+*              uniform random integers mod q
+*
+* Arguments:   - int16_t *r: pointer to output buffer
+*              - unsigned int len: requested number of 16-bit integers
+*                (uniform mod q)
+*              - const uint8_t *buf: pointer to input buffer
+*                (assumed to be uniform random bytes)
+*              - unsigned int buflen: length of input buffer in bytes
+*
+* Returns number of sampled 16-bit integers (at most len)
+**************************************************/
+static unsigned int rej_uniform(int16_t *r,
+                                unsigned int len,
+                                const uint8_t *buf,
+                                unsigned int buflen) {
+    unsigned int ctr = 0, pos = 0;
+    uint16_t val = 0;
 
     ctr = pos = 0;
     while (ctr < len && pos + 2 <= buflen) {
-        val = (uint16_t)(buf[pos] | ((uint16_t)buf[pos + 1] << 8));
+        val = buf[pos] | ((uint16_t)buf[pos + 1] << 8);
         pos += 2;
 
         if (val < 19 * KYBER_Q) {
@@ -116,46 +150,47 @@ static size_t rej_uniform_ref(int16_t *r, size_t len, const uint8_t *buf, size_t
     return ctr;
 }
 
-#define gen_a(A,B)  gen_matrix(A,B,0)
-#define gen_at(A,B) gen_matrix(A,B,1)
+#define gen_a(A,B)  PQCLEAN_KYBER76890S_AVX2_gen_matrix(A,B,0)
+#define gen_at(A,B) PQCLEAN_KYBER76890S_AVX2_gen_matrix(A,B,1)
 
 /*************************************************
-* Name:        gen_matrix
+* Name:        PQCLEAN_KYBER76890S_AVX2_gen_matrix
 *
 * Description: Deterministically generate matrix A (or the transpose of A)
 *              from a seed. Entries of the matrix are polynomials that look
 *              uniformly random. Performs rejection sampling on output of
 *              a XOF
 *
-* Arguments:   - polyvec *a:                pointer to ouptput matrix A
+* Arguments:   - polyvec *a: pointer to ouptput matrix A
 *              - const uint8_t *seed: pointer to input seed
-*              - int transposed:            boolean deciding whether A or A^T is generated
+*              - int transposed: boolean deciding whether A or A^T is generated
 **************************************************/
-#define  GEN_MATRIX_MAXNBLOCKS ((530+XOF_BLOCKBYTES)/XOF_BLOCKBYTES)    /* 530 is expected number of required bytes */
-static void gen_matrix(polyvec *a, const uint8_t *seed, int transposed) {
-    size_t ctr;
-    union {
-        uint8_t x[XOF_BLOCKBYTES * GEN_MATRIX_MAXNBLOCKS];
-        __m256i _dummy;
-    } buf;
+#define GEN_MATRIX_NBLOCKS ((2*KYBER_N*(1U << 16)/(19*KYBER_Q) \
+                             + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
+void PQCLEAN_KYBER76890S_AVX2_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMBYTES], int transposed) {
+    unsigned int ctr = 0, i = 0, j = 0;
+    ALIGN16_TYPE(uint64_t) nonce = {.orig = 0};
+    ALIGN32_ARRAY(uint8_t, GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES) buf;
     aes256ctr_ctx state;
 
     PQCLEAN_KYBER76890S_AVX2_aes256ctr_init(&state, seed, 0);
 
-    for (size_t i = 0; i < KYBER_K; i++) {
-        for (size_t j = 0; j < KYBER_K; j++) {
+    for (i = 0; i < KYBER_K; i++) {
+        for (j = 0; j < KYBER_K; j++) {
             if (transposed) {
-                PQCLEAN_KYBER76890S_AVX2_aes256ctr_select(&state, (i << 8) + j);
+                nonce.orig = (j << 8) | i;
             } else {
-                PQCLEAN_KYBER76890S_AVX2_aes256ctr_select(&state, (j << 8) + i);
+                nonce.orig = (i << 8) | j;
             }
 
-            PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf.x, GEN_MATRIX_MAXNBLOCKS, &state);
-            ctr = PQCLEAN_KYBER76890S_AVX2_rej_uniform(a[i].vec[j].coeffs, KYBER_N, buf.x, GEN_MATRIX_MAXNBLOCKS * XOF_BLOCKBYTES);
+            state.n = _mm_loadl_epi64(&nonce.vec);
+            PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf.arr, GEN_MATRIX_NBLOCKS, &state);
+            ctr = PQCLEAN_KYBER76890S_AVX2_rej_uniform_avx(a[i].vec[j].coeffs, buf.arr);
 
             while (ctr < KYBER_N) {
-                PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf.x, 1, &state);
-                ctr += rej_uniform_ref(a[i].vec[j].coeffs + ctr, KYBER_N - ctr, buf.x, XOF_BLOCKBYTES);
+                PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf.arr, 1, &state);
+                ctr += rej_uniform(a[i].vec[j].coeffs + ctr, KYBER_N - ctr, buf.arr,
+                                   XOF_BLOCKBYTES);
             }
 
             PQCLEAN_KYBER76890S_AVX2_poly_nttunpack(&a[i].vec[j]);
@@ -164,47 +199,53 @@ static void gen_matrix(polyvec *a, const uint8_t *seed, int transposed) {
 }
 
 /*************************************************
-* Name:        indcpa_keypair
+* Name:        PQCLEAN_KYBER76890S_AVX2_indcpa_keypair
 *
 * Description: Generates public and private key for the CPA-secure
 *              public-key encryption scheme underlying Kyber
 *
-* Arguments:   - uint8_t *pk: pointer to output public key (of length KYBER_INDCPA_PUBLICKEYBYTES bytes)
-*              - uint8_t *sk: pointer to output private key (of length KYBER_INDCPA_SECRETKEYBYTES bytes)
+* Arguments:   - uint8_t *pk: pointer to output public key
+*                             (of length KYBER_INDCPA_PUBLICKEYBYTES bytes)
+*              - uint8_t *sk: pointer to output private key
+                              (of length KYBER_INDCPA_SECRETKEYBYTES bytes)
 **************************************************/
-void PQCLEAN_KYBER76890S_AVX2_indcpa_keypair(uint8_t *pk, uint8_t *sk) {
-    polyvec a[KYBER_K], skpv, e, pkpv;
-    uint8_t buf[2 * KYBER_SYMBYTES];
-    const uint8_t *publicseed = buf;
-    const uint8_t *noiseseed = buf + KYBER_SYMBYTES;
-    uint8_t nonce = 0;
+void PQCLEAN_KYBER76890S_AVX2_indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
+        uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES]) {
+    unsigned int i = 0;
+    ALIGN32_ARRAY(uint8_t, 2 * KYBER_SYMBYTES) buf;
+    const uint8_t *publicseed = buf.arr;
+    const uint8_t *noiseseed = buf.arr + KYBER_SYMBYTES;
+    polyvec a[KYBER_K], e, pkpv, skpv;
 
-    randombytes(buf, KYBER_SYMBYTES);
-    hash_g(buf, buf, KYBER_SYMBYTES);
+    randombytes(buf.arr, KYBER_SYMBYTES);
+    hash_g(buf.arr, buf.arr, KYBER_SYMBYTES);
 
     gen_a(a, publicseed);
 
+    ALIGN16_TYPE(uint64_t) nonce = {.orig = 0};
     aes256ctr_ctx state;
-    uint8_t coins[128];
-    PQCLEAN_KYBER76890S_AVX2_aes256ctr_init(&state, noiseseed, 0);
-    for (size_t i = 0; i < KYBER_K; i++) {
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_select(&state, (uint16_t)nonce++ << 8);
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(coins, 1, &state);
-        PQCLEAN_KYBER76890S_AVX2_cbd(skpv.vec + i, coins);
+    ALIGN32_ARRAY(uint8_t, 128) coins;
+    PQCLEAN_KYBER76890S_AVX2_aes256ctr_init(&state, noiseseed, nonce.orig++);
+    for (i = 0; i < KYBER_K; i++) {
+        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(coins.arr, 2, &state);
+        state.n = _mm_loadl_epi64(&nonce.vec);
+        nonce.orig++;
+        PQCLEAN_KYBER76890S_AVX2_cbd(&skpv.vec[i], coins.arr);
     }
-    for (size_t i = 0; i < KYBER_K; i++) {
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_select(&state, (uint16_t)nonce++ << 8);
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(coins, 1, &state);
-        PQCLEAN_KYBER76890S_AVX2_cbd(e.vec + i, coins);
+    for (i = 0; i < KYBER_K; i++) {
+        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(coins.arr, 2, &state);
+        state.n = _mm_loadl_epi64(&nonce.vec);
+        nonce.orig++;
+        PQCLEAN_KYBER76890S_AVX2_cbd(&e.vec[i], coins.arr);
     }
 
     PQCLEAN_KYBER76890S_AVX2_polyvec_ntt(&skpv);
     PQCLEAN_KYBER76890S_AVX2_polyvec_ntt(&e);
 
     // matrix-vector multiplication
-    for (size_t i = 0; i < KYBER_K; i++) {
-        PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc(pkpv.vec + i, a + i, &skpv);
-        PQCLEAN_KYBER76890S_AVX2_poly_frommont(pkpv.vec + i);
+    for (i = 0; i < KYBER_K; i++) {
+        PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc_montgomery(&pkpv.vec[i], &a[i], &skpv);
+        PQCLEAN_KYBER76890S_AVX2_poly_tomont(&pkpv.vec[i]);
     }
 
     PQCLEAN_KYBER76890S_AVX2_polyvec_add(&pkpv, &pkpv, &e);
@@ -215,58 +256,67 @@ void PQCLEAN_KYBER76890S_AVX2_indcpa_keypair(uint8_t *pk, uint8_t *sk) {
 }
 
 /*************************************************
-* Name:        indcpa_enc
+* Name:        PQCLEAN_KYBER76890S_AVX2_indcpa_enc
 *
 * Description: Encryption function of the CPA-secure
 *              public-key encryption scheme underlying Kyber.
 *
-* Arguments:   - uint8_t *c:          pointer to output ciphertext (of length KYBER_INDCPA_BYTES bytes)
-*              - const uint8_t *m:    pointer to input message (of length KYBER_INDCPA_MSGBYTES bytes)
-*              - const uint8_t *pk:   pointer to input public key (of length KYBER_INDCPA_PUBLICKEYBYTES bytes)
-*              - const uint8_t *coin: pointer to input random coins used as seed (of length KYBER_SYMBYTES bytes)
-*                                           to deterministically generate all randomness
+* Arguments:   - uint8_t *c:           pointer to output ciphertext
+*                                      (of length KYBER_INDCPA_BYTES bytes)
+*              - const uint8_t *m:     pointer to input message
+*                                      (of length KYBER_INDCPA_MSGBYTES bytes)
+*              - const uint8_t *pk:    pointer to input public key
+*                                      (of length KYBER_INDCPA_PUBLICKEYBYTES)
+*              - const uint8_t *coins: pointer to input random coins
+*                                      used as seed (of length KYBER_SYMBYTES)
+*                                      to deterministically generate all
+*                                      randomness
 **************************************************/
-void PQCLEAN_KYBER76890S_AVX2_indcpa_enc(uint8_t *c,
-        const uint8_t *m,
-        const uint8_t *pk,
-        const uint8_t *coins) {
-    polyvec at[KYBER_K], pkpv, sp, ep, bp;
-    poly k, v, epp;
-    uint8_t seed[KYBER_SYMBYTES];
-    uint8_t nonce = 0;
+void PQCLEAN_KYBER76890S_AVX2_indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
+        const uint8_t m[KYBER_INDCPA_MSGBYTES],
+        const uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
+        const uint8_t coins[KYBER_SYMBYTES]) {
+    unsigned int i = 0;
+    ALIGN32_ARRAY(uint8_t, KYBER_SYMBYTES) seed;
+    polyvec sp, pkpv, ep, at[KYBER_K], bp;
+    poly v, k, epp;
 
-    unpack_pk(&pkpv, seed, pk);
+    unpack_pk(&pkpv, seed.arr, pk);
     PQCLEAN_KYBER76890S_AVX2_poly_frommsg(&k, m);
-    gen_at(at, seed);
+    gen_at(at, seed.arr);
 
+    ALIGN16_TYPE(uint64_t) nonce = {.orig = 0};
     aes256ctr_ctx state;
-    uint8_t buf[128];
-    PQCLEAN_KYBER76890S_AVX2_aes256ctr_init(&state, coins, 0);
-    for (size_t i = 0; i < KYBER_K; i++) {
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_select(&state, (uint16_t)nonce++ << 8);
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf, 1, &state);
-        PQCLEAN_KYBER76890S_AVX2_cbd(sp.vec + i, buf);
+    ALIGN32_ARRAY(uint8_t, 128) buf;
+    PQCLEAN_KYBER76890S_AVX2_aes256ctr_init(&state, coins, nonce.orig++);
+    for (i = 0; i < KYBER_K; i++) {
+        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf.arr, 2, &state);
+        state.n = _mm_loadl_epi64(&nonce.vec);
+        nonce.orig++;
+        PQCLEAN_KYBER76890S_AVX2_cbd(&sp.vec[i], buf.arr);
     }
-    for (size_t i = 0; i < KYBER_K; i++) {
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_select(&state, (uint16_t)nonce++ << 8);
-        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf, 1, &state);
-        PQCLEAN_KYBER76890S_AVX2_cbd(ep.vec + i, buf);
+    for (i = 0; i < KYBER_K; i++) {
+        PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf.arr, 2, &state);
+        state.n = _mm_loadl_epi64(&nonce.vec);
+        nonce.orig++;
+        PQCLEAN_KYBER76890S_AVX2_cbd(&ep.vec[i], buf.arr);
     }
-    PQCLEAN_KYBER76890S_AVX2_aes256ctr_select(&state, (uint16_t)nonce++ << 8);
-    PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf, 1, &state);
-    PQCLEAN_KYBER76890S_AVX2_cbd(&epp, buf);
+    PQCLEAN_KYBER76890S_AVX2_aes256ctr_squeezeblocks(buf.arr, 2, &state);
+    state.n = _mm_loadl_epi64(&nonce.vec);
+    nonce.orig++;
+    PQCLEAN_KYBER76890S_AVX2_cbd(&epp, buf.arr);
 
     PQCLEAN_KYBER76890S_AVX2_polyvec_ntt(&sp);
 
     // matrix-vector multiplication
-    for (size_t i = 0; i < KYBER_K; i++) {
-        PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc(bp.vec + i, at + i, &sp);
+    for (i = 0; i < KYBER_K; i++) {
+        PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc_montgomery(&bp.vec[i], &at[i], &sp);
     }
 
-    PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc(&v, &pkpv, &sp);
+    PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc_montgomery(&v, &pkpv, &sp);
 
-    PQCLEAN_KYBER76890S_AVX2_polyvec_invntt(&bp);
-    PQCLEAN_KYBER76890S_AVX2_poly_invntt(&v);
+    PQCLEAN_KYBER76890S_AVX2_polyvec_invntt_tomont(&bp);
+    PQCLEAN_KYBER76890S_AVX2_poly_invntt_tomont(&v);
 
     PQCLEAN_KYBER76890S_AVX2_polyvec_add(&bp, &bp, &ep);
     PQCLEAN_KYBER76890S_AVX2_poly_add(&v, &v, &epp);
@@ -278,18 +328,21 @@ void PQCLEAN_KYBER76890S_AVX2_indcpa_enc(uint8_t *c,
 }
 
 /*************************************************
-* Name:        indcpa_dec
+* Name:        PQCLEAN_KYBER76890S_AVX2_indcpa_dec
 *
 * Description: Decryption function of the CPA-secure
 *              public-key encryption scheme underlying Kyber.
 *
-* Arguments:   - uint8_t *m:        pointer to output decrypted message (of length KYBER_INDCPA_MSGBYTES)
-*              - const uint8_t *c:  pointer to input ciphertext (of length KYBER_INDCPA_BYTES)
-*              - const uint8_t *sk: pointer to input secret key (of length KYBER_INDCPA_SECRETKEYBYTES)
+* Arguments:   - uint8_t *m:        pointer to output decrypted message
+*                                   (of length KYBER_INDCPA_MSGBYTES)
+*              - const uint8_t *c:  pointer to input ciphertext
+*                                   (of length KYBER_INDCPA_BYTES)
+*              - const uint8_t *sk: pointer to input secret key
+*                                   (of length KYBER_INDCPA_SECRETKEYBYTES)
 **************************************************/
-void PQCLEAN_KYBER76890S_AVX2_indcpa_dec(uint8_t *m,
-        const uint8_t *c,
-        const uint8_t *sk) {
+void PQCLEAN_KYBER76890S_AVX2_indcpa_dec(uint8_t m[KYBER_INDCPA_MSGBYTES],
+        const uint8_t c[KYBER_INDCPA_BYTES],
+        const uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES]) {
     polyvec bp, skpv;
     poly v, mp;
 
@@ -297,8 +350,8 @@ void PQCLEAN_KYBER76890S_AVX2_indcpa_dec(uint8_t *m,
     unpack_sk(&skpv, sk);
 
     PQCLEAN_KYBER76890S_AVX2_polyvec_ntt(&bp);
-    PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc(&mp, &skpv, &bp);
-    PQCLEAN_KYBER76890S_AVX2_poly_invntt(&mp);
+    PQCLEAN_KYBER76890S_AVX2_polyvec_pointwise_acc_montgomery(&mp, &skpv, &bp);
+    PQCLEAN_KYBER76890S_AVX2_poly_invntt_tomont(&mp);
 
     PQCLEAN_KYBER76890S_AVX2_poly_sub(&mp, &v, &mp);
     PQCLEAN_KYBER76890S_AVX2_poly_reduce(&mp);

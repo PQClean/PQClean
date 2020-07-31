@@ -14,7 +14,7 @@ consistency_checks:
     - polyvec.h
     - reduce.c
     - reduce.h
-    - symmetric-fips202.c
+    - symmetric-shake.c
     - symmetric.h
     - verify.c
     - verify.h

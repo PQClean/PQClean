@@ -1,24 +1,20 @@
-#ifndef CONSTS_H
-#define CONSTS_H
+#ifndef PQCLEAN_KYBER51290S_AVX2_CONSTS_H
+#define PQCLEAN_KYBER51290S_AVX2_CONSTS_H
 
+#include "cdecl.inc"
+
+#include "params.h"
 #include <immintrin.h>
 #include <stdint.h>
 
-typedef union {
-    uint16_t as_arr[16];
-    __m256i as_vec;
-} aligned_uint16_t;
+#define ALIGNED_UINT16_T(N) \
+    union   {                   \
+        __m256i as_vec;         \
+        uint16_t as_arr[(N)];     \
+    }
 
-extern const uint16_t PQCLEAN_KYBER51290S_AVX2_zetas_exp[396];
-extern const uint16_t PQCLEAN_KYBER51290S_AVX2_zetas_inv_exp[396];
+typedef ALIGNED_UINT16_T(928) qdata_t;
 
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xq;
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xqinv;
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xv;
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xflo;
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xfhi;
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xmontsqlo;
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xmontsqhi;
-extern const aligned_uint16_t PQCLEAN_KYBER51290S_AVX2_16xmask;
+extern const qdata_t PQCLEAN_KYBER51290S_AVX2_qdata;
 
 #endif

@@ -28,6 +28,7 @@ implementations:
         - architecture: x86_64
           operating_systems:
             - Linux
+            - Darwin
           required_flags:
             - aes
             - avx2

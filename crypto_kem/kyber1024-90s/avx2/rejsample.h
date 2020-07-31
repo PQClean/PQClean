@@ -1,12 +1,11 @@
 #ifndef REJSAMPLE_H
 #define REJSAMPLE_H
 
-#include <stddef.h>
+#include "params.h"
 #include <stdint.h>
 
-size_t PQCLEAN_KYBER102490S_AVX2_rej_uniform(int16_t *r,
-        size_t len,
-        const uint8_t *buf,
-        size_t buflen);
+
+unsigned int PQCLEAN_KYBER102490S_AVX2_rej_uniform_avx(int16_t *r,
+        const unsigned char *buf);
 
 #endif

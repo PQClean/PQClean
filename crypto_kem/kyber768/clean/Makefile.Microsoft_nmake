@@ -2,7 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libkyber768_clean.lib
-OBJECTS=cbd.obj indcpa.obj kem.obj ntt.obj poly.obj polyvec.obj reduce.obj verify.obj symmetric-fips202.obj
+OBJECTS=cbd.obj indcpa.obj kem.obj ntt.obj poly.obj polyvec.obj reduce.obj verify.obj symmetric-shake.obj
 
 # Warning C4146 is raised when a unary minus operator is applied to an
 # unsigned type; this has nonetheless been standard and portable for as
