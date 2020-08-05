@@ -8,6 +8,14 @@
 #include <unistd.h>
 #endif
 
-int randombytes(uint8_t *buf, size_t n);
+#ifdef __cplusplus
+#define EXTERNC extern "C"
+#else
+#define EXTERNC
+#endif
+
+EXTERNC int randombytes(uint8_t *buf, size_t n);
+
+#undef EXTERNC
 
 #endif
