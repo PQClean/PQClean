@@ -1,5 +1,5 @@
+#include "crypto_sort.h"
 #include "sample.h"
-#include "fips202.h"
 
 void PQCLEAN_NTRUHPS2048677_CLEAN_sample_fg(poly *f, poly *g, const unsigned char uniformbytes[NTRU_SAMPLE_FG_BYTES]) {
     PQCLEAN_NTRUHPS2048677_CLEAN_sample_iid(f, uniformbytes);
@@ -11,17 +11,6 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_sample_rm(poly *r, poly *m, const unsigned cha
     PQCLEAN_NTRUHPS2048677_CLEAN_sample_fixed_type(m, uniformbytes + NTRU_SAMPLE_IID_BYTES);
 }
 
-void PQCLEAN_NTRUHPS2048677_CLEAN_sample_iid(poly *r, const unsigned char uniformbytes[NTRU_SAMPLE_IID_BYTES]) {
-    int i;
-    /* {0,1,...,255} -> {0,1,2}; Pr[0] = 86/256, Pr[1] = Pr[-1] = 85/256 */
-    for (i = 0; i < NTRU_N - 1; i++) {
-        r->coeffs[i] = PQCLEAN_NTRUHPS2048677_CLEAN_mod3(uniformbytes[i]);
-    }
-
-    r->coeffs[NTRU_N - 1] = 0;
-}
-
-#include "crypto_sort.h"
 void PQCLEAN_NTRUHPS2048677_CLEAN_sample_fixed_type(poly *r, const unsigned char u[NTRU_SAMPLE_FT_BYTES]) {
     // Assumes NTRU_SAMPLE_FT_BYTES = ceil(30*(n-1)/8)
 
