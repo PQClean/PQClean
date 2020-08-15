@@ -7,6 +7,8 @@
 
 /* Do not modify below this line */
 
+#define PAD32(X) ((((X) + 31)/32)*32)
+
 #define NTRU_Q (1 << NTRU_LOGQ)
 
 #define NTRU_SEEDBYTES       32
