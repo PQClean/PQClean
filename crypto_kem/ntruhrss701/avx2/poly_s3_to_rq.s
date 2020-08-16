@@ -290,10 +290,10 @@ mask_n:
 .word 0
 .word 0
 .text
-.hidden poly_lift
-.global poly_lift
+.hidden PQCLEAN_NTRUHRSS701_AVX2_poly_lift
+.global PQCLEAN_NTRUHRSS701_AVX2_poly_lift
 .att_syntax prefix
-poly_lift:
+PQCLEAN_NTRUHRSS701_AVX2_poly_lift:
 mov %rsp, %r8
 andq $-32, %rsp
 subq $1408, %rsp
