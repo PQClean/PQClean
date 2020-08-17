@@ -31,50 +31,59 @@ void PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_frombytes(poly *a, const unsigned char 
 }
 
 
-static void __poly_R2_mul(unsigned char r[128], unsigned char a[128], unsigned char b[128]) {
+static void _poly_R2_mul(unsigned char r[128], unsigned char a[128], unsigned char b[128]) {
     // TODO: Try to avoid copying input
     int i;
-    unsigned char rt[128] __attribute__((aligned(32)));
-    PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_mul(rt, a, b);
+    union {
+        unsigned char b[128];
+        __m256i b_x32[4];
+    } rt;
+
+    PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_mul(rt.b, a, b);
     for (i = 0; i < 128; i++) {
-        r[i] = rt[i];
+        r[i] = rt.b[i];
     }
 }
 
 void PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_inv(poly *r, const poly *a) {
-    unsigned char squares[13][128] __attribute__((aligned(32)));
+    union {
+        unsigned char s[128];
+        __m256i s_x32[4];
+    } squares[13];
+#define s(x) squares[(x)].s
 
     // This relies on the following addition chain:
     // 1, 2, 3, 6, 12, 24, 48, 51, 102, 204, 408, 816, 819
 
-    PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_tobytes(squares[0], a); // TODO alignment
+    PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_tobytes(s(0), a); // TODO alignment
 
-    PQCLEAN_NTRUHPS4096821_AVX2_square_1_821(squares[1], squares[0]);
-    __poly_R2_mul(squares[1], squares[1], squares[0]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_1_821(squares[2], squares[1]);
-    __poly_R2_mul(squares[2], squares[2], squares[0]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_3_821(squares[3], squares[2]);
-    __poly_R2_mul(squares[3], squares[3], squares[2]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_6_821(squares[4], squares[3]);
-    __poly_R2_mul(squares[4], squares[4], squares[3]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_12_821(squares[5], squares[4]);
-    __poly_R2_mul(squares[5], squares[5], squares[4]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_24_821(squares[6], squares[5]);
-    __poly_R2_mul(squares[6], squares[6], squares[5]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_3_821(squares[7], squares[6]);
-    __poly_R2_mul(squares[7], squares[7], squares[2]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_51_821(squares[8], squares[7]);
-    __poly_R2_mul(squares[8], squares[8], squares[7]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_102_821(squares[9], squares[8]);
-    __poly_R2_mul(squares[9], squares[9], squares[8]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_204_821(squares[10], squares[9]);
-    __poly_R2_mul(squares[10], squares[10], squares[9]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_408_821(squares[11], squares[10]);
-    __poly_R2_mul(squares[11], squares[11], squares[10]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_3_821(squares[12], squares[11]);
-    __poly_R2_mul(squares[12], squares[12], squares[2]);
-    PQCLEAN_NTRUHPS4096821_AVX2_square_1_821(squares[0], squares[12]);
+    PQCLEAN_NTRUHPS4096821_AVX2_square_1_821(s(1), s(0));
+    _poly_R2_mul(s(1), s(1), s(0));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_1_821(s(2), s(1));
+    _poly_R2_mul(s(2), s(2), s(0));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_3_821(s(3), s(2));
+    _poly_R2_mul(s(3), s(3), s(2));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_6_821(s(4), s(3));
+    _poly_R2_mul(s(4), s(4), s(3));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_12_821(s(5), s(4));
+    _poly_R2_mul(s(5), s(5), s(4));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_24_821(s(6), s(5));
+    _poly_R2_mul(s(6), s(6), s(5));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_3_821(s(7), s(6));
+    _poly_R2_mul(s(7), s(7), s(2));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_51_821(s(8), s(7));
+    _poly_R2_mul(s(8), s(8), s(7));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_102_821(s(9), s(8));
+    _poly_R2_mul(s(9), s(9), s(8));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_204_821(s(10), s(9));
+    _poly_R2_mul(s(10), s(10), s(9));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_408_821(s(11), s(10));
+    _poly_R2_mul(s(11), s(11), s(10));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_3_821(s(12), s(11));
+    _poly_R2_mul(s(12), s(12), s(2));
+    PQCLEAN_NTRUHPS4096821_AVX2_square_1_821(s(0), s(12));
 
 
-    PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_frombytes(r, squares[0]);
+    PQCLEAN_NTRUHPS4096821_AVX2_poly_R2_frombytes(r, s(0));
+#undef s
 }

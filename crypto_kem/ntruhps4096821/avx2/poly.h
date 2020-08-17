@@ -1,17 +1,16 @@
 #ifndef POLY_H
 #define POLY_H
 
+#include <immintrin.h>
 #include <stdint.h>
 
 #include "params.h"
 
 #define MODQ(X) ((X) & (NTRU_Q-1))
 
-typedef struct {
-    // round to nearest multiple of 32 to make it easier to load into vector
-    //   registers without having to do bound checks
-#define NTRU_N_32 PAD32(NTRU_N)
-    uint16_t coeffs[NTRU_N_32] __attribute__((aligned(32)));
+typedef union { /* align to 32 byte boundary for vmovdqa */
+    uint16_t coeffs[PAD32(NTRU_N)];
+    __m256i coeffs_x16[PAD32(NTRU_N) / 16];
 } poly;
 
 void PQCLEAN_NTRUHPS4096821_AVX2_poly_mod_3_Phi_n(poly *r);
