@@ -3,12 +3,9 @@ consistency_checks:
     scheme: ntruhps2048509
     implementation: clean
   files:
+    - cmov.c
+    - cmov.h
     - kem.c
-    - poly.h
-    - verify.c
-    - verify.h
-- source:
-    scheme: ntruhps4096821
-    implementation: clean
-  files:
-    - pack3.c
+    - LICENSE
+    - poly.c
+    - poly_mod.c

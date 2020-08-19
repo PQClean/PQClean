@@ -5,8 +5,6 @@ consistency_checks:
   files:
     - cmov.c
     - cmov.h
-    - crypto_sort_int32.c
-    - crypto_sort_int32.h
     - kem.c
     - LICENSE
     - owcpa.c
@@ -14,9 +12,20 @@ consistency_checks:
     - pack3.c
     - packq.c
     - poly.c
-    - poly.h
     - poly_lift.c
-    - poly_mod.c
     - sample.c
     - sample.h
+- source:
+    scheme: ntruhps2048509
+    implementation: avx2
+  files:
+    - crypto_sort_int32.c
+    - crypto_sort_int32.h
+    - poly.h
     - sample_iid.c
+- source:
+    scheme: ntruhps2048677
+    implementation: clean
+  files:
+    - api.h
+    - params.h

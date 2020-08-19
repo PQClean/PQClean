@@ -5,21 +5,29 @@ consistency_checks:
   files:
     - cmov.c
     - cmov.h
-    - crypto_sort_int32.c
-    - crypto_sort_int32.h
     - kem.c
     - LICENSE
     - owcpa.c
     - owcpa.h
     - poly.c
-    - poly.h
     - poly_lift.c
-    - poly_mod.c
     - sample.c
     - sample.h
-    - sample_iid.c
 - source:
     scheme: ntruhrss701
     implementation: clean
   files:
     - pack3.c
+- source:
+    scheme: ntruhps2048509
+    implementation: avx2
+  files:
+    - poly.h
+    - sample_iid.c
+- source:
+    scheme: ntruhps4096821
+    implementation: clean
+  files:
+    - api.h
+    - packq.c
+    - params.h
