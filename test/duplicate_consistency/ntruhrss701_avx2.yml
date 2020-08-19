@@ -1,0 +1,21 @@
+consistency_checks:
+- source:
+    scheme: ntruhps2048509 
+    implementation: clean
+  files:
+    - kem.c
+    - LICENSE
+    - poly.c
+    - verify.c
+    - verify.h
+- source:
+    scheme: ntruhps4096821
+    implementation: clean
+  files:
+    - pack3.c
+- source:
+    scheme: ntruhps2048509
+    implementation: avx2
+  files:
+    - poly.h
+    - sample_iid.c

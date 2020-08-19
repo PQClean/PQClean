@@ -6,11 +6,23 @@ consistency_checks:
     - crypto_sort.c
     - crypto_sort.h
     - kem.c
+    - LICENSE
     - owcpa.c
     - owcpa.h
     - poly.c
     - poly.h
+    - poly_lift.c
+    - poly_mod.c
+    - poly_r2_inv.c
+    - poly_rq_mul.c
+    - poly_s3_inv.c
     - sample.c
     - sample.h
+    - sample_iid.c
     - verify.c
     - verify.h
+- source:
+    scheme: ntruhrss701
+    implementation: clean
+  files:
+    - pack3.c
