@@ -1,16 +1,13 @@
 #ifndef POLY_H
 #define POLY_H
 
-#include <stdint.h>
-
 #include "params.h"
+
+#include <stdint.h>
 
 #define MODQ(X) ((X) & (NTRU_Q-1))
 
 typedef struct {
-    // round to nearest multiple of 32 to make it easier to load into vector
-    //   registers without having to do bound checks
-#define NTRU_N_32 PAD32(NTRU_N)
     uint16_t coeffs[NTRU_N];
 } poly;
 
@@ -38,5 +35,4 @@ void PQCLEAN_NTRUHRSS701_CLEAN_poly_S3_inv(poly *r, const poly *a);
 
 void PQCLEAN_NTRUHRSS701_CLEAN_poly_Z3_to_Zq(poly *r);
 void PQCLEAN_NTRUHRSS701_CLEAN_poly_trinary_Zq_to_Z3(poly *r);
-
 #endif

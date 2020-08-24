@@ -47,6 +47,7 @@ void PQCLEAN_NTRUHRSS701_CLEAN_owcpa_keypair(unsigned char *pk,
     }
     g->coeffs[0] = -(3 * g->coeffs[0]);
 
+
     PQCLEAN_NTRUHRSS701_CLEAN_poly_Rq_mul(gf, g, f);
 
     PQCLEAN_NTRUHRSS701_CLEAN_poly_Rq_inv(invgf, gf);

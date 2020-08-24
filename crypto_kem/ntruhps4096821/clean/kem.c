@@ -1,12 +1,10 @@
-#include <stdint.h>
-
 #include "api.h"
+#include "cmov.h"
 #include "fips202.h"
 #include "owcpa.h"
 #include "params.h"
 #include "randombytes.h"
 #include "sample.h"
-#include "verify.h"
 
 // API FUNCTIONS
 int PQCLEAN_NTRUHPS4096821_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
@@ -51,7 +49,7 @@ int PQCLEAN_NTRUHPS4096821_CLEAN_crypto_kem_dec(uint8_t *k, const uint8_t *c, co
 
     fail |= PQCLEAN_NTRUHPS4096821_CLEAN_owcpa_dec(rm, c, sk);
     /* If fail = 0 then c = Enc(h, rm). There is no need to re-encapsulate. */
-    /* See comment in PQCLEAN_NTRUHPS4096821_CLEAN_owcpa_dec for details.      */
+    /* See comment in PQCLEAN_NTRUHPS4096821_CLEAN_owcpa_dec for details.                                */
 
     sha3_256(k, rm, NTRU_OWCPA_MSGBYTES);
 

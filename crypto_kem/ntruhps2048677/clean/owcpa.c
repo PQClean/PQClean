@@ -59,6 +59,7 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_owcpa_keypair(unsigned char *pk,
     PQCLEAN_NTRUHPS2048677_CLEAN_poly_Z3_to_Zq(f);
     PQCLEAN_NTRUHPS2048677_CLEAN_poly_Z3_to_Zq(g);
 
+
     /* g = 3*g */
     for (i = 0; i < NTRU_N; i++) {
         g->coeffs[i] = 3 * g->coeffs[i];

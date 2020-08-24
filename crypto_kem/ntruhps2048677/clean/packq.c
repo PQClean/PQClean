@@ -29,7 +29,6 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_poly_Sq_tobytes(unsigned char *r, const poly *
         t[j] = 0;
     }
 
-
     switch (NTRU_PACK_DEG & 0x07) {
     // cases 0 and 6 are impossible since 2 generates (Z/n)* and
     // p mod 8 in {1, 7} implies that 2 is a quadratic residue.
@@ -61,19 +60,18 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_poly_Sq_frombytes(poly *r, const unsigned char
         r->coeffs[8 * i + 6] = (a[11 * i + 8] >> 2) | (((uint16_t)a[11 * i + 9] & 0x1f) << 6);
         r->coeffs[8 * i + 7] = (a[11 * i + 9] >> 5) | (((uint16_t)a[11 * i + 10] & 0xff) << 3);
     }
-
     switch (NTRU_PACK_DEG & 0x07) {
     // cases 0 and 6 are impossible since 2 generates (Z/n)* and
     // p mod 8 in {1, 7} implies that 2 is a quadratic residue.
     case 4:
-        r->coeffs[8 * i + 0] = (unsigned char) (a[11 * i + 0] >> 0) | (((uint16_t)a[11 * i + 1] & 0x07) << 8);
-        r->coeffs[8 * i + 1] = (unsigned char) (a[11 * i + 1] >> 3) | (((uint16_t)a[11 * i + 2] & 0x3f) << 5);
-        r->coeffs[8 * i + 2] = (unsigned char) (a[11 * i + 2] >> 6) | (((uint16_t)a[11 * i + 3] & 0xff) << 2) | (((uint16_t)a[11 * i + 4] & 0x01) << 10);
-        r->coeffs[8 * i + 3] = (unsigned char) (a[11 * i + 4] >> 1) | (((uint16_t)a[11 * i + 5] & 0x0f) << 7);
+        r->coeffs[8 * i + 0] = (a[11 * i + 0] >> 0) | (((uint16_t)a[11 * i + 1] & 0x07) << 8);
+        r->coeffs[8 * i + 1] = (a[11 * i + 1] >> 3) | (((uint16_t)a[11 * i + 2] & 0x3f) << 5);
+        r->coeffs[8 * i + 2] = (a[11 * i + 2] >> 6) | (((uint16_t)a[11 * i + 3] & 0xff) << 2) | (((uint16_t)a[11 * i + 4] & 0x01) << 10);
+        r->coeffs[8 * i + 3] = (a[11 * i + 4] >> 1) | (((uint16_t)a[11 * i + 5] & 0x0f) << 7);
         break;
     case 2:
-        r->coeffs[8 * i + 0] = (unsigned char) (a[11 * i + 0] >> 0) | (((uint16_t)a[11 * i + 1] & 0x07) << 8);
-        r->coeffs[8 * i + 1] = (unsigned char) (a[11 * i + 1] >> 3) | (((uint16_t)a[11 * i + 2] & 0x3f) << 5);
+        r->coeffs[8 * i + 0] = (a[11 * i + 0] >> 0) | (((uint16_t)a[11 * i + 1] & 0x07) << 8);
+        r->coeffs[8 * i + 1] = (a[11 * i + 1] >> 3) | (((uint16_t)a[11 * i + 2] & 0x3f) << 5);
         break;
     }
     r->coeffs[NTRU_N - 1] = 0;

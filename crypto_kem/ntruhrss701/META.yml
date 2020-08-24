@@ -1,4 +1,4 @@
-name: NTRU-HRSS701
+name: ntruhrss701
 type: kem
 claimed-nist-level: 3
 claimed-security: IND-CCA2
@@ -15,9 +15,22 @@ auxiliary-submitters:
   - Jeffrey Hoffstein
   - Andreas Hülsing
   - Joost Rijneveld
+  - Tsunekazu Saito
   - Peter Schwabe
   - William Whyte
+  - Keita Xagawa
+  - Takashi Yamakawa
   - Zhenfei Zhang
 implementations:
     - name: clean
-      version: https://github.com/jschanck/ntru/tree/485dde03 reference implementation
+      version: https://github.com/jschanck/ntru/tree/4699d70a reference implementation
+    - name: avx2
+      version: https://github.com/jschanck/ntru/tree/4699d70a avx2 implementation
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2
+                - bmi2
