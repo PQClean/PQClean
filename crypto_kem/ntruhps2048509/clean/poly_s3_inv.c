@@ -7,7 +7,7 @@ static inline uint8_t mod3(uint8_t a) { /* a between 0 and 9 */
     a = (a >> 2) + (a & 3); /* between 0 and 4 */
     t = a - 3;
     c = t >> 5;
-    return t ^ (c & (a ^ t));
+    return (uint8_t) (t ^ (c & (a ^ t)));
 }
 
 /* return -1 if x<0 and y<0; otherwise return 0 */
