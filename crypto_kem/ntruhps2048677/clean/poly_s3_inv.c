@@ -44,7 +44,7 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_poly_S3_inv(poly *r, const poly *a) {
         }
         v.coeffs[0] = 0;
 
-        sign = mod3(2 * g.coeffs[0] * f.coeffs[0]);
+        sign = mod3((uint8_t) (2 * g.coeffs[0] * f.coeffs[0]));
         swap = both_negative_mask(-delta, -(int) g.coeffs[0]);
         delta ^= swap & (delta ^ -delta);
         delta += 1;
@@ -59,10 +59,10 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_poly_S3_inv(poly *r, const poly *a) {
         }
 
         for (i = 0; i < NTRU_N; ++i) {
-            g.coeffs[i] = mod3(g.coeffs[i] + sign * f.coeffs[i]);
+            g.coeffs[i] = mod3((uint8_t) (g.coeffs[i] + sign * f.coeffs[i]));
         }
         for (i = 0; i < NTRU_N; ++i) {
-            w.coeffs[i] = mod3(w.coeffs[i] + sign * v.coeffs[i]);
+            w.coeffs[i] = mod3((uint8_t) (w.coeffs[i] + sign * v.coeffs[i]));
         }
         for (i = 0; i < NTRU_N - 1; ++i) {
             g.coeffs[i] = g.coeffs[i + 1];
@@ -72,7 +72,7 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_poly_S3_inv(poly *r, const poly *a) {
 
     sign = f.coeffs[0];
     for (i = 0; i < NTRU_N - 1; ++i) {
-        r->coeffs[i] = mod3(sign * v.coeffs[NTRU_N - 2 - i]);
+        r->coeffs[i] = mod3((uint8_t) (sign * v.coeffs[NTRU_N - 2 - i]));
     }
     r->coeffs[NTRU_N - 1] = 0;
 }
