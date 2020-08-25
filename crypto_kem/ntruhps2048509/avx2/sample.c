@@ -1,3 +1,4 @@
+#include "crypto_sort_int32.h"
 #include "sample.h"
 
 void PQCLEAN_NTRUHPS2048509_AVX2_sample_fg(poly *f, poly *g, const unsigned char uniformbytes[NTRU_SAMPLE_FG_BYTES]) {
@@ -13,7 +14,6 @@ void PQCLEAN_NTRUHPS2048509_AVX2_sample_rm(poly *r, poly *m, const unsigned char
 }
 
 
-#include "crypto_sort_int32.h"
 void PQCLEAN_NTRUHPS2048509_AVX2_sample_fixed_type(poly *r, const unsigned char u[NTRU_SAMPLE_FT_BYTES]) {
     // Assumes NTRU_SAMPLE_FT_BYTES = ceil(30*(n-1)/8)
 
