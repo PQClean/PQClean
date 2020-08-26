@@ -12,7 +12,6 @@ void PQCLEAN_NTRUHRSS701_CLEAN_poly_S3_tobytes(unsigned char msg[NTRU_OWCPA_MSGB
         c = (3 * c + a->coeffs[5 * i + 0]) & 255;
         msg[i] = c;
     }
-
 }
 
 void PQCLEAN_NTRUHRSS701_CLEAN_poly_S3_frombytes(poly *r, const unsigned char msg[NTRU_OWCPA_MSGBYTES]) {

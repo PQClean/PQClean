@@ -1,10 +1,10 @@
 # This Makefile can be used with GNU Make or BSD Make
 
 LIB=libntruhps2048677_clean.a
-HEADERS=api.h crypto_sort.h owcpa.h params.h poly.h sample.h verify.h
-OBJECTS=crypto_sort.o kem.o owcpa.o pack3.o packq.o poly.o poly_lift.o poly_mod.o poly_r2_inv.o poly_rq_mul.o poly_s3_inv.o sample.o sample_iid.o verify.o
+HEADERS=api.h cmov.h crypto_sort_int32.h owcpa.h params.h poly.h sample.h 
+OBJECTS=cmov.o crypto_sort_int32.o kem.o owcpa.o pack3.o packq.o poly.o poly_lift.o poly_mod.o poly_r2_inv.o poly_rq_mul.o poly_s3_inv.o sample.o sample_iid.o 
 
-CFLAGS=-O3 -Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wextra -Wpedantic -Wvla -Werror -Wredundant-decls -Wmissing-prototypes -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 

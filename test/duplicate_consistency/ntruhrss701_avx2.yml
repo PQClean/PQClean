@@ -1,0 +1,26 @@
+consistency_checks:
+- source:
+    scheme: ntruhps2048509 
+    implementation: clean
+  files:
+    - cmov.c
+    - cmov.h
+    - kem.c
+    - LICENSE
+    - poly.c
+- source:
+    scheme: ntruhps2048509
+    implementation: avx2
+  files:
+    - poly.h
+    - sample_iid.c
+- source:
+    scheme: ntruhrss701
+    implementation: clean
+  files:
+    - api.h
+    - pack3.c
+    - packq.c
+    - params.h
+    - sample.c
+    - sample.h

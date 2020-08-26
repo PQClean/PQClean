@@ -1,0 +1,31 @@
+consistency_checks:
+- source:
+    scheme: ntruhps2048509
+    implementation: clean
+  files:
+    - cmov.c
+    - cmov.h
+    - kem.c
+    - LICENSE
+    - owcpa.c
+    - owcpa.h
+    - pack3.c
+    - packq.c
+    - poly.c
+    - poly_lift.c
+    - sample.c
+    - sample.h
+- source:
+    scheme: ntruhps2048509
+    implementation: avx2
+  files:
+    - crypto_sort_int32.c
+    - crypto_sort_int32.h
+    - poly.h
+    - sample_iid.c
+- source:
+    scheme: ntruhps2048677
+    implementation: clean
+  files:
+    - api.h
+    - params.h

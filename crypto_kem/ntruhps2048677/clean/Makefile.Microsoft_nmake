@@ -2,7 +2,7 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libntruhps2048677_clean.lib
-OBJECTS=crypto_sort.obj kem.obj owcpa.obj pack3.obj packq.obj poly.obj poly_lift.obj poly_mod.obj poly_r2_inv.obj poly_rq_mul.obj poly_s3_inv.obj sample.obj sample_iid.obj verify.obj
+OBJECTS=cmov.obj crypto_sort_int32.obj kem.obj owcpa.obj pack3.obj packq.obj poly.obj poly_lift.obj poly_mod.obj poly_r2_inv.obj poly_rq_mul.obj poly_s3_inv.obj sample.obj sample_iid.obj 
 
 CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 

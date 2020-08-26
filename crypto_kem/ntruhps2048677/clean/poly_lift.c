@@ -8,3 +8,4 @@ void PQCLEAN_NTRUHPS2048677_CLEAN_poly_lift(poly *r, const poly *a) {
     PQCLEAN_NTRUHPS2048677_CLEAN_poly_Z3_to_Zq(r);
 }
 
+
