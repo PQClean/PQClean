@@ -28,7 +28,7 @@
 #define q 4591
 #define w 286
 
-#define ppadsort 768
+#define ppadsort 761
 
 #define crypto_verify_clen PQCLEAN_SNTRUP761_CLEAN_crypto_verify_1039
 
