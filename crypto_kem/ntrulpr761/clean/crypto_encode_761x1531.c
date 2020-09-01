@@ -115,5 +115,5 @@ void PQCLEAN_NTRULPR761_CLEAN_crypto_encode_761x1531(unsigned char *out, const v
     r0 = R[0];
     *out++ = (unsigned char) r0;
     r0 >>= 8;
-    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0;
 }

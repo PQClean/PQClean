@@ -54,7 +54,7 @@ static void uint32_divmod_uint14(uint32 *q, uint16 *r, uint32 x, uint16 m) {
 
     x -= m;
     *q += 1;
-    mask = -(x >> 31);
+    mask = (~(x >> 31) + 1);
     x += mask & (uint32)m;
     *q += mask;
     /* x < m */

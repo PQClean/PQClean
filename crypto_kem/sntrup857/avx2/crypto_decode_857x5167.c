@@ -112,7 +112,7 @@ void PQCLEAN_SNTRUP857_AVX2_crypto_decode_857x5167(void *v, const unsigned char 
         a2 = a0 = R9[i];
         a0 = mulhi(a0, -28) - mulhi(mullo(a0, -886), 74); /* -44...37 */
         a0 += (a0 >> 15) & 74; /* 0...73 */
-        a1 = (int16) (a2 - a0) >> 1;
+        a1 = (int16) ((a2 - a0) >> 1);
         a1 = mullo(a1, 7085);
 
         /* invalid inputs might need reduction mod 74 */

@@ -297,5 +297,5 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x1531(unsigned char *out, const voi
     r0 = R[0];
     *out++ = (unsigned char) r0;
     r0 >>= 8;
-    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0;
 }

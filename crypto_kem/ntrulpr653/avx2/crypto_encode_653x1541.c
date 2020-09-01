@@ -282,5 +282,5 @@ void PQCLEAN_NTRULPR653_AVX2_crypto_encode_653x1541(unsigned char *out, const vo
     r0 = R[0];
     *out++ = (unsigned char) r0;
     r0 >>= 8;
-    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0;
 }

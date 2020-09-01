@@ -284,5 +284,5 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x1541round(unsigned char *out, cons
     r0 = R[0];
     *out++ = (unsigned char) r0;
     r0 >>= 8;
-    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0;
 }

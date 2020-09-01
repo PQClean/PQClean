@@ -15,8 +15,8 @@ void PQCLEAN_SNTRUP857_CLEAN_crypto_encode_857x5167(unsigned char *out, const vo
     uint32 r2;
 
     for (i = 0; i < 428; ++i) {
-        r0 = (R0[2 * i] + 2583) & 16383;
-        r1 = (R0[2 * i + 1] + 2583) & 16383;
+        r0 = (uint16) ((R0[2 * i] + 2583) & 16383);
+        r1 = (uint16) ((R0[2 * i + 1] + 2583) & 16383);
         r2 = r0 + r1 * (uint32)5167;
         *out++ = (unsigned char) r2;
         r2 >>= 8;
@@ -24,7 +24,7 @@ void PQCLEAN_SNTRUP857_CLEAN_crypto_encode_857x5167(unsigned char *out, const vo
         r2 >>= 8;
         R[i] = (uint16) r2;
     }
-    R[428] = (R0[856] + 2583) & 16383;
+    R[428] = (uint16) ((R0[856] + 2583) & 16383);
 
     for (i = 0; i < 214; ++i) {
         r0 = R[2 * i];
@@ -134,5 +134,5 @@ void PQCLEAN_SNTRUP857_CLEAN_crypto_encode_857x5167(unsigned char *out, const vo
     r0 = R[0];
     *out++ = (unsigned char) r0;
     r0 >>= 8;
-    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0;
 }

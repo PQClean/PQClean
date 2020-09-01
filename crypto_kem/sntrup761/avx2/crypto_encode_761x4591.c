@@ -58,7 +58,7 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x4591(unsigned char *out, const voi
         writing += 16;
         out += 32;
     }
-    R[380] = ((R0[760] + 2295) & 16383);
+    R[380] = (uint16) (((R0[760] + 2295) & 16383));
 
     reading = (uint16 *) R;
     writing = R;
@@ -304,5 +304,5 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x4591(unsigned char *out, const voi
     r0 = R[0];
     *out++ = (unsigned char) r0;
     r0 >>= 8;
-    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0;
 }

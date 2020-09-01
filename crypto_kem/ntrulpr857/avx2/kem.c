@@ -48,7 +48,7 @@ static Fq Fq_bigfreeze(uint32 x) {
     x -= (uint32) (q * ((x * (uint64)q31) >> 31));
     x -= (uint32) (q * ((x * (uint64)q31) >> 31));
     x -= q;
-    x += (-(x >> 31)) & (uint32)q;
+    x += (~(x >> 31) + 1) & (uint32)q;
     return (Fq) x;
 }
 
