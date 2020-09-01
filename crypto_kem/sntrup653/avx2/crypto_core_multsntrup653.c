@@ -298,7 +298,7 @@ int PQCLEAN_SNTRUP653_AVX2_crypto_core_multsntrup653(unsigned char *outbytes, co
 
     mult768(fg, f, g);
 
-    fg[0] -= fg[p - 1];
+    fg[0] = (int16) (fg[0] - fg[p - 1]);
     for (i = 0; i < 768; i += 16) {
         int16x16 fgi = load_x16(&fg[i]);
         int16x16 fgip = load_x16(&fg[i + p]);

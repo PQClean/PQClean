@@ -5,15 +5,15 @@
 #define p 761
 
 void PQCLEAN_NTRULPR761_CLEAN_crypto_encode_761x3(unsigned char *s, const void *v) {
-    const uint8 *f = v;
+    const uint8 *f = (const uint8 *)v;
     uint8 x;
     int i;
 
     for (i = 0; i < p / 4; ++i) {
-        x = *f++ + 1;
-        x += (uint8) ((*f++ + 1) << 2);
-        x += (uint8) ((*f++ + 1) << 4);
-        x += (uint8) ((*f++ + 1) << 6);
+        x = (uint8) (*f++ + 1);
+        x = (uint8) (x + ((*f++ + 1) << 2));
+        x = (uint8) (x + ((*f++ + 1) << 4));
+        x = (uint8) (x + ((*f++ + 1) << 6));
         *s++ = x;
     }
     x = *f++ + 1;

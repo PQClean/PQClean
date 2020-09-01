@@ -10,10 +10,10 @@ void PQCLEAN_NTRULPR653_CLEAN_crypto_encode_653x3(unsigned char *s, const void *
     int i;
 
     for (i = 0; i < p / 4; ++i) {
-        x = *f++ + 1;
-        x += (uint8) ((*f++ + 1) << 2);
-        x += (uint8) ((*f++ + 1) << 4);
-        x += (uint8) ((*f++ + 1) << 6);
+        x = (uint8) (*f++ + 1);
+        x = (uint8) (x + ((*f++ + 1) << 2));
+        x = (uint8) (x + ((*f++ + 1) << 4));
+        x = (uint8) (x + ((*f++ + 1) << 6));
         *s++ = x;
     }
     x = *f++ + 1;

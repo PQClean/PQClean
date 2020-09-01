@@ -74,7 +74,7 @@ int PQCLEAN_SNTRUP761_CLEAN_crypto_core_inv3sntrup761(unsigned char *outbytes, c
         v[0] = 0;
 
         sign = -g[0] * f[0];
-        swap = int16_negative_mask(-(int16) delta) & int16_nonzero_mask(g[0]);
+        swap = int16_negative_mask((int16) - delta) & int16_nonzero_mask(g[0]);
         delta ^= swap & (delta ^ -delta);
         delta += 1;
 
@@ -102,7 +102,7 @@ int PQCLEAN_SNTRUP761_CLEAN_crypto_core_inv3sntrup761(unsigned char *outbytes, c
 
     sign = f[0];
     for (i = 0; i < p; ++i) {
-        out[i] = (small) sign * v[p - 1 - i];
+        out[i] = (small) (sign * v[p - 1 - i]);
     }
 
     out[p] = (small) int16_nonzero_mask((int16) delta);
