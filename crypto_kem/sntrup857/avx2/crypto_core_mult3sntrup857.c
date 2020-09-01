@@ -278,7 +278,7 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_mult3sntrup857(unsigned char *outbytes, c
 
     mult1024(fg, f, g);
 
-    fg[0] -= fg[p - 1];
+    fg[0] = (int16) (fg[0] - fg[p - 1]);
     for (i = 0; i < 1024; i += 16) {
         int16x16 fgi = load_x16(&fg[i]);
         int16x16 fgip = load_x16(&fg[i + p]);

@@ -11,14 +11,14 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_decode_653x3(void *v, const unsigned char *s
 
     for (i = 0; i < p / 4; ++i) {
         x = *s++;
-        *f++ = ((uint8)(x & 3)) - 1;
+        *f++ = (uint8) ((x & 3) - 1);
         x >>= 2;
-        *f++ = ((uint8)(x & 3)) - 1;
+        *f++ = (uint8) ((x & 3) - 1);
         x >>= 2;
-        *f++ = ((uint8)(x & 3)) - 1;
+        *f++ = (uint8) ((x & 3) - 1);
         x >>= 2;
-        *f++ = ((uint8)(x & 3)) - 1;
+        *f++ = (uint8) ((x & 3) - 1);
     }
     x = *s++;
-    *f++ = ((uint8)(x & 3)) - 1;
+    *f++ = (uint8) ((x & 3) - 1);
 }

@@ -61,5 +61,5 @@ void PQCLEAN_SNTRUP857_AVX2_crypto_decode_857x3(void *v, const unsigned char *s)
         nextf += 128;
     }
 
-    *f = ((uint8)(*s & 3)) - 1;
+    *f = (uint8) ((*s & 3) - 1);
 }
