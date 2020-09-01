@@ -18,11 +18,11 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x4621(unsigned char *out, const vo
         r0 = (R0[2 * i] + 2310) & 16383;
         r1 = (R0[2 * i + 1] + 2310) & 16383;
         r2 = r0 + r1 * (uint32)4621;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     R[326] = (R0[652] + 2310) & 16383;
 
@@ -30,9 +30,9 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x4621(unsigned char *out, const vo
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)326;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     R[163] = R[326];
 
@@ -40,35 +40,35 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x4621(unsigned char *out, const vo
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)416;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
 
     for (i = 0; i < 40; ++i) {
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)676;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     r0 = R[80];
     r1 = R[81];
     r2 = r0 + r1 * (uint32)676;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    R[40] = r2;
+    R[40] = (uint16) r2;
 
     for (i = 0; i < 20; ++i) {
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)1786;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     R[20] = R[40];
 
@@ -76,11 +76,11 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x4621(unsigned char *out, const vo
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)12461;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     R[10] = R[20];
 
@@ -88,11 +88,11 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x4621(unsigned char *out, const vo
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)2370;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     R[5] = R[10];
 
@@ -100,28 +100,28 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x4621(unsigned char *out, const vo
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)86;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
 
     r0 = R[0];
     r1 = R[1];
     r2 = r0 + r1 * (uint32)7396;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    R[0] = r2;
+    R[0] = (uint16) r2;
     R[1] = R[2];
 
     r0 = R[0];
     r1 = R[1];
     r2 = r0 + r1 * (uint32)835;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    R[0] = r2;
+    R[0] = (uint16) r2;
 
     r0 = R[0];
-    *out++ = r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
 }

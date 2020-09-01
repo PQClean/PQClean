@@ -17,7 +17,7 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_wforcesntrup857(unsigned char *out, const
     crypto_core_weight((unsigned char *) &weight, in);
     PQCLEAN_SNTRUP857_AVX2_crypto_decode_int16(&weight, (unsigned char *) &weight);
 
-    mask = (weight - w) | (w - weight);
+    mask = (int16) ((weight - w) | (w - weight));
     mask >>= 15;
     maskvec = _mm256_set1_epi16((short) ~mask);
 

@@ -14,7 +14,7 @@ typedef int16 Fq;
 static Fq Fq_freeze(int32 x) {
     x -= q * ((q18 * x) >> 18);
     x -= q * ((q27 * x + 67108864) >> 27);
-    return x;
+    return (Fq) x;
 }
 
 int PQCLEAN_NTRULPR761_CLEAN_crypto_core_multsntrup761(unsigned char *outbytes, const unsigned char *inbytes, const unsigned char *kbytes) {
@@ -30,9 +30,9 @@ int PQCLEAN_NTRULPR761_CLEAN_crypto_core_multsntrup761(unsigned char *outbytes, 
     }
 
     for (i = 0; i < p; ++i) {
-        small gi = kbytes[i];
+        small gi = (small) kbytes[i];
         small gi0 = gi & 1;
-        g[i] = gi0 - (gi & (gi0 << 1));
+        g[i] = (small) (gi0 - (gi & (gi0 << 1)));
     }
 
     for (i = 0; i < p; ++i) {

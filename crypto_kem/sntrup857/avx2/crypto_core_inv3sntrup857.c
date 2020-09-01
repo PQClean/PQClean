@@ -179,7 +179,7 @@ static void vec256_final(small *out, const vec256 *V0, const vec256 *V1) {
     vec256_tobits(V1, v1);
 
     for (i = 0; i < ppad; ++i) {
-        v[i] = v0[i] + 2 * v1[i] - 4 * (v0[i] & v1[i]);
+        v[i] = (small) (v0[i] + 2 * v1[i] - 4 * (v0[i] & v1[i]));
     }
 
     for (i = 0; i < ppad; ++i) {
@@ -252,11 +252,11 @@ static inline int vec256_bit0mask(vec256 *f) {
 static inline void vec256_divx_1(vec256 *f) {
     vec256 f0 = f[0];
 
-    unsigned long long low0 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
+    unsigned long long low0 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
 
     low0 = low0 >> 1;
 
-    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, low0), 0x3);
+    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, (long long) low0), 0x3);
 
     f[0] = _mm256_permute4x64_epi64(f0, 0x39);
 }
@@ -265,14 +265,14 @@ static inline void vec256_divx_2(vec256 *f) {
     vec256 f0 = f[0];
     vec256 f1 = f[1];
 
-    unsigned long long low0 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
-    unsigned long long low1 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
+    unsigned long long low0 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
+    unsigned long long low1 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
 
     low0 = (low0 >> 1) | (low1 << 63);
     low1 = low1 >> 1;
 
-    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, low0), 0x3);
-    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, low1), 0x3);
+    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, (long long) low0), 0x3);
+    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, (long long) low1), 0x3);
 
     f[0] = _mm256_permute4x64_epi64(f0, 0x39);
     f[1] = _mm256_permute4x64_epi64(f1, 0x39);
@@ -283,17 +283,17 @@ static inline void vec256_divx_3(vec256 *f) {
     vec256 f1 = f[1];
     vec256 f2 = f[2];
 
-    unsigned long long low0 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
-    unsigned long long low1 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
-    unsigned long long low2 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
+    unsigned long long low0 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
+    unsigned long long low1 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
+    unsigned long long low2 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
 
     low0 = (low0 >> 1) | (low1 << 63);
     low1 = (low1 >> 1) | (low2 << 63);
     low2 = low2 >> 1;
 
-    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, low0), 0x3);
-    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, low1), 0x3);
-    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, low2), 0x3);
+    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, (long long) low0), 0x3);
+    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, (long long) low1), 0x3);
+    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, (long long) low2), 0x3);
 
     f[0] = _mm256_permute4x64_epi64(f0, 0x39);
     f[1] = _mm256_permute4x64_epi64(f1, 0x39);
@@ -306,20 +306,20 @@ static inline void vec256_divx_4(vec256 *f) {
     vec256 f2 = f[2];
     vec256 f3 = f[3];
 
-    unsigned long long low0 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
-    unsigned long long low1 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
-    unsigned long long low2 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
-    unsigned long long low3 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f3));
+    unsigned long long low0 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
+    unsigned long long low1 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
+    unsigned long long low2 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
+    unsigned long long low3 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f3));
 
     low0 = (low0 >> 1) | (low1 << 63);
     low1 = (low1 >> 1) | (low2 << 63);
     low2 = (low2 >> 1) | (low3 << 63);
     low3 = low3 >> 1;
 
-    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, low0), 0x3);
-    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, low1), 0x3);
-    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, low2), 0x3);
-    f3 = _mm256_blend_epi32(f3, _mm256_set_epi64x(0, 0, 0, low3), 0x3);
+    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, (long long) low0), 0x3);
+    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, (long long) low1), 0x3);
+    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, (long long) low2), 0x3);
+    f3 = _mm256_blend_epi32(f3, _mm256_set_epi64x(0, 0, 0, (long long) low3), 0x3);
 
     f[0] = _mm256_permute4x64_epi64(f0, 0x39);
     f[1] = _mm256_permute4x64_epi64(f1, 0x39);
@@ -330,11 +330,11 @@ static inline void vec256_divx_4(vec256 *f) {
 static inline void vec256_timesx_1(vec256 *f) {
     vec256 f0 = _mm256_permute4x64_epi64(f[0], 0x93);
 
-    unsigned long long low0 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
+    unsigned long long low0 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
 
     low0 = low0 << 1;
 
-    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, low0), 0x3);
+    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, (long long) low0), 0x3);
 
     f[0] = f0;
 }
@@ -343,14 +343,14 @@ static inline void vec256_timesx_2(vec256 *f) {
     vec256 f0 = _mm256_permute4x64_epi64(f[0], 0x93);
     vec256 f1 = _mm256_permute4x64_epi64(f[1], 0x93);
 
-    unsigned long long low0 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
-    unsigned long long low1 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
+    unsigned long long low0 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
+    unsigned long long low1 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
 
     low1 = (low1 << 1) | (low0 >> 63);
     low0 = low0 << 1;
 
-    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, low0), 0x3);
-    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, low1), 0x3);
+    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, (long long) low0), 0x3);
+    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, (long long) low1), 0x3);
 
     f[0] = f0;
     f[1] = f1;
@@ -363,7 +363,7 @@ static inline void vec256_timesx_3(vec256 *f) {
 
     unsigned long long low0 = *(unsigned long long *) &f0;
     unsigned long long low1 = *(unsigned long long *) &f1;
-    unsigned long long low2 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
+    unsigned long long low2 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
 
     low2 = (low2 << 1) | (low1 >> 63);
     low1 = (low1 << 1) | (low0 >> 63);
@@ -371,7 +371,7 @@ static inline void vec256_timesx_3(vec256 *f) {
 
     *(unsigned long long *) &f0 = low0;
     *(unsigned long long *) &f1 = low1;
-    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, low2), 0x3);
+    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, (long long) low2), 0x3);
 
     f[0] = f0;
     f[1] = f1;
@@ -384,20 +384,20 @@ static inline void vec256_timesx_4(vec256 *f) {
     vec256 f2 = _mm256_permute4x64_epi64(f[2], 0x93);
     vec256 f3 = _mm256_permute4x64_epi64(f[3], 0x93);
 
-    unsigned long long low0 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
-    unsigned long long low1 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
-    unsigned long long low2 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
-    unsigned long long low3 = _mm_cvtsi128_si64(_mm256_castsi256_si128(f3));
+    unsigned long long low0 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f0));
+    unsigned long long low1 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f1));
+    unsigned long long low2 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f2));
+    unsigned long long low3 = (unsigned long long) _mm_cvtsi128_si64(_mm256_castsi256_si128(f3));
 
     low3 = (low3 << 1) | (low2 >> 63);
     low2 = (low2 << 1) | (low1 >> 63);
     low1 = (low1 << 1) | (low0 >> 63);
     low0 = low0 << 1;
 
-    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, low0), 0x3);
-    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, low1), 0x3);
-    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, low2), 0x3);
-    f3 = _mm256_blend_epi32(f3, _mm256_set_epi64x(0, 0, 0, low3), 0x3);
+    f0 = _mm256_blend_epi32(f0, _mm256_set_epi64x(0, 0, 0, (long long) low0), 0x3);
+    f1 = _mm256_blend_epi32(f1, _mm256_set_epi64x(0, 0, 0, (long long) low1), 0x3);
+    f2 = _mm256_blend_epi32(f2, _mm256_set_epi64x(0, 0, 0, (long long) low2), 0x3);
+    f3 = _mm256_blend_epi32(f3, _mm256_set_epi64x(0, 0, 0, (long long) low3), 0x3);
 
     f[0] = f0;
     f[1] = f1;
@@ -653,6 +653,6 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_inv3sntrup857(unsigned char *outbytes, co
     vec256_scale(V0, V1, c0vec, c1vec);
 
     vec256_final(out, V0, V1);
-    out[p] = negative_mask(minusdelta);
+    out[p] = (small) negative_mask(minusdelta);
     return 0;
 }

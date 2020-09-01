@@ -82,22 +82,22 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x4621(unsigned char *out, const voi
                                 ));
         x = _mm256_permute4x64_epi64(x, 0xd8);
         _mm_storeu_si128((__m128i *) writing, _mm256_extractf128_si256(x, 0));
-        s0 = _mm256_extract_epi32(x, 4);
-        *out++ = s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 4);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
-        s0 = _mm256_extract_epi32(x, 6);
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 6);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         reading += 16;
         writing += 8;
     }
@@ -125,22 +125,22 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x4621(unsigned char *out, const voi
                                 ));
         x = _mm256_permute4x64_epi64(x, 0xd8);
         _mm_storeu_si128((__m128i *) writing, _mm256_extractf128_si256(x, 0));
-        s0 = _mm256_extract_epi32(x, 4);
-        *out++ = s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 4);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
-        s0 = _mm256_extract_epi32(x, 6);
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 6);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         reading += 16;
         writing += 8;
     }
@@ -162,33 +162,33 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x4621(unsigned char *out, const voi
                                 ));
         x = _mm256_permute4x64_epi64(x, 0xd8);
         _mm_storeu_si128((__m128i *) writing, _mm256_extractf128_si256(x, 0));
-        s0 = _mm256_extract_epi32(x, 4);
-        *out++ = s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 4);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
-        s0 = _mm256_extract_epi32(x, 6);
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 6);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         reading += 16;
         writing += 8;
     }
     r0 = R[80];
     r1 = R[81];
     r2 = r0 + r1 * (uint32)676;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    R[40] = r2;
+    R[40] = (uint16) r2;
 
     reading = (uint16 *) R;
     writing = R;
@@ -212,22 +212,22 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x4621(unsigned char *out, const voi
                                 ));
         x = _mm256_permute4x64_epi64(x, 0xd8);
         _mm_storeu_si128((__m128i *) writing, _mm256_extractf128_si256(x, 0));
-        s0 = _mm256_extract_epi32(x, 4);
-        *out++ = s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 4);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
-        s0 = _mm256_extract_epi32(x, 6);
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
+        s0 = (uint32) _mm256_extract_epi32(x, 6);
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         s0 >>= 8;
-        *out++ = s0;
+        *out++ = (unsigned char) s0;
         reading += 16;
         writing += 8;
     }
@@ -237,11 +237,11 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x4621(unsigned char *out, const voi
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)12461;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     R[10] = R[20];
 
@@ -249,11 +249,11 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x4621(unsigned char *out, const voi
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)2370;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        *out++ = r2;
+        *out++ = (unsigned char) r2;
         r2 >>= 8;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
     R[5] = R[10];
 
@@ -261,28 +261,28 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653x4621(unsigned char *out, const voi
         r0 = R[2 * i];
         r1 = R[2 * i + 1];
         r2 = r0 + r1 * (uint32)86;
-        R[i] = r2;
+        R[i] = (uint16) r2;
     }
 
     r0 = R[0];
     r1 = R[1];
     r2 = r0 + r1 * (uint32)7396;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    R[0] = r2;
+    R[0] = (uint16) r2;
     R[1] = R[2];
 
     r0 = R[0];
     r1 = R[1];
     r2 = r0 + r1 * (uint32)835;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    *out++ = r2;
+    *out++ = (unsigned char) r2;
     r2 >>= 8;
-    R[0] = r2;
+    R[0] = (uint16) r2;
 
     r0 = R[0];
-    *out++ = r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
+    *out++ = (unsigned char) r0; /*clang-analyzer-deadcode.DeadStores*/ /*r0 >>= 8;*/
 }

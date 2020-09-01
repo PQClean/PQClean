@@ -11,7 +11,7 @@ void PQCLEAN_NTRULPR857_CLEAN_crypto_encode_857x1723round(unsigned char *out, co
     int i;
 
     for (i = 0; i < p; ++i) {
-        x[i] = 3 * ((10923 * a[i] + 16384) >> 15);
+        x[i] = (int16) (3 * ((10923 * a[i] + 16384) >> 15));
     }
     PQCLEAN_NTRULPR857_CLEAN_crypto_encode_857x1723(out, x);
 }

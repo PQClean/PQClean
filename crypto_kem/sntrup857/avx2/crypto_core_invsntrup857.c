@@ -14,11 +14,11 @@
 
 /* return -1 if x!=0; else return 0 */
 static int int16_nonzero_mask(int16 x) {
-    uint16 u = x; /* 0, else 1...65535 */
+    uint16 u = (uint16) x; /* 0, else 1...65535 */
     uint32 v = u; /* 0, else 1...65535 */
     v = -v; /* 0, else 2^32-65535...2^32-1 */
     v >>= 31; /* 0, else 1 */
-    return -v; /* 0, else -1 */
+    return -(int) v; /* 0, else -1 */
 }
 
 /* return -1 if x<0; otherwise return 0 */
@@ -37,7 +37,7 @@ typedef int16 Fq;
 static Fq Fq_freeze(int32 x) {
     x -= q * ((q18 * x) >> 18);
     x -= q * ((q27 * x + 67108864) >> 27);
-    return x;
+    return (Fq) x;
 }
 
 /* nonnegative e */
@@ -158,13 +158,13 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_invsntrup857(unsigned char *outbytes, con
         f0 = f[0];
 
         minusdelta = -delta;
-        swap = int16_negative_mask(minusdelta) & int16_nonzero_mask(g0);
+        swap = int16_negative_mask((int16) minusdelta) & int16_nonzero_mask(g0);
         delta ^= swap & (delta ^ minusdelta);
         delta += 1;
 
         fgflip = swap & (f0 ^ g0);
-        f0 ^= fgflip;
-        g0 ^= fgflip;
+        f0 ^= (Fq) fgflip;
+        g0 ^= (Fq) fgflip;
 
         f[0] = f0;
 
@@ -177,13 +177,13 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_invsntrup857(unsigned char *outbytes, con
         f0 = f[0];
 
         minusdelta = -delta;
-        swap = int16_negative_mask(minusdelta) & int16_nonzero_mask(g0);
+        swap = int16_negative_mask((int16) minusdelta) & int16_nonzero_mask(g0);
         delta ^= swap & (delta ^ minusdelta);
         delta += 1;
 
         fgflip = swap & (f0 ^ g0);
-        f0 ^= fgflip;
-        g0 ^= fgflip;
+        f0 ^= (Fq) fgflip;
+        g0 ^= (Fq) fgflip;
 
         f[0] = f0;
 
@@ -197,6 +197,6 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_invsntrup857(unsigned char *outbytes, con
     }
 
     crypto_encode_pxint16(outbytes, out);
-    outbytes[2 * p] = int16_nonzero_mask(delta);
+    outbytes[2 * p] = (unsigned char) int16_nonzero_mask((int16) delta);
     return 0;
 }

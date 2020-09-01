@@ -7,7 +7,7 @@ void PQCLEAN_NTRULPR761_AVX2_crypto_encode_761xint16(unsigned char *s, const voi
 
     for (i = 0; i < 761; ++i) {
         uint16_t u = *x++;
-        *s++ = u;
-        *s++ = u >> 8;
+        *s++ = (unsigned char) u;
+        *s++ = (unsigned char) (u >> 8);
     }
 }

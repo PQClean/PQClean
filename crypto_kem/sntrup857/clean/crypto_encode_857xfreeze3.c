@@ -12,7 +12,7 @@
 /* and F3_freeze(x) is in {-2,-1,0,1,2} */
 
 static inline unsigned char F3_freeze(int16 x) {
-    return x - 3 * ((10923 * x + 16384) >> 15);
+    return (unsigned char) (x - 3 * ((10923 * x + 16384) >> 15));
 }
 
 void PQCLEAN_SNTRUP857_CLEAN_crypto_encode_857xfreeze3(unsigned char *s, const void *v) {

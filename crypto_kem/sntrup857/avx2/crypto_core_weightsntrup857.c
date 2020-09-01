@@ -37,8 +37,8 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_weightsntrup857(unsigned char *outbytes, 
     sum = _mm256_hadd_epi16(sum, sum);
     /* want sum[0]+sum[8] */
 
-    weight = _mm256_extract_epi16(sum, 0);
-    weight += _mm256_extract_epi16(sum, 8);
+    weight = (int16) _mm256_extract_epi16(sum, 0);
+    weight += (int16) _mm256_extract_epi16(sum, 8);
 
     PQCLEAN_SNTRUP857_AVX2_crypto_encode_int16(outbytes, &weight);
     return 0;

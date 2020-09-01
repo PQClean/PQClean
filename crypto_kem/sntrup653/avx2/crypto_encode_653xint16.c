@@ -7,7 +7,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_encode_653xint16(unsigned char *s, const void
 
     for (i = 0; i < 653; ++i) {
         uint16_t u = *x++;
-        *s++ = u;
-        *s++ = u >> 8;
+        *s++ = (unsigned char) u;
+        *s++ = (unsigned char) (u >> 8);
     }
 }

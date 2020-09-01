@@ -10,7 +10,7 @@ static inline int16 mullo(int16 x, int16 y) {
 }
 
 static inline int16 mulhi(int16 x, int16 y) {
-    return (x * (int32)y) >> 16;
+    return (int16) ((x * (int32)y) >> 16);
 }
 
 static inline __m256i add(__m256i x, __m256i y) {
@@ -81,7 +81,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
     a0 = mulhi(a0, 396) - mulhi(mullo(a0, -20092), 835); /* -421...422 */
     a0 += s[2 * i + 0]; /* -421...677 */
     a0 += (a0 >> 15) & 835; /* 0...834 */
-    a1 = (s[2 * i + 1] << 8) + s[2 * i] - a0;
+    a1 = (int16) ((s[2 * i + 1] << 8) + s[2 * i] - a0);
     a1 = mullo(a1, 8555);
 
     /* invalid inputs might need reduction mod 6708 */
@@ -103,7 +103,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
         a0 = mulhi(a0, 3088) - mulhi(mullo(a0, -2268), 7396); /* -3873...3920 */
         a0 += s[2 * i + 0]; /* -3873...4175 */
         a0 += (a0 >> 15) & 7396; /* 0...7395 */
-        a1 = (a2 << 14) + (s[2 * i + 1] << 6) + ((s[2 * i] - a0) >> 2);
+        a1 = (int16) ((a2 << 14) + (s[2 * i + 1] << 6) + ((s[2 * i] - a0) >> 2));
         a1 = mullo(a1, -18679);
 
         /* invalid inputs might need reduction mod 7396 */
@@ -120,7 +120,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
     a2 = a0 = R8[2];
     a0 = mulhi(a0, 4) - mulhi(mullo(a0, -762), 86); /* -43...44 */
     a0 += (a0 >> 15) & 86; /* 0...85 */
-    a1 = (a2 - a0) >> 1;
+    a1 = (int16) ((a2 - a0) >> 1);
     a1 = mullo(a1, -16765);
 
     /* invalid inputs might need reduction mod 78 */
@@ -134,7 +134,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
         a2 = a0 = R8[i];
         a0 = mulhi(a0, 4) - mulhi(mullo(a0, -762), 86); /* -43...44 */
         a0 += (a0 >> 15) & 86; /* 0...85 */
-        a1 = (a2 - a0) >> 1;
+        a1 = (int16) ((a2 - a0) >> 1);
         a1 = mullo(a1, -16765);
 
         /* invalid inputs might need reduction mod 86 */
@@ -156,7 +156,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
         a0 = mulhi(a0, -14) - mulhi(mullo(a0, -7079), 2370); /* -1186...1185 */
         a0 += s[2 * i + 0]; /* -1186...1440 */
         a0 += (a0 >> 15) & 2370; /* 0...2369 */
-        a1 = (a2 << 15) + (s[2 * i + 1] << 7) + ((s[2 * i] - a0) >> 1);
+        a1 = (int16) ((a2 << 15) + (s[2 * i + 1] << 7) + ((s[2 * i] - a0) >> 1));
         a1 = mullo(a1, -8351);
 
         /* invalid inputs might need reduction mod 2370 */
@@ -178,7 +178,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
         a0 = mulhi(a0, 4710) - mulhi(mullo(a0, -1346), 12461); /* -6679...6781 */
         a0 += s[2 * i + 0]; /* -6679...7036 */
         a0 += (a0 >> 15) & 12461; /* 0...12460 */
-        a1 = (s[2 * i + 1] << 8) + s[2 * i] - a0;
+        a1 = (int16) ((s[2 * i + 1] << 8) + s[2 * i] - a0);
         a1 = mullo(a1, -19675);
 
         /* invalid inputs might need reduction mod 12461 */
@@ -234,7 +234,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
     a0 = mulhi(a0, 248) - mulhi(mullo(a0, -24818), 676); /* -340...340 */
     a0 += s[2 * i + 0]; /* -340...595 */
     a0 += (a0 >> 15) & 676; /* 0...675 */
-    a1 = (a2 << 14) + (s[2 * i + 1] << 6) + ((s[2 * i] - a0) >> 2);
+    a1 = (int16) ((a2 << 14) + (s[2 * i + 1] << 6) + ((s[2 * i] - a0) >> 2));
     a1 = mullo(a1, -23655);
 
     /* invalid inputs might need reduction mod 7510 */
@@ -285,7 +285,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_decode_653x4621(void *v, const unsigned char 
     a0 -= 416; /* -640..>47 */
     a0 += (a0 >> 15) & 416; /* -224...415 */
     a0 += (a0 >> 15) & 416; /* 0...415 */
-    a1 = (a2 << 3) + ((s[i] - a0) >> 5);
+    a1 = (int16) ((a2 << 3) + ((s[i] - a0) >> 5));
     a1 = mullo(a1, 20165);
 
     /* invalid inputs might need reduction mod 4621 */

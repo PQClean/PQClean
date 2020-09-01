@@ -11,7 +11,7 @@ void PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x1541round(unsigned char *out, con
     int i;
 
     for (i = 0; i < p; ++i) {
-        x[i] = 3 * ((10923 * a[i] + 16384) >> 15);
+        x[i] = (int16) (3 * ((10923 * a[i] + 16384) >> 15));
     }
     PQCLEAN_SNTRUP653_CLEAN_crypto_encode_653x1541(out, x);
 }

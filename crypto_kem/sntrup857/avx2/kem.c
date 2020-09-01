@@ -65,7 +65,7 @@ static void Rq_recip3(Fq *out, const small *in) {
 static void Hash(unsigned char *out, const unsigned char *in, int inlen) {
     unsigned char h[64];
     int i;
-    sha512(h, in, inlen);
+    sha512(h, in, (size_t) inlen);
     for (i = 0; i < 32; ++i) {
         out[i] = h[i];
     }
@@ -103,7 +103,7 @@ static void Short_random(small *out) {
     }
     PQCLEAN_SNTRUP857_AVX2_crypto_sort_uint32(L, ppadsort);
     for (i = 0; i < p; ++i) {
-        out[i] = (L[i] & 3) - 1;
+        out[i] = (small) ((L[i] & 3) - 1);
     }
 }
 
@@ -115,7 +115,7 @@ static void Small_random(small *out) {
         L[i] = urandom32();
     }
     for (i = 0; i < p; ++i) {
-        out[i] = (((L[i] & 0x3fffffff) * 3) >> 30) - 1;
+        out[i] = (small) ((((L[i] & 0x3fffffff) * 3) >> 30) - 1);
     }
 }
 
@@ -248,13 +248,13 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_kem_dec(unsigned char *k, const unsigned char 
         Hide(x, cnew, r_enc, r, pk, cache);
         mask = crypto_verify_clen(c, cnew);
         for (i = 0; i < Small_bytes; ++i) {
-            r_enc[i + 1] ^= mask & (r_enc[i + 1] ^ rho[i]);
+            r_enc[i + 1] ^= (unsigned char) (mask & (r_enc[i + 1] ^ rho[i]));
         }
         Hash(x + 1, r_enc, 1 + Small_bytes); /* XXX: can instead do cmov on cached hash of rho */
         for (i = 0; i < Ciphertexts_bytes + Confirm_bytes; ++i) {
             x[1 + Hash_bytes + i] = c[i];
         }
-        x[0] = 1 + mask;
+        x[0] = (unsigned char) (1 + mask);
         Hash(k, x, sizeof x);
     }
     return 0;

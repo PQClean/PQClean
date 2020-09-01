@@ -44,7 +44,7 @@ static void minmax_vector(int32 *x, int32 *y, size_t n) {
         int32x8_MINMAX(x0, y0);
         int32x8_store(x + n - 8, x0);
         int32x8_store(y + n - 8, y0);
-        n &= ~7;
+        n &= ~(size_t) 7;
     }
     do {
         int32x8 x0 = int32x8_load(x);

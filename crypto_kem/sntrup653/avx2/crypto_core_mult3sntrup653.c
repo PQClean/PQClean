@@ -229,14 +229,14 @@ int PQCLEAN_SNTRUP653_AVX2_crypto_core_mult3sntrup653(unsigned char *outbytes, c
     }
 
     for (i = 0; i < p; ++i) {
-        int8 fi = inbytes[i];
+        int8 fi = (int8) inbytes[i];
         int8 fi0 = fi & 1;
-        f[i] = fi0 - (fi & (fi0 << 1));
+        f[i] = (int16) (fi0 - (fi & (fi0 << 1)));
     }
     for (i = 0; i < p; ++i) {
-        int8 gi = kbytes[i];
+        int8 gi = (int8) kbytes[i];
         int8 gi0 = gi & 1;
-        g[i] = gi0 - (gi & (gi0 << 1));
+        g[i] = (int16) (gi0 - (gi & (gi0 << 1)));
     }
 
     mult768(fg, f, g);
@@ -252,7 +252,7 @@ int PQCLEAN_SNTRUP653_AVX2_crypto_core_mult3sntrup653(unsigned char *outbytes, c
     }
 
     for (i = 0; i < p; ++i) {
-        outbytes[i] = h[i];
+        outbytes[i] = (unsigned char) h[i];
     }
 
     return 0;

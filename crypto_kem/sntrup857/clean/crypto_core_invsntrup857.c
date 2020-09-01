@@ -13,16 +13,16 @@
 
 /* return -1 if x!=0; else return 0 */
 static int int16_nonzero_mask(int16 x) {
-    uint16 u = x; /* 0, else 1...65535 */
+    uint16 u = (uint16) x; /* 0, else 1...65535 */
     uint32 v = u; /* 0, else 1...65535 */
     v = -v; /* 0, else 2^32-65535...2^32-1 */
     v >>= 31; /* 0, else 1 */
-    return -v; /* 0, else -1 */
+    return -(int) v; /* 0, else -1 */
 }
 
 /* return -1 if x<0; otherwise return 0 */
 static int int16_negative_mask(int16 x) {
-    uint16 u = x;
+    uint16 u = (uint16) x;
     u >>= 15;
     return -(int) u;
     /* alternative with gcc -fwrapv: */
@@ -40,7 +40,7 @@ typedef int16 Fq;
 static Fq Fq_freeze(int32 x) {
     x -= q * ((q18 * x) >> 18);
     x -= q * ((q27 * x + 67108864) >> 27);
-    return x;
+    return (Fq) x;
 }
 
 static Fq Fq_recip(Fq a1) {
@@ -91,17 +91,17 @@ int PQCLEAN_SNTRUP857_CLEAN_crypto_core_invsntrup857(unsigned char *outbytes, co
         }
         v[0] = 0;
 
-        swap = int16_negative_mask(-delta) & int16_nonzero_mask(g[0]);
+        swap = int16_negative_mask((int16) - delta) & int16_nonzero_mask(g[0]);
         delta ^= swap & (delta ^ -delta);
         delta += 1;
 
         for (i = 0; i < p + 1; ++i) {
             t = swap & (f[i] ^ g[i]);
-            f[i] ^= t;
-            g[i] ^= t;
+            f[i] ^= (Fq) t;
+            g[i] ^= (Fq) t;
             t = swap & (v[i] ^ r[i]);
-            v[i] ^= t;
-            r[i] ^= t;
+            v[i] ^= (Fq) t;
+            r[i] ^= (Fq) t;
         }
 
         f0 = f[0];
@@ -126,6 +126,6 @@ int PQCLEAN_SNTRUP857_CLEAN_crypto_core_invsntrup857(unsigned char *outbytes, co
 
     crypto_encode_pxint16(outbytes, out);
 
-    outbytes[2 * p] = int16_nonzero_mask(delta);
+    outbytes[2 * p] = (unsigned char) int16_nonzero_mask((int16) delta);
     return 0;
 }

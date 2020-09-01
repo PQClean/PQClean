@@ -291,9 +291,9 @@ int PQCLEAN_NTRULPR761_AVX2_crypto_core_multsntrup761(unsigned char *outbytes, c
         store_x16(&f[i], x);
     }
     for (i = 0; i < p; ++i) {
-        int8 gi = kbytes[i];
+        int8 gi = (int8) kbytes[i];
         int8 gi0 = gi & 1;
-        g[i] = gi0 - (gi & (gi0 << 1));
+        g[i] = (int16) (gi0 - (gi & (gi0 << 1)));
     }
 
     mult768(fg, f, g);

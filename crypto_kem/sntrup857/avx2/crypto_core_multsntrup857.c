@@ -398,9 +398,9 @@ int PQCLEAN_SNTRUP857_AVX2_crypto_core_multsntrup857(unsigned char *outbytes, co
         store_x16(&f[i], x);
     }
     for (i = 0; i < p; ++i) {
-        int8 gi = kbytes[i];
+        int8 gi = (int8) kbytes[i];
         int8 gi0 = gi & 1;
-        g[i] = gi0 - (gi & (gi0 << 1));
+        g[i] = (int8) (gi0 - (gi & (gi0 << 1)));
     }
 
     mult1024(fg, f, g);

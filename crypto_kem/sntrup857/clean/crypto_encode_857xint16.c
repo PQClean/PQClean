@@ -7,7 +7,7 @@ void PQCLEAN_SNTRUP857_CLEAN_crypto_encode_857xint16(unsigned char *s, const voi
 
     for (i = 0; i < 857; ++i) {
         uint16_t u = *x++;
-        *s++ = u;
-        *s++ = u >> 8;
+        *s++ = (unsigned char) u;
+        *s++ = (unsigned char) (u >> 8);
     }
 }

@@ -8,6 +8,6 @@ void PQCLEAN_NTRULPR761_CLEAN_crypto_encode_256x2(unsigned char *s, const void *
         s[i] = 0;
     }
     for (i = 0; i < 256; ++i) {
-        s[i >> 3] |= (r[i] & 1) << (i & 7);
+        s[i >> 3] |= (unsigned char) ((r[i] & 1) << (i & 7));
     }
 }
