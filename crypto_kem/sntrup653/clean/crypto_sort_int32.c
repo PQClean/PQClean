@@ -16,7 +16,8 @@
 
 /* assume 2 <= n <= 0x40000000 */
 void PQCLEAN_SNTRUP653_CLEAN_crypto_sort_int32(int32_t *x, long long n) {
-    int32 top, p, q, r, i, j;
+    int32 top, p, q, r, i;
+    long long j;
 
     top = 1;
     while (top < n - top) {
