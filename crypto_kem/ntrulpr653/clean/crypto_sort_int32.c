@@ -15,7 +15,7 @@
     } while(0)
 
 /* assume 2 <= n <= 0x40000000 */
-void PQCLEAN_NTRULPR653_CLEAN_crypto_sort_int32(int32_t *x, long long n) {
+void PQCLEAN_NTRULPR653_CLEAN_crypto_sort_int32(int32_t *x, int32_t n) {
     int32 top, p, q, r, i, j;
 
     top = 1;
