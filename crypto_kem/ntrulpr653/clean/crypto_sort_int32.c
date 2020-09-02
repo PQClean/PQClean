@@ -38,7 +38,8 @@ static void crypto_sort_smallindices(int32 *x, int32 n) {
         i = 0;
         j = 0;
         for (q = top; q > p; q >>= 1) {
-            if (j != i) for (;;) {
+            if (j != i) {
+                for (;;) {
                     if (j == n - q) {
                         goto done;
                     }
@@ -53,6 +54,7 @@ static void crypto_sort_smallindices(int32 *x, int32 n) {
                         break;
                     }
                 }
+            }
             while (i + p <= n - q) {
                 for (j = i; j < i + p; ++j) {
                     int32 a = x[j + p];
