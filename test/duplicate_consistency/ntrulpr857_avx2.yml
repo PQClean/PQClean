@@ -3,7 +3,6 @@ consistency_checks:
     scheme: sntrup653
     implementation: clean
   files:
-      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_sort_uint32.c
@@ -22,7 +21,6 @@ consistency_checks:
     scheme: sntrup761
     implementation: clean
   files:
-      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_sort_uint32.c
@@ -50,7 +48,6 @@ consistency_checks:
       - crypto_encode_857x1723round.h
       - crypto_encode_857x3.h
       - crypto_encode_857xint16.h
-      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_decode_857xint16.c
@@ -106,7 +103,6 @@ consistency_checks:
       - crypto_encode_857x1723round.h
       - crypto_encode_857x3.h
       - crypto_encode_857xint16.h
-      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_verify_1312.h

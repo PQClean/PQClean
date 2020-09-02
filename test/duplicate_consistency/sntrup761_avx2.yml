@@ -22,7 +22,6 @@ consistency_checks:
       - crypto_encode_761xfreeze3.h
       - crypto_encode_761xint16.h
       - crypto_encode_int16.h
-      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_verify_1039.h
@@ -38,7 +37,6 @@ consistency_checks:
     implementation: clean
   files:
       - crypto_encode_int16.h
-      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_encode_int16.c

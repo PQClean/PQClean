@@ -4,5 +4,5 @@
 #include <stdint.h>
 #define PQCLEAN_NTRULPR857_CLEAN_crypto_sort_int32_BYTES 4
 
-void PQCLEAN_NTRULPR857_CLEAN_crypto_sort_int32(void *array, long long n);
+void PQCLEAN_NTRULPR857_CLEAN_crypto_sort_int32(int32_t *x, long long n);
 #endif
