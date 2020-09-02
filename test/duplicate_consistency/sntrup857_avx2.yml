@@ -22,6 +22,7 @@ consistency_checks:
       - crypto_encode_857xfreeze3.h
       - crypto_encode_857xint16.h
       - crypto_encode_int16.h
+      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_verify_1184.h

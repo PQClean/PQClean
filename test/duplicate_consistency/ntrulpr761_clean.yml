@@ -13,6 +13,7 @@ consistency_checks:
     scheme: sntrup653
     implementation: avx2
   files:
+      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_sort_uint32.c
@@ -58,6 +59,7 @@ consistency_checks:
       - crypto_encode_761x1531round.h
       - crypto_encode_761x3.h
       - crypto_encode_761xint16.h
+      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_decode_761xint16.c
@@ -79,6 +81,7 @@ consistency_checks:
     scheme: sntrup857
     implementation: avx2
   files:
+      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_sort_uint32.c
@@ -101,6 +104,7 @@ consistency_checks:
       - crypto_encode_761x1531round.h
       - crypto_encode_761x3.h
       - crypto_encode_761xint16.h
+      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_verify_1167.h
@@ -139,6 +143,7 @@ consistency_checks:
       - crypto_decode_256x2.h
       - crypto_encode_256x16.h
       - crypto_encode_256x2.h
+      - crypto_sort_int32.h
       - crypto_sort_uint32.h
       - crypto_stream_aes256ctr.h
       - crypto_decode_256x16.c

@@ -1,7 +1,5 @@
 #include "crypto_sort_int32.h"
 #include <immintrin.h>
-// Based on supercop-20200820/crypto_sort/int32/avx2
-
 
 #define int32 int32_t
 
@@ -28,9 +26,9 @@ static inline void int32_MINMAX(int32 *a, int32 *b) {
     *b ^= c;
 }
 
-static void minmax_vector(int32 *x, int32 *y, size_t n) {
-    if ((long long) n < 8) {
-        while ((long long) n > 0) {
+static void minmax_vector(int32 *x, int32 *y, long long n) {
+    if (n < 8) {
+        while (n > 0) {
             int32_MINMAX(x, y);
             ++x;
             ++y;
@@ -44,7 +42,7 @@ static void minmax_vector(int32 *x, int32 *y, size_t n) {
         int32x8_MINMAX(x0, y0);
         int32x8_store(x + n - 8, x0);
         int32x8_store(y + n - 8, y0);
-        n &= ~(size_t) 7;
+        n &= ~7;
     }
     do {
         int32x8 x0 = int32x8_load(x);
@@ -99,8 +97,8 @@ static void merge16_finish(int32 *x, int32x8 x0, int32x8 x1, int flagdown) {
 }
 
 /* stages 64,32 of bitonic merging; n is multiple of 128 */
-static void int32_twostages_32(int32 *x, size_t n) {
-    size_t i;
+static void int32_twostages_32(int32 *x, long long n) {
+    long long i;
 
     while (n > 0) {
         for (i = 0; i < 32; i += 8) {
@@ -125,8 +123,8 @@ static void int32_twostages_32(int32 *x, size_t n) {
 }
 
 /* stages 4q,2q,q of bitonic merging */
-static size_t int32_threestages(int32 *x, size_t n, size_t q) {
-    size_t k, i;
+static long long int32_threestages(int32 *x, long long n, long long q) {
+    long long k, i;
 
     for (k = 0; k + 8 * q <= n; k += 8 * q) {
         for (i = k; i < k + q; i += 8) {
@@ -168,8 +166,8 @@ static size_t int32_threestages(int32 *x, size_t n, size_t q) {
 
 /* n is a power of 2; n >= 8; if n == 8 then flagdown */
 // NOLINTNEXTLINE(google-readability-function-size)
-static void int32_sort_2power(int32 *x, size_t n, int flagdown) {
-    size_t p, q, i, j, k;
+static void int32_sort_2power(int32 *x, long long n, int flagdown) {
+    long long p, q, i, j, k;
     int32x8 mask;
 
     if (n == 8) {
@@ -892,8 +890,8 @@ static void int32_sort_2power(int32 *x, size_t n, int flagdown) {
     }
 }
 
-void PQCLEAN_SNTRUP653_AVX2_crypto_sort_int32(int32 *x, size_t n) {
-    size_t q, i, j;
+static void int32_sort(int32 *x, long long n) {
+    long long q, i, j;
 
     if (n <= 8) {
         if (n == 8) {
@@ -968,7 +966,7 @@ void PQCLEAN_SNTRUP653_AVX2_crypto_sort_int32(int32 *x, size_t n) {
     }
 
     int32_sort_2power(x, q, 1);
-    PQCLEAN_SNTRUP653_AVX2_crypto_sort_int32(x + q, n - q);
+    int32_sort(x + q, n - q);
 
     while (q >= 64) {
         q >>= 2;
@@ -1207,4 +1205,8 @@ continue8:
     if (j + 2 <= n) {
         int32_MINMAX(&x[j], &x[j + 1]);
     }
+}
+
+void PQCLEAN_SNTRUP653_AVX2_crypto_sort_int32(void *array, long long n) {
+    int32_sort(array, n);
 }

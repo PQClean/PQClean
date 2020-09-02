@@ -19,15 +19,17 @@
 #include "crypto_encode_761xfreeze3.h"
 #include "crypto_encode_761xint16.h"
 #include "crypto_encode_int16.h"
+#include "crypto_sort_int32.h"
+#include "crypto_sort_uint32.h"
 #include "crypto_verify_1039.h"
 
 
-#define p 761
 #define qinv 15631 /* reciprocal of q mod 2^16 */
 #define q27 29235 /* closest integer to 2^27/q */
 #define q18 57 /* closest integer to 2^18/q */
 #define ppad 769
 #define crypto_core_weight PQCLEAN_SNTRUP761_AVX2_crypto_core_weightsntrup761
+#define p 761
 #define q 4591
 #define w 286
 

@@ -13,14 +13,16 @@
 #include "crypto_encode_857x1723round.h"
 #include "crypto_encode_857x3.h"
 #include "crypto_encode_857xint16.h"
+#include "crypto_sort_int32.h"
+#include "crypto_sort_uint32.h"
 #include "crypto_verify_1312.h"
 
 
 #define p 857
-#define q 5167
-#define w 281
 #define q27 25976 /* closest integer to 2^27/q */
 #define q18 51 /* closest integer to 2^18/q */
+#define q 5167
+#define w 281
 #define tau0 2433
 #define tau1 101
 #define tau2 2265

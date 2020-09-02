@@ -19,12 +19,14 @@
 #include "crypto_encode_653xfreeze3.h"
 #include "crypto_encode_653xint16.h"
 #include "crypto_encode_int16.h"
+#include "crypto_sort_int32.h"
+#include "crypto_sort_uint32.h"
 #include "crypto_verify_897.h"
 
 
-#define p 653
 #define q27 29045 /* closest integer to 2^27/q */
 #define q18 57 /* closest integer to 2^18/q */
+#define p 653
 #define q 4621
 #define w 288
 

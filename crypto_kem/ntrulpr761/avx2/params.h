@@ -13,6 +13,8 @@
 #include "crypto_encode_761x1531round.h"
 #include "crypto_encode_761x3.h"
 #include "crypto_encode_761xint16.h"
+#include "crypto_sort_int32.h"
+#include "crypto_sort_uint32.h"
 #include "crypto_verify_1167.h"
 
 
