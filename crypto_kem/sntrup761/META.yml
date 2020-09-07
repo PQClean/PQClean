@@ -6,7 +6,7 @@ length-public-key: 1158
 length-secret-key: 1763
 length-ciphertext: 1039
 length-shared-secret: 32
-nistkat-sha256: 2eba10673b9077530ba9c063d22f2534e415a6da42985c333c6baee133cc0ff1
+nistkat-sha256: afc42c3a5b10f4ef69654250097ebda9b9564570f4086744b24a6daf2bd1f89a
 principal-submitters:
   - Daniel J. Bernstein
   - Chitchanok Chuengsatiansup
