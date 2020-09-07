@@ -68,6 +68,7 @@ consistency_checks:
       - hqc.h
       - parsing.h
       - vector.h
+      - gf2x.c
       - hqc.c
       - kem.c
       - parsing.c
