@@ -1,0 +1,69 @@
+consistency_checks:
+- source:
+    scheme: hqc-256
+    implementation: avx2
+  files:
+      - api.h
+      - code.h
+      - gf.h
+      - hqc.h
+- source:
+    scheme: hqc-rmrs-128
+    implementation: clean
+  files:
+      - code.h
+      - gf2x.h
+      - hqc.h
+      - parsing.h
+      - vector.h
+      - gf2x.c
+      - hqc.c
+      - kem.c
+      - parsing.c
+      - vector.c
+- source:
+    scheme: hqc-rmrs-128
+    implementation: avx2
+  files:
+      - code.h
+      - hqc.h
+- source:
+    scheme: hqc-rmrs-192
+    implementation: clean
+  files:
+      - code.h
+      - gf2x.h
+      - hqc.h
+      - parsing.h
+      - vector.h
+      - gf2x.c
+      - hqc.c
+      - kem.c
+      - parsing.c
+      - vector.c
+- source:
+    scheme: hqc-rmrs-192
+    implementation: avx2
+  files:
+      - code.h
+      - hqc.h
+- source:
+    scheme: hqc-rmrs-256
+    implementation: clean
+  files:
+      - code.h
+      - gf2x.h
+      - hqc.h
+      - parsing.h
+      - vector.h
+      - gf2x.c
+      - hqc.c
+      - kem.c
+      - parsing.c
+      - vector.c
+- source:
+    scheme: hqc-rmrs-256
+    implementation: avx2
+  files:
+      - code.h
+      - hqc.h

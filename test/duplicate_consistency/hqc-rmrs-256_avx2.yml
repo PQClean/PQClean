@@ -1,0 +1,14 @@
+consistency_checks:
+- source:
+    scheme: hqc-rmrs-256
+    implementation: clean
+  files:
+      - api.h
+      - code.h
+      - fft.h
+      - hqc.h
+      - reed_muller.h
+      - reed_solomon.h
+      - code.c
+      - fft.c
+      - reed_solomon.c

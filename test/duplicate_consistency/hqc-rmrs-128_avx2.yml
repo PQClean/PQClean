@@ -1,0 +1,78 @@
+consistency_checks:
+- source:
+    scheme: hqc-rmrs-128
+    implementation: clean
+  files:
+      - api.h
+      - code.h
+      - fft.h
+      - hqc.h
+      - reed_muller.h
+      - reed_solomon.h
+      - code.c
+      - fft.c
+      - reed_solomon.c
+- source:
+    scheme: hqc-rmrs-192
+    implementation: clean
+  files:
+      - code.h
+      - fft.h
+      - hqc.h
+      - reed_muller.h
+      - reed_solomon.h
+      - code.c
+      - fft.c
+- source:
+    scheme: hqc-rmrs-192
+    implementation: avx2
+  files:
+      - code.h
+      - fft.h
+      - gf2x.h
+      - gf.h
+      - hqc.h
+      - parsing.h
+      - reed_muller.h
+      - reed_solomon.h
+      - vector.h
+      - code.c
+      - fft.c
+      - gf.c
+      - hqc.c
+      - kem.c
+      - parsing.c
+      - reed_muller.c
+      - vector.c
+- source:
+    scheme: hqc-rmrs-256
+    implementation: clean
+  files:
+      - code.h
+      - fft.h
+      - hqc.h
+      - reed_muller.h
+      - reed_solomon.h
+      - code.c
+      - fft.c
+- source:
+    scheme: hqc-rmrs-256
+    implementation: avx2
+  files:
+      - code.h
+      - fft.h
+      - gf2x.h
+      - gf.h
+      - hqc.h
+      - parsing.h
+      - reed_muller.h
+      - reed_solomon.h
+      - vector.h
+      - code.c
+      - fft.c
+      - gf.c
+      - hqc.c
+      - kem.c
+      - parsing.c
+      - reed_muller.c
+      - vector.c

@@ -1,0 +1,34 @@
+name: HQC-RMRS-128
+type: kem
+claimed-nist-level: 1
+claimed-security: IND-CCA2
+length-ciphertext: 5191
+length-public-key: 2607
+length-secret-key: 2647
+length-shared-secret: 64
+nistkat-sha256: 3e8023f5ed44d10902265f0e557cf00414e35c09bf86b1bf09195f9f8565ebb7
+principal-submitters:
+  - Carlos Aguilar Melchor
+  - Nicolas Aragon
+  - Slim Bettaieb
+  - Olivier Blazy
+  - Jurjen Bos
+  - Jean-Christophe Deneuville
+  - Philippe Gaborit
+  - Edoardo Persichetti
+  - Jean-Marc Robert
+  - Pascal Véron
+  - Gilles Zémor
+  - Loïc Bidoux
+implementations:
+    - name: clean
+      version: 2020-05-29
+    - name: avx2
+      version: 2020-05-29
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2
