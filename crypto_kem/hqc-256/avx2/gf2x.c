@@ -519,8 +519,7 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
     }
 
     for (int32_t i = 0 ; i < 6 * T_TM3_3W_256 - 2 ; i++) {
-        uint64_t *out64 = ((uint64_t *)Out) + (i << 2);
-        _mm256_storeu_si256((__m256i *)out64, ro256[i]);
+        _mm256_storeu_si256(&Out[i], ro256[i]);
     }
 }
 
@@ -715,9 +714,8 @@ static void TOOM3RecMult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
     ro256[3 + 5 * T_TM3R_3W_256] ^= W3[3 + 2 * T_TM3R_3W_256];
 
 
-    for (int32_t i = 0 ; i < 6 * T_TM3R_3W_256 - 2 ; i++) {
-        uint64_t *out64 = ((uint64_t *)Out) + (i << 2);
-        _mm256_storeu_si256((__m256i *)out64, ro256[i]);
+    for (int32_t i = 0 ; i < 2 * VEC_N_SIZE_256 + 1 ; i++) {
+        _mm256_storeu_si256(&Out[i], ro256[i]);
     }
 }
 

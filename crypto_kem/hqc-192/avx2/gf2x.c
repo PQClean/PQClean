@@ -418,6 +418,7 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
 
     //W1 = W2 * W3
     karat_mult_64( W1, W2, W3);
+
     //W0 =(U1 + U2*x)*x ; W4 =(V1 + V2*x)*x (SIZE = T_TM3_3W_256 !)
     int64_t *U1_64 = ((int64_t *) U1);
     int64_t *U2_64 = ((int64_t *) U2);
@@ -455,6 +456,7 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
         W4[i] ^= V0[i];
     }
 
+
     karat_mult_64(tmp, W3, W2);
 
     for (int32_t i = 0 ; i < 2 * (T_TM3_3W_256) ; i++) {
@@ -462,7 +464,6 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
     }
 
     karat_mult_64( W2, W0, W4);
-
     //W4 = U2 * V2      ; W0 = U0 * V0
     karat_mult_64(W4, U2, V2);
     karat_mult_64(W0, U0, V0);
@@ -550,12 +551,10 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
         _mm256_storeu_si256(&U2_256[i], W3[i] ^ _mm256_loadu_si256(&U2_256[i]));
     }
 
-    for (int32_t i = 0 ; i < 6 * T_TM3_3W_256 - 2 ; i++) {
-        uint64_t *out64 = ((uint64_t *)Out) + (i << 2);
-        _mm256_storeu_si256((__m256i *)out64, ro256[i]);
+    for (int32_t i = 0 ; i < 2 * VEC_N_SIZE_256 + 1 ; i++) {
+        _mm256_storeu_si256(&Out[i], ro256[i]);
     }
 }
-
 
 
 /**
