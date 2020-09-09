@@ -6,12 +6,12 @@ consistency_checks:
       - api.h
       - code.h
       - fft.h
+      - gf.h
       - hqc.h
       - reed_muller.h
       - reed_solomon.h
       - code.c
       - fft.c
-      - reed_solomon.c
 - source:
     scheme: hqc-rmrs-256
     implementation: clean
@@ -40,6 +40,7 @@ consistency_checks:
   files:
       - code.h
       - fft.h
+      - gf.h
       - hqc.h
       - reed_muller.h
       - reed_solomon.h
