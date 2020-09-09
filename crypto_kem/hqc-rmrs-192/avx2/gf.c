@@ -125,10 +125,10 @@ uint16_t PQCLEAN_HQCRMRS192_AVX2_gf_inverse(uint16_t a) {
  * @param[in] i The integer whose modulo is taken
  */
 uint16_t PQCLEAN_HQCRMRS192_AVX2_gf_mod(uint16_t i) {
-    uint16_t tmp = i - PARAM_GF_MUL_ORDER;
+    uint16_t tmp = (uint16_t) (i - PARAM_GF_MUL_ORDER);
 
     // mask = 0xffff if (i < GF_MUL_ORDER)
-    int16_t mask = -(tmp >> 15);
+    uint16_t mask = -(tmp >> 15);
 
     return tmp + (mask & PARAM_GF_MUL_ORDER);
 }
