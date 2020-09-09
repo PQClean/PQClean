@@ -8,7 +8,7 @@
  * @brief Implementation of repetition codes
  */
 
-#define MASK_N2                              ((1UL << PARAM_N2) - 1)
+#define MASK_N2 ((((uint64_t) 1) << PARAM_N2) - 1)
 
 static inline int32_t popcount(uint64_t n);
 

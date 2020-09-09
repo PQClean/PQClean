@@ -10,7 +10,7 @@
  */
 
 
-#define MASK_N2                              ((1UL << PARAM_N2) - 1)
+#define MASK_N2 ((((uint64_t) 1) << PARAM_N2) - 1)
 
 /**
  * @brief Decoding the code words to a message using the repetition code
