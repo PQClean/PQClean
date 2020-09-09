@@ -16,7 +16,7 @@
 #define BIT0MASK(x) (-((x) & 1))
 
 
-static void encode(uint32_t *word, const uint8_t message);
+static void encode(uint32_t *word, uint8_t message);
 static void hadamard(uint16_t src[128], uint16_t dst[128]);
 static void expand_and_sum(uint16_t dest[128], const uint32_t src[4 * MULTIPLICITY]);
 static uint8_t find_peaks(const uint16_t transform[128]);
