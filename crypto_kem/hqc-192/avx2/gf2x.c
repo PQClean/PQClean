@@ -368,9 +368,7 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
     static __m256i W0[2 * (T_TM3_3W_256)], W1[2 * (T_TM3_3W_256)], W2[2 * (T_TM3_3W_256)], W3[2 * (T_TM3_3W_256)], W4[2 * (T_TM3_3W_256)];
     static __m256i tmp[2 * (T_TM3_3W_256)];
     static __m256i ro256[6 * (T_TM3_3W_256)];
-    const __m256i zero = (__m256i) {
-        0ul, 0ul, 0ul, 0ul
-    };
+    const __m256i zero = _mm256_setzero_si256();
     int32_t T2 = T_TM3_3W_64 << 1;
 
     for (int32_t i = 0 ; i < T_TM3_3W_256 - 1 ; i++) {
@@ -387,24 +385,12 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
     for (int32_t i = T_TM3_3W_256 - 1 ; i < T_TM3_3W_256 ; i++) {
         int32_t i4 = i << 2;
         int32_t i41 = i4 + 1;
-        U0[i] = (__m256i) {
-            A[i4], A[i41], 0x0ul, 0x0ul
-        };
-        V0[i] = (__m256i) {
-            B[i4], B[i41], 0x0ul, 0x0ul
-        };
-        U1[i] = (__m256i) {
-            A[i4 + T_TM3_3W_64 - 2], A[i41 + T_TM3_3W_64 - 2], 0x0ul, 0x0ul
-        };
-        V1[i] = (__m256i) {
-            B[i4 + T_TM3_3W_64 - 2], B[i41 + T_TM3_3W_64 - 2], 0x0ul, 0x0ul
-        };
-        U2[i] = (__m256i) {
-            A[i4 - 4 + T2], A[i4 - 3 + T2], 0x0ul, 0x0ul
-        };
-        V2[i] = (__m256i) {
-            B[i4 - 4 + T2], B[i4 - 3 + T2], 0x0ul, 0x0ul
-        };
+        U0[i] = _mm256_set_epi64x(0, 0, A[i41], A[i4]);
+        V0[i] = _mm256_set_epi64x(0, 0, B[i41], B[i4]);
+        U1[i] = _mm256_set_epi64x(0, 0, A[i41 + T_TM3_3W_64 - 2], A[i4 + T_TM3_3W_64 - 2]);
+        V1[i] = _mm256_set_epi64x(0, 0, B[i41 + T_TM3_3W_64 - 2], B[i4 + T_TM3_3W_64 - 2]);
+        U2[i] = _mm256_set_epi64x(0, 0, A[i4 - 3 + T2], A[i4 - 4 + T2]);
+        V2[i] = _mm256_set_epi64x(0, 0, B[i4 - 3 + T2], B[i4 - 4 + T2]);
     }
 
     // Evaluation phase : x= X^64
@@ -492,9 +478,7 @@ static void TOOM3Mult(__m256i *Out, const uint64_t *A, const uint64_t *B) {
     //W2 =(W2 + W3 + W4*(x^3+1))/(x+1)
     U1_64 = ((int64_t *) W4);
     __m256i *U1_256 = (__m256i *) (U1_64 + 1);
-    tmp[0] = W2[0] ^ W3[0] ^ W4[0] ^ (__m256i) {
-        0x0ul, 0x0ul, 0x0ul, U1_64[0]
-    };
+    tmp[0] = W2[0] ^ W3[0] ^ W4[0] ^ _mm256_set_epi64x(U1_64[0], 0, 0, 0);
 
     for (int32_t i = 1 ; i < (T_TM3_3W_256 << 1) - 1 ; i++) {
         tmp[i] = W2[i] ^ W3[i] ^ W4[i] ^ _mm256_lddqu_si256(&U1_256[i - 1]);

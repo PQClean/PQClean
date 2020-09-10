@@ -30,29 +30,28 @@ uint16_t PQCLEAN_HQCRMRS256_AVX2_gf_log(uint16_t elt) {
  * @param[in] deg_x The degree of polynomial x
  */
 static uint16_t gf_reduce(uint64_t x, size_t deg_x) {
-    // Compute the distance between the primitive polynomial first two set bits
-    size_t lz1 = __builtin_clz(PARAM_GF_POLY);
-    size_t lz2 = __builtin_clz(PARAM_GF_POLY ^ 1 << PARAM_M);
-    size_t dist = lz2 - lz1;
+    uint16_t z1, z2, rmdr, dist;
+    uint64_t mod;
+    size_t steps, i, j;
 
     // Deduce the number of steps of reduction
-    size_t steps = CEIL_DIVIDE(deg_x - (PARAM_M - 1), dist);
+    steps = CEIL_DIVIDE(deg_x - (PARAM_M - 1), PARAM_GF_POLY_M2);
 
     // Reduce
-    for (size_t i = 0; i < steps; ++i) {
-        uint64_t mod = x >> PARAM_M;
+    for (i = 0; i < steps; ++i) {
+        mod = x >> PARAM_M;
         x &= (1 << PARAM_M) - 1;
         x ^= mod;
 
-        size_t tz1 = 0;
-        uint16_t rmdr = PARAM_GF_POLY ^ 1;
-        for (size_t j = __builtin_popcount(PARAM_GF_POLY) - 2; j; --j) {
-            size_t tz2 = __builtin_ctz(rmdr);
-            size_t shift = tz2 - tz1;
-            mod <<= shift;
+        z1 = 0;
+        rmdr = PARAM_GF_POLY ^ 1;
+        for (j = PARAM_GF_POLY_WT - 2; j; --j) {
+            z2 = __tzcnt_u16(rmdr);
+            dist = (uint16_t) (z2 - z1);
+            mod <<= dist;
             x ^= mod;
-            rmdr ^= 1 << tz2;
-            tz1 = tz2;
+            rmdr ^= 1 << z2;
+            z1 = z2;
         }
     }
 
