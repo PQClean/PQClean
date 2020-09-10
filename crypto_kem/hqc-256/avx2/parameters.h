@@ -47,6 +47,8 @@
   #define PARAM_DELTA                           Define the parameter delta of the scheme (correcting capacity of the BCH code)
   #define PARAM_M                               Define a positive integer
   #define PARAM_GF_POLY                         Generator polynomial of galois field GF(2^PARAM_M), represented in hexadecimial form
+  #define PARAM_GF_POLY_WT                      Hamming weight of PARAM_GF_POLY
+  #define PARAM_GF_POLY_M2                      Distance between the primitive polynomial first two set bits
   #define PARAM_GF_MUL_ORDER                    Define the size of the multiplicative group of GF(2^PARAM_M),  i.e 2^PARAM_M -1
   #define PARAM_K                               Define the size of the information bits of the BCH code
   #define PARAM_G                               Define the size of the generator polynomial of BCH code
@@ -96,6 +98,8 @@
 #define PARAM_DELTA                             60
 #define PARAM_M                                 10
 #define PARAM_GF_POLY                           0x409
+#define PARAM_GF_POLY_WT                        3
+#define PARAM_GF_POLY_M2                        7
 #define PARAM_GF_MUL_ORDER                      1023
 #define PARAM_K                                 256
 #define PARAM_G                                 541

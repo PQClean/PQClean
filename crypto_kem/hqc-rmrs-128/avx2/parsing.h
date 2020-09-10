@@ -11,6 +11,15 @@
 
 #include <stdint.h>
 
+void PQCLEAN_HQCRMRS128_AVX2_store8(unsigned char *out, uint64_t in);
+
+uint64_t PQCLEAN_HQCRMRS128_AVX2_load8(const unsigned char *in);
+
+void PQCLEAN_HQCRMRS128_AVX2_load8_arr(uint64_t *out64, size_t outlen, const uint8_t *in8, size_t inlen);
+
+void PQCLEAN_HQCRMRS128_AVX2_store8_arr(uint8_t *out8, size_t outlen, const uint64_t *in64, size_t inlen);
+
+
 void PQCLEAN_HQCRMRS128_AVX2_hqc_secret_key_to_string(uint8_t *sk, const uint8_t *sk_seed, const uint8_t *pk);
 
 void PQCLEAN_HQCRMRS128_AVX2_hqc_secret_key_from_string(uint64_t *x, uint64_t *y, uint8_t *pk, const uint8_t *sk);

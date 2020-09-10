@@ -5,14 +5,12 @@ consistency_checks:
   files:
       - api.h
       - code.h
-      - gf.h
       - hqc.h
 - source:
     scheme: hqc-256
     implementation: clean
   files:
       - code.h
-      - gf.h
       - hqc.h
 - source:
     scheme: hqc-256
@@ -52,7 +50,6 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c
 - source:
     scheme: hqc-rmrs-192
     implementation: clean
@@ -72,7 +69,6 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c
 - source:
     scheme: hqc-rmrs-256
     implementation: clean
@@ -91,4 +87,3 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c

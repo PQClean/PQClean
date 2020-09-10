@@ -5,7 +5,6 @@ consistency_checks:
   files:
       - api.h
       - code.h
-      - gf.h
       - hqc.h
 - source:
     scheme: hqc-rmrs-128
