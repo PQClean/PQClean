@@ -51,7 +51,7 @@ static void compute_fft_betas(uint16_t *betas) {
  * @param[in] set_size Size of the array set
  */
 static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, size_t set_size) {
-    size_t i, j;
+    uint16_t i, j;
     subset_sums[0] = 0;
 
     for (i = 0; i < set_size; ++i) {
@@ -134,7 +134,8 @@ static void radix_t_big(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uin
     uint16_t Q[1 << 2 * (PARAM_FFT_T - 2)] = {0};
     uint16_t R[1 << 2 * (PARAM_FFT_T - 2)] = {0};
 
-    size_t i, n;
+    uint16_t n;
+    size_t i;
 
     n = 1 << (m_f - 2);
     memcpy(Q0, f0 + n, 2 * n);
@@ -627,7 +628,8 @@ void PQCLEAN_HQC128_CLEAN_fft_retrieve_bch_error_poly(uint64_t *error, const uin
     uint16_t gammas[PARAM_M - 1] = {0};
     uint16_t gammas_sums[1 << (PARAM_M - 1)] = {0};
     uint64_t bit;
-    size_t i, k, index;
+    uint16_t k;
+    size_t i, index;
 
     compute_fft_betas(gammas);
     compute_subset_sums(gammas_sums, gammas, PARAM_M - 1);

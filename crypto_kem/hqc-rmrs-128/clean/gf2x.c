@@ -78,50 +78,51 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     uint16_t permutation_sparse_vect[PARAM_OMEGA_E];
     uint64_t *pt;
     uint16_t *res_16;
+    uint16_t i, j;
 
-    for (uint32_t i = 0; i < 16; i++) {
+    for (i = 0; i < 16; i++) {
         permuted_table[i] = i;
     }
 
     seedexpander(ctx, (uint8_t *) permutation_table, 16 * sizeof(uint16_t));
 
-    for (uint32_t i = 0; i < 15; i++) {
+    for (i = 0; i < 15; i++) {
         swap(permuted_table + i, 0, permutation_table[i] % (16 - i));
     }
 
     pt = table + (permuted_table[0] * (VEC_N_SIZE_64 + 1));
-    for (int32_t j = 0; j < VEC_N_SIZE_64; j++) {
+    for (j = 0; j < VEC_N_SIZE_64; j++) {
         pt[j] = a2[j];
     }
     pt[VEC_N_SIZE_64] = 0x0;
 
-    for (uint32_t i = 1; i < 16; i++) {
+    for (i = 1; i < 16; i++) {
         carry = 0;
         pt = table + (permuted_table[i] * (VEC_N_SIZE_64 + 1));
-        for (uint32_t j = 0; j < VEC_N_SIZE_64; j++) {
+        for (j = 0; j < VEC_N_SIZE_64; j++) {
             pt[j] = (a2[j] << i) ^ carry;
             carry = (a2[j] >> ((64 - i)));
         }
         pt[VEC_N_SIZE_64] = carry;
     }
 
-    for (uint32_t i = 0; i < weight; i++) {
+    for (i = 0; i < weight; i++) {
         permuted_sparse_vect[i] = i;
     }
 
     seedexpander(ctx, (uint8_t *) permutation_sparse_vect, weight * sizeof(uint16_t));
 
-    for (uint32_t i = 0; i + 1 < weight; i++) {
+    for (i = 0; i + 1 < weight; i++) {
         swap(permuted_sparse_vect + i, 0, permutation_sparse_vect[i] % (weight - i));
     }
 
-    for (uint32_t i = 0; i < weight; i++) {
+    for (i = 0; i < weight; i++) {
         dec = a1[permuted_sparse_vect[i]] & 0xf;
         s = a1[permuted_sparse_vect[i]] >> 4;
         res_16 = ((uint16_t *) o) + s;
         pt = table + (permuted_table[dec] * (VEC_N_SIZE_64 + 1));
 
-        for (uint32_t j = 0; j < VEC_N_SIZE_64 + 1; j++) {
+        for (j = 0; j < VEC_N_SIZE_64 + 1; j++) {
             *res_16++ ^= (uint16_t) pt[j];
             *res_16++ ^= (uint16_t) (pt[j] >> 16);
             *res_16++ ^= (uint16_t) (pt[j] >> 32);

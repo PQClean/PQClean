@@ -21,7 +21,6 @@ consistency_checks:
       - vector.h
       - bch.c
       - code.c
-      - fft.c
       - gf2x.c
       - gf.c
       - hqc.c
@@ -48,7 +47,6 @@ consistency_checks:
       - vector.h
       - bch.c
       - code.c
-      - fft.c
       - gf2x.c
       - gf.c
       - hqc.c

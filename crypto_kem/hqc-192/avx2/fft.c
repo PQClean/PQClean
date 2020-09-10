@@ -325,7 +325,8 @@ void PQCLEAN_HQC192_AVX2_fft_retrieve_bch_error_poly(uint64_t *error, const uint
     uint16_t gammas[PARAM_M - 1] = {0};
     uint16_t gammas_sums[1 << (PARAM_M - 1)] = {0};
     uint64_t bit;
-    size_t i, k, index;
+    uint16_t k;
+    size_t i, index;
 
     compute_fft_betas(gammas);
     compute_subset_sums(gammas_sums, gammas, PARAM_M - 1);

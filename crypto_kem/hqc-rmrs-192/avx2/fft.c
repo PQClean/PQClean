@@ -47,7 +47,7 @@ static void compute_fft_betas(uint16_t *betas) {
  * @param[in] set_size Size of the array set
  */
 static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, size_t set_size) {
-    size_t i, j;
+    uint16_t i, j;
     subset_sums[0] = 0;
 
     for (i = 0; i < set_size; ++i) {
@@ -324,7 +324,8 @@ void PQCLEAN_HQCRMRS192_AVX2_fft(uint16_t *w, const uint16_t *f, size_t f_coeffs
 void PQCLEAN_HQCRMRS192_AVX2_fft_retrieve_error_poly(uint8_t *error, const uint16_t *w) {
     uint16_t gammas[PARAM_M - 1] = {0};
     uint16_t gammas_sums[1 << (PARAM_M - 1)] = {0};
-    size_t i, k, index;
+    uint16_t k;
+    size_t i, index;
 
     compute_fft_betas(gammas);
     compute_subset_sums(gammas_sums, gammas, PARAM_M - 1);

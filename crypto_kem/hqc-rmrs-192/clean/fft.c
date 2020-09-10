@@ -324,7 +324,8 @@ void PQCLEAN_HQCRMRS192_CLEAN_fft(uint16_t *w, const uint16_t *f, size_t f_coeff
 void PQCLEAN_HQCRMRS192_CLEAN_fft_retrieve_error_poly(uint8_t *error, const uint16_t *w) {
     uint16_t gammas[PARAM_M - 1] = {0};
     uint16_t gammas_sums[1 << (PARAM_M - 1)] = {0};
-    size_t i, k, index;
+    uint16_t k;
+    size_t i, index;
 
     compute_fft_betas(gammas);
     compute_subset_sums(gammas_sums, gammas, PARAM_M - 1);

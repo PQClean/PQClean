@@ -28,7 +28,6 @@ consistency_checks:
       - repetition.h
       - vector.h
       - bch.c
-      - fft.c
       - gf.c
       - hqc.c
       - kem.c
@@ -54,7 +53,6 @@ consistency_checks:
       - repetition.h
       - vector.h
       - bch.c
-      - fft.c
       - gf.c
       - hqc.c
       - kem.c
