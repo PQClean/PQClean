@@ -45,7 +45,7 @@ static void reduce(uint64_t *o, const uint64_t *a) {
     uint64_t r;
     uint64_t carry;
 
-    for (uint32_t i = 0 ; i < VEC_N_SIZE_64 ; i++) {
+    for (uint32_t i = 0; i < VEC_N_SIZE_64; i++) {
         r = a[i + VEC_N_SIZE_64 - 1] >> (PARAM_N & 63);
         carry = (uint64_t) (a[i + VEC_N_SIZE_64] << (64 - (PARAM_N & 63)));
         o[i] = a[i] ^ r ^ carry;
@@ -79,49 +79,49 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     uint64_t *pt;
     uint16_t *res_16;
 
-    for (uint32_t i = 0 ; i < 16; i++) {
+    for (uint32_t i = 0; i < 16; i++) {
         permuted_table[i] = i;
     }
 
     seedexpander(ctx, (uint8_t *) permutation_table, 16 * sizeof(uint16_t));
 
-    for (uint32_t i = 0 ; i < 15 ; i++) {
+    for (uint32_t i = 0; i < 15; i++) {
         swap(permuted_table + i, 0, permutation_table[i] % (16 - i));
     }
 
     pt = table + (permuted_table[0] * (VEC_N_SIZE_64 + 1));
-    for (int32_t j = 0 ; j < VEC_N_SIZE_64 ; j++) {
+    for (int32_t j = 0; j < VEC_N_SIZE_64; j++) {
         pt[j] = a2[j];
     }
     pt[VEC_N_SIZE_64] = 0x0;
 
-    for (uint32_t i = 1 ; i < 16 ; i++) {
+    for (uint32_t i = 1; i < 16; i++) {
         carry = 0;
         pt = table + (permuted_table[i] * (VEC_N_SIZE_64 + 1));
-        for (uint32_t j = 0 ; j < VEC_N_SIZE_64 ; j++) {
+        for (uint32_t j = 0; j < VEC_N_SIZE_64; j++) {
             pt[j] = (a2[j] << i) ^ carry;
             carry = (a2[j] >> ((64 - i)));
         }
         pt[VEC_N_SIZE_64] = carry;
     }
 
-    for (uint32_t i = 0 ; i < weight ; i++) {
+    for (uint32_t i = 0; i < weight; i++) {
         permuted_sparse_vect[i] = i;
     }
 
     seedexpander(ctx, (uint8_t *) permutation_sparse_vect, weight * sizeof(uint16_t));
 
-    for (uint32_t i = 0 ; i + 1 < weight ; i++) {
+    for (uint32_t i = 0; i + 1 < weight; i++) {
         swap(permuted_sparse_vect + i, 0, permutation_sparse_vect[i] % (weight - i));
     }
 
-    for (uint32_t i = 0 ; i < weight ; i++) {
+    for (uint32_t i = 0; i < weight; i++) {
         dec = a1[permuted_sparse_vect[i]] & 0xf;
         s = a1[permuted_sparse_vect[i]] >> 4;
         res_16 = ((uint16_t *) o) + s;
         pt = table + (permuted_table[dec] * (VEC_N_SIZE_64 + 1));
 
-        for (uint32_t j = 0 ; j < VEC_N_SIZE_64 + 1 ; j++) {
+        for (uint32_t j = 0; j < VEC_N_SIZE_64 + 1; j++) {
             *res_16++ ^= (uint16_t) pt[j];
             *res_16++ ^= (uint16_t) (pt[j] >> 16);
             *res_16++ ^= (uint16_t) (pt[j] >> 32);
@@ -146,7 +146,7 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
  */
 void PQCLEAN_HQCRMRS128_CLEAN_vect_mul(uint64_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx) {
     uint64_t tmp[2 * VEC_N_SIZE_64 + 1];
-    for (uint32_t j = 0 ; j < 2 * VEC_N_SIZE_64 + 1 ; j++) {
+    for (uint32_t j = 0; j < 2 * VEC_N_SIZE_64 + 1; j++) {
         tmp[j] = 0;
     }
 

@@ -104,8 +104,8 @@ static void hadamard(uint16_t src[128], uint16_t dst[128]) {
     uint16_t *p1 = src;
     uint16_t *p2 = dst;
     uint16_t *p3;
-    for (uint32_t pass = 0 ; pass < 7 ; pass++) {
-        for (uint32_t i = 0 ; i < 64 ; i++) {
+    for (uint32_t pass = 0; pass < 7; pass++) {
+        for (uint32_t i = 0; i < 64; i++) {
             p2[i] = p1[2 * i] + p1[2 * i + 1];
             p2[i + 64] = p1[2 * i] - p1[2 * i + 1];
         }
@@ -133,15 +133,15 @@ static void hadamard(uint16_t src[128], uint16_t dst[128]) {
  */
 static void expand_and_sum(uint16_t dest[128], const uint32_t src[4 * MULTIPLICITY]) {
     // start with the first copy
-    for (uint32_t part = 0 ; part < 4 ; part++) {
-        for (uint32_t bit = 0 ; bit < 32 ; bit++) {
+    for (uint32_t part = 0; part < 4; part++) {
+        for (uint32_t bit = 0; bit < 32; bit++) {
             dest[part * 32 + bit] = (uint16_t) ((src[part] >> bit) & 1);
         }
     }
     // sum the rest of the copies
-    for (uint32_t copy = 1 ; copy < MULTIPLICITY ; copy++) {
-        for (uint32_t part = 0 ; part < 4 ; part++) {
-            for (uint32_t bit = 0 ; bit < 32 ; bit++) {
+    for (uint32_t copy = 1; copy < MULTIPLICITY; copy++) {
+        for (uint32_t part = 0; part < 4; part++) {
+            for (uint32_t bit = 0; bit < 32; bit++) {
                 dest[part * 32 + bit] += (uint16_t) ((src[4 * copy + part] >> bit) & 1);
             }
         }
@@ -164,7 +164,7 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
     uint16_t peak = 0;
     uint16_t pos = 0;
     uint16_t t, abs, mask;
-    for (uint16_t i = 0 ; i < 128 ; i++) {
+    for (uint16_t i = 0; i < 128; i++) {
         t = transform[i];
         abs = t ^ ((-(t >> 15)) & (t ^ -t)); // t = abs(t)
         mask = -(((uint16_t)(peak_abs - abs)) >> 15);
@@ -191,11 +191,11 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
 void PQCLEAN_HQCRMRS192_CLEAN_reed_muller_encode(uint64_t *cdw, const uint64_t *msg) {
     uint8_t *message_array = (uint8_t *) msg;
     uint32_t *codeArray = (uint32_t *) cdw;
-    for (size_t i = 0 ; i < VEC_N1_SIZE_BYTES ; i++) {
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
         // encode first word
         encode(&codeArray[4 * i * MULTIPLICITY], message_array[i]);
         // copy to other identical codewords
-        for (size_t copy = 1 ; copy < MULTIPLICITY ; copy++) {
+        for (size_t copy = 1; copy < MULTIPLICITY; copy++) {
             memcpy(&codeArray[4 * i * MULTIPLICITY + 4 * copy], &codeArray[4 * i * MULTIPLICITY], 4 * sizeof(uint32_t));
         }
     }
@@ -217,7 +217,7 @@ void PQCLEAN_HQCRMRS192_CLEAN_reed_muller_decode(uint64_t *msg, const uint64_t *
     uint32_t *codeArray = (uint32_t *) cdw;
     uint16_t expanded[128];
     uint16_t transform[128];
-    for (size_t i = 0 ; i < VEC_N1_SIZE_BYTES ; i++) {
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
         // collect the codewords
         expand_and_sum(expanded, &codeArray[4 * i * MULTIPLICITY]);
         // apply hadamard transform

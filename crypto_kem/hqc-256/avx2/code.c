@@ -43,7 +43,7 @@ void PQCLEAN_HQC256_AVX2_code_encode(uint64_t *em, const uint64_t *m) {
     __m256i msg = _mm256_lddqu_si256((const __m256i *) m);
     colonne = ((__m256i *) gen_matrix);
 
-    for (i = 0 ; i < PARAM_N1 - PARAM_K ; i++) {
+    for (i = 0; i < PARAM_N1 - PARAM_K; i++) {
         // y is the and operation between m and ith column of G
         y = _mm256_and_si256(colonne[i], msg);
         // aux0 = (y2 y3 y0 y1)
@@ -74,8 +74,8 @@ void PQCLEAN_HQC256_AVX2_code_encode(uint64_t *em, const uint64_t *m) {
 
     /* now we add the message m */
     /* systematic encoding */
-    for (int32_t i = 0 ; i < 4 ; i++) {
-        for (int32_t j = 0 ; j < 64 ; j++) {
+    for (int32_t i = 0; i < 4; i++) {
+        for (int32_t j = 0; j < 64; j++) {
             uint8_t bit = (m[i] >> j) & 0x1;
             uint32_t pos_r = PARAM_N2 * ((PARAM_N1 - PARAM_K) + ((i << 6) + j));
             uint16_t idx_r = (pos_r & 0x3f);

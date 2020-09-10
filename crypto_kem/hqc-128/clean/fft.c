@@ -33,7 +33,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
  */
 static void compute_fft_betas(uint16_t *betas) {
     size_t i;
-    for (i = 0 ; i < PARAM_M - 1 ; ++i) {
+    for (i = 0; i < PARAM_M - 1; ++i) {
         betas[i] = 1 << (PARAM_M - 1 - i);
     }
 }
@@ -54,8 +54,8 @@ static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, size
     size_t i, j;
     subset_sums[0] = 0;
 
-    for (i = 0 ; i < set_size ; ++i) {
-        for (j = 0 ; j < (1U << i) ; ++j) {
+    for (i = 0; i < set_size; ++i) {
+        for (j = 0; j < (1U << i); ++j) {
             subset_sums[(1 << i) + j] = set[i] ^ subset_sums[j];
         }
     }
@@ -149,7 +149,7 @@ static void radix_t_big(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uin
     memcpy(f + 2 * n, R + n, 2 * n);
     memcpy(f + 3 * n, Q + n, 2 * n);
 
-    for (i = 0 ; i < n ; ++i) {
+    for (i = 0; i < n; ++i) {
         f[2 * n + i] ^= Q[i];
         f[3 * n + i] ^= f[2 * n + i];
     }
@@ -185,14 +185,14 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
     // Step 1
     if (m_f == 1) {
         f[0] = 0;
-        for (i = 0 ; i < (1U << m) ; ++i) {
+        for (i = 0; i < (1U << m); ++i) {
             f[0] ^= w[i];
         }
         f[1] = 0;
 
         betas_sums[0] = 0;
-        for (j = 0 ; j < m ; ++j) {
-            for (k = 0 ; k < (1U << j) ; ++k) {
+        for (j = 0; j < m; ++j) {
+            for (k = 0; k < (1U << j); ++k) {
                 betas_sums[(1 << j) + k] = betas_sums[k] ^ betas[j];
                 f[1] ^= PQCLEAN_HQC128_CLEAN_gf_mul(betas_sums[(1 << j) + k], w[(1 << j) + k]);
             }
@@ -202,7 +202,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
     }
 
     // Compute gammas and deltas
-    for (i = 0 ; i + 1 < m ; ++i) {
+    for (i = 0; i + 1 < m; ++i) {
         gammas[i] = PQCLEAN_HQC128_CLEAN_gf_mul(betas[i], PQCLEAN_HQC128_CLEAN_gf_inverse(betas[m - 1]));
         deltas[i] = PQCLEAN_HQC128_CLEAN_gf_square(gammas[i]) ^ gammas[i];
     }
@@ -222,7 +222,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
         f1[1] = 0;
         u[0] = w[0] ^ w[k];
         f1[0] = w[k];
-        for (i = 1 ; i < k ; ++i) {
+        for (i = 1; i < k; ++i) {
             u[i] = w[i] ^ w[k + i];
             f1[0] ^= PQCLEAN_HQC128_CLEAN_gf_mul(gammas_sums[i], u[i]) ^ w[k + i];
         }
@@ -231,7 +231,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
         u[0] = w[0] ^ w[k];
         v[0] = w[k];
 
-        for (i = 1 ; i < k ; ++i) {
+        for (i = 1; i < k; ++i) {
             u[i] = w[i] ^ w[k + i];
             v[i] = PQCLEAN_HQC128_CLEAN_gf_mul(gammas_sums[i], u[i]) ^ w[k + i];
         }
@@ -247,7 +247,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
     // Step 2: compute f from g
     if (betas[m - 1] != 1) {
         beta_m_pow = 1;
-        for (i = 1 ; i < (1U << m_f) ; ++i) {
+        for (i = 1; i < (1U << m_f); ++i) {
             beta_m_pow = PQCLEAN_HQC128_CLEAN_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC128_CLEAN_gf_mul(beta_m_pow, f[i]);
         }
@@ -294,13 +294,13 @@ void PQCLEAN_HQC128_CLEAN_fft_t(uint16_t *f, const uint16_t *w, size_t f_coeffs)
     k = 1 << (PARAM_M - 1);
     u[0] = w[0] ^ w[k];
     v[0] = w[k];
-    for (i = 1 ; i < k ; ++i) {
+    for (i = 1; i < k; ++i) {
         u[i] = w[i] ^ w[k + i];
         v[i] = PQCLEAN_HQC128_CLEAN_gf_mul(betas_sums[i], u[i]) ^ w[k + i];
     }
 
     // Compute deltas
-    for (i = 0 ; i < PARAM_M - 1 ; ++i) {
+    for (i = 0; i < PARAM_M - 1; ++i) {
         deltas[i] = PQCLEAN_HQC128_CLEAN_gf_square(betas[i]) ^ betas[i];
     }
 
@@ -395,7 +395,7 @@ static void radix_big(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_
     memcpy(Q + n, f + 3 * n, 2 * n);
     memcpy(R, f, 4 * n);
 
-    for (i = 0 ; i < n ; ++i) {
+    for (i = 0; i < n; ++i) {
         Q[i] ^= f[2 * n + i];
         R[n + i] ^= Q[i];
     }
@@ -438,13 +438,13 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
 
     // Step 1
     if (m_f == 1) {
-        for (i = 0 ; i < m ; ++i) {
+        for (i = 0; i < m; ++i) {
             tmp[i] = PQCLEAN_HQC128_CLEAN_gf_mul(betas[i], f[1]);
         }
 
         w[0] = f[0];
-        for (j = 0 ; j < m ; ++j) {
-            for (k = 0 ; k < (1U << j) ; ++k) {
+        for (j = 0; j < m; ++j) {
+            for (k = 0; k < (1U << j); ++k) {
                 w[(1 << j) + k] = w[k] ^ tmp[j];
             }
         }
@@ -455,7 +455,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     // Step 2: compute g
     if (betas[m - 1] != 1) {
         beta_m_pow = 1;
-        for (i = 1 ; i < (1U << m_f) ; ++i) {
+        for (i = 1; i < (1U << m_f); ++i) {
             beta_m_pow = PQCLEAN_HQC128_CLEAN_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC128_CLEAN_gf_mul(beta_m_pow, f[i]);
         }
@@ -465,7 +465,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     radix(f0, f1, f, m_f);
 
     // Step 4: compute gammas and deltas
-    for (i = 0 ; i + 1 < m ; ++i) {
+    for (i = 0; i + 1 < m; ++i) {
         gammas[i] = PQCLEAN_HQC128_CLEAN_gf_mul(betas[i], PQCLEAN_HQC128_CLEAN_gf_inverse(betas[m - 1]));
         deltas[i] = PQCLEAN_HQC128_CLEAN_gf_square(gammas[i]) ^ gammas[i];
     }
@@ -480,7 +480,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     if (f_coeffs <= 3) { // 3-coefficient polynomial f case: f1 is constant
         w[0] = u[0];
         w[k] = u[0] ^ f1[0];
-        for (i = 1 ; i < k ; ++i) {
+        for (i = 1; i < k; ++i) {
             w[i] = u[i] ^ PQCLEAN_HQC128_CLEAN_gf_mul(gammas_sums[i], f1[0]);
             w[k + i] = w[i] ^ f1[0];
         }
@@ -491,7 +491,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
         memcpy(w + k, v, 2 * k);
         w[0] = u[0];
         w[k] ^= u[0];
-        for (i = 1 ; i < k ; ++i) {
+        for (i = 1; i < k; ++i) {
             w[i] = u[i] ^ PQCLEAN_HQC128_CLEAN_gf_mul(gammas_sums[i], v[i]);
             w[k + i] ^= w[i];
         }
@@ -544,7 +544,7 @@ void PQCLEAN_HQC128_CLEAN_fft(uint16_t *w, const uint16_t *f, size_t f_coeffs) {
     radix(f0, f1, f, PARAM_FFT);
 
     // Step 4: Compute deltas
-    for (i = 0 ; i < PARAM_M - 1 ; ++i) {
+    for (i = 0; i < PARAM_M - 1; ++i) {
         deltas[i] = PQCLEAN_HQC128_CLEAN_gf_square(betas[i]) ^ betas[i];
     }
 
@@ -563,7 +563,7 @@ void PQCLEAN_HQC128_CLEAN_fft(uint16_t *w, const uint16_t *f, size_t f_coeffs) {
     w[k] ^= u[0];
 
     // Find other roots
-    for (i = 1 ; i < k ; ++i) {
+    for (i = 1; i < k; ++i) {
         w[i] = u[i] ^ PQCLEAN_HQC128_CLEAN_gf_mul(betas_sums[i], v[i]);
         w[k + i] ^= w[i];
     }
@@ -588,14 +588,14 @@ void PQCLEAN_HQC128_CLEAN_fft_t_preprocess_bch_codeword(uint16_t *w, const uint6
     size_t i, j, k;
 
     // Unpack the received word vector into array r
-    for (i = 0 ; i < VEC_N1_SIZE_64 - (PARAM_N1 % 64 != 0) ; ++i) {
-        for (j = 0 ; j < 64 ; ++j) {
+    for (i = 0; i < VEC_N1_SIZE_64 - (PARAM_N1 % 64 != 0); ++i) {
+        for (j = 0; j < 64; ++j) {
             r[64 * i + j] = (uint8_t) ((vector[i] >> j) & 1);
         }
     }
 
     // Last byte
-    for (j = 0 ; j < PARAM_N1 % 64 ; ++j) {
+    for (j = 0; j < PARAM_N1 % 64; ++j) {
         r[64 * i + j] = (uint8_t) ((vector[i] >> j) & 1);
     }
 
@@ -609,7 +609,7 @@ void PQCLEAN_HQC128_CLEAN_fft_t_preprocess_bch_codeword(uint16_t *w, const uint6
     k = 1 << (PARAM_M - 1);
     w[0] = 0;
     w[k] = -r[0] & 1;
-    for (i = 1 ; i < k ; ++i) {
+    for (i = 1; i < k; ++i) {
         w[i] = -r[PQCLEAN_HQC128_CLEAN_gf_log(gammas_sums[i])] & gammas_sums[i];
         w[k + i] = -r[PQCLEAN_HQC128_CLEAN_gf_log(gammas_sums[i] ^ 1)] & (gammas_sums[i] ^ 1);
     }
@@ -639,7 +639,7 @@ void PQCLEAN_HQC128_CLEAN_fft_retrieve_bch_error_poly(uint64_t *error, const uin
     bit = 1 ^ ((uint16_t) - w[k] >> 15);
     error[index / 8] ^= bit << (index % 64);
 
-    for (i = 1 ; i < k ; ++i) {
+    for (i = 1; i < k; ++i) {
         index = PARAM_GF_MUL_ORDER - PQCLEAN_HQC128_CLEAN_gf_log(gammas_sums[i]);
         bit = 1 ^ ((uint16_t) - w[i] >> 15);
         error[index / 64] ^= bit << (index % 64);

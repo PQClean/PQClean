@@ -50,7 +50,7 @@ static uint16_t mod(uint16_t i, uint16_t modulus) {
  */
 static void compute_cyclotomic_cosets(uint16_t *cosets, uint16_t upper_bound) {
     // Compute the odd cyclotomic classes
-    for (uint16_t i = 1 ; i < upper_bound ; i += 2) {
+    for (uint16_t i = 1; i < upper_bound; i += 2) {
         if (cosets[i] == 0) { // If i does not already belong to a class
             uint16_t tmp = i;
             size_t j = PARAM_M;
@@ -88,13 +88,13 @@ size_t PQCLEAN_HQC128_CLEAN_compute_bch_poly(uint16_t *bch_poly, size_t *t, cons
     // Start with bch_poly(X) = 1
     bch_poly[0] = 1;
 
-    for (uint16_t i = 1 ; i < PARAM_GF_MUL_ORDER ; ++i) {
+    for (uint16_t i = 1; i < PARAM_GF_MUL_ORDER; ++i) {
         if (cosets[i] == 0) {
             continue;
         }
 
         // Multiply bch_poly(X) by X-a^i
-        for (size_t j = deg_bch_poly ; j ; --j) {
+        for (size_t j = deg_bch_poly; j; --j) {
             int16_t mask = -((uint16_t) - bch_poly[j] >> 15);
             bch_poly[j] = (mask & exp[mod(log[bch_poly[j]] + i, PARAM_GF_MUL_ORDER)]) ^ bch_poly[j - 1];
         }
@@ -119,13 +119,13 @@ size_t PQCLEAN_HQC128_CLEAN_compute_bch_poly(uint16_t *bch_poly, size_t *t, cons
  * @param[in] message Array of PARAM_K bytes storing the packed message
  */
 static void unpack_message(uint8_t *message_unpacked, const uint64_t *message) {
-    for (size_t i = 0 ; i < (VEC_K_SIZE_64 - (PARAM_K % 64 != 0)) ; ++i) {
-        for (size_t j = 0 ; j < 64 ; ++j) {
+    for (size_t i = 0; i < (VEC_K_SIZE_64 - (PARAM_K % 64 != 0)); ++i) {
+        for (size_t j = 0; j < 64; ++j) {
             message_unpacked[j + 64 * i] = (message[i] >> j) & 0x0000000000000001;
         }
     }
 
-    for (int8_t j = 0 ; j < PARAM_K % 64 ; ++j) {
+    for (int8_t j = 0; j < PARAM_K % 64; ++j) {
         message_unpacked[j + 64 * (VEC_K_SIZE_64 - 1)] = (message[VEC_K_SIZE_64 - 1] >> j) & 0x0000000000000001;
     }
 }
@@ -142,10 +142,10 @@ static void lfsr_encode(uint8_t *codeword, const uint8_t *message) {
     uint8_t bch_poly[PARAM_G] = PARAM_BCH_POLY;
 
     // Compute the Parity-check digits
-    for (int16_t i = PARAM_K - 1 ; i >= 0 ; --i) {
+    for (int16_t i = PARAM_K - 1; i >= 0; --i) {
         gate_value = message[i] ^ codeword[PARAM_N1 - PARAM_K - 1];
 
-        for (size_t j = PARAM_N1 - PARAM_K - 1 ; j ; --j) {
+        for (size_t j = PARAM_N1 - PARAM_K - 1; j; --j) {
             codeword[j] = codeword[j - 1] ^ (-gate_value & bch_poly[j]);
         }
 
@@ -165,13 +165,13 @@ static void lfsr_encode(uint8_t *codeword, const uint8_t *message) {
  * @param[in] codeword_unpacked Array of PARAM_N1 bytes storing the unpacked codeword
  */
 static void pack_codeword(uint64_t *codeword, const uint8_t *codeword_unpacked) {
-    for (size_t i = 0 ; i < (VEC_N1_SIZE_64 - (PARAM_N1 % 64 != 0)) ; ++i) {
-        for (size_t j = 0 ; j < 64 ; ++j) {
+    for (size_t i = 0; i < (VEC_N1_SIZE_64 - (PARAM_N1 % 64 != 0)); ++i) {
+        for (size_t j = 0; j < 64; ++j) {
             codeword[i] |= ((uint64_t) codeword_unpacked[j + 64 * i]) << j;
         }
     }
 
-    for (size_t j = 0 ; j < PARAM_N1 % 64 ; ++j) {
+    for (size_t j = 0; j < PARAM_N1 % 64; ++j) {
         codeword[VEC_N1_SIZE_64 - 1] |= ((uint64_t) codeword_unpacked[j + 64 * (VEC_N1_SIZE_64 - 1)]) << j;
     }
 }
@@ -224,13 +224,13 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     uint16_t d_p = 1;
     uint16_t d = syndromes[0];
 
-    for (size_t mu = 0 ; mu < PARAM_DELTA ; ++mu) {
+    for (size_t mu = 0; mu < PARAM_DELTA; ++mu) {
         // Save sigma in case we need it to update X_sigma_p
         memcpy(sigma_copy, sigma, 2 * (PARAM_DELTA - 1));
         deg_sigma_copy = deg_sigma;
 
         uint16_t dd = PQCLEAN_HQC128_CLEAN_gf_mul(d, PQCLEAN_HQC128_CLEAN_gf_inverse(d_p)); // 0 if(d == 0)
-        for (size_t i = 1 ; (i <= 2 * mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= 2 * mu + 1) && (i <= PARAM_DELTA); ++i) {
             sigma[i] ^= PQCLEAN_HQC128_CLEAN_gf_mul(dd, X_sigma_p[i]);
         }
 
@@ -254,7 +254,7 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
         // Update pp, d_p and X_sigma_p if needed
         pp = (mask12 & (2 * mu)) ^ (~mask12 & pp);
         d_p = (mask12 & d) ^ (~mask12 & d_p);
-        for (size_t i = PARAM_DELTA - 1 ; i ; --i) {
+        for (size_t i = PARAM_DELTA - 1; i; --i) {
             X_sigma_p[i + 1] = (mask12 & sigma_copy[i - 1]) ^ (~mask12 & X_sigma_p[i - 1]);
         }
         X_sigma_p[1] = 0;
@@ -263,7 +263,7 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
 
         // Compute the next discrepancy
         d = syndromes[2 * mu + 2];
-        for (size_t i = 1 ; (i <= 2 * mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= 2 * mu + 1) && (i <= PARAM_DELTA); ++i) {
             d ^= PQCLEAN_HQC128_CLEAN_gf_mul(sigma[i], syndromes[2 * mu + 2 - i]);
         }
     }
@@ -288,7 +288,7 @@ static void message_from_codeword(uint64_t *message, const uint64_t *codeword) {
     uint64_t mask2 = (uint64_t) (0xffffffffffffffff >> (64 - val % 64));
     size_t index = val / 64;
 
-    for (size_t i = 0 ; i < VEC_K_SIZE_64 - 1 ; ++i) {
+    for (size_t i = 0; i < VEC_K_SIZE_64 - 1; ++i) {
         uint64_t message1 = (codeword[index] & mask1) >> val % 64;
         uint64_t message2 = (codeword[++index] & mask2) << (64 - val % 64);
         message[i] = message1 | message2;

@@ -26,7 +26,7 @@ void PQCLEAN_HQC128_AVX2_repetition_code_decode(uint64_t *m, const uint64_t *em)
     size_t t = 0, b, bn, bi, c, cn, ci;
     uint64_t cx, ones;
 
-    for (b = 0 ; b < PARAM_N1N2 - PARAM_N2 + 1 ; b += PARAM_N2) {
+    for (b = 0; b < PARAM_N1N2 - PARAM_N2 + 1; b += PARAM_N2) {
         bn = b >> 6;
         bi = b & 63;
         c = b + PARAM_N2 - 1;

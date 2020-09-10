@@ -45,7 +45,7 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(AES_XOF_struct *ctx, u
 
     seedexpander(ctx, rand_bytes, random_bytes_size);
 
-    for (uint32_t i = 0 ; i < weight ; ++i) {
+    for (uint32_t i = 0; i < weight; ++i) {
         exist = 0;
         do {
             if (j == random_bytes_size) {
@@ -61,7 +61,7 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(AES_XOF_struct *ctx, u
 
         random_data = random_data % PARAM_N;
 
-        for (uint32_t k = 0 ; k < i ; k++) {
+        for (uint32_t k = 0; k < i; k++) {
             if (tmp[k] == random_data) {
                 exist = 1;
             }
@@ -74,7 +74,7 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(AES_XOF_struct *ctx, u
         }
     }
 
-    for (uint32_t i = 0 ; i < weight ; i++) {
+    for (uint32_t i = 0; i < weight; i++) {
         // we store the bloc number and bit position of each vb[i]
         uint64_t bloc = tmp[i] >> 6;
         bloc256[i] = _mm256_set1_epi64x(bloc >> 2);
@@ -86,11 +86,11 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(AES_XOF_struct *ctx, u
         bit256[i] = bloc256 & mask256;
     }
 
-    for (uint32_t i = 0 ; i < LOOP_SIZE ; i++) {
+    for (uint32_t i = 0; i < LOOP_SIZE; i++) {
         __m256i aux = _mm256_loadu_si256(((__m256i *)v) + i);
         __m256i i256 = _mm256_set1_epi64x(i);
 
-        for (uint32_t j = 0 ; j < weight ; j++) {
+        for (uint32_t j = 0; j < weight; j++) {
             __m256i mask256 = _mm256_cmpeq_epi64(bloc256[j], i256);
             aux ^= bit256[j] & mask256;
         }
@@ -147,7 +147,7 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_from_randombytes(uint64_t *v) {
  * @param[in] size Integer that is the size of the vectors
  */
 void PQCLEAN_HQCRMRS256_AVX2_vect_add(uint64_t *o, const uint64_t *v1, const uint64_t *v2, uint32_t size) {
-    for (uint32_t i = 0 ; i < size ; ++i) {
+    for (uint32_t i = 0; i < size; ++i) {
         o[i] = v1[i] ^ v2[i];
     }
 }
@@ -165,7 +165,7 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_add(uint64_t *o, const uint64_t *v1, const uin
 int PQCLEAN_HQCRMRS256_AVX2_vect_compare(const uint64_t *v1, const uint64_t *v2, uint32_t size) {
     unsigned char diff = 0;
 
-    for (uint32_t i = 0 ; i < size ; i++) {
+    for (uint32_t i = 0; i < size; i++) {
         diff |= ((uint8_t *) v1)[i] ^ ((uint8_t *) v2)[i];
     }
     return diff != 0;
@@ -192,7 +192,7 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_resize(uint64_t *o, uint32_t size_o, const uin
 
         memcpy(o, v, VEC_N1N2_SIZE_BYTES);
 
-        for (int8_t i = 0 ; i < val ; ++i) {
+        for (int8_t i = 0; i < val; ++i) {
             o[VEC_N1N2_SIZE_64 - 1] &= (mask >> i);
         }
     } else {

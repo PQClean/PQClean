@@ -41,20 +41,20 @@ void PQCLEAN_HQCRMRS256_CLEAN_reed_solomon_encode(uint64_t *cdw, const uint64_t 
     uint8_t msg_bytes[PARAM_K] = {0};
     uint8_t cdw_bytes[PARAM_N1] = {0};
 
-    for (size_t i = 0 ; i < VEC_K_SIZE_64 ; ++i) {
-        for (size_t j = 0 ; j < 8 ; ++j) {
+    for (size_t i = 0; i < VEC_K_SIZE_64; ++i) {
+        for (size_t j = 0; j < 8; ++j) {
             msg_bytes[i * 8 + j] = (uint8_t) (msg[i] >> (j * 8));
         }
     }
 
-    for (int i = PARAM_K - 1 ; i >= 0 ; --i) {
+    for (int i = PARAM_K - 1; i >= 0; --i) {
         gate_value = msg_bytes[i] ^ cdw_bytes[PARAM_N1 - PARAM_K - 1];
 
-        for (size_t j = 0 ; j < PARAM_G ; ++j) {
+        for (size_t j = 0; j < PARAM_G; ++j) {
             tmp[j] = PQCLEAN_HQCRMRS256_CLEAN_gf_mul(gate_value, PARAM_RS_POLY[j]);
         }
 
-        for (size_t k = PARAM_N1 - PARAM_K - 1 ; k ; --k) {
+        for (size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
             cdw_bytes[k] = cdw_bytes[k - 1] ^ tmp[k];
         }
 
@@ -74,8 +74,8 @@ void PQCLEAN_HQCRMRS256_CLEAN_reed_solomon_encode(uint64_t *cdw, const uint64_t 
  * @param[in] cdw Array of size PARAM_N1 storing the received vector
  */
 void compute_syndromes(uint16_t *syndromes, uint8_t *cdw) {
-    for (size_t i = 0 ; i < 2 * PARAM_DELTA ; ++i) {
-        for (size_t j = 1 ; j < PARAM_N1 ; ++j) {
+    for (size_t i = 0; i < 2 * PARAM_DELTA; ++i) {
+        for (size_t j = 1; j < PARAM_N1; ++j) {
             syndromes[i] ^= PQCLEAN_HQCRMRS256_CLEAN_gf_mul(cdw[j], alpha_ij_pow[i][j - 1]);
         }
         syndromes[i] ^= cdw[0];
@@ -111,14 +111,14 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     uint16_t d_p = 1;
     uint16_t d = syndromes[0];
 
-    for (size_t mu = 0 ; (mu < (2 * PARAM_DELTA)) ; ++mu) {
+    for (size_t mu = 0; (mu < (2 * PARAM_DELTA)); ++mu) {
         // Save sigma in case we need it to update X_sigma_p
         memcpy(sigma_copy, sigma, 2 * (PARAM_DELTA));
         deg_sigma_copy = deg_sigma;
 
         uint16_t dd = PQCLEAN_HQCRMRS256_CLEAN_gf_mul(d, PQCLEAN_HQCRMRS256_CLEAN_gf_inverse(d_p));
 
-        for (size_t i = 1 ; (i <= mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= mu + 1) && (i <= PARAM_DELTA); ++i) {
             sigma[i] ^= PQCLEAN_HQCRMRS256_CLEAN_gf_mul(dd, X_sigma_p[i]);
         }
 
@@ -141,14 +141,14 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
 
         pp = (mask12 & mu) ^ (~mask12 & pp);
         d_p = (mask12 & d) ^ (~mask12 & d_p);
-        for (size_t i = PARAM_DELTA ; i ; --i) {
+        for (size_t i = PARAM_DELTA; i; --i) {
             X_sigma_p[i] = (mask12 & sigma_copy[i - 1]) ^ (~mask12 & X_sigma_p[i - 1]);
         }
 
         deg_sigma_p = (mask12 & deg_sigma_copy) ^ (~mask12 & deg_sigma_p);
         d = syndromes[mu + 1];
 
-        for (size_t i = 1 ; (i <= mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= mu + 1) && (i <= PARAM_DELTA); ++i) {
             d ^= PQCLEAN_HQCRMRS256_CLEAN_gf_mul(sigma[i], syndromes[mu + 1 - i]);
         }
     }
@@ -189,18 +189,18 @@ static void compute_roots(uint8_t *error, uint16_t *sigma) {
 static void compute_z_poly(uint16_t *z, const uint16_t *sigma, uint8_t degree, const uint16_t *syndromes) {
     z[0] = 1;
 
-    for (size_t i = 1 ; i < PARAM_DELTA + 1 ; ++i) {
+    for (size_t i = 1; i < PARAM_DELTA + 1; ++i) {
         int16_t mask2 = -((uint16_t) (i - degree - 1) >> 15);
         z[i] = ((uint16_t)mask2) & sigma[i];
     }
 
     z[1] ^= syndromes[0];
 
-    for (size_t i = 2 ; i <= PARAM_DELTA ; ++i) {
+    for (size_t i = 2; i <= PARAM_DELTA; ++i) {
         int16_t mask2 = -((uint16_t) (i - degree - 1) >> 15);
         z[i] ^= ((uint16_t)mask2 & syndromes[i - 1]);
 
-        for (size_t j = 1 ; j < i ; ++j) {
+        for (size_t j = 1; j < i; ++j) {
             z[i] ^= ((uint16_t)mask2) & PQCLEAN_HQCRMRS256_CLEAN_gf_mul(sigma[j], syndromes[i - j - 1]);
         }
     }
@@ -226,10 +226,10 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
     uint16_t delta_real_value;
 
     // Compute the beta_{j_i} page 31 of the documentation
-    for (size_t i = 0 ; i < PARAM_N1 ; i++) {
+    for (size_t i = 0; i < PARAM_N1; i++) {
         uint16_t found = 0;
         uint16_t valuemask = (uint16_t) (-((int32_t)error[i]) >> 31); // error[i] != 0
-        for (uint16_t j = 0 ; j < PARAM_DELTA ; j++) {
+        for (uint16_t j = 0; j < PARAM_DELTA; j++) {
             uint16_t indexmask = ~((uint16_t) (-((int32_t) j ^ delta_counter) >> 31)); // j == delta_counter
             beta_j[j] += indexmask & valuemask & exp[i];
             found += indexmask & valuemask & 1;
@@ -239,17 +239,17 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
     delta_real_value = delta_counter;
 
     // Compute the e_{j_i} page 31 of the documentation
-    for (size_t i = 0 ; i < PARAM_DELTA ; ++i) {
+    for (size_t i = 0; i < PARAM_DELTA; ++i) {
         uint16_t tmp1 = 1;
         uint16_t tmp2 = 1;
         uint16_t inverse = PQCLEAN_HQCRMRS256_CLEAN_gf_inverse(beta_j[i]);
         uint16_t inverse_power_j = 1;
 
-        for (size_t j = 1 ; j <= PARAM_DELTA ; ++j) {
+        for (size_t j = 1; j <= PARAM_DELTA; ++j) {
             inverse_power_j = PQCLEAN_HQCRMRS256_CLEAN_gf_mul(inverse_power_j, inverse);
             tmp1 ^= PQCLEAN_HQCRMRS256_CLEAN_gf_mul(inverse_power_j, z[j]);
         }
-        for (size_t k = 1 ; k < PARAM_DELTA ; ++k) {
+        for (size_t k = 1; k < PARAM_DELTA; ++k) {
             tmp2 = PQCLEAN_HQCRMRS256_CLEAN_gf_mul(tmp2, (1 ^ PQCLEAN_HQCRMRS256_CLEAN_gf_mul(inverse, beta_j[(i + k) % PARAM_DELTA])));
         }
         uint16_t mask = (uint16_t) (((int16_t) i - delta_real_value) >> 15); // i < delta_real_value
@@ -258,10 +258,10 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
 
     // Place the delta e_{j_i} values at the right coordinates of the output vector
     delta_counter = 0;
-    for (size_t i = 0 ; i < PARAM_N1 ; ++i) {
+    for (size_t i = 0; i < PARAM_N1; ++i) {
         uint16_t found = 0;
         uint16_t valuemask = (uint16_t) (-((int32_t)error[i]) >> 31); // error[i] != 0
-        for (size_t j = 0 ; j < PARAM_DELTA ; j++) {
+        for (size_t j = 0; j < PARAM_DELTA; j++) {
             uint16_t indexmask = ~((uint16_t) (-((int32_t) j ^ delta_counter) >> 31)); // j == delta_counter
             error_values[i] += indexmask & valuemask & e_j[j];
             found += indexmask & valuemask & 1;
@@ -280,7 +280,7 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
  * @param[in] error_values Array of PARAM_DELTA elements storing the error values
  */
 static void correct_errors(uint8_t *cdw, const uint16_t *error_values) {
-    for (size_t i = 0 ; i < PARAM_N1 ; ++i) {
+    for (size_t i = 0; i < PARAM_N1; ++i) {
         cdw[i] ^= error_values[i];
     }
 }

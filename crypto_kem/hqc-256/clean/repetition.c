@@ -19,8 +19,8 @@ static inline int32_t popcount(uint64_t n);
  */
 void PQCLEAN_HQC256_CLEAN_repetition_code_encode(uint64_t *em, const uint64_t *m) {
     static const uint64_t mask[2][3] = {{0x0UL, 0x0UL, 0x0UL}, {0xFFFFFFFFFFFFFFFFUL, 0xFFFFFFFFFFFFFFFFUL, 0x3FFFFFUL}};
-    for (size_t i = 0 ; i < VEC_N1_SIZE_64 - 1 ; i++) {
-        for (size_t j = 0 ; j < 64 ; j++) {
+    for (size_t i = 0; i < VEC_N1_SIZE_64 - 1; i++) {
+        for (size_t j = 0; j < 64; j++) {
             uint8_t bit = (m[i] >> j) & 0x1;
             uint32_t pos_r = PARAM_N2 * ((i << 6) + j);
             uint16_t idx_r = (pos_r & 0x3f);
@@ -35,7 +35,7 @@ void PQCLEAN_HQC256_CLEAN_repetition_code_encode(uint64_t *em, const uint64_t *m
         }
     }
 
-    for (size_t j = 0 ; j < (PARAM_N1 & 0x3f) ; j++) {
+    for (size_t j = 0; j < (PARAM_N1 & 0x3f); j++) {
         uint8_t bit = (m[VEC_N1_SIZE_64 - 1] >> j) & 0x1;
         uint32_t pos_r = PARAM_N2 * (((VEC_N1_SIZE_64 - 1) << 6) + j);
         uint16_t idx_r = (pos_r & 0x3f);

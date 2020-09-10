@@ -79,10 +79,10 @@ static void encode(uint64_t *word, uint32_t message) {
  */
 inline void expand_and_sum(__m256i *dst, const uint64_t *src) {
     uint16_t v[16];
-    for (size_t part = 0 ; part < 8 ; part++) {
+    for (size_t part = 0; part < 8; part++) {
         dst[part] = _mm256_setzero_si256();
     }
-    for (size_t copy = 0 ; copy < MULTIPLICITY ; copy++) {
+    for (size_t copy = 0; copy < MULTIPLICITY; copy++) {
         for (size_t part = 0; part < 8; part++) {
             for (size_t bit = 0; bit < 16; bit++) {
                 v[bit] = (((uint16_t *)(&src[2 * copy]))[part] >> bit) & 1;
@@ -133,10 +133,10 @@ inline void hadamard(__m256i *src, __m256i *dst) {
     __m256i *p1 = src;
     __m256i *p2 = dst;
     __m256i *p3;
-    for (size_t pass = 0 ; pass < 7 ; pass++) {
+    for (size_t pass = 0; pass < 7; pass++) {
         // warning: hadd works "within lanes" as Intel call it
         // so you have to swap the middle 64 bit blocks of the result
-        for (size_t part = 0 ; part < 4 ; part++) {
+        for (size_t part = 0; part < 4; part++) {
             p2[part] = _mm256_permute4x64_epi64(_mm256_hadd_epi16(p1[2 * part], p1[2 * part + 1]), 0xd8);
             p2[part + 4] = _mm256_permute4x64_epi64(_mm256_hsub_epi16(p1[2 * part], p1[2 * part + 1]), 0xd8);
         }
@@ -223,13 +223,13 @@ inline int32_t find_peaks(__m256i *transform) {
     __m256i bitmap, abs_rows[8], bound, active_row, max_abs_rows;
     __m256i peak_mask;
     // compute absolute value of transform
-    for (size_t i = 0 ; i < 8 ; i++) {
+    for (size_t i = 0; i < 8; i++) {
         abs_rows[i] = _mm256_abs_epi16(transform[i]);
     }
     // compute a vector of 16 elements which contains the maximum somewhere
     // (later used to compute bits 0 through 3 of message)
     max_abs_rows = abs_rows[0];
-    for (size_t i = 1 ; i < 8 ; i++) {
+    for (size_t i = 1; i < 8; i++) {
         max_abs_rows = _mm256_max_epi16(max_abs_rows, abs_rows[i]);
     }
 
@@ -263,7 +263,7 @@ inline int32_t find_peaks(__m256i *transform) {
     // find in which of the 8 groups a maximum occurs to compute bits 4, 5, 6 of message
     // find lowest value by searching backwards skip first check to save time
     size_t message = 0x70;
-    for (int32_t i = 7 ; i >= 0 ; i--) {
+    for (int32_t i = 7; i >= 0; i--) {
         bitmap = _mm256_cmpgt_epi16(abs_rows[i], bound);
         int message_mask = (-(int16_t)(_mm256_testz_si256(bitmap, bitmap) == 0)) >> 15;
         message ^= message_mask & (message ^ (unsigned)i << 4);
@@ -297,7 +297,7 @@ inline int32_t find_peaks(__m256i *transform) {
     // and then adding elements within two groups of 8
     peak_mask = _mm256_cmpgt_epi16(active_row, bound);
     peak_mask &= _mm256_set_epi16(-32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1);
-    for (int32_t i = 0 ; i < 3 ; i++) {
+    for (int32_t i = 0; i < 3; i++) {
         peak_mask = _mm256_hadd_epi16(peak_mask, peak_mask);
     }
     // add low 4 bits of message
@@ -337,12 +337,12 @@ inline int32_t find_peaks(__m256i *transform) {
  * @param[in] msg Array of size VEC_N1_SIZE_64 storing the message
  */
 void PQCLEAN_HQCRMRS256_AVX2_reed_muller_encode(uint64_t *cdw, const uint64_t *msg) {
-    for (size_t i = 0 ; i < VEC_N1_SIZE_BYTES ; i++) {
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
         // fill entries i * MULTIPLICITY to (i+1) * MULTIPLICITY
         // encode first word
         encode(&cdw[2 * i * MULTIPLICITY], ((uint8_t *)msg)[i]);
         // copy to other identical codewords
-        for (size_t copy = 1 ; copy < MULTIPLICITY ; copy++) {
+        for (size_t copy = 1; copy < MULTIPLICITY; copy++) {
             memcpy(&cdw[2 * (i * MULTIPLICITY + copy)], &cdw[2 * i * MULTIPLICITY], 2 * sizeof(uint64_t));
         }
     }
@@ -362,7 +362,7 @@ void PQCLEAN_HQCRMRS256_AVX2_reed_muller_encode(uint64_t *cdw, const uint64_t *m
 void PQCLEAN_HQCRMRS256_AVX2_reed_muller_decode(uint64_t *msg, const uint64_t *cdw) {
     __m256i expanded[8];
     __m256i transform[8];
-    for (size_t i = 0 ; i < VEC_N1_SIZE_BYTES ; i++) {
+    for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
         // collect the codewords
         expand_and_sum(expanded, &cdw[2 * i * MULTIPLICITY]);
         // apply hadamard transform

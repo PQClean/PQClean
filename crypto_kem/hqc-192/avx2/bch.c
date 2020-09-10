@@ -49,7 +49,7 @@ static uint16_t mod(uint16_t i, uint16_t modulus) {
  */
 static void compute_cyclotomic_cosets(uint16_t *cosets, uint16_t upper_bound) {
     // Compute the odd cyclotomic classes
-    for (uint16_t i = 1 ; i < upper_bound ; i += 2) {
+    for (uint16_t i = 1; i < upper_bound; i += 2) {
         if (cosets[i] == 0) { // If i does not already belong to a class
             uint16_t tmp = i;
             size_t j = PARAM_M;
@@ -87,13 +87,13 @@ size_t PQCLEAN_HQC192_AVX2_compute_bch_poly(uint16_t *bch_poly, size_t *t, const
     // Start with bch_poly(X) = 1
     bch_poly[0] = 1;
 
-    for (uint16_t i = 1 ; i < PARAM_GF_MUL_ORDER ; ++i) {
+    for (uint16_t i = 1; i < PARAM_GF_MUL_ORDER; ++i) {
         if (cosets[i] == 0) {
             continue;
         }
 
         // Multiply bch_poly(X) by X-a^i
-        for (size_t j = deg_bch_poly ; j ; --j) {
+        for (size_t j = deg_bch_poly; j; --j) {
             int16_t mask = -((uint16_t) - bch_poly[j] >> 15);
             bch_poly[j] = (mask & exp[mod(log[bch_poly[j]] + i, PARAM_GF_MUL_ORDER)]) ^ bch_poly[j - 1];
         }
@@ -129,10 +129,10 @@ void PQCLEAN_HQC192_AVX2_table_alphaij_generation(const uint16_t *exp) {
 
     // pre-computation of alpha^ij for i in [0, N1[ and j in [1, 2*PARAM_DELTA]
     // see comment of alpha_ij_table_init() function.
-    for (uint16_t i = 0; i < PARAM_N1 ; ++i) {
+    for (uint16_t i = 0; i < PARAM_N1; ++i) {
         tmp_value = 0;
         alpha_tmp = table_alpha_ij + i * (PARAM_DELTA << 1);
-        for (uint16_t j = 0 ; j < (PARAM_DELTA << 1) ; j++) {
+        for (uint16_t j = 0; j < (PARAM_DELTA << 1); j++) {
             tmp_value = PQCLEAN_HQC192_AVX2_gf_mod(tmp_value + i);
             alpha_tmp[j] = exp[tmp_value];
         }
@@ -168,13 +168,13 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     uint16_t d_p = 1;
     uint16_t d = syndromes[0];
 
-    for (size_t mu = 0 ; mu < PARAM_DELTA ; ++mu) {
+    for (size_t mu = 0; mu < PARAM_DELTA; ++mu) {
         // Save sigma in case we need it to update X_sigma_p
         memcpy(sigma_copy, sigma, 2 * (PARAM_DELTA - 1));
         deg_sigma_copy = deg_sigma;
 
         uint16_t dd = PQCLEAN_HQC192_AVX2_gf_mul(d, PQCLEAN_HQC192_AVX2_gf_inverse(d_p)); // 0 if(d == 0)
-        for (size_t i = 1 ; (i <= 2 * mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= 2 * mu + 1) && (i <= PARAM_DELTA); ++i) {
             sigma[i] ^= PQCLEAN_HQC192_AVX2_gf_mul(dd, X_sigma_p[i]);
         }
 
@@ -198,7 +198,7 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
         // Update pp, d_p and X_sigma_p if needed
         pp = (mask12 & (2 * mu)) ^ (~mask12 & pp);
         d_p = (mask12 & d) ^ (~mask12 & d_p);
-        for (size_t i = PARAM_DELTA - 1 ; i ; --i) {
+        for (size_t i = PARAM_DELTA - 1; i; --i) {
             X_sigma_p[i + 1] = (mask12 & sigma_copy[i - 1]) ^ (~mask12 & X_sigma_p[i - 1]);
         }
         X_sigma_p[1] = 0;
@@ -207,7 +207,7 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
 
         // Compute the next discrepancy
         d = syndromes[2 * mu + 2];
-        for (size_t i = 1 ; (i <= 2 * mu + 1) && (i <= PARAM_DELTA) ; ++i) {
+        for (size_t i = 1; (i <= 2 * mu + 1) && (i <= PARAM_DELTA); ++i) {
             d ^= PQCLEAN_HQC192_AVX2_gf_mul(sigma[i], syndromes[2 * mu + 2 - i]);
         }
     }
@@ -232,7 +232,7 @@ static void message_from_codeword(uint64_t *message, const uint64_t *codeword) {
     uint64_t mask2 = (uint64_t) (0xffffffffffffffff >> (64 - val % 64));
     size_t index = val / 64;
 
-    for (size_t i = 0 ; i < VEC_K_SIZE_64 - 1 ; ++i) {
+    for (size_t i = 0; i < VEC_K_SIZE_64 - 1; ++i) {
         uint64_t message1 = (codeword[index] & mask1) >> val % 64;
         uint64_t message2 = (codeword[++index] & mask2) << (64 - val % 64);
         message[i] = message1 | message2;
@@ -282,7 +282,7 @@ void compute_syndromes(__m256i *syndromes, const uint64_t *rcv) {
     // vectorized version of the separation of the coordinates of the vector v in order to put each coordinate in an unsigned char
     // aux is used to consider 4 elements in v at each step of the loop
     aux = (uint32_t *) rcv;
-    for (i = 0 ; i < ((VEC_N1_SIZE_BYTES >> 2) << 2) ; i += 4) {
+    for (i = 0; i < ((VEC_N1_SIZE_BYTES >> 2) << 2); i += 4) {
         // duplicate aux 8 times in y , i.e y= (aux aux aux .... aux)
         y = _mm256_set1_epi32(*aux);
         // shuffle the bytes of y so that if aux=(a0 a1 a2 a3)
@@ -294,11 +294,11 @@ void compute_syndromes(__m256i *syndromes, const uint64_t *rcv) {
     }
 
     // Evaluation of the polynomial corresponding to the vector v in alpha^i for i in {1, ..., 2 * PARAM_DELTA}
-    for (size_t j = 0 ; j < SYND_SIZE_256 ; ++j) {
+    for (size_t j = 0; j < SYND_SIZE_256; ++j) {
         S = zero_256;
         alpha_tmp = table_alpha_ij + (j << 4);
 
-        for (size_t i = 0 ; i < PARAM_N1 ; ++i) {
+        for (size_t i = 0; i < PARAM_N1; ++i) {
             tmp_repeat = _mm256_set1_epi64x((long long)(tmp_array[i] != 0));
             L = _mm256_cmpeq_epi64(tmp_repeat, un_256);
             tmp_repeat = _mm256_lddqu_si256((__m256i *)(alpha_tmp + i * (PARAM_DELTA << 1)));

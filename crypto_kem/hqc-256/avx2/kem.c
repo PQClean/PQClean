@@ -128,7 +128,7 @@ int PQCLEAN_HQC256_AVX2_crypto_kem_dec(unsigned char *ss, const unsigned char *c
 
     // Abort if c != c' or d != d'
     result = (PQCLEAN_HQC256_AVX2_vect_compare(u, u2, VEC_N_SIZE_BYTES) == 0 && PQCLEAN_HQC256_AVX2_vect_compare(v, v2, VEC_N1N2_SIZE_BYTES) == 0 && PQCLEAN_HQC256_AVX2_vect_compare((uint64_t *)d, (uint64_t *)d2, SHA512_BYTES) == 0);
-    for (size_t i = 0 ; i < SHARED_SECRET_BYTES ; i++) {
+    for (size_t i = 0; i < SHARED_SECRET_BYTES; i++) {
         ss[i] = result * ss[i];
     }
     result--;
