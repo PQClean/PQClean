@@ -1,5 +1,6 @@
 #include "nistseedexpander.h"
 #include "parameters.h"
+#include "parsing.h"
 #include "randombytes.h"
 #include "vector.h"
 #include <immintrin.h>

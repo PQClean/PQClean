@@ -27,7 +27,6 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c
 - source:
     scheme: hqc-192
     implementation: avx2
@@ -55,7 +54,6 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c
 - source:
     scheme: hqc-256
     implementation: avx2
@@ -75,7 +73,6 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c
 - source:
     scheme: hqc-rmrs-128
     implementation: avx2
@@ -95,7 +92,6 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c
 - source:
     scheme: hqc-rmrs-192
     implementation: avx2
@@ -115,7 +111,6 @@ consistency_checks:
       - hqc.c
       - kem.c
       - parsing.c
-      - vector.c
 - source:
     scheme: hqc-rmrs-256
     implementation: avx2
