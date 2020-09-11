@@ -66,9 +66,9 @@ int PQCLEAN_HQC256_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss, co
     sha512(d, (unsigned char *) m, VEC_K_SIZE_BYTES);
 
     // Computing shared secret
-    memcpy(mc, m, VEC_K_SIZE_BYTES);
-    memcpy(mc + VEC_K_SIZE_BYTES, u, VEC_N_SIZE_BYTES);
-    memcpy(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, v, VEC_N1N2_SIZE_BYTES);
+    PQCLEAN_HQC256_CLEAN_store8_arr(mc, VEC_K_SIZE_BYTES, m, VEC_K_SIZE_64);
+    PQCLEAN_HQC256_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
+    PQCLEAN_HQC256_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
     sha512(ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES);
 
     // Computing ciphertext
@@ -121,9 +121,9 @@ int PQCLEAN_HQC256_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *
     sha512(d2, (unsigned char *) m, VEC_K_SIZE_BYTES);
 
     // Computing shared secret
-    memcpy(mc, m, VEC_K_SIZE_BYTES);
-    memcpy(mc + VEC_K_SIZE_BYTES, u, VEC_N_SIZE_BYTES);
-    memcpy(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, v, VEC_N1N2_SIZE_BYTES);
+    PQCLEAN_HQC256_CLEAN_store8_arr(mc, VEC_K_SIZE_BYTES, m, VEC_K_SIZE_64);
+    PQCLEAN_HQC256_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
+    PQCLEAN_HQC256_CLEAN_store8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
     sha512(ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES);
 
     // Abort if c != c' or d != d'
