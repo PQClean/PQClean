@@ -12,6 +12,7 @@ consistency_checks:
       - reed_solomon.h
       - code.c
       - fft.c
+      - reed_solomon.c
 - source:
     scheme: hqc-rmrs-256
     implementation: clean
@@ -23,7 +24,6 @@ consistency_checks:
       - hqc.h
       - parsing.h
       - reed_muller.h
-      - reed_solomon.h
       - vector.h
       - code.c
       - fft.c
@@ -33,6 +33,7 @@ consistency_checks:
       - kem.c
       - parsing.c
       - reed_muller.c
+      - reed_solomon.c
       - vector.c
 - source:
     scheme: hqc-rmrs-256
@@ -43,6 +44,6 @@ consistency_checks:
       - gf.h
       - hqc.h
       - reed_muller.h
-      - reed_solomon.h
       - code.c
       - fft.c
+      - reed_solomon.c

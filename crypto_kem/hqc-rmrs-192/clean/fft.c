@@ -51,7 +51,7 @@ static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, uint
     subset_sums[0] = 0;
 
     for (i = 0; i < set_size; ++i) {
-        for (j = 0; j < (1U << i); ++j) {
+        for (j = 0; j < (1 << i); ++j) {
             subset_sums[(1 << i) + j] = set[i] ^ subset_sums[j];
         }
     }
@@ -178,6 +178,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
 
     uint16_t beta_m_pow;
     size_t i, j, k;
+    size_t x;
 
     // Step 1
     if (m_f == 1) {
@@ -186,10 +187,12 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
         }
 
         w[0] = f[0];
+        x = 1;
         for (j = 0; j < m; ++j) {
-            for (k = 0; k < (1U << j); ++k) {
-                w[(1 << j) + k] = w[k] ^ tmp[j];
+            for (k = 0; k < x; ++k) {
+                w[x + k] = w[k] ^ tmp[j];
             }
+            x <<= 1;
         }
 
         return;
@@ -198,7 +201,8 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     // Step 2: compute g
     if (betas[m - 1] != 1) {
         beta_m_pow = 1;
-        for (i = 1; i < (1U << m_f); ++i) {
+        x = 1 << m_f;
+        for (i = 1; i < x; ++i) {
             beta_m_pow = PQCLEAN_HQCRMRS192_CLEAN_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQCRMRS192_CLEAN_gf_mul(beta_m_pow, f[i]);
         }

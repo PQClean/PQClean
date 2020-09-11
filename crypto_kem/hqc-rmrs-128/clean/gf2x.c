@@ -82,7 +82,7 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     size_t i, j;
 
     for (i = 0; i < 16; i++) {
-        permuted_table[i] = i;
+        permuted_table[i] = (uint16_t) i;
     }
 
     seedexpander(ctx, (uint8_t *) permutation_table, 16 * sizeof(uint16_t));
@@ -108,7 +108,7 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     }
 
     for (i = 0; i < weight; i++) {
-        permuted_sparse_vect[i] = i;
+        permuted_sparse_vect[i] = (uint16_t) i;
     }
 
     seedexpander(ctx, (uint8_t *) permutation_sparse_vect, weight * sizeof(uint16_t));

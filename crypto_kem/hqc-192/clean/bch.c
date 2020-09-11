@@ -189,26 +189,20 @@ static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
  * @param[in] codeword Array of size VEC_N1_SIZE_BYTES storing the codeword
  */
 static void message_from_codeword(uint64_t *message, const uint64_t *codeword) {
-    int32_t val = PARAM_N1 - PARAM_K;
-
-    uint64_t mask1 = (uint64_t) (0xffffffffffffffff << val % 64);
-    uint64_t mask2 = (uint64_t) (0xffffffffffffffff >> (64 - val % 64));
-    size_t index = val / 64;
+    uint64_t mask1 = (uint64_t) (0xffffffffffffffff << ((PARAM_N1 - PARAM_K) % 64));
+    uint64_t mask2 = (uint64_t) (0xffffffffffffffff >> (64 - (PARAM_N1 - PARAM_K) % 64));
+    size_t index = (PARAM_N1 - PARAM_K) / 64;
 
     for (size_t i = 0; i < VEC_K_SIZE_64 - 1; ++i) {
-        uint64_t message1 = (codeword[index] & mask1) >> val % 64;
-        uint64_t message2 = (codeword[++index] & mask2) << (64 - val % 64);
-        message[i] = message1 | message2;
+        message[i] = (codeword[index] & mask1) >> ((PARAM_N1 - PARAM_K) % 64);
+        message[i] |= (codeword[++index] & mask2) << (64 - (PARAM_N1 - PARAM_K) % 64);
     }
 
     // Last byte (8-val % 8 is the number of bits given by message1)
-    if ((PARAM_K % 64 == 0) || (64 - val % 64 < PARAM_K % 64)) {
-        uint64_t message1 = (codeword[index] & mask1) >> val % 64;
-        uint64_t message2 = (codeword[++index] & mask2) << (64 - val % 64);
-        message[VEC_K_SIZE_64 - 1] = message1 | message2;
-    } else {
-        uint64_t message1 = (codeword[index] & mask1) >> val % 64;
-        message[VEC_K_SIZE_64 - 1] = message1;
+    message[VEC_K_SIZE_64 - 1] = (codeword[index] & mask1) >> ((PARAM_N1 - PARAM_K) % 64);
+    ++index;
+    if (index < VEC_N1_SIZE_64) {
+        message[VEC_K_SIZE_64 - 1] |= (codeword[index] & mask2) << (64 - (PARAM_N1 - PARAM_K) % 64);
     }
 }
 
