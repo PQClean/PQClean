@@ -11,3 +11,4 @@ consistency_checks:
       - reed_muller.h
       - reed_solomon.h
       - code.c
+      - fft.c

@@ -42,10 +42,11 @@ static inline void swap(uint16_t *tab, uint16_t elt1, uint16_t elt2) {
  * @param[out] o Pointer to the result
  */
 static void reduce(uint64_t *o, const uint64_t *a) {
+    size_t i;
     uint64_t r;
     uint64_t carry;
 
-    for (uint32_t i = 0; i < VEC_N_SIZE_64; i++) {
+    for (i = 0; i < VEC_N_SIZE_64; i++) {
         r = a[i + VEC_N_SIZE_64 - 1] >> (PARAM_N & 63);
         carry = (uint64_t) (a[i + VEC_N_SIZE_64] << (64 - (PARAM_N & 63)));
         o[i] = a[i] ^ r ^ carry;
@@ -78,7 +79,7 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     uint16_t permutation_sparse_vect[PARAM_OMEGA_E];
     uint64_t *pt;
     uint16_t *res_16;
-    uint16_t i, j;
+    size_t i, j;
 
     for (i = 0; i < 16; i++) {
         permuted_table[i] = i;
@@ -113,7 +114,7 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     seedexpander(ctx, (uint8_t *) permutation_sparse_vect, weight * sizeof(uint16_t));
 
     for (i = 0; i + 1 < weight; i++) {
-        swap(permuted_sparse_vect + i, 0, permutation_sparse_vect[i] % (weight - i));
+        swap(permuted_sparse_vect + i, 0, (uint16_t) (permutation_sparse_vect[i] % (weight - i)));
     }
 
     for (i = 0; i < weight; i++) {

@@ -24,7 +24,7 @@ void PQCLEAN_HQC128_CLEAN_repetition_code_encode(uint64_t *em, const uint64_t *m
     uint32_t pos_r;
     uint64_t *p64 = em;
     const uint64_t mask[2][2] = {{0x0UL, 0x0UL}, {0x7FFFFFFFUL, 0x3FFFFFFFUL}};
-    for (i = 0; i < VEC_N1_SIZE_64 - 1; i++) {
+    for (i = 0; i < (uint16_t) (VEC_N1_SIZE_64 - 1); i++) {
         for (j = 0; j < 64; j++) {
             bit = (m[i] >> j) & 0x1;
             pos_r = PARAM_N2 * ((i << 6) + j);

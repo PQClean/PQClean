@@ -26,6 +26,7 @@ consistency_checks:
       - reed_solomon.h
       - vector.h
       - code.c
+      - fft.c
       - gf2x.c
       - gf.c
       - hqc.c
@@ -59,6 +60,7 @@ consistency_checks:
       - reed_solomon.h
       - vector.h
       - code.c
+      - fft.c
       - gf2x.c
       - gf.c
       - hqc.c
