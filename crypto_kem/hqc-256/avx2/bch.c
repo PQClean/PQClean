@@ -19,36 +19,6 @@ static void compute_syndromes(__m256i *syndromes, const uint64_t *rcv);
 static void compute_roots(uint64_t *error, const uint16_t *sigma);
 
 /**
- * @brief Computes the values alpha^ij for decoding syndromes
- *
- * function to initialize a table which contains values alpha^ij for i in [0,N1[ and j in [1,2*PARAM_DELTA]
- * these values are used in order to compute the syndromes of the received word v(x)=v_0+v_1x+...+v_{n1-1}x^{n1-1}
- * value alpha^ij is stored in alpha_ij_table[2*PARAM_DELTA*i+j-1]
- * The syndromes are equal to v(alpha^k) for k in [1,2*PARAM_DELTA]
- * Size of the table is fixed to match 256 bit representation
- * Useless values are filled with 0.
- *
- * @param[in] exp Exp look-up-table of GF
- */
-void PQCLEAN_HQC256_AVX2_table_alphaij_generation(const uint16_t *exp) {
-    int32_t tmp_value;
-    int16_t *alpha_tmp;
-
-    // pre-computation of alpha^ij for i in [0, N1[ and j in [1, 2*PARAM_DELTA]
-    // see comment of alpha_ij_table_init() function.
-    for (uint16_t i = 0; i < PARAM_N1; ++i) {
-        tmp_value = 0;
-        alpha_tmp = table_alpha_ij + i * (PARAM_DELTA << 1);
-        for (uint16_t j = 0; j < (PARAM_DELTA << 1); j++) {
-            tmp_value = PQCLEAN_HQC256_AVX2_gf_mod(tmp_value + i);
-            alpha_tmp[j] = gf_exp[tmp_value];
-        }
-    }
-}
-
-
-
-/**
  * @brief Computes the error locator polynomial (ELP) sigma
  *
  * This is a constant time implementation of Berlekamp's simplified algorithm (see @cite joiner1995decoding). <br>

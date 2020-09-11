@@ -15,7 +15,4 @@
 void PQCLEAN_HQC128_AVX2_bch_code_decode(uint64_t *message, uint64_t *vector);
 
 
-void PQCLEAN_HQC128_AVX2_table_alphaij_generation(const uint16_t *exp);
-
-
 #endif
