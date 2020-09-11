@@ -335,10 +335,10 @@ void PQCLEAN_HQCRMRS192_AVX2_fft_retrieve_error_poly(uint8_t *error, const uint1
     error[0] ^= 1 ^ ((uint16_t) - w[k] >> 15);
 
     for (i = 1; i < k; ++i) {
-        index = PARAM_GF_MUL_ORDER - PQCLEAN_HQCRMRS192_AVX2_gf_log(gammas_sums[i]);
+        index = PARAM_GF_MUL_ORDER - gf_log[gammas_sums[i]];
         error[index] ^= 1 ^ ((uint16_t) - w[i] >> 15);
 
-        index = PARAM_GF_MUL_ORDER - PQCLEAN_HQCRMRS192_AVX2_gf_log(gammas_sums[i] ^ 1);
+        index = PARAM_GF_MUL_ORDER - gf_log[gammas_sums[i] ^ 1];
         error[index] ^= 1 ^ ((uint16_t) - w[k + i] >> 15);
     }
 }

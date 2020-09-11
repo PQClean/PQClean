@@ -231,7 +231,7 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
         int16_t valuemask = ((int16_t) - (error[i] != 0)) >> 15;
         for (size_t j = 0; j < PARAM_DELTA; j++) {
             int16_t indexmask = ((int16_t) - (j == delta_counter)) >> 15;
-            beta_j[j] += indexmask & valuemask & exp[i];
+            beta_j[j] += indexmask & valuemask & gf_exp[i];
             found += indexmask & valuemask & 1;
         }
         delta_counter += found;

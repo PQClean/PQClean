@@ -41,7 +41,7 @@ void PQCLEAN_HQC128_AVX2_table_alphaij_generation(const uint16_t *exp) {
         alpha_tmp = table_alpha_ij + i * (PARAM_DELTA << 1);
         for (uint16_t j = 0; j < (PARAM_DELTA << 1); j++) {
             tmp_value = PQCLEAN_HQC128_AVX2_gf_mod(tmp_value + i);
-            alpha_tmp[j] = exp[tmp_value];
+            alpha_tmp[j] = gf_exp[tmp_value];
         }
     }
 }

@@ -44,6 +44,7 @@ consistency_checks:
       - parsing.h
       - vector.h
       - gf2x.c
+      - gf.c
       - hqc.c
       - kem.c
       - parsing.c
@@ -64,6 +65,7 @@ consistency_checks:
       - parsing.h
       - vector.h
       - gf2x.c
+      - gf.c
       - hqc.c
       - kem.c
       - parsing.c
@@ -84,6 +86,7 @@ consistency_checks:
       - parsing.h
       - vector.h
       - gf2x.c
+      - gf.c
       - hqc.c
       - kem.c
       - parsing.c

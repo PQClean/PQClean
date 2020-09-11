@@ -339,11 +339,11 @@ void PQCLEAN_HQC256_AVX2_fft_retrieve_bch_error_poly(uint64_t *error, const uint
     error[index / 8] ^= bit << (index % 64);
 
     for (i = 1; i < k; ++i) {
-        index = PARAM_GF_MUL_ORDER - PQCLEAN_HQC256_AVX2_gf_log(gammas_sums[i]);
+        index = PARAM_GF_MUL_ORDER - gf_log[gammas_sums[i]];
         bit = 1 ^ ((uint16_t) - w[i] >> 15);
         error[index / 64] ^= bit << (index % 64);
 
-        index = PARAM_GF_MUL_ORDER - PQCLEAN_HQC256_AVX2_gf_log(gammas_sums[i] ^ 1);
+        index = PARAM_GF_MUL_ORDER - gf_log[gammas_sums[i] ^ 1];
         bit = 1 ^ ((uint16_t) - w[k + i] >> 15);
         error[index / 64] ^= bit << (index % 64);
     }

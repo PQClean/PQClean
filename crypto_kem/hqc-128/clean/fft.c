@@ -611,8 +611,8 @@ void PQCLEAN_HQC128_CLEAN_fft_t_preprocess_bch_codeword(uint16_t *w, const uint6
     w[0] = 0;
     w[k] = -r[0] & 1;
     for (i = 1; i < k; ++i) {
-        w[i] = -r[PQCLEAN_HQC128_CLEAN_gf_log(gammas_sums[i])] & gammas_sums[i];
-        w[k + i] = -r[PQCLEAN_HQC128_CLEAN_gf_log(gammas_sums[i] ^ 1)] & (gammas_sums[i] ^ 1);
+        w[i] = -r[gf_log[gammas_sums[i]]] & gammas_sums[i];
+        w[k + i] = -r[gf_log[gammas_sums[i] ^ 1]] & (gammas_sums[i] ^ 1);
     }
 }
 
@@ -642,11 +642,11 @@ void PQCLEAN_HQC128_CLEAN_fft_retrieve_bch_error_poly(uint64_t *error, const uin
     error[index / 8] ^= bit << (index % 64);
 
     for (i = 1; i < k; ++i) {
-        index = PARAM_GF_MUL_ORDER - PQCLEAN_HQC128_CLEAN_gf_log(gammas_sums[i]);
+        index = PARAM_GF_MUL_ORDER - gf_log[gammas_sums[i]];
         bit = 1 ^ ((uint16_t) - w[i] >> 15);
         error[index / 64] ^= bit << (index % 64);
 
-        index = PARAM_GF_MUL_ORDER - PQCLEAN_HQC128_CLEAN_gf_log(gammas_sums[i] ^ 1);
+        index = PARAM_GF_MUL_ORDER - gf_log[gammas_sums[i] ^ 1];
         bit = 1 ^ ((uint16_t) - w[k + i] >> 15);
         error[index / 64] ^= bit << (index % 64);
     }

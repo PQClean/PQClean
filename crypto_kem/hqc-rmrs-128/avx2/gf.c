@@ -12,16 +12,6 @@
 static uint16_t gf_reduce(uint64_t x, size_t deg_x);
 
 
-/**
- * Returns the integer i such that elt = a^i
- * where a is the primitive element of GF(2^GF_M).
- *@returns the logarithm of the given element
- */
-uint16_t PQCLEAN_HQCRMRS128_AVX2_gf_log(uint16_t elt) {
-    return log[elt];
-}
-
-
 
 /**
  * Reduces polynomial x modulo primitive polynomial GF_POLY.
