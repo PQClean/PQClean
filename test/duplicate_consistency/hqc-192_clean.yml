@@ -38,15 +38,11 @@ consistency_checks:
     scheme: hqc-rmrs-128
     implementation: clean
   files:
-      - code.h
       - gf2x.h
-      - hqc.h
       - parsing.h
       - vector.h
       - gf2x.c
       - gf.c
-      - hqc.c
-      - kem.c
       - parsing.c
       - vector.c
 - source:
@@ -59,15 +55,11 @@ consistency_checks:
     scheme: hqc-rmrs-192
     implementation: clean
   files:
-      - code.h
       - gf2x.h
-      - hqc.h
       - parsing.h
       - vector.h
       - gf2x.c
       - gf.c
-      - hqc.c
-      - kem.c
       - parsing.c
       - vector.c
 - source:
@@ -80,15 +72,11 @@ consistency_checks:
     scheme: hqc-rmrs-256
     implementation: clean
   files:
-      - code.h
       - gf2x.h
-      - hqc.h
       - parsing.h
       - vector.h
       - gf2x.c
       - gf.c
-      - hqc.c
-      - kem.c
       - parsing.c
       - vector.c
 - source:

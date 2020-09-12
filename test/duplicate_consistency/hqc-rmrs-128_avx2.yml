@@ -4,27 +4,16 @@ consistency_checks:
     implementation: clean
   files:
       - api.h
-      - code.h
       - fft.h
       - gf.h
-      - hqc.h
-      - reed_muller.h
-      - reed_solomon.h
-      - code.c
       - fft.c
-      - reed_solomon.c
 - source:
     scheme: hqc-rmrs-192
     implementation: clean
   files:
-      - code.h
       - fft.h
       - gf.h
-      - hqc.h
-      - reed_muller.h
-      - code.c
       - fft.c
-      - reed_solomon.c
 - source:
     scheme: hqc-rmrs-192
     implementation: avx2
@@ -50,15 +39,9 @@ consistency_checks:
     scheme: hqc-rmrs-256
     implementation: clean
   files:
-      - code.h
       - fft.h
       - gf.h
-      - hqc.h
-      - reed_muller.h
-      - reed_solomon.h
-      - code.c
       - fft.c
-      - reed_solomon.c
 - source:
     scheme: hqc-rmrs-256
     implementation: avx2

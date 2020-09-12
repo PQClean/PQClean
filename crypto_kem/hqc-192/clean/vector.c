@@ -155,22 +155,6 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random(AES_XOF_struct *ctx, uint64_t *v) {
 
 
 /**
- * @brief Generates a random vector
- *
- * This function generates a random binary vector. It uses the the randombytes function.
- *
- * @param[in] v Pointer to an array
- */
-void PQCLEAN_HQC192_CLEAN_vect_set_random_from_randombytes(uint64_t *v) {
-    uint8_t rand_bytes [VEC_K_SIZE_BYTES] = {0};
-
-    randombytes(rand_bytes, VEC_K_SIZE_BYTES);
-    memcpy(v, rand_bytes, VEC_K_SIZE_BYTES);
-}
-
-
-
-/**
  * @brief Adds two vectors
  *
  * @param[out] o Pointer to an array that is the result
@@ -183,6 +167,7 @@ void PQCLEAN_HQC192_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64
         o[i] = v1[i] ^ v2[i];
     }
 }
+
 
 
 /**
@@ -216,12 +201,12 @@ void PQCLEAN_HQC192_CLEAN_vect_resize(uint64_t *o, uint32_t size_o, const uint64
             val = 64 - (size_o % 64);
         }
 
-        memcpy(o, v, VEC_N1N2_SIZE_BYTES);
+        memcpy(o, v, 8 * VEC_N1N2_SIZE_64);
 
         for (int8_t i = 0; i < val; ++i) {
             o[VEC_N1N2_SIZE_64 - 1] &= (mask >> i);
         }
     } else {
-        memcpy(o, v, CEIL_DIVIDE(size_v, 8));
+        memcpy(o, v, 8 * CEIL_DIVIDE(size_v, 64));
     }
 }

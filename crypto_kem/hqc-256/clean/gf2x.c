@@ -1,10 +1,9 @@
 #include "gf2x.h"
 #include "nistseedexpander.h"
 #include "parameters.h"
+#include "parsing.h"
 #include "randombytes.h"
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 /**
  * \file gf2x.c
  * \brief Implementation of multiplication of two polynomials
@@ -13,7 +12,7 @@
 
 static inline void swap(uint16_t *tab, uint16_t elt1, uint16_t elt2);
 static void reduce(uint64_t *o, const uint64_t *a);
-static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx);
+static void fast_convolution_mult(uint8_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx);
 
 /**
  * @brief swap two elements in a table
@@ -68,7 +67,7 @@ static void reduce(uint64_t *o, const uint64_t *a) {
  * @param[in] weight Hamming wifht of the sparse polynomial a2
  * @param[in] ctx Pointer to a seed expander used to randomize the multiplication process
  */
-static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx) {
+static void fast_convolution_mult(uint8_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx) {
 //static uint32_t fast_convolution_mult(const uint64_t *A, const uint32_t *vB, uint64_t *C, const uint16_t w, AES_XOF_struct *ctx)
     uint64_t carry;
     uint32_t dec, s;
@@ -77,8 +76,9 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     uint16_t permutation_table[16];
     uint16_t permuted_sparse_vect[PARAM_OMEGA_E];
     uint16_t permutation_sparse_vect[PARAM_OMEGA_E];
+    uint64_t tmp;
     uint64_t *pt;
-    uint16_t *res_16;
+    uint8_t *res;
     size_t i, j;
 
     for (i = 0; i < 16; i++) {
@@ -120,14 +120,13 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
     for (i = 0; i < weight; i++) {
         dec = a1[permuted_sparse_vect[i]] & 0xf;
         s = a1[permuted_sparse_vect[i]] >> 4;
-        res_16 = ((uint16_t *) o) + s;
+        res = o + 2 * s;
         pt = table + (permuted_table[dec] * (VEC_N_SIZE_64 + 1));
 
         for (j = 0; j < VEC_N_SIZE_64 + 1; j++) {
-            *res_16++ ^= (uint16_t) pt[j];
-            *res_16++ ^= (uint16_t) (pt[j] >> 16);
-            *res_16++ ^= (uint16_t) (pt[j] >> 32);
-            *res_16++ ^= (uint16_t) (pt[j] >> 48);
+            tmp = PQCLEAN_HQC256_CLEAN_load8(res);
+            PQCLEAN_HQC256_CLEAN_store8(res, tmp ^ pt[j]);
+            res += 8;
         }
     }
 }
@@ -147,11 +146,9 @@ static void fast_convolution_mult(uint64_t *o, const uint32_t *a1, const uint64_
  * @param[in] ctx Pointer to the randomness context
  */
 void PQCLEAN_HQC256_CLEAN_vect_mul(uint64_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx) {
-    uint64_t tmp[2 * VEC_N_SIZE_64 + 1];
-    for (uint32_t j = 0; j < 2 * VEC_N_SIZE_64 + 1; j++) {
-        tmp[j] = 0;
-    }
+    uint64_t tmp[2 * VEC_N_SIZE_64 + 1] = {0};
 
-    fast_convolution_mult(tmp, a1, a2, weight, ctx);
+    fast_convolution_mult((uint8_t *) tmp, a1, a2, weight, ctx);
+    PQCLEAN_HQC256_CLEAN_load8_arr(tmp, 2 * VEC_N_SIZE_64 + 1, (uint8_t *) tmp, sizeof(tmp));
     reduce(o, tmp);
 }

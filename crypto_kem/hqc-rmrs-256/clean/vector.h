@@ -18,8 +18,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_vect_set_random_fixed_weight(AES_XOF_struct *ctx, 
 
 void PQCLEAN_HQCRMRS256_CLEAN_vect_set_random(AES_XOF_struct *ctx, uint64_t *v);
 
-void PQCLEAN_HQCRMRS256_CLEAN_vect_set_random_from_randombytes(uint64_t *v);
-
 
 void PQCLEAN_HQCRMRS256_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64_t *v2, uint32_t size);
 

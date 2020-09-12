@@ -82,7 +82,8 @@ void PQCLEAN_HQC192_AVX2_store8_arr(uint8_t *out8, size_t outlen, const uint64_t
  */
 void PQCLEAN_HQC192_AVX2_hqc_secret_key_to_string(uint8_t *sk, const uint8_t *sk_seed, const uint8_t *pk) {
     memcpy(sk, sk_seed, SEED_BYTES);
-    memcpy(sk + SEED_BYTES, pk, PUBLIC_KEY_BYTES);
+    sk += SEED_BYTES;
+    memcpy(sk, pk, PUBLIC_KEY_BYTES);
 }
 
 /**
@@ -101,11 +102,12 @@ void PQCLEAN_HQC192_AVX2_hqc_secret_key_from_string(uint64_t *x, uint64_t *y, ui
     uint8_t sk_seed[SEED_BYTES] = {0};
 
     memcpy(sk_seed, sk, SEED_BYTES);
-    seedexpander_init(&sk_seedexpander, sk_seed, sk_seed + 32, SEEDEXPANDER_MAX_LENGTH);
+    sk += SEED_BYTES;
+    memcpy(pk, sk, PUBLIC_KEY_BYTES);
 
+    seedexpander_init(&sk_seedexpander, sk_seed, sk_seed + 32, SEEDEXPANDER_MAX_LENGTH);
     PQCLEAN_HQC192_AVX2_vect_set_random_fixed_weight(&sk_seedexpander, x, PARAM_OMEGA);
     PQCLEAN_HQC192_AVX2_vect_set_random_fixed_weight(&sk_seedexpander, y, PARAM_OMEGA);
-    memcpy(pk, sk + SEED_BYTES, PUBLIC_KEY_BYTES);
 }
 
 /**
@@ -138,10 +140,11 @@ void PQCLEAN_HQC192_AVX2_hqc_public_key_from_string(uint64_t *h, uint64_t *s, co
     uint8_t pk_seed[SEED_BYTES] = {0};
 
     memcpy(pk_seed, pk, SEED_BYTES);
+    pk += SEED_BYTES;
+    PQCLEAN_HQC192_AVX2_load8_arr(s, VEC_N_SIZE_64, pk, VEC_N_SIZE_BYTES);
+
     seedexpander_init(&pk_seedexpander, pk_seed, pk_seed + 32, SEEDEXPANDER_MAX_LENGTH);
     PQCLEAN_HQC192_AVX2_vect_set_random(&pk_seedexpander, h);
-
-    PQCLEAN_HQC192_AVX2_load8_arr(s, VEC_N_SIZE_64, pk + SEED_BYTES, VEC_N_SIZE_BYTES);
 }
 
 
@@ -157,8 +160,10 @@ void PQCLEAN_HQC192_AVX2_hqc_public_key_from_string(uint64_t *h, uint64_t *s, co
  */
 void PQCLEAN_HQC192_AVX2_hqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u, const uint64_t *v, const uint8_t *d) {
     PQCLEAN_HQC192_AVX2_store8_arr(ct, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
-    PQCLEAN_HQC192_AVX2_store8_arr(ct + VEC_N_SIZE_BYTES, VEC_N_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
-    memcpy(ct + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, d, SHA512_BYTES);
+    ct += VEC_N_SIZE_BYTES;
+    PQCLEAN_HQC192_AVX2_store8_arr(ct, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
+    ct += VEC_N1N2_SIZE_BYTES;
+    memcpy(ct, d, SHA512_BYTES);
 }
 
 
@@ -174,6 +179,8 @@ void PQCLEAN_HQC192_AVX2_hqc_ciphertext_to_string(uint8_t *ct, const uint64_t *u
  */
 void PQCLEAN_HQC192_AVX2_hqc_ciphertext_from_string(uint64_t *u, uint64_t *v, uint8_t *d, const uint8_t *ct) {
     PQCLEAN_HQC192_AVX2_load8_arr(u, VEC_N_SIZE_64, ct, VEC_N_SIZE_BYTES);
-    PQCLEAN_HQC192_AVX2_load8_arr(v, VEC_N1N2_SIZE_64, ct + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES);
-    memcpy(d, ct + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES, SHA512_BYTES);
+    ct += VEC_N_SIZE_BYTES;
+    PQCLEAN_HQC192_AVX2_load8_arr(v, VEC_N1N2_SIZE_64, ct, VEC_N1N2_SIZE_BYTES);
+    ct += VEC_N1N2_SIZE_BYTES;
+    memcpy(d, ct, SHA512_BYTES);
 }

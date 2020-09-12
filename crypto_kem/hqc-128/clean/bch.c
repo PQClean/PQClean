@@ -28,12 +28,12 @@ static void compute_roots(uint64_t *error, const uint16_t *sigma);
 static void unpack_message(uint8_t *message_unpacked, const uint64_t *message) {
     for (size_t i = 0; i < (VEC_K_SIZE_64 - (PARAM_K % 64 != 0)); ++i) {
         for (size_t j = 0; j < 64; ++j) {
-            message_unpacked[j + 64 * i] = (message[i] >> j) & 0x0000000000000001;
+            message_unpacked[j + 64 * i] = (message[i] >> j) & 1;
         }
     }
 
     for (int8_t j = 0; j < PARAM_K % 64; ++j) {
-        message_unpacked[j + 64 * (VEC_K_SIZE_64 - 1)] = (message[VEC_K_SIZE_64 - 1] >> j) & 0x0000000000000001;
+        message_unpacked[j + 64 * (VEC_K_SIZE_64 - 1)] = (message[VEC_K_SIZE_64 - 1] >> j) & 1;
     }
 }
 

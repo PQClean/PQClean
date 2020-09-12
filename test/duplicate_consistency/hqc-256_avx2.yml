@@ -10,8 +10,6 @@ consistency_checks:
     scheme: hqc-rmrs-128
     implementation: clean
   files:
-      - code.h
-      - hqc.h
 - source:
     scheme: hqc-rmrs-128
     implementation: avx2
@@ -28,8 +26,6 @@ consistency_checks:
     scheme: hqc-rmrs-192
     implementation: clean
   files:
-      - code.h
-      - hqc.h
 - source:
     scheme: hqc-rmrs-192
     implementation: avx2
@@ -46,8 +42,6 @@ consistency_checks:
     scheme: hqc-rmrs-256
     implementation: clean
   files:
-      - code.h
-      - hqc.h
 - source:
     scheme: hqc-rmrs-256
     implementation: avx2
