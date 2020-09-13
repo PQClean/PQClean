@@ -15,10 +15,10 @@
 // copy bit 0 into all bits of a 64 bit value
 #define BIT0MASK(x) (int64_t)(-((x) & 1))
 
-static void encode(uint64_t *word, uint32_t message);
+static void encode(uint8_t *word, uint8_t message);
 static void expand_and_sum(__m256i *dst, const uint64_t *src);
 static void hadamard(__m256i *src, __m256i *dst);
-static int32_t find_peaks(__m256i *transform);
+static uint32_t find_peaks(__m256i *transform);
 
 
 
@@ -39,28 +39,38 @@ static int32_t find_peaks(__m256i *transform);
  * @param[out] word An RM(1,7) codeword
  * @param[in] message A message to encode
  */
-static void encode(uint64_t *word, uint32_t message) {
-    // the four parts of the word are identical
-    // except for encoding bits 5 and 6
-    uint32_t first_word;
+static void encode(uint8_t *word, uint8_t message) {
+    uint32_t e;
     // bit 7 flips all the bits, do that first to save work
-    first_word = BIT0MASK(message >> 7);
+    e = BIT0MASK(message >> 7);
     // bits 0, 1, 2, 3, 4 are the same for all four longs
     // (Warning: in the bit matrix above, low bits are at the left!)
-    first_word ^= BIT0MASK(message >> 0) & 0xaaaaaaaa;
-    first_word ^= BIT0MASK(message >> 1) & 0xcccccccc;
-    first_word ^= BIT0MASK(message >> 2) & 0xf0f0f0f0;
-    first_word ^= BIT0MASK(message >> 3) & 0xff00ff00;
-    first_word ^= BIT0MASK(message >> 4) & 0xffff0000;
+    e ^= BIT0MASK(message >> 0) & 0xaaaaaaaa;
+    e ^= BIT0MASK(message >> 1) & 0xcccccccc;
+    e ^= BIT0MASK(message >> 2) & 0xf0f0f0f0;
+    e ^= BIT0MASK(message >> 3) & 0xff00ff00;
+    e ^= BIT0MASK(message >> 4) & 0xffff0000;
     // we can store this in the first quarter
-    ((uint32_t *) word)[0] = first_word;
+    word[0 + 0] = (e >> 0x00) & 0xff;
+    word[0 + 1] = (e >> 0x08) & 0xff;
+    word[0 + 2] = (e >> 0x10) & 0xff;
+    word[0 + 3] = (e >> 0x18) & 0xff;
     // bit 5 flips entries 1 and 3; bit 6 flips 2 and 3
-    first_word ^= BIT0MASK(message >> 5);
-    ((uint32_t *) word)[1] = first_word;
-    first_word ^= BIT0MASK(message >> 6);
-    ((uint32_t *) word)[3] = first_word;
-    first_word ^= BIT0MASK(message >> 5);
-    ((uint32_t *) word)[2] = first_word;
+    e ^= BIT0MASK(message >> 5);
+    word[4 + 0] = (e >> 0x00) & 0xff;
+    word[4 + 1] = (e >> 0x08) & 0xff;
+    word[4 + 2] = (e >> 0x10) & 0xff;
+    word[4 + 3] = (e >> 0x18) & 0xff;
+    e ^= BIT0MASK(message >> 6);
+    word[12 + 0] = (e >> 0x00) & 0xff;
+    word[12 + 1] = (e >> 0x08) & 0xff;
+    word[12 + 2] = (e >> 0x10) & 0xff;
+    word[12 + 3] = (e >> 0x18) & 0xff;
+    e ^= BIT0MASK(message >> 5);
+    word[8 + 0] = (e >> 0x00) & 0xff;
+    word[8 + 1] = (e >> 0x08) & 0xff;
+    word[8 + 2] = (e >> 0x10) & 0xff;
+    word[8 + 3] = (e >> 0x18) & 0xff;
 }
 
 
@@ -218,7 +228,7 @@ inline void hadamard(__m256i *src, __m256i *dst) {
  *
  * @param[in] transform Structure that contain the expanded codeword
  */
-inline int32_t find_peaks(__m256i *transform) {
+inline uint32_t find_peaks(__m256i *transform) {
     // a whole lot of vector variables
     __m256i bitmap, abs_rows[8], bound, active_row, max_abs_rows;
     __m256i peak_mask;
@@ -322,7 +332,7 @@ inline int32_t find_peaks(__m256i *transform) {
         result |= message_mask & ptr[i];
     }
     message |= (0x8000 & ~result) >> 8;
-    return message;
+    return (uint32_t) message;
 }
 
 
@@ -336,14 +346,13 @@ inline int32_t find_peaks(__m256i *transform) {
  * @param[out] cdw Array of size VEC_N1N2_SIZE_64 receiving the encoded message
  * @param[in] msg Array of size VEC_N1_SIZE_64 storing the message
  */
-void PQCLEAN_HQCRMRS192_AVX2_reed_muller_encode(uint64_t *cdw, const uint64_t *msg) {
+void PQCLEAN_HQCRMRS192_AVX2_reed_muller_encode(uint8_t *cdw, const uint8_t *msg) {
     for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
-        // fill entries i * MULTIPLICITY to (i+1) * MULTIPLICITY
         // encode first word
-        encode(&cdw[2 * i * MULTIPLICITY], ((uint8_t *)msg)[i]);
+        encode(&cdw[16 * i * MULTIPLICITY], msg[i]);
         // copy to other identical codewords
         for (size_t copy = 1; copy < MULTIPLICITY; copy++) {
-            memcpy(&cdw[2 * (i * MULTIPLICITY + copy)], &cdw[2 * i * MULTIPLICITY], 2 * sizeof(uint64_t));
+            memcpy(&cdw[16 * i * MULTIPLICITY + 16 * copy], &cdw[16 * i * MULTIPLICITY], 16);
         }
     }
 }
@@ -359,18 +368,18 @@ void PQCLEAN_HQCRMRS192_AVX2_reed_muller_encode(uint64_t *cdw, const uint64_t *m
  * @param[out] msg Array of size VEC_N1_SIZE_64 receiving the decoded message
  * @param[in] cdw Array of size VEC_N1N2_SIZE_64 storing the received word
  */
-void PQCLEAN_HQCRMRS192_AVX2_reed_muller_decode(uint64_t *msg, const uint64_t *cdw) {
+void PQCLEAN_HQCRMRS192_AVX2_reed_muller_decode(uint8_t *msg, const uint8_t *cdw) {
     __m256i expanded[8];
     __m256i transform[8];
     for (size_t i = 0; i < VEC_N1_SIZE_BYTES; i++) {
         // collect the codewords
-        expand_and_sum(expanded, &cdw[2 * i * MULTIPLICITY]);
+        expand_and_sum(expanded, (uint64_t *)&cdw[16 * i * MULTIPLICITY]);
         // apply hadamard transform
         hadamard(expanded, transform);
         // fix the first entry to get the half Hadamard transform
         transform[0] -= _mm256_set_epi16(0, 0, 0, 0, 0, 0, 0, 0,
                                          0, 0, 0, 0, 0, 0, 0, 64 * MULTIPLICITY);
         // finish the decoding
-        ((uint8_t *)msg)[i] = find_peaks(transform);
+        msg[i] = find_peaks(transform);
     }
 }

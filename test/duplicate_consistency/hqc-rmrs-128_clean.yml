@@ -1,16 +1,20 @@
 consistency_checks:
-- source:
-    scheme: hqc-rmrs-128
-    implementation: avx2
-  files:
+    - source:
+        scheme: hqc-rmrs-128
+        implementation: avx2
+      files:
       - api.h
+      - code.h
       - fft.h
       - gf.h
+      - hqc.h
+      - reed_muller.h
       - fft.c
-- source:
-    scheme: hqc-rmrs-192
-    implementation: clean
-  files:
+      - reed_solomon.c
+    - source:
+        scheme: hqc-rmrs-192
+        implementation: clean
+      files:
       - code.h
       - fft.h
       - gf2x.h
@@ -29,17 +33,21 @@ consistency_checks:
       - reed_muller.c
       - reed_solomon.c
       - vector.c
-- source:
-    scheme: hqc-rmrs-192
-    implementation: avx2
-  files:
+    - source:
+        scheme: hqc-rmrs-192
+        implementation: avx2
+      files:
+      - code.h
       - fft.h
       - gf.h
+      - hqc.h
+      - reed_muller.h
       - fft.c
-- source:
-    scheme: hqc-rmrs-256
-    implementation: clean
-  files:
+      - reed_solomon.c
+    - source:
+        scheme: hqc-rmrs-256
+        implementation: clean
+      files:
       - code.h
       - fft.h
       - gf2x.h
@@ -58,10 +66,14 @@ consistency_checks:
       - reed_muller.c
       - reed_solomon.c
       - vector.c
-- source:
-    scheme: hqc-rmrs-256
-    implementation: avx2
-  files:
+    - source:
+        scheme: hqc-rmrs-256
+        implementation: avx2
+      files:
+      - code.h
       - fft.h
       - gf.h
+      - hqc.h
+      - reed_muller.h
       - fft.c
+      - reed_solomon.c

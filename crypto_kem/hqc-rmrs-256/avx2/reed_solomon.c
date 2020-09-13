@@ -1,6 +1,7 @@
 #include "fft.h"
 #include "gf.h"
 #include "parameters.h"
+#include "parsing.h"
 #include "reed_solomon.h"
 #include <stdint.h>
 #include <stdio.h>
@@ -30,37 +31,31 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values);
  * @param[out] cdw Array of size VEC_N1_SIZE_64 receiving the encoded message
  * @param[in] msg Array of size VEC_K_SIZE_64 storing the message
  */
-void PQCLEAN_HQCRMRS256_AVX2_reed_solomon_encode(uint64_t *cdw, const uint64_t *msg) {
+void PQCLEAN_HQCRMRS256_AVX2_reed_solomon_encode(uint8_t *cdw, const uint8_t *msg) {
     uint8_t gate_value = 0;
 
     uint16_t tmp[PARAM_G] = {0};
     uint16_t PARAM_RS_POLY [] = {RS_POLY_COEFS};
 
-    uint8_t msg_bytes[PARAM_K] = {0};
-    uint8_t cdw_bytes[PARAM_N1] = {0};
-
-    for (size_t i = 0; i < VEC_K_SIZE_64; ++i) {
-        for (size_t j = 0; j < 8; ++j) {
-            msg_bytes[i * 8 + j] = (uint8_t) (msg[i] >> (j * 8));
-        }
+    for (size_t i = 0; i < PARAM_N1; i++) {
+        cdw[i] = 0;
     }
 
     for (int i = PARAM_K - 1; i >= 0; --i) {
-        gate_value = msg_bytes[i] ^ cdw_bytes[PARAM_N1 - PARAM_K - 1];
+        gate_value = msg[i] ^ cdw[PARAM_N1 - PARAM_K - 1];
 
         for (size_t j = 0; j < PARAM_G; ++j) {
             tmp[j] = PQCLEAN_HQCRMRS256_AVX2_gf_mul(gate_value, PARAM_RS_POLY[j]);
         }
 
         for (size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
-            cdw_bytes[k] = cdw_bytes[k - 1] ^ tmp[k];
+            cdw[k] = cdw[k - 1] ^ tmp[k];
         }
 
-        cdw_bytes[0] = tmp[0];
+        cdw[0] = tmp[0];
     }
 
-    memcpy(cdw_bytes + PARAM_N1 - PARAM_K, msg_bytes, PARAM_K);
-    memcpy(cdw, cdw_bytes, PARAM_N1);
+    memcpy(cdw + PARAM_N1 - PARAM_K, msg, PARAM_K);
 }
 
 
@@ -312,8 +307,7 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values) {
  * @param[out] msg Array of size VEC_K_SIZE_64 receiving the decoded message
  * @param[in] cdw Array of size VEC_N1_SIZE_64 storing the received word
  */
-void PQCLEAN_HQCRMRS256_AVX2_reed_solomon_decode(uint64_t *msg, uint64_t *cdw) {
-    uint8_t cdw_bytes[PARAM_N1] = {0};
+void PQCLEAN_HQCRMRS256_AVX2_reed_solomon_decode(uint8_t *msg, uint8_t *cdw) {
     uint16_t syndromes[2 * PARAM_DELTA] = {0};
     uint16_t sigma[1 << PARAM_FFT] = {0};
     uint8_t error[1 << PARAM_M] = {0};
@@ -321,11 +315,8 @@ void PQCLEAN_HQCRMRS256_AVX2_reed_solomon_decode(uint64_t *msg, uint64_t *cdw) {
     uint16_t error_values[PARAM_N1] = {0};
     uint16_t deg;
 
-    // Copy the vector in an array of bytes
-    memcpy(cdw_bytes, cdw, PARAM_N1);
-
     // Calculate the 2*PARAM_DELTA syndromes
-    compute_syndromes(syndromes, cdw_bytes);
+    compute_syndromes(syndromes, cdw);
 
     // Compute the error locator polynomial sigma
     // Sigma's degree is at most PARAM_DELTA but the FFT requires the extra room
@@ -341,9 +332,9 @@ void PQCLEAN_HQCRMRS256_AVX2_reed_solomon_decode(uint64_t *msg, uint64_t *cdw) {
     compute_error_values(error_values, z, error);
 
     // Correct the errors
-    correct_errors(cdw_bytes, error_values);
+    correct_errors(cdw, error_values);
 
     // Retrieve the message from the decoded codeword
-    memcpy(msg, cdw_bytes + (PARAM_G - 1), PARAM_K);
+    memcpy(msg, cdw + (PARAM_G - 1), PARAM_K);
 
 }

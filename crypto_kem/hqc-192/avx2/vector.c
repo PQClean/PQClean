@@ -116,7 +116,7 @@ void PQCLEAN_HQC192_AVX2_vect_set_random(AES_XOF_struct *ctx, uint64_t *v) {
 
     seedexpander(ctx, rand_bytes, VEC_N_SIZE_BYTES);
 
-    memcpy(v, rand_bytes, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC192_AVX2_load8_arr(v, VEC_N_SIZE_64, rand_bytes, VEC_N_SIZE_BYTES);
     v[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
 
@@ -133,7 +133,7 @@ void PQCLEAN_HQC192_AVX2_vect_set_random_from_randombytes(uint64_t *v) {
     uint8_t rand_bytes [VEC_K_SIZE_BYTES] = {0};
 
     randombytes(rand_bytes, VEC_K_SIZE_BYTES);
-    memcpy(v, rand_bytes, VEC_K_SIZE_BYTES);
+    PQCLEAN_HQC192_AVX2_load8_arr(v, VEC_K_SIZE_64, rand_bytes, VEC_K_SIZE_BYTES);
 }
 
 

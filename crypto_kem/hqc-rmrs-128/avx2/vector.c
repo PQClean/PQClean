@@ -123,22 +123,6 @@ void PQCLEAN_HQCRMRS128_AVX2_vect_set_random(AES_XOF_struct *ctx, uint64_t *v) {
 
 
 /**
- * @brief Generates a random vector
- *
- * This function generates a random binary vector. It uses the the randombytes function.
- *
- * @param[in] v Pointer to an array
- */
-void PQCLEAN_HQCRMRS128_AVX2_vect_set_random_from_randombytes(uint64_t *v) {
-    uint8_t rand_bytes [VEC_K_SIZE_BYTES] = {0};
-
-    randombytes(rand_bytes, VEC_K_SIZE_BYTES);
-    PQCLEAN_HQCRMRS128_AVX2_load8_arr(v, VEC_K_SIZE_64, rand_bytes, VEC_K_SIZE_BYTES);
-}
-
-
-
-/**
  * @brief Adds two vectors
  *
  * @param[out] o Pointer to an array that is the result

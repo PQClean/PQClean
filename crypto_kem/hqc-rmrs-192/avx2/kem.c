@@ -47,26 +47,26 @@ int PQCLEAN_HQCRMRS192_AVX2_crypto_kem_keypair(unsigned char *pk, unsigned char 
 int PQCLEAN_HQCRMRS192_AVX2_crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk) {
 
     uint8_t theta[SHA512_BYTES] = {0};
-    uint64_t m[VEC_K_SIZE_64] = {0};
+    uint8_t m[VEC_K_SIZE_BYTES] = {0};
     uint64_t u[VEC_N_256_SIZE_64] = {0};
     uint64_t v[VEC_N1N2_256_SIZE_64] = {0};
     unsigned char d[SHA512_BYTES] = {0};
     unsigned char mc[VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES] = {0};
 
     // Computing m
-    PQCLEAN_HQCRMRS192_AVX2_vect_set_random_from_randombytes(m);
+    randombytes(m, VEC_K_SIZE_BYTES);
 
     // Computing theta
-    sha3_512(theta, (uint8_t *) m, VEC_K_SIZE_BYTES);
+    sha3_512(theta, m, VEC_K_SIZE_BYTES);
 
     // Encrypting m
     PQCLEAN_HQCRMRS192_AVX2_hqc_pke_encrypt(u, v, m, theta, pk);
 
     // Computing d
-    sha512(d, (unsigned char *) m, VEC_K_SIZE_BYTES);
+    sha512(d, m, VEC_K_SIZE_BYTES);
 
     // Computing shared secret
-    PQCLEAN_HQCRMRS192_AVX2_store8_arr(mc, VEC_K_SIZE_BYTES, m, VEC_K_SIZE_64);
+    memcpy(mc, m, VEC_K_SIZE_BYTES);
     PQCLEAN_HQCRMRS192_AVX2_store8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
     PQCLEAN_HQCRMRS192_AVX2_store8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
     sha512(ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES);
@@ -95,7 +95,7 @@ int PQCLEAN_HQCRMRS192_AVX2_crypto_kem_dec(unsigned char *ss, const unsigned cha
     uint64_t v[VEC_N1N2_256_SIZE_64] = {0};
     unsigned char d[SHA512_BYTES] = {0};
     unsigned char pk[PUBLIC_KEY_BYTES] = {0};
-    uint64_t m[VEC_K_SIZE_64] = {0};
+    uint8_t m[VEC_K_SIZE_BYTES] = {0};
     uint8_t theta[SHA512_BYTES] = {0};
     uint64_t u2[VEC_N_256_SIZE_64] = {0};
     uint64_t v2[VEC_N1N2_256_SIZE_64] = {0};
@@ -112,17 +112,17 @@ int PQCLEAN_HQCRMRS192_AVX2_crypto_kem_dec(unsigned char *ss, const unsigned cha
     PQCLEAN_HQCRMRS192_AVX2_hqc_pke_decrypt(m, u, v, sk);
 
     // Computing theta
-    sha3_512(theta, (uint8_t *) m, VEC_K_SIZE_BYTES);
+    sha3_512(theta, m, VEC_K_SIZE_BYTES);
 
     // Encrypting m'
     PQCLEAN_HQCRMRS192_AVX2_hqc_pke_encrypt(u2, v2, m, theta, pk);
 
     // Computing d'
-    sha512(d2, (unsigned char *) m, VEC_K_SIZE_BYTES);
+    sha512(d2, m, VEC_K_SIZE_BYTES);
 
     // Computing shared secret
-    PQCLEAN_HQCRMRS192_AVX2_store8_arr(mc, VEC_K_SIZE_BYTES, m, VEC_K_SIZE_64);
-    PQCLEAN_HQCRMRS192_AVX2_store8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_SIZE_64);
+    memcpy(mc, m, VEC_K_SIZE_BYTES);
+    PQCLEAN_HQCRMRS192_AVX2_store8_arr(mc + VEC_K_SIZE_BYTES, VEC_N_SIZE_BYTES, u, VEC_N_256_SIZE_64);
     PQCLEAN_HQCRMRS192_AVX2_store8_arr(mc + VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES, VEC_N1N2_SIZE_BYTES, v, VEC_N1N2_SIZE_64);
     sha512(ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES);
 
