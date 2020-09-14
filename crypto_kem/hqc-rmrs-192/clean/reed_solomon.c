@@ -44,7 +44,7 @@ void PQCLEAN_HQCRMRS192_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
     }
 
     for (i = 0; i < PARAM_K; ++i) {
-        gate_value = msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1];
+        gate_value = (uint8_t) (msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1]);
 
         for (j = 0; j < PARAM_G; ++j) {
             tmp[j] = PQCLEAN_HQCRMRS192_CLEAN_gf_mul(gate_value, PARAM_RS_POLY[j]);
