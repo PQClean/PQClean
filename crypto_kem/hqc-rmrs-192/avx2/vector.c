@@ -146,14 +146,15 @@ void PQCLEAN_HQCRMRS192_AVX2_vect_add(uint64_t *o, const uint64_t *v1, const uin
  * @param[in] size Integer that is the size of the vectors
  * @returns 0 if the vectors are equals and a negative/psotive value otherwise
  */
-int PQCLEAN_HQCRMRS192_AVX2_vect_compare(const uint64_t *v1, const uint64_t *v2, uint32_t size) {
-    unsigned char diff = 0;
-
-    for (uint32_t i = 0; i < size; i++) {
-        diff |= ((uint8_t *) v1)[i] ^ ((uint8_t *) v2)[i];
+uint8_t PQCLEAN_HQCRMRS192_AVX2_vect_compare(const uint8_t *v1, const uint8_t *v2, uint32_t size) {
+    uint64_t r = 0;
+    for (size_t i = 0; i < size; i++) {
+        r |= v1[i] ^ v2[i];
     }
-    return diff != 0;
+    r = (-r) >> 63;
+    return (uint8_t) r;
 }
+
 
 
 

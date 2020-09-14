@@ -21,7 +21,7 @@ void PQCLEAN_HQCRMRS256_CLEAN_vect_set_random(AES_XOF_struct *ctx, uint64_t *v);
 
 void PQCLEAN_HQCRMRS256_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64_t *v2, uint32_t size);
 
-int PQCLEAN_HQCRMRS256_CLEAN_vect_compare(const uint64_t *v1, const uint64_t *v2, uint32_t size);
+uint8_t PQCLEAN_HQCRMRS256_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *v2, uint32_t size);
 
 void PQCLEAN_HQCRMRS256_CLEAN_vect_resize(uint64_t *o, uint32_t size_o, const uint64_t *v, uint32_t size_v);
 

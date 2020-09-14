@@ -178,8 +178,13 @@ void PQCLEAN_HQCRMRS256_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const ui
  * @param[in] size Integer that is the size of the vectors
  * @returns 0 if the vectors are equals and a negative/psotive value otherwise
  */
-int PQCLEAN_HQCRMRS256_CLEAN_vect_compare(const uint64_t *v1, const uint64_t *v2, uint32_t size) {
-    return memcmp(v1, v2, size);
+uint8_t PQCLEAN_HQCRMRS256_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *v2, uint32_t size) {
+    uint64_t r = 0;
+    for (size_t i = 0; i < size; i++) {
+        r |= v1[i] ^ v2[i];
+    }
+    r = (-r) >> 63;
+    return (uint8_t) r;
 }
 
 
