@@ -32,27 +32,30 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values);
  * @param[in] msg Array of size VEC_K_SIZE_64 storing the message
  */
 void PQCLEAN_HQCRMRS256_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *msg) {
+    size_t i, j, k;
     uint8_t gate_value = 0;
 
     uint16_t tmp[PARAM_G] = {0};
     uint16_t PARAM_RS_POLY [] = {RS_POLY_COEFS};
+    uint8_t prev, x;
 
-    for (size_t i = 0; i < PARAM_N1; i++) {
+    for (i = 0; i < PARAM_N1; ++i) {
         cdw[i] = 0;
     }
 
-    for (int i = PARAM_K - 1; i >= 0; --i) {
-        gate_value = msg[i] ^ cdw[PARAM_N1 - PARAM_K - 1];
+    for (i = 0; i < PARAM_K; ++i) {
+        gate_value = msg[PARAM_K - 1 - i] ^ cdw[PARAM_N1 - PARAM_K - 1];
 
-        for (size_t j = 0; j < PARAM_G; ++j) {
+        for (j = 0; j < PARAM_G; ++j) {
             tmp[j] = PQCLEAN_HQCRMRS256_CLEAN_gf_mul(gate_value, PARAM_RS_POLY[j]);
         }
 
-        for (size_t k = PARAM_N1 - PARAM_K - 1; k; --k) {
-            cdw[k] = cdw[k - 1] ^ tmp[k];
+        prev = 0;
+        for (k = 0; k < PARAM_N1 - PARAM_K; k++) {
+            x = cdw[k];
+            cdw[k] = (uint8_t) prev ^ tmp[k];
+            prev = x;
         }
-
-        cdw[0] = tmp[0];
     }
 
     memcpy(cdw + PARAM_N1 - PARAM_K, msg, PARAM_K);
@@ -99,7 +102,7 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     uint16_t deg_sigma_copy = 0;
     uint16_t sigma_copy[PARAM_DELTA + 1] = {0};
     uint16_t X_sigma_p[PARAM_DELTA + 1] = {0, 1};
-    uint16_t pp = -1; // 2*rho
+    uint16_t pp = (uint16_t) -1; // 2*rho
     uint16_t d_p = 1;
     uint16_t d = syndromes[0];
 
