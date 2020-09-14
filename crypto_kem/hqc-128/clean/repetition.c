@@ -20,26 +20,18 @@ static inline int32_t popcount(uint64_t n);
  * @param[in] m Pointer to an array that is the message
  */
 void PQCLEAN_HQC128_CLEAN_repetition_code_encode(uint64_t *em, const uint64_t *m) {
-    uint16_t i, j, bit, idx_r;
-    uint32_t pos_r;
-    uint64_t *p64 = em;
-    const uint64_t mask[2][2] = {{0x0UL, 0x0UL}, {0x7FFFFFFFUL, 0x3FFFFFFFUL}};
-    for (i = 0; i < (uint16_t) (VEC_N1_SIZE_64 - 1); i++) {
-        for (j = 0; j < 64; j++) {
-            bit = (m[i] >> j) & 0x1;
-            pos_r = PARAM_N2 * ((i << 6) + j);
-            idx_r = (pos_r & 0x3f);
-            p64[pos_r >> 6] ^= mask[bit][0] << idx_r;
-            p64[(pos_r >> 6) + 1] ^= mask[bit][1] >> ((63 - idx_r));
-        }
-    }
+    uint64_t bit, idx_r;
+    size_t pos_r;
 
-    for (j = 0; j < (PARAM_N1 & 0x3f); j++) {
-        bit = (m[VEC_N1_SIZE_64 - 1] >> j) & 0x1;
-        pos_r = PARAM_N2 * (((VEC_N1_SIZE_64 - 1) << 6) + j);
-        idx_r = (pos_r & 0x3f);
-        p64[pos_r >> 6] ^= mask[bit][0] << idx_r;
-        p64[(pos_r >> 6) + 1] ^= mask[bit][1] >> ((63 - idx_r));
+    pos_r = 0;
+    for (size_t i = 0; i < VEC_N1_SIZE_64; i++) {
+        for (size_t j = 0; j < 64 && pos_r < PARAM_N1N2; j++) {
+            bit = -((m[i] >> j) & 1);
+            idx_r = (pos_r & 0x3f);
+            em[(pos_r >> 6) + 0] ^= (bit & 0x7FFFFFFFUL) << idx_r;
+            em[(pos_r >> 6) + 1] ^= (bit & 0x3FFFFFFFUL) >> ((63 - idx_r));
+            pos_r += PARAM_N2;
+        }
     }
 }
 

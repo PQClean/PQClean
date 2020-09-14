@@ -18,35 +18,21 @@ static inline int32_t popcount(uint64_t n);
  * @param[in] m Pointer to an array that is the message
  */
 void PQCLEAN_HQC256_CLEAN_repetition_code_encode(uint64_t *em, const uint64_t *m) {
-    static const uint64_t mask[2][3] = {{0x0UL, 0x0UL, 0x0UL}, {0xFFFFFFFFFFFFFFFFUL, 0xFFFFFFFFFFFFFFFFUL, 0x3FFFFFUL}};
-    for (size_t i = 0; i < VEC_N1_SIZE_64 - 1; i++) {
-        for (size_t j = 0; j < 64; j++) {
-            uint8_t bit = (m[i] >> j) & 0x1;
-            uint32_t pos_r = PARAM_N2 * ((i << 6) + j);
-            uint16_t idx_r = (pos_r & 0x3f);
-            uint64_t *p64 = em;
-            p64 += pos_r >> 6;
-            *p64 ^= mask[bit][0] << idx_r;
-            int64_t aux = (41 - idx_r);
-            uint64_t aux2 = (aux > 0);
-            uint64_t idx2 = aux * aux2;
-            *(p64 + 1) ^= mask[bit][1] >> idx2;
-            *(p64 + 2) ^= mask[bit][2] >> ((63 - idx_r));
-        }
-    }
+    uint64_t bit, idx_r, idx2;
+    size_t pos_r;
 
-    for (size_t j = 0; j < (PARAM_N1 & 0x3f); j++) {
-        uint8_t bit = (m[VEC_N1_SIZE_64 - 1] >> j) & 0x1;
-        uint32_t pos_r = PARAM_N2 * (((VEC_N1_SIZE_64 - 1) << 6) + j);
-        uint16_t idx_r = (pos_r & 0x3f);
-        uint64_t *p64 = em;
-        p64 += pos_r >> 6;
-        *p64 ^= mask[bit][0] << idx_r;
-        int64_t aux = (41 - idx_r);
-        uint64_t aux2 = (aux > 0);
-        uint64_t idx2 = aux * aux2;
-        *(p64 + 1) ^= mask[bit][1] >> idx2;
-        *(p64 + 2) ^= mask[bit][2] >> ((63 - idx_r));
+    pos_r = 0;
+    for (size_t i = 0; i < VEC_N1_SIZE_64; i++) {
+        for (size_t j = 0; j < 64 && pos_r < PARAM_N1N2; j++) {
+            bit = -((m[i] >> j) & 1);
+            idx_r = (pos_r & 0x3f);
+            idx2 = 41 - idx_r;
+            idx2 &= (uint64_t) (-((int64_t)idx2) >> 63);
+            em[(pos_r >> 6) + 0] ^= (bit & 0xFFFFFFFFFFFFFFFFUL) << idx_r;
+            em[(pos_r >> 6) + 1] ^= (bit & 0xFFFFFFFFFFFFFFFFUL) >> idx2;
+            em[(pos_r >> 6) + 2] ^= (bit & 0x3FFFFFUL) >> ((63 - idx_r));
+            pos_r += PARAM_N2;
+        }
     }
 }
 
