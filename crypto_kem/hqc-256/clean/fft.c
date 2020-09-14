@@ -34,7 +34,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
 static void compute_fft_betas(uint16_t *betas) {
     size_t i;
     for (i = 0; i < PARAM_M - 1; ++i) {
-        betas[i] = (uint16_t) (1 << (PARAM_M - 1 - i));
+        betas[i] = 1 << (PARAM_M - 1 - i);
     }
 }
 
@@ -134,9 +134,10 @@ static void radix_t_big(uint16_t *f, const uint16_t *f0, const uint16_t *f1, uin
     uint16_t Q[1 << 2 * (PARAM_FFT_T - 2)] = {0};
     uint16_t R[1 << 2 * (PARAM_FFT_T - 2)] = {0};
 
-    size_t i, n;
+    uint16_t n;
+    size_t i;
 
-    n = (size_t) (1 << (m_f - 2));
+    n = 1 << (m_f - 2);
     memcpy(Q0, f0 + n, 2 * n);
     memcpy(Q1, f1 + n, 2 * n);
     memcpy(R0, f0, 2 * n);
@@ -186,7 +187,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
     // Step 1
     if (m_f == 1) {
         f[0] = 0;
-        x = (size_t) (1 << m);
+        x = 1 << m;
         for (i = 0; i < x; ++i) {
             f[0] ^= w[i];
         }
@@ -220,7 +221,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
      * Transpose:
      * u[i] = w[i] + w[k+i]
      * v[i] = G[i].w[i] + (G[i]+1).w[k+i] = G[i].u[i] + w[k+i] */
-    k = (size_t) (1 << ((m - 1) & 0xf)); // &0xf is to let the compiler know that m-1 is small.
+    k = 1 << ((m - 1) & 0xf); // &0xf is to let the compiler know that m-1 is small.
     if (f_coeffs <= 3) { // 3-coefficient polynomial f case
         // Step 5: Compute f0 from u and f1 from v
         f1[1] = 0;
@@ -251,7 +252,7 @@ static void fft_t_rec(uint16_t *f, const uint16_t *w, size_t f_coeffs, uint8_t m
     // Step 2: compute f from g
     if (betas[m - 1] != 1) {
         beta_m_pow = 1;
-        x = (size_t) (1 << m_f);
+        x = 1 << m_f;
         for (i = 1; i < x; ++i) {
             beta_m_pow = PQCLEAN_HQC256_CLEAN_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC256_CLEAN_gf_mul(beta_m_pow, f[i]);
@@ -296,7 +297,7 @@ void PQCLEAN_HQC256_CLEAN_fft_t(uint16_t *f, const uint16_t *w, size_t f_coeffs)
      * Transpose:
      * u[i] = w[i] + w[k+i]
      * v[i] = G[i].w[i] + (G[i]+1).w[k+i] = G[i].u[i] + w[k+i] */
-    k = (size_t) (1 << (PARAM_M - 1));
+    k = 1 << (PARAM_M - 1);
     u[0] = w[0] ^ w[k];
     v[0] = w[k];
     for (i = 1; i < k; ++i) {
@@ -395,7 +396,7 @@ static void radix_big(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_
 
     size_t i, n;
 
-    n = (size_t) (1 << (m_f - 2));
+    n = 1 << (m_f - 2);
     memcpy(Q, f + 3 * n, 2 * n);
     memcpy(Q + n, f + 3 * n, 2 * n);
     memcpy(R, f, 4 * n);
@@ -463,7 +464,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     // Step 2: compute g
     if (betas[m - 1] != 1) {
         beta_m_pow = 1;
-        x = (size_t) (1 << m_f);
+        x = 1 << m_f;
         for (i = 1; i < x; ++i) {
             beta_m_pow = PQCLEAN_HQC256_CLEAN_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC256_CLEAN_gf_mul(beta_m_pow, f[i]);
@@ -485,7 +486,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     // Step 5
     fft_rec(u, f0, (f_coeffs + 1) / 2, m - 1, m_f - 1, deltas);
 
-    k = (size_t) (1 << ((m - 1) & 0xf)); // &0xf is to let the compiler know that m-1 is small.
+    k = 1 << ((m - 1) & 0xf); // &0xf is to let the compiler know that m-1 is small.
     if (f_coeffs <= 3) { // 3-coefficient polynomial f case: f1 is constant
         w[0] = u[0];
         w[k] = u[0] ^ f1[0];
@@ -561,7 +562,7 @@ void PQCLEAN_HQC256_CLEAN_fft(uint16_t *w, const uint16_t *f, size_t f_coeffs) {
     fft_rec(u, f0, (f_coeffs + 1) / 2, PARAM_M - 1, PARAM_FFT - 1, deltas);
     fft_rec(v, f1, f_coeffs / 2, PARAM_M - 1, PARAM_FFT - 1, deltas);
 
-    k = (size_t) (1 << (PARAM_M - 1));
+    k = 1 << (PARAM_M - 1);
     // Step 6, 7 and error polynomial computation
     memcpy(w + k, v, 2 * k);
 
@@ -636,14 +637,15 @@ void PQCLEAN_HQC256_CLEAN_fft_retrieve_bch_error_poly(uint64_t *error, const uin
     uint16_t gammas[PARAM_M - 1] = {0};
     uint16_t gammas_sums[1 << (PARAM_M - 1)] = {0};
     uint64_t bit;
-    size_t i, k, index;
+    uint16_t k;
+    size_t i, index;
 
     compute_fft_betas(gammas);
     compute_subset_sums(gammas_sums, gammas, PARAM_M - 1);
 
     error[0] ^= 1 ^ ((uint16_t) - w[0] >> 15);
 
-    k = (size_t) (1 << (PARAM_M - 1));
+    k = 1 << (PARAM_M - 1);
     index = PARAM_GF_MUL_ORDER;
     bit = 1 ^ ((uint16_t) - w[k] >> 15);
     error[index / 8] ^= bit << (index % 64);
