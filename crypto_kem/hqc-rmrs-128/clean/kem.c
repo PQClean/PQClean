@@ -90,7 +90,7 @@ int PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *ss
  */
 int PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk) {
 
-    int8_t result = -1;
+    uint8_t result;
     uint64_t u[VEC_N_SIZE_64] = {0};
     uint64_t v[VEC_N1N2_SIZE_64] = {0};
     unsigned char d[SHA512_BYTES] = {0};
@@ -127,12 +127,14 @@ int PQCLEAN_HQCRMRS128_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned ch
     sha512(ss, mc, VEC_K_SIZE_BYTES + VEC_N_SIZE_BYTES + VEC_N1N2_SIZE_BYTES);
 
     // Abort if c != c' or d != d'
-    result = (PQCLEAN_HQCRMRS128_CLEAN_vect_compare(u, u2, VEC_N_SIZE_BYTES) == 0 && PQCLEAN_HQCRMRS128_CLEAN_vect_compare(v, v2, VEC_N1N2_SIZE_BYTES) == 0 && memcmp(d, d2, SHA512_BYTES) == 0);
+    result = PQCLEAN_HQCRMRS128_CLEAN_vect_compare(u, u2, VEC_N_SIZE_BYTES);
+    result |= PQCLEAN_HQCRMRS128_CLEAN_vect_compare(v, v2, VEC_N1N2_SIZE_BYTES);
+    result |= memcmp(d, d2, SHA512_BYTES);
+    result = (uint8_t) (-((int16_t) result) >> 15);
     for (size_t i = 0; i < SHARED_SECRET_BYTES; i++) {
-        ss[i] = result * ss[i];
+        ss[i] &= ~result;
     }
-    result--;
 
 
-    return result;
+    return result & 1;
 }
