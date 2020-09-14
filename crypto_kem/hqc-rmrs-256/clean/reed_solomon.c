@@ -53,7 +53,7 @@ void PQCLEAN_HQCRMRS256_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
         prev = 0;
         for (k = 0; k < PARAM_N1 - PARAM_K; k++) {
             x = cdw[k];
-            cdw[k] = (uint8_t) prev ^ tmp[k];
+            cdw[k] = (uint8_t) (prev ^ tmp[k]);
             prev = x;
         }
     }

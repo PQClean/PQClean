@@ -167,7 +167,7 @@ uint8_t PQCLEAN_HQC192_AVX2_vect_compare(const uint8_t *v1, const uint8_t *v2, u
     for (size_t i = 0; i < size; i++) {
         r |= v1[i] ^ v2[i];
     }
-    r = (-r) >> 63;
+    r = (~r + 1) >> 63;
     return (uint8_t) r;
 }
 
