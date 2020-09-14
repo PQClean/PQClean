@@ -27,6 +27,12 @@ class ForbiddenLineVisitor(pycparser.c_ast.NodeVisitor):
     v.visit(node.rvalue)
     self.errors.extend(v.errors)
 
+  def visit_Decl(self, node):
+    if node.init:
+        v = ForbiddenOpVisitor();
+        v.visit(node.init)
+        self.errors.extend(v.errors)
+
   def visit_FuncCall(self, node): 
     if node.args:
         v = ForbiddenOpVisitor();
