@@ -140,5 +140,5 @@ int PQCLEAN_HQC128_CLEAN_crypto_kem_dec(unsigned char *ss, const unsigned char *
     }
 
 
-    return result & 1;
+    return -(result & 1);
 }

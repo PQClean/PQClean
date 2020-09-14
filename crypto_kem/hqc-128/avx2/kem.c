@@ -136,5 +136,5 @@ int PQCLEAN_HQC128_AVX2_crypto_kem_dec(unsigned char *ss, const unsigned char *c
     }
 
 
-    return result & 1;
+    return -(result & 1);
 }
