@@ -31,7 +31,7 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
 static void compute_fft_betas(uint16_t *betas) {
     size_t i;
     for (i = 0; i < PARAM_M - 1; ++i) {
-        betas[i] = 1 << (PARAM_M - 1 - i);
+        betas[i] = (uint16_t) (1 << (PARAM_M - 1 - i));
     }
 }
 
@@ -134,7 +134,8 @@ static void radix_big(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_
 
     size_t i, n;
 
-    n = 1 << (m_f - 2);
+    n = 1;
+    n <<= m_f - 2;
     memcpy(Q, f + 3 * n, 2 * n);
     memcpy(Q + n, f + 3 * n, 2 * n);
     memcpy(R, f, 4 * n);
@@ -202,7 +203,8 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     // Step 2: compute g
     if (betas[m - 1] != 1) {
         beta_m_pow = 1;
-        x = 1 << m_f;
+        x = 1;
+        x <<= m_f;
         for (i = 1; i < x; ++i) {
             beta_m_pow = PQCLEAN_HQC128_AVX2_gf_mul(beta_m_pow, betas[m - 1]);
             f[i] = PQCLEAN_HQC128_AVX2_gf_mul(beta_m_pow, f[i]);
@@ -224,7 +226,8 @@ static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32
     // Step 5
     fft_rec(u, f0, (f_coeffs + 1) / 2, m - 1, m_f - 1, deltas);
 
-    k = 1 << ((m - 1) & 0xf); // &0xf is to let the compiler know that m-1 is small.
+    k = 1;
+    k <<= ((m - 1) & 0xf); // &0xf is to let the compiler know that m-1 is small.
     if (f_coeffs <= 3) { // 3-coefficient polynomial f case: f1 is constant
         w[0] = u[0];
         w[k] = u[0] ^ f1[0];
@@ -300,7 +303,8 @@ void PQCLEAN_HQC128_AVX2_fft(uint16_t *w, const uint16_t *f, size_t f_coeffs) {
     fft_rec(u, f0, (f_coeffs + 1) / 2, PARAM_M - 1, PARAM_FFT - 1, deltas);
     fft_rec(v, f1, f_coeffs / 2, PARAM_M - 1, PARAM_FFT - 1, deltas);
 
-    k = 1 << (PARAM_M - 1);
+    k = 1;
+    k <<= PARAM_M - 1;
     // Step 6, 7 and error polynomial computation
     memcpy(w + k, v, 2 * k);
 
@@ -337,7 +341,8 @@ void PQCLEAN_HQC128_AVX2_fft_retrieve_bch_error_poly(uint64_t *error, const uint
 
     error[0] ^= 1 ^ ((uint16_t) - w[0] >> 15);
 
-    k = 1 << (PARAM_M - 1);
+    k = 1;
+    k <<= PARAM_M - 1;
     index = PARAM_GF_MUL_ORDER;
     bit = 1 ^ ((uint16_t) - w[k] >> 15);
     error[index / 8] ^= bit << (index % 64);
