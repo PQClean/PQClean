@@ -19,6 +19,7 @@ consistency_checks:
       - parsing.h
       - repetition.h
       - vector.h
+      - bch.c
       - code.c
       - fft.c
       - gf2x.c
@@ -46,6 +47,7 @@ consistency_checks:
       - parsing.h
       - repetition.h
       - vector.h
+      - bch.c
       - code.c
       - fft.c
       - gf2x.c

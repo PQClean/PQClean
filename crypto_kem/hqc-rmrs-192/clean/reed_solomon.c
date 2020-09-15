@@ -228,17 +228,25 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
     uint16_t beta_j[PARAM_DELTA] = {0};
     uint16_t e_j[PARAM_DELTA] = {0};
 
-    uint16_t delta_counter = 0;
+    uint16_t delta_counter;
     uint16_t delta_real_value;
+    uint16_t found;
+    uint16_t mask1;
+    uint16_t mask2;
+    uint16_t tmp1;
+    uint16_t tmp2;
+    uint16_t inverse;
+    uint16_t inverse_power_j;
 
     // Compute the beta_{j_i} page 31 of the documentation
+    delta_counter = 0;
     for (size_t i = 0; i < PARAM_N1; i++) {
-        uint16_t found = 0;
-        uint16_t valuemask = (uint16_t) (-((int32_t)error[i]) >> 31); // error[i] != 0
-        for (uint16_t j = 0; j < PARAM_DELTA; j++) {
-            uint16_t indexmask = ~((uint16_t) (-((int32_t) j ^ delta_counter) >> 31)); // j == delta_counter
-            beta_j[j] += indexmask & valuemask & gf_exp[i];
-            found += indexmask & valuemask & 1;
+        found = 0;
+        mask1 = (uint16_t) (-((int32_t)error[i]) >> 31); // error[i] != 0
+        for (size_t j = 0; j < PARAM_DELTA; j++) {
+            mask2 = ~((uint16_t) (-((int32_t) j ^ delta_counter) >> 31)); // j == delta_counter
+            beta_j[j] += mask1 & mask2 & gf_exp[i];
+            found += mask1 & mask2 & 1;
         }
         delta_counter += found;
     }
@@ -246,10 +254,10 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
 
     // Compute the e_{j_i} page 31 of the documentation
     for (size_t i = 0; i < PARAM_DELTA; ++i) {
-        uint16_t tmp1 = 1;
-        uint16_t tmp2 = 1;
-        uint16_t inverse = PQCLEAN_HQCRMRS192_CLEAN_gf_inverse(beta_j[i]);
-        uint16_t inverse_power_j = 1;
+        tmp1 = 1;
+        tmp2 = 1;
+        inverse = PQCLEAN_HQCRMRS192_CLEAN_gf_inverse(beta_j[i]);
+        inverse_power_j = 1;
 
         for (size_t j = 1; j <= PARAM_DELTA; ++j) {
             inverse_power_j = PQCLEAN_HQCRMRS192_CLEAN_gf_mul(inverse_power_j, inverse);
@@ -258,19 +266,19 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
         for (size_t k = 1; k < PARAM_DELTA; ++k) {
             tmp2 = PQCLEAN_HQCRMRS192_CLEAN_gf_mul(tmp2, (1 ^ PQCLEAN_HQCRMRS192_CLEAN_gf_mul(inverse, beta_j[(i + k) % PARAM_DELTA])));
         }
-        uint16_t mask = (uint16_t) (((int16_t) i - delta_real_value) >> 15); // i < delta_real_value
-        e_j[i] = mask & PQCLEAN_HQCRMRS192_CLEAN_gf_mul(tmp1, PQCLEAN_HQCRMRS192_CLEAN_gf_inverse(tmp2));
+        mask1 = (uint16_t) (((int16_t) i - delta_real_value) >> 15); // i < delta_real_value
+        e_j[i] = mask1 & PQCLEAN_HQCRMRS192_CLEAN_gf_mul(tmp1, PQCLEAN_HQCRMRS192_CLEAN_gf_inverse(tmp2));
     }
 
     // Place the delta e_{j_i} values at the right coordinates of the output vector
     delta_counter = 0;
     for (size_t i = 0; i < PARAM_N1; ++i) {
-        uint16_t found = 0;
-        uint16_t valuemask = (uint16_t) (-((int32_t)error[i]) >> 31); // error[i] != 0
+        found = 0;
+        mask1 = (uint16_t) (-((int32_t)error[i]) >> 31); // error[i] != 0
         for (size_t j = 0; j < PARAM_DELTA; j++) {
-            uint16_t indexmask = ~((uint16_t) (-((int32_t) j ^ delta_counter) >> 31)); // j == delta_counter
-            error_values[i] += indexmask & valuemask & e_j[j];
-            found += indexmask & valuemask & 1;
+            mask2 = ~((uint16_t) (-((int32_t) j ^ delta_counter) >> 31)); // j == delta_counter
+            error_values[i] += mask1 & mask2 & e_j[j];
+            found += mask1 & mask2 & 1;
         }
         delta_counter += found;
     }

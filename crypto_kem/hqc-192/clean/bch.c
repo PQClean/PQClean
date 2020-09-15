@@ -121,52 +121,54 @@ void PQCLEAN_HQC192_CLEAN_bch_code_encode(uint64_t *codeword, const uint64_t *me
  * @param[in] syndromes Array of size (at least) 2*PARAM_DELTA storing the syndromes
  */
 static size_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
-    sigma[0] = 1;
-    size_t deg_sigma = 0;
-    size_t deg_sigma_p = 0;
     uint16_t sigma_copy[PARAM_DELTA - 1] = {0};
-    size_t deg_sigma_copy = 0;
-    uint16_t X_sigma_p[PARAM_DELTA + 1] = {0, 1};
-    int32_t pp = -1; // 2*rho
-    uint16_t d_p = 1;
-    uint16_t d = syndromes[0];
+    uint16_t X_sigma_p[PARAM_DELTA + 1] = {0};
+    uint16_t d_p, d, dd;
+    uint16_t mask;
+    int32_t pp; // 2*rho
+    size_t deg_sigma, deg_sigma_p, deg_sigma_copy, deg_X_sigma_p;
 
+    d = syndromes[0];
+    sigma[0] = 1;
+    X_sigma_p[1] = 1;
+    deg_sigma = 0;
+    deg_sigma_p = 0;
+    d_p = 1;
+    pp = -1;
     for (size_t mu = 0; mu < PARAM_DELTA; ++mu) {
         // Save sigma in case we need it to update X_sigma_p
         memcpy(sigma_copy, sigma, 2 * (PARAM_DELTA - 1));
         deg_sigma_copy = deg_sigma;
 
-        uint16_t dd = PQCLEAN_HQC192_CLEAN_gf_mul(d, PQCLEAN_HQC192_CLEAN_gf_inverse(d_p)); // 0 if(d == 0)
+        dd = PQCLEAN_HQC192_CLEAN_gf_mul(d, PQCLEAN_HQC192_CLEAN_gf_inverse(d_p)); // 0 if(d == 0)
         for (size_t i = 1; (i <= 2 * mu + 1) && (i <= PARAM_DELTA); ++i) {
             sigma[i] ^= PQCLEAN_HQC192_CLEAN_gf_mul(dd, X_sigma_p[i]);
         }
 
-        size_t deg_X = 2 * mu - pp; // 2*(mu-rho)
-        size_t deg_X_sigma_p = deg_X + deg_sigma_p;
+        deg_X_sigma_p = 2 * mu - pp + deg_sigma_p;
 
-        // mask1 = 0xffff if(d != 0) and 0 otherwise
-        int16_t mask1 = -((uint16_t) - d >> 15);
+        // mask = 0xffff if(d != 0) and 0 otherwise
+        mask = -((uint16_t) - d >> 15);
 
-        // mask2 = 0xffff if(deg_X_sigma_p > deg_sigma) and 0 otherwise
-        int16_t mask2 = -((uint16_t) (deg_sigma - deg_X_sigma_p) >> 15);
+        // mask2 &= 0xffff if(deg_X_sigma_p > deg_sigma) and 0 otherwise
+        mask &= -((uint16_t) (deg_sigma - deg_X_sigma_p) >> 15);
 
-        // mask12 = 0xffff if the deg_sigma increased and 0 otherwise
-        int16_t mask12 = mask1 & mask2;
-        deg_sigma = (mask12 & deg_X_sigma_p) ^ (~mask12 & deg_sigma);
+        deg_sigma ^= mask & (deg_sigma ^ deg_X_sigma_p);
 
         if (mu == PARAM_DELTA - 1) {
             break;
         }
 
         // Update pp, d_p and X_sigma_p if needed
-        pp = (mask12 & (2 * mu)) ^ (~mask12 & pp);
-        d_p = (mask12 & d) ^ (~mask12 & d_p);
+        pp ^= mask & (pp ^ (2 * mu));
+        d_p ^= mask & (d_p ^ d);
         for (size_t i = PARAM_DELTA - 1; i; --i) {
-            X_sigma_p[i + 1] = (mask12 & sigma_copy[i - 1]) ^ (~mask12 & X_sigma_p[i - 1]);
+            X_sigma_p[i + 1] = X_sigma_p[i - 1];
+            X_sigma_p[i + 1] ^= mask & (X_sigma_p[i + 1] ^ sigma_copy[i - 1]);
         }
         X_sigma_p[1] = 0;
         X_sigma_p[0] = 0;
-        deg_sigma_p = (mask12 & deg_sigma_copy) ^ (~mask12 & deg_sigma_p);
+        deg_sigma_p ^= mask & (deg_sigma_p ^ deg_sigma_copy);
 
         // Compute the next discrepancy
         d = syndromes[2 * mu + 2];
