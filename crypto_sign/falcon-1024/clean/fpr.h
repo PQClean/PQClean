@@ -436,8 +436,8 @@ fpr_lt(fpr x, fpr y) {
      */
     int cc0, cc1;
 
-    cc0 = *(int64_t *)&x < *(int64_t *)&y;
-    cc1 = *(int64_t *)&x > *(int64_t *)&y;
+    cc0 = ((*(int64_t *)&x - *(int64_t *)&y) >> 63) & 1;
+    cc1 = ((*(int64_t *)&y - *(int64_t *)&x) >> 63) & 1;
     return cc0 ^ ((cc0 ^ cc1) & (int)((x & y) >> 63));
 }
 
