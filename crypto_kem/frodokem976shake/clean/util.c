@@ -12,8 +12,10 @@
 #include "params.h"
 
 static inline uint8_t min(uint8_t x, uint8_t y) {
-  if (x < y) return x;
-  return y;
+    if (x < y) {
+        return x;
+    }
+    return y;
 }
 
 uint16_t PQCLEAN_FRODOKEM976SHAKE_CLEAN_LE_TO_UINT16(uint16_t n) {
