@@ -1,0 +1,82 @@
+consistency_checks:
+- source:
+    scheme: sntrup653
+    implementation: avx2
+  files:
+      - api.h
+      - crypto_core_inv3sntrup653.h
+      - crypto_core_invsntrup653.h
+      - crypto_core_mult3sntrup653.h
+      - crypto_core_multsntrup653.h
+      - crypto_core_scale3sntrup653.h
+      - crypto_core_weightsntrup653.h
+      - crypto_decode_653x1541.h
+      - crypto_decode_653x3.h
+      - crypto_decode_653x4621.h
+      - crypto_decode_653xint16.h
+      - crypto_decode_653xint32.h
+      - crypto_encode_653x1541.h
+      - crypto_encode_653x1541round.h
+      - crypto_encode_653x3.h
+      - crypto_encode_653x4621.h
+      - crypto_encode_653xfreeze3.h
+      - crypto_encode_653xint16.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_verify_897.h
+      - crypto_decode_653xint16.c
+      - crypto_decode_653xint32.c
+      - crypto_encode_653xint16.c
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c
+- source:
+    scheme: sntrup761
+    implementation: clean
+  files:
+      - crypto_encode_int16.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_encode_int16.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c
+- source:
+    scheme: sntrup761
+    implementation: avx2
+  files:
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c
+- source:
+    scheme: sntrup857
+    implementation: clean
+  files:
+      - crypto_encode_int16.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_encode_int16.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c
+- source:
+    scheme: sntrup857
+    implementation: avx2
+  files:
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c

@@ -1,0 +1,26 @@
+name: ntrulpr761
+type: kem
+claimed-nist-level: 3
+claimed-security: IND-CCA2
+length-public-key: 1039
+length-secret-key: 1294
+length-ciphertext: 1167
+length-shared-secret: 32
+nistkat-sha256: 06aa733e296035f1f171c4f48d1700571979cb0ccb27a4c0479c3ca32684797f
+principal-submitters:
+  - Daniel J. Bernstein
+  - Chitchanok Chuengsatiansup
+  - Tanja Lange
+  - Christine van Vredendaal
+implementations:
+    - name: clean
+      version: supercop-20200826
+    - name: avx2
+      version: supercop-20200826
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2

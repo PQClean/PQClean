@@ -1,0 +1,26 @@
+name: sntrup653
+type: kem
+claimed-nist-level: 2
+claimed-security: IND-CCA2
+length-public-key: 994
+length-secret-key: 1518
+length-ciphertext: 897
+length-shared-secret: 32
+nistkat-sha256: 0d8643f1c81a20f4de836542224c49f01a3d4498d612f98577d76710896ed7fc
+principal-submitters:
+  - Daniel J. Bernstein
+  - Chitchanok Chuengsatiansup
+  - Tanja Lange
+  - Christine van Vredendaal
+implementations:
+    - name: clean
+      version: supercop-20200826
+    - name: avx2
+      version: supercop-20200826
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2

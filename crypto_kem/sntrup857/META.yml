@@ -1,0 +1,26 @@
+name: sntrup857
+type: kem
+claimed-nist-level: 4
+claimed-security: IND-CCA2
+length-public-key: 1322
+length-secret-key: 1999
+length-ciphertext: 1184
+length-shared-secret: 32
+nistkat-sha256: 8e58185a923122f15522eba1626f7f01f5bd5aa4503c1245df88f0e31a22d967
+principal-submitters:
+  - Daniel J. Bernstein
+  - Chitchanok Chuengsatiansup
+  - Tanja Lange
+  - Christine van Vredendaal
+implementations:
+    - name: clean
+      version: supercop-20200826
+    - name: avx2
+      version: supercop-20200826
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2

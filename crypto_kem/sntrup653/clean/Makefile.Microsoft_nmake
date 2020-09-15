@@ -1,0 +1,19 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY=libsntrup653_clean.lib
+OBJECTS=crypto_core_inv3sntrup653.obj crypto_core_invsntrup653.obj crypto_core_mult3sntrup653.obj crypto_core_multsntrup653.obj crypto_core_scale3sntrup653.obj crypto_core_weightsntrup653.obj crypto_core_wforcesntrup653.obj crypto_decode_653x1541.obj crypto_decode_653x3.obj crypto_decode_653x4621.obj crypto_decode_653xint16.obj crypto_decode_653xint32.obj crypto_encode_653x1541.obj crypto_encode_653x1541round.obj crypto_encode_653x3.obj crypto_encode_653x4621.obj crypto_encode_653xfreeze3.obj crypto_encode_653xint16.obj crypto_encode_int16.obj crypto_sort_int32.obj crypto_sort_uint32.obj crypto_stream_aes256ctr.obj crypto_verify_897.obj kem.obj 
+
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)

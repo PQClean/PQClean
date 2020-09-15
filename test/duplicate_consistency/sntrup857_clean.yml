@@ -1,0 +1,34 @@
+consistency_checks:
+- source:
+    scheme: sntrup857
+    implementation: avx2
+  files:
+      - api.h
+      - crypto_core_inv3sntrup857.h
+      - crypto_core_invsntrup857.h
+      - crypto_core_mult3sntrup857.h
+      - crypto_core_multsntrup857.h
+      - crypto_core_scale3sntrup857.h
+      - crypto_core_weightsntrup857.h
+      - crypto_decode_857x1723.h
+      - crypto_decode_857x3.h
+      - crypto_decode_857x5167.h
+      - crypto_decode_857xint16.h
+      - crypto_decode_857xint32.h
+      - crypto_encode_857x1723.h
+      - crypto_encode_857x1723round.h
+      - crypto_encode_857x3.h
+      - crypto_encode_857x5167.h
+      - crypto_encode_857xfreeze3.h
+      - crypto_encode_857xint16.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_verify_1184.h
+      - crypto_decode_857xint16.c
+      - crypto_decode_857xint32.c
+      - crypto_encode_857xint16.c
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c
