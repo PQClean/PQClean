@@ -169,7 +169,8 @@ static unsigned int rej_uniform(int16_t *r,
                              + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
 // Not static for benchmarking
 void PQCLEAN_KYBER768_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMBYTES], int transposed) {
-    unsigned int ctr = 0, i = 0, j = 0;
+    unsigned int ctr = 0;
+    uint8_t i = 0, j = 0;
     uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];
     xof_state state;
 
