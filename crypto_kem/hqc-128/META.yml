@@ -1,0 +1,34 @@
+name: HQC-128
+type: kem
+claimed-nist-level: 1
+claimed-security: IND-CCA2
+length-ciphertext: 6017
+length-public-key: 3024
+length-secret-key: 3064
+length-shared-secret: 64
+nistkat-sha256: 32702949431d8a869abb530a2fda87d5c81c63c698673b135e59ad7e8b5a4f5f
+principal-submitters:
+  - Carlos Aguilar Melchor
+  - Nicolas Aragon
+  - Slim Bettaieb
+  - Olivier Blazy
+  - Jurjen Bos
+  - Jean-Christophe Deneuville
+  - Philippe Gaborit
+  - Edoardo Persichetti
+  - Jean-Marc Robert
+  - Pascal Véron
+  - Gilles Zémor
+  - Loïc Bidoux
+implementations:
+    - name: clean
+      version: 2020-05-29
+    - name: avx2
+      version: 2020-05-29
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2

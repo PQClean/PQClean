@@ -1,0 +1,34 @@
+name: HQC-192
+type: kem
+claimed-nist-level: 3
+claimed-security: IND-CCA2
+length-ciphertext: 11364
+length-public-key: 5690
+length-secret-key: 5730
+length-shared-secret: 64
+nistkat-sha256: b49351ae5bdab016521254af85a0df2072b81841722c0c422bb44af22cec4418
+principal-submitters:
+  - Carlos Aguilar Melchor
+  - Nicolas Aragon
+  - Slim Bettaieb
+  - Olivier Blazy
+  - Jurjen Bos
+  - Jean-Christophe Deneuville
+  - Philippe Gaborit
+  - Edoardo Persichetti
+  - Jean-Marc Robert
+  - Pascal Véron
+  - Gilles Zémor
+  - Loïc Bidoux
+implementations:
+    - name: clean
+      version: 2020-05-29
+    - name: avx2
+      version: 2020-05-29
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2

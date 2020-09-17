@@ -1,0 +1,13 @@
+consistency_checks:
+    - source:
+        scheme: hqc-rmrs-256
+        implementation: avx2
+      files:
+      - api.h
+      - code.h
+      - fft.h
+      - gf.h
+      - hqc.h
+      - reed_muller.h
+      - fft.c
+      - reed_solomon.c
