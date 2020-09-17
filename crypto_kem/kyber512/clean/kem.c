@@ -117,7 +117,7 @@ int PQCLEAN_KYBER512_CLEAN_crypto_kem_dec(unsigned char *ss,
     hash_h(kr + KYBER_SYMBYTES, ct, KYBER_CIPHERTEXTBYTES);
 
     /* Overwrite pre-k with z on re-encryption failure */
-    PQCLEAN_KYBER512_CLEAN_cmov(kr, sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES, KYBER_SYMBYTES, fail);
+    PQCLEAN_KYBER512_CLEAN_cmov(kr, sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES, KYBER_SYMBYTES, (uint8_t)fail);
 
     /* hash concatenation of pre-k and H(c) to k */
     kdf(ss, kr, 2 * KYBER_SYMBYTES);

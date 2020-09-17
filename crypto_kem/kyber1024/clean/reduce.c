@@ -22,7 +22,7 @@ int16_t PQCLEAN_KYBER1024_CLEAN_montgomery_reduce(int32_t a) {
     t = (int32_t)u * KYBER_Q;
     t = a - t;
     t >>= 16;
-    return t;
+    return (int16_t)t;
 }
 
 /*************************************************

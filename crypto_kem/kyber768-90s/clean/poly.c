@@ -72,9 +72,9 @@ void PQCLEAN_KYBER76890S_CLEAN_poly_tobytes(uint8_t r[KYBER_POLYBYTES], poly *a)
     for (i = 0; i < KYBER_N / 2; i++) {
         t0 = a->coeffs[2 * i];
         t1 = a->coeffs[2 * i + 1];
-        r[3 * i + 0] = (t0 >> 0);
-        r[3 * i + 1] = (t0 >> 8) | (t1 << 4);
-        r[3 * i + 2] = (t1 >> 4);
+        r[3 * i + 0] = (uint8_t)(t0 >> 0);
+        r[3 * i + 1] = (uint8_t)((t0 >> 8) | (t1 << 4));
+        r[3 * i + 2] = (uint8_t)(t1 >> 4);
     }
 }
 

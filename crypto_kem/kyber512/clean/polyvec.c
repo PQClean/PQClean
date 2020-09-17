@@ -27,11 +27,11 @@ void PQCLEAN_KYBER512_CLEAN_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBY
                 }
             }
 
-            r[0] = (t[0] >> 0);
-            r[1] = (t[0] >> 8) | (t[1] << 2);
-            r[2] = (t[1] >> 6) | (t[2] << 4);
-            r[3] = (t[2] >> 4) | (t[3] << 6);
-            r[4] = (t[3] >> 2);
+            r[0] = (uint8_t)(t[0] >> 0);
+            r[1] = (uint8_t)((t[0] >> 8) | (t[1] << 2));
+            r[2] = (uint8_t)((t[1] >> 6) | (t[2] << 4));
+            r[3] = (uint8_t)((t[2] >> 4) | (t[3] << 6));
+            r[4] = (uint8_t)(t[3] >> 2);
             r += 5;
         }
     }
