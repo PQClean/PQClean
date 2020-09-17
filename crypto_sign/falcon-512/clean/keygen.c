@@ -1903,9 +1903,9 @@ zint_add_scaled_mul_small(uint32_t *x, size_t xlen,
          */
         v = u - sch;
         if (v < ylen) {
-          wy = y[v];
+            wy = y[v];
         } else {
-          wy = ysign;
+            wy = ysign;
         }
         wys = ((wy << scl) & 0x7FFFFFFF) | tw;
         tw = wy >> (31 - scl);
@@ -1965,9 +1965,9 @@ zint_sub_scaled(uint32_t *x, size_t xlen,
          */
         v = u - sch;
         if (v < ylen) {
-          wy = y[v];
+            wy = y[v];
         } else {
-          wy = ysign;
+            wy = ysign;
         }
         wys = ((wy << scl) & 0x7FFFFFFF) | tw;
         tw = wy >> (31 - scl);
@@ -2656,16 +2656,18 @@ make_fg(uint32_t *data, const int8_t *f, const int8_t *g,
         return;
     }
 
-    if (depth == 0) return;
+    if (depth == 0) {
+        return;
+    }
     if (depth == 1) {
-      make_fg_step(data, logn, 0, 0, out_ntt);
-      return;
+        make_fg_step(data, logn, 0, 0, out_ntt);
+        return;
     }
     make_fg_step(data, logn, 0, 0, 1);
-    for (d = 1; d+1 < depth; d ++) {
+    for (d = 1; d + 1 < depth; d ++) {
         make_fg_step(data, logn - d, d, 1, 1);
     }
-    make_fg_step(data, logn-depth+1, depth-1, 1, out_ntt);
+    make_fg_step(data, logn - depth + 1, depth - 1, 1, out_ntt);
 }
 
 /*
@@ -3043,7 +3045,9 @@ solve_NTRU_intermediate(unsigned logn_top,
      * middle or the upper half of these top 10 words.
      */
     rlen = slen;
-    if (rlen > 10) rlen = 10;
+    if (rlen > 10) {
+        rlen = 10;
+    }
     poly_big_to_fp(rt3, ft + slen - rlen, rlen, slen, logn);
     poly_big_to_fp(rt4, gt + slen - rlen, rlen, slen, logn);
 
@@ -3118,7 +3122,9 @@ solve_NTRU_intermediate(unsigned logn_top,
          * scaling if the current length is more than 10 words.
          */
         rlen = FGlen;
-        if (rlen > 10) rlen = 10;
+        if (rlen > 10) {
+            rlen = 10;
+        }
         scale_FG = 31 * (int)(FGlen - rlen);
         poly_big_to_fp(rt1, Ft + FGlen - rlen, rlen, llen, logn);
         poly_big_to_fp(rt2, Gt + FGlen - rlen, rlen, llen, logn);

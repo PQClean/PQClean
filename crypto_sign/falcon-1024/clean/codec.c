@@ -445,7 +445,7 @@ PQCLEAN_FALCON1024_CLEAN_comp_decode(
         }
         x[u] = (int16_t) m;
         if (s) {
-          x[u] = (int16_t) -x[u];
+            x[u] = (int16_t) - x[u];
         }
     }
     return v;

@@ -1190,9 +1190,9 @@ PQCLEAN_FALCON1024_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rng,
          * SHAKE context ('rng').
          */
         if (logn == 10) {
-          spc.sigma_min = fpr_sigma_min_10;
+            spc.sigma_min = fpr_sigma_min_10;
         } else {
-          spc.sigma_min = fpr_sigma_min_9;
+            spc.sigma_min = fpr_sigma_min_9;
         }
         PQCLEAN_FALCON1024_CLEAN_prng_init(&spc.p, rng);
         samp = PQCLEAN_FALCON1024_CLEAN_sampler;
@@ -1237,9 +1237,9 @@ PQCLEAN_FALCON1024_CLEAN_sign_dyn(int16_t *sig, inner_shake256_context *rng,
          * SHAKE context ('rng').
          */
         if (logn == 10) {
-          spc.sigma_min = fpr_sigma_min_10;
+            spc.sigma_min = fpr_sigma_min_10;
         } else {
-          spc.sigma_min = fpr_sigma_min_9;
+            spc.sigma_min = fpr_sigma_min_9;
         }
         PQCLEAN_FALCON1024_CLEAN_prng_init(&spc.p, rng);
         samp = PQCLEAN_FALCON1024_CLEAN_sampler;
