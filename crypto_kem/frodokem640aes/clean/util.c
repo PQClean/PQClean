@@ -11,7 +11,12 @@
 #include "common.h"
 #include "params.h"
 
-#define min(x, y) (((x) < (y)) ? (x) : (y))
+static inline uint8_t min(uint8_t x, uint8_t y) {
+    if (x < y) {
+        return x;
+    }
+    return y;
+}
 
 uint16_t PQCLEAN_FRODOKEM640AES_CLEAN_LE_TO_UINT16(uint16_t n) {
     return (((uint8_t *) &n)[0] | (((uint8_t *) &n)[1] << 8));
