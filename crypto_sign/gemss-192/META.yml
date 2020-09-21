@@ -1,0 +1,26 @@
+name: gemss-192
+type: signature
+claimed-nist-level: 3
+length-public-key: 1237964
+length-secret-key: 24
+length-signature: 52
+nistkat-sha256: 47c4ad0a28de204c77d44c85e9e578689a3a7c490c9d3d3bdbc544cb7bc087b2
+principal-submitters:
+  - A. Casanova
+  - J.-C. Faugere
+  - G. Macario-Rat
+  - J. Patarin
+  - L. Perret
+  - J. Ryckeghem
+implementations:
+    - name: clean
+      version: GeMSS-Round2_V2.a
+    - name: avx2
+      version: GeMSS-Round2_V2.a
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2

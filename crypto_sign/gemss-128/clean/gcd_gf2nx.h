@@ -1,0 +1,12 @@
+#ifndef _GCD_GF2NX_H
+#define _GCD_GF2NX_H
+#include "arch.h"
+#include "gf2nx.h"
+
+
+
+unsigned int PQCLEAN_GEMSS128_CLEAN_gcd_gf2nx(unsigned int *b, gf2nx A, unsigned int da,
+        gf2nx B, unsigned int db);
+
+
+#endif

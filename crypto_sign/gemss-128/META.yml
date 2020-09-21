@@ -1,0 +1,26 @@
+name: gemss-128
+type: signature
+claimed-nist-level: 1
+length-public-key: 352188
+length-secret-key: 16
+length-signature: 33
+nistkat-sha256: a60bb56ac878e85fd716ed5c8a003cb44034410509ae9140ddb4fa8c4ce248bb
+principal-submitters:
+  - A. Casanova
+  - J.-C. Faugere
+  - G. Macario-Rat
+  - J. Patarin
+  - L. Perret
+  - J. Ryckeghem
+implementations:
+    - name: clean
+      version: GeMSS-Round2_V2.a
+    - name: avx2
+      version: GeMSS-Round2_V2.a
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2
