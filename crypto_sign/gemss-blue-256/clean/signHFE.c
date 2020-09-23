@@ -194,7 +194,8 @@ int PQCLEAN_GEMSSBLUE256_CLEAN_precSignHFE(secret_key_HFE *sk_HFE, const UINT **
     for (i = 0; i < HFEDegI; ++i) {
         /* Copy i quadratic terms */
 
-        for (j = 0; j < i; ++j) {
+        j = 0;
+        for (; j < i; ++j) {
             /* X^(2^i + 2^j) */
             copy_gf2n(F_cp, F_HFEv);
             F_HFEv += NB_WORD_GFqn;

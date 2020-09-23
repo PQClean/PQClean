@@ -33,7 +33,7 @@ int PQCLEAN_GEMSS128_AVX2_crypto_sign(
     const uint8_t *m, size_t mlen,
     const uint8_t *sk) {
     *smlen = mlen + PQCLEAN_GEMSS128_AVX2_CRYPTO_BYTES;
-    memcpy(sm + PQCLEAN_GEMSS128_AVX2_CRYPTO_BYTES, m, mlen);
+    memmove(sm + PQCLEAN_GEMSS128_AVX2_CRYPTO_BYTES, m, mlen);
     return signHFE(sm, m, mlen, (UINT *)sk);
 }
 
@@ -55,7 +55,7 @@ int PQCLEAN_GEMSS128_AVX2_crypto_sign_open(
     *mlen = smlen - PQCLEAN_GEMSS128_AVX2_CRYPTO_BYTES;
     result = PQCLEAN_GEMSS128_AVX2_sign_openHFE(sm + PQCLEAN_GEMSS128_AVX2_CRYPTO_BYTES, (size_t)(*mlen), sm, pk);
     /* For compatibily with SUPERCOP, the memcpy is done only after sign_open */
-    memcpy(m, sm + PQCLEAN_GEMSS128_AVX2_CRYPTO_BYTES, (size_t)(*mlen));
+    memmove(m, sm + PQCLEAN_GEMSS128_AVX2_CRYPTO_BYTES, (size_t)(*mlen));
     return result;
 }
 

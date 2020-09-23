@@ -46,11 +46,11 @@ typedef UINT static_gf2nv;
 
 
 
+#define set0_gf2nv(c) SET0((unsigned char *)(c),8*NB_WORD_GF2nv)
 
 #define add_gf2nv(a,b,c) ADD_GF2X(a,b,c,NB_WORD_GF2nv)
 #define add2_gf2nv(a,b) ADD_2_GF2X(a,b,NB_WORD_GF2nv)
 #define swap_gf2nv(a,b) SWAP(XOR_2,a,b,NB_WORD_GF2nv)
-#define set0_gf2nv(c) SET0(c,NB_WORD_GF2nv)
 #define xorLoadMask1_gf2nv(res,a,b) XORLOADMASK1(res,a,b,NB_WORD_GF2nv)
 
 

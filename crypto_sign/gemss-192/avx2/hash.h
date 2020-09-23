@@ -15,7 +15,7 @@
 #define EQUALHASH_NOCST PQCLEAN_GEMSS192_AVX2_ISEQUAL6_NOCST
 #define COPYHASH COPY6
 
-#define EQUALHASH(a,b) f_ISEQUAL(a,b,SIZE_DIGEST_UINT)
+#define EQUALHASH(a,b) PQCLEAN_GEMSS192_AVX2_ISEQUAL(a,b,SIZE_DIGEST_UINT)
 
 #define expandSeed(output,outputByteLen,seed,seedByteLen)         SHAKE(output,outputByteLen,seed,seedByteLen)
 

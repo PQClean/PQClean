@@ -44,11 +44,10 @@ void PQCLEAN_GEMSSRED128_AVX2_mixEquationsMQS8_gf2_right(mqsnv8_gf2m pk, cst_mqs
     vecMatProductm_gf2(pk_last, MQS, T);
 
     for (i = 0; i < HFEmq; ++i) {
-        *((UINT *)pk) = pk_last[i];
+        STORE_UINT(pk, pk_last[i])
         pk += 8;
     }
 
-    /* We fill the last bytes of pk without 64-bit cast */
     for (i = 0; i < (5); ++i) {
         pk[i] = pk_last[NB_WORD_GF2m - 1] >> (i << 3);
     }

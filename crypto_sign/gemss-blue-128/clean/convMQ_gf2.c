@@ -122,10 +122,13 @@ uint64_t PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_UL_gf2(uint8_t *pk2, const uint8
  * @remark  Constant-time implementation.
  */
 UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_uncompressL_gf2(uint64_t *pk2, const uint8_t *pk) {
-    const uint64_t *pk64;
     unsigned int iq, ir, k, nb_bits;
+    uint64_t t1, t2;
+    const uint8_t *pk64 = pk;
+    const uint8_t *pk_end;
+    uint64_t end;
+    unsigned int l;
 
-    pk64 = (uint64_t *)pk;
 
     nb_bits = 1;
     /* For each row */
@@ -133,25 +136,30 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_uncompressL_gf2(uint64_t *pk2, const
         for (ir = 1; ir < 64; ++ir) {
             if (nb_bits & 63) {
                 for (k = 0; k < iq; ++k) {
-                    pk2[k] = (pk64[k] >> (nb_bits & 63))
-                             ^ (pk64[k + 1] << (64 - (nb_bits & 63)));
+                    LOAD_UINT(t1, &pk64[8 * k])
+                    LOAD_UINT(t2, &pk64[8 * (k + 1)])
+                    pk2[k] = (t1 >> (nb_bits & 63))
+                             ^ (t2 << (64 - (nb_bits & 63)));
                 }
 
-                pk2[k] = pk64[k] >> (nb_bits & 63);
+                LOAD_UINT(t1, &pk64[8 * k])
+                pk2[k] = t1 >> (nb_bits & 63);
                 if (((nb_bits & 63) + ir) > 64) {
-                    pk2[k] ^= pk64[k + 1] << (64 - (nb_bits & 63));
+                    LOAD_UINT(t1, &pk64[8 * (k + 1)])
+                    pk2[k] ^= t1 << (64 - (nb_bits & 63));
                 }
 
                 if (((nb_bits & 63) + ir) >= 64) {
-                    ++pk64;
+                    pk64 += 8;
                 }
             } else {
                 for (k = 0; k <= iq; ++k) {
-                    pk2[k] = pk64[k];
+                    LOAD_UINT(t1, &pk64[8 * k])
+                    pk2[k] = t1;
                 }
             }
 
-            pk64 += iq;
+            pk64 += 8 * iq;
             /* 0 padding on the last word */
             pk2[iq] &= (ONE64 << ir) - ONE64;
             pk2 += iq + 1;
@@ -161,14 +169,17 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_uncompressL_gf2(uint64_t *pk2, const
         /* ir=64 */
         if (nb_bits & 63) {
             for (k = 0; k <= iq; ++k) {
-                pk2[k] = (pk64[k] >> (nb_bits & 63)) ^ (pk64[k + 1] << (64 - (nb_bits & 63)));
+                LOAD_UINT(t1, &pk64[8 * k])
+                LOAD_UINT(t2, &pk64[8 * (k + 1)])
+                pk2[k] = (t1 >> (nb_bits & 63)) ^ (t2 << (64 - (nb_bits & 63)));
             }
         } else {
             for (k = 0; k <= iq; ++k) {
-                pk2[k] = pk64[k];
+                LOAD_UINT(t1, &pk64[8 * k])
+                pk2[k] = t1;
             }
         }
-        pk64 += iq + 1;
+        pk64 += 8 * (iq + 1);
         pk2 += iq + 1;
         nb_bits += (iq + 1) << 6;
     }
@@ -176,25 +187,30 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_uncompressL_gf2(uint64_t *pk2, const
     for (ir = 1; ir <= HFEnvrm1; ++ir) {
         if (nb_bits & 63) {
             for (k = 0; k < iq; ++k) {
-                pk2[k] = (pk64[k] >> (nb_bits & 63))
-                         ^ (pk64[k + 1] << (64 - (nb_bits & 63)));
+                LOAD_UINT(t1, &pk64[8 * k])
+                LOAD_UINT(t2, &pk64[8 * (k + 1)])
+                pk2[k] = (t1 >> (nb_bits & 63))
+                         ^ (t2 << (64 - (nb_bits & 63)));
             }
 
-            pk2[k] = pk64[k] >> (nb_bits & 63);
+            LOAD_UINT(t1, &pk64[8 * k])
+            pk2[k] = t1 >> (nb_bits & 63);
             if (((nb_bits & 63) + ir) > 64) {
-                pk2[k] ^= pk64[k + 1] << (64 - (nb_bits & 63));
+                LOAD_UINT(t1, &pk64[8 * (k + 1)])
+                pk2[k] ^= t1 << (64 - (nb_bits & 63));
             }
 
             if (((nb_bits & 63) + ir) >= 64) {
-                ++pk64;
+                pk64 += 8;
             }
         } else {
             for (k = 0; k <= iq; ++k) {
-                pk2[k] = pk64[k];
+                LOAD_UINT(t1, &pk64[8 * k])
+                pk2[k] = t1;
             }
         }
 
-        pk64 += iq;
+        pk64 += 8 * iq;
         /* 0 padding on the last word */
         pk2[iq] &= (ONE64 << ir) - ONE64;
         pk2 += iq + 1;
@@ -207,24 +223,23 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_uncompressL_gf2(uint64_t *pk2, const
 #define LAST_ROW_R ((HFEnv-LOST_BITS)&63)
     iq = LAST_ROW_Q;
 
-    uint8_t *pk_end;
-    uint64_t end;
-    unsigned int l;
-
     if (nb_bits & 63) {
 #define NB_WHOLE_BLOCKS ((HFEnv-\
                           ((64-((NB_MONOMIAL_PK-LOST_BITS-HFEnvr)&63))&63))>>6)
 
         for (k = 0; k < NB_WHOLE_BLOCKS; ++k) {
-            pk2[k] = (pk64[k] >> (nb_bits & 63))
-                     ^ (pk64[k + 1] << (64 - (nb_bits & 63)));
+            LOAD_UINT(t1, &pk64[8 * k])
+            LOAD_UINT(t2, &pk64[8 * (k + 1)])
+            pk2[k] = (t1 >> (nb_bits & 63))
+                     ^ (t2 << (64 - (nb_bits & 63)));
         }
 
-        pk2[k] = pk64[k] >> (nb_bits & 63);
+        LOAD_UINT(t1, &pk64[8 * k])
+        pk2[k] = t1 >> (nb_bits & 63);
 
         if (((nb_bits & 63) + LAST_ROW_R) > 64) {
             end = 0;
-            pk_end = (uint8_t *)(pk64 + k + 1);
+            pk_end = pk64 + 8 * (k + 1);
             for (l = 0; l < (4); ++l) {
                 end ^= ((uint64_t)(pk_end[l])) << (l << 3);
             }
@@ -232,11 +247,12 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_uncompressL_gf2(uint64_t *pk2, const
         }
     } else {
         for (k = 0; k < iq; ++k) {
-            pk2[k] = pk64[k];
+            LOAD_UINT(t1, &pk64[8 * k])
+            pk2[k] = t1;
         }
 
         end = 0;
-        pk_end = (uint8_t *)(pk64 + k);
+        pk_end = pk64 + 8 * k;
         for (l = 0; l < (4); ++l) {
             end ^= ((uint64_t)(pk_end[l])) << (l << 3);
         }
@@ -266,10 +282,11 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_last_uncompressL_gf2(uint64_t *pk2, const
  * @remark  Constant-time implementation.
  */
 UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_uncompressL_gf2(uint64_t *pk2, const uint8_t *pk) {
-    const uint64_t *pk64;
+    const uint8_t *pk64;
     unsigned int iq, ir, k, nb_bits;
+    uint64_t t1, t2;
 
-    pk64 = (uint64_t *)pk;
+    pk64 = pk;
 
     nb_bits = 1;
     /* For each row */
@@ -277,25 +294,30 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_uncompressL_gf2(uint64_t *pk2, const uint
         for (ir = 1; ir < 64; ++ir) {
             if (nb_bits & 63) {
                 for (k = 0; k < iq; ++k) {
-                    pk2[k] = (pk64[k] >> (nb_bits & 63))
-                             ^ (pk64[k + 1] << (64 - (nb_bits & 63)));
+                    LOAD_UINT(t1, &pk64[8 * k])
+                    LOAD_UINT(t2, &pk64[8 * (k + 1)])
+                    pk2[k] = (t1 >> (nb_bits & 63))
+                             ^ (t2 << (64 - (nb_bits & 63)));
                 }
 
-                pk2[k] = pk64[k] >> (nb_bits & 63);
+                LOAD_UINT(t1, &pk64[8 * k])
+                pk2[k] = t1 >> (nb_bits & 63);
                 if (((nb_bits & 63) + ir) > 64) {
-                    pk2[k] ^= pk64[k + 1] << (64 - (nb_bits & 63));
+                    LOAD_UINT(t1, &pk64[8 * (k + 1)])
+                    pk2[k] ^= t1 << (64 - (nb_bits & 63));
                 }
 
                 if (((nb_bits & 63) + ir) >= 64) {
-                    ++pk64;
+                    pk64 += 8;
                 }
             } else {
                 for (k = 0; k <= iq; ++k) {
-                    pk2[k] = pk64[k];
+                    LOAD_UINT(t1, &pk64[8 * k])
+                    pk2[k] = t1;
                 }
             }
 
-            pk64 += iq;
+            pk64 += 8 * iq;
             /* 0 padding on the last word */
             pk2[iq] &= (ONE64 << ir) - ONE64;
             pk2 += iq + 1;
@@ -305,14 +327,17 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_uncompressL_gf2(uint64_t *pk2, const uint
         /* ir=64 */
         if (nb_bits & 63) {
             for (k = 0; k <= iq; ++k) {
-                pk2[k] = (pk64[k] >> (nb_bits & 63)) ^ (pk64[k + 1] << (64 - (nb_bits & 63)));
+                LOAD_UINT(t1, &pk64[8 * k])
+                LOAD_UINT(t2, &pk64[8 * (k + 1)])
+                pk2[k] = (t1 >> (nb_bits & 63)) ^ (t2 << (64 - (nb_bits & 63)));
             }
         } else {
             for (k = 0; k <= iq; ++k) {
-                pk2[k] = pk64[k];
+                LOAD_UINT(t1, &pk64[8 * k])
+                pk2[k] = t1;
             }
         }
-        pk64 += iq + 1;
+        pk64 += 8 * (iq + 1);
         pk2 += iq + 1;
         nb_bits += (iq + 1) << 6;
     }
@@ -320,25 +345,30 @@ UINT PQCLEAN_GEMSSBLUE128_CLEAN_convMQ_uncompressL_gf2(uint64_t *pk2, const uint
     for (ir = 1; ir <= HFEnvr; ++ir) {
         if (nb_bits & 63) {
             for (k = 0; k < iq; ++k) {
-                pk2[k] = (pk64[k] >> (nb_bits & 63))
-                         ^ (pk64[k + 1] << (64 - (nb_bits & 63)));
+                LOAD_UINT(t1, &pk64[8 * k])
+                LOAD_UINT(t2, &pk64[8 * (k + 1)])
+                pk2[k] = (t1 >> (nb_bits & 63))
+                         ^ (t2 << (64 - (nb_bits & 63)));
             }
 
-            pk2[k] = pk64[k] >> (nb_bits & 63);
+            LOAD_UINT(t1, &pk64[8 * k])
+            pk2[k] = t1 >> (nb_bits & 63);
             if (((nb_bits & 63) + ir) > 64) {
-                pk2[k] ^= pk64[k + 1] << (64 - (nb_bits & 63));
+                LOAD_UINT(t1, &pk64[8 * (k + 1)])
+                pk2[k] ^= t1 << (64 - (nb_bits & 63));
             }
 
             if (((nb_bits & 63) + ir) >= 64) {
-                ++pk64;
+                pk64 += 8;
             }
         } else {
             for (k = 0; k <= iq; ++k) {
-                pk2[k] = pk64[k];
+                LOAD_UINT(t1, &pk64[8 * k])
+                pk2[k] = t1;
             }
         }
 
-        pk64 += iq;
+        pk64 += 8 * iq;
         /* 0 padding on the last word */
         pk2[iq] &= (ONE64 << ir) - ONE64;
         pk2 += iq + 1;

@@ -65,7 +65,10 @@
     bit_ir=vec[HFEvq]; \
     LOOPIR(HFEvr);
 
-#define CLEAN_M (res)[NB_WORD_GF2m-1]&=MASK_GF2m;
+#define CLEAN_M \
+    LOAD_UINT(vec_ir, (((unsigned char *)res)+(8*(NB_WORD_GF2m-1)))) \
+    vec_ir &= MASK_GF2m; \
+    STORE_UINT((((unsigned char *)res)+(8*(NB_WORD_GF2m-1))), vec_ir)
 
 #define REM_N(LOOPIR) \
     bit_ir=vec[HFEnq]; \

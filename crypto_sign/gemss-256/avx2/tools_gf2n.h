@@ -60,9 +60,10 @@ typedef const UINT cst_static_gf2n;
 #define cmp_lt_gf2n(a,b) PQCLEAN_GEMSS256_AVX2_CMP_LT(a,b,NB_WORD_GFqn)
 #define cmp_gt_gf2n(a,b) PQCLEAN_GEMSS256_AVX2_CMP_GT(a,b,NB_WORD_GFqn)
 
+#define set0_gf2n(c) SET0((unsigned char *)(c),8*NB_WORD_GFqn)
+
 #define swap_gf2n CONCAT_NB_WORD_GFqn_SUP(SWAP)
 #define copy_gf2n CONCAT_NB_WORD_GFqn_SUP(COPY)
-#define set0_gf2n CONCAT_NB_WORD_GFqn_SUP(SET0_)
 #define set1_gf2n CONCAT_NB_WORD_GFqn_SUP(SET1_)
 #define xorLoadMask1_gf2n CONCAT_NB_WORD_GFqn_SUP(XORLOADMASK1_)
 
@@ -135,7 +136,7 @@ typedef const UINT cst_static_gf2n;
 
 
 
-#define set0_product_gf2n(c) SET0(c,NB_WORD_MMUL)
+#define set0_product_gf2n(c) SET0((unsigned char*)(c),8*NB_WORD_MMUL)
 
 #define set0_high_product_gf2n(c)             SET0((c)+NB_WORD_GFqn,NB_WORD_MMUL-NB_WORD_GFqn)
 

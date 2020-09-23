@@ -52,37 +52,22 @@
 
 #define CONCAT_NB_WORD_EQ_SUP(name) CONCAT(name,NB_WORD_EQ)
 
-
-
 /*** Tuning ***/
 #define LEN_UNROLLED_64 4
 
-
-
-
-
-
-
 /* 64-bit version */
-
-#define XOR_ELEM CONCAT(CONCAT_NB_WORD_EQ_SUP(ADD),_2_GF2X)
-
-#define COPY_64bits_variables CONCAT_NB_WORD_EQ_SUP(COPY)
-
-
+#define XOR_ELEM(a,b) ADD_2_GF2X((unsigned char *)(a),(unsigned char *)(b),8*NB_WORD_EQ);
 
 #define LOOPJR_NOCST_64(START,NB_IT) \
     for(jr=(START);jr<(NB_IT);++jr)\
     {\
         if(xj&UINT_1)\
         {\
-            XOR_ELEM(c,(const UINT*)pk);\
+            XOR_ELEM(c,pk);\
         }\
         pk+=NB_BYTES_EQ;\
         xj>>=1;\
     }
-
-
 
 #define LOOPJR_UNROLLED_64(START,NB_IT) \
     for(jr=(START);jr<((NB_IT)-LEN_UNROLLED_64+1);jr+=LEN_UNROLLED_64)\
@@ -91,7 +76,7 @@
         {\
             if(xj&UINT_1)\
             {\
-                XOR_ELEM(c,(const UINT*)pk);\
+                XOR_ELEM(c,pk);\
             }\
             pk+=NB_BYTES_EQ;\
             xj>>=1;\
@@ -101,7 +86,7 @@
     {\
         if(xj&UINT_1)\
         {\
-            XOR_ELEM(c,(const UINT*)pk);\
+            XOR_ELEM(c,pk);\
         }\
         pk+=NB_BYTES_EQ;\
         xj>>=1;\
@@ -118,7 +103,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_evalMQSnocst8_unrolled_quo_gf2(vecm_gf2 c, cst_ve
     unsigned int h;
 
     /* Constant cst_pk */
-    COPY_64bits_variables(c, (const UINT *)pk);
+    LOAD_UINT_ARRAY(c, pk, NB_WORD_EQ)
     pk += NB_BYTES_EQ;
 
     /* for each row of the quadratic matrix of pk, excepted the last block */
@@ -130,7 +115,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_evalMQSnocst8_unrolled_quo_gf2(vecm_gf2 c, cst_ve
                 /* for each column of the quadratic matrix of pk */
 
                 /* xj=xi=1 */
-                XOR_ELEM(c, (const UINT *)pk);
+                XOR_ELEM(c, pk);
                 pk += NB_BYTES_EQ;
 
                 xj = xi >> 1;
@@ -156,7 +141,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_evalMQSnocst8_unrolled_quo_gf2(vecm_gf2 c, cst_ve
             /* for each column of the quadratic matrix of pk */
 
             /* xj=xi=1 */
-            XOR_ELEM(c, (const UINT *)pk);
+            XOR_ELEM(c, pk);
             pk += NB_BYTES_EQ;
 
             xj = xi >> 1;
