@@ -20,7 +20,7 @@
 
 #define HFEvr8 (HFEv&7)
 /* Number of bytes that an element of GF(2^(n+v)) needs */
-#define NB_BYTES_GFqv ((HFEv>>3)+((HFEvr8)?1:0))
+#define NB_BYTES_GFqv ((HFEv>>3)+0)
 
 
 

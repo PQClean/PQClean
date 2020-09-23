@@ -110,7 +110,11 @@ void PQCLEAN_GEMSS192_AVX2_fast_sort_gf2n(vec_gf2n tab, int l) {
         /* Size of the remainder block */
         rem = l - (pa << 1) * quo;
         /* Impact on the sort */
-        rem = (rem <= pa) ? 0 : (rem - pa);
+        if (rem <= pa) {
+            rem = 0;
+        } else {
+            rem = rem - pa;
+        }
 
         tab_i = tab;
         tab_ipa = tab + pa * NB_WORD_GFqn;

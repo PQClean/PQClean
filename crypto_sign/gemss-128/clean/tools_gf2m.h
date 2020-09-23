@@ -33,7 +33,7 @@ typedef UINT static_gf2m;
 #define HFEmr8c ((8-HFEmr8)&7)
 
 /* Number of bytes that an element of GF(2^m) needs */
-#define NB_BYTES_GFqm (HFEmq8+((HFEmr8)?1:0))
+#define NB_BYTES_GFqm (HFEmq8+1)
 
 /* To choose macro for NB_WORD_GF2m*64 bits */
 #define NB_BITS_GFqm_SUP 192

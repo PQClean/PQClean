@@ -31,7 +31,7 @@ typedef UINT static_gf2nv;
 #define HFEnvr8 (HFEnv&7)
 #define MASK8_GF2nv ((1U<<HFEnvr8)-1)
 /* Number of bytes that an element of GF(2^(n+v)) needs */
-#define NB_BYTES_GFqnv (HFEnvq8+((HFEnvr8)?1:0))
+#define NB_BYTES_GFqnv (HFEnvq8+0)
 
 
 
@@ -57,7 +57,7 @@ typedef UINT static_gf2nv;
 
 
 
-#define NB_WORD_GF2nvm (NB_WORD_GF2nv-NB_WORD_GF2m+(HFEmr?1:0))
+#define NB_WORD_GF2nvm (NB_WORD_GF2nv-NB_WORD_GF2m+1)
 
 #define MASK_GF2nvm (~MASK_GF2m)
 

@@ -51,8 +51,11 @@ static void compress_signHFE(unsigned char *sm8, const UINT *sm) {
 
     for (k1 = 1; k1 < NB_ITE; ++k1) {
         /* Number of bits to complete the byte of sm8, in [0,7] */
-        val_n = ((69) < ((8 - (nb_bits & 7U)) & 7U)) ? (HFEDELTA + HFEv)
-                : ((8 - (nb_bits & 7U)) & 7U);
+        if ((69) < ((8 - (nb_bits & 7U)) & 7U)) {
+            val_n = (69);
+        } else {
+            val_n = ((8 - (nb_bits & 7U)) & 7U);
+        }
 
         /* First byte of sm8 */
         if (nb_bits & 7U) {
@@ -194,7 +197,8 @@ int PQCLEAN_GEMSSRED256_AVX2_precSignHFE(secret_key_HFE *sk_HFE, const UINT **li
     for (i = 0; i < HFEDegI; ++i) {
         /* Copy i quadratic terms */
 
-        for (j = 0; j < i; ++j) {
+        j = 0;
+        for (; j < i; ++j) {
             /* X^(2^i + 2^j) */
             copy_gf2n(F_cp, F_HFEv);
             F_HFEv += NB_WORD_GFqn;

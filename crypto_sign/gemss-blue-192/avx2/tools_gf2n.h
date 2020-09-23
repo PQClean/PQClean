@@ -36,7 +36,7 @@ typedef const UINT cst_static_gf2n;
 #define HFEnr8 (HFEn&7)
 #define MASK8_GF2n ((1U<<HFEnr8)-1)
 /* Number of bytes that an element of GF(2^n) needs */
-#define NB_BYTES_GFqn ((HFEn>>3)+((HFEnr8)?1:0))
+#define NB_BYTES_GFqn ((HFEn>>3)+1)
 
 
 

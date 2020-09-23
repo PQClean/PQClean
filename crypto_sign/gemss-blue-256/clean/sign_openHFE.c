@@ -39,8 +39,11 @@ static void uncompress_signHFE(UINT *sm, const unsigned char *sm8) {
 
     for (k1 = 1; k1 < NB_ITE; ++k1) {
         /* Number of bits to complete the byte of sm8, in [0,7] */
-        val_n = ((66) < ((8 - (nb_bits & 7U)) & 7U)) ? (HFEDELTA + HFEv)
-                : ((8 - (nb_bits & 7U)) & 7U);
+        if ((66) < ((8 - (nb_bits & 7U)) & 7U)) {
+            val_n = (66);
+        } else {
+            val_n = ((8 - (nb_bits & 7U)) & 7U);
+        }
 
         /* First byte of sm8 */
         if (nb_bits & 7U) {
