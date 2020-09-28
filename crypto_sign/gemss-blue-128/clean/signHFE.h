@@ -5,6 +5,7 @@
 #include "gf2nx.h"
 #include "matrix_gf2.h"
 #include "parameters_HFE.h"
+#include "sizes_HFE.h"
 #include <stddef.h>
 
 
@@ -14,7 +15,10 @@ typedef struct _secret_key_HFE {
     GLnv_gf2 S;
     GLn_gf2 T;
 
-    UINT *sk_uncomp;
+    UINT sk_uncomp[NB_UINT_HFEVPOLY
+                   + (LTRIANGULAR_NV_SIZE << 1)
+                   + (LTRIANGULAR_N_SIZE << 1) + SIZE_VECTOR_t
+                   + MATRIXnv_SIZE + MATRIXn_SIZE];
 } secret_key_HFE;
 
 

@@ -29,9 +29,8 @@ typedef const UINT cst_static_gf2n;
 #define HFEnr (9)
 /* The number of word that an element of GF(2^n) needs */
 #define NB_WORD_GFqn_TMP (HFEnq+1)
-
 /* Mask for arithmetic in GF(2^n) */
-#define MASK_GF2n maskUINT(HFEnr)
+#define MASK_GF2n ((UINT_1<<(HFEnr))-UINT_1)
 
 #define HFEnr8 (HFEn&7)
 #define MASK8_GF2n ((1U<<HFEnr8)-1)
@@ -138,7 +137,8 @@ typedef const UINT cst_static_gf2n;
 
 #define set0_product_gf2n(c) SET0((unsigned char*)(c),8*NB_WORD_MMUL)
 
-#define set0_high_product_gf2n(c)             SET0((c)+NB_WORD_GFqn,NB_WORD_MMUL-NB_WORD_GFqn)
+#define set0_high_product_gf2n(c) \
+    SET0((c)+NB_WORD_GFqn,NB_WORD_MMUL-NB_WORD_GFqn)
 
 
 

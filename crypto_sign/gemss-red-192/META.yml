@@ -5,6 +5,7 @@ length-public-key: 1290543
 length-secret-key: 24
 length-signature: 55
 nistkat-sha256: a3edfab4e1387318d720589d7173a5df5221b611d4aac70ac1f9c41e31da2223
+testvectors-sha256: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 principal-submitters:
   - A. Casanova
   - J.-C. Faugere

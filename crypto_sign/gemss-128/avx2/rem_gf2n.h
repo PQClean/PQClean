@@ -5,7 +5,6 @@
 #include "macro.h"
 #include "parameters_HFE.h"
 #include "rem5_gf2n.h"
-#include "rem_gf2x.h"
 #include "tools_gf2n.h"
 
 
@@ -31,10 +30,19 @@
 
 
 /* Automatic choice of REM_GF2N */
-
-/* Example: REM192_TRINOMIAL_GF2X(P,Pol,K3mod64,KI,KI64,K364mod64,
-                                  Q,R,MASK_GF2n) */
-#define REM_GF2N(P,Pol,Q,R) CONCAT(CONCAT_NB_BITS_MMUL_SUP(REM),_TRINOMIAL_GF2X(P,Pol,K3mod64,KI,KI64,K364mod64,Q,R,MASK_GF2n))
+/* Assumes KI >= K3, which it is for {Blue,Red,}GeMSS128 */
+#define REM_GF2N(P,Pol,Q,R) \
+    (Q)[0]=((Pol)[2]>>(KI))^((Pol)[3]<<(KI64));\
+    (Q)[1]=((Pol)[3]>>(KI))^((Pol)[4]<<(KI64));\
+    (Q)[2]=((Pol)[4]>>(KI))^((Pol)[5]<<(KI64));\
+    XOR3(P,Pol,Q);\
+    (P)[0]^=(Q)[0]<<(K3);\
+    (P)[1]^=((Q)[0]>>(K364))^((Q)[1]<<(K3));\
+    (P)[2]^=((Q)[1]>>(K364))^((Q)[2]<<(K3));\
+    (R)=(Q)[2]>>((KI)-(K3));\
+    (P)[0]^=(R);\
+    (P)[0]^=(R)<<(K3);\
+    (P)[2]&=(MASK_GF2n);
 
 
 /***********************************************************************/

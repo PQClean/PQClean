@@ -89,9 +89,11 @@ typedef const UINT *cst_Tnv_gf2;
 
 
 /* Size of lower triangular matrix n*n (in words) */
-#define LTRIANGULAR_N_SIZE (((HFEnq*(HFEnq+1))>>1)*NB_BITS_UINT+                            NB_WORD_GFqn*HFEnr)
+#define LTRIANGULAR_N_SIZE (((HFEnq*(HFEnq+1))>>1)*NB_BITS_UINT+\
+                            NB_WORD_GFqn*HFEnr)
 /* Size of lower triangular matrix (n+v)*(n+v) (in words) */
-#define LTRIANGULAR_NV_SIZE (((HFEnvq*(HFEnvq+1))>>1)*NB_BITS_UINT+                            NB_WORD_GF2nv*HFEnvr)
+#define LTRIANGULAR_NV_SIZE (((HFEnvq*(HFEnvq+1))>>1)*NB_BITS_UINT+\
+                             NB_WORD_GF2nv*HFEnvr)
 
 
 

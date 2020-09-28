@@ -42,10 +42,10 @@
 /* The number of bytes that an element of GF(2^NB_EQ) needs */
 #define NB_BYTES_EQ NB_EQq
 
-#define MASK_EQ mask64(0)
 /* The AND is useless here */
 #define MASK_64(c)
 #define MASK2_64(c,a)
+#define MASK_EQ UINT_M1
 
 
 /* To choose macro for NB_WORD_EQ*64 bits */

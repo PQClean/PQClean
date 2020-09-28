@@ -268,7 +268,8 @@ void PQCLEAN_GEMSS192_AVX2_genLowerMatrixnv(Tn_gf2 L) {
 
 
 #define LOOPJR(NB_IT) \
-    mini=MINI(iq,jq);\
+    if (iq<jq) mini=iq; \
+    else mini=jq; \
     *S=0;\
     for(jr=0;jr<(NB_IT);++jr)\
     {\

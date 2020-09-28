@@ -3,7 +3,6 @@
 #include "inv_gf2n.h"
 #include "mul_gf2n.h"
 #include "rem_gf2n.h"
-#include "rem_gf2x.h"
 #include "sqr_gf2n.h"
 #include "tools_gf2n.h"
 

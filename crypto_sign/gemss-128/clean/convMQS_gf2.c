@@ -86,16 +86,13 @@ void PQCLEAN_GEMSS128_CLEAN_convMQS_one_eq_to_hybrid_rep8_comp_gf2(uint8_t *pk2,
     unsigned int i;
     unsigned int j;
 
-    uint8_t *pk_U = (uint8_t *)malloc(HFEmr8 * NB_BYTES_EQUATION
-                                      * sizeof(uint8_t));
+    uint8_t pk_U[HFEmr8 * NB_BYTES_EQUATION] = {0};
 
     convMQS_one_to_last_mr8_equations_gf2(pk_U, pk);
     for (j = 0; j < HFEmr8; ++j) {
         PQCLEAN_GEMSS128_CLEAN_convMQ_UL_gf2(pk2 + ACCESS_last_equations8 + j * NB_BYTES_EQUATION,
                                              pk_U + j * NB_BYTES_EQUATION);
     }
-
-    free(pk_U);
 
     /* Monomial representation */
     for (i = 0; i < NB_MONOMIAL_PK; ++i) {

@@ -5,7 +5,10 @@
 
 
 
-#define rand_gf2n(A)         randombytes((unsigned char*)(A),NB_BYTES_GFqn);        /* Clean the last word (included the zero padding) */        (A)[NB_WORD_GFqn-1]&=MASK_GF2n;
+#define rand_gf2n(A) \
+    randombytes((unsigned char*)(A),NB_BYTES_GFqn);\
+    /* Clean the last word (included the zero padding) */\
+    (A)[NB_WORD_GFqn-1]&=MASK_GF2n;
 
 
 

@@ -8,7 +8,14 @@
 #include "parameters_HFE.h"
 
 
-#define M_ITOH265(V,MS)        V##EVEN_CASE(2);        V##EVEN_CASE(4);        V##EVEN_CASE(8);        V##ODD_CASE(16);        V##EVEN_CASE(33);        V##EVEN_CASE(66);        V##EVEN_CASE(132);
+#define M_ITOH265(V,MS)\
+    V##EVEN_CASE(2);\
+    V##EVEN_CASE(4);\
+    V##EVEN_CASE(8);\
+    V##ODD_CASE(16);\
+    V##EVEN_CASE(33);\
+    V##EVEN_CASE(66);\
+    V##EVEN_CASE(132);
 
 #define ITOH265U M_ITOH265(,)
 #define P_ITOH265U M_ITOH265(P,)

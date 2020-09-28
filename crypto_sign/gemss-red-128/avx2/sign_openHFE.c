@@ -13,7 +13,7 @@
 
 
 /* Number of bits to complete the byte of sm64, in [0,7] */
-#define VAL_BITS_M (((30)<(8-HFEmr8))?(HFEDELTA+HFEv):(8-HFEmr8))
+#define VAL_BITS_M 6
 
 /* Uncompress the signature */
 static void uncompress_signHFE(UINT *sm, const unsigned char *sm8) {
@@ -303,10 +303,8 @@ int PQCLEAN_GEMSSRED128_AVX2_sign_openHFE(const unsigned char *m, size_t len,
     int ret;
 
     /* Compute p(S_(NB_IT),X_(NB_IT)) */
-    UINT *pk_tmp;
+    UINT pk_tmp[(1 + NB_WORD_UNCOMP_EQ * HFEmr8)];
     unsigned int i;
-    /* 1 to store the constant */
-    pk_tmp = (UINT *)malloc((1 + NB_WORD_UNCOMP_EQ * HFEmr8) * sizeof(UINT));
 
     uint64_t val;
     const uint8_t *pk_cp;
@@ -345,8 +343,6 @@ int PQCLEAN_GEMSSRED128_AVX2_sign_openHFE(const unsigned char *m, size_t len,
     ret = PQCLEAN_GEMSSRED128_AVX2_sign_openHFE_huncomp_pk(m, len, sm8, pk, (uint8_t *)pk_tmp,
             evalMQShybrid8_nocst_gf2_m);
 
-
-    free(pk_tmp);
 
     return ret;
 }

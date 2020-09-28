@@ -12,7 +12,11 @@
  * @param[in]   i   An integer for a for loop.
  * @remark  Constant-time implementation when len is not secret.
  */
-#define add2_gf2nx(res,A,len,i)     for((i)=0;(i)<((len)*NB_WORD_GFqn);++(i))    {        (res)[i]^=(A)[i];    }
+#define add2_gf2nx(res,A,len,i) \
+    for((i)=0;(i)<((len)*NB_WORD_GFqn);++(i))\
+    {\
+        (res)[i]^=(A)[i];\
+    }
 
 
 /**
@@ -24,7 +28,11 @@
  * @remark  Requires to allocate len elements of GF(2^n) for res.
  * @remark  Constant-time implementation when len is not secret.
  */
-#define copy_gf2nx(res,A,len,i)     for((i)=0;(i)<((len)*NB_WORD_GFqn);++(i))    {        (res)[i]=(A)[i];    }
+#define copy_gf2nx(res,A,len,i) \
+    for((i)=0;(i)<((len)*NB_WORD_GFqn);++(i))\
+    {\
+        (res)[i]=(A)[i];\
+    }
 
 
 /**
@@ -35,7 +43,11 @@
  * @remark  Requires to allocate len elements of GF(2^n) for res.
  * @remark  Constant-time implementation when len is not secret.
  */
-#define set0_gf2nx(res,len,i)     for((i)=0;(i)<((len)*NB_WORD_GFqn);++(i))    {        (res)[i]=0;    }
+#define set0_gf2nx(res,len,i) \
+    for((i)=0;(i)<((len)*NB_WORD_GFqn);++(i))\
+    {\
+        (res)[i]=0;\
+    }
 
 
 #endif

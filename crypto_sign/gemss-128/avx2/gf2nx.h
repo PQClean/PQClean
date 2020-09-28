@@ -58,9 +58,11 @@ typedef const UINT *cst_vec_gf2nx;
    1 (X^0) + 1 (X^1) + i(i+1)/2 (X^2 to X^(2*2^(i-1))) +
                           (j+1) (X^(2^i + 2^0) to X^(2^i + 2^j))
                              -1 (leading term == 1 is not stored) */
-#define NB_COEFS_HFEPOLY                         (2+HFEDegJ+((HFEDegI*(HFEDegI+1))>>1))
+#define NB_COEFS_HFEPOLY \
+    (2+HFEDegJ+((HFEDegI*(HFEDegI+1))>>1))
 
-#define NB_COEFS_HFEVPOLY                     (NB_COEFS_HFEPOLY+(NB_MONOMIAL_VINEGAR-1)+(HFEDegI+1)*HFEv)
+#define NB_COEFS_HFEVPOLY \
+    (NB_COEFS_HFEPOLY+(NB_MONOMIAL_VINEGAR-1)+(HFEDegI+1)*HFEv)
 
 
 #define NB_UINT_HFEVPOLY (NB_COEFS_HFEVPOLY*NB_WORD_GFqn)
@@ -74,7 +76,7 @@ typedef const UINT *cst_vec_gf2nx;
 
 /* A structure with a special list to find the exponents of the monomials */
 typedef struct {
-    cst_sparse_monic_gf2nx poly;
+    UINT poly[NB_UINT_HFEPOLY];
     /* List of the successive differences of the exponents of the monomials of
        poly multiplied by NB_WORD_GFqn */
     unsigned int L[NB_COEFS_HFEPOLY];

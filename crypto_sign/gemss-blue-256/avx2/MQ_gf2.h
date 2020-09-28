@@ -31,7 +31,8 @@ typedef const UINT *cst_mqnv_gf2;
 
 
 /* Size for an uncompressed equation */
-#define NB_WORD_UNCOMP_EQ     ((((HFEnvq*(HFEnvq+1))>>1)*NB_BITS_UINT)+(HFEnvq+1)*HFEnvr)
+#define NB_WORD_UNCOMP_EQ \
+    ((((HFEnvq*(HFEnvq+1))>>1)*NB_BITS_UINT)+(HFEnvq+1)*HFEnvr)
 
 
 

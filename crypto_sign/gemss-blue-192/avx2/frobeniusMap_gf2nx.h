@@ -19,7 +19,7 @@ unsigned int PQCLEAN_GEMSSBLUE192_AVX2_frobeniusMap_HFE_gf2nx(gf2nx Xqn,
 #define POW_II (ONE32<<II)
 
 /* First k s.t. k*(2^II) >= D, i.e. k = Ceil(D/2^II) */
-#define KP ((HFEDeg>>II)+((HFEDeg%POW_II)?1:0))
+#define KP ((HFEDeg>>II)+1)
 /* Number of coefficients k s.t. k*(2^II) >= D and k < D */
 #define KX (HFEDeg-KP)
 

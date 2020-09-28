@@ -5,7 +5,6 @@
 #include "macro.h"
 #include "parameters_HFE.h"
 #include "rem5_gf2n.h"
-#include "rem_gf2x.h"
 #include "tools_gf2n.h"
 
 
@@ -31,8 +30,26 @@
 
 
 /* Automatic choice of REM_GF2N */
-
-#define REM_GF2N(P,Pol,Q,R) REM288_SPECIALIZED_TRINOMIAL_GF2X(P,Pol,K3,KI,KI64,K364,Q,R,MASK_GF2n)
+/* Assumes KI < K3, which it is for {Blue,Red,}GeMSS192 */
+#define REM_GF2N(P,Pol,Q,R)\
+    (Q)[0]=((Pol)[4]>>(KI))^((Pol)[5]<<(KI64));\
+    (Q)[1]=((Pol)[5]>>(KI))^((Pol)[6]<<(KI64));\
+    (Q)[2]=((Pol)[6]>>(KI))^((Pol)[7]<<(KI64));\
+    (Q)[3]=((Pol)[7]>>(KI))^((Pol)[8]<<(KI64));\
+    (Q)[4]=((Pol)[8]>>(KI));\
+    XOR5(P,Pol,Q);\
+    (P)[0]^=(Q)[0]<<(K3);\
+    (P)[1]^=((Q)[0]>>(K364))^((Q)[1]<<(K3));\
+    (P)[2]^=((Q)[1]>>(K364))^((Q)[2]<<(K3));\
+    (P)[3]^=((Q)[2]>>(K364))^((Q)[3]<<(K3));\
+    (P)[4]^=((Q)[3]>>(K364))^((Q)[4]<<(K3));\
+    /* 64-((K364)+(KI)) == ((K3)-(KI)) */\
+    (R)=((Q)[3]>>((K364)+(KI)))^((Q)[4]<<((K3)-(KI)));\
+    (P)[0]^=(R);\
+    (P)[0]^=(R)<<(K3);\
+    /* This row is the unique difference with REM288_TRINOMIAL_GF2X */\
+    (P)[1]^=(R)>>(K364);\
+    (P)[4]&=(MASK_GF2n);
 
 
 /***********************************************************************/

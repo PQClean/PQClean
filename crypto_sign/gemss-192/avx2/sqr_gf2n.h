@@ -38,7 +38,8 @@ void PQCLEAN_GEMSS192_AVX2_sqr_no_simd_gf2x_ref2(static_gf2x C[NB_WORD_MUL],
 
 
 /* Choice of the squaring in GF(2)[x] for the arithmetic in GF(2^n). */
-#define sqr_nocst_gf2x                 CONCAT(CONCAT_NB_BITS_MMUL_SUP(best_sqr_nocst_),_gf2x)
+#define sqr_nocst_gf2x \
+    CONCAT(CONCAT_NB_BITS_MMUL_SUP(best_sqr_nocst_),_gf2x)
 
 #define sqr_gf2x CONCAT(CONCAT_NB_BITS_MMUL_SUP(best_sqr),_gf2x)
 

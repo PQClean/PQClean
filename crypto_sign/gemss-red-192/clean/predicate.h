@@ -5,10 +5,18 @@
 
 
 /* Compare two 64-bit words in constant-time */
-#define CMP_LT_U64(a,b)             (((((a)>>63U)^((b)>>63U))    &((((a)>>63U)-((b)>>63U))>>63U))        ^    ((((a)>>63U)^((b)>>63U)^ONE64)              &((((a)&((uint64_t)0x7FFFFFFFFFFFFFFF))                -((b)&((uint64_t)0x7FFFFFFFFFFFFFFF)))>>63U)))
+#define CMP_LT_U64(a,b) \
+    (((((a)>>63U)^((b)>>63U))    &((((a)>>63U)-((b)>>63U))>>63U))\
+     ^    ((((a)>>63U)^((b)>>63U)^ONE64)\
+           &((((a)&((uint64_t)0x7FFFFFFFFFFFFFFF))\
+              -((b)&((uint64_t)0x7FFFFFFFFFFFFFFF)))>>63U)))
 
 /* Compare two 32-bit words in constant-time */
-#define CMP_LT_U32(a,b)             (((((a)>>31U)^((b)>>31U))    &((((a)>>31U)-((b)>>31U))>>31U))        ^    ((((a)>>31U)^((b)>>31U)^ONE32)              &((((a)&((uint32_t)0x7FFFFFFF))                -((b)&((uint32_t)0x7FFFFFFF)))>>31U)))
+#define CMP_LT_U32(a,b) \
+    (((((a)>>31U)^((b)>>31U))    &((((a)>>31U)-((b)>>31U))>>31U))\
+     ^    ((((a)>>31U)^((b)>>31U)^ONE32)\
+           &((((a)&((uint32_t)0x7FFFFFFF))\
+              -((b)&((uint32_t)0x7FFFFFFF)))>>31U)))
 
 /* Compare two UINT in constant-time */
 #define CMP_LT_UINT CONCAT(CMP_LT_U,NB_BITS_UINT)
@@ -74,14 +82,22 @@ int PQCLEAN_GEMSSRED192_CLEAN_CMP_LT_NOCST(const UINT *a, const UINT *b, unsigne
 
 /* Comparison, less than */
 #define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT1_NOCST(a,b) ((a)[0]<(b)[0])
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT2_NOCST(a,b) (((a)[1]==(b)[1])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT1_NOCST(a,b)                                              :((a)[1]<(b)[1]))
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT3_NOCST(a,b) (((a)[2]==(b)[2])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT2_NOCST(a,b)                                              :((a)[2]<(b)[2]))
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT4_NOCST(a,b) (((a)[3]==(b)[3])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT3_NOCST(a,b)                                              :((a)[3]<(b)[3]))
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT5_NOCST(a,b) (((a)[4]==(b)[4])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT4_NOCST(a,b)                                              :((a)[4]<(b)[4]))
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT6_NOCST(a,b) (((a)[5]==(b)[5])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT5_NOCST(a,b)                                              :((a)[5]<(b)[5]))
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT7_NOCST(a,b) (((a)[6]==(b)[6])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT6_NOCST(a,b)                                              :((a)[6]<(b)[6]))
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT8_NOCST(a,b) (((a)[7]==(b)[7])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT7_NOCST(a,b)                                              :((a)[7]<(b)[7]))
-#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT9_NOCST(a,b) (((a)[8]==(b)[8])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT8_NOCST(a,b)                                              :((a)[8]<(b)[8]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT2_NOCST(a,b) (((a)[1]==(b)[1])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT1_NOCST(a,b)\
+        :((a)[1]<(b)[1]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT3_NOCST(a,b) (((a)[2]==(b)[2])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT2_NOCST(a,b)\
+        :((a)[2]<(b)[2]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT4_NOCST(a,b) (((a)[3]==(b)[3])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT3_NOCST(a,b)\
+        :((a)[3]<(b)[3]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT5_NOCST(a,b) (((a)[4]==(b)[4])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT4_NOCST(a,b)\
+        :((a)[4]<(b)[4]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT6_NOCST(a,b) (((a)[5]==(b)[5])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT5_NOCST(a,b)\
+        :((a)[5]<(b)[5]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT7_NOCST(a,b) (((a)[6]==(b)[6])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT6_NOCST(a,b)\
+        :((a)[6]<(b)[6]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT8_NOCST(a,b) (((a)[7]==(b)[7])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT7_NOCST(a,b)\
+        :((a)[7]<(b)[7]))
+#define PQCLEAN_GEMSSRED192_CLEAN_CMP_LT9_NOCST(a,b) (((a)[8]==(b)[8])?PQCLEAN_GEMSSRED192_CLEAN_CMP_LT8_NOCST(a,b)\
+        :((a)[8]<(b)[8]))
 
 
 #endif

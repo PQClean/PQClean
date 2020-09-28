@@ -8,7 +8,14 @@
 #include "parameters_HFE.h"
 
 
-#define M_ITOH358(V,MS)        V##ODD_CASE(2);        V##ODD_CASE(5);        V##EVEN_CASE(11);        V##EVEN_CASE(22);        V##ODD_CASE(44);        V##EVEN_CASE(89);        V##ODD_CASE(178);
+#define M_ITOH358(V,MS)\
+    V##ODD_CASE(2);\
+    V##ODD_CASE(5);\
+    V##EVEN_CASE(11);\
+    V##EVEN_CASE(22);\
+    V##ODD_CASE(44);\
+    V##EVEN_CASE(89);\
+    V##ODD_CASE(178);
 
 #define ITOH358U M_ITOH358(,)
 #define P_ITOH358U M_ITOH358(P,)

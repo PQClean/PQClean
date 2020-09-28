@@ -58,7 +58,8 @@ typedef const UINT *cst_mqnv_gf2_m;
 /* It is padded to avoid to load data outside of memory
    during the public-key evaluation */
 /* XXX We remove the padding here XXX */
-#define NB_WORD_HYBRID_EQUATIONS (ACCESS_last_equations+            NB_WORD_UNCOMP_EQ*HFEmr/*+((4-(NB_WORD_GF2nv&3))&3)*/)
+#define NB_WORD_HYBRID_EQUATIONS (ACCESS_last_equations+\
+                                  NB_WORD_UNCOMP_EQ*HFEmr/*+((4-(NB_WORD_GF2nv&3))&3)*/)
 
 
 #define ACCESS_last_equations8 (NB_MONOMIAL_PK*HFEmq8)
@@ -85,7 +86,8 @@ typedef const UINT *cst_mqnv_gf2_m;
 /* XXX We remove the padding here XXX */
 #define MQ_GFqm_SIZE ((NB_MONOMIAL_PK*NB_WORD_GF2m)/*+((4-(NB_WORD_GF2m&3))&3)*/)
 /* XXX 64-bit padding XXX */
-#define MQ_GFqm8_SIZE             (NB_MONOMIAL_PK*NB_BYTES_GFqm+((8-(NB_BYTES_GFqm&7))&7))
+#define MQ_GFqm8_SIZE \
+    (NB_MONOMIAL_PK*NB_BYTES_GFqm+((8-(NB_BYTES_GFqm&7))&7))
 
 #define MALLOC_MQSm (UINT*)malloc(MQ_GFqm_SIZE*sizeof(UINT))
 #define CALLOC_MQSm (UINT*)calloc(MQ_GFqm_SIZE,sizeof(UINT))

@@ -17,9 +17,15 @@ void PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixn(Tn_gf2 L);
 void PQCLEAN_GEMSSRED192_CLEAN_cleanLowerMatrixnv(Tnv_gf2 L);
 void PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixnv(Tnv_gf2 L);
 
-#define GEN_LU_Tn(L,U)     PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixn(L);    /* Generate the transpose of U */    PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixn(U);
+#define GEN_LU_Tn(L,U) \
+    PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixn(L);\
+    /* Generate the transpose of U */\
+    PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixn(U);
 
-#define GEN_LU_Tnv(L,U)     PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixnv(L);    /* Generate the transpose of U */    PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixnv(U);
+#define GEN_LU_Tnv(L,U) \
+    PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixnv(L);\
+    /* Generate the transpose of U */\
+    PQCLEAN_GEMSSRED192_CLEAN_genLowerMatrixnv(U);
 
 void PQCLEAN_GEMSSRED192_CLEAN_randInvMatrix_gf2_n(GLn_gf2 S, Mn_gf2 S_cp);
 void PQCLEAN_GEMSSRED192_CLEAN_randInvMatrix_gf2_nv(GLnv_gf2 S, Mnv_gf2 S_cp);
@@ -29,9 +35,13 @@ void PQCLEAN_GEMSSRED192_CLEAN_mulMatricesLU_gf2_nv(Mnv_gf2 S, cst_Tnv_gf2 L,
         cst_Tnv_gf2 U);
 
 
-#define randInvMatrixLU_gf2_n(S,L,U)             GEN_LU_Tn(L,U);            PQCLEAN_GEMSSRED192_CLEAN_mulMatricesLU_gf2_n(S,L,U);
+#define randInvMatrixLU_gf2_n(S,L,U) \
+    GEN_LU_Tn(L,U);\
+    PQCLEAN_GEMSSRED192_CLEAN_mulMatricesLU_gf2_n(S,L,U);
 
-#define randInvMatrixLU_gf2_nv(S,L,U)             GEN_LU_Tnv(L,U);            PQCLEAN_GEMSSRED192_CLEAN_mulMatricesLU_gf2_nv(S,L,U);
+#define randInvMatrixLU_gf2_nv(S,L,U) \
+    GEN_LU_Tnv(L,U);\
+    PQCLEAN_GEMSSRED192_CLEAN_mulMatricesLU_gf2_nv(S,L,U);
 
 
 #endif

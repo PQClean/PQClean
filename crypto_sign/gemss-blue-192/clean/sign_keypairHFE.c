@@ -91,12 +91,17 @@
  * @remark  Constant-time implementation.
  */
 int PQCLEAN_GEMSSBLUE192_CLEAN_sign_keypairHFE(uint8_t *pk, UINT *sk) {
-    mqsnv_gf2n Q;
+    UINT Q[MQnv_GFqn_SIZE] = {0};
     sparse_monic_gf2nx F;
-    GLnv_gf2 S;
-    GLn_gf2 T;
+    /* Generate S for the linear transformation on variables */
+    UINT S[MATRIXnv_SIZE] = {0};
+    UINT *T = S;
     Tnv_gf2 L, U;
-    UINT *sk_uncomp;
+    UINT sk_uncomp[(NB_UINT_HFEVPOLY +
+                    (LTRIANGULAR_NV_SIZE << 1) +
+                    (LTRIANGULAR_N_SIZE << 1) +
+                    SIZE_VECTOR_t)] = {0};
+    uint8_t pk_tmp[MQ_GFqm8_SIZE] = {0};
     int ret;
 
 
@@ -104,10 +109,6 @@ int PQCLEAN_GEMSSBLUE192_CLEAN_sign_keypairHFE(uint8_t *pk, UINT *sk) {
 
 
     /* The seed generates L,U and L',U' such as S=LU and T=L'U' */
-    sk_uncomp = (UINT *)malloc((NB_UINT_HFEVPOLY + (LTRIANGULAR_NV_SIZE << 1)
-                                + (LTRIANGULAR_N_SIZE << 1) + SIZE_VECTOR_t)
-                               * sizeof(UINT));
-    VERIFY_ALLOC_RET(sk_uncomp);
     expandSeed((uint8_t *)sk_uncomp, (NB_UINT_HFEVPOLY
                                       + (LTRIANGULAR_NV_SIZE << 1)
                                       + (LTRIANGULAR_N_SIZE << 1) + SIZE_VECTOR_t) << 3,
@@ -123,28 +124,10 @@ int PQCLEAN_GEMSSBLUE192_CLEAN_sign_keypairHFE(uint8_t *pk, UINT *sk) {
     /* Here, the first element (of GF(2^n)) of Q is reserved to store cst.
        The matrix Q is stored as upper triangular matrix. */
 
-    Q = (UINT *)malloc(MQnv_GFqn_SIZE * sizeof(UINT));
-    if (!Q) {
-        free(sk_uncomp);
-        return ERROR_ALLOC;
-    }
     ret = genSecretMQS_gf2(Q, F);
     if (ret) {
-        free(sk_uncomp);
-        free(Q);
         return ret;
     }
-
-    /* Generate S for the linear transformation on variables */
-    S = MALLOC_MATRIXnv;
-    if (!S) {
-        free(sk_uncomp);
-        free(Q);
-        return ERROR_ALLOC;
-    }
-    /* The allocated memory for S will be use for T */
-    T = S;
-
 
     /* The random bytes are already generated from a seed */
     L = sk_uncomp + NB_UINT_HFEVPOLY;
@@ -172,34 +155,13 @@ int PQCLEAN_GEMSSBLUE192_CLEAN_sign_keypairHFE(uint8_t *pk, UINT *sk) {
     PQCLEAN_GEMSSBLUE192_CLEAN_invMatrixLUn_gf2(T, L, U);
 
 
-    free(sk_uncomp);
-
-
-    uint8_t *pk_tmp = (uint8_t *)malloc(MQ_GFqm8_SIZE * sizeof(uint8_t));
-
-    if (!pk_tmp) {
-        free(Q);
-        /* T is stored in S. free(S) would have the same effect. */
-        free(T);
-        return ERROR_ALLOC;
-    }
-
-
     /* Use T (variable S) to compute cst_pk and Q_pk */
     mixEquationsMQS8_gf2(pk_tmp, Q, T);
-    free(Q);
-
 
     /* Generate the inverse of T */
 
 
-    /* T is stored in S */
-    free(S);
-
-
     convMQS_one_eq_to_hybrid_rep8_gf2(pk, pk_tmp);
-
-    free(pk_tmp);
 
     return 0;
 }

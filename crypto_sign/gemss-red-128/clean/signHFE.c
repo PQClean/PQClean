@@ -28,7 +28,7 @@
 
 
 /* Number of bits to complete the byte of sm64, in [0,7] */
-#define VAL_BITS_M (((30)<(8-HFEmr8))?(HFEDELTA+HFEv):(8-HFEmr8))
+#define VAL_BITS_M 6
 
 static void compress_signHFE(unsigned char *sm8, const UINT *sm) {
     unsigned char *sm64;
@@ -127,10 +127,6 @@ void PQCLEAN_GEMSSRED128_CLEAN_precSignHFESeed(secret_key_HFE *sk_HFE, const UIN
     Tnv_gf2 L, U;
 
 
-    ALIGNED_GFqn_MALLOC(sk_HFE->sk_uncomp, UINT *, NB_UINT_HFEVPOLY
-                        + (LTRIANGULAR_NV_SIZE << 1)
-                        + (LTRIANGULAR_N_SIZE << 1) + SIZE_VECTOR_t
-                        + MATRIXnv_SIZE + MATRIXn_SIZE, sizeof(UINT));
     expandSeed((uint8_t *)(sk_HFE->sk_uncomp), (NB_UINT_HFEVPOLY
                + (LTRIANGULAR_NV_SIZE << 1)
                + (LTRIANGULAR_N_SIZE << 1) + SIZE_VECTOR_t) << 3,
@@ -174,19 +170,17 @@ void PQCLEAN_GEMSSRED128_CLEAN_precSignHFESeed(secret_key_HFE *sk_HFE, const UIN
 int PQCLEAN_GEMSSRED128_CLEAN_precSignHFE(secret_key_HFE *sk_HFE, const UINT **linear_coefs,
         const UINT *sk) {
     cst_sparse_monic_gf2nx F_HFEv;
-    UINT *F;
+    sparse_monic_gf2nx F;
+    sparse_monic_gf2nx F_cp;
     unsigned int i;
 
     PQCLEAN_GEMSSRED128_CLEAN_precSignHFESeed(sk_HFE, sk);
 
     PQCLEAN_GEMSSRED128_CLEAN_initListDifferences_gf2nx(sk_HFE->F_struct.L);
 
+    F = sk_HFE->F_struct.poly;
     F_HFEv = sk_HFE->F_HFEv;
 
-    ALIGNED_GFqn_MALLOC(F, UINT *, NB_UINT_HFEPOLY, sizeof(UINT));
-    VERIFY_ALLOC_RET(F);
-
-    UINT *F_cp;
     unsigned int j;
 
     /* X^(2^0) */
@@ -210,7 +204,6 @@ int PQCLEAN_GEMSSRED128_CLEAN_precSignHFE(secret_key_HFE *sk_HFE, const UINT **l
         F_HFEv += MLv_GFqn_SIZE;
         F_cp += NB_WORD_GFqn;
     }
-    sk_HFE->F_struct.poly = F;
 
     return 0;
 }
@@ -264,7 +257,7 @@ int PQCLEAN_GEMSSRED128_CLEAN_signHFE_FeistelPatarin(unsigned char *sm8,
     unsigned char rem_char;
 
     int nb_root;
-    secret_key_HFE sk_HFE;
+    secret_key_HFE sk_HFE = {0};
 
     UINT *F;
     unsigned int i;
@@ -344,7 +337,6 @@ int PQCLEAN_GEMSSRED128_CLEAN_signHFE_FeistelPatarin(unsigned char *sm8,
             }
             if (nb_root < 0) {
                 /* Error from chooseRootHFE */
-                ALIGNED_GFqn_FREE(F);
                 return nb_root;
             }
 
@@ -378,9 +370,6 @@ int PQCLEAN_GEMSSRED128_CLEAN_signHFE_FeistelPatarin(unsigned char *sm8,
             Hi = tmp;
         }
     }
-
-    free(sk_HFE.sk_uncomp);
-    ALIGNED_GFqn_FREE(F);
 
     compress_signHFE(sm8, sm);
 

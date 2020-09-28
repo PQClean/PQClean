@@ -25,15 +25,13 @@
  * @remark  Constant-time implementation.
  */
 int PQCLEAN_GEMSSRED128_AVX2_changeVariablesMQS_simd_gf2(mqsnv_gf2n MQS, cst_GLnv_gf2 S) {
-    UINT tmp[NB_WORD_GFqn];
-    mqsnv_gf2n MQS2, MQS2_cp;
+    UINT tmp[NB_WORD_GFqn] = {0};
+    /* Tmp matrix (n+v)*(n+v) of quadratic terms to compute S*Q */
+    UINT MQS2[HFEnv * HFEnv * NB_WORD_GFqn] = {0};
+    UINT *MQS2_cp;
     cst_mqsnv_gf2n MQS_cpi, MQS_cpj;
     cst_GLnv_gf2 S_cpi, S_cpj;
     unsigned int i, j;
-
-    /* Tmp matrix (n+v)*(n+v) of quadratic terms to compute S*Q */
-    MQS2 = (UINT *)malloc(HFEnv * HFEnv * NB_WORD_GFqn * sizeof(UINT));
-    VERIFY_ALLOC_RET(MQS2);
 
     /* To avoid the constant of MQS */
     MQS += NB_WORD_GFqn;
@@ -122,8 +120,6 @@ int PQCLEAN_GEMSSRED128_AVX2_changeVariablesMQS_simd_gf2(mqsnv_gf2n MQS, cst_GLn
         S_cpj += NB_WORD_GF2nv;
     }
 
-
-    free(MQS2);
     return 0;
 }
 
@@ -222,15 +218,13 @@ int PQCLEAN_GEMSSRED128_AVX2_changeVariablesMQS_simd_gf2(mqsnv_gf2n MQS, cst_GLn
  * @remark  Constant-time implementation.
  */
 int PQCLEAN_GEMSSRED128_AVX2_changeVariablesMQS64_gf2(mqsnv_gf2n MQS, cst_GLnv_gf2 S) {
-    mqsnv_gf2n MQS2, MQS2_cp;
+    /* Tmp matrix (n+v)*(n+v) of quadratic terms to compute S*Q */
+    UINT MQS2[HFEnv * HFEnv * NB_WORD_GFqn] = {0};
+    UINT *MQS2_cp;
     UINT bit_kr, mask;
     cst_mqsnv_gf2n MQS_cpi, MQS_cpj;
     cst_GLnv_gf2 S_cpi, S_cpj;
     unsigned int iq, ir, j, jq, jr, kq, kr;
-
-    /* Tmp matrix (n+v)*(n+v) of quadratic terms to compute S*Q */
-    MQS2 = (UINT *)calloc(HFEnv * HFEnv * NB_WORD_GFqn, sizeof(UINT));
-    VERIFY_ALLOC_RET(MQS2);
 
     /* To avoid the constant of MQS */
     MQS_cpi = MQS + NB_WORD_GFqn;
@@ -342,7 +336,5 @@ int PQCLEAN_GEMSSRED128_AVX2_changeVariablesMQS64_gf2(mqsnv_gf2n MQS, cst_GLnv_g
     }
     /* the last block excepted the last row */
 
-
-    free(MQS2);
     return 0;
 }

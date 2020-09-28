@@ -24,9 +24,9 @@ typedef UINT static_gf2m;
 #define HFEmr (HFEm%NB_BITS_UINT)
 /* The number of word that an element of GF(2^m) needs */
 #define NB_WORD_GF2m_TMP (HFEmq+1)
-
 /* Mask to truncate the last word */
-#define MASK_GF2m maskUINT(HFEmr)
+#define MASK_GF2m ((UINT_1<<(HFEmr))-UINT_1)
+
 
 #define HFEmq8 (HFEm>>3)
 #define HFEmr8 (HFEm&7U)

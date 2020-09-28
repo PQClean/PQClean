@@ -8,7 +8,13 @@
 #include "parameters_HFE.h"
 
 
-#define M_ITOH177(V,MS)        V##ODD_CASE(2);        V##ODD_CASE(5);        V##EVEN_CASE(11);        V##EVEN_CASE(22);        V##EVEN_CASE(44);        V##EVEN_CASE(88);
+#define M_ITOH177(V,MS)\
+    V##ODD_CASE(2);\
+    V##ODD_CASE(5);\
+    V##EVEN_CASE(11);\
+    V##EVEN_CASE(22);\
+    V##EVEN_CASE(44);\
+    V##EVEN_CASE(88);
 
 #define ITOH177U M_ITOH177(,)
 #define P_ITOH177U M_ITOH177(P,)

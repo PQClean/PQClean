@@ -12,7 +12,8 @@
 /* Set to 0 */
 #define PSETZERO_PS() _mm_setzero_ps()
 
-#define PSHUFFLE_PS(A,B,i)                 ((__m128i)_mm_shuffle_ps((__m128)(A),(__m128)(B),i))
+#define PSHUFFLE_PS(A,B,i) \
+    ((__m128i)_mm_shuffle_ps((__m128)(A),(__m128)(B),i))
 
 #define PMOVE_PS(A,B) ((__m128i)_mm_move_ss((__m128)(A),(__m128)(B)))
 
@@ -48,7 +49,8 @@
 
 
 /* Shuffle */
-#define PSHUFFLE_PD(A,B,i)                 ((__m128i)_mm_shuffle_pd((__m128d)(A),(__m128d)(B),i))
+#define PSHUFFLE_PD(A,B,i) \
+    ((__m128i)_mm_shuffle_pd((__m128d)(A),(__m128d)(B),i))
 
 /* Add */
 #define PADD_64(A,B) _mm_add_epi64(A,B)
@@ -57,8 +59,10 @@
 #define PSUB_64(A,B) _mm_sub_epi64(A,B)
 
 /* Set */
-#define PSET_8(AF,AE,AD,AC,AB,AA,A9,A8,A7,A6,A5,A4,A3,A2,A1,A0)                 _mm_set_epi8(AF,AE,AD,AC,AB,AA,A9,A8,A7,A6,A5,A4,A3,A2,A1,A0)
-#define PSET_16(A7,A6,A5,A4,A3,A2,A1,A0)                 _mm_set_epi16(A7,A6,A5,A4,A3,A2,A1,A0)
+#define PSET_8(AF,AE,AD,AC,AB,AA,A9,A8,A7,A6,A5,A4,A3,A2,A1,A0) \
+    _mm_set_epi8(AF,AE,AD,AC,AB,AA,A9,A8,A7,A6,A5,A4,A3,A2,A1,A0)
+#define PSET_16(A7,A6,A5,A4,A3,A2,A1,A0) \
+    _mm_set_epi16(A7,A6,A5,A4,A3,A2,A1,A0)
 #define PSET_32(A3,A2,A1,A0) _mm_set_epi32(A3,A2,A1,A0)
 #define PSET_64(A1,A0) _mm_set_epi64x(A1,A0)
 
@@ -130,88 +134,175 @@
 #define PINIT64(x,A) x=PLOADL(A);
 #define PINIT128(x,A) x=PLOADU(A);
 
-#define PINIT192(x1,x2,A)         PINIT128(x1,A);        PINIT64(x2,(A)+2);
+#define PINIT192(x1,x2,A) \
+    PINIT128(x1,A);\
+    PINIT64(x2,(A)+2);
 
-#define PINIT256(x1,x2,A)         PINIT128(x1,A);        PINIT128(x2,(A)+2);
+#define PINIT256(x1,x2,A) \
+    PINIT128(x1,A);\
+    PINIT128(x2,(A)+2);
 
-#define PINIT320(x1,x2,x3,A)         PINIT256(x1,x2,A);        PINIT64(x3,(A)+4);
+#define PINIT320(x1,x2,x3,A) \
+    PINIT256(x1,x2,A);\
+    PINIT64(x3,(A)+4);
 
-#define PINIT384(x1,x2,x3,A)         PINIT256(x1,x2,A);        PINIT128(x3,(A)+4);
+#define PINIT384(x1,x2,x3,A) \
+    PINIT256(x1,x2,A);\
+    PINIT128(x3,(A)+4);
 
-#define PINIT448(x1,x2,x3,x4,A)         PINIT256(x1,x2,A);        PINIT192(x3,x4,(A)+4);
+#define PINIT448(x1,x2,x3,x4,A) \
+    PINIT256(x1,x2,A);\
+    PINIT192(x3,x4,(A)+4);
 
-#define PINIT512(x1,x2,x3,x4,A)         PINIT256(x1,x2,A);        PINIT256(x3,x4,(A)+4);
+#define PINIT512(x1,x2,x3,x4,A) \
+    PINIT256(x1,x2,A);\
+    PINIT256(x3,x4,(A)+4);
 
-#define PINIT576(x1,x2,x3,x4,x5,A)         PINIT512(x1,x2,x3,x4,A);        PINIT64(x5,(A)+8);
+#define PINIT576(x1,x2,x3,x4,x5,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT64(x5,(A)+8);
 
-#define PINIT640(x1,x2,x3,x4,x5,A)         PINIT512(x1,x2,x3,x4,A);        PINIT128(x5,(A)+8);
+#define PINIT640(x1,x2,x3,x4,x5,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT128(x5,(A)+8);
 
-#define PINIT704(x1,x2,x3,x4,x5,x6,A)         PINIT512(x1,x2,x3,x4,A);        PINIT192(x5,x6,(A)+8);
+#define PINIT704(x1,x2,x3,x4,x5,x6,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT192(x5,x6,(A)+8);
 
-#define PINIT768(x1,x2,x3,x4,x5,x6,A)         PINIT512(x1,x2,x3,x4,A);        PINIT256(x5,x6,(A)+8);
+#define PINIT768(x1,x2,x3,x4,x5,x6,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT256(x5,x6,(A)+8);
 
-#define PINIT832(x1,x2,x3,x4,x5,x6,x7,A)         PINIT512(x1,x2,x3,x4,A);        PINIT320(x5,x6,x7,(A)+8);
+#define PINIT832(x1,x2,x3,x4,x5,x6,x7,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT320(x5,x6,x7,(A)+8);
 
-#define PINIT896(x1,x2,x3,x4,x5,x6,x7,A)         PINIT512(x1,x2,x3,x4,A);        PINIT384(x5,x6,x7,(A)+8);
+#define PINIT896(x1,x2,x3,x4,x5,x6,x7,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT384(x5,x6,x7,(A)+8);
 
-#define PINIT960(x1,x2,x3,x4,x5,x6,x7,x8,A)         PINIT512(x1,x2,x3,x4,A);        PINIT448(x5,x6,x7,x8,(A)+8);
+#define PINIT960(x1,x2,x3,x4,x5,x6,x7,x8,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT448(x5,x6,x7,x8,(A)+8);
 
-#define PINIT1024(x1,x2,x3,x4,x5,x6,x7,x8,A)         PINIT512(x1,x2,x3,x4,A);        PINIT512(x5,x6,x7,x8,(A)+8);
+#define PINIT1024(x1,x2,x3,x4,x5,x6,x7,x8,A) \
+    PINIT512(x1,x2,x3,x4,A);\
+    PINIT512(x5,x6,x7,x8,(A)+8);
 
-#define PINIT1088(x1,x2,x3,x4,x5,x6,x7,x8,x9,A)         PINIT1024(x1,x2,x3,x4,x5,x6,x7,x8,A);        PINIT64(x9,(A)+16);
+#define PINIT1088(x1,x2,x3,x4,x5,x6,x7,x8,x9,A) \
+    PINIT1024(x1,x2,x3,x4,x5,x6,x7,x8,A);\
+    PINIT64(x9,(A)+16);
 
-#define PINIT1152(x1,x2,x3,x4,x5,x6,x7,x8,x9,A)         PINIT1024(x1,x2,x3,x4,x5,x6,x7,x8,A);        PINIT128(x9,(A)+16);
+#define PINIT1152(x1,x2,x3,x4,x5,x6,x7,x8,x9,A) \
+    PINIT1024(x1,x2,x3,x4,x5,x6,x7,x8,A);\
+    PINIT128(x9,(A)+16);
 
 
 /* Store */
 #define PSTORE128(A,x1) PSTOREU(A,x1)
 
-#define PSTORE192(A,x1,x2)         PSTORE128(A,x1);        PSTOREL((A)+2,x2);
+#define PSTORE192(A,x1,x2) \
+    PSTORE128(A,x1);\
+    PSTOREL((A)+2,x2);
 
-#define PSTORE256(A,x1,x2)         PSTORE128(A,x1);        PSTORE128((A)+2,x2);
+#define PSTORE256(A,x1,x2) \
+    PSTORE128(A,x1);\
+    PSTORE128((A)+2,x2);
 
-#define PSTORE320(A,x1,x2,x3)         PSTORE256(A,x1,x2);        PSTOREL((A)+4,x3);
+#define PSTORE320(A,x1,x2,x3) \
+    PSTORE256(A,x1,x2);\
+    PSTOREL((A)+4,x3);
 
-#define PSTORE384(A,x1,x2,x3)         PSTORE256(A,x1,x2);        PSTORE128((A)+4,x3);
+#define PSTORE384(A,x1,x2,x3) \
+    PSTORE256(A,x1,x2);\
+    PSTORE128((A)+4,x3);
 
-#define PSTORE448(A,x1,x2,x3,x4)         PSTORE256(A,x1,x2);        PSTORE192((A)+4,x3,x4);
+#define PSTORE448(A,x1,x2,x3,x4) \
+    PSTORE256(A,x1,x2);\
+    PSTORE192((A)+4,x3,x4);
 
-#define PSTORE512(A,x1,x2,x3,x4)         PSTORE256(A,x1,x2);        PSTORE256((A)+4,x3,x4);
+#define PSTORE512(A,x1,x2,x3,x4) \
+    PSTORE256(A,x1,x2);\
+    PSTORE256((A)+4,x3,x4);
 
-#define PSTORE576(A,x1,x2,x3,x4,x5)         PSTORE512(A,x1,x2,x3,x4);        PSTOREL((A)+8,x5);
+#define PSTORE576(A,x1,x2,x3,x4,x5) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTOREL((A)+8,x5);
 
-#define PSTORE640(A,x1,x2,x3,x4,x5)         PSTORE512(A,x1,x2,x3,x4);        PSTORE128((A)+8,x5);
+#define PSTORE640(A,x1,x2,x3,x4,x5) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTORE128((A)+8,x5);
 
-#define PSTORE704(A,x1,x2,x3,x4,x5,x6)         PSTORE512(A,x1,x2,x3,x4);        PSTORE192((A)+8,x5,x6);
+#define PSTORE704(A,x1,x2,x3,x4,x5,x6) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTORE192((A)+8,x5,x6);
 
-#define PSTORE768(A,x1,x2,x3,x4,x5,x6)         PSTORE512(A,x1,x2,x3,x4);        PSTORE256((A)+8,x5,x6);
+#define PSTORE768(A,x1,x2,x3,x4,x5,x6) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTORE256((A)+8,x5,x6);
 
-#define PSTORE832(A,x1,x2,x3,x4,x5,x6,x7)         PSTORE512(A,x1,x2,x3,x4);        PSTORE320((A)+8,x5,x6,x7);
+#define PSTORE832(A,x1,x2,x3,x4,x5,x6,x7) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTORE320((A)+8,x5,x6,x7);
 
-#define PSTORE896(A,x1,x2,x3,x4,x5,x6,x7)         PSTORE512(A,x1,x2,x3,x4);        PSTORE384((A)+8,x5,x6,x7);
+#define PSTORE896(A,x1,x2,x3,x4,x5,x6,x7) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTORE384((A)+8,x5,x6,x7);
 
-#define PSTORE960(A,x1,x2,x3,x4,x5,x6,x7,x8)         PSTORE512(A,x1,x2,x3,x4);        PSTORE448((A)+8,x5,x6,x7,x8);
+#define PSTORE960(A,x1,x2,x3,x4,x5,x6,x7,x8) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTORE448((A)+8,x5,x6,x7,x8);
 
-#define PSTORE1024(A,x1,x2,x3,x4,x5,x6,x7,x8)         PSTORE512(A,x1,x2,x3,x4);        PSTORE512((A)+8,x5,x6,x7,x8);
+#define PSTORE1024(A,x1,x2,x3,x4,x5,x6,x7,x8) \
+    PSTORE512(A,x1,x2,x3,x4);\
+    PSTORE512((A)+8,x5,x6,x7,x8);
 
-#define PSTORE1088(A,x1,x2,x3,x4,x5,x6,x7,x8,x9)         PSTORE1024(A,x1,x2,x3,x4,x5,x6,x7,x8);        PSTOREL((A)+16,x9);
+#define PSTORE1088(A,x1,x2,x3,x4,x5,x6,x7,x8,x9) \
+    PSTORE1024(A,x1,x2,x3,x4,x5,x6,x7,x8);\
+    PSTOREL((A)+16,x9);
 
-#define PSTORE1152(A,x1,x2,x3,x4,x5,x6,x7,x8,x9)         PSTORE1024(A,x1,x2,x3,x4,x5,x6,x7,x8);        PSTORE128((A)+16,x9);
+#define PSTORE1152(A,x1,x2,x3,x4,x5,x6,x7,x8,x9) \
+    PSTORE1024(A,x1,x2,x3,x4,x5,x6,x7,x8);\
+    PSTORE128((A)+16,x9);
 
 
 /* Bitwise operator */
 #define PAND1_2(C,A) C=PAND_(A,C);
 
 #define PXOR1_(C,A,B) C=PXOR_(A,B);
-#define PXOR2_(C1,C2,A1,A2,B1,B2)         PXOR1_(C1,A1,B1)        PXOR1_(C2,A2,B2)
-#define PXOR3_(C1,C2,C3,A1,A2,A3,B1,B2,B3)         PXOR1_(C1,A1,B1)        PXOR1_(C2,A2,B2)        PXOR1_(C3,A3,B3)
-#define PXOR4_(C1,C2,C3,C4,A1,A2,A3,A4,B1,B2,B3,B4)         PXOR1_(C1,A1,B1)        PXOR1_(C2,A2,B2)        PXOR1_(C3,A3,B3)        PXOR1_(C4,A4,B4)
+#define PXOR2_(C1,C2,A1,A2,B1,B2) \
+    PXOR1_(C1,A1,B1)\
+    PXOR1_(C2,A2,B2)
+#define PXOR3_(C1,C2,C3,A1,A2,A3,B1,B2,B3) \
+    PXOR1_(C1,A1,B1)\
+    PXOR1_(C2,A2,B2)\
+    PXOR1_(C3,A3,B3)
+#define PXOR4_(C1,C2,C3,C4,A1,A2,A3,A4,B1,B2,B3,B4) \
+    PXOR1_(C1,A1,B1)\
+    PXOR1_(C2,A2,B2)\
+    PXOR1_(C3,A3,B3)\
+    PXOR1_(C4,A4,B4)
 
 #define PXOR1_2(C,A) C=PXOR_(A,C);
-#define PXOR2_2(C1,C2,A1,A2)         PXOR1_2(C1,A1)        PXOR1_2(C2,A2)
-#define PXOR3_2(C1,C2,C3,A1,A2,A3)         PXOR1_2(C1,A1)        PXOR1_2(C2,A2)        PXOR1_2(C3,A3)
-#define PXOR4_2(C1,C2,C3,C4,A1,A2,A3,A4)         PXOR1_2(C1,A1)        PXOR1_2(C2,A2)        PXOR1_2(C3,A3)        PXOR1_2(C4,A4)
-#define PXOR5_2(C1,C2,C3,C4,C5,A1,A2,A3,A4,A5)         PXOR1_2(C1,A1)        PXOR1_2(C2,A2)        PXOR1_2(C3,A3)        PXOR1_2(C4,A4)        PXOR1_2(C5,A5)
+#define PXOR2_2(C1,C2,A1,A2) \
+    PXOR1_2(C1,A1)\
+    PXOR1_2(C2,A2)
+#define PXOR3_2(C1,C2,C3,A1,A2,A3) \
+    PXOR1_2(C1,A1)\
+    PXOR1_2(C2,A2)\
+    PXOR1_2(C3,A3)
+#define PXOR4_2(C1,C2,C3,C4,A1,A2,A3,A4) \
+    PXOR1_2(C1,A1)\
+    PXOR1_2(C2,A2)\
+    PXOR1_2(C3,A3)\
+    PXOR1_2(C4,A4)
+#define PXOR5_2(C1,C2,C3,C4,C5,A1,A2,A3,A4,A5) \
+    PXOR1_2(C1,A1)\
+    PXOR1_2(C2,A2)\
+    PXOR1_2(C3,A3)\
+    PXOR1_2(C4,A4)\
+    PXOR1_2(C5,A5)
 
 
 /* Shuffle */
@@ -242,8 +333,10 @@
 #define VPXOR_(A,B) _mm256_xor_si256(A,B)
 
 /* Load + mask */
-#define PMASKLOAD(data,mask)         _mm_maskload_epi64((long long int*)(data),mask)
-#define VPMASKLOAD(data,mask)         _mm256_maskload_epi64((long long int*)(data),mask)
+#define PMASKLOAD(data,mask) \
+    _mm_maskload_epi64((long long int*)(data),mask)
+#define VPMASKLOAD(data,mask) \
+    _mm256_maskload_epi64((long long int*)(data),mask)
 
 /* Unpack */
 #define VPUNPACKLO_32(A,B) _mm256_unpacklo_epi32(A,B)
@@ -269,7 +362,8 @@
 #define VPSETZERO() _mm256_setzero_si256()
 
 /* Set */
-#define VPSET_32(A7,A6,A5,A4,A3,A2,A1,A0)                 _mm256_set_epi32(A7,A6,A5,A4,A3,A2,A1,A0)
+#define VPSET_32(A7,A6,A5,A4,A3,A2,A1,A0) \
+    _mm256_set_epi32(A7,A6,A5,A4,A3,A2,A1,A0)
 #define VPSET_64(A3,A2,A1,A0) _mm256_set_epi64x(A3,A2,A1,A0)
 
 /* Set 1 */
@@ -307,79 +401,142 @@
 /* Load */
 #define VPINITU256(x,A) x=VPLOADU(A);
 
-#define VPINIT64(x,A)         x=PCVT_256(PLOADL(A));
+#define VPINIT64(x,A) \
+    x=PCVT_256(PLOADL(A));
 
-#define VPINIT128(x,A)         x=PCVT_256(PLOADU(A));
+#define VPINIT128(x,A) \
+    x=PCVT_256(PLOADU(A));
 
-#define VPINIT192(x,A)         x=VPINSERT_128(PCVT_256(PLOADU(A)),PLOADL((A)+2));
+#define VPINIT192(x,A) \
+    x=VPINSERT_128(PCVT_256(PLOADU(A)),PLOADL((A)+2));
 
 #define VPINIT256(x,A) x=VPLOADU(A);
 
-#define VPINIT320(x1,x2,A)         VPINIT256(x1,A);        VPINIT64(x2,(A)+4);
+#define VPINIT320(x1,x2,A) \
+    VPINIT256(x1,A);\
+    VPINIT64(x2,(A)+4);
 
-#define VPINIT384(x1,x2,A)         VPINIT256(x1,A);        VPINIT128(x2,(A)+4);
+#define VPINIT384(x1,x2,A) \
+    VPINIT256(x1,A);\
+    VPINIT128(x2,(A)+4);
 
-#define VPINIT448(x1,x2,A)         VPINIT256(x1,A);        VPINIT192(x2,(A)+4);
+#define VPINIT448(x1,x2,A) \
+    VPINIT256(x1,A);\
+    VPINIT192(x2,(A)+4);
 
-#define VPINIT512(x1,x2,A)         VPINIT256(x1,A);        VPINIT256(x2,(A)+4);
+#define VPINIT512(x1,x2,A) \
+    VPINIT256(x1,A);\
+    VPINIT256(x2,(A)+4);
 
-#define VPINIT576(x1,x2,x3,A)         VPINIT512(x1,x2,A);        VPINIT64(x3,(A)+8);
+#define VPINIT576(x1,x2,x3,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT64(x3,(A)+8);
 
-#define VPINIT640(x1,x2,x3,A)         VPINIT512(x1,x2,A);        VPINIT128(x3,(A)+8);
+#define VPINIT640(x1,x2,x3,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT128(x3,(A)+8);
 
-#define VPINIT704(x1,x2,x3,A)         VPINIT512(x1,x2,A);        VPINIT192(x3,(A)+8);
+#define VPINIT704(x1,x2,x3,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT192(x3,(A)+8);
 
-#define VPINIT768(x1,x2,x3,A)         VPINIT512(x1,x2,A);        VPINIT256(x3,(A)+8);
+#define VPINIT768(x1,x2,x3,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT256(x3,(A)+8);
 
-#define VPINIT832(x1,x2,x3,x4,A)         VPINIT512(x1,x2,A);        VPINIT320(x3,x4,(A)+8);
+#define VPINIT832(x1,x2,x3,x4,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT320(x3,x4,(A)+8);
 
-#define VPINIT896(x1,x2,x3,x4,A)         VPINIT512(x1,x2,A);        VPINIT384(x3,x4,(A)+8);
+#define VPINIT896(x1,x2,x3,x4,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT384(x3,x4,(A)+8);
 
-#define VPINIT960(x1,x2,x3,x4,A)         VPINIT512(x1,x2,A);        VPINIT448(x3,x4,(A)+8);
+#define VPINIT960(x1,x2,x3,x4,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT448(x3,x4,(A)+8);
 
-#define VPINIT1024(x1,x2,x3,x4,A)         VPINIT512(x1,x2,A);        VPINIT512(x3,x4,(A)+8);
+#define VPINIT1024(x1,x2,x3,x4,A) \
+    VPINIT512(x1,x2,A);\
+    VPINIT512(x3,x4,(A)+8);
 
-#define VPINIT1088(x1,x2,x3,x4,x5,A)         VPINIT1024(x1,x2,x3,x4,A);        VPINIT64(x5,(A)+16);
+#define VPINIT1088(x1,x2,x3,x4,x5,A) \
+    VPINIT1024(x1,x2,x3,x4,A);\
+    VPINIT64(x5,(A)+16);
 
-#define VPINIT1152(x1,x2,x3,x4,x5,A)         VPINIT1024(x1,x2,x3,x4,A);        VPINIT128(x5,(A)+16);
+#define VPINIT1152(x1,x2,x3,x4,x5,A) \
+    VPINIT1024(x1,x2,x3,x4,A);\
+    VPINIT128(x5,(A)+16);
 
 
 /* Store */
-#define VPSTORE64(A,x)         PSTOREL(A,VPCVT_128(x));
+#define VPSTORE64(A,x) \
+    PSTOREL(A,VPCVT_128(x));
 
-#define VPSTORE128(A,x)         PSTOREU(A,VPCVT_128(x));
+#define VPSTORE128(A,x) \
+    PSTOREU(A,VPCVT_128(x));
 
-#define VPSTORE192(A,x)         PSTOREU(A,VPCVT_128(x));        PSTOREL((A)+2,VPEXTRACT128(x));
+#define VPSTORE192(A,x) \
+    PSTOREU(A,VPCVT_128(x));\
+    PSTOREL((A)+2,VPEXTRACT128(x));
 
 #define VPSTORE256 VPSTOREU
 
-#define VPSTORE320(A,x1,x2)         VPSTORE256(A,x1);        VPSTORE64((A)+4,x2);
+#define VPSTORE320(A,x1,x2) \
+    VPSTORE256(A,x1);\
+    VPSTORE64((A)+4,x2);
 
-#define VPSTORE384(A,x1,x2)         VPSTORE256(A,x1);        VPSTORE128((A)+4,x2);
+#define VPSTORE384(A,x1,x2) \
+    VPSTORE256(A,x1);\
+    VPSTORE128((A)+4,x2);
 
-#define VPSTORE448(A,x1,x2)         VPSTORE256(A,x1);        VPSTORE192((A)+4,x2);
+#define VPSTORE448(A,x1,x2) \
+    VPSTORE256(A,x1);\
+    VPSTORE192((A)+4,x2);
 
-#define VPSTORE512(A,x1,x2)         VPSTORE256(A,x1);        VPSTORE256((A)+4,x2);
+#define VPSTORE512(A,x1,x2) \
+    VPSTORE256(A,x1);\
+    VPSTORE256((A)+4,x2);
 
-#define VPSTORE576(A,x1,x2,x3)         VPSTORE512(A,x1,x2);        VPSTORE64((A)+8,x3);
+#define VPSTORE576(A,x1,x2,x3) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE64((A)+8,x3);
 
-#define VPSTORE640(A,x1,x2,x3)         VPSTORE512(A,x1,x2);        VPSTORE128((A)+8,x3);
+#define VPSTORE640(A,x1,x2,x3) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE128((A)+8,x3);
 
-#define VPSTORE704(A,x1,x2,x3)         VPSTORE512(A,x1,x2);        VPSTORE192((A)+8,x3);
+#define VPSTORE704(A,x1,x2,x3) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE192((A)+8,x3);
 
-#define VPSTORE768(A,x1,x2,x3)         VPSTORE512(A,x1,x2);        VPSTORE256((A)+8,x3);
+#define VPSTORE768(A,x1,x2,x3) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE256((A)+8,x3);
 
-#define VPSTORE832(A,x1,x2,x3,x4)         VPSTORE512(A,x1,x2);        VPSTORE320((A)+8,x3,x4);
+#define VPSTORE832(A,x1,x2,x3,x4) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE320((A)+8,x3,x4);
 
-#define VPSTORE896(A,x1,x2,x3,x4)         VPSTORE512(A,x1,x2);        VPSTORE384((A)+8,x3,x4);
+#define VPSTORE896(A,x1,x2,x3,x4) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE384((A)+8,x3,x4);
 
-#define VPSTORE960(A,x1,x2,x3,x4)         VPSTORE512(A,x1,x2);        VPSTORE448((A)+8,x3,x4);
+#define VPSTORE960(A,x1,x2,x3,x4) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE448((A)+8,x3,x4);
 
-#define VPSTORE1024(A,x1,x2,x3,x4)         VPSTORE512(A,x1,x2);        VPSTORE512((A)+8,x3,x4);
+#define VPSTORE1024(A,x1,x2,x3,x4) \
+    VPSTORE512(A,x1,x2);\
+    VPSTORE512((A)+8,x3,x4);
 
-#define VPSTORE1088(A,x1,x2,x3,x4,x5)         VPSTORE1024(A,x1,x2,x3,x4);        VPSTORE64((A)+16,x5);
+#define VPSTORE1088(A,x1,x2,x3,x4,x5) \
+    VPSTORE1024(A,x1,x2,x3,x4);\
+    VPSTORE64((A)+16,x5);
 
-#define VPSTORE1152(A,x1,x2,x3,x4,x5)         VPSTORE1024(A,x1,x2,x3,x4);        VPSTORE128((A)+16,x5);
+#define VPSTORE1152(A,x1,x2,x3,x4,x5) \
+    VPSTORE1024(A,x1,x2,x3,x4);\
+    VPSTORE128((A)+16,x5);
 
 
 /* These intrinsics are available on AVX2 only */
@@ -448,14 +605,32 @@
 #define VPAND1_2(C,A) C=VPAND_(A,C);
 
 #define VPXOR1_(C,A,B) C=VPXOR_(A,B);
-#define VPXOR2_(C1,C2,A1,A2,B1,B2)         VPXOR1_(C1,A1,B1)        VPXOR1_(C2,A2,B2)
-#define VPXOR3_(C1,C2,C3,A1,A2,A3,B1,B2,B3)         VPXOR1_(C1,A1,B1)        VPXOR1_(C2,A2,B2)        VPXOR1_(C3,A3,B3)
-#define VPXOR4_(C1,C2,C3,C4,A1,A2,A3,A4,B1,B2,B3,B4)         VPXOR1_(C1,A1,B1)        VPXOR1_(C2,A2,B2)        VPXOR1_(C3,A3,B3)        VPXOR1_(C4,A4,B4)
+#define VPXOR2_(C1,C2,A1,A2,B1,B2) \
+    VPXOR1_(C1,A1,B1)\
+    VPXOR1_(C2,A2,B2)
+#define VPXOR3_(C1,C2,C3,A1,A2,A3,B1,B2,B3) \
+    VPXOR1_(C1,A1,B1)\
+    VPXOR1_(C2,A2,B2)\
+    VPXOR1_(C3,A3,B3)
+#define VPXOR4_(C1,C2,C3,C4,A1,A2,A3,A4,B1,B2,B3,B4) \
+    VPXOR1_(C1,A1,B1)\
+    VPXOR1_(C2,A2,B2)\
+    VPXOR1_(C3,A3,B3)\
+    VPXOR1_(C4,A4,B4)
 
 #define VPXOR1_2(C,A) C=VPXOR_(A,C);
-#define VPXOR2_2(C1,C2,A1,A2)         VPXOR1_2(C1,A1)        VPXOR1_2(C2,A2)
-#define VPXOR3_2(C1,C2,C3,A1,A2,A3)         VPXOR1_2(C1,A1)        VPXOR1_2(C2,A2)        VPXOR1_2(C3,A3)
-#define VPXOR4_2(C1,C2,C3,C4,A1,A2,A3,A4)         VPXOR1_2(C1,A1)        VPXOR1_2(C2,A2)        VPXOR1_2(C3,A3)        VPXOR1_2(C4,A4)
+#define VPXOR2_2(C1,C2,A1,A2) \
+    VPXOR1_2(C1,A1)\
+    VPXOR1_2(C2,A2)
+#define VPXOR3_2(C1,C2,C3,A1,A2,A3) \
+    VPXOR1_2(C1,A1)\
+    VPXOR1_2(C2,A2)\
+    VPXOR1_2(C3,A3)
+#define VPXOR4_2(C1,C2,C3,C4,A1,A2,A3,A4) \
+    VPXOR1_2(C1,A1)\
+    VPXOR1_2(C2,A2)\
+    VPXOR1_2(C3,A3)\
+    VPXOR1_2(C4,A4)
 
 
 /* Carry less multiplication */

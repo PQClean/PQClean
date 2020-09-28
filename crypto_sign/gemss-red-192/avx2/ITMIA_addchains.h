@@ -8,7 +8,14 @@
 #include "parameters_HFE.h"
 
 
-#define M_ITOH266(V,MS)        V##EVEN_CASE(2);        V##EVEN_CASE(4);        V##EVEN_CASE(8);        V##ODD_CASE(16);        V##EVEN_CASE(33);        V##EVEN_CASE(66);        V##ODD_CASE(132);
+#define M_ITOH266(V,MS)\
+    V##EVEN_CASE(2);\
+    V##EVEN_CASE(4);\
+    V##EVEN_CASE(8);\
+    V##ODD_CASE(16);\
+    V##EVEN_CASE(33);\
+    V##EVEN_CASE(66);\
+    V##ODD_CASE(132);
 
 #define ITOH266U M_ITOH266(,)
 #define P_ITOH266U M_ITOH266(P,)

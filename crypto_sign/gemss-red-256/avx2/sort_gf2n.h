@@ -12,7 +12,8 @@ void PQCLEAN_GEMSSRED256_AVX2_selectionSort_gf2n(vec_gf2n tab, int l);
 
 
 /* The fastest function in variable-time */
-#define sort_nocst_gf2n(tab,l)                 PQCLEAN_GEMSSRED256_AVX2_quickSort_nocst_gf2n(tab,(tab)+((l)-1)*NB_WORD_GFqn)
+#define sort_nocst_gf2n(tab,l) \
+    PQCLEAN_GEMSSRED256_AVX2_quickSort_nocst_gf2n(tab,(tab)+((l)-1)*NB_WORD_GFqn)
 
 /* Constant-time */
 #define sort_gf2n PQCLEAN_GEMSSRED256_AVX2_fast_sort_gf2n

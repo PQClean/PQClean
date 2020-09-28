@@ -68,7 +68,8 @@
 /* Signature: NB_WORD_GF2nv for signature NB_ITE, NB_WORD_GF2nvm for others */
 
 /* Size of signature (words): */
-#define SIZE_SIGN_UNCOMPRESSED             (NB_WORD_GF2nv+(NB_ITE-1)*NB_WORD_GF2nvm+SIZE_SALT_WORD)
+#define SIZE_SIGN_UNCOMPRESSED \
+    (NB_WORD_GF2nv+(NB_ITE-1)*NB_WORD_GF2nvm+SIZE_SALT_WORD)
 /* Size of signature (bytes): */
 /* (x+7)/8 = Ceiling(x/8) */
 #define SIZE_SIGN_HFE ((SIZE_SIGN_THEORETICAL_HFE+7)>>3)

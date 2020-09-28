@@ -28,7 +28,7 @@
  */
 unsigned int PQCLEAN_GEMSSRED256_AVX2_frobeniusMap_HFE_gf2nx(gf2nx Xqn, const
         complete_sparse_monic_gf2nx F, cst_gf2n U) {
-    static_gf2n cst[NB_WORD_GFqn];
+    static_gf2n cst[NB_WORD_GFqn] = {0};
     UINT b, mask;
     unsigned int d, i;
 
@@ -91,7 +91,7 @@ unsigned int PQCLEAN_GEMSSRED256_AVX2_frobeniusMap_HFE_gf2nx(gf2nx Xqn, const
 static void precompute_table(vec_gf2nx table,
                              const complete_sparse_monic_gf2nx F,
                              cst_gf2n cst) {
-    static_gf2n mul_coef[NB_WORD_GFqn];
+    static_gf2n mul_coef[NB_WORD_GFqn] = {0};
     gf2n leading_coef;
     vec_gf2nx table_cp;
     unsigned int k, j, i;
@@ -192,11 +192,12 @@ static void precompute_table(vec_gf2nx table,
  */
 unsigned int PQCLEAN_GEMSSRED256_AVX2_frobeniusMap_multisqr_HFE_gf2nx(gf2nx Xqn, const
         complete_sparse_monic_gf2nx F, cst_gf2n U) {
-    static_gf2n cst[NB_WORD_GFqn];
-    static_gf2n mul_coef[NB_WORD_GFqn];
-    gf2nx Xqn_cp;
-    vec_gf2nx table, table_cp;
-    gf2nx Xqn_sqr;
+    static_gf2n cst[NB_WORD_GFqn] = {0};
+    static_gf2n mul_coef[NB_WORD_GFqn] = {0};
+    UINT table[(KX * HFEDeg + POW_II)*NB_WORD_GFqn] = {0};
+    UINT Xqn_sqr[HFEDeg * NB_WORD_GFqn] = {0};
+    UINT *table_cp;
+    UINT *Xqn_cp;
     gf2n current_coef;
     UINT b, mask;
     unsigned int d, i, j, k;
@@ -205,16 +206,12 @@ unsigned int PQCLEAN_GEMSSRED256_AVX2_frobeniusMap_multisqr_HFE_gf2nx(gf2nx Xqn,
     add_gf2n(cst, F.poly, U);
 
     /* Table of the X^(k*2^II) mod F. */
-    table = (UINT *)malloc((KX * HFEDeg + POW_II) * NB_WORD_GFqn * sizeof(UINT));
     precompute_table(table, F, cst);
 
     /* X^(2^(HFEDegI+II)) = X^( (2^HFEDegI) * (2^II)) */
     /* We take the polynomial from the table */
-    table += (((ONE32 << HFEDegI) - KP) * HFEDeg) * NB_WORD_GFqn;
-    copy_gf2nx(Xqn, table, HFEDeg, i);
-    table -= (((ONE32 << HFEDegI) - KP) * HFEDeg) * NB_WORD_GFqn;
+    copy_gf2nx(Xqn, table + ((((ONE32 << HFEDegI) - KP)*HFEDeg)*NB_WORD_GFqn), HFEDeg, i);
 
-    Xqn_sqr = (UINT *)calloc(HFEDeg * NB_WORD_GFqn, sizeof(UINT));
     for (i = 0; i < ((HFEn - HFEDegI - II) / II); ++i) {
         /* Step 1: Xqn^(2^II) with II squarings */
         /* Xqn_sqr is the list of the coefficients of Xqn at the power 2^II */
@@ -261,9 +258,6 @@ unsigned int PQCLEAN_GEMSSRED256_AVX2_frobeniusMap_multisqr_HFE_gf2nx(gf2nx Xqn,
             add2_gf2n(Xqn + j * POW_II * NB_WORD_GFqn, Xqn_sqr + j * NB_WORD_GFqn);
         }
     }
-
-    free(table);
-    free(Xqn_sqr);
 
     for (i = 0; i < (2); ++i) {
         /* Step 1: (X^(2^i) mod (F-U))^2 = X^(2^(i+1)) */

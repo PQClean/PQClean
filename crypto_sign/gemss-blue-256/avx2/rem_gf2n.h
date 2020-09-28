@@ -5,7 +5,6 @@
 #include "macro.h"
 #include "parameters_HFE.h"
 #include "rem5_gf2n.h"
-#include "rem_gf2x.h"
 #include "tools_gf2n.h"
 
 
@@ -31,8 +30,24 @@
 
 
 /* Automatic choice of REM_GF2N */
-
-#define REM_GF2N(P,Pol,Q,R) REM384_SPECIALIZED358_TRINOMIAL_GF2X(P,Pol,K3mod64,KI,KI64,K364,Q,R,MASK_GF2n)
+#define REM_GF2N(P,Pol,Q,R) \
+    (Q)[0]=((Pol)[5]>>(KI))^((Pol)[6]<<(KI64));\
+    (Q)[1]=((Pol)[6]>>(KI))^((Pol)[7]<<(KI64));\
+    (Q)[2]=((Pol)[7]>>(KI))^((Pol)[8]<<(KI64));\
+    (Q)[3]=((Pol)[8]>>(KI))^((Pol)[9]<<(KI64));\
+    (Q)[4]=((Pol)[9]>>(KI))^((Pol)[10]<<(KI64));\
+    (Q)[5]=((Pol)[10]>>(KI))^((Pol)[11]<<(KI64));\
+    /* 64-((k364)+(KI)) == ((K3mod64)-(KI)) */\
+    (R)=((Q)[4]>>((K364)+(KI)))^((Q)[5]<<((K3mod64)-(KI)));\
+    (Q)[0]^=(R);\
+    XOR6(P,Pol,Q);\
+    (P)[0]^=(Q)[0]<<(K3mod64);\
+    (P)[1]^=((Q)[0]>>(K364))^((Q)[1]<<(K3mod64));\
+    (P)[2]^=((Q)[1]>>(K364))^((Q)[2]<<(K3mod64));\
+    (P)[3]^=((Q)[2]>>(K364))^((Q)[3]<<(K3mod64));\
+    (P)[4]^=((Q)[3]>>(K364))^((Q)[4]<<(K3mod64));\
+    (P)[5]^=((Q)[4]>>(K364));\
+    (P)[5]&=(MASK_GF2n);
 
 
 /***********************************************************************/

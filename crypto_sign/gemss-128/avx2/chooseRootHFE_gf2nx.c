@@ -28,10 +28,10 @@ int PQCLEAN_GEMSS128_AVX2_chooseRootHFE_gf2nx(gf2n root,
 
     UINT hash[SIZE_DIGEST_UINT];
 
-    vec_gf2n roots;
+    UINT roots[HFEDeg * NB_WORD_GFqn] = {0};
     int l;
 
-    l = PQCLEAN_GEMSS128_AVX2_findRootsHFE_gf2nx(&roots, F, U);
+    l = PQCLEAN_GEMSS128_AVX2_findRootsHFE_gf2nx(roots, F, U);
 
     if (l == 0) {
         /* Zero root */
@@ -51,6 +51,5 @@ int PQCLEAN_GEMSS128_AVX2_chooseRootHFE_gf2nx(gf2n root,
              (unsigned char *)U, NB_BYTES_GFqn);
         copy_gf2n(root, roots + (hash[0] % l)*NB_WORD_GFqn);
     }
-    free(roots);
     return l;
 }

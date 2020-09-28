@@ -23,9 +23,7 @@ typedef UINT static_gf2nv;
 #define HFEnvr (HFEnv%NB_BITS_UINT)
 /* The number of word that an element of GF(2^(n+v)) needs */
 #define NB_WORD_GF2nv_TMP HFEnvq
-
-/* Mask for arithmetic in GF(2^(n+v)) */
-#define MASK_GF2nv maskUINT(HFEnvr)
+#define MASK_GF2nv UINT_M1
 
 #define HFEnvq8 (HFEnv>>3)
 #define HFEnvr8 (HFEnv&7)

@@ -17,7 +17,8 @@
 
 #define EQUALHASH(a,b) PQCLEAN_GEMSSBLUE128_AVX2_ISEQUAL(a,b,SIZE_DIGEST_UINT)
 
-#define expandSeed(output,outputByteLen,seed,seedByteLen)         SHAKE(output,outputByteLen,seed,seedByteLen)
+#define expandSeed(output,outputByteLen,seed,seedByteLen) \
+    SHAKE(output,outputByteLen,seed,seedByteLen)
 
 #define expandSeedCxtDeclaration Keccak_HashInstance hashInstance
 #define expandSeedIUF Keccak_HashIUF_SHAKE

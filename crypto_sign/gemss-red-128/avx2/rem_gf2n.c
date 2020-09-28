@@ -1,5 +1,4 @@
 #include "rem_gf2n.h"
-#include "rem_gf2x.h"
 #include "simd.h"
 
 

@@ -310,32 +310,23 @@ modular reduction. */
 int PQCLEAN_GEMSSBLUE256_CLEAN_genSecretMQS_gf2_ref(mqsnv_gf2n MQS, cst_sparse_monic_gf2nx F) {
     /* if there is not quadratic terms X^(2^i + 2^j) */
     mqsnv_gf2n MQS_cp;
-    vecn_gf2n lin, lin_cp;
+    UINT lin[HFEn * NB_WORD_GFqn] = {0};
+    UINT *lin_cp;
+    cst_vec_gf2n a_vec;
+    unsigned int i, j;
     static_gf2n tmp1[NB_WORD_GFqn];
     static_gf2n tmp_i[NB_WORD_GFqn], tmp_j[NB_WORD_GFqn];
     cst_sparse_monic_gf2nx F_cp;
-    cst_vec_gf2n a_vec, a_veci, a_vecj;
-    unsigned int i, j, ia, ja;
+    cst_vec_gf2n a_veci, a_vecj;
+    unsigned int ia, ja;
 
     /* Precompute alpha_vec is disabled in the submission */
-    vec_gf2n alpha_vec;
-
     /* Matrix in GF(2^n) with (HFEDegI+1) rows and HFEn-1 columns */
     /* calloc is useful when it initialises a multiple precision element
        to 1 */
-    alpha_vec = (UINT *)calloc((HFEDegI + 1) * (HFEn - 1) * NB_WORD_GFqn,
-                               sizeof(UINT));
-    VERIFY_ALLOC_RET(alpha_vec);
+    UINT alpha_vec[(HFEDegI + 1) * (HFEn - 1)*NB_WORD_GFqn] = {0};
 
     PQCLEAN_GEMSSBLUE256_CLEAN_genCanonicalBasis_gf2n(alpha_vec);
-
-    /* Temporary linear vector */
-    lin = (UINT *)calloc(HFEn * NB_WORD_GFqn, sizeof(UINT));
-    if (!lin) {
-        free(alpha_vec);
-        return ERROR_ALLOC;
-    }
-
 
     /* Constant : copy the first coefficient of F in MQS */
     copy_gf2n(MQS, F);
@@ -423,8 +414,6 @@ int PQCLEAN_GEMSSBLUE256_CLEAN_genSecretMQS_gf2_ref(mqsnv_gf2n MQS, cst_sparse_m
     a_veci = a_vec;
     QUADRATIC_MONIC_CASE_REF(a_veci, a_vecj);
 
-    free(alpha_vec);
-
     /* Put linear part on "diagonal" of MQS */
     lin_cp = lin;
     MQS_cp = MQS + NB_WORD_GFqn;
@@ -434,6 +423,5 @@ int PQCLEAN_GEMSSBLUE256_CLEAN_genSecretMQS_gf2_ref(mqsnv_gf2n MQS, cst_sparse_m
         MQS_cp += i * NB_WORD_GFqn;
     }
 
-    free(lin);
     return 0;
 }
