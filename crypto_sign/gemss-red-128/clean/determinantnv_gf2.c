@@ -106,19 +106,6 @@ gf2 PQCLEAN_GEMSSRED128_CLEAN_determinantnv_nocst_gf2(cst_Mnv_gf2 S, Mnv_gf2 S_c
 
     /* Every coefficients of diagonal of S_cp are 1 */
     return 1;
-
-    /* for each row of the last block excepted the last */
-    /* iq = HFEnvq */
-    LOOPIR(HFEnvr - 1, SWAP_WORD(*S_cpj, *S_cpi), *S_cpj ^= *S_cpi & pivot);
-
-    /* We know there are 1 on diagonal excepted for the last line */
-    bit_ir &= *S_cpi;
-    if (bit_ir) {
-        bit_ir = 1;
-    } else {
-        bit_ir = 0;
-    }
-    return (gf2) bit_ir;
 }
 
 
