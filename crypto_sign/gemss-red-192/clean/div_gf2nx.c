@@ -254,7 +254,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_div_r_monic_cst_gf2nx(gf2nx A, unsigned int da,
  * @remark  This implementation is not in constant-time.
  */
 unsigned int PQCLEAN_GEMSSRED192_CLEAN_div_r_HFE_gf2nx(gf2nx poly, unsigned int dp,
-        const complete_sparse_monic_gf2nx F,
+        complete_sparse_monic_gf2nx F,
         cst_gf2n cst) {
     static_gf2n mul_coef[NB_WORD_GFqn];
     gf2n leading_coef, res;
@@ -317,7 +317,7 @@ unsigned int PQCLEAN_GEMSSRED192_CLEAN_div_r_HFE_gf2nx(gf2nx poly, unsigned int 
  * @remark  Constant-time implementation when dp is not secret.
  */
 void PQCLEAN_GEMSSRED192_CLEAN_div_r_HFE_cstdeg_gf2nx(gf2nx poly, unsigned int dp,
-        const complete_sparse_monic_gf2nx F,
+        complete_sparse_monic_gf2nx F,
         cst_gf2n cst) {
     static_gf2n mul_coef[NB_WORD_GFqn];
     gf2n leading_coef, res;
@@ -356,7 +356,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_div_r_HFE_cstdeg_gf2nx(gf2nx poly, unsigned int d
  * @remark  Constant-time implementation.
  */
 void PQCLEAN_GEMSSRED192_CLEAN_div_r_HFE_cst_gf2nx(gf2nx poly,
-        const complete_sparse_monic_gf2nx F,
+        complete_sparse_monic_gf2nx F,
         cst_gf2n cst) {
     static_gf2n mul_coef[NB_WORD_GFqn];
     gf2n leading_coef, res;

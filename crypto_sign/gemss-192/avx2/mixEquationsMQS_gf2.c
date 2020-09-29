@@ -49,6 +49,6 @@ void PQCLEAN_GEMSS192_AVX2_mixEquationsMQS8_gf2_right(mqsnv8_gf2m pk, cst_mqsnv_
     }
 
     for (i = 0; i < (7); ++i) {
-        pk[i] = pk_last[NB_WORD_GF2m - 1] >> (i << 3);
+        pk[i] = (uint8_t)(pk_last[NB_WORD_GF2m - 1] >> (i << 3));
     }
 }

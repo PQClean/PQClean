@@ -28,7 +28,7 @@
  * @remark  A part of the implementation is not in constant-time.
  */
 int PQCLEAN_GEMSSBLUE128_CLEAN_findRootsHFE_gf2nx(vec_gf2n roots,
-        const complete_sparse_monic_gf2nx F,
+        complete_sparse_monic_gf2nx F,
         cst_gf2n U) {
 
     UINT p1[((HFEDeg << 1) - 1)*NB_WORD_GFqn] = {0};
@@ -89,7 +89,7 @@ int PQCLEAN_GEMSSBLUE128_CLEAN_findRootsHFE_gf2nx(vec_gf2n roots,
  * @remark  A part of the implementation is not in constant-time.
  */
 int PQCLEAN_GEMSSBLUE128_CLEAN_findUniqRootHFE_gf2nx(gf2n root,
-        const complete_sparse_monic_gf2nx F,
+        complete_sparse_monic_gf2nx F,
         cst_gf2n U) {
 
     static_gf2n inv[NB_WORD_GFqn] = {0};

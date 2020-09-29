@@ -40,7 +40,7 @@ void PQCLEAN_GEMSS128_AVX2_convMonic_gf2nx(gf2nx F, unsigned int d) {
  * @remark  Constant-time implementation.
  */
 void PQCLEAN_GEMSS128_AVX2_convHFEpolynomialSparseToDense_gf2nx(gf2nx F_dense,
-        const complete_sparse_monic_gf2nx F) {
+        complete_sparse_monic_gf2nx F) {
     cst_sparse_monic_gf2nx F_cp = F.poly;
     gf2nx F_dense_cp = F_dense;
     unsigned int i;

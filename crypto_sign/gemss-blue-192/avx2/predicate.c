@@ -39,7 +39,7 @@ int PQCLEAN_GEMSSBLUE192_AVX2_ISZERO(const UINT *a, unsigned int size) {
         r |= a[i];
     }
     NORBITS_UINT(r);
-    return r;
+    return (int) r;
 }
 
 
@@ -60,7 +60,7 @@ int PQCLEAN_GEMSSBLUE192_AVX2_ISNOTZERO(const UINT *a, unsigned int size) {
         r |= a[i];
     }
     ORBITS_UINT(r);
-    return r;
+    return (int) r;
 }
 
 
@@ -103,7 +103,7 @@ int PQCLEAN_GEMSSBLUE192_AVX2_ISONE(const UINT *a, unsigned int size) {
         r |= a[i];
     }
     NORBITS_UINT(r);
-    return r;
+    return (int) r;
 }
 
 
@@ -145,7 +145,7 @@ int PQCLEAN_GEMSSBLUE192_AVX2_ISEQUAL(const UINT *a, const UINT *b, unsigned int
         r |= a[i] ^ b[i];
     }
     NORBITS_UINT(r);
-    return r;
+    return (int) r;
 }
 
 
@@ -165,7 +165,7 @@ int PQCLEAN_GEMSSBLUE192_AVX2_CMP_LT_NOCST(const UINT *a, const UINT *b, unsigne
             return (a[i] < b[i]);
         }
     }
-    return (a[0] < b[0]);
+    return (int) (a[0] < b[0]);
 }
 
 
@@ -196,7 +196,7 @@ int PQCLEAN_GEMSSBLUE192_AVX2_CMP_LT(const UINT *a, const UINT *b, unsigned int 
     for (i = 0; i < size; ++i) {
         bo = i ^ d;
         NORBITS_UINT(bo);
-        mask |= (-bo)&CMP_LT_UINT(*a, *b);
+        mask |= (1 + ~bo)&CMP_LT_UINT(*a, *b);
         ++a;
         ++b;
     }

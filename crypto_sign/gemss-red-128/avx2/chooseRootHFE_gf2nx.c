@@ -23,7 +23,7 @@
  * @remark  A part of the implementation is not in constant-time.
  */
 int PQCLEAN_GEMSSRED128_AVX2_chooseRootHFE_gf2nx(gf2n root,
-        const complete_sparse_monic_gf2nx F,
+        complete_sparse_monic_gf2nx F,
         cst_gf2n U) {
 
     UINT hash[SIZE_DIGEST_UINT];

@@ -26,7 +26,7 @@ void PQCLEAN_GEMSS192_AVX2_mul_no_simd_gf2x_ref(uint64_t C[NB_WORD_MUL],
 
     for (i = 0; i < HFEnq; ++i) {
         /* j=0 */
-        mask_B = -((*B)&ONE64);
+        mask_B = (1 + ~((*B)&ONE64));
         for (k = 0; k < NB_WORD_GFqn; ++k) {
             C[k] ^= A[k] & mask_B;
         }
@@ -35,7 +35,7 @@ void PQCLEAN_GEMSS192_AVX2_mul_no_simd_gf2x_ref(uint64_t C[NB_WORD_MUL],
            So, there is not overflow for BL<<j while j<=(64-HFEnr). */
         for (j = 1; j <= (64 - HFEnr); ++j) {
             jc = 64 - j;
-            mask_B = -(((*B) >> j)&ONE64);
+            mask_B = (1 + ~(((*B) >> j)&ONE64));
             /* k=0 */
             tmp_A = (*A)&mask_B;
             C[0] ^= tmp_A << j;
@@ -47,7 +47,7 @@ void PQCLEAN_GEMSS192_AVX2_mul_no_simd_gf2x_ref(uint64_t C[NB_WORD_MUL],
         }
         for (; j < 64; ++j) {
             jc = 64 - j;
-            mask_B = -(((*B) >> j)&ONE64);
+            mask_B = (1 + ~(((*B) >> j)&ONE64));
             /* k=0 */
             tmp_A = (*A)&mask_B;
             C[0] ^= tmp_A << j;
@@ -65,7 +65,7 @@ void PQCLEAN_GEMSS192_AVX2_mul_no_simd_gf2x_ref(uint64_t C[NB_WORD_MUL],
     }
 
     /* j=0 */
-    mask_B = -((*B)&ONE64);
+    mask_B = (1 + ~((*B)&ONE64));
     for (k = 0; k < NB_WORD_GFqn; ++k) {
         C[k] ^= A[k] & mask_B;
     }
@@ -74,7 +74,7 @@ void PQCLEAN_GEMSS192_AVX2_mul_no_simd_gf2x_ref(uint64_t C[NB_WORD_MUL],
        So, there is not overflow for BL<<j while j<=(64-HFEnr). */
     for (j = 1; j < HFEnr; ++j) {
         jc = 64 - j;
-        mask_B = -(((*B) >> j)&ONE64);
+        mask_B = (1 + ~(((*B) >> j)&ONE64));
         /* k=0 */
         tmp_A = (*A)&mask_B;
         C[0] ^= tmp_A << j;

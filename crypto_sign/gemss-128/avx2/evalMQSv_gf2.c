@@ -92,7 +92,7 @@ void PQCLEAN_GEMSS128_AVX2_evalMQSv_classical_gf2(vecm_gf2 c, cst_vecnv_gf2 m,
     while (k < NB_VAR) {
         xi = m[i];
         for (j = 0; (j < NB_BITS_UINT) && (k < NB_VAR); ++j) {
-            x[k] = -((xi >> j)&UINT_1);
+            x[k] = (1 + ~((xi >> j)&UINT_1));
             ++k;
         }
         ++i;
@@ -133,7 +133,7 @@ void PQCLEAN_GEMSS128_AVX2_evalMQSv_unrolled_gf2(vecm_gf2 c, cst_vecnv_gf2 m,
     while (k < NB_VAR) {
         xi = m[i];
         for (j = 0; (j < NB_BITS_UINT) && (k < NB_VAR); ++j) {
-            x[k] = -((xi >> j)&UINT_1);
+            x[k] = (1 + ~((xi >> j)&UINT_1));
             ++k;
         }
         ++i;

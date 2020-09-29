@@ -27,7 +27,7 @@
 
 #define ADDROW(LOOPK) \
     /* pivot */\
-    pivot=-(((*S_cpj)>>ir)&1);\
+    pivot=(1+~(((*S_cpj)>>ir)&1));\
     LOOPK;
 
 
@@ -118,7 +118,7 @@ gf2 PQCLEAN_GEMSSRED128_CLEAN_determinantnv_nocst_gf2(cst_Mnv_gf2 S, Mnv_gf2 S_c
     } else {
         bit_ir = 0;
     }
-    return bit_ir;
+    return (gf2) bit_ir;
 }
 
 
@@ -137,7 +137,7 @@ gf2 PQCLEAN_GEMSSRED128_CLEAN_determinantnv_nocst_gf2(cst_Mnv_gf2 S, Mnv_gf2 S_c
     for(ir=0;ir<(NB_IT);++ir,++i)\
     {\
         /* row i += (1-pivot_i)* row j */\
-        LOOPJ_CST({mask=(-(UINT_1-(((*S_cpi)>>ir)&UINT_1)));\
+        LOOPJ_CST({mask=(1+~(UINT_1-(((*S_cpi)>>ir)&UINT_1)));\
             LOOPK(XORLOADMASK1_1(S_cpi+k,S_cpj+k,mask);)});\
         \
         /* Here, the pivot is 1 if S is invertible */\
@@ -159,7 +159,7 @@ columns, and so it is useless to return 0 before the end of the
                                         algorithm. */\
                                         \
                                         /* row j += (pivot_j) * row_i */\
-                                        LOOPJ_CST({mask=(-(((*S_cpj)>>ir)&UINT_1));\
+                                        LOOPJ_CST({mask=(1+~(((*S_cpj)>>ir)&UINT_1));\
                                                 LOOPK(XORLOADMASK1_1(S_cpj+k,S_cpi+k,mask);)});\
 \
 /* Next row */\
@@ -203,5 +203,5 @@ gf2 PQCLEAN_GEMSSRED128_CLEAN_determinantnv_cst_gf2(cst_Mnv_gf2 S, Mnv_gf2 S_cp)
         ++S_cpi;
     }
 
-    return det_i;
+    return (gf2) det_i;
 }

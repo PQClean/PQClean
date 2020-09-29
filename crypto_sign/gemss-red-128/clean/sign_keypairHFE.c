@@ -158,8 +158,6 @@ int PQCLEAN_GEMSSRED128_CLEAN_sign_keypairHFE(uint8_t *pk, UINT *sk) {
     /* Use T (variable S) to compute cst_pk and Q_pk */
     mixEquationsMQS8_gf2(pk_tmp, Q, T);
 
-    /* Generate the inverse of T */
-
 
     convMQS_one_eq_to_hybrid_rep8_gf2(pk, pk_tmp);
 

@@ -14,7 +14,7 @@
     {\
         /* multiply the (iq*NB_BITS_UINT)+ir bit of vec
             by the (iq*NB_BITS_UINT)+ir row of S */\
-        vec_ir=-(bit_ir&1);\
+        vec_ir=(1+~(bit_ir&1));\
         xorLoadMask1_gf2m(res,S_cp,vec_ir);\
         /* next row of S */\
         S_cp+=NB_WORD_GFqn;\
@@ -27,7 +27,7 @@
     {\
         /* multiply the (iq*NB_BITS_UINT)+ir bit of vec
             by the (iq*NB_BITS_UINT)+ir row of S */\
-        vec_ir=-(bit_ir&1);\
+        vec_ir=(1+~(bit_ir&1));\
         xorLoadMask1_gf2n(res,S_cp,vec_ir);\
         /* next row of S */\
         S_cp+=NB_WORD_GFqn;\
@@ -40,7 +40,7 @@
     {\
         /* multiply the (iq*NB_BITS_UINT)+ir bit of vec
             by the (iq*NB_BITS_UINT)+ir row of S */\
-        vec_ir=-(bit_ir&1);\
+        vec_ir=(1+~(bit_ir&1));\
         xorLoadMask1_gf2n(res,S_cp,vec_ir);\
         /* next row of S */\
         S_cp+=NB_WORD_GFqn;\
@@ -53,7 +53,7 @@
     {\
         /* multiply the (iq*NB_BITS_UINT)+ir bit of vec
             by the (iq*NB_BITS_UINT)+ir row of S */\
-        vec_ir=-(bit_ir&1);\
+        vec_ir=(1+~(bit_ir&1));\
         xorLoadMask1_gf2nv(res,S_cp,vec_ir);\
         /* next row of S */\
         S_cp+=NB_WORD_GF2nv;\
@@ -153,7 +153,7 @@ void PQCLEAN_GEMSS128_CLEAN_vecMatProductv_64(vecn_gf2 res, cst_vecn_gf2 vec, cs
         for (ir = 0; (NB_BITS_UINT * iq + ir < HFEv) && (ir < NB_BITS_UINT); ++ir) {
             /* multiply the (iq*NB_BITS_UINT)+ir bit of vec
                 by the (iq*NB_BITS_UINT)+ir row of S */
-            vec_ir = -(bit_ir & 1);
+            vec_ir = (1 + ~(bit_ir & 1));
             xorLoadMask1_gf2n(res, S_cp, vec_ir);
             /* next row of S */
             S_cp += NB_WORD_GFqn;

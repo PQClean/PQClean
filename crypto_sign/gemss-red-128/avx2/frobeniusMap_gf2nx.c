@@ -26,7 +26,7 @@
  * @remark  Requirement: F.L must be initialized with initListDifferences_gf2nx.
  * @remark  Constant-time implementation when CONSTANT_TIME!=0.
  */
-unsigned int PQCLEAN_GEMSSRED128_AVX2_frobeniusMap_HFE_gf2nx(gf2nx Xqn, const
+unsigned int PQCLEAN_GEMSSRED128_AVX2_frobeniusMap_HFE_gf2nx(gf2nx Xqn,
         complete_sparse_monic_gf2nx F, cst_gf2n U) {
     static_gf2n cst[NB_WORD_GFqn] = {0};
     UINT b, mask;
@@ -89,7 +89,7 @@ unsigned int PQCLEAN_GEMSSRED128_AVX2_frobeniusMap_HFE_gf2nx(gf2nx Xqn, const
  * @remark  Constant-time implementation.
  */
 static void precompute_table(vec_gf2nx table,
-                             const complete_sparse_monic_gf2nx F,
+                             complete_sparse_monic_gf2nx F,
                              cst_gf2n cst) {
     static_gf2n mul_coef[NB_WORD_GFqn] = {0};
     gf2n leading_coef;
@@ -276,7 +276,7 @@ unsigned int PQCLEAN_GEMSSRED128_AVX2_frobeniusMap_multisqr_HFE_gf2nx(gf2nx Xqn,
         b = isNot0_gf2n(Xqn + i * NB_WORD_GFqn);
         mask |= b;
         /* We add 1 to d as soon as we exceed all left zero coefficients */
-        d += mask;
+        d += (unsigned int)mask;
     }
 
     return d;

@@ -29,7 +29,7 @@
 
 #define ADDROW(LOOPK,LOOPKINV) \
     /* pivot */\
-    mask=-(((*S_cpj)>>ir)&1);\
+    mask=(1+~(((*S_cpj)>>ir)&1));\
     LOOPK;\
     LOOPKINV;
 
@@ -82,7 +82,7 @@
             S_cpj-=NB_WORD_GFqn;\
             Sinv_cpj-=NB_WORD_GFqn;\
             /* pivot */\
-            mask=-(((*S_cpj)>>ir)&1);\
+            mask=(1+~(((*S_cpj)>>ir)&1));\
             xorLoadMask1_gf2n(Sinv_cpj,Sinv_cpi,mask);\
         }\
         \
@@ -171,13 +171,13 @@ void PQCLEAN_GEMSSRED192_CLEAN_invMatrixn_nocst_gf2(GLn_gf2 S_inv, GLn_gf2 S) {
     for(ir=0;ir<(NB_IT);++ir,++i)\
     {\
         /* row i += (1-pivot_i)* row j */\
-        LOOPJ_CST({mask=(-(UINT_1-(((*S_cpi)>>ir)&UINT_1)));\
+        LOOPJ_CST({mask=(1+~(UINT_1-(((*S_cpi)>>ir)&UINT_1)));\
             LOOPK(XORLOADMASK1_1(S_cpi+k,S_cpj+k,mask);)\
             xorLoadMask1_gf2n(Sinv_cpi,Sinv_cpj,mask);\
         });\
         \
         /* row j += (pivot_j) * row_i */\
-        LOOPJ_CST({mask=(-(((*S_cpj)>>ir)&UINT_1));\
+        LOOPJ_CST({mask=(1+~(((*S_cpj)>>ir)&UINT_1));\
             LOOPK(XORLOADMASK1_1(S_cpj+k,S_cpi+k,mask);)\
             xorLoadMask1_gf2n(Sinv_cpj,Sinv_cpi,mask);\
         });\
@@ -289,7 +289,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_invMatrixLUn_gf2(GLn_gf2 S_inv, cst_Tn_gf2 L, cst
                 Sinv_cpj += NB_WORD_GFqn;
                 L_cpj += (j >> 6) + 1;
 
-                mask = (-(((*L_cpj) >> ir)&UINT_1));
+                mask = (1 + ~(((*L_cpj) >> ir)&UINT_1));
                 for (k = 0; k <= iq; ++k) {
                     XORLOADMASK1_1(Sinv_cpj + k, Sinv_cpi + k, mask);
                 }
@@ -314,7 +314,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_invMatrixLUn_gf2(GLn_gf2 S_inv, cst_Tn_gf2 L, cst
             Sinv_cpj += NB_WORD_GFqn;
             L_cpj += (j >> 6) + 1;
 
-            mask = (-(((*L_cpj) >> ir)&UINT_1));
+            mask = (1 + ~(((*L_cpj) >> ir)&UINT_1));
             for (k = 0; k <= iq; ++k) {
                 XORLOADMASK1_1(Sinv_cpj + k, Sinv_cpi + k, mask);
             }
@@ -348,7 +348,7 @@ void PQCLEAN_GEMSSRED192_CLEAN_invMatrixLUn_gf2(GLn_gf2 S_inv, cst_Tn_gf2 L, cst
         /* for the previous rows */
         for (j = 0; j < i; ++j) {
             /* pivot */
-            mask = -(((U[j >> 6]) >> (j & 63U)) & 1U);
+            mask = (1 + ~(((U[j >> 6]) >> (j & 63U)) & 1U));
             xorLoadMask1_gf2n(Sinv_cpj, Sinv_cpi, mask);
 
             /* next row */

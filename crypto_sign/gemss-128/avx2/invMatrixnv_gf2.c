@@ -29,7 +29,7 @@
 
 #define ADDROW(LOOPK,LOOPKINV) \
     /* pivot */\
-    mask=-(((*S_cpj)>>ir)&1);\
+    mask=(1+~(((*S_cpj)>>ir)&1));\
     LOOPK;\
     LOOPKINV;
 
@@ -82,7 +82,7 @@
             S_cpj-=NB_WORD_GF2nv;\
             Sinv_cpj-=NB_WORD_GF2nv;\
             /* pivot */\
-            mask=-(((*S_cpj)>>ir)&1);\
+            mask=(1+~(((*S_cpj)>>ir)&1));\
             xorLoadMask1_gf2nv(Sinv_cpj,Sinv_cpi,mask);\
         }\
         \
@@ -171,13 +171,13 @@ void PQCLEAN_GEMSS128_AVX2_invMatrixnv_nocst_gf2(GLnv_gf2 S_inv, GLnv_gf2 S) {
     for(ir=0;ir<(NB_IT);++ir,++i)\
     {\
         /* row i += (1-pivot_i)* row j */\
-        LOOPJ_CST({mask=(-(UINT_1-(((*S_cpi)>>ir)&UINT_1)));\
+        LOOPJ_CST({mask=(1+~(UINT_1-(((*S_cpi)>>ir)&UINT_1)));\
             LOOPK(XORLOADMASK1_1(S_cpi+k,S_cpj+k,mask);)\
             xorLoadMask1_gf2nv(Sinv_cpi,Sinv_cpj,mask);\
         });\
         \
         /* row j += (pivot_j) * row_i */\
-        LOOPJ_CST({mask=(-(((*S_cpj)>>ir)&UINT_1));\
+        LOOPJ_CST({mask=(1+~(((*S_cpj)>>ir)&UINT_1));\
             LOOPK(XORLOADMASK1_1(S_cpj+k,S_cpi+k,mask);)\
             xorLoadMask1_gf2nv(Sinv_cpj,Sinv_cpi,mask);\
         });\
@@ -290,7 +290,7 @@ void PQCLEAN_GEMSS128_AVX2_invMatrixLUnv_gf2(GLnv_gf2 S_inv, cst_Tnv_gf2 L,
                 Sinv_cpj += NB_WORD_GF2nv;
                 L_cpj += (j >> 6) + 1;
 
-                mask = (-(((*L_cpj) >> ir)&UINT_1));
+                mask = (1 + ~(((*L_cpj) >> ir)&UINT_1));
                 for (k = 0; k <= iq; ++k) {
                     XORLOADMASK1_1(Sinv_cpj + k, Sinv_cpi + k, mask);
                 }
@@ -315,7 +315,7 @@ void PQCLEAN_GEMSS128_AVX2_invMatrixLUnv_gf2(GLnv_gf2 S_inv, cst_Tnv_gf2 L,
             Sinv_cpj += NB_WORD_GF2nv;
             L_cpj += (j >> 6) + 1;
 
-            mask = (-(((*L_cpj) >> ir)&UINT_1));
+            mask = (1 + ~(((*L_cpj) >> ir)&UINT_1));
             for (k = 0; k <= iq; ++k) {
                 XORLOADMASK1_1(Sinv_cpj + k, Sinv_cpi + k, mask);
             }
@@ -349,7 +349,7 @@ void PQCLEAN_GEMSS128_AVX2_invMatrixLUnv_gf2(GLnv_gf2 S_inv, cst_Tnv_gf2 L,
         /* for the previous rows */
         for (j = 0; j < i; ++j) {
             /* pivot */
-            mask = -(((U[j >> 6]) >> (j & 63U)) & 1U);
+            mask = (1 + ~(((U[j >> 6]) >> (j & 63U)) & 1U));
             xorLoadMask1_gf2nv(Sinv_cpj, Sinv_cpi, mask);
 
             /* next row */
