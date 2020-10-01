@@ -32,3 +32,5 @@ implementations:
                 - Darwin
             required_flags:
                 - avx2
+                - bmi1
+                - pclmul
