@@ -33,14 +33,14 @@ def test_symbol_namespaces(implementation, impl_path, test_dir, init, destr):
     lines = out.strip().split("\n")
     symbols = []
     for line in lines:
-        if ' T ' in line or ' D ' in line or ' S ' in line:
+        if line.startswith("00"):
             symbols.append(line)
 
     namespace = implementation.namespace_prefix()
     non_namespaced = []
     for symbolstr in symbols:
         *_, symtype, symbol = symbolstr.split()
-        if symtype in 'TR':
+        if symtype in 'TDRS':
             if not (symbol.startswith(namespace) or
                     symbol.startswith('_' + namespace) or
                     # KeccakP-1600 for AVX2
