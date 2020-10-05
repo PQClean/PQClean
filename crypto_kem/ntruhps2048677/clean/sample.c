@@ -1,4 +1,3 @@
-#include "crypto_sort_int32.h"
 #include "sample.h"
 
 void PQCLEAN_NTRUHPS2048677_CLEAN_sample_fg(poly *f, poly *g, const unsigned char uniformbytes[NTRU_SAMPLE_FG_BYTES]) {
