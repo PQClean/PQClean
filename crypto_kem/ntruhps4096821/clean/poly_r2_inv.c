@@ -9,8 +9,8 @@ static inline int16_t both_negative_mask(int16_t x, int16_t y) {
 
 void PQCLEAN_NTRUHPS4096821_CLEAN_poly_R2_inv(poly *r, const poly *a) {
     poly f, g, v, w;
-    int16_t i, loop, delta;
-    int16_t sign, swap, t;
+    size_t i, loop;
+    int16_t delta, sign, swap, t;
 
     for (i = 0; i < NTRU_N; ++i) {
         v.coeffs[i] = 0;

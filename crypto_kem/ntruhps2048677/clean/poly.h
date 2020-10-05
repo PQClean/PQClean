@@ -4,6 +4,7 @@
 #include "params.h"
 
 #include <stdint.h>
+#include <stddef.h>
 
 #define MODQ(X) ((X) & (NTRU_Q-1))
 
