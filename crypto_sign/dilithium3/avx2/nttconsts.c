@@ -9,14 +9,14 @@ const aligned_uint32x8_t PQCLEAN_DILITHIUM3_AVX2_8xqinv = {.as_arr = {QINV, QINV
 const aligned_uint32x8_t PQCLEAN_DILITHIUM3_AVX2_8xq = {.as_arr = {Q, Q, Q, Q, Q, Q, Q, Q}};
 const aligned_uint32x8_t PQCLEAN_DILITHIUM3_AVX2_8x2q = {.as_arr = {2 * Q, 2 * Q, 2 * Q, 2 * Q, 2 * Q, 2 * Q, 2 * Q, 2 * Q}};
 const aligned_uint32x8_t PQCLEAN_DILITHIUM3_AVX2_8x256q = {.as_arr = {256 * Q, 256 * Q, 256 * Q, 256 * Q, 256 * Q, 256 * Q, 256 * Q,
-                                                                       256 * Q
-                                                                      }
-                                                           };
+                                                                      256 * Q
+                                                                     }
+                                                          };
 const aligned_uint32x8_t PQCLEAN_DILITHIUM3_AVX2_mask = {.as_arr = {0, 2, 4, 6, 0, 0, 0, 0}};
 const aligned_uint32x8_t PQCLEAN_DILITHIUM3_AVX2_8x23ones = {.as_arr = {0x7FFFFF, 0x7FFFFF, 0x7FFFFF, 0x7FFFFF, 0x7FFFFF, 0x7FFFFF,
-                                                                         0x7FFFFF, 0x7FFFFF
-                                                                        }
-                                                             };
+                                                                        0x7FFFFF, 0x7FFFFF
+                                                                       }
+                                                            };
 const aligned_uint32x8_t PQCLEAN_DILITHIUM3_AVX2_8xdiv = { .as_arr = {DIV, DIV, DIV, DIV, DIV, DIV, DIV, DIV}};
 
 #undef QINV
