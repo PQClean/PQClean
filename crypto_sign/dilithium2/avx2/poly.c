@@ -82,7 +82,7 @@ void PQCLEAN_DILITHIUM2_AVX2_poly_add(poly *c, const poly *a, const poly *b)  {
 **************************************************/
 void PQCLEAN_DILITHIUM2_AVX2_poly_sub(poly *c, const poly *a, const poly *b) {
     __m256i vec0, vec1;
-    const __m256i twoq = _mm256_load_si256(_PQCLEAN_DILITHIUM2_AVX2_8x2q.as_vec);
+    const __m256i twoq = _mm256_load_si256(PQCLEAN_DILITHIUM2_AVX2_8x2q.as_vec);
 
     for (size_t i = 0; i < N / 8; i++) {
         vec0 = _mm256_load_si256(&a->coeffs_x8[i]);
