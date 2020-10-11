@@ -13,6 +13,7 @@ on:
       - 'crypto_kem/firesaber/**'
       - '.github/workflows/kem_firesaber.yml'
       - '*'
+      - '!*.md'
 
 name: Test firesaber
 

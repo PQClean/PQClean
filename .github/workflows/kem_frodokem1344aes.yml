@@ -13,6 +13,7 @@ on:
       - 'crypto_kem/frodokem1344aes/**'
       - '.github/workflows/kem_frodokem1344aes.yml'
       - '*'
+      - '!*.md'
 
 name: Test frodokem1344aes
 

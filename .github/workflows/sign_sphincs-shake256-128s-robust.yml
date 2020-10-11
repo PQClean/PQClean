@@ -13,6 +13,7 @@ on:
       - 'crypto_sign/sphincs-shake256-128s-robust/**'
       - '.github/workflows/sign_sphincs-shake256-128s-robust.yml'
       - '*'
+      - '!*.md'
 
 name: Test sphincs-shake256-128s-robust
 

@@ -13,6 +13,7 @@ on:
       - 'crypto_kem/kyber1024-90s/**'
       - '.github/workflows/kem_kyber1024-90s.yml'
       - '*'
+      - '!*.md'
 
 name: Test kyber1024-90s
 

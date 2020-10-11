@@ -13,6 +13,7 @@ on:
       - 'crypto_sign/sphincs-haraka-256s-robust/**'
       - '.github/workflows/sign_sphincs-haraka-256s-robust.yml'
       - '*'
+      - '!*.md'
 
 name: Test sphincs-haraka-256s-robust
 

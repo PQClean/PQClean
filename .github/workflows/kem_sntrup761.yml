@@ -13,6 +13,7 @@ on:
       - 'crypto_kem/sntrup761/**'
       - '.github/workflows/kem_sntrup761.yml'
       - '*'
+      - '!*.md'
 
 name: Test sntrup761
 

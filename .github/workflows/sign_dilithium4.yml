@@ -13,6 +13,7 @@ on:
       - 'crypto_sign/dilithium4/**'
       - '.github/workflows/sign_dilithium4.yml'
       - '*'
+      - '!*.md'
 
 name: Test dilithium4
 

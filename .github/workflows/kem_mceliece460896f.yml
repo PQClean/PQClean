@@ -13,6 +13,7 @@ on:
       - 'crypto_kem/mceliece460896f/**'
       - '.github/workflows/kem_mceliece460896f.yml'
       - '*'
+      - '!*.md'
 
 name: Test mceliece460896f
 

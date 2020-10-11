@@ -13,6 +13,7 @@ on:
       - 'crypto_sign/falcon-512/**'
       - '.github/workflows/sign_falcon-512.yml'
       - '*'
+      - '!*.md'
 
 name: Test falcon-512
 

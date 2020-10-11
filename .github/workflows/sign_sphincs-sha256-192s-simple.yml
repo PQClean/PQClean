@@ -13,6 +13,7 @@ on:
       - 'crypto_sign/sphincs-sha256-192s-simple/**'
       - '.github/workflows/sign_sphincs-sha256-192s-simple.yml'
       - '*'
+      - '!*.md'
 
 name: Test sphincs-sha256-192s-simple
 

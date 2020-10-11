@@ -13,6 +13,7 @@ on:
       - 'crypto_kem/frodokem1344shake/**'
       - '.github/workflows/kem_frodokem1344shake.yml'
       - '*'
+      - '!*.md'
 
 name: Test frodokem1344shake
 

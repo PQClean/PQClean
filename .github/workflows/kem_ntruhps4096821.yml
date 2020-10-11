@@ -13,6 +13,7 @@ on:
       - 'crypto_kem/ntruhps4096821/**'
       - '.github/workflows/kem_ntruhps4096821.yml'
       - '*'
+      - '!*.md'
 
 name: Test ntruhps4096821
 
