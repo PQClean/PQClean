@@ -18,6 +18,10 @@ def render_workflow(scheme_path):
     if not TEST_MODE:
         with open(target_name, "w") as f:
             f.write(new_contents)
+        with open("BADGES.md", "a") as f:
+            f.write(
+                f"![Test {scheme_name}]"
+                f"(https://github.com/PQClean/PQClean/workflows/Test%20{scheme_name}/badge.svg?branch=master)\n")
     else:
         if (Path(".") / target_name).exists():
             with open(target_name, "r") as f:
@@ -42,6 +46,11 @@ if __name__ == "__main__":
     TPL_ENV = jinja2.Environment(
         loader=loader, variable_start_string="{-", variable_end_string="-}"
     )
+
+    if not TEST_MODE:
+        with open("BADGES.md", "w") as f:
+            f.truncate()
+
     with open("template.yml.j2") as f:
         TEMPLATE = f.read()
     root = Path("../..")

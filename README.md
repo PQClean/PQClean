@@ -1,9 +1,97 @@
 # PQClean
 
 [![Build Status on Travis CI](https://travis-ci.com/PQClean/PQClean.svg?branch=master)](https://travis-ci.com/PQClean/PQClean)
-[![Build Status on Appveyor](https://ci.appveyor.com/api/projects/status/186ky7yb9mlqj3io/branch/master?svg=true)](https://ci.appveyor.com/project/PQClean/pqclean/branch/master)
-[![Build Status on CircleCI](https://circleci.com/gh/PQClean/PQClean/tree/master.svg?style=svg)](https://circleci.com/gh/PQClean/PQClean/tree/master)
-
+![Test dilithium2](https://github.com/PQClean/PQClean/workflows/Test%20dilithium2/badge.svg?branch=master)
+![Test dilithium3](https://github.com/PQClean/PQClean/workflows/Test%20dilithium3/badge.svg?branch=master)
+![Test dilithium4](https://github.com/PQClean/PQClean/workflows/Test%20dilithium4/badge.svg?branch=master)
+![Test falcon-1024](https://github.com/PQClean/PQClean/workflows/Test%20falcon-1024/badge.svg?branch=master)
+![Test falcon-512](https://github.com/PQClean/PQClean/workflows/Test%20falcon-512/badge.svg?branch=master)
+![Test firesaber](https://github.com/PQClean/PQClean/workflows/Test%20firesaber/badge.svg?branch=master)
+![Test frodokem1344aes](https://github.com/PQClean/PQClean/workflows/Test%20frodokem1344aes/badge.svg?branch=master)
+![Test frodokem1344shake](https://github.com/PQClean/PQClean/workflows/Test%20frodokem1344shake/badge.svg?branch=master)
+![Test frodokem640aes](https://github.com/PQClean/PQClean/workflows/Test%20frodokem640aes/badge.svg?branch=master)
+![Test frodokem640shake](https://github.com/PQClean/PQClean/workflows/Test%20frodokem640shake/badge.svg?branch=master)
+![Test frodokem976aes](https://github.com/PQClean/PQClean/workflows/Test%20frodokem976aes/badge.svg?branch=master)
+![Test frodokem976shake](https://github.com/PQClean/PQClean/workflows/Test%20frodokem976shake/badge.svg?branch=master)
+![Test hqc-128](https://github.com/PQClean/PQClean/workflows/Test%20hqc-128/badge.svg?branch=master)
+![Test hqc-192](https://github.com/PQClean/PQClean/workflows/Test%20hqc-192/badge.svg?branch=master)
+![Test hqc-256](https://github.com/PQClean/PQClean/workflows/Test%20hqc-256/badge.svg?branch=master)
+![Test hqc-rmrs-128](https://github.com/PQClean/PQClean/workflows/Test%20hqc-rmrs-128/badge.svg?branch=master)
+![Test hqc-rmrs-192](https://github.com/PQClean/PQClean/workflows/Test%20hqc-rmrs-192/badge.svg?branch=master)
+![Test hqc-rmrs-256](https://github.com/PQClean/PQClean/workflows/Test%20hqc-rmrs-256/badge.svg?branch=master)
+![Test kyber1024-90s](https://github.com/PQClean/PQClean/workflows/Test%20kyber1024-90s/badge.svg?branch=master)
+![Test kyber1024](https://github.com/PQClean/PQClean/workflows/Test%20kyber1024/badge.svg?branch=master)
+![Test kyber512-90s](https://github.com/PQClean/PQClean/workflows/Test%20kyber512-90s/badge.svg?branch=master)
+![Test kyber512](https://github.com/PQClean/PQClean/workflows/Test%20kyber512/badge.svg?branch=master)
+![Test kyber768-90s](https://github.com/PQClean/PQClean/workflows/Test%20kyber768-90s/badge.svg?branch=master)
+![Test kyber768](https://github.com/PQClean/PQClean/workflows/Test%20kyber768/badge.svg?branch=master)
+![Test lightsaber](https://github.com/PQClean/PQClean/workflows/Test%20lightsaber/badge.svg?branch=master)
+![Test mceliece348864](https://github.com/PQClean/PQClean/workflows/Test%20mceliece348864/badge.svg?branch=master)
+![Test mceliece348864f](https://github.com/PQClean/PQClean/workflows/Test%20mceliece348864f/badge.svg?branch=master)
+![Test mceliece460896](https://github.com/PQClean/PQClean/workflows/Test%20mceliece460896/badge.svg?branch=master)
+![Test mceliece460896f](https://github.com/PQClean/PQClean/workflows/Test%20mceliece460896f/badge.svg?branch=master)
+![Test mceliece6688128](https://github.com/PQClean/PQClean/workflows/Test%20mceliece6688128/badge.svg?branch=master)
+![Test mceliece6688128f](https://github.com/PQClean/PQClean/workflows/Test%20mceliece6688128f/badge.svg?branch=master)
+![Test mceliece6960119](https://github.com/PQClean/PQClean/workflows/Test%20mceliece6960119/badge.svg?branch=master)
+![Test mceliece6960119f](https://github.com/PQClean/PQClean/workflows/Test%20mceliece6960119f/badge.svg?branch=master)
+![Test mceliece8192128](https://github.com/PQClean/PQClean/workflows/Test%20mceliece8192128/badge.svg?branch=master)
+![Test mceliece8192128f](https://github.com/PQClean/PQClean/workflows/Test%20mceliece8192128f/badge.svg?branch=master)
+![Test ntruhps2048509](https://github.com/PQClean/PQClean/workflows/Test%20ntruhps2048509/badge.svg?branch=master)
+![Test ntruhps2048677](https://github.com/PQClean/PQClean/workflows/Test%20ntruhps2048677/badge.svg?branch=master)
+![Test ntruhps4096821](https://github.com/PQClean/PQClean/workflows/Test%20ntruhps4096821/badge.svg?branch=master)
+![Test ntruhrss701](https://github.com/PQClean/PQClean/workflows/Test%20ntruhrss701/badge.svg?branch=master)
+![Test ntrulpr653](https://github.com/PQClean/PQClean/workflows/Test%20ntrulpr653/badge.svg?branch=master)
+![Test ntrulpr761](https://github.com/PQClean/PQClean/workflows/Test%20ntrulpr761/badge.svg?branch=master)
+![Test ntrulpr857](https://github.com/PQClean/PQClean/workflows/Test%20ntrulpr857/badge.svg?branch=master)
+![Test rainbowIIIc-classic](https://github.com/PQClean/PQClean/workflows/Test%20rainbowIIIc-classic/badge.svg?branch=master)
+![Test rainbowIIIc-cyclic-compressed](https://github.com/PQClean/PQClean/workflows/Test%20rainbowIIIc-cyclic-compressed/badge.svg?branch=master)
+![Test rainbowIIIc-cyclic](https://github.com/PQClean/PQClean/workflows/Test%20rainbowIIIc-cyclic/badge.svg?branch=master)
+![Test rainbowIa-classic](https://github.com/PQClean/PQClean/workflows/Test%20rainbowIa-classic/badge.svg?branch=master)
+![Test rainbowIa-cyclic-compressed](https://github.com/PQClean/PQClean/workflows/Test%20rainbowIa-cyclic-compressed/badge.svg?branch=master)
+![Test rainbowIa-cyclic](https://github.com/PQClean/PQClean/workflows/Test%20rainbowIa-cyclic/badge.svg?branch=master)
+![Test rainbowVc-classic](https://github.com/PQClean/PQClean/workflows/Test%20rainbowVc-classic/badge.svg?branch=master)
+![Test rainbowVc-cyclic-compressed](https://github.com/PQClean/PQClean/workflows/Test%20rainbowVc-cyclic-compressed/badge.svg?branch=master)
+![Test rainbowVc-cyclic](https://github.com/PQClean/PQClean/workflows/Test%20rainbowVc-cyclic/badge.svg?branch=master)
+![Test saber](https://github.com/PQClean/PQClean/workflows/Test%20saber/badge.svg?branch=master)
+![Test sntrup653](https://github.com/PQClean/PQClean/workflows/Test%20sntrup653/badge.svg?branch=master)
+![Test sntrup761](https://github.com/PQClean/PQClean/workflows/Test%20sntrup761/badge.svg?branch=master)
+![Test sntrup857](https://github.com/PQClean/PQClean/workflows/Test%20sntrup857/badge.svg?branch=master)
+![Test sphincs-haraka-128f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-128f-robust/badge.svg?branch=master)
+![Test sphincs-haraka-128f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-128f-simple/badge.svg?branch=master)
+![Test sphincs-haraka-128s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-128s-robust/badge.svg?branch=master)
+![Test sphincs-haraka-128s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-128s-simple/badge.svg?branch=master)
+![Test sphincs-haraka-192f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-192f-robust/badge.svg?branch=master)
+![Test sphincs-haraka-192f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-192f-simple/badge.svg?branch=master)
+![Test sphincs-haraka-192s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-192s-robust/badge.svg?branch=master)
+![Test sphincs-haraka-192s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-192s-simple/badge.svg?branch=master)
+![Test sphincs-haraka-256f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-256f-robust/badge.svg?branch=master)
+![Test sphincs-haraka-256f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-256f-simple/badge.svg?branch=master)
+![Test sphincs-haraka-256s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-256s-robust/badge.svg?branch=master)
+![Test sphincs-haraka-256s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-haraka-256s-simple/badge.svg?branch=master)
+![Test sphincs-sha256-128f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-128f-robust/badge.svg?branch=master)
+![Test sphincs-sha256-128f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-128f-simple/badge.svg?branch=master)
+![Test sphincs-sha256-128s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-128s-robust/badge.svg?branch=master)
+![Test sphincs-sha256-128s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-128s-simple/badge.svg?branch=master)
+![Test sphincs-sha256-192f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-192f-robust/badge.svg?branch=master)
+![Test sphincs-sha256-192f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-192f-simple/badge.svg?branch=master)
+![Test sphincs-sha256-192s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-192s-robust/badge.svg?branch=master)
+![Test sphincs-sha256-192s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-192s-simple/badge.svg?branch=master)
+![Test sphincs-sha256-256f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-256f-robust/badge.svg?branch=master)
+![Test sphincs-sha256-256f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-256f-simple/badge.svg?branch=master)
+![Test sphincs-sha256-256s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-256s-robust/badge.svg?branch=master)
+![Test sphincs-sha256-256s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha256-256s-simple/badge.svg?branch=master)
+![Test sphincs-shake256-128f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-128f-robust/badge.svg?branch=master)
+![Test sphincs-shake256-128f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-128f-simple/badge.svg?branch=master)
+![Test sphincs-shake256-128s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-128s-robust/badge.svg?branch=master)
+![Test sphincs-shake256-128s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-128s-simple/badge.svg?branch=master)
+![Test sphincs-shake256-192f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-192f-robust/badge.svg?branch=master)
+![Test sphincs-shake256-192f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-192f-simple/badge.svg?branch=master)
+![Test sphincs-shake256-192s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-192s-robust/badge.svg?branch=master)
+![Test sphincs-shake256-192s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-192s-simple/badge.svg?branch=master)
+![Test sphincs-shake256-256f-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-256f-robust/badge.svg?branch=master)
+![Test sphincs-shake256-256f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-256f-simple/badge.svg?branch=master)
+![Test sphincs-shake256-256s-robust](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-256s-robust/badge.svg?branch=master)
+![Test sphincs-shake256-256s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-shake256-256s-simple/badge.svg?branch=master)
 **PQClean**, in short, is an effort to collect **clean** implementations of the post-quantum
 schemes that are in the
 [NIST post-quantum project](https://csrc.nist.gov/projects/post-quantum-cryptography).
@@ -161,10 +249,10 @@ All other code in this repository is released under the conditions of [CC0](http
 
 See https://github.com/PQClean/PQClean/wiki/Test-framework for details about the PQClean test framework.
 
-While we run extensive automatic testing on [Circle CI][circleci-pqc] (Linux builds), [Travis CI][travis-pqc] (OS X builds) and [Appveyor][appveyor-pqc] (Windows builds), most tests can also be run locally.
+While we run extensive automatic testing on Github Actions ((emulated) Linux builds, MacOS and Windows builds) and [Travis CI][travis-pqc] (Aarch64 builds), and most tests can also be run locally.
 To do this, make sure the following is installed:
 
-* Python 3.5+
+* Python 3.6+
 * `pytest` for python 3.
 
 We also recommend installing ``pytest-xdist`` to allow running tests in parallel.
@@ -179,6 +267,4 @@ Run the Python-based tests by going into the `test` directory and running `pytes
 
 You may also run `python3 <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
 
-[circleci-pqc]: https://circleci.com/gh/PQClean/PQClean/
 [travis-pqc]: https://travis-ci.com/PQClean/PQClean/
-[appveyor-pqc]: https://ci.appveyor.com/project/PQClean/pqclean
