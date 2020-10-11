@@ -6,6 +6,7 @@ on:
       - 'crypto_kem/mceliece8192128f/**'
       - '.github/workflows/kem_mceliece8192128f.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/kem_mceliece8192128f.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test mceliece8192128f
 

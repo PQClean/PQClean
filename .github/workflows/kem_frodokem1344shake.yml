@@ -6,6 +6,7 @@ on:
       - 'crypto_kem/frodokem1344shake/**'
       - '.github/workflows/kem_frodokem1344shake.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/kem_frodokem1344shake.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test frodokem1344shake
 

@@ -6,6 +6,7 @@ on:
       - 'crypto_sign/sphincs-haraka-256s-robust/**'
       - '.github/workflows/sign_sphincs-haraka-256s-robust.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/sign_sphincs-haraka-256s-robust.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test sphincs-haraka-256s-robust
 

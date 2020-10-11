@@ -6,6 +6,7 @@ on:
       - 'crypto_kem/ntrulpr653/**'
       - '.github/workflows/kem_ntrulpr653.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/kem_ntrulpr653.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test ntrulpr653
 

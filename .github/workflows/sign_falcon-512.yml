@@ -6,6 +6,7 @@ on:
       - 'crypto_sign/falcon-512/**'
       - '.github/workflows/sign_falcon-512.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/sign_falcon-512.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test falcon-512
 

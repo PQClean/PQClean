@@ -6,6 +6,7 @@ on:
       - 'crypto_sign/dilithium3/**'
       - '.github/workflows/sign_dilithium3.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/sign_dilithium3.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test dilithium3
 

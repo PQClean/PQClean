@@ -6,6 +6,7 @@ on:
       - 'crypto_sign/sphincs-shake256-256s-simple/**'
       - '.github/workflows/sign_sphincs-shake256-256s-simple.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/sign_sphincs-shake256-256s-simple.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test sphincs-shake256-256s-simple
 

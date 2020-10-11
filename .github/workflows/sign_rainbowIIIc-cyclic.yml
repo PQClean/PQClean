@@ -6,6 +6,7 @@ on:
       - 'crypto_sign/rainbowIIIc-cyclic/**'
       - '.github/workflows/sign_rainbowIIIc-cyclic.yml'
       - '*'
+      - '!*.md'
   pull_request:
     paths:
       - 'test/**'
@@ -14,6 +15,8 @@ on:
       - '.github/workflows/sign_rainbowIIIc-cyclic.yml'
       - '*'
       - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test rainbowIIIc-cyclic
 
