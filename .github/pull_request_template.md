@@ -2,9 +2,10 @@
 
 <!-- Type some lines about your submission -->
 
-<!-- If you are not submitting a new scheme, we suggest removing the following lines -->
-#### Manually checked properties
+<!-- !! If you are not submitting a new scheme, we suggest removing the following lines!!  -->
 
+#### Manually checked properties
+* [ ] Generated Github workflow (run ``.github/workflows/generate_workflows.py``) (new schemes)
 * [ ] No stringification macros
 * [ ] Output-parameter pointers in functions are on the left
 * [ ] Negative return values on failure of API functions (within restrictions of FO transform).

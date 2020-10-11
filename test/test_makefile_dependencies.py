@@ -62,13 +62,18 @@ def check_makefile_dependencies(implementation, impl_path, file):
     sfiles = glob.glob(os.path.join(impl_path, '*.[sS]'))
     hfiles = glob.glob(os.path.join(impl_path, '*.h'))
     incfiles = glob.glob(os.path.join(impl_path, '*.inc'))
-    ofiles = glob.glob(
-        os.path.join(impl_path,
-                     '*.o' if os.name != 'nt' else '*.obj'))
-    # handle dependency o-files
+    o_ext = '*.o' if os.name != 'nt' else '*.obj'
+    ofiles = glob.glob(os.path.join(impl_path, o_ext))
+
+    # handle dependency files: these also need to be set correctly
     commondir = os.path.join(impl_path, '..', '..', '..', 'common')
-    ofiles += glob.glob(os.path.join(commondir, '*.o'))
-    ofiles += glob.glob(os.path.join(commondir, '**', '*.o'))
+    cfiles += glob.glob(os.path.join(commondir, '*.c'))
+    cfiles += glob.glob(os.path.join(commondir, '**', '*.c'))
+    hfiles += glob.glob(os.path.join(commondir, '*.h'))
+    hfiles += glob.glob(os.path.join(commondir, '**', '*.h'))
+    incfiles.append(os.path.join(commondir, 'keccak4x', 'KeccakP-1600-unrolling.macros'))
+    ofiles += glob.glob(os.path.join(commondir, o_ext))
+    ofiles += glob.glob(os.path.join(commondir, '**', o_ext))
 
     libfile = os.path.join(impl_path, implementation.libname())
 
