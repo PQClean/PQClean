@@ -45,9 +45,9 @@ vpsrlq		$32,%ymm\h3,%ymm\h3
 .global cdecl(PQCLEAN_DILITHIUM4_AVX2_invntt_levels0t4_avx)
 cdecl(PQCLEAN_DILITHIUM4_AVX2_invntt_levels0t4_avx):
 #consts
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xqinv)(%rip),%ymm0
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xq)(%rip),%ymm1
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8x256q)(%rip),%ymm2
+vmovdqa		cdecl(PQCLEAN_DILITHIUM4_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(PQCLEAN_DILITHIUM4_AVX2_8xq)(%rip),%ymm1
+vmovdqa		cdecl(PQCLEAN_DILITHIUM4_AVX2_8x256q)(%rip),%ymm2
 
 #load
 vmovdqa		(%rsi),%ymm6
@@ -165,9 +165,9 @@ ret
 .global cdecl(PQCLEAN_DILITHIUM4_AVX2_invntt_levels5t7_avx)
 cdecl(PQCLEAN_DILITHIUM4_AVX2_invntt_levels5t7_avx):
 #consts
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xqinv)(%rip),%ymm0
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xq)(%rip),%ymm1
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8x256q)(%rip),%ymm2
+vmovdqa		cdecl(PQCLEAN_DILITHIUM4_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(PQCLEAN_DILITHIUM4_AVX2_8xq)(%rip),%ymm1
+vmovdqa		cdecl(PQCLEAN_DILITHIUM4_AVX2_8x256q)(%rip),%ymm2
 
 #load
 vmovdqa		(%rsi),%ymm4
@@ -237,7 +237,7 @@ vpbroadcastd	24(%rdx),%ymm3
 butterfly	4,5,6,7,8,9,10,11,3,3
 
 #consts
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM4_AVX2_8xdiv)(%rip),%ymm3
+vmovdqa		cdecl(PQCLEAN_DILITHIUM4_AVX2_8xdiv)(%rip),%ymm3
 
 vpmuludq        %ymm3,%ymm4,%ymm4
 vpmuludq        %ymm3,%ymm5,%ymm5
@@ -261,7 +261,7 @@ vpsrlq          $32,%ymm6,%ymm6
 vpsrlq          $32,%ymm7,%ymm7
 
 #store
-vmovdqa         cdecl(_PQCLEAN_DILITHIUM4_AVX2_mask)(%rip),%ymm3
+vmovdqa         cdecl(PQCLEAN_DILITHIUM4_AVX2_mask)(%rip),%ymm3
 vpermd          %ymm4,%ymm3,%ymm4
 vpermd          %ymm5,%ymm3,%ymm5
 vpermd          %ymm6,%ymm3,%ymm6

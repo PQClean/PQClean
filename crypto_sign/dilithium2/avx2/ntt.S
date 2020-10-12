@@ -44,9 +44,9 @@ vpsubd		%ymm15,%ymm\rh3,%ymm\rh3
 .global cdecl(PQCLEAN_DILITHIUM2_AVX2_ntt_levels0t2_avx)
 cdecl(PQCLEAN_DILITHIUM2_AVX2_ntt_levels0t2_avx):
 #consts
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xqinv)(%rip),%ymm0
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm1
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8x2q)(%rip),%ymm2
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm1
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8x2q)(%rip),%ymm2
 
 level0:
 #zetas
@@ -95,9 +95,9 @@ ret
 .global cdecl(PQCLEAN_DILITHIUM2_AVX2_ntt_levels3t8_avx)
 cdecl(PQCLEAN_DILITHIUM2_AVX2_ntt_levels3t8_avx):
 #consts
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xqinv)(%rip),%ymm0
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm1
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8x2q)(%rip),%ymm2
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8xqinv)(%rip),%ymm0
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm1
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8x2q)(%rip),%ymm2
 
 #load
 vmovdqa		(%rsi),%ymm4

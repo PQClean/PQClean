@@ -3,7 +3,7 @@
 .global cdecl(PQCLEAN_DILITHIUM2_AVX2_reduce_avx)
 cdecl(PQCLEAN_DILITHIUM2_AVX2_reduce_avx):
 #consts
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8x23ones)(%rip),%ymm0
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8x23ones)(%rip),%ymm0
 
 xor		%eax,%eax
 _looptop_rdc32:
@@ -51,7 +51,7 @@ ret
 .global cdecl(PQCLEAN_DILITHIUM2_AVX2_csubq_avx)
 cdecl(PQCLEAN_DILITHIUM2_AVX2_csubq_avx):
 #consts
-vmovdqa		cdecl(_PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm0
+vmovdqa		cdecl(PQCLEAN_DILITHIUM2_AVX2_8xq)(%rip),%ymm0
 
 xor		%eax,%eax
 _looptop_csubq:
