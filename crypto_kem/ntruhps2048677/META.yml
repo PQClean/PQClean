@@ -23,9 +23,9 @@ auxiliary-submitters:
   - Zhenfei Zhang
 implementations:
     - name: clean
-      version: https://github.com/jschanck/ntru/tree/2d4df948 reference implementation
+      version: https://github.com/jschanck/ntru/tree/b38a346a reference implementation
     - name: avx2
-      version: https://github.com/jschanck/ntru/tree/2d4df948 avx2 implementation
+      version: https://github.com/jschanck/ntru/tree/b38a346a avx2 implementation
       supported_platforms:
           - architecture: x86_64
             operating_systems:
