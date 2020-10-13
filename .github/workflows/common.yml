@@ -96,7 +96,6 @@ jobs:
         bits:
           - 64
           - 32
-    env:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
