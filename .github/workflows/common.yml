@@ -44,7 +44,7 @@ jobs:
       - name: Run tests
         run: |
           cd test
-          python3 test_common.py
+          python3 test_common.py --numprocesses=auto
           python3 test_workflows.py
   test-emulated:
     runs-on: ubuntu-latest
@@ -79,17 +79,16 @@ jobs:
         with:
           path: ~/.cache/pip
           key: v1-python-pip
-
       - name: Run tests in container
         run: |
-          docker run --rm -e CI -e CC -e -v $PWD:$PWD -w $PWD -v ~/ccache:/ccache pqclean/ci-container:${{ matrix.arch }} /bin/bash -c "\
+          docker run --rm -e CI -e CC -v $PWD:$PWD -w $PWD -v ~/ccache:/ccache pqclean/ci-container:${{ matrix.arch }} /bin/bash -c "\
           export CCACHE_NOSTATS=1 && \
           export CCACHE_DIR=/ccache && \
           export CCACHE_SLOPPINESS=include_file_mtime && \
           export CC=\"ccache $CC\" && \
-          pip3 install -r requirements.txt && \
+          pip3 install -U -r requirements.txt && \
           cd test && \
-          python3 test_common.py"
+          python3 test_common.py --numprocesses=auto"
   test-windows:
     strategy:
       matrix:
@@ -115,7 +114,7 @@ jobs:
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvars${{ matrix.bits }}.bat"
           cd test
           python -m pytest --verbose --numprocesses=auto
-          python3 test_common.py
+          python3 test_common.py --numprocesses=auto
         shell: cmd
   test-macos:
     env:
@@ -141,5 +140,5 @@ jobs:
       - name: Run tests
         run: |
           cd test
-          python3 test_common.py
+          python3 test_common.py --numprocesses=auto
 
