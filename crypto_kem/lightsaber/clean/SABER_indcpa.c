@@ -13,7 +13,7 @@
 void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_keypair(uint8_t pk[SABER_INDCPA_PUBLICKEYBYTES], uint8_t sk[SABER_INDCPA_SECRETKEYBYTES]) {
     uint16_t A[SABER_L][SABER_L][SABER_N];
     uint16_t s[SABER_L][SABER_N];
-    uint16_t b[SABER_L][SABER_N] = {0};
+    uint16_t b[SABER_L][SABER_N] = {{0}};
 
     uint8_t seed_A[SABER_SEEDBYTES];
     uint8_t seed_s[SABER_NOISE_SEEDBYTES];
@@ -41,7 +41,7 @@ void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_keypair(uint8_t pk[SABER_INDCPA_PUBLICK
 void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(uint8_t ciphertext[SABER_BYTES_CCA_DEC], const uint8_t m[SABER_KEYBYTES], const uint8_t seed_sp[SABER_NOISE_SEEDBYTES], const uint8_t pk[SABER_INDCPA_PUBLICKEYBYTES]) {
     uint16_t A[SABER_L][SABER_L][SABER_N];
     uint16_t sp[SABER_L][SABER_N];
-    uint16_t bp[SABER_L][SABER_N] = {0};
+    uint16_t bp[SABER_L][SABER_N] = {{0}};
     uint16_t vp[SABER_N] = {0};
     uint16_t mp[SABER_N];
     uint16_t b[SABER_L][SABER_N];
