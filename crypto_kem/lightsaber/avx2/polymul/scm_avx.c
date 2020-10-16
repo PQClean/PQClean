@@ -4,7 +4,7 @@
 
 #include <immintrin.h>
 
-inline __m256i mul_add(__m256i a, __m256i b, __m256i c) { 
+static inline __m256i mul_add(__m256i a, __m256i b, __m256i c) { 
     return _mm256_add_epi16(_mm256_mullo_epi16(a, b), c);
 }
 
