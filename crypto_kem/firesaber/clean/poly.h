@@ -1,26 +1,15 @@
 #ifndef POLY_H
 #define POLY_H
-
-/*---------------------------------------------------------------------
-This file has been adapted from the implementation
-(available at, Public Domain https://github.com/pq-crystals/kyber)
-of "CRYSTALS – Kyber: a CCA-secure module-lattice-based KEM"
-by : Joppe Bos, Leo Ducas, Eike Kiltz, Tancrede Lepoint,
-Vadim Lyubashevsky, John M. Schanck, Peter Schwabe & Damien stehle
-----------------------------------------------------------------------*/
-
-
 #include "SABER_params.h"
 #include <stdint.h>
 
-typedef struct {
-    uint16_t coeffs[SABER_N];
-} poly;
+void PQCLEAN_FIRESABER_CLEAN_MatrixVectorMul(uint16_t res[SABER_L][SABER_N], const uint16_t a[SABER_L][SABER_L][SABER_N], const uint16_t s[SABER_L][SABER_N], int16_t transpose);
 
-typedef struct {
-    poly vec[SABER_K];
-} polyvec;
+void PQCLEAN_FIRESABER_CLEAN_InnerProd(uint16_t res[SABER_N], const uint16_t b[SABER_L][SABER_N], const uint16_t s[SABER_L][SABER_N]);
 
-void PQCLEAN_FIRESABER_CLEAN_GenSecret(uint16_t r[SABER_K][SABER_N], const unsigned char *seed);
+void PQCLEAN_FIRESABER_CLEAN_GenMatrix(uint16_t a[SABER_L][SABER_L][SABER_N], const uint8_t seed[SABER_SEEDBYTES]);
+
+void PQCLEAN_FIRESABER_CLEAN_GenSecret(uint16_t s[SABER_L][SABER_N], const uint8_t seed[SABER_NOISE_SEEDBYTES]);
+
 
 #endif

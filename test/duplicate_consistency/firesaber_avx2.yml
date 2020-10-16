@@ -1,0 +1,7 @@
+consistency_checks:
+    - source:
+        scheme: firesaber
+        implementation: clean
+      files:
+      - verify.h
+      - verify.c

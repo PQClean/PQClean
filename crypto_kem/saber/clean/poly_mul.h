@@ -1,9 +1,9 @@
-#ifndef POLYMUL_H
-#define POLYMUL_H
-
+#ifndef POLY_MUL_H
+#define POLY_MUL_H
 #include "SABER_params.h"
 #include <stdint.h>
 
-void PQCLEAN_SABER_CLEAN_pol_mul(uint16_t *a, uint16_t *b, uint16_t *res, uint16_t p, uint32_t n);
+void PQCLEAN_SABER_CLEAN_poly_mul_acc(const uint16_t a[SABER_N], const uint16_t b[SABER_N], uint16_t res[SABER_N]);
+
 
 #endif

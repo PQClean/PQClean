@@ -1,21 +1,49 @@
-/*---------------------------------------------------------------------
-This file has been adapted from the implementation
-(available at, Public Domain https://github.com/pq-crystals/kyber)
-of "CRYSTALS – Kyber: a CCA-secure module-lattice-based KEM"
-by : Joppe Bos, Leo Ducas, Eike Kiltz, Tancrede Lepoint,
-Vadim Lyubashevsky, John M. Schanck, Peter Schwabe & Damien stehle
-----------------------------------------------------------------------*/
-#include "SABER_params.h"
+#include "api.h"
 #include "cbd.h"
 #include "fips202.h"
+#include "pack_unpack.h"
 #include "poly.h"
+#include "poly_mul.h"
+#include <stdio.h>
 
-void PQCLEAN_LIGHTSABER_CLEAN_GenSecret(uint16_t r[SABER_K][SABER_N], const unsigned char *seed) {
-    uint8_t buf[SABER_MU * SABER_N * SABER_K / 8];
+void PQCLEAN_LIGHTSABER_CLEAN_MatrixVectorMul(uint16_t res[SABER_L][SABER_N], const uint16_t A[SABER_L][SABER_L][SABER_N], const uint16_t s[SABER_L][SABER_N], int16_t transpose) {
+    int i, j;
+    for (i = 0; i < SABER_L; i++) {
+        for (j = 0; j < SABER_L; j++) {
+            if (transpose == 1) {
+                PQCLEAN_LIGHTSABER_CLEAN_poly_mul_acc(A[j][i], s[j], res[i]);
+            } else {
+                PQCLEAN_LIGHTSABER_CLEAN_poly_mul_acc(A[i][j], s[j], res[i]);
+            }
+        }
+    }
+}
 
-    shake128(buf, sizeof(buf), seed, SABER_NOISESEEDBYTES);
+void PQCLEAN_LIGHTSABER_CLEAN_InnerProd(uint16_t res[SABER_N], const uint16_t b[SABER_L][SABER_N], const uint16_t s[SABER_L][SABER_N]) {
+    int j;
+    for (j = 0; j < SABER_L; j++) {
+        PQCLEAN_LIGHTSABER_CLEAN_poly_mul_acc(b[j], s[j], res);
+    }
+}
 
-    for (size_t i = 0; i < SABER_K; i++) {
-        PQCLEAN_LIGHTSABER_CLEAN_cbd(r[i], buf + i * SABER_MU * SABER_N / 8);
+void PQCLEAN_LIGHTSABER_CLEAN_GenMatrix(uint16_t A[SABER_L][SABER_L][SABER_N], const uint8_t seed[SABER_SEEDBYTES]) {
+    uint8_t buf[SABER_L * SABER_POLYVECBYTES];
+    int i;
+
+    shake128(buf, sizeof(buf), seed, SABER_SEEDBYTES);
+
+    for (i = 0; i < SABER_L; i++) {
+        PQCLEAN_LIGHTSABER_CLEAN_BS2POLVECq(A[i], buf + i * SABER_POLYVECBYTES);
+    }
+}
+
+void PQCLEAN_LIGHTSABER_CLEAN_GenSecret(uint16_t s[SABER_L][SABER_N], const uint8_t seed[SABER_NOISE_SEEDBYTES]) {
+    uint8_t buf[SABER_L * SABER_POLYCOINBYTES];
+    size_t i;
+
+    shake128(buf, sizeof(buf), seed, SABER_NOISE_SEEDBYTES);
+
+    for (i = 0; i < SABER_L; i++) {
+        PQCLEAN_LIGHTSABER_CLEAN_cbd(s[i], buf + i * SABER_POLYCOINBYTES);
     }
 }

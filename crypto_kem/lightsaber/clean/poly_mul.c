@@ -228,19 +228,15 @@ static void toom_cook_4way (const uint16_t *a1, const uint16_t *b1, uint16_t *re
     }
 }
 
-void PQCLEAN_LIGHTSABER_CLEAN_pol_mul(uint16_t *a, uint16_t *b, uint16_t *res, uint16_t p, uint32_t n) {
-    uint32_t i;
-    // normal multiplication
-    uint16_t c[512];
-
-    for (i = 0; i < 512; i++) {
-        c[i] = 0;
-    }
+/* res += a*b */
+void PQCLEAN_LIGHTSABER_CLEAN_poly_mul_acc(const uint16_t a[SABER_N], const uint16_t b[SABER_N], uint16_t res[SABER_N]) {
+    uint16_t c[2 * SABER_N] = {0};
+    int i;
 
     toom_cook_4way(a, b, c);
 
-    // reduction
-    for (i = n; i < 2 * n; i++) {
-        res[i - n] = (c[i - n] - c[i]) & (p - 1);
+    /* reduction */
+    for (i = SABER_N; i < 2 * SABER_N; i++) {
+        res[i - SABER_N] += (c[i - SABER_N] - c[i]);
     }
 }
