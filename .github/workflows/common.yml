@@ -107,6 +107,10 @@ jobs:
           Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\.NetFramework\\v4.0.30319" -Name "SchUseStrongCrypto" -Value '1' -Type DWord
           Invoke-WebRequest -OutFile "test\\astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
         shell: powershell
+      - name: Setup Python
+        uses: actions/setup-python@main
+        with:
+          python-version: "3.x"
       - name: Install python requirements
         run: python -m pip install -r requirements.txt
       - name: Run tests
@@ -114,7 +118,7 @@ jobs:
           call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvars${{ matrix.bits }}.bat"
           cd test
           python -m pytest --verbose --numprocesses=auto
-          python3 test_common.py --numprocesses=auto
+          python test_common.py --numprocesses=auto
         shell: cmd
   test-macos:
     env:
@@ -135,10 +139,14 @@ jobs:
       - name: Set up GCC9 compiler
         run: 'export PATH="/usr/local/bin:$PATH" && export CC=gcc-9'
         if: ${{ matrix.compiler == 'gcc9' }}
+      - name: Setup Python
+        uses: actions/setup-python@main
+        with:
+          python-version: "3.x"
       - name: Install Python dependencies
-        run: python3 -m pip install -r requirements.txt
+        run: python -m pip install -r requirements.txt
       - name: Run tests
         run: |
           cd test
-          python3 test_common.py --numprocesses=auto
+          python test_common.py --numprocesses=auto
 
