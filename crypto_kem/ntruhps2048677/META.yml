@@ -6,7 +6,7 @@ length-public-key: 930
 length-secret-key: 1234
 length-ciphertext: 930
 length-shared-secret: 32
-nistkat-sha256: 715a5caf1ee22bb4b75ff6b10f911fec77e0d63378ea359c0773ee0a4c6cbb97
+nistkat-sha256: 33e2cad6c2a2f17991517050d7a1b745908c84b8283a4e0f07dbe6f62d166507
 principal-submitters:
   - John M. Schanck
 auxiliary-submitters:
@@ -23,9 +23,9 @@ auxiliary-submitters:
   - Zhenfei Zhang
 implementations:
     - name: clean
-      version: https://github.com/jschanck/ntru/tree/b38a346a reference implementation
+      version: https://github.com/jschanck/ntru/tree/6d1f44f5 reference implementation
     - name: avx2
-      version: https://github.com/jschanck/ntru/tree/b38a346a avx2 implementation
+      version: https://github.com/jschanck/ntru/tree/6d1f44f5 avx2 implementation
       supported_platforms:
           - architecture: x86_64
             operating_systems:
