@@ -17,7 +17,7 @@ void PQCLEAN_FIRESABER_CLEAN_indcpa_kem_keypair(uint8_t pk[SABER_INDCPA_PUBLICKE
 
     uint8_t seed_A[SABER_SEEDBYTES];
     uint8_t seed_s[SABER_NOISE_SEEDBYTES];
-    int i, j;
+    size_t i, j;
 
     randombytes(seed_A, SABER_SEEDBYTES);
     shake128(seed_A, SABER_SEEDBYTES, seed_A, SABER_SEEDBYTES); // for not revealing system RNG state
@@ -45,7 +45,7 @@ void PQCLEAN_FIRESABER_CLEAN_indcpa_kem_enc(uint8_t ciphertext[SABER_BYTES_CCA_D
     uint16_t vp[SABER_N] = {0};
     uint16_t mp[SABER_N];
     uint16_t b[SABER_L][SABER_N];
-    int i, j;
+    size_t i, j;
     const uint8_t *seed_A = pk + SABER_POLYVECCOMPRESSEDBYTES;
 
     PQCLEAN_FIRESABER_CLEAN_GenMatrix(A, seed_A);
@@ -77,7 +77,7 @@ void PQCLEAN_FIRESABER_CLEAN_indcpa_kem_dec(uint8_t m[SABER_KEYBYTES], const uin
     uint16_t b[SABER_L][SABER_N];
     uint16_t v[SABER_N] = {0};
     uint16_t cm[SABER_N];
-    int i;
+    size_t i;
 
     PQCLEAN_FIRESABER_CLEAN_BS2POLVECq(s, sk);
     PQCLEAN_FIRESABER_CLEAN_BS2POLVECp(b, ciphertext);

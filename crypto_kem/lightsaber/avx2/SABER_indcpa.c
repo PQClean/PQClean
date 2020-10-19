@@ -66,7 +66,7 @@ static void GenSecret(uint16_t r[SABER_K][SABER_N], const uint8_t *seed) {
 }
 
 //********************************matrix-vector mul routines*****************************************************
-static void matrix_vector_mul(__m256i a1_avx_combined[NUM_POLY][NUM_POLY][AVX_N1], __m256i b_bucket[NUM_POLY][SCHB_N * 4], __m256i res_avx[NUM_POLY][AVX_N1], int isTranspose) {
+static void matrix_vector_mul(__m256i res_avx[NUM_POLY][AVX_N1], __m256i a1_avx_combined[NUM_POLY][NUM_POLY][AVX_N1], __m256i b_bucket[NUM_POLY][SCHB_N * 4], int isTranspose) {
     int64_t i, j;
 
     __m256i c_bucket[2 * SCM_SIZE * 4]; //Holds results for 9 Karatsuba at a time
@@ -86,7 +86,7 @@ static void matrix_vector_mul(__m256i a1_avx_combined[NUM_POLY][NUM_POLY][AVX_N1
 
 }
 
-static void vector_vector_mul(__m256i a_avx[NUM_POLY][AVX_N1], __m256i b_bucket[NUM_POLY][SCHB_N * 4], __m256i res_avx[AVX_N1]) {
+static void vector_vector_mul(__m256i res_avx[AVX_N1], __m256i a_avx[NUM_POLY][AVX_N1], __m256i b_bucket[NUM_POLY][SCHB_N * 4]) {
 
     int64_t i;
 
@@ -162,7 +162,7 @@ void PQCLEAN_LIGHTSABER_AVX2_indcpa_kem_keypair(uint8_t *pk, uint8_t *sk) {
     for (j = 0; j < NUM_POLY; j++) {
         TC_eval(sk_avx[j], b_bucket[j]);
     }
-    matrix_vector_mul(a_avx, b_bucket, res_avx, 1);// Matrix-vector multiplication; Matrix in transposed order
+    matrix_vector_mul(res_avx, a_avx, b_bucket, 1);// Matrix-vector multiplication; Matrix in transposed order
 
     // Now truncation
 
@@ -259,7 +259,7 @@ void PQCLEAN_LIGHTSABER_AVX2_indcpa_kem_enc(uint8_t ciphertext[SABER_BYTES_CCA_D
     for (j = 0; j < NUM_POLY; j++) {
         TC_eval(sk_avx[j], b_bucket[j]);
     }
-    matrix_vector_mul(a_avx, b_bucket, res_avx, 0);// Matrix-vector multiplication; Matrix in normal order
+    matrix_vector_mul(res_avx, a_avx, b_bucket, 0);// Matrix-vector multiplication; Matrix in normal order
 
     // Now truncation
 
@@ -302,7 +302,7 @@ void PQCLEAN_LIGHTSABER_AVX2_indcpa_kem_enc(uint8_t ciphertext[SABER_BYTES_CCA_D
 
     // vector-vector scalar multiplication with mod p
 
-    vector_vector_mul(pkcl_avx, b_bucket, vprime_avx);
+    vector_vector_mul(vprime_avx, pkcl_avx, b_bucket);
 
     // Computation of v'+h1
     for (i = 0; i < SABER_N / 16; i++) { //adding h1
@@ -392,7 +392,7 @@ void PQCLEAN_LIGHTSABER_AVX2_indcpa_kem_dec(uint8_t m[SABER_KEYBYTES], const uin
         TC_eval(sksv_avx[j], b_bucket[j]);
     }
 
-    vector_vector_mul(pksv_avx, b_bucket, v_avx);
+    vector_vector_mul(v_avx, pksv_avx, b_bucket);
 
     for (i = 0; i < SABER_N / 16; i++) {
         _mm256_maskstore_epi32 ((int *)(message_dec_unpacked + i * 16), _mm256_set1_epi32(-1), v_avx[i]);

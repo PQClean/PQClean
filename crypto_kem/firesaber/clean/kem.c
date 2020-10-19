@@ -4,13 +4,12 @@
 #include "fips202.h"
 #include "randombytes.h"
 #include "verify.h"
+#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 
 int PQCLEAN_FIRESABER_CLEAN_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
-    int i;
+    size_t i;
 
     PQCLEAN_FIRESABER_CLEAN_indcpa_kem_keypair(pk, sk); // sk[0:SABER_INDCPA_SECRETKEYBYTES-1] <-- sk
     for (i = 0; i < SABER_INDCPA_PUBLICKEYBYTES; i++) {
@@ -48,7 +47,7 @@ int PQCLEAN_FIRESABER_CLEAN_crypto_kem_enc(uint8_t *c, uint8_t *k, const uint8_t
 }
 
 int PQCLEAN_FIRESABER_CLEAN_crypto_kem_dec(uint8_t *k, const uint8_t *c, const uint8_t *sk) {
-    int i;
+    size_t i;
     uint8_t fail;
     uint8_t cmp[SABER_BYTES_CCA_DEC];
     uint8_t buf[64];

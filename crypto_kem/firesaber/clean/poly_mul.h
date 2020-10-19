@@ -3,7 +3,7 @@
 #include "SABER_params.h"
 #include <stdint.h>
 
-void PQCLEAN_FIRESABER_CLEAN_poly_mul_acc(const uint16_t a[SABER_N], const uint16_t b[SABER_N], uint16_t res[SABER_N]);
+void PQCLEAN_FIRESABER_CLEAN_poly_mul_acc(uint16_t res[SABER_N], const uint16_t a[SABER_N], const uint16_t b[SABER_N]);
 
 
 #endif
