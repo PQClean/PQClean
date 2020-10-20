@@ -5,29 +5,24 @@ consistency_checks:
     files:
       - address.c
       - address.h
-      - fors.c
       - fors.h
       - hash.h
-      - sign.c
       - thash.h
       - utils.c
       - utils.h
-      - wots.c
       - wots.h
   - source:
       scheme: sphincs-shake256-128s-robust
       implementation: avx2
     files:
       - hash_state.h
-      - shake256.c
-      - shake256.h
       - hash_shake256.c
       - thash_shake256_robust.c
       - fips202x4.c
       - fips202x4.h
       - hashx4.h
       - hash_shake256x4.c
-      - thashx4.c
+      - thashx4.h
       - thash_shake256_robust.c
       - utilsx4.c
       - utilsx4.c
@@ -36,15 +31,13 @@ consistency_checks:
       implementation: avx2
     files:
       - hash_state.h
-      - shake256.c
-      - shake256.h
       - hash_shake256.c
       - thash_shake256_robust.c
       - fips202x4.c
       - fips202x4.h
       - hashx4.h
       - hash_shake256x4.c
-      - thashx4.c
+      - thashx4.h
       - thash_shake256_robust.c
       - utilsx4.c
       - utilsx4.c
@@ -53,15 +46,13 @@ consistency_checks:
       implementation: avx2
     files:
       - hash_state.h
-      - shake256.c
-      - shake256.h
       - hash_shake256.c
       - thash_shake256_robust.c
       - fips202x4.c
       - fips202x4.h
       - hashx4.h
       - hash_shake256x4.c
-      - thashx4.c
+      - thashx4.h
       - thash_shake256_robust.c
       - utilsx4.c
       - utilsx4.c
@@ -70,15 +61,13 @@ consistency_checks:
       implementation: avx2
     files:
       - hash_state.h
-      - shake256.c
-      - shake256.h
       - hash_shake256.c
       - thash_shake256_robust.c
       - fips202x4.c
       - fips202x4.h
       - hashx4.h
       - hash_shake256x4.c
-      - thashx4.c
+      - thashx4.h
       - thash_shake256_robust.c
       - utilsx4.c
       - utilsx4.c
@@ -87,15 +76,13 @@ consistency_checks:
       implementation: avx2
     files:
       - hash_state.h
-      - shake256.c
-      - shake256.h
       - hash_shake256.c
       - thash_shake256_robust.c
       - fips202x4.c
       - fips202x4.h
       - hashx4.h
       - hash_shake256x4.c
-      - thashx4.c
+      - thashx4.h
       - thash_shake256_robust.c
       - utilsx4.c
       - utilsx4.c
@@ -107,8 +94,6 @@ consistency_checks:
       - address.h
       - api.h
       - fors.h
-      - fips202.c
-      - fips202.h
       - hash.h
       - hash_shake256.c
       - hash_state.h

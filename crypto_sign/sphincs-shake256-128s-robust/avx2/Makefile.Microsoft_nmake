@@ -18,8 +18,8 @@ $(OBJECTS): *.h
 $(LIBRARY): $(OBJECTS) $(KECCAK4X)
 	LIB.EXE /NOLOGO /WX /OUT:$@ $**
 
-$(KECCAK4X): $(KECCAK4XDIR)/*.c $(KECCAK4XDIR)/*.h $(KECCAK4XDIR)/*.macros
-	cd $(KECCAK4XDIR) && $(MAKE) /$(MAKEFLAGS) /f Makefile.Microsoft_nmake $(KECCAK4XOBJ)
+$(KECCAK4X):
+	cd $(KECCAK4XDIR) && $(MAKE) /f Makefile.Microsoft_nmake $(KECCAK4XOBJ)
 
 clean:
 	-DEL $(OBJECTS)

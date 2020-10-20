@@ -1,26 +1,9 @@
 consistency_checks:
   - source:
-      scheme: sphincs-shake256-256s-robust
-      implementation: clean
-    files:
-      - address.c
-      - address.h
-      - fors.c
-      - fors.h
-      - hash.h
-      - sign.c
-      - thash.h
-      - utils.c
-      - utils.h
-      - wots.c
-      - wots.h
-  - source:
       scheme: sphincs-haraka-128f-robust
       implementation: clean
     files:
       - hash_state.h
-      - haraka.c
-      - haraka.h
       - hash_haraka.c
       - thash_haraka_robust.c
   - source:
@@ -28,8 +11,6 @@ consistency_checks:
       implementation: clean
     files:
       - hash_state.h
-      - haraka.c
-      - haraka.h
       - hash_haraka.c
       - thash_haraka_robust.c
   - source:
@@ -37,8 +18,6 @@ consistency_checks:
       implementation: clean
     files:
       - hash_state.h
-      - haraka.c
-      - haraka.h
       - hash_haraka.c
       - thash_haraka_robust.c
   - source:
@@ -46,8 +25,6 @@ consistency_checks:
       implementation: clean
     files:
       - hash_state.h
-      - haraka.c
-      - haraka.h
       - hash_haraka.c
       - thash_haraka_robust.c
   - source:
@@ -55,7 +32,5 @@ consistency_checks:
       implementation: clean
     files:
       - hash_state.h
-      - haraka.c
-      - haraka.h
       - hash_haraka.c
       - thash_haraka_robust.c

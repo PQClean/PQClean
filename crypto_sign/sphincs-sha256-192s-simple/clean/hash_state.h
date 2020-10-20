@@ -1,5 +1,5 @@
-#ifndef SPX_HASH_STATE_H
-#define SPX_HASH_STATE_H
+#ifndef PQCLEAN_SPHINCSSHA256192SSIMPLE_CLEAN_HASH_STATE_H
+#define PQCLEAN_SPHINCSSHA256192SSIMPLE_CLEAN_HASH_STATE_H
 
 /**
  * Defines the type of the hash function state.
