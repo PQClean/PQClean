@@ -1,0 +1,11 @@
+consistency_checks:
+  - source:
+      scheme: falcon1024
+      implementation: avx2
+    files:
+      - api.h
+      - codec.c
+      - common.c
+      - keygen.c
+      - pqclean.c
+      - vrfy.c
