@@ -146,7 +146,7 @@ void compute_syndromes(__m256i *syndromes, const uint64_t *rcv) {
     __m256i tmp_repeat;
     uint32_t *aux;
     int16_t *alpha_tmp;
-    uint32_t i;
+    size_t i, j;
     uint32_t nzflag;
     // static variable so that it is stored in the DATA segment
     // not in the STACK segment
@@ -167,11 +167,11 @@ void compute_syndromes(__m256i *syndromes, const uint64_t *rcv) {
     }
 
     // Evaluation of the polynomial corresponding to the vector v in alpha^i for i in {1, ..., 2 * PARAM_DELTA}
-    for (size_t j = 0; j < SYND_SIZE_256; ++j) {
+    for (j = 0; j < SYND_SIZE_256; ++j) {
         S = zero_256;
         alpha_tmp = table_alpha_ij + (j << 4);
 
-        for (size_t i = 0; i < PARAM_N1; ++i) {
+        for (i = 0; i < PARAM_N1; ++i) {
             nzflag = ((-(int32_t) tmp_array[i]) >> 31) & 1;
             tmp_repeat = _mm256_set1_epi64x(nzflag);
             L = _mm256_cmpeq_epi64(tmp_repeat, un_256);
