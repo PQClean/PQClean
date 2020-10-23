@@ -1,8 +1,6 @@
 # PQClean
 
-[![Build Status on Travis CI](https://travis-ci.com/PQClean/PQClean.svg?branch=master)](https://travis-ci.com/PQClean/PQClean)
-[![Build Status on Appveyor](https://ci.appveyor.com/api/projects/status/186ky7yb9mlqj3io/branch/master?svg=true)](https://ci.appveyor.com/project/PQClean/pqclean/branch/master)
-[![Build Status on CircleCI](https://circleci.com/gh/PQClean/PQClean/tree/master.svg?style=svg)](https://circleci.com/gh/PQClean/PQClean/tree/master)
+_[See the build status for each component here](.github/workflows/BADGES.md)_
 
 **PQClean**, in short, is an effort to collect **clean** implementations of the post-quantum
 schemes that are in the
@@ -161,10 +159,10 @@ All other code in this repository is released under the conditions of [CC0](http
 
 See https://github.com/PQClean/PQClean/wiki/Test-framework for details about the PQClean test framework.
 
-While we run extensive automatic testing on [Circle CI][circleci-pqc] (Linux builds), [Travis CI][travis-pqc] (OS X builds) and [Appveyor][appveyor-pqc] (Windows builds), most tests can also be run locally.
+While we run extensive automatic testing on Github Actions ((emulated) Linux builds, MacOS and Windows builds) and [Travis CI][travis-pqc] (Aarch64 builds), and most tests can also be run locally.
 To do this, make sure the following is installed:
 
-* Python 3.5+
+* Python 3.6+
 * `pytest` for python 3.
 
 We also recommend installing ``pytest-xdist`` to allow running tests in parallel.
@@ -179,6 +177,4 @@ Run the Python-based tests by going into the `test` directory and running `pytes
 
 You may also run `python3 <testmodule>` where `<testmodule>` is any of the files starting with `test_` in the `test/` folder.
 
-[circleci-pqc]: https://circleci.com/gh/PQClean/PQClean/
 [travis-pqc]: https://travis-ci.com/PQClean/PQClean/
-[appveyor-pqc]: https://ci.appveyor.com/project/PQClean/pqclean

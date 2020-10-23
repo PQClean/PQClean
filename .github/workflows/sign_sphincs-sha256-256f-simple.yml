@@ -1,18 +1,38 @@
 on:
   push:
     paths:
+      # build if tests change
       - 'test/**'
+      # do not build if other schemes duplicate_consistency files change
+      - '!test/duplicate_consistency/*.yml'
+      - 'test/duplicate_consistency/sphincs-sha256-256f-simple*.yml'
+      # build if common files change
       - 'common/**'
+      # build if scheme changed
       - 'crypto_sign/sphincs-sha256-256f-simple/**'
+      # build if workflow file changed
       - '.github/workflows/sign_sphincs-sha256-256f-simple.yml'
+      # Build if any files in the root change, except .md files
       - '*'
+      - '!*.md'
   pull_request:
     paths:
+      # build if tests change
       - 'test/**'
+      # do not build if other schemes duplicate_consistency files change
+      - '!test/duplicate_consistency/*.yml'
+      - 'test/duplicate_consistency/sphincs-sha256-256f-simple*.yml'
+      # build if common files change
       - 'common/**'
+      # build if scheme changed
       - 'crypto_sign/sphincs-sha256-256f-simple/**'
+      # build if workflow file changed
       - '.github/workflows/sign_sphincs-sha256-256f-simple.yml'
+      # Build if any files in the root change, except .md files
       - '*'
+      - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
 
 name: Test sphincs-sha256-256f-simple
 
