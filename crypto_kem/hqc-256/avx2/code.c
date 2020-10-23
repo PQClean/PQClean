@@ -35,7 +35,7 @@ static inline uint64_t mux(uint64_t a, uint64_t b, int64_t bit) {
  */
 void PQCLEAN_HQC256_AVX2_code_encode(uint64_t *em, const uint64_t *m) {
     const uint64_t mask[2][3] = {{0x0UL, 0x0UL, 0x0UL}, {0xFFFFFFFFFFFFFFFFUL, 0xFFFFFFFFFFFFFFFFUL, 0x3FFFFFUL}};
-    size_t i, pos_r;
+    size_t i, j, pos_r;
     uint64_t bit;
     uint64_t idx_r;
     uint64_t idx_2;
@@ -76,8 +76,8 @@ void PQCLEAN_HQC256_AVX2_code_encode(uint64_t *em, const uint64_t *m) {
     /* now we add the message m */
     /* systematic encoding */
     pos_r = PARAM_N2 * (PARAM_N1 - PARAM_K);
-    for (int32_t i = 0; i < 4; i++) {
-        for (int32_t j = 0; j < 64; j++) {
+    for (i = 0; i < 4; i++) {
+        for (j = 0; j < 64; j++) {
             bit = (m[i] >> j) & 0x1;
 
 

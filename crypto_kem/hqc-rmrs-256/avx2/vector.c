@@ -36,9 +36,13 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(AES_XOF_struct *ctx, u
     __m256i bit256[PARAM_OMEGA_R];
     __m256i bloc256[PARAM_OMEGA_R];
     __m256i posCmp256 = _mm256_set_epi64x(3, 2, 1, 0);
+    __m256i pos256;
+    __m256i mask256;
+    __m256i aux;
+    __m256i i256;
     uint64_t bloc, pos, bit64;
     uint8_t inc;
-    size_t i, j;
+    size_t i, j, k;
 
     i = 0;
     j = random_bytes_size;
@@ -58,7 +62,7 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(AES_XOF_struct *ctx, u
         tmp[i] = tmp[i] % PARAM_N;
 
         inc = 1;
-        for (uint32_t k = 0; k < i; k++) {
+        for (k = 0; k < i; k++) {
             if (tmp[k] == tmp[i]) {
                 inc = 0;
             }
@@ -71,19 +75,18 @@ void PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(AES_XOF_struct *ctx, u
         bloc = tmp[i] >> 6;
         bloc256[i] = _mm256_set1_epi64x(bloc >> 2);
         pos = (bloc & 0x3UL);
-        __m256i pos256 = _mm256_set1_epi64x(pos);
-        __m256i mask256 = _mm256_cmpeq_epi64(pos256, posCmp256);
+        pos256 = _mm256_set1_epi64x(pos);
+        mask256 = _mm256_cmpeq_epi64(pos256, posCmp256);
         bit64 = 1ULL << (tmp[i] & 0x3f);
-        __m256i bloc256 = _mm256_set1_epi64x(bit64);
-        bit256[i] = bloc256 & mask256;
+        bit256[i] = _mm256_set1_epi64x(bit64)&mask256;
     }
 
     for (i = 0; i < CEIL_DIVIDE(PARAM_N, 256); i++) {
-        __m256i aux = _mm256_loadu_si256(((__m256i *)v) + i);
-        __m256i i256 = _mm256_set1_epi64x(i);
+        aux = _mm256_loadu_si256(((__m256i *)v) + i);
+        i256 = _mm256_set1_epi64x(i);
 
         for (j = 0; j < weight; j++) {
-            __m256i mask256 = _mm256_cmpeq_epi64(bloc256[j], i256);
+            mask256 = _mm256_cmpeq_epi64(bloc256[j], i256);
             aux ^= bit256[j] & mask256;
         }
         _mm256_storeu_si256(((__m256i *)v) + i, aux);
@@ -145,7 +148,6 @@ uint8_t PQCLEAN_HQCRMRS256_AVX2_vect_compare(const uint8_t *v1, const uint8_t *v
     r = (~r + 1) >> 63;
     return (uint8_t) r;
 }
-
 
 
 

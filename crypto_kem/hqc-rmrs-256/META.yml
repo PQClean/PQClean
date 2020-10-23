@@ -22,9 +22,9 @@ principal-submitters:
   - Loïc Bidoux
 implementations:
     - name: clean
-      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/22134db4/hqc
+      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/09ab89ed/hqc
     - name: avx2
-      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/22134db4/hqc
+      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/09ab89ed/hqc
       supported_platforms:
           - architecture: x86_64
             operating_systems:
