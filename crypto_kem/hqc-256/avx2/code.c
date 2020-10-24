@@ -37,8 +37,8 @@ void PQCLEAN_HQC256_AVX2_code_encode(uint64_t *em, const uint64_t *m) {
     const uint64_t mask[2][3] = {{0x0UL, 0x0UL, 0x0UL}, {0xFFFFFFFFFFFFFFFFUL, 0xFFFFFFFFFFFFFFFFUL, 0x3FFFFFUL}};
     size_t i, j, pos_r;
     uint64_t bit;
-    uint16_t idx_r;
-    uint16_t idx_2;
+    uint64_t idx_r;
+    uint64_t idx_2;
     uint64_t select;
 
 
