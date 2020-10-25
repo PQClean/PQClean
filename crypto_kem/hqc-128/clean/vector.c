@@ -31,13 +31,10 @@
 void PQCLEAN_HQC128_CLEAN_vect_set_random_fixed_weight_by_coordinates(AES_XOF_struct *ctx, uint32_t *v, uint16_t weight) {
     size_t random_bytes_size = 3 * weight;
     uint8_t rand_bytes[3 * PARAM_OMEGA_R] = {0}; // weight is expected to be <= PARAM_OMEGA_R
-    uint8_t inc;
-    size_t i, j;
+    size_t j;
     uint32_t tmp[PARAM_N], random_data;
-    i = 0;
     j = random_bytes_size;
     for(uint32_t i=0; i < PARAM_N; i++){
-    // while (i < weight) {
         tmp[i] = i;
         do {
             if (j == random_bytes_size) {
@@ -55,14 +52,9 @@ void PQCLEAN_HQC128_CLEAN_vect_set_random_fixed_weight_by_coordinates(AES_XOF_st
         uint32_t temp = tmp[i];
         tmp[i] = tmp[random_data];
         tmp[random_data] = temp;
-        // inc = 1;
-        // for (size_t k = 0; k < i; k++) {
-        //     if (v[k] == v[i]) {
-        //         inc = 0;
-        //     }
-        // }
-        // i += inc;
+
     }
+    
     for(uint32_t i=0; i < weight; i++)
         v[i] = tmp[i];
 }
