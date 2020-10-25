@@ -33,32 +33,38 @@ void PQCLEAN_HQC128_CLEAN_vect_set_random_fixed_weight_by_coordinates(AES_XOF_st
     uint8_t rand_bytes[3 * PARAM_OMEGA_R] = {0}; // weight is expected to be <= PARAM_OMEGA_R
     uint8_t inc;
     size_t i, j;
-
+    uint32_t tmp[PARAM_N], random_data;
     i = 0;
     j = random_bytes_size;
-    while (i < weight) {
+    for(uint32_t i=0; i < PARAM_N; i++){
+    // while (i < weight) {
+        tmp[i] = i;
         do {
             if (j == random_bytes_size) {
                 seedexpander(ctx, rand_bytes, random_bytes_size);
                 j = 0;
             }
 
-            v[i]  = ((uint32_t) rand_bytes[j++]) << 16;
-            v[i] |= ((uint32_t) rand_bytes[j++]) << 8;
-            v[i] |= rand_bytes[j++];
+            random_data  = ((uint32_t) rand_bytes[j++]) << 16;
+            random_data |= ((uint32_t) rand_bytes[j++]) << 8;
+            random_data |= rand_bytes[j++];
 
-        } while (v[i] >= UTILS_REJECTION_THRESHOLD);
+        } while (random_data >= UTILS_REJECTION_THRESHOLD);
 
-        v[i] = v[i] % PARAM_N;
-
-        inc = 1;
-        for (size_t k = 0; k < i; k++) {
-            if (v[k] == v[i]) {
-                inc = 0;
-            }
-        }
-        i += inc;
+        random_data = random_data % PARAM_N;
+        uint32_t temp = tmp[i];
+        tmp[i] = tmp[random_data];
+        tmp[random_data] = temp;
+        // inc = 1;
+        // for (size_t k = 0; k < i; k++) {
+        //     if (v[k] == v[i]) {
+        //         inc = 0;
+        //     }
+        // }
+        // i += inc;
     }
+    for(uint32_t i=0; i < weight; i++)
+        v[i] = tmp[i];
 }
 
 
