@@ -37,6 +37,7 @@ consistency_checks:
       - kem.c
       - parsing.c
       - reed_muller.c
+      - vector.c
     - source:
         scheme: hqc-rmrs-256
         implementation: clean
@@ -65,3 +66,4 @@ consistency_checks:
       - kem.c
       - parsing.c
       - reed_muller.c
+      - vector.c
