@@ -19,8 +19,6 @@ static void compute_z_poly(uint16_t *z, const uint16_t *sigma, uint16_t degree, 
 static void compute_error_values(uint16_t *error_values, const uint16_t *z, const uint8_t *error);
 static void correct_errors(uint8_t *cdw, const uint16_t *error_values);
 
-
-
 /**
  * @brief Encodes a message message of PARAM_K bits to a Reed-Solomon codeword codeword of PARAM_N1 bytes
  *

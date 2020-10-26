@@ -1,7 +1,5 @@
 #include "gf.h"
 #include "parameters.h"
-#include <emmintrin.h>
-#include <immintrin.h>
 #include <stdint.h>
 /**
  * @file gf.c
@@ -68,6 +66,56 @@ uint16_t PQCLEAN_HQCRMRS256_AVX2_gf_mul(uint16_t a, uint16_t b) {
 
 
 /**
+ *  Compute 16 products in GF(2^GF_M).
+ *  @returns the product (a0b0,a1b1,...,a15b15) , ai,bi in GF(2^GF_M)
+ *  @param[in] a 256-bit register where a0,..,a15 are stored as 16 bit integers
+ *  @param[in] b 256-bit register where b0,..,b15 are stored as 16 bit integer
+ *
+ */
+__m256i PQCLEAN_HQCRMRS256_AVX2_gf_mul_vect(__m256i a, __m256i b) {
+    __m128i al = _mm256_extractf128_si256(a, 0);
+    __m128i ah = _mm256_extractf128_si256(a, 1);
+    __m128i bl = _mm256_extractf128_si256(b, 0);
+    __m128i bh = _mm256_extractf128_si256(b, 1);
+
+    __m128i abl0 = _mm_clmulepi64_si128(al & CONST128_MASKL, bl & CONST128_MASKL, 0x0);
+    abl0 &= CONST128_MIDDLEMASKL;
+    abl0 ^= (_mm_clmulepi64_si128(al & CONST128_MASKH, bl & CONST128_MASKH, 0x0) & CONST128_MIDDLEMASKH);
+
+    __m128i abh0 = _mm_clmulepi64_si128(al & CONST128_MASKL, bl & CONST128_MASKL, 0x11);
+    abh0 &= CONST128_MIDDLEMASKL;
+    abh0 ^= (_mm_clmulepi64_si128(al & CONST128_MASKH, bl & CONST128_MASKH, 0x11) & CONST128_MIDDLEMASKH);
+
+    abl0 = _mm_shuffle_epi8(abl0, CONST128_INDEXL);
+    abl0 ^= _mm_shuffle_epi8(abh0, CONST128_INDEXH);
+
+    __m128i abl1 = _mm_clmulepi64_si128(ah & CONST128_MASKL, bh & CONST128_MASKL, 0x0);
+    abl1 &= CONST128_MIDDLEMASKL;
+    abl1 ^= (_mm_clmulepi64_si128(ah & CONST128_MASKH, bh & CONST128_MASKH, 0x0) & CONST128_MIDDLEMASKH);
+
+    __m128i abh1 = _mm_clmulepi64_si128(ah & CONST128_MASKL, bh & CONST128_MASKL, 0x11);
+    abh1 &= CONST128_MIDDLEMASKL;
+    abh1 ^= (_mm_clmulepi64_si128(ah & CONST128_MASKH, bh & CONST128_MASKH, 0x11) & CONST128_MIDDLEMASKH);
+
+    abl1 = _mm_shuffle_epi8(abl1, CONST128_INDEXL);
+    abl1 ^= _mm_shuffle_epi8(abh1, CONST128_INDEXH);
+
+    __m256i ret = _mm256_set_m128i(abl1, abl0);
+
+    __m256i aux = CONST256_MR0;
+
+    for (int32_t i = 0; i < 7; i++) {
+        ret ^= red[i] & _mm256_cmpeq_epi16((ret & aux), aux);
+        aux = aux << 1;
+    }
+
+    ret &= CONST256_LASTMASK;
+    return ret;
+}
+
+
+
+/**
  * Squares an element of GF(2^GF_M).
  * @returns a^2
  * @param[in] a Element of GF(2^GF_M)
@@ -84,23 +132,28 @@ uint16_t PQCLEAN_HQCRMRS256_AVX2_gf_square(uint16_t a) {
 }
 
 
+
 /**
- * Computes the inverse of an element of GF(2^GF_M) by fast exponentiation.
+ * Computes the inverse of an element of GF(2^8),
+ * using the addition chain 1 2 3 4 7 11 15 30 60 120 127 254
  * @returns the inverse of a
  * @param[in] a Element of GF(2^GF_M)
  */
 uint16_t PQCLEAN_HQCRMRS256_AVX2_gf_inverse(uint16_t a) {
-    size_t pow = (1 << PARAM_M) - 2;
-    uint16_t inv = 1;
+    uint16_t inv = a;
+    uint16_t tmp1, tmp2;
 
-    do {
-        if (pow & 1) {
-            inv = PQCLEAN_HQCRMRS256_AVX2_gf_mul(inv, a);
-        }
-        a = PQCLEAN_HQCRMRS256_AVX2_gf_square(a);
-        pow >>= 1;
-    } while (pow);
-
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_square(a); /* a^2 */
+    tmp1 = PQCLEAN_HQCRMRS256_AVX2_gf_mul(inv, a); /* a^3 */
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_square(inv); /* a^4 */
+    tmp2 = PQCLEAN_HQCRMRS256_AVX2_gf_mul(inv, tmp1); /* a^7 */
+    tmp1 = PQCLEAN_HQCRMRS256_AVX2_gf_mul(inv, tmp2); /* a^11 */
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_mul(tmp1, inv); /* a^15 */
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_square(inv); /* a^30 */
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_square(inv); /* a^60 */
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_square(inv); /* a^120 */
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_mul(inv, tmp2); /* a^127 */
+    inv = PQCLEAN_HQCRMRS256_AVX2_gf_square(inv); /* a^254 */
     return inv;
 }
 

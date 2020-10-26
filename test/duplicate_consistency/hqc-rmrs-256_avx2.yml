@@ -6,8 +6,6 @@ consistency_checks:
       - api.h
       - code.h
       - fft.h
-      - gf.h
       - hqc.h
       - reed_muller.h
       - fft.c
-      - reed_solomon.c

@@ -2,11 +2,11 @@ name: HQC-RMRS-192
 type: kem
 claimed-nist-level: 3
 claimed-security: IND-CCA2
-length-ciphertext: 9794
-length-public-key: 4906
-length-secret-key: 4946
+length-ciphertext: 9026
+length-public-key: 4522
+length-secret-key: 4562
 length-shared-secret: 64
-nistkat-sha256: 248c5e5d14f1722eeb39947c2f0065d49ff709d1cef146e4362cad27240754d3
+nistkat-sha256: e0aaabf79ac558dc9d5e79a8abe88c313ecad1e55956de323f8811c81d0c0779
 principal-submitters:
   - Carlos Aguilar Melchor
   - Nicolas Aragon
@@ -22,9 +22,9 @@ principal-submitters:
   - Loïc Bidoux
 implementations:
     - name: clean
-      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/8a81b2c9/hqc
+      version: hqc-submission_2020-10-01 via https://github.com/jschanck/package-pqclean/tree/196a2f2f/hqc
     - name: avx2
-      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/8a81b2c9/hqc
+      version: hqc-submission_2020-10-01 via https://github.com/jschanck/package-pqclean/tree/196a2f2f/hqc
       supported_platforms:
           - architecture: x86_64
             operating_systems:

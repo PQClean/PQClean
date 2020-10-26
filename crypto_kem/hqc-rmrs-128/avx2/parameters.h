@@ -60,13 +60,13 @@
   #define SEEDEXPANDER_MAX_LENGTH               Define the seed expander max length
 */
 
-#define PARAM_N                                 20533
-#define PARAM_N1                                80
-#define PARAM_N2                                256
-#define PARAM_N1N2                              20480
-#define PARAM_OMEGA                             67
-#define PARAM_OMEGA_E                           77
-#define PARAM_OMEGA_R                           77
+#define PARAM_N                                 17669
+#define PARAM_N1                                46
+#define PARAM_N2                                384
+#define PARAM_N1N2                              17664
+#define PARAM_OMEGA                             66
+#define PARAM_OMEGA_E                           75
+#define PARAM_OMEGA_R                           75
 #define PARAM_SECURITY                          128
 #define PARAM_DFR_EXP                           128
 
@@ -75,33 +75,36 @@
 #define SHARED_SECRET_BYTES                     PQCLEAN_HQCRMRS128_AVX2_CRYPTO_BYTES
 #define CIPHERTEXT_BYTES                        PQCLEAN_HQCRMRS128_AVX2_CRYPTO_CIPHERTEXTBYTES
 
-#define UTILS_REJECTION_THRESHOLD               16775461
+#define UTILS_REJECTION_THRESHOLD               16767881
 #define VEC_N_SIZE_BYTES                        CEIL_DIVIDE(PARAM_N, 8)
 #define VEC_K_SIZE_BYTES                        PARAM_K
 #define VEC_N1_SIZE_BYTES                       PARAM_N1
 #define VEC_N1N2_SIZE_BYTES                     CEIL_DIVIDE(PARAM_N1N2, 8)
+
+#define VEC_N_SIZE_256                          CEIL_DIVIDE(PARAM_N, 256)
 
 #define VEC_N_SIZE_64                           CEIL_DIVIDE(PARAM_N, 64)
 #define VEC_K_SIZE_64                           CEIL_DIVIDE(PARAM_K, 8)
 #define VEC_N1_SIZE_64                          CEIL_DIVIDE(PARAM_N1, 8)
 #define VEC_N1N2_SIZE_64                        CEIL_DIVIDE(PARAM_N1N2, 64)
 
-#define PARAM_N_MULT                            24192
-#define VEC_N_256_SIZE_64                       (CEIL_DIVIDE(PARAM_N_MULT, 256) << 2)
+#define PARAM_N_MULT                            (9*256*CEIL_DIVIDE(CEIL_DIVIDE(PARAM_N, 9), 256))
+#define VEC_N_256_SIZE_64                       (PARAM_N_MULT / 64)
 #define VEC_N1N2_256_SIZE_64                    (CEIL_DIVIDE(PARAM_N1N2, 256) << 2)
 
-#define PARAM_DELTA                             24
+#define PARAM_DELTA                             15
 #define PARAM_M                                 8
 #define PARAM_GF_POLY                           0x11D
 #define PARAM_GF_POLY_WT                        5
 #define PARAM_GF_POLY_M2                        4
 #define PARAM_GF_MUL_ORDER                      255
-#define PARAM_K                                 32
-#define PARAM_G                                 49
+#define PARAM_K                                 16
+#define PARAM_G                                 31
 #define PARAM_FFT                               5
-#define RS_POLY_COEFS               228,231,214,81,113,204,19,169,10,244,117,219,130,12,160,151,195,170,150,151,251,218,245,166,149,183,109,176,148,218,21,161,240,25,15,71,62,5,17,32,157,194,73,195,218,14,12,122,1
+#define RS_POLY_COEFS 89,69,153,116,176,117,111,75,73,233,242,233,65,210,21,139,103,173,67,118,105,210,174,110,74,69,228,82,255,181,1
 
-#define RED_MASK                                0x1fffffffffffffUL
+#define BITMASK(a, size)                        ((1UL << ((a) % (size))) - 1)
+#define RED_MASK                                BITMASK(PARAM_N, 64)
 #define SHA512_BYTES                            64
 #define SEED_BYTES                              40
 #define SEEDEXPANDER_MAX_LENGTH                 4294967295
