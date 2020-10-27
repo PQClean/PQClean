@@ -10,7 +10,7 @@
 extern void KeccakF1600_StatePermute4x(__m256i *s);
 
 static inline void store64(uint8_t x[8], uint64_t u) {
-    unsigned int i = 0;
+    unsigned int i;
 
     for (i = 0; i < 8; i++) {
         x[i] = u >> 8 * i;
@@ -25,7 +25,7 @@ static void keccakx4_absorb(__m256i s[25],
                             const uint8_t *in3,
                             size_t inlen,
                             uint8_t p) {
-    size_t i = 0, pos = 0;
+    size_t i, pos = 0;
     __m256i t, idx;
 
     for (i = 0; i < 25; ++i) {
@@ -74,8 +74,8 @@ static void keccakx4_squeezeblocks(uint8_t *out0,
                                    size_t nblocks,
                                    unsigned int r,
                                    __m256i s[25]) {
-    unsigned int i = 0;
-    uint64_t f0 = 0, f1 = 0, f2 = 0, f3 = 0;
+    unsigned int i;
+    uint64_t f0, f1, f2, f3;
 
     while (nblocks > 0) {
         KeccakF1600_StatePermute4x(s);
@@ -137,8 +137,17 @@ void PQCLEAN_KYBER768_AVX2_shake256x4_squeezeblocks(uint8_t *out0,
                            state->s);
 }
 
-void PQCLEAN_KYBER768_AVX2_shake128x4(uint8_t *out0, uint8_t *out1, uint8_t *out2, uint8_t *out3, size_t outlen, const uint8_t *in0, const uint8_t *in1, const uint8_t *in2, const uint8_t *in3, size_t inlen) {
-    unsigned int i = 0;
+void PQCLEAN_KYBER768_AVX2_shake128x4(uint8_t *out0,
+                                      uint8_t *out1,
+                                      uint8_t *out2,
+                                      uint8_t *out3,
+                                      size_t outlen,
+                                      const uint8_t *in0,
+                                      const uint8_t *in1,
+                                      const uint8_t *in2,
+                                      const uint8_t *in3,
+                                      size_t inlen) {
+    unsigned int i;
     size_t nblocks = outlen / SHAKE128_RATE;
     uint8_t t[4][SHAKE128_RATE];
     keccakx4_state state;
@@ -163,8 +172,17 @@ void PQCLEAN_KYBER768_AVX2_shake128x4(uint8_t *out0, uint8_t *out1, uint8_t *out
     }
 }
 
-void PQCLEAN_KYBER768_AVX2_shake256x4(uint8_t *out0, uint8_t *out1, uint8_t *out2, uint8_t *out3, size_t outlen, const uint8_t *in0, const uint8_t *in1, const uint8_t *in2, const uint8_t *in3, size_t inlen) {
-    unsigned int i = 0;
+void PQCLEAN_KYBER768_AVX2_shake256x4(uint8_t *out0,
+                                      uint8_t *out1,
+                                      uint8_t *out2,
+                                      uint8_t *out3,
+                                      size_t outlen,
+                                      const uint8_t *in0,
+                                      const uint8_t *in1,
+                                      const uint8_t *in2,
+                                      const uint8_t *in3,
+                                      size_t inlen) {
+    unsigned int i;
     size_t nblocks = outlen / SHAKE256_RATE;
     uint8_t t[4][SHAKE256_RATE];
     keccakx4_state state;

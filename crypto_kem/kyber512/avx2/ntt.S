@@ -1,4 +1,4 @@
-#include "cdecl.inc"
+#include "cdecl.h"
 .include "shuffle.inc"
 .include "fq.inc"
 
@@ -203,7 +203,9 @@ vmovdqa		%ymm11,224(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER512_AVX2_ntt_avx)
+.global _cdecl(PQCLEAN_KYBER512_AVX2_ntt_avx)
 cdecl(PQCLEAN_KYBER512_AVX2_ntt_avx):
+_cdecl(PQCLEAN_KYBER512_AVX2_ntt_avx):
 #consts
 vmovdqa		_16XQ*2(%rsi),%ymm0
 mov		%rsi,%rdx

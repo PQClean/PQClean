@@ -1,5 +1,6 @@
 #ifndef PQCLEAN_KYBER76890S_AVX2_ALIGN_H
 #define PQCLEAN_KYBER76890S_AVX2_ALIGN_H
+
 #include <immintrin.h>
 
 #define ALIGN16_TYPE(t) \

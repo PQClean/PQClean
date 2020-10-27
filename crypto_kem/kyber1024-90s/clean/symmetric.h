@@ -1,13 +1,12 @@
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
-
+#ifndef PQCLEAN_KYBER102490S_CLEAN_SYMMETRIC_H
+#define PQCLEAN_KYBER102490S_CLEAN_SYMMETRIC_H
 #include "params.h"
+#include "sha2.h"
+#include "symmetric-aes.h"
 #include <stddef.h>
 #include <stdint.h>
 
 
-#include "sha2.h"
-#include "symmetric-aes.h"
 
 typedef aes256xof_ctx xof_state;
 

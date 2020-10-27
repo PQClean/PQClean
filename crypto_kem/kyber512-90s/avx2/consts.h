@@ -1,11 +1,10 @@
 #ifndef PQCLEAN_KYBER51290S_AVX2_CONSTS_H
 #define PQCLEAN_KYBER51290S_AVX2_CONSTS_H
-
-#include "cdecl.inc"
-
+#include "cdecl.h"
 #include "params.h"
 #include <immintrin.h>
 #include <stdint.h>
+
 
 #define ALIGNED_UINT16_T(N) \
     union   {                   \

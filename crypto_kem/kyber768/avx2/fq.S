@@ -1,4 +1,4 @@
-#include "cdecl.inc"
+#include "cdecl.h"
 .include "fq.inc"
 
 .text
@@ -35,7 +35,9 @@ vmovdqa		%ymm9,224(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER768_AVX2_reduce_avx)
+.global _cdecl(PQCLEAN_KYBER768_AVX2_reduce_avx)
 cdecl(PQCLEAN_KYBER768_AVX2_reduce_avx):
+_cdecl(PQCLEAN_KYBER768_AVX2_reduce_avx):
 #consts
 vmovdqa		_16XQ*2(%rsi),%ymm0
 vmovdqa		_16XV*2(%rsi),%ymm1
@@ -77,7 +79,9 @@ vmovdqa		%ymm8,224(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER768_AVX2_csubq_avx)
+.global _cdecl(PQCLEAN_KYBER768_AVX2_csubq_avx)
 cdecl(PQCLEAN_KYBER768_AVX2_csubq_avx):
+_cdecl(PQCLEAN_KYBER768_AVX2_csubq_avx):
 #consts
 vmovdqa		_16XQ*2(%rsi),%ymm0
 call		csubq128_avx
@@ -118,7 +122,9 @@ vmovdqa		%ymm10,224(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER768_AVX2_tomont_avx)
+.global _cdecl(PQCLEAN_KYBER768_AVX2_tomont_avx)
 cdecl(PQCLEAN_KYBER768_AVX2_tomont_avx):
+_cdecl(PQCLEAN_KYBER768_AVX2_tomont_avx):
 #consts
 vmovdqa		_16XQ*2(%rsi),%ymm0
 vmovdqa		_16XMONTSQLO*2(%rsi),%ymm1

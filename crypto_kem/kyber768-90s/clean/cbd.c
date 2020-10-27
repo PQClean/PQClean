@@ -1,5 +1,5 @@
-#include "params.h"
 #include "cbd.h"
+#include "params.h"
 #include <stdint.h>
 
 /*************************************************
@@ -13,7 +13,7 @@
 * Returns 32-bit unsigned integer loaded from x
 **************************************************/
 static uint32_t load32_littleendian(const uint8_t x[4]) {
-    uint32_t r = 0;
+    uint32_t r;
     r  = (uint32_t)x[0];
     r |= (uint32_t)x[1] << 8;
     r |= (uint32_t)x[2] << 16;
@@ -32,9 +32,9 @@ static uint32_t load32_littleendian(const uint8_t x[4]) {
 *              - const uint8_t *buf: pointer to input byte array
 **************************************************/
 void PQCLEAN_KYBER76890S_CLEAN_cbd(poly *r, const uint8_t buf[KYBER_ETA * KYBER_N / 4]) {
-    unsigned int i = 0, j = 0;
-    uint32_t t = 0, d = 0;
-    int16_t a = 0, b = 0;
+    unsigned int i, j;
+    uint32_t t, d;
+    int16_t a, b;
 
     for (i = 0; i < KYBER_N / 8; i++) {
         t  = load32_littleendian(buf + 4 * i);

@@ -25,7 +25,7 @@
 static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
                     polyvec *pk,
                     const uint8_t seed[KYBER_SYMBYTES]) {
-    size_t i = 0;
+    size_t i;
     PQCLEAN_KYBER1024_AVX2_polyvec_tobytes(r, pk);
     for (i = 0; i < KYBER_SYMBYTES; i++) {
         r[i + KYBER_POLYVECBYTES] = seed[i];
@@ -45,7 +45,7 @@ static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
 static void unpack_pk(polyvec *pk,
                       uint8_t seed[KYBER_SYMBYTES],
                       const uint8_t packedpk[KYBER_INDCPA_PUBLICKEYBYTES]) {
-    size_t i = 0;
+    size_t i;
     PQCLEAN_KYBER1024_AVX2_polyvec_frombytes(pk, packedpk);
     for (i = 0; i < KYBER_SYMBYTES; i++) {
         seed[i] = packedpk[i + KYBER_POLYVECBYTES];
@@ -133,8 +133,8 @@ static unsigned int rej_uniform(int16_t *r,
                                 unsigned int len,
                                 const uint8_t *buf,
                                 unsigned int buflen) {
-    unsigned int ctr = 0, pos = 0;
-    uint16_t val = 0;
+    unsigned int ctr, pos;
+    uint16_t val;
 
     ctr = pos = 0;
     while (ctr < len && pos + 2 <= buflen) {
@@ -168,7 +168,7 @@ static unsigned int rej_uniform(int16_t *r,
 #define GEN_MATRIX_NBLOCKS ((2*KYBER_N*(1U << 16)/(19*KYBER_Q) \
                              + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
 void PQCLEAN_KYBER1024_AVX2_gen_matrix(polyvec *a, const uint8_t seed[32], int transposed) {
-    unsigned int i = 0, ctr0 = 0, ctr1 = 0, ctr2 = 0, ctr3 = 0;
+    unsigned int i, ctr0, ctr1, ctr2, ctr3;
     ALIGN32_ARRAY_2D(uint8_t, 4, (GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES + 31) / 32 * 32) buf;
     __m256i f;
     keccakx4_state state;
@@ -242,7 +242,7 @@ void PQCLEAN_KYBER1024_AVX2_gen_matrix(polyvec *a, const uint8_t seed[32], int t
 **************************************************/
 void PQCLEAN_KYBER1024_AVX2_indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
         uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES]) {
-    unsigned int i = 0;
+    unsigned int i;
     ALIGN32_ARRAY(uint8_t, 2 * KYBER_SYMBYTES) buf;
     const uint8_t *publicseed = buf.arr;
     const uint8_t *noiseseed = buf.arr + KYBER_SYMBYTES;
@@ -295,7 +295,7 @@ void PQCLEAN_KYBER1024_AVX2_indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
                                        const uint8_t m[KYBER_INDCPA_MSGBYTES],
                                        const uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
                                        const uint8_t coins[KYBER_SYMBYTES]) {
-    unsigned int i = 0;
+    unsigned int i;
     ALIGN32_ARRAY(uint8_t, KYBER_SYMBYTES) seed;
     polyvec sp, pkpv, ep, at[KYBER_K], bp;
     poly v, k, epp;

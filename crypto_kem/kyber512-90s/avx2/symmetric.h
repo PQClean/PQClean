@@ -1,13 +1,12 @@
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
-
+#ifndef PQCLEAN_KYBER51290S_AVX2_SYMMETRIC_H
+#define PQCLEAN_KYBER51290S_AVX2_SYMMETRIC_H
+#include "aes256ctr.h"
 #include "params.h"
+#include "sha2.h"
 #include <stddef.h>
 #include <stdint.h>
 
 
-#include "aes256ctr.h"
-#include "sha2.h"
 
 typedef aes256ctr_ctx xof_state;
 

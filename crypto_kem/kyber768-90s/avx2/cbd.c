@@ -1,5 +1,5 @@
-#include "params.h"
 #include "cbd.h"
+#include "params.h"
 #include <immintrin.h>
 #include <stdint.h>
 
@@ -14,7 +14,7 @@
 *              - const unsigned char *buf: pointer to input byte array
 **************************************************/
 void PQCLEAN_KYBER76890S_AVX2_cbd(poly *restrict r, const uint8_t *restrict buf) {
-    unsigned int i = 0;
+    unsigned int i;
     __m256i vec0, vec1, vec2, vec3, tmp;
     const __m256i mask55 = _mm256_set1_epi32(0x55555555);
     const __m256i mask33 = _mm256_set1_epi32(0x33333333);

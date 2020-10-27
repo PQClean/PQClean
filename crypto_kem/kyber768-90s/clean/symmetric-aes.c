@@ -1,5 +1,6 @@
-#include "symmetric-aes.h"
 #include "aes.h"
+#include "params.h"
+#include "symmetric.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
@@ -34,7 +35,7 @@ static void aes256_ctr_xof(unsigned char *out, size_t outlen, const unsigned cha
 }
 
 /*************************************************
-* Name:        aes256_prf
+* Name:        PQCLEAN_KYBER76890S_CLEAN_aes256_prf
 *
 * Description: AES256 stream generation in CTR mode using 32-bit counter,
 *              nonce is zero-padded to 12 bytes, counter starts at zero
@@ -58,7 +59,7 @@ void PQCLEAN_KYBER76890S_CLEAN_aes256_prf(uint8_t *output, size_t outlen, const 
 }
 
 /*************************************************
-* Name:        aes256xof_absorb
+* Name:        PQCLEAN_KYBER76890S_CLEAN_aes256xof_absorb
 *
 * Description: AES256 CTR used as a replacement for a XOF; this function
 *              "absorbs" a 32-byte key and two additional bytes that are zero-padded
@@ -80,7 +81,7 @@ void PQCLEAN_KYBER76890S_CLEAN_aes256xof_absorb(aes256xof_ctx *s, const uint8_t 
 }
 
 /*************************************************
-* Name:        aes256xof_squeezeblocks
+* Name:        PQCLEAN_KYBER76890S_CLEAN_aes256xof_squeezeblocks
 *
 * Description: AES256 CTR used as a replacement for a XOF; this function
 *              generates 4 blocks out AES256-CTR output

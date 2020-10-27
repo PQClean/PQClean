@@ -1,5 +1,5 @@
-#include "params.h"
 #include "ntt.h"
+#include "params.h"
 #include "reduce.h"
 #include <stdint.h>
 
@@ -89,8 +89,8 @@ static int16_t fqmul(int16_t a, int16_t b) {
 *                                of Zq
 **************************************************/
 void PQCLEAN_KYBER51290S_CLEAN_ntt(int16_t r[256]) {
-    unsigned int len = 0, start = 0, j = 0, k = 0;
-    int16_t t = 0, zeta = 0;
+    unsigned int len, start, j, k;
+    int16_t t, zeta;
 
     k = 1;
     for (len = 128; len >= 2; len >>= 1) {
@@ -116,8 +116,8 @@ void PQCLEAN_KYBER51290S_CLEAN_ntt(int16_t r[256]) {
 *                                of Zq
 **************************************************/
 void PQCLEAN_KYBER51290S_CLEAN_invntt(int16_t r[256]) {
-    unsigned int start = 0, len = 0, j = 0, k = 0;
-    int16_t t = 0, zeta = 0;
+    unsigned int start, len, j, k;
+    int16_t t, zeta;
 
     k = 0;
     for (len = 2; len <= 128; len <<= 1) {
@@ -148,7 +148,10 @@ void PQCLEAN_KYBER51290S_CLEAN_invntt(int16_t r[256]) {
 *              - const int16_t b[2]: pointer to the second factor
 *              - int16_t zeta:       integer defining the reduction polynomial
 **************************************************/
-void PQCLEAN_KYBER51290S_CLEAN_basemul(int16_t r[2], const int16_t a[2], const int16_t b[2], int16_t zeta) {
+void PQCLEAN_KYBER51290S_CLEAN_basemul(int16_t r[2],
+                                       const int16_t a[2],
+                                       const int16_t b[2],
+                                       int16_t zeta) {
     r[0]  = fqmul(a[1], b[1]);
     r[0]  = fqmul(r[0], zeta);
     r[0] += fqmul(a[0], b[0]);

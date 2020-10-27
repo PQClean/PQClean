@@ -22,7 +22,7 @@
 static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
                     polyvec *pk,
                     const uint8_t seed[KYBER_SYMBYTES]) {
-    size_t i = 0;
+    size_t i;
     PQCLEAN_KYBER1024_CLEAN_polyvec_tobytes(r, pk);
     for (i = 0; i < KYBER_SYMBYTES; i++) {
         r[i + KYBER_POLYVECBYTES] = seed[i];
@@ -44,7 +44,7 @@ static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
 static void unpack_pk(polyvec *pk,
                       uint8_t seed[KYBER_SYMBYTES],
                       const uint8_t packedpk[KYBER_INDCPA_PUBLICKEYBYTES]) {
-    size_t i = 0;
+    size_t i;
     PQCLEAN_KYBER1024_CLEAN_polyvec_frombytes(pk, packedpk);
     for (i = 0; i < KYBER_SYMBYTES; i++) {
         seed[i] = packedpk[i + KYBER_POLYVECBYTES];
@@ -132,8 +132,8 @@ static unsigned int rej_uniform(int16_t *r,
                                 unsigned int len,
                                 const uint8_t *buf,
                                 unsigned int buflen) {
-    unsigned int ctr = 0, pos = 0;
-    uint16_t val = 0;
+    unsigned int ctr, pos;
+    uint16_t val;
 
     ctr = pos = 0;
     while (ctr < len && pos + 2 <= buflen) {
@@ -169,8 +169,7 @@ static unsigned int rej_uniform(int16_t *r,
                              + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
 // Not static for benchmarking
 void PQCLEAN_KYBER1024_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMBYTES], int transposed) {
-    unsigned int ctr = 0;
-    uint8_t i = 0, j = 0;
+    unsigned int ctr, i, j;
     uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];
     xof_state state;
 
@@ -208,7 +207,7 @@ void PQCLEAN_KYBER1024_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYM
 **************************************************/
 void PQCLEAN_KYBER1024_CLEAN_indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
         uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES]) {
-    unsigned int i = 0;
+    unsigned int i;
     uint8_t buf[2 * KYBER_SYMBYTES];
     const uint8_t *publicseed = buf;
     const uint8_t *noiseseed = buf + KYBER_SYMBYTES;
@@ -264,7 +263,7 @@ void PQCLEAN_KYBER1024_CLEAN_indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
                                         const uint8_t m[KYBER_INDCPA_MSGBYTES],
                                         const uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
                                         const uint8_t coins[KYBER_SYMBYTES]) {
-    unsigned int i = 0;
+    unsigned int i;
     uint8_t seed[KYBER_SYMBYTES];
     uint8_t nonce = 0;
     polyvec sp, pkpv, ep, at[KYBER_K], bp;

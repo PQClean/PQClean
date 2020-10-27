@@ -8,7 +8,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 /*************************************************
 * Name:        PQCLEAN_KYBER51290S_AVX2_crypto_kem_keypair
 *
@@ -23,7 +22,7 @@
 * Returns 0 (success)
 **************************************************/
 int PQCLEAN_KYBER51290S_AVX2_crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
-    size_t i = 0;
+    size_t i;
     PQCLEAN_KYBER51290S_AVX2_indcpa_keypair(pk, sk);
     for (i = 0; i < KYBER_INDCPA_PUBLICKEYBYTES; i++) {
         sk[i + KYBER_INDCPA_SECRETKEYBYTES] = pk[i];
@@ -94,8 +93,8 @@ int PQCLEAN_KYBER51290S_AVX2_crypto_kem_enc(unsigned char *ct,
 int PQCLEAN_KYBER51290S_AVX2_crypto_kem_dec(unsigned char *ss,
         const unsigned char *ct,
         const unsigned char *sk) {
-    size_t i = 0;
-    int fail = 0;
+    size_t i;
+    int fail;
     ALIGN32_ARRAY(uint8_t, 2 * KYBER_SYMBYTES) buf;
     /* Will contain key, coins */
     ALIGN32_ARRAY(uint8_t, 2 * KYBER_SYMBYTES) kr;
@@ -119,7 +118,7 @@ int PQCLEAN_KYBER51290S_AVX2_crypto_kem_dec(unsigned char *ss,
     hash_h(kr.arr + KYBER_SYMBYTES, ct, KYBER_CIPHERTEXTBYTES);
 
     /* Overwrite pre-k with z on re-encryption failure */
-    PQCLEAN_KYBER51290S_AVX2_cmov(kr.arr, sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES, KYBER_SYMBYTES, fail);
+    PQCLEAN_KYBER51290S_AVX2_cmov(kr.arr, sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES, KYBER_SYMBYTES, (uint8_t)fail);
 
     /* hash concatenation of pre-k and H(c) to k */
     kdf(ss, kr.arr, 2 * KYBER_SYMBYTES);

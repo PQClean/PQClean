@@ -19,7 +19,7 @@
 *              - poly *a:    pointer to input polynomial
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], poly *restrict a) {
-    unsigned int i = 0, j = 0;
+    unsigned int i, j;
     uint8_t t[8];
 
     PQCLEAN_KYBER512_AVX2_poly_csubq(a);
@@ -48,9 +48,9 @@ void PQCLEAN_KYBER512_AVX2_poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], p
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_poly_decompress(poly *restrict r,
         const uint8_t a[KYBER_POLYCOMPRESSEDBYTES]) {
-    unsigned int i = 0;
+    unsigned int i;
 
-    unsigned int j = 0;
+    unsigned int j;
     uint8_t t[8];
     for (i = 0; i < KYBER_N / 8; i++) {
         t[0] = (a[0] >> 0);
@@ -112,7 +112,7 @@ void PQCLEAN_KYBER512_AVX2_poly_frommsg(poly *restrict r,
     const __m256i hqs = _mm256_set1_epi16((KYBER_Q + 1) / 2);
 
 #define FROMMSG64(i)                        \
-    g3 = _mm256_shuffle_epi32(f,0x55*(i));              \
+    g3 = _mm256_shuffle_epi32(f,0x55*(i));                \
     g3 = _mm256_sllv_epi32(g3,shift);             \
     g3 = _mm256_shuffle_epi8(g3,idx);             \
     g0 = _mm256_slli_epi16(g3,12);                \
@@ -134,9 +134,9 @@ void PQCLEAN_KYBER512_AVX2_poly_frommsg(poly *restrict r,
     g2 = _mm256_permute2x128_si256(h0,h1,0x31);           \
     g1 = _mm256_permute2x128_si256(h2,h3,0x20);           \
     g3 = _mm256_permute2x128_si256(h2,h3,0x31);           \
-    _mm256_store_si256((__m256i *)&r->coeffs[  0+32*(i)+ 0],g0);    \
-    _mm256_store_si256((__m256i *)&r->coeffs[  0+32*(i)+16],g1);    \
-    _mm256_store_si256((__m256i *)&r->coeffs[128+32*(i)+ 0],g2);    \
+    _mm256_store_si256((__m256i *)&r->coeffs[  0+32*(i)+ 0],g0);  \
+    _mm256_store_si256((__m256i *)&r->coeffs[  0+32*(i)+16],g1);  \
+    _mm256_store_si256((__m256i *)&r->coeffs[128+32*(i)+ 0],g2);  \
     _mm256_store_si256((__m256i *)&r->coeffs[128+32*(i)+16],g3)
 
     f = _mm256_load_si256((__m256i *)msg);
@@ -155,8 +155,8 @@ void PQCLEAN_KYBER512_AVX2_poly_frommsg(poly *restrict r,
 *              - poly *a:      pointer to input polynomial
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], poly *restrict a) {
-    unsigned int i = 0;
-    uint32_t small = 0;
+    unsigned int i;
+    uint32_t small;
     __m256i f0, f1, g0, g1;
     const __m256i hqs = _mm256_set1_epi16((KYBER_Q - 1) / 2);
     const __m256i hhqs = _mm256_set1_epi16((KYBER_Q - 5) / 4);
@@ -323,7 +323,7 @@ void PQCLEAN_KYBER512_AVX2_poly_csubq(poly *r) {
 *            - const poly *b: pointer to second input polynomial
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_poly_add(poly *r, const poly *a, const poly *b) {
-    unsigned int i = 0;
+    unsigned int i;
     __m256i f0, f1;
 
     for (i = 0; i < KYBER_N; i += 16) {
@@ -344,7 +344,7 @@ void PQCLEAN_KYBER512_AVX2_poly_add(poly *r, const poly *a, const poly *b) {
 *            - const poly *b: pointer to second input polynomial
 **************************************************/
 void PQCLEAN_KYBER512_AVX2_poly_sub(poly *r, const poly *a, const poly *b) {
-    unsigned int i = 0;
+    unsigned int i;
     __m256i f0, f1;
 
     for (i = 0; i < KYBER_N; i += 16) {

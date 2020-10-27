@@ -1,3 +1,7 @@
+#include "aes256ctr.h"
+#include <immintrin.h>
+#include <stddef.h>
+#include <stdint.h>
 /*
   Based heavily on public-domain code by Romain Dolbeau
   Different handling of nonce+counter than original version
@@ -5,10 +9,6 @@
   Public Domain
 */
 
-#include "aes256ctr.h"
-#include <immintrin.h>
-#include <stddef.h>
-#include <stdint.h>
 
 static inline void aesni_encrypt4(uint8_t out[64],
                                   __m128i *n,
@@ -114,7 +114,7 @@ void PQCLEAN_KYBER102490S_AVX2_aes256ctr_init(aes256ctr_ctx *state, const uint8_
 void PQCLEAN_KYBER102490S_AVX2_aes256ctr_squeezeblocks(uint8_t *out,
         size_t nblocks,
         aes256ctr_ctx *state) {
-    size_t i = 0;
+    size_t i;
     for (i = 0; i < nblocks; i++) {
         aesni_encrypt4(out, &state->n, state->rkeys);
         out += 64;
@@ -123,13 +123,13 @@ void PQCLEAN_KYBER102490S_AVX2_aes256ctr_squeezeblocks(uint8_t *out,
 
 void PQCLEAN_KYBER102490S_AVX2_aes256ctr_prf(uint8_t *out,
         size_t outlen,
-        const uint8_t seed[32],
+        const uint8_t key[32],
         uint64_t nonce) {
-    unsigned int i = 0;
+    unsigned int i;
     uint8_t buf[64];
     aes256ctr_ctx state;
 
-    PQCLEAN_KYBER102490S_AVX2_aes256ctr_init(&state, seed, nonce);
+    PQCLEAN_KYBER102490S_AVX2_aes256ctr_init(&state, key, nonce);
 
     while (outlen >= 64) {
         aesni_encrypt4(out, &state.n, state.rkeys);

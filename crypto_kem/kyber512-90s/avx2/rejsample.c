@@ -2,6 +2,7 @@
 #include "consts.h"
 #include "params.h"
 #include "rejsample.h"
+#include <immintrin.h>
 #include <stdint.h>
 
 static const ALIGN32_ARRAY_2D(uint8_t, 256, 8) idx = {.arr = {
@@ -270,9 +271,9 @@ static const ALIGN32_ARRAY_2D(uint8_t, 256, 8) idx = {.arr = {
 #define REJ_UNIFORM_BUFLEN 576
 unsigned int PQCLEAN_KYBER51290S_AVX2_rej_uniform_avx(int16_t *restrict r,
         const uint8_t *restrict buf) {
-    unsigned int ctr = 0, pos = 0;
-    uint16_t val = 0;
-    uint32_t good = 0;
+    unsigned int ctr, pos;
+    uint16_t val;
+    uint32_t good;
     const __m256i bound  = _mm256_set1_epi16((int16_t)(19 * KYBER_Q - 1));
     const __m256i ones   = _mm256_set1_epi8(1);
     const __m256i kyberq = _mm256_load_si256((__m256i *)&PQCLEAN_KYBER51290S_AVX2_qdata.as_arr[_16XQ]);
@@ -297,7 +298,7 @@ unsigned int PQCLEAN_KYBER51290S_AVX2_rej_uniform_avx(int16_t *restrict r,
         g1 = _mm256_inserti128_si256(g1, _mm_loadl_epi64((__m128i *)&idx.arr[(good >> 24) & 0xFF]), 1);
 
         //g0 = _mm256_cvtepu8_epi64(_mm_loadl_epi64((__m128i *)&good));
-        //g1 = _mm256_i64gather_epi64((long long *)idx, g0, 8);
+        //g1 = _mm256_i64gather_epi64((long long *)idx.arr, g0, 8);
 
         /* Barrett reduction of (still unsigned) values */
         g2 = _mm256_mulhi_epu16(f0, v);

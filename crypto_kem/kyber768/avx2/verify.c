@@ -15,8 +15,8 @@
 * Returns 0 if the byte arrays are equal, 1 otherwise
 **************************************************/
 int PQCLEAN_KYBER768_AVX2_verify(const uint8_t *a, const uint8_t *b, size_t len) {
-    size_t pos = 0;
-    uint64_t r = 0;
+    size_t pos;
+    uint64_t r;
     __m256i avec, bvec, cvec;
 
     cvec = _mm256_setzero_si256();
@@ -53,7 +53,7 @@ int PQCLEAN_KYBER768_AVX2_verify(const uint8_t *a, const uint8_t *b, size_t len)
 *              unsigned char b:        Condition bit; has to be in {0,1}
 **************************************************/
 void PQCLEAN_KYBER768_AVX2_cmov(uint8_t *restrict r, const uint8_t *restrict x, size_t len, uint8_t b) {
-    size_t pos = 0;
+    size_t pos;
     __m256i xvec, rvec, bvec;
 
     b = -b;

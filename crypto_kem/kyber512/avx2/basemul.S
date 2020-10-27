@@ -1,5 +1,5 @@
+#include "cdecl.h"
 #include "params.h"
-#include "cdecl.inc"
 
 .macro schoolbook off,sign
 #load
@@ -133,7 +133,9 @@ vmovdqa		%ymm5,96(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER512_AVX2_basemul_acc_avx)
+.global _cdecl(PQCLEAN_KYBER512_AVX2_basemul_acc_avx)
 cdecl(PQCLEAN_KYBER512_AVX2_basemul_acc_avx):
+_cdecl(PQCLEAN_KYBER512_AVX2_basemul_acc_avx):
 #consts
 vmovdqa		_16XQ*2(%rcx),%ymm0
 vmovdqa		_16XQINV*2(%rcx),%ymm1
@@ -183,7 +185,9 @@ vmovdqa		%ymm12,96(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER512_AVX2_basemul_avx)
+.global _cdecl(PQCLEAN_KYBER512_AVX2_basemul_avx)
 cdecl(PQCLEAN_KYBER512_AVX2_basemul_avx):
+_cdecl(PQCLEAN_KYBER512_AVX2_basemul_avx):
 #consts
 vmovdqa		_16XQ*2(%rcx),%ymm0
 vmovdqa		_16XQINV*2(%rcx),%ymm1

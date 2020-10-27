@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_DILITHIUM2_AVX2_CDECL
-#define PQCLEAN_DILITHIUM2_AVX2_CDECL
+#ifndef PQCLEAN_KYBER512_AVX2_CDECL_H
+#define PQCLEAN_KYBER512_AVX2_CDECL_H
 
 #define _16XQ            0
 #define _16XQINV        16
@@ -21,10 +21,6 @@
  * This define helps us get around this
  */
 
-#if defined(__WIN32__) || defined(__APPLE__)
-#define cdecl(s) _##s
-#else
+#define _cdecl(s) _##s
 #define cdecl(s) s
-#endif
-
 #endif

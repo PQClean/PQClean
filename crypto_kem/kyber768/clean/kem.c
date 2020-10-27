@@ -21,7 +21,7 @@
 * Returns 0 (success)
 **************************************************/
 int PQCLEAN_KYBER768_CLEAN_crypto_kem_keypair(unsigned char *pk, unsigned char *sk) {
-    size_t i = 0;
+    size_t i;
     PQCLEAN_KYBER768_CLEAN_indcpa_keypair(pk, sk);
     for (i = 0; i < KYBER_INDCPA_PUBLICKEYBYTES; i++) {
         sk[i + KYBER_INDCPA_SECRETKEYBYTES] = pk[i];
@@ -92,8 +92,8 @@ int PQCLEAN_KYBER768_CLEAN_crypto_kem_enc(unsigned char *ct,
 int PQCLEAN_KYBER768_CLEAN_crypto_kem_dec(unsigned char *ss,
         const unsigned char *ct,
         const unsigned char *sk) {
-    size_t i = 0;
-    int fail = 0;
+    size_t i;
+    int fail;
     uint8_t buf[2 * KYBER_SYMBYTES];
     /* Will contain key, coins */
     uint8_t kr[2 * KYBER_SYMBYTES];

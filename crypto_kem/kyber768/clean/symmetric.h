@@ -1,12 +1,11 @@
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
-
+#ifndef PQCLEAN_KYBER768_CLEAN_SYMMETRIC_H
+#define PQCLEAN_KYBER768_CLEAN_SYMMETRIC_H
+#include "fips202.h"
 #include "params.h"
 #include <stddef.h>
 #include <stdint.h>
 
 
-#include "fips202.h"
 
 typedef shake128ctx xof_state;
 

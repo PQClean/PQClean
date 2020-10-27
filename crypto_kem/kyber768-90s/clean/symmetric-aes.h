@@ -1,10 +1,9 @@
-#ifndef AES256CTR_H
-#define AES256CTR_H
-
+#ifndef PQCLEAN_KYBER76890S_CLEAN_SYMMETRIC_AES_H
+#define PQCLEAN_KYBER76890S_CLEAN_SYMMETRIC_AES_H
 #include "aes.h"
-
 #include <stddef.h>
 #include <stdint.h>
+
 
 typedef struct {
     aes256ctx sk_exp;

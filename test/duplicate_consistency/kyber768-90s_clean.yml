@@ -3,6 +3,96 @@ consistency_checks:
         scheme: kyber512
         implementation: clean
       files:
+      - cbd.h
+      - indcpa.h
+      - kem.h
+      - ntt.h
+      - poly.h
+      - polyvec.h
+      - reduce.h
+      - verify.h
+      - cbd.c
+      - indcpa.c
+      - kem.c
+      - ntt.c
+      - polyvec.c
+      - reduce.c
+      - verify.c
+    - source:
+        scheme: kyber512
+        implementation: avx2
+      files:
+      - cbd.h
+      - indcpa.h
+      - kem.h
+      - polyvec.h
+      - verify.h
+    - source:
+        scheme: kyber512-90s
+        implementation: clean
+      files:
+      - cbd.h
+      - indcpa.h
+      - kem.h
+      - ntt.h
+      - poly.h
+      - polyvec.h
+      - reduce.h
+      - symmetric-aes.h
+      - symmetric.h
+      - verify.h
+      - cbd.c
+      - indcpa.c
+      - kem.c
+      - ntt.c
+      - polyvec.c
+      - reduce.c
+      - symmetric-aes.c
+      - verify.c
+    - source:
+        scheme: kyber512-90s
+        implementation: avx2
+      files:
+      - cbd.h
+      - indcpa.h
+      - kem.h
+      - polyvec.h
+      - verify.h
+    - source:
+        scheme: kyber768
+        implementation: clean
+      files:
+      - cbd.h
+      - indcpa.h
+      - kem.h
+      - ntt.h
+      - params.h
+      - poly.h
+      - polyvec.h
+      - reduce.h
+      - verify.h
+      - cbd.c
+      - indcpa.c
+      - kem.c
+      - ntt.c
+      - poly.c
+      - polyvec.c
+      - reduce.c
+      - verify.c
+    - source:
+        scheme: kyber768
+        implementation: avx2
+      files:
+      - cbd.h
+      - indcpa.h
+      - kem.h
+      - params.h
+      - polyvec.h
+      - verify.h
+    - source:
+        scheme: kyber768-90s
+        implementation: avx2
+      files:
       - api.h
       - cbd.h
       - indcpa.h
@@ -10,103 +100,6 @@ consistency_checks:
       - params.h
       - polyvec.h
       - verify.h
-      - symmetric-shake.c
-    - source:
-        scheme: kyber512-90s
-        implementation: clean
-      files:
-      - cbd.h
-      - indcpa.h
-      - kem.h
-      - params.h
-      - polyvec.h
-      - verify.h
-    - source:
-        scheme: kyber512-90s
-        implementation: avx2
-      files:
-      - align.h
-      - cbd.h
-      - cdecl.h
-      - consts.h
-      - indcpa.h
-      - kem.h
-      - ntt.h
-      - params.h
-      - polyvec.h
-      - reduce.h
-      - rejsample.h
-      - verify.h
-      - cbd.c
-      - consts.c
-      - kem.c
-      - polyvec.c
-      - verify.c
-    - source:
-        scheme: kyber768
-        implementation: clean
-      files:
-      - cbd.h
-      - indcpa.h
-      - kem.h
-      - polyvec.h
-      - verify.h
-      - symmetric-shake.c
-    - source:
-        scheme: kyber768
-        implementation: avx2
-      files:
-      - align.h
-      - cbd.h
-      - cdecl.h
-      - consts.h
-      - fips202x4.h
-      - indcpa.h
-      - kem.h
-      - ntt.h
-      - poly.h
-      - polyvec.h
-      - reduce.h
-      - rejsample.h
-      - symmetric.h
-      - verify.h
-      - cbd.c
-      - consts.c
-      - fips202x4.c
-      - kem.c
-      - polyvec.c
-      - rejsample.c
-      - symmetric-shake.c
-      - verify.c
-    - source:
-        scheme: kyber768-90s
-        implementation: clean
-      files:
-      - cbd.h
-      - indcpa.h
-      - kem.h
-      - polyvec.h
-      - verify.h
-    - source:
-        scheme: kyber768-90s
-        implementation: avx2
-      files:
-      - align.h
-      - cbd.h
-      - cdecl.h
-      - consts.h
-      - indcpa.h
-      - kem.h
-      - ntt.h
-      - polyvec.h
-      - reduce.h
-      - rejsample.h
-      - verify.h
-      - cbd.c
-      - consts.c
-      - kem.c
-      - polyvec.c
-      - verify.c
     - source:
         scheme: kyber1024
         implementation: clean
@@ -114,37 +107,20 @@ consistency_checks:
       - cbd.h
       - indcpa.h
       - kem.h
-      - polyvec.h
-      - verify.h
-      - symmetric-shake.c
-    - source:
-        scheme: kyber1024
-        implementation: avx2
-      files:
-      - align.h
-      - cbd.h
-      - cdecl.h
-      - consts.h
-      - fips202x4.h
-      - indcpa.h
-      - kem.h
       - ntt.h
       - poly.h
       - polyvec.h
       - reduce.h
-      - rejsample.h
-      - symmetric.h
       - verify.h
       - cbd.c
-      - consts.c
-      - fips202x4.c
+      - indcpa.c
       - kem.c
-      - rejsample.c
-      - symmetric-shake.c
+      - ntt.c
+      - reduce.c
       - verify.c
     - source:
-        scheme: kyber1024-90s
-        implementation: clean
+        scheme: kyber1024
+        implementation: avx2
       files:
       - cbd.h
       - indcpa.h
@@ -153,20 +129,31 @@ consistency_checks:
       - verify.h
     - source:
         scheme: kyber1024-90s
-        implementation: avx2
+        implementation: clean
       files:
-      - align.h
       - cbd.h
-      - cdecl.h
-      - consts.h
       - indcpa.h
       - kem.h
       - ntt.h
+      - poly.h
       - polyvec.h
       - reduce.h
-      - rejsample.h
+      - symmetric-aes.h
+      - symmetric.h
       - verify.h
       - cbd.c
-      - consts.c
+      - indcpa.c
       - kem.c
+      - ntt.c
+      - reduce.c
+      - symmetric-aes.c
       - verify.c
+    - source:
+        scheme: kyber1024-90s
+        implementation: avx2
+      files:
+      - cbd.h
+      - indcpa.h
+      - kem.h
+      - polyvec.h
+      - verify.h

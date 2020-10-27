@@ -1,17 +1,16 @@
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
-
+#ifndef PQCLEAN_KYBER768_AVX2_SYMMETRIC_H
+#define PQCLEAN_KYBER768_AVX2_SYMMETRIC_H
+#include "fips202.h"
+#include "fips202x4.h"
 #include "params.h"
 #include <stddef.h>
 #include <stdint.h>
 
 
-#include "fips202.h"
-#include "fips202x4.h"
 
 typedef shake128ctx xof_state;
 
-void PQCLEAN_KYBER768_AVX2_kyber_shake128_absorb(shake128ctx *s,
+void PQCLEAN_KYBER768_AVX2_kyber_shake128_absorb(xof_state *s,
         const uint8_t seed[KYBER_SYMBYTES],
         uint8_t x,
         uint8_t y);

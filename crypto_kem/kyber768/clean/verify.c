@@ -14,7 +14,7 @@
 * Returns 0 if the byte arrays are equal, 1 otherwise
 **************************************************/
 int PQCLEAN_KYBER768_CLEAN_verify(const uint8_t *a, const uint8_t *b, size_t len) {
-    size_t i = 0;
+    size_t i;
     uint8_t r = 0;
 
     for (i = 0; i < len; i++) {
@@ -38,7 +38,7 @@ int PQCLEAN_KYBER768_CLEAN_verify(const uint8_t *a, const uint8_t *b, size_t len
 *              uint8_t b:        Condition bit; has to be in {0,1}
 **************************************************/
 void PQCLEAN_KYBER768_CLEAN_cmov(uint8_t *r, const uint8_t *x, size_t len, uint8_t b) {
-    size_t i = 0;
+    size_t i;
 
     b = -b;
     for (i = 0; i < len; i++) {

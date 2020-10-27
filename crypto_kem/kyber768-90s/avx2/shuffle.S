@@ -1,4 +1,4 @@
-#include "cdecl.inc"
+#include "cdecl.h"
 .include "fq.inc"
 .include "shuffle.inc"
 
@@ -92,7 +92,9 @@ vmovdqa		%ymm11,224(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER76890S_AVX2_nttunpack_avx)
+.global _cdecl(PQCLEAN_KYBER76890S_AVX2_nttunpack_avx)
 cdecl(PQCLEAN_KYBER76890S_AVX2_nttunpack_avx):
+_cdecl(PQCLEAN_KYBER76890S_AVX2_nttunpack_avx):
 call		nttunpack128_avx
 add		$256,%rdi
 call		nttunpack128_avx
@@ -169,7 +171,9 @@ vmovdqu		%ymm9,160(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER76890S_AVX2_ntttobytes_avx)
+.global _cdecl(PQCLEAN_KYBER76890S_AVX2_ntttobytes_avx)
 cdecl(PQCLEAN_KYBER76890S_AVX2_ntttobytes_avx):
+_cdecl(PQCLEAN_KYBER76890S_AVX2_ntttobytes_avx):
 #consts
 vmovdqa		_16XQ*2(%rdx),%ymm0
 call		ntttobytes128_avx
@@ -245,7 +249,9 @@ vmovdqa		%ymm1,224(%rdi)
 ret
 
 .global cdecl(PQCLEAN_KYBER76890S_AVX2_nttfrombytes_avx)
+.global _cdecl(PQCLEAN_KYBER76890S_AVX2_nttfrombytes_avx)
 cdecl(PQCLEAN_KYBER76890S_AVX2_nttfrombytes_avx):
+_cdecl(PQCLEAN_KYBER76890S_AVX2_nttfrombytes_avx):
 #consts
 vmovdqa		_16XMASK*2(%rdx),%ymm0
 call		nttfrombytes128_avx

@@ -1,5 +1,5 @@
-#include "params.h"
 #include "consts.h"
+#include "params.h"
 #include <stdint.h>
 
 #define Q KYBER_Q
