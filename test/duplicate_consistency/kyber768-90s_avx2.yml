@@ -3,10 +3,8 @@ consistency_checks:
         scheme: kyber512
         implementation: clean
       files:
-      - cbd.h
       - indcpa.h
       - kem.h
-      - polyvec.h
       - verify.h
     - source:
         scheme: kyber512
@@ -23,19 +21,17 @@ consistency_checks:
       - reduce.h
       - rejsample.h
       - verify.h
-      - cbd.c
       - consts.c
       - kem.c
       - polyvec.c
+      - rejsample.c
       - verify.c
     - source:
         scheme: kyber512-90s
         implementation: clean
       files:
-      - cbd.h
       - indcpa.h
       - kem.h
-      - polyvec.h
       - verify.h
     - source:
         scheme: kyber512-90s
@@ -56,10 +52,10 @@ consistency_checks:
       - symmetric.h
       - verify.h
       - aes256ctr.c
-      - cbd.c
       - consts.c
       - indcpa.c
       - kem.c
+      - poly.c
       - polyvec.c
       - rejsample.c
       - verify.c
@@ -67,11 +63,8 @@ consistency_checks:
         scheme: kyber768
         implementation: clean
       files:
-      - cbd.h
       - indcpa.h
       - kem.h
-      - params.h
-      - polyvec.h
       - verify.h
     - source:
         scheme: kyber768
@@ -93,26 +86,22 @@ consistency_checks:
       - consts.c
       - kem.c
       - polyvec.c
+      - rejsample.c
       - verify.c
     - source:
         scheme: kyber768-90s
         implementation: clean
       files:
       - api.h
-      - cbd.h
       - indcpa.h
       - kem.h
-      - params.h
-      - polyvec.h
       - verify.h
     - source:
         scheme: kyber1024
         implementation: clean
       files:
-      - cbd.h
       - indcpa.h
       - kem.h
-      - polyvec.h
       - verify.h
     - source:
         scheme: kyber1024
@@ -132,15 +121,14 @@ consistency_checks:
       - cbd.c
       - consts.c
       - kem.c
+      - rejsample.c
       - verify.c
     - source:
         scheme: kyber1024-90s
         implementation: clean
       files:
-      - cbd.h
       - indcpa.h
       - kem.h
-      - polyvec.h
       - verify.h
     - source:
         scheme: kyber1024-90s

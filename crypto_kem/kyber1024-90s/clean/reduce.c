@@ -6,8 +6,7 @@
 * Name:        PQCLEAN_KYBER102490S_CLEAN_montgomery_reduce
 *
 * Description: Montgomery reduction; given a 32-bit integer a, computes
-*              16-bit integer congruent to a * R^-1 mod q,
-*              where R=2^16
+*              16-bit integer congruent to a * R^-1 mod q, where R=2^16
 *
 * Arguments:   - int32_t a: input integer to be reduced;
 *                           has to be in {-q2^15,...,q2^15-1}
@@ -29,32 +28,17 @@ int16_t PQCLEAN_KYBER102490S_CLEAN_montgomery_reduce(int32_t a) {
 * Name:        PQCLEAN_KYBER102490S_CLEAN_barrett_reduce
 *
 * Description: Barrett reduction; given a 16-bit integer a, computes
-*              16-bit integer congruent to a mod q in {0,...,q}
+*              centered representative congruent to a mod q in {-(q-1)/2,...,(q-1)/2}
 *
 * Arguments:   - int16_t a: input integer to be reduced
 *
-* Returns:     integer in {0,...,q} congruent to a modulo q.
+* Returns:     integer in {-(q-1)/2,...,(q-1)/2} congruent to a modulo q.
 **************************************************/
 int16_t PQCLEAN_KYBER102490S_CLEAN_barrett_reduce(int16_t a) {
     int16_t t;
     const int16_t v = ((1U << 26) + KYBER_Q / 2) / KYBER_Q;
 
-    t  = (int32_t)v * a >> 26;
+    t  = ((int32_t)v * a + (1 << 25)) >> 26;
     t *= KYBER_Q;
     return a - t;
-}
-
-/*************************************************
-* Name:        PQCLEAN_KYBER102490S_CLEAN_csubq
-*
-* Description: Conditionallly subtract q
-*
-* Arguments:   - int16_t x: input integer
-*
-* Returns:     a - q if a >= q, else a
-**************************************************/
-int16_t PQCLEAN_KYBER102490S_CLEAN_csubq(int16_t a) {
-    a -= KYBER_Q;
-    a += (a >> 15) & KYBER_Q;
-    return a;
 }

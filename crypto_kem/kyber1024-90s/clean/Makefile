@@ -1,8 +1,8 @@
 # This Makefile can be used with GNU Make or BSD Make
 
 LIB=libkyber1024-90s_clean.a
-HEADERS=api.h cbd.h indcpa.h kem.h ntt.h params.h poly.h polyvec.h reduce.h symmetric-aes.h symmetric.h verify.h 
-OBJECTS=cbd.o indcpa.o kem.o ntt.o poly.o polyvec.o reduce.o symmetric-aes.o verify.o 
+HEADERS=aes256ctr.h api.h cbd.h indcpa.h kem.h ntt.h params.h poly.h polyvec.h reduce.h symmetric.h verify.h 
+OBJECTS=aes256ctr.o cbd.o indcpa.o kem.o ntt.o poly.o polyvec.o reduce.o symmetric-aes.o verify.o 
 
 CFLAGS=-O3 -Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 

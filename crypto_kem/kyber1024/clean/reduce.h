@@ -10,6 +10,4 @@ int16_t PQCLEAN_KYBER1024_CLEAN_montgomery_reduce(int32_t a);
 
 int16_t PQCLEAN_KYBER1024_CLEAN_barrett_reduce(int16_t a);
 
-int16_t PQCLEAN_KYBER1024_CLEAN_csubq(int16_t a);
-
 #endif

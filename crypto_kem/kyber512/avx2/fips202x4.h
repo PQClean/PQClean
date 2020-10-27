@@ -9,7 +9,7 @@ typedef struct {
     __m256i s[25];
 } keccakx4_state;
 
-void PQCLEAN_KYBER512_AVX2_shake128x4_absorb(keccakx4_state *state,
+void PQCLEAN_KYBER512_AVX2_shake128x4_absorb_once(keccakx4_state *state,
         const uint8_t *in0,
         const uint8_t *in1,
         const uint8_t *in2,
@@ -23,7 +23,7 @@ void PQCLEAN_KYBER512_AVX2_shake128x4_squeezeblocks(uint8_t *out0,
         size_t nblocks,
         keccakx4_state *state);
 
-void PQCLEAN_KYBER512_AVX2_shake256x4_absorb(keccakx4_state *state,
+void PQCLEAN_KYBER512_AVX2_shake256x4_absorb_once(keccakx4_state *state,
         const uint8_t *in0,
         const uint8_t *in1,
         const uint8_t *in2,

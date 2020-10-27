@@ -2,22 +2,18 @@
 #define PQCLEAN_KYBER768_AVX2_ALIGN_H
 
 #include <immintrin.h>
+#include <stdint.h>
 
-#define ALIGN16_TYPE(t) \
-    union {                       \
-        __m128i vec;              \
-        t  orig;     \
+#define ALIGNED_UINT8(N)        \
+    union {                     \
+        uint8_t coeffs[(N)];      \
+        __m256i vec[((N)+31)/32]; \
     }
 
-#define ALIGN32_ARRAY(t, s) \
-    union {                       \
-        __m256i vec;              \
-        t  arr[(s)];     \
+#define ALIGNED_INT16(N)        \
+    union {                     \
+        int16_t coeffs[(N)];      \
+        __m256i vec[((N)+15)/16]; \
     }
 
-#define ALIGN32_ARRAY_2D(t, n, m) \
-    union {                       \
-        __m256i vec;              \
-        t  arr[(n)][(m)];         \
-    }
 #endif
