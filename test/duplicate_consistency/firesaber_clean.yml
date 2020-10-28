@@ -3,5 +3,14 @@ consistency_checks:
         scheme: firesaber
         implementation: avx2
       files:
+      - api.h
+      - cbd.h
+      - poly_mul.h
+      - pack_unpack.h
+      - SABER_indcpa.h
+      - SABER_params.h
       - verify.h
+      - cbd.c
+      - kem.c
+      - pack_unpack.c
       - verify.c

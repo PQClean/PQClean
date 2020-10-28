@@ -11,81 +11,102 @@
 #define h2 ((1 << (SABER_EP - 2)) - (1 << (SABER_EP - SABER_ET - 1)) + (1 << (SABER_EQ - SABER_EP - 1)))
 
 void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_keypair(uint8_t pk[SABER_INDCPA_PUBLICKEYBYTES], uint8_t sk[SABER_INDCPA_SECRETKEYBYTES]) {
-    uint16_t A[SABER_L][SABER_L][SABER_N];
-    uint16_t s[SABER_L][SABER_N];
-    uint16_t b[SABER_L][SABER_N] = {{0}};
-
-    uint8_t seed_A[SABER_SEEDBYTES];
-    uint8_t seed_s[SABER_NOISE_SEEDBYTES];
     size_t i, j;
+
+    poly A[SABER_L][SABER_L];
+    poly s[SABER_L];
+    poly res[SABER_L];
+
+    uint8_t rand[SABER_NOISESEEDBYTES];
+    uint8_t *seed_A = pk + SABER_POLYVECCOMPRESSEDBYTES;
 
     randombytes(seed_A, SABER_SEEDBYTES);
     shake128(seed_A, SABER_SEEDBYTES, seed_A, SABER_SEEDBYTES); // for not revealing system RNG state
-    randombytes(seed_s, SABER_NOISE_SEEDBYTES);
 
-    PQCLEAN_LIGHTSABER_CLEAN_GenMatrix(A, seed_A);
-    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(s, seed_s);
-    PQCLEAN_LIGHTSABER_CLEAN_MatrixVectorMul(b, (const uint16_t (*)[SABER_L][SABER_N])A, (const uint16_t (*)[SABER_N])s, 1);
+    randombytes(rand, SABER_NOISESEEDBYTES);
+    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(s, rand);
+    PQCLEAN_LIGHTSABER_CLEAN_POLVECq2BS(sk, s);
 
+    PQCLEAN_LIGHTSABER_CLEAN_GenMatrix(A, seed_A); // sample matrix A
+    PQCLEAN_LIGHTSABER_CLEAN_MatrixVectorMul(res, (const poly (*)[SABER_L])A, (const poly *)s, 1); // Matrix in transposed order
+
+
+    // rounding
     for (i = 0; i < SABER_L; i++) {
         for (j = 0; j < SABER_N; j++) {
-            b[i][j] = (b[i][j] + h1) >> (SABER_EQ - SABER_EP);
+            res[i].coeffs[j] += h1;
+            res[i].coeffs[j] >>= SABER_EQ - SABER_EP;
+            res[i].coeffs[j] &= SABER_Q - 1;
         }
     }
 
-    PQCLEAN_LIGHTSABER_CLEAN_POLVECq2BS(sk, (const uint16_t (*)[SABER_N])s);
-    PQCLEAN_LIGHTSABER_CLEAN_POLVECp2BS(pk, (const uint16_t (*)[SABER_N])b);
-    memcpy(pk + SABER_POLYVECCOMPRESSEDBYTES, seed_A, sizeof(seed_A));
+    PQCLEAN_LIGHTSABER_CLEAN_POLVECp2BS(pk, res); // pack public key
 }
 
-void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(uint8_t ciphertext[SABER_BYTES_CCA_DEC], const uint8_t m[SABER_KEYBYTES], const uint8_t seed_sp[SABER_NOISE_SEEDBYTES], const uint8_t pk[SABER_INDCPA_PUBLICKEYBYTES]) {
-    uint16_t A[SABER_L][SABER_L][SABER_N];
-    uint16_t sp[SABER_L][SABER_N];
-    uint16_t bp[SABER_L][SABER_N] = {{0}};
-    uint16_t vp[SABER_N] = {0};
-    uint16_t mp[SABER_N];
-    uint16_t b[SABER_L][SABER_N];
+
+void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_enc(uint8_t ciphertext[SABER_BYTES_CCA_DEC], const uint8_t m[SABER_KEYBYTES], const uint8_t noiseseed[SABER_NOISESEEDBYTES], const uint8_t pk[SABER_INDCPA_PUBLICKEYBYTES]) {
     size_t i, j;
+
+    poly A[SABER_L][SABER_L];
+    poly res[SABER_L];
+    poly s[SABER_L];
+    poly *temp = A[0]; // re-use stack space
+    poly *vprime = &A[0][0];
+    poly *message = &A[0][1];
+
     const uint8_t *seed_A = pk + SABER_POLYVECCOMPRESSEDBYTES;
+    uint8_t *msk_c = ciphertext + SABER_POLYVECCOMPRESSEDBYTES;
 
+    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(s, noiseseed);
     PQCLEAN_LIGHTSABER_CLEAN_GenMatrix(A, seed_A);
-    PQCLEAN_LIGHTSABER_CLEAN_GenSecret(sp, seed_sp);
-    PQCLEAN_LIGHTSABER_CLEAN_MatrixVectorMul(bp, (const uint16_t (*)[SABER_L][SABER_N])A, (const uint16_t (*)[SABER_N])sp, 0);
+    PQCLEAN_LIGHTSABER_CLEAN_MatrixVectorMul(res, (const poly (*)[SABER_L])A, (const poly *)s, 0); // 0 => not transposed
 
-    for (i = 0; i < SABER_L; i++) {
+
+    // rounding
+    for (i = 0; i < SABER_L; i++) { //shift right EQ-EP bits
         for (j = 0; j < SABER_N; j++) {
-            bp[i][j] = (bp[i][j] + h1) >> (SABER_EQ - SABER_EP);
+            res[i].coeffs[j] += h1;
+            res[i].coeffs[j] >>= SABER_EQ - SABER_EP;
+            res[i].coeffs[j] &= SABER_Q - 1;
         }
     }
+    PQCLEAN_LIGHTSABER_CLEAN_POLVECp2BS(ciphertext, res);
 
-    PQCLEAN_LIGHTSABER_CLEAN_POLVECp2BS(ciphertext, (const uint16_t (*)[SABER_N])bp);
-    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVECp(b, pk);
-    PQCLEAN_LIGHTSABER_CLEAN_InnerProd(vp, (const uint16_t (*)[SABER_N])b, (const uint16_t (*)[SABER_N])sp);
-
-    PQCLEAN_LIGHTSABER_CLEAN_BS2POLmsg(mp, m);
-
-    for (j = 0; j < SABER_N; j++) {
-        vp[j] = (vp[j] - (mp[j] << (SABER_EP - 1)) + h1) >> (SABER_EP - SABER_ET);
-    }
-
-    PQCLEAN_LIGHTSABER_CLEAN_POLT2BS(ciphertext + SABER_POLYVECCOMPRESSEDBYTES, vp);
-}
-
-void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_dec(uint8_t m[SABER_KEYBYTES], const uint8_t sk[SABER_INDCPA_SECRETKEYBYTES], const uint8_t ciphertext[SABER_BYTES_CCA_DEC]) {
-
-    uint16_t s[SABER_L][SABER_N];
-    uint16_t b[SABER_L][SABER_N];
-    uint16_t v[SABER_N] = {0};
-    uint16_t cm[SABER_N];
-    size_t i;
-
-    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVECq(s, sk);
-    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVECp(b, ciphertext);
-    PQCLEAN_LIGHTSABER_CLEAN_InnerProd(v, (const uint16_t (*)[SABER_N])b, (const uint16_t (*)[SABER_N])s);
-    PQCLEAN_LIGHTSABER_CLEAN_BS2POLT(cm, ciphertext + SABER_POLYVECCOMPRESSEDBYTES);
+    // vector-vector scalar multiplication with mod p
+    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVECp(temp, pk);
+    PQCLEAN_LIGHTSABER_CLEAN_InnerProd(vprime, temp, s);
+    PQCLEAN_LIGHTSABER_CLEAN_BS2POLmsg(message, m);
 
     for (i = 0; i < SABER_N; i++) {
-        v[i] = (v[i] + h2 - (cm[i] << (SABER_EP - SABER_ET))) >> (SABER_EP - 1);
+        vprime->coeffs[i] += h1 - (message->coeffs[i] << (SABER_EP - 1));
+        vprime->coeffs[i] &= SABER_P - 1;
+        vprime->coeffs[i] >>= SABER_EP - SABER_ET;
+    }
+
+    PQCLEAN_LIGHTSABER_CLEAN_POLT2BS(msk_c, vprime);
+}
+
+
+void PQCLEAN_LIGHTSABER_CLEAN_indcpa_kem_dec(uint8_t m[SABER_KEYBYTES], const uint8_t sk[SABER_INDCPA_SECRETKEYBYTES], const uint8_t ciphertext[SABER_BYTES_CCA_DEC]) {
+    size_t i;
+
+    poly temp[SABER_L];
+    poly s[SABER_L];
+
+    const uint8_t *packed_cm = ciphertext + SABER_POLYVECCOMPRESSEDBYTES;
+    poly *v = &temp[0];
+    poly *cm = &temp[1];
+
+    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVECq(s, sk);
+    PQCLEAN_LIGHTSABER_CLEAN_BS2POLVECp(temp, ciphertext);
+    PQCLEAN_LIGHTSABER_CLEAN_InnerProd(&temp[0], temp, s);
+
+    PQCLEAN_LIGHTSABER_CLEAN_BS2POLT(cm, packed_cm);
+
+    for (i = 0; i < SABER_N; i++) {
+        v->coeffs[i] += h2 - (cm->coeffs[i] << (SABER_EP - SABER_ET));
+        v->coeffs[i] &= SABER_P - 1;
+        v->coeffs[i] >>= SABER_EP - 1;
     }
 
     PQCLEAN_LIGHTSABER_CLEAN_POLmsg2BS(m, v);

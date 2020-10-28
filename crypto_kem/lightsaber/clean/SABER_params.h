@@ -2,19 +2,21 @@
 #define PARAMS_H
 
 
-/* Change this for different security strengths */
-
 /* Don't change anything below this line */
 #define SABER_L 2
 #define SABER_MU 10
 #define SABER_ET 3
 
-#define SABER_EQ 13
-#define SABER_EP 10
 #define SABER_N 256
 
+#define SABER_EP 10
+#define SABER_P (1 << SABER_EP)
+
+#define SABER_EQ 13
+#define SABER_Q (1 << SABER_EQ)
+
 #define SABER_SEEDBYTES 32
-#define SABER_NOISE_SEEDBYTES 32
+#define SABER_NOISESEEDBYTES 32
 #define SABER_KEYBYTES 32
 #define SABER_HASHBYTES 32
 

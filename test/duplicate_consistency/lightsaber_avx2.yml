@@ -3,13 +3,27 @@ consistency_checks:
         scheme: lightsaber
         implementation: clean
       files:
+      - api.h
+      - cbd.h
+      - pack_unpack.h
+      - kem.h
+      - SABER_indcpa.h
+      - SABER_params.h
       - verify.h
+      - cbd.c
+      - kem.c
+      - pack_unpack.c
       - verify.c
     - source:
         scheme: saber
         implementation: clean
       files:
+      - cbd.h
+      - pack_unpack.h
+      - kem.h
+      - SABER_indcpa.h
       - verify.h
+      - kem.c
       - verify.c
     - source:
         scheme: saber
@@ -22,13 +36,20 @@ consistency_checks:
       - SABER_indcpa.h
       - verify.h
       - kem.c
-      - pack_unpack.c
+      - poly.c
+      - poly_mul.c
+      - SABER_indcpa.c
       - verify.c
     - source:
         scheme: firesaber
         implementation: clean
       files:
+      - cbd.h
+      - pack_unpack.h
+      - kem.h
+      - SABER_indcpa.h
       - verify.h
+      - kem.c
       - verify.c
     - source:
         scheme: firesaber
@@ -41,5 +62,7 @@ consistency_checks:
       - SABER_indcpa.h
       - verify.h
       - kem.c
-      - pack_unpack.c
+      - poly.c
+      - poly_mul.c
+      - SABER_indcpa.c
       - verify.c

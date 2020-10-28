@@ -15,4 +15,4 @@ int PQCLEAN_FIRESABER_CLEAN_crypto_kem_enc(unsigned char *ct, unsigned char *k, 
 int PQCLEAN_FIRESABER_CLEAN_crypto_kem_dec(unsigned char *k, const unsigned char *ct, const unsigned char *sk);
 
 
-#endif /* api_h */
+#endif /* PQCLEAN_FIRESABER_CLEAN_API_H */

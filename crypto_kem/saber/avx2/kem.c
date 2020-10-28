@@ -4,14 +4,12 @@
 #include "fips202.h"
 #include "randombytes.h"
 #include "verify.h"
-#include <immintrin.h>
+#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 
 int PQCLEAN_SABER_AVX2_crypto_kem_keypair(uint8_t *pk, uint8_t *sk) {
-    int i;
+    size_t i;
 
     PQCLEAN_SABER_AVX2_indcpa_kem_keypair(pk, sk); // sk[0:SABER_INDCPA_SECRETKEYBYTES-1] <-- sk
     for (i = 0; i < SABER_INDCPA_PUBLICKEYBYTES; i++) {
@@ -39,7 +37,7 @@ int PQCLEAN_SABER_AVX2_crypto_kem_enc(uint8_t *c, uint8_t *k, const uint8_t *pk)
     sha3_512(kr, buf, 64);               // kr[0:63] <-- Hash(buf[0:63]);
     // K^ <-- kr[0:31]
     // noiseseed (r) <-- kr[32:63];
-    PQCLEAN_SABER_AVX2_indcpa_kem_enc(c, buf, (const uint8_t *) (kr + 32), pk); // buf[0:31] contains message; kr[32:63] contains randomness r;
+    PQCLEAN_SABER_AVX2_indcpa_kem_enc(c, buf, kr + 32, pk); // buf[0:31] contains message; kr[32:63] contains randomness r;
 
     sha3_256(kr + 32, c, SABER_BYTES_CCA_DEC);
 
@@ -49,7 +47,7 @@ int PQCLEAN_SABER_AVX2_crypto_kem_enc(uint8_t *c, uint8_t *k, const uint8_t *pk)
 }
 
 int PQCLEAN_SABER_AVX2_crypto_kem_dec(uint8_t *k, const uint8_t *c, const uint8_t *sk) {
-    int i;
+    size_t i;
     uint8_t fail;
     uint8_t cmp[SABER_BYTES_CCA_DEC];
     uint8_t buf[64];
@@ -65,7 +63,7 @@ int PQCLEAN_SABER_AVX2_crypto_kem_dec(uint8_t *k, const uint8_t *c, const uint8_
 
     sha3_512(kr, buf, 64);
 
-    PQCLEAN_SABER_AVX2_indcpa_kem_enc(cmp, buf, (const uint8_t *) (kr + 32), pk);
+    PQCLEAN_SABER_AVX2_indcpa_kem_enc(cmp, buf, kr + 32, pk);
 
     fail = PQCLEAN_SABER_AVX2_verify(c, cmp, SABER_BYTES_CCA_DEC);
 

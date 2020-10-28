@@ -7,10 +7,10 @@ of "CRYSTALS – Kyber: a CCA-secure module-lattice-based KEM"
 by : Joppe Bos, Leo Ducas, Eike Kiltz, Tancrede Lepoint,
 Vadim Lyubashevsky, John M. Schanck, Peter Schwabe & Damien stehle
 ----------------------------------------------------------------------*/
-#include "poly.h"
+#include "SABER_params.h"
 #include <stdint.h>
 
-void PQCLEAN_LIGHTSABER_AVX2_cbd(uint16_t *r, const unsigned char *buf);
+void PQCLEAN_LIGHTSABER_AVX2_cbd(uint16_t s[SABER_N], const uint8_t buf[SABER_POLYCOINBYTES]);
 
 
 #endif

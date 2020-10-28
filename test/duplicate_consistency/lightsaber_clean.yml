@@ -3,7 +3,16 @@ consistency_checks:
         scheme: lightsaber
         implementation: avx2
       files:
+      - api.h
+      - cbd.h
+      - poly_mul.h
+      - pack_unpack.h
+      - SABER_indcpa.h
+      - SABER_params.h
       - verify.h
+      - cbd.c
+      - kem.c
+      - pack_unpack.c
       - verify.c
     - source:
         scheme: saber
@@ -24,7 +33,12 @@ consistency_checks:
         scheme: saber
         implementation: avx2
       files:
+      - cbd.h
+      - poly_mul.h
+      - pack_unpack.h
+      - SABER_indcpa.h
       - verify.h
+      - kem.c
       - verify.c
     - source:
         scheme: firesaber
@@ -45,5 +59,10 @@ consistency_checks:
         scheme: firesaber
         implementation: avx2
       files:
+      - cbd.h
+      - poly_mul.h
+      - pack_unpack.h
+      - SABER_indcpa.h
       - verify.h
+      - kem.c
       - verify.c

@@ -3,13 +3,21 @@
 #include "SABER_params.h"
 #include <stdint.h>
 
-void PQCLEAN_FIRESABER_CLEAN_MatrixVectorMul(uint16_t res[SABER_L][SABER_N], const uint16_t a[SABER_L][SABER_L][SABER_N], const uint16_t s[SABER_L][SABER_N], int16_t transpose);
+typedef union {
+    uint16_t coeffs[SABER_N];
+} poly;
 
-void PQCLEAN_FIRESABER_CLEAN_InnerProd(uint16_t res[SABER_N], const uint16_t b[SABER_L][SABER_N], const uint16_t s[SABER_L][SABER_N]);
 
-void PQCLEAN_FIRESABER_CLEAN_GenMatrix(uint16_t a[SABER_L][SABER_L][SABER_N], const uint8_t seed[SABER_SEEDBYTES]);
+void PQCLEAN_FIRESABER_CLEAN_MatrixVectorMul(poly c[SABER_L], const poly A[SABER_L][SABER_L], const poly s[SABER_L], int16_t transpose);
 
-void PQCLEAN_FIRESABER_CLEAN_GenSecret(uint16_t s[SABER_L][SABER_N], const uint8_t seed[SABER_NOISE_SEEDBYTES]);
+void PQCLEAN_FIRESABER_CLEAN_InnerProd(poly *c, const poly b[SABER_L], const poly s[SABER_L]);
+
+void PQCLEAN_FIRESABER_CLEAN_GenMatrix(poly A[SABER_L][SABER_L], const uint8_t seed[SABER_SEEDBYTES]);
+
+void PQCLEAN_FIRESABER_CLEAN_GenSecret(poly s[SABER_L], const uint8_t seed[SABER_NOISESEEDBYTES]);
+
+
+void PQCLEAN_FIRESABER_CLEAN_poly_mul(poly *c, const poly *a, const poly *b, int accumulate);
 
 
 #endif

@@ -1,4 +1,4 @@
-#include "poly_mul.h"
+#include "poly.h"
 #include <stdint.h>
 #include <string.h>
 
@@ -229,14 +229,20 @@ static void toom_cook_4way (uint16_t *result, const uint16_t *a1, const uint16_t
 }
 
 /* res += a*b */
-void PQCLEAN_LIGHTSABER_CLEAN_poly_mul_acc(uint16_t res[SABER_N], const uint16_t a[SABER_N], const uint16_t b[SABER_N]) {
-    uint16_t c[2 * SABER_N] = {0};
+void PQCLEAN_LIGHTSABER_CLEAN_poly_mul(poly *c, const poly *a, const poly *b, const int accumulate) {
+    uint16_t C[2 * SABER_N] = {0};
     size_t i;
 
-    toom_cook_4way(c, a, b);
+    toom_cook_4way(C, a->coeffs, b->coeffs);
 
     /* reduction */
-    for (i = SABER_N; i < 2 * SABER_N; i++) {
-        res[i - SABER_N] += (c[i - SABER_N] - c[i]);
+    if (accumulate == 0) {
+        for (i = SABER_N; i < 2 * SABER_N; i++) {
+            c->coeffs[i - SABER_N] = (C[i - SABER_N] - C[i]);
+        }
+    } else {
+        for (i = SABER_N; i < 2 * SABER_N; i++) {
+            c->coeffs[i - SABER_N] += (C[i - SABER_N] - C[i]);
+        }
     }
 }
