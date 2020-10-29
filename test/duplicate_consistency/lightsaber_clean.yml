@@ -5,7 +5,6 @@ consistency_checks:
       files:
       - api.h
       - cbd.h
-      - poly_mul.h
       - pack_unpack.h
       - SABER_indcpa.h
       - SABER_params.h
@@ -34,7 +33,6 @@ consistency_checks:
         implementation: avx2
       files:
       - cbd.h
-      - poly_mul.h
       - pack_unpack.h
       - SABER_indcpa.h
       - verify.h
@@ -60,7 +58,6 @@ consistency_checks:
         implementation: avx2
       files:
       - cbd.h
-      - poly_mul.h
       - pack_unpack.h
       - SABER_indcpa.h
       - verify.h

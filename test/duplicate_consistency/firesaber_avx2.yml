@@ -6,7 +6,6 @@ consistency_checks:
       - api.h
       - cbd.h
       - pack_unpack.h
-      - kem.h
       - SABER_indcpa.h
       - SABER_params.h
       - verify.h
