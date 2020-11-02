@@ -1,0 +1,32 @@
+consistency_checks:
+  - source:
+      scheme: falcon512
+      implementation: avx2
+    files:
+      - api.h
+      - codec.c
+      - common.c
+      - keygen.c
+      - pqclean.c
+      - vrfy.c
+  - source:
+      scheme: falcon1024
+      implementation: clean
+    files:
+      - fpr.h
+      - codec.c
+      - common.c
+      - fft.c
+      - fpr.c
+      - keygen.c
+      - rng.c
+      - sign.c
+      - vrfy.c
+  - source:
+      scheme: falcon1024
+      implementation: avx2
+    files:
+      - codec.c
+      - common.c
+      - keygen.c
+      - vrfy.c

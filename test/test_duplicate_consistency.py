@@ -62,17 +62,17 @@ def test_duplicate_consistency(implementation, source, files):
     for file in files:
         target_path = os.path.join(source.path(), file)
         this_path = os.path.join(implementation.path(), file)
-        target_src = file_get_contents(target_path)
-        this_src = file_get_contents(this_path)
-        this_transformed_src = this_src.replace(
-            implementation.namespace_prefix(), '')
-        target_transformed_src = target_src.replace(
-            source.namespace_prefix(), '')
+        target_src = file_get_contents(target_path)\
+                        .replace(source.namespace_prefix(), '')\
+                        .replace(' ', '')
+        this_src = file_get_contents(this_path)\
+                        .replace(implementation.namespace_prefix(), '')\
+                        .replace(' ', '')
 
-        if not this_transformed_src == target_transformed_src:
+        if not this_src == target_src:
             diff = difflib.unified_diff(
-                this_transformed_src.splitlines(keepends=True),
-                target_transformed_src.splitlines(keepends=True),
+                this_src.splitlines(keepends=True),
+                target_src.splitlines(keepends=True),
                 fromfile=this_path,
                 tofile=target_path)
             messages.append("{} differed:\n{}".format(file, ''.join(diff)))
