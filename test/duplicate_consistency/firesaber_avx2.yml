@@ -1,0 +1,15 @@
+consistency_checks:
+    - source:
+        scheme: firesaber
+        implementation: clean
+      files:
+      - api.h
+      - cbd.h
+      - pack_unpack.h
+      - SABER_indcpa.h
+      - SABER_params.h
+      - verify.h
+      - cbd.c
+      - kem.c
+      - pack_unpack.c
+      - verify.c
