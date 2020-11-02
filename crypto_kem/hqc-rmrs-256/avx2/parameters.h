@@ -50,8 +50,8 @@
   #define PARAM_K                               Define the size of the information bits of the Reed-Solomon code
   #define PARAM_G                               Define the size of the generator polynomial of Reed-Solomon code
   #define PARAM_FFT                             The additive FFT takes a 2^PARAM_FFT polynomial as input
-                                                We use the FFT to compute the roots of sigma, whose degree if PARAM_DELTA=23
-                                                The smallest power of 2 greater than 23+1 is 32=2^5
+                                                We use the FFT to compute the roots of sigma, whose degree if PARAM_DELTA=24
+                                                The smallest power of 2 greater than 24+1 is 32=2^5
   #define RS_POLY_COEFS                         Coefficients of the generator polynomial of the Reed-Solomon code
 
   #define RED_MASK                              A mask fot the higher bits of a vector
@@ -60,13 +60,13 @@
   #define SEEDEXPANDER_MAX_LENGTH               Define the seed expander max length
 */
 
-#define PARAM_N                                 59957
-#define PARAM_N1                                78
-#define PARAM_N2                                768
-#define PARAM_N1N2                              59904
-#define PARAM_OMEGA                             133
-#define PARAM_OMEGA_E                           153
-#define PARAM_OMEGA_R                           153
+#define PARAM_N                                 57637
+#define PARAM_N1                                90
+#define PARAM_N2                                640
+#define PARAM_N1N2                              57600
+#define PARAM_OMEGA                             131
+#define PARAM_OMEGA_E                           149
+#define PARAM_OMEGA_R                           149
 #define PARAM_SECURITY                          256
 #define PARAM_DFR_EXP                           256
 
@@ -75,33 +75,33 @@
 #define SHARED_SECRET_BYTES                     PQCLEAN_HQCRMRS256_AVX2_CRYPTO_BYTES
 #define CIPHERTEXT_BYTES                        PQCLEAN_HQCRMRS256_AVX2_CRYPTO_CIPHERTEXTBYTES
 
-#define UTILS_REJECTION_THRESHOLD               16728003
+#define UTILS_REJECTION_THRESHOLD               16772367
 #define VEC_N_SIZE_BYTES                        CEIL_DIVIDE(PARAM_N, 8)
 #define VEC_K_SIZE_BYTES                        PARAM_K
 #define VEC_N1_SIZE_BYTES                       PARAM_N1
 #define VEC_N1N2_SIZE_BYTES                     CEIL_DIVIDE(PARAM_N1N2, 8)
 
-#define VEC_N_SIZE_64                           CEIL_DIVIDE(PARAM_N, 64)
+#define VEC_N_SIZE_64                         CEIL_DIVIDE(PARAM_N, 64)
 #define VEC_K_SIZE_64                           CEIL_DIVIDE(PARAM_K, 8)
 #define VEC_N1_SIZE_64                          CEIL_DIVIDE(PARAM_N1, 8)
 #define VEC_N1N2_SIZE_64                        CEIL_DIVIDE(PARAM_N1N2, 64)
 
-#define PARAM_N_MULT                            71424
-#define VEC_N_256_SIZE_64                       (CEIL_DIVIDE(PARAM_N_MULT, 256) << 2)
+#define PARAM_N_MULT                            (9*256*CEIL_DIVIDE(CEIL_DIVIDE(PARAM_N, 9), 256))
+#define VEC_N_256_SIZE_64                       (PARAM_N_MULT / 64)
 #define VEC_N1N2_256_SIZE_64                    (CEIL_DIVIDE(PARAM_N1N2, 256) << 2)
 
-#define PARAM_DELTA                             23
+#define PARAM_DELTA                             29
 #define PARAM_M                                 8
 #define PARAM_GF_POLY                           0x11D
 #define PARAM_GF_POLY_WT                        5
 #define PARAM_GF_POLY_M2                        4
 #define PARAM_GF_MUL_ORDER                      255
 #define PARAM_K                                 32
-#define PARAM_G                                 47
+#define PARAM_G                                 59
 #define PARAM_FFT                               5
-#define RS_POLY_COEFS               111,204,161,232,250,107,58,200,161,225,89,57,143,12,106,116,218,68,19,127,236,48,3,210,243,174,203,57,78,15,185,168,204,194,152,17,189,200,197,162,244,8,248,163,217,31,1
+#define RS_POLY_COEFS 49,167,49,39,200,121,124,91,240,63,148,71,150,123,87,101,32,215,159,71,201,115,97,210,186,183,141,217,123,12,31,243,180,219,152,239,99,141,4,246,191,144,8,232,47,27,141,178,130,64,124,47,39,188,216,48,199,187,1
 
-#define RED_MASK                                0x1fffffffffffffUL
+#define RED_MASK                                0x1fffffffff
 #define SHA512_BYTES                            64
 #define SEED_BYTES                              40
 #define SEEDEXPANDER_MAX_LENGTH                 4294967295

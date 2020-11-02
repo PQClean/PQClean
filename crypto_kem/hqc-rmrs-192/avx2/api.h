@@ -7,10 +7,10 @@
 
 #define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_ALGNAME                      "HQC-RMRS-192"
 
-#define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_SECRETKEYBYTES               4946
-#define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_PUBLICKEYBYTES               4906
+#define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_SECRETKEYBYTES               4562
+#define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_PUBLICKEYBYTES               4522
 #define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_BYTES                        64
-#define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_CIPHERTEXTBYTES              9794
+#define PQCLEAN_HQCRMRS192_AVX2_CRYPTO_CIPHERTEXTBYTES              9026
 
 // As a technicality, the public key is appended to the secret key in order to respect the NIST API.
 // Without this constraint, PQCLEAN_HQCRMRS192_AVX2_CRYPTO_SECRETKEYBYTES would be defined as 32

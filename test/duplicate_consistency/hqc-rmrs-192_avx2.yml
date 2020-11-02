@@ -6,22 +6,18 @@ consistency_checks:
       - api.h
       - code.h
       - fft.h
-      - gf.h
       - hqc.h
       - reed_muller.h
       - fft.c
-      - reed_solomon.c
     - source:
         scheme: hqc-rmrs-256
         implementation: clean
       files:
       - code.h
       - fft.h
-      - gf.h
       - hqc.h
       - reed_muller.h
       - fft.c
-      - reed_solomon.c
     - source:
         scheme: hqc-rmrs-256
         implementation: avx2
@@ -41,5 +37,4 @@ consistency_checks:
       - kem.c
       - parsing.c
       - reed_muller.c
-      - reed_solomon.c
       - vector.c

@@ -2,11 +2,11 @@ name: HQC-RMRS-128
 type: kem
 claimed-nist-level: 1
 claimed-security: IND-CCA2
-length-ciphertext: 5191
-length-public-key: 2607
-length-secret-key: 2647
+length-ciphertext: 4481
+length-public-key: 2249
+length-secret-key: 2289
 length-shared-secret: 64
-nistkat-sha256: 3e8023f5ed44d10902265f0e557cf00414e35c09bf86b1bf09195f9f8565ebb7
+nistkat-sha256: b9d10eda065c8ff31d40b929ad7f742889544363aa031096850009a882d9d827
 principal-submitters:
   - Carlos Aguilar Melchor
   - Nicolas Aragon
@@ -22,9 +22,9 @@ principal-submitters:
   - Loïc Bidoux
 implementations:
     - name: clean
-      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/22134db4/hqc
+      version: hqc-submission_2020-10-01 via https://github.com/jschanck/package-pqclean/tree/4924a647/hqc
     - name: avx2
-      version: hqc-submission_2020-05-29 via https://github.com/jschanck/package-pqclean/tree/22134db4/hqc
+      version: hqc-submission_2020-10-01 via https://github.com/jschanck/package-pqclean/tree/4924a647/hqc
       supported_platforms:
           - architecture: x86_64
             operating_systems:
@@ -33,4 +33,4 @@ implementations:
             required_flags:
                 - avx2
                 - bmi1
-                - pclmul
+                - pclmulqdq
