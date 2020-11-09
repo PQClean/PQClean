@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo,-google-readability-casting,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration,-readability-uppercase-literal-suffix,-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling'
+Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo,-google-readability-casting,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-readability-isolate-declaration,-readability-uppercase-literal-suffix,-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,-clang-analyzer-valist.*'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
