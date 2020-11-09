@@ -121,6 +121,7 @@ static size_t rej_uniform(int16_t *r, size_t len, const uint8_t *buf, size_t buf
         val = (uint16_t)(buf[pos] | ((uint16_t)buf[pos + 1] << 8));
         pos += 2;
 
+        //+PQCLEAN_TIMECOP_DECLASSIFY(&val, sizeof val);
         if (val < 19 * KYBER_Q) {
             val -= (uint16_t)((val >> 12) * KYBER_Q); // Barrett reduction
             r[ctr++] = (int16_t)val;

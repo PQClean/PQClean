@@ -78,6 +78,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_challenge(poly *c,
             }
 
             b = outbuf[pos++];
+            //+PQCLEAN_TIMECOP_DECLASSIFY(&b, sizeof b);
         } while (b > i);
 
         c->coeffs[i] = c->coeffs[b];
@@ -261,12 +262,15 @@ rej:
 
     PQCLEAN_DILITHIUM3_CLEAN_polyveck_add(&w0, &w0, &ct0);
     PQCLEAN_DILITHIUM3_CLEAN_polyveck_csubq(&w0);
+
     n = PQCLEAN_DILITHIUM3_CLEAN_polyveck_make_hint(&h, &w0, &w1);
     if (n > OMEGA) {
         goto rej;
     }
 
     /* Write signature */
+    //+PQCLEAN_TIMECOP_DECLASSIFY(&h, sizeof h);
+    //+PQCLEAN_TIMECOP_DECLASSIFY(&c, sizeof c);
     PQCLEAN_DILITHIUM3_CLEAN_pack_sig(sig, &z, &h, &c);
     *siglen = PQCLEAN_DILITHIUM3_CLEAN_CRYPTO_BYTES;
     return 0;

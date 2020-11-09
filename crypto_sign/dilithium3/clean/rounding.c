@@ -76,6 +76,8 @@ uint32_t PQCLEAN_DILITHIUM3_CLEAN_decompose(uint32_t a, uint32_t *a0) {
 * Returns 1 if high bits of a and b differ and 0 otherwise.
 **************************************************/
 unsigned int PQCLEAN_DILITHIUM3_CLEAN_make_hint(uint32_t a0, uint32_t a1) {
+    //+PQCLEAN_TIMECOP_DECLASSIFY(&a0, sizeof a0);
+    //+PQCLEAN_TIMECOP_DECLASSIFY(&a1, sizeof a1);
     if (a0 <= GAMMA2 || a0 > Q - GAMMA2 || (a0 == Q - GAMMA2 && a1 == 0)) {
         return 0;
     }

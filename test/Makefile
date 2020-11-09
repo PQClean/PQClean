@@ -44,6 +44,9 @@ clean-scheme:
 .PHONY: functest
 functest: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
 
+.PHONY: timecop
+timecop: $(DEST_DIR)/timecop_$(SCHEME)_$(IMPLEMENTATION)
+
 .PHONY: testvectors
 testvectors: $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION)
 
@@ -73,6 +76,10 @@ $(DEST_DIR)/test_common_nistseedexpander: test_common/sp800-185.c $(COMMON_FILES
 $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): $(SCHEME_LIBRARY) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) -DNTESTS=$(NTESTS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+
+$(DEST_DIR)/timecop_$(SCHEME)_$(IMPLEMENTATION): $(SCHEME_LIBRARY) crypto_$(TYPE)/timecop.c $(COMMON_FILES) $(TEST_COMMON_DIR)/poisonbytes.c $(TEST_COMMON_DIR)/crypto_declassify.c $(COMMON_HEADERS)
+	mkdir -p $(DEST_DIR)
+	$(CC) $(CFLAGS) -DNTESTS=$(NTESTS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/timecop.c $(COMMON_FILES) $(TEST_COMMON_DIR)/poisonbytes.c $(TEST_COMMON_DIR)/crypto_declassify.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
 
 $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): $(SCHEME_LIBRARY) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(TEST_COMMON_DIR)/notrandombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)

@@ -234,6 +234,7 @@ int PQCLEAN_DILITHIUM3_CLEAN_poly_chknorm(const poly *a, uint32_t B) {
         t ^= (t >> 31);
         t = (Q - 1) / 2 - t;
 
+        //+PQCLEAN_TIMECOP_DECLASSIFY(&t, sizeof t);
         if ((uint32_t)t >= B) {
             return 1;
         }
@@ -270,6 +271,7 @@ static size_t rej_uniform(
         t |= (uint32_t)buf[pos++] << 16;
         t &= 0x7FFFFF;
 
+        //+PQCLEAN_TIMECOP_DECLASSIFY(&t, sizeof t);
         if (t < Q) {
             a[ctr++] = t;
         }
@@ -345,6 +347,8 @@ static size_t rej_eta(
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
 
+        //+PQCLEAN_TIMECOP_DECLASSIFY(&t0, sizeof t0);
+        //+PQCLEAN_TIMECOP_DECLASSIFY(&t1, sizeof t1);
         if (t0 <= 2 * ETA) {
             a[ctr++] = Q + ETA - t0;
         }
@@ -426,6 +430,8 @@ static size_t rej_gamma1m1(
 
         pos += 5;
 
+        //+PQCLEAN_TIMECOP_DECLASSIFY(&t0, sizeof t0);
+        //+PQCLEAN_TIMECOP_DECLASSIFY(&t1, sizeof t1);
         if (t0 <= 2 * GAMMA1 - 2) {
             a[ctr++] = Q + GAMMA1 - 1 - t0;
         }
