@@ -50,7 +50,6 @@ def test_functest(implementation, impl_path, test_dir,
 )
 @helpers.skip_windows()
 @helpers.filtered_test
-@helpers.slow_test
 def test_functest_sanitizers(implementation, impl_path, test_dir,
                              init, destr):
     dest_dir = os.path.join(test_dir, 'bin')

@@ -30,7 +30,6 @@ def valgrind_supports_exit_early():
      for impl in pqclean.Scheme.all_supported_implementations()],
     ids=[str(impl) for impl in pqclean.Scheme.all_supported_implementations()],
 )
-@helpers.slow_test
 @helpers.filtered_test
 def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
                   init, destr):
