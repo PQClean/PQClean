@@ -14,7 +14,6 @@ import pqclean
      for impl in pqclean.Scheme.all_supported_implementations()],
     ids=[str(impl) for impl in pqclean.Scheme.all_supported_implementations()],
 )
-@helpers.slow_test
 @helpers.filtered_test
 def test_timecop(implementation: pqclean.Implementation, impl_path, test_dir,
                   init, destr):
