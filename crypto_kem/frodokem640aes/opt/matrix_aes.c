@@ -80,7 +80,7 @@ int PQCLEAN_FRODOKEM640AES_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t *
         *((uint32_t *)&out[i]) = *((uint32_t *)&e[i]);
     }
 
-    int k;
+    size_t k;
     uint16_t a_cols[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
     uint16_t a_cols_t[PARAMS_N * PARAMS_STRIPE_STEP];
     uint16_t a_cols_temp[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
@@ -110,10 +110,10 @@ int PQCLEAN_FRODOKEM640AES_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t *
                 uint16_t sum[PARAMS_PARALLEL] = {0};
                 for (j = 0; j < PARAMS_N; j++) {                // Matrix-vector multiplication
                     uint16_t sp = s[i * PARAMS_N + j];
-                    sum[0] += sp * a_cols_t[(k + 0) * PARAMS_N + j];
-                    sum[1] += sp * a_cols_t[(k + 1) * PARAMS_N + j];
-                    sum[2] += sp * a_cols_t[(k + 2) * PARAMS_N + j];
-                    sum[3] += sp * a_cols_t[(k + 3) * PARAMS_N + j];
+                    sum[0] += (uint16_t)(sp * (uint32_t)a_cols_t[(k + 0) * PARAMS_N + j]);
+                    sum[1] += (uint16_t)(sp * (uint32_t)a_cols_t[(k + 1) * PARAMS_N + j]);
+                    sum[2] += (uint16_t)(sp * (uint32_t)a_cols_t[(k + 2) * PARAMS_N + j]);
+                    sum[3] += (uint16_t)(sp * (uint32_t)a_cols_t[(k + 3) * PARAMS_N + j]);
                 }
                 out[i * PARAMS_N + kk + k + 0] += sum[0];
                 out[i * PARAMS_N + kk + k + 2] += sum[2];
