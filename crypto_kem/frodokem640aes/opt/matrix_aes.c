@@ -80,7 +80,7 @@ int PQCLEAN_FRODOKEM640AES_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t *
         *((uint32_t *)&out[i]) = *((uint32_t *)&e[i]);
     }
 
-    size_t k;
+    int k;
     uint16_t a_cols[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
     uint16_t a_cols_t[PARAMS_N * PARAMS_STRIPE_STEP];
     uint16_t a_cols_temp[PARAMS_N * PARAMS_STRIPE_STEP] = {0};
