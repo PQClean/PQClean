@@ -96,7 +96,7 @@ int PQCLEAN_FRODOKEM976SHAKE_OPT_mul_add_sa_plus_e(uint16_t *out, const uint16_t
             for (j = 0; j < 4; j++) {
                 uint16_t sp = s[i * PARAMS_N + kk + j];
                 for (k = 0; k < PARAMS_N; k++) {                // Matrix-vector multiplication
-                    sum[k] += sp * a_cols[(t + j) * PARAMS_N + k];
+                    sum[k] += (uint16_t)(sp * (uint32_t)a_cols[(t + j) * PARAMS_N + k]);
                 }
             }
             for (k = 0; k < PARAMS_N; k++) {
