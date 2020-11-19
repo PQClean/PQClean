@@ -1,0 +1,68 @@
+consistency_checks:
+- source:
+    scheme: rainbowIII-circumzenithal
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.c
+    - blas.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+    - utils_hash.c
+- source:
+    scheme: rainbowIII-compressed
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.c
+    - blas.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+    - utils_hash.c
+- source:
+    scheme: rainbowV-classic
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.c
+    - blas.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+- source:
+    scheme: rainbowV-circumzenithal
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.c
+    - blas.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
+- source:
+    scheme: rainbowV-compressed
+    implementation: clean
+  files:
+    - blas_comm.c
+    - blas_comm.h
+    - blas.c
+    - blas.h
+    - gf.c
+    - gf.h
+    - parallel_matrix_op.c
+    - parallel_matrix_op.h
+    - rainbow_blas.h
