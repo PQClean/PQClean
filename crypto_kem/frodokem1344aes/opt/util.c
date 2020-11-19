@@ -58,7 +58,7 @@ void PQCLEAN_FRODOKEM1344AES_OPT_mul_add_sb_plus_e(uint16_t *out, const uint16_t
         for (i = 0; i < PARAMS_NBAR; i++) {
             out[k * PARAMS_NBAR + i] = e[k * PARAMS_NBAR + i];
             for (j = 0; j < PARAMS_N; j++) {
-                out[k * PARAMS_NBAR + i] += s[k * PARAMS_N + j] * b[j * PARAMS_NBAR + i];
+                out[k * PARAMS_NBAR + i] += (uint16_t)(s[k * PARAMS_N + j] * (uint32_t)b[j * PARAMS_NBAR + i]);
             }
             out[k * PARAMS_NBAR + i] = (uint32_t)(out[k * PARAMS_NBAR + i]) & ((1 << PARAMS_LOGQ) - 1);
         }
