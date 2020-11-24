@@ -40,7 +40,7 @@ void PQCLEAN_FRODOKEM640AES_OPT_mul_bs(uint16_t *out, const uint16_t *b, const u
         for (j = 0; j < PARAMS_NBAR; j++) {
             out[i * PARAMS_NBAR + j] = 0;
             for (k = 0; k < PARAMS_N; k++) {
-                out[i * PARAMS_NBAR + j] += b[i * PARAMS_N + k] * s[j * PARAMS_N + k];
+                out[i * PARAMS_NBAR + j] += (uint16_t)(b[i * PARAMS_N + k] * (uint32_t)s[j * PARAMS_N + k]);
             }
             out[i * PARAMS_NBAR + j] = (uint32_t)(out[i * PARAMS_NBAR + j]) & ((1 << PARAMS_LOGQ) - 1);
         }
