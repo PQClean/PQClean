@@ -29,7 +29,6 @@ consistency_checks:
         scheme: kyber512-90s
         implementation: clean
       files:
-      - aes256ctr.h
       - cbd.h
       - indcpa.h
       - kem.h
@@ -37,9 +36,9 @@ consistency_checks:
       - poly.h
       - polyvec.h
       - reduce.h
+      - symmetric-aes.h
       - symmetric.h
       - verify.h
-      - aes256ctr.c
       - indcpa.c
       - kem.c
       - ntt.c
@@ -120,7 +119,6 @@ consistency_checks:
         scheme: kyber1024-90s
         implementation: clean
       files:
-      - aes256ctr.h
       - cbd.h
       - indcpa.h
       - kem.h
@@ -128,9 +126,9 @@ consistency_checks:
       - poly.h
       - polyvec.h
       - reduce.h
+      - symmetric-aes.h
       - symmetric.h
       - verify.h
-      - aes256ctr.c
       - cbd.c
       - indcpa.c
       - kem.c
