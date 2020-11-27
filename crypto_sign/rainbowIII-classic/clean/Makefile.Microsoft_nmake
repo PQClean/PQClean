@@ -4,7 +4,7 @@
 LIBRARY=librainbowIII-classic_clean.lib
 OBJECTS =  blas_comm.obj parallel_matrix_op.obj rainbow.obj rainbow_keypair.obj rainbow_keypair_computation.obj sign.obj utils_hash.obj utils_prng.obj blas.obj gf.obj
 
-CFLAGS=/nologo /I ..\..\..\common /W4 /WX
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 
