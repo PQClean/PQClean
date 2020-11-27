@@ -75,9 +75,9 @@ void PQCLEAN_KYBER51290S_CLEAN_poly_tobytes(uint8_t r[KYBER_POLYBYTES], const po
         t0 += ((int16_t)t0 >> 15) & KYBER_Q;
         t1 = a->coeffs[2 * i + 1];
         t1 += ((int16_t)t1 >> 15) & KYBER_Q;
-        r[3 * i + 0] = (t0 >> 0);
-        r[3 * i + 1] = (t0 >> 8) | (t1 << 4);
-        r[3 * i + 2] = (t1 >> 4);
+        r[3 * i + 0] = (uint8_t)(t0 >> 0);
+        r[3 * i + 1] = (uint8_t)((t0 >> 8) | (t1 << 4));
+        r[3 * i + 2] = (uint8_t)(t1 >> 4);
     }
 }
 

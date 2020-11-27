@@ -167,9 +167,9 @@ void PQCLEAN_KYBER102490S_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_
     for (i = 0; i < KYBER_K; i++) {
         for (j = 0; j < KYBER_K; j++) {
             if (transposed) {
-                xof_absorb(&state, seed, i, j);
+                xof_absorb(&state, seed, (uint8_t)i, (uint8_t)j);
             } else {
-                xof_absorb(&state, seed, j, i);
+                xof_absorb(&state, seed, (uint8_t)j, (uint8_t)i);
             }
 
             xof_squeezeblocks(buf, GEN_MATRIX_NBLOCKS, &state);
