@@ -1,0 +1,20 @@
+name: "RAINBOW(256,68,32,48) - classic"
+type: signature
+claimed-nist-level: 3
+length-public-key: 882080
+length-secret-key: 626048
+length-signature: 164
+nistkat-sha256: 1eb9bb6e63cfdbd05a6eaca9989e969fd234b110b67ff7e6373e1af080b35f41
+testvectors-sha256: 79a7c069612ceb35b6d702a20d9cfdffe7923429820bc4019d3ab9b4b23a1b1b
+principal-submitters:
+  - Jintai Ding
+auxiliary-submitters:
+  - Ming-Shing Chen
+  - Matthias Kannwischer
+  - Jacques Patarin
+  - Albrecht Petzoldt
+  - Dieter Schmidt
+  - Bo-Yin Yang
+implementations:
+    - name: clean
+      version: https://github.com/fast-crypto-lab/rainbow-submission-round2/commit/173ada0e077e1b9dbd8e4a78994f87acc0c92263

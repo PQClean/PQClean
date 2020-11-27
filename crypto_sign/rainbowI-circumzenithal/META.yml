@@ -1,0 +1,20 @@
+name: "RAINBOW(16,36,32,32) - circumzenithal"
+type: signature
+claimed-nist-level: 1
+length-public-key: 60192
+length-secret-key: 103648
+length-signature: 66
+nistkat-sha256: 819bd33be86eea97c3da516b7dfbe4885ea7dfad6c44d196f5fd7c1c8b00b8a7
+testvectors-sha256: 2cc6d4b3e394832f19ca312ba1ddefcdade1e105b348782d7c6f201635506307
+principal-submitters:
+  - Jintai Ding
+auxiliary-submitters:
+  - Ming-Shing Chen
+  - Matthias Kannwischer
+  - Jacques Patarin
+  - Albrecht Petzoldt
+  - Dieter Schmidt
+  - Bo-Yin Yang
+implementations:
+    - name: clean
+      version: https://github.com/fast-crypto-lab/rainbow-submission-round2/commit/173ada0e077e1b9dbd8e4a78994f87acc0c92263

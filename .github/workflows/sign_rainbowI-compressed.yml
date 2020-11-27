@@ -1,0 +1,204 @@
+on:
+  push:
+    paths:
+      # build if tests change
+      - 'test/**'
+      # do not build if other schemes duplicate_consistency files change
+      - '!test/duplicate_consistency/*.yml'
+      - 'test/duplicate_consistency/rainbowI-compressed*.yml'
+      # build if common files change
+      - 'common/**'
+      # build if scheme changed
+      - 'crypto_sign/rainbowI-compressed/**'
+      # build if workflow file changed
+      - '.github/workflows/sign_rainbowI-compressed.yml'
+      # Build if any files in the root change, except .md files
+      - '*'
+      - '!*.md'
+  pull_request:
+    paths:
+      # build if tests change
+      - 'test/**'
+      # do not build if other schemes duplicate_consistency files change
+      - '!test/duplicate_consistency/*.yml'
+      - 'test/duplicate_consistency/rainbowI-compressed*.yml'
+      # build if common files change
+      - 'common/**'
+      # build if scheme changed
+      - 'crypto_sign/rainbowI-compressed/**'
+      # build if workflow file changed
+      - '.github/workflows/sign_rainbowI-compressed.yml'
+      # Build if any files in the root change, except .md files
+      - '*'
+      - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
+
+name: Test rainbowI-compressed
+
+jobs:
+  test-native:
+    runs-on: ubuntu-latest
+    container:
+      image: pqclean/ci-container:${{ matrix.arch }}
+      env:
+        PQCLEAN_ONLY_SCHEMES: rainbowI-compressed
+        CC: ccache ${{ matrix.cc }}
+        CCACHE_NOSTATS: 1
+        CCACHE_DIR: /ccache
+        CCACHE_SLOPPINESS: include_file_mtime
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - i386
+        cc:
+          - gcc
+          - clang
+    steps:
+      - name: Cancel Previous Runs
+        uses: thomwiggers/cancel-workflow-action@all_but_latest
+        with:
+          all_but_latest: true
+          access_token: ${{ github.token }}
+        continue-on-error: true
+        if: matrix.arch == 'amd64' && matrix.cc == 'gcc'
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Cache ccache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-ccache
+        with:
+          path: /ccache
+          key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-python-pip
+        with:
+          path: ~/.cache/pip
+          key: v1-python-pip
+      - name: Install python dependencies
+        run: |
+          python3 -m pip install -U -r requirements.txt
+      - name: Run tests
+        run: |
+          cd test
+          python3 -m pytest --verbose --numprocesses=auto
+  test-emulated:
+    needs:
+      - test-native
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - armhf
+          - unstable-ppc
+        cc:
+          - gcc
+          - clang
+    env:
+      CC: ${{ matrix.cc }}
+    steps:
+      - name: Register qemu-user-static
+        run: |
+          docker run --rm --privileged multiarch/qemu-user-static:register --reset
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Cache ccache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-ccache
+        with:
+          path: ~/ccache
+          key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
+      - name: Cache pip
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-python-pip
+        with:
+          path: ~/.cache/pip
+          key: v1-python-pip
+      - name: Run tests in container
+        run: |
+          docker run --rm -e CI -e CC -e PQCLEAN_ONLY_SCHEMES=rainbowI-compressed -v $PWD:$PWD -w $PWD -v ~/ccache:/ccache pqclean/ci-container:${{ matrix.arch }} /bin/bash -c "\
+          export CCACHE_NOSTATS=1 && \
+          export CCACHE_DIR=/ccache && \
+          export CCACHE_SLOPPINESS=include_file_mtime && \
+          export CC=\"ccache $CC\" && \
+          pip3 install -U -r requirements.txt && \
+          cd test && \
+          python3 -m pytest --verbose --numprocesses=auto"
+  test-windows:
+    needs:
+      - test-native
+    strategy:
+      matrix:
+        bits:
+          - 64
+          - 32
+    env:
+      PQCLEAN_ONLY_SCHEMES: rainbowI-compressed
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Setup astyle
+        run: |
+          # Setup strong crypto
+          Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\.NetFramework\\v4.0.30319" -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
+          Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\.NetFramework\\v4.0.30319" -Name "SchUseStrongCrypto" -Value '1' -Type DWord
+          Invoke-WebRequest -OutFile "test\\astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
+        shell: powershell
+      - name: Setup Python
+        uses: actions/setup-python@main
+        with:
+          python-version: "3.x"
+      - name: Install python requirements
+        run: python -m pip install -U -r requirements.txt
+      - name: Run tests
+        run: |
+          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvars${{ matrix.bits }}.bat"
+          cd test
+          python -m pytest --verbose --numprocesses=auto
+        shell: cmd
+  test-macos:
+    needs:
+      - test-native
+    env:
+      PQCLEAN_ONLY_SCHEMES: rainbowI-compressed
+      CCACHE_NOSTATS: 1
+      CCACHE_SLOPPINESS: include_file_mtime
+      # XCode version
+      DEVELOPER_DIR: /Applications/Xcode_11.5.app/Contents/Developer
+    strategy:
+      matrix:
+        compiler:
+          - clang  # XCode (Apple LLVM/Clang)
+          - gcc9   # GNU (Homebrew)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+      - name: Install astyle
+        run: |
+          brew install astyle
+      - name: Set up GCC9 compiler
+        run: 'export PATH="/usr/local/bin:$PATH" && export CC=gcc-9'
+        if: matrix.compiler == 'gcc9'
+      - name: Setup Python
+        uses: actions/setup-python@main
+        with:
+          python-version: "3.x"
+      - name: Install Python dependencies
+        run: python -m pip install -U -r requirements.txt
+      - name: Run tests
+        run: |
+          cd test
+          python -m pytest --verbose --numprocesses=auto
+
