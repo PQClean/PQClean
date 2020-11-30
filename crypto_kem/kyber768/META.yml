@@ -6,7 +6,7 @@ length-public-key: 1184
 length-ciphertext: 1088
 length-secret-key: 2400
 length-shared-secret: 32
-nistkat-sha256: d6dbb9399d1ba4ee2d986de3e54a461256b91d6c2f9b90ad2410cf41e09b64d1
+nistkat-sha256: 89e82a5bf2d4ddb2c6444e10409e6d9ca65dafbca67d1a0db2c9b54920a29172
 principal-submitters:
   - Peter Schwabe
 auxiliary-submitters:
@@ -21,14 +21,16 @@ auxiliary-submitters:
   - Damien Stehlé
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
+      version: https://github.com/pq-crystals/kyber/commit/e7faae9f662f5b92fee4e966f09b2f23e1e91c65 via https://github.com/jschanck/package-pqclean/tree/231c9bec/kyber
     - name: avx2
-      version: https://github.com/pq-crystals/kyber/commit/46e283ab575ec92dfe82fb12229ae2d9d6246682
+      version: https://github.com/pq-crystals/kyber/commit/e7faae9f662f5b92fee4e966f09b2f23e1e91c65 via https://github.com/jschanck/package-pqclean/tree/231c9bec/kyber
       supported_platforms:
         - architecture: x86_64
           operating_systems:
-            - Linux
+              - Linux
+              - Darwin
           required_flags:
-            - avx2
-            - bmi2
-            - popcnt
+              - aes
+              - avx2
+              - bmi2
+              - popcnt
