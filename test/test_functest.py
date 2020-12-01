@@ -54,6 +54,11 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
                              init, destr):
     dest_dir = os.path.join(test_dir, 'bin')
     env = None
+    if (implementation.scheme.name == "sphincs-sha256-192s-robust"
+            and 'CI' in os.environ
+            and implementation.name == "clean"
+            and 'clang' in os.environ.get('CC', '')):
+        raise unittest.SkipTest("Clang makes this test use too much RAM")
     if platform.machine() == 'ppc' and 'clang' in os.environ.get('CC', 'gcc'):
         raise unittest.SkipTest("Clang does not support ASAN on ppc")
     elif platform.machine() in ['armv7l', 'aarch64']:
