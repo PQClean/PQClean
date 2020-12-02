@@ -139,65 +139,65 @@ static void calculate_F_from_Q_ref(sk_t *Fs, const sk_t *Qs, sk_t *Ts) {
     batch_bmatTr_madd(Fs->l2_F6, Qs->l2_F2, _O1, Ts->t4, _V1, _V1_BYTE, _O2, _O2_BYTE);
 }
 
+#define _SIZE_BUFFER_F2 (_O2_BYTE * _V1 * _O2)
+#define _SIZE_BUFFER_F3 (_O2_BYTE * _V1 * _O2)
 static void calculate_Q_from_F_cyclic_ref(cpk_t *Qs, const sk_t *Fs, const sk_t *Ts) {
     // Layer 1: Computing Q5, Q3, Q6, Q9
 
     //  Q_pk.l1_F5s[i] = UT( T1tr* (F1 * T1 + F2) )
     const unsigned char *t2 = Ts->t4;
-    sk_t tempQ;
-    memcpy(tempQ.l1_F2, Fs->l1_F2, _O1_BYTE * _V1 * _O1);
-    batch_trimat_madd(tempQ.l1_F2, Fs->l1_F1, Ts->t1, _V1, _V1_BYTE, _O1, _O1_BYTE); // F1*T1 + F2
-    memset(tempQ.l2_F1, 0, sizeof(tempQ.l2_F1));
-    memset(tempQ.l2_F2, 0, sizeof(tempQ.l2_F2));
-    batch_matTr_madd(tempQ.l2_F1, Ts->t1, _V1, _V1_BYTE, _O1, tempQ.l1_F2, _O1, _O1_BYTE); // T1tr*(F1*T1 + F2)
-    memset(Qs->l1_Q5, 0, _O1_BYTE * N_TRIANGLE_TERMS(_O1));
-    PQCLEAN_RAINBOWICIRCUMZENITHAL_CLEAN_UpperTrianglize(Qs->l1_Q5, tempQ.l2_F1, _O1, _O1_BYTE); // UT( ... )   // Q5
 
+    // assuming _O2 >= _O1
+
+    unsigned char buffer_F2[_SIZE_BUFFER_F2];
+    memcpy(buffer_F2, Fs->l1_F2, _O1_BYTE * _V1 * _O1);
+    batch_trimat_madd( buffer_F2, Fs->l1_F1, Ts->t1, _V1, _V1_BYTE, _O1, _O1_BYTE);          // F1*T1 + F2
+
+    // assuming _O2 >= _O1
+    unsigned char buffer_F3[_SIZE_BUFFER_F3];
+    memset(buffer_F3, 0, _O1_BYTE * _V1 * _O2);
+    batch_matTr_madd(buffer_F3, Ts->t1, _V1, _V1_BYTE, _O1, buffer_F2, _O1, _O1_BYTE);    // T1tr*(F1*T1 + F2) , release buffer_F2
+    memset(Qs->l1_Q5, 0, _O1_BYTE * N_TRIANGLE_TERMS(_O1));
+    PQCLEAN_RAINBOWICIRCUMZENITHAL_CLEAN_UpperTrianglize(Qs->l1_Q5, buffer_F3, _O1, _O1_BYTE);                          // UT( ... )   // Q5 , release buffer_F3
     /*
-          F1_T2     = F1 * t2
-          F2_T3     = F2 * t3
-          F1_F1T_T2 + F2_T3 = F1_T2 + F2_T3 + F1tr * t2
-          Q_pk.l1_F3s[i] =         F1_F1T_T2 + F2_T3
-          Q_pk.l1_F6s[i] = T1tr* ( F1_F1T_T2 + F2_T3 ) + F2tr * t2
-          Q_pk.l1_F9s[i] = UT( T2tr* ( F1_T2 + F2_T3 ) )
-      */
+        F1_T2     = F1 * t2
+        F2_T3     = F2 * t3
+        F1_F1T_T2 + F2_T3 = F1_T2 + F2_T3 + F1tr * t2
+        Q_pk.l1_F3s[i] =         F1_F1T_T2 + F2_T3
+        Q_pk.l1_F6s[i] = T1tr* ( F1_F1T_T2 + F2_T3 ) + F2tr * t2
+        Q_pk.l1_F9s[i] = UT( T2tr* ( F1_T2 + F2_T3 ) )
+    */
     memset(Qs->l1_Q3, 0, _O1_BYTE * _V1 * _O2);
     memset(Qs->l1_Q6, 0, _O1_BYTE * _O1 * _O2);
     memset(Qs->l1_Q9, 0, _O1_BYTE * N_TRIANGLE_TERMS(_O2));
 
-    batch_trimat_madd(Qs->l1_Q3, Fs->l1_F1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE);       // F1*T2
-    batch_mat_madd(Qs->l1_Q3, Fs->l1_F2, _V1, Ts->t3, _O1, _O1_BYTE, _O2, _O1_BYTE); // F1_T2 + F2_T3
-
-    memset(tempQ.l1_F2, 0, _O1_BYTE * _V1 * _O2);                                    // should be F3. assuming: _O1 >= _O2
-    batch_matTr_madd(tempQ.l1_F2, t2, _V1, _V1_BYTE, _O2, Qs->l1_Q3, _O2, _O1_BYTE); // T2tr * ( F1_T2 + F2_T3 )
-    PQCLEAN_RAINBOWICIRCUMZENITHAL_CLEAN_UpperTrianglize(Qs->l1_Q9, tempQ.l1_F2, _O2, _O1_BYTE);        // Q9
-
-    batch_trimatTr_madd(Qs->l1_Q3, Fs->l1_F1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE); // F1_F1T_T2 + F2_T3  // Q3
-
-    batch_bmatTr_madd(Qs->l1_Q6, Fs->l1_F2, _O1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE);    // F2tr*T2
-    batch_matTr_madd(Qs->l1_Q6, Ts->t1, _V1, _V1_BYTE, _O1, Qs->l1_Q3, _O2, _O1_BYTE); // Q6
+    batch_trimat_madd(Qs->l1_Q3, Fs->l1_F1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE);            // F1*T2
+    batch_mat_madd(Qs->l1_Q3, Fs->l1_F2, _V1, Ts->t3, _O1, _O1_BYTE, _O2, _O1_BYTE);      // F1_T2 + F
+    memset(buffer_F3, 0, _O1_BYTE * _V1 * _O2);
+    batch_matTr_madd(buffer_F3, t2, _V1, _V1_BYTE, _O2, Qs->l1_Q3, _O2, _O1_BYTE);      // T2tr *  ( F1_T2 + F2_T3 )
+    PQCLEAN_RAINBOWICIRCUMZENITHAL_CLEAN_UpperTrianglize(Qs->l1_Q9, buffer_F3, _O2, _O1_BYTE);                               // Q9 , release buffe
+    batch_trimatTr_madd(Qs->l1_Q3, Fs->l1_F1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE);          // F1_F1T_T2 + F2_T3  /
+    batch_bmatTr_madd(Qs->l1_Q6, Fs->l1_F2, _O1, t2, _V1, _V1_BYTE, _O2, _O1_BYTE);       // F2tr*T2
+    batch_matTr_madd(Qs->l1_Q6, Ts->t1, _V1, _V1_BYTE, _O1, Qs->l1_Q3, _O2, _O1_BYTE);    // Q6
     /*
-          Layer 2
-          Computing Q9:
-
-          F1_T2     = F1 * t2
-          F2_T3     = F2 * t3
-          Q9 = UT( T2tr*( F1*T2 + F2*T3 + F3 )  +  T3tr*( F5*T3 + F6 ) )
-      */
-    sk_t tempQ2;
-    memcpy(tempQ2.l2_F3, Fs->l2_F3, _O2_BYTE * _V1 * _O2);                              /// F3 actually.
-    batch_trimat_madd(tempQ2.l2_F3, Fs->l2_F1, t2, _V1, _V1_BYTE, _O2, _O2_BYTE);       // F1*T2 + F3
-    batch_mat_madd(tempQ2.l2_F3, Fs->l2_F2, _V1, Ts->t3, _O1, _O1_BYTE, _O2, _O2_BYTE); // F1_T2 + F2_T3 + F3
-
-    memset(tempQ.l2_F3, 0, _O2_BYTE * _V1 * _O2);
-    batch_matTr_madd(tempQ.l2_F3, t2, _V1, _V1_BYTE, _O2, tempQ2.l2_F3, _O2, _O2_BYTE); // T2tr * ( ..... )
-
-    memcpy(tempQ.l2_F6, Fs->l2_F6, _O2_BYTE * _O1 * _O2);
-    batch_trimat_madd(tempQ.l2_F6, Fs->l2_F5, Ts->t3, _O1, _O1_BYTE, _O2, _O2_BYTE); // F5*T3 + F6
-
-    batch_matTr_madd(tempQ.l2_F3, Ts->t3, _O1, _O1_BYTE, _O2, tempQ.l2_F6, _O2, _O2_BYTE); // T2tr*( ..... ) + T3tr*( ..... )
+        Layer 2
+        Computing
+        F1_T2     = F1 * t2
+        F2_T3     = F2 * t3
+        Q9 = UT( T2tr*( F1*T2 + F2*T3 + F3 )  +  T3tr*( F5*T3 + F6 ) )
+    */
+    memcpy(buffer_F3, Fs->l2_F3, _O2_BYTE * _V1 * _O2);
+    batch_trimat_madd(buffer_F3, Fs->l2_F1, t2, _V1, _V1_BYTE, _O2, _O2_BYTE);           // F1*T2 + F3
+    batch_mat_madd(buffer_F3, Fs->l2_F2, _V1, Ts->t3, _O1, _O1_BYTE, _O2, _O2_BYTE);     // F1_T2 + F2_T3
+    memset(buffer_F2, 0, _O2_BYTE * _V1 * _O2);
+    batch_matTr_madd(buffer_F2, t2, _V1, _V1_BYTE, _O2, buffer_F3, _O2, _O2_BYTE);     // T2tr * ( ..... )  , release buffe
+    memcpy(buffer_F3, Fs->l2_F6, _O2_BYTE * _O1 * _O2);
+    batch_trimat_madd(buffer_F3, Fs->l2_F5, Ts->t3, _O1, _O1_BYTE, _O2, _O2_BYTE);        // F5*T3 + F6
+    batch_matTr_madd(buffer_F2, Ts->t3, _O1, _O1_BYTE, _O2, buffer_F3, _O2, _O2_BYTE);   // T2tr*( ..... ) + T3tr*( ..... )
     memset(Qs->l2_Q9, 0, _O2_BYTE * N_TRIANGLE_TERMS(_O2));
-    PQCLEAN_RAINBOWICIRCUMZENITHAL_CLEAN_UpperTrianglize(Qs->l2_Q9, tempQ.l2_F3, _O2, _O2_BYTE); // Q9
+    PQCLEAN_RAINBOWICIRCUMZENITHAL_CLEAN_UpperTrianglize(Qs->l2_Q9, buffer_F2, _O2, _O2_BYTE);                                 // Q9
+    memset(buffer_F2, 0, _SIZE_BUFFER_F2);
+    memset(buffer_F3, 0, _SIZE_BUFFER_F3);
 }
 
 // Choosing implementations depends on the macros: _BLAS_SSE_ and _BLAS_AVX2_
