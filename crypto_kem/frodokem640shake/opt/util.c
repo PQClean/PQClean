@@ -238,7 +238,7 @@ int8_t PQCLEAN_FRODOKEM640SHAKE_OPT_ct_verify(const uint16_t *a, const uint16_t 
         r |= a[i] ^ b[i];
     }
 
-    r = (-(int16_t)r) >> (8 * sizeof(uint16_t) -1);
+    r = (-(int16_t)(r >> 1) | -(int16_t)(r & 1)) >> (8 * sizeof(uint16_t) -1);
     return (int8_t)r;
 }
 
