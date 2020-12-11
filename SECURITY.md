@@ -24,6 +24,9 @@ Use at your own risk.
 ### 2019-XX-XX
 -->
 
+### 2020-12-11
+* The fix of the timing leak in the CCA transform of FrodoKEM in [PR #303](https://github.com/PQClean/PQClean/pull/303) was ineffective. The FrodoKEM team released another [fix](https://github.com/microsoft/PQCrypto-LWEKE/commit/669522db63850fa64d1a24a47e138e80a59349db) which was ported to PQClean in [PR #367](https://github.com/PQClean/PQClean/pull/367).
+
 ### 2020-06-19
 * A potential timing leak was present in the FrodoKEM decapsulation routine, as identified by [Guo, Johansson, and Nilsson](https://eprint.iacr.org/2020/743).  This was fixed in [PR #303](https://github.com/PQClean/PQClean/pull/303).
 
