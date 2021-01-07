@@ -30,3 +30,4 @@ implementations:
                 - avx2
                 - bmi1
                 - popcnt
+                - aes
