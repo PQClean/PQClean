@@ -1,0 +1,32 @@
+name: Dilithium2-AES
+type: signature
+claimed-nist-level: 2
+length-public-key: 1312
+length-secret-key: 2544
+length-signature: 2420
+nistkat-sha256: 23972a0a5f1f32781aa11fa57d9994ddd53c1bbcc732967f61d9d9aaef01c492
+testvectors-sha256: 22e68fe8bf781dee949a4297f9ba44d1c350a1d88bae03117cfb2ca494c6e604
+principal-submitters:
+  - Vadim Lyubashevsky
+auxiliary-submitters:
+  - Shi Bai
+  - Léo Ducas
+  - Eike Kiltz
+  - Tancrède Lepoint
+  - Peter Schwabe
+  - Gregor Seiler
+  - Damien Stehlé
+implementations:
+    - name: clean
+      version: https://csrc.nist.gov/CSRC/media/Projects/post-quantum-cryptography/documents/round-3/submissions/Dilithium-Round3.zip
+    - name: avx2
+      version: https://csrc.nist.gov/CSRC/media/Projects/post-quantum-cryptography/documents/round-3/submissions/Dilithium-Round3.zip
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Darwin
+                - Linux
+            required_flags:
+                - avx2
+                - bmi1
+                - popcnt

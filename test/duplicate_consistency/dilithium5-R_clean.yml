@@ -1,0 +1,257 @@
+consistency_checks:
+  - source:
+      scheme: dilithium2
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+      - symmetric-shake.c
+  - source:
+      scheme: dilithium3
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+      - symmetric-shake.c
+  - source:
+      scheme: dilithium5
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+      - ntt.h
+      - poly.c
+      - poly.h
+      - polyvec.c
+      - polyvec.h
+      - rounding.c
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+      - symmetric-shake.c
+  - source:
+      scheme: dilithium2-R
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+      - symmetric-shake.c
+  - source:
+      scheme: dilithium3-R
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+      - symmetric-shake.c
+  - source:
+      scheme: dilithium2-AES
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+  - source:
+      scheme: dilithium3-AES
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+  - source:
+      scheme: dilithium5-AES
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - ntt.h
+      - poly.c
+      - poly.h
+      - polyvec.c
+      - polyvec.h
+      - rounding.c
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+  - source:
+      scheme: dilithium2-AES-R
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+  - source:
+      scheme: dilithium3-AES-R
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - ntt.h
+      - polyvec.h
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+  - source:
+      scheme: dilithium5-AES-R
+      implementation: clean
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - ntt.h
+      - poly.c
+      - poly.h
+      - polyvec.c
+      - polyvec.h
+      - rounding.c
+      - rounding.h
+      - ntt.c
+      - reduce.c
+      - reduce.h
+  - source:
+      scheme: dilithium2
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+  - source:
+      scheme: dilithium3
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+  - source:
+      scheme: dilithium5
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+  - source:
+      scheme: dilithium2-R
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+  - source:
+      scheme: dilithium3-R
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+  - source:
+      scheme: dilithium5-R
+      implementation: avx2
+    files:
+      - api.h
+      - packing.c
+      - packing.h
+      - sign.h
+      - symmetric.h
+  - source:
+      scheme: dilithium2-AES
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+  - source:
+      scheme: dilithium3-AES
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+  - source:
+      scheme: dilithium5-AES
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+  - source:
+      scheme: dilithium2-AES-R
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+  - source:
+      scheme: dilithium3-AES-R
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h
+  - source:
+      scheme: dilithium5-AES-R
+      implementation: avx2
+    files:
+      - packing.c
+      - packing.h
+      - sign.h

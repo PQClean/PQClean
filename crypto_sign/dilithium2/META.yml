@@ -1,14 +1,15 @@
 name: Dilithium2
 type: signature
-claimed-nist-level: 1
-length-public-key: 1184
-length-secret-key: 2800
-length-signature: 2044
-nistkat-sha256: 23b7d52a268bbd8633d139b64a1b0e3263777cb2b074f7af0a7fd315afe94d18
-testvectors-sha256: d647039ae7e1785414c64934d5ae37518f259acab95d6a6e873e9b6d3ad63dfd
+claimed-nist-level: 2
+length-public-key: 1312
+length-secret-key: 2544
+length-signature: 2420
+nistkat-sha256: 9c636528bf81c03df6ad8f9471cb1b4d9097d66af825d4f60b7ff0d941ca4d37
+testvectors-sha256: 166fc2481358d5a1b7a528b30af36ad069b049b5755cf63b843ce0f25f35aeb6
 principal-submitters:
   - Vadim Lyubashevsky
 auxiliary-submitters:
+  - Shi Bai
   - Léo Ducas
   - Eike Kiltz
   - Tancrède Lepoint
@@ -17,9 +18,9 @@ auxiliary-submitters:
   - Damien Stehlé
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/dilithium/commit/c1b40fd599e71f65aa18be64dd6c3fc8e84b0c08
+      version: https://csrc.nist.gov/CSRC/media/Projects/post-quantum-cryptography/documents/round-3/submissions/Dilithium-Round3.zip
     - name: avx2
-      version: https://github.com/pq-crystals/dilithium/commit/c1b40fd599e71f65aa18be64dd6c3fc8e84b0c08
+      version: https://csrc.nist.gov/CSRC/media/Projects/post-quantum-cryptography/documents/round-3/submissions/Dilithium-Round3.zip
       supported_platforms:
           - architecture: x86_64
             operating_systems:

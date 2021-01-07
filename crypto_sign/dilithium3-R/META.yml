@@ -1,0 +1,32 @@
+name: Dilithium3-R
+type: signature
+claimed-nist-level: 3
+length-public-key: 1952
+length-secret-key: 4016
+length-signature: 3293
+nistkat-sha256: 5fe8aa5e18a22358bbed45090f428c3bd2751a6ff7460367fa92c4939ba7a0bc
+testvectors-sha256: ad8d798f2603876a095011c48f86e4138193c2fb9dc37fc23f600578aa71431c
+principal-submitters:
+  - Vadim Lyubashevsky
+auxiliary-submitters:
+  - Shi Bai
+  - Léo Ducas
+  - Eike Kiltz
+  - Tancrède Lepoint
+  - Peter Schwabe
+  - Gregor Seiler
+  - Damien Stehlé
+implementations:
+    - name: clean
+      version: https://csrc.nist.gov/CSRC/media/Projects/post-quantum-cryptography/documents/round-3/submissions/Dilithium-Round3.zip
+    - name: avx2
+      version: https://csrc.nist.gov/CSRC/media/Projects/post-quantum-cryptography/documents/round-3/submissions/Dilithium-Round3.zip
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Darwin
+                - Linux
+            required_flags:
+                - avx2
+                - bmi1
+                - popcnt

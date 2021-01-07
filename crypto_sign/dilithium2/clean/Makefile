@@ -2,10 +2,10 @@
 
 LIB=libdilithium2_clean.a
 
-SOURCES = sign.c polyvec.c poly.c packing.c ntt.c reduce.c rounding.c stream.c
-OBJECTS = sign.o polyvec.o poly.o packing.o ntt.o reduce.o rounding.o stream.o
+SOURCES = sign.c polyvec.c poly.c packing.c ntt.c reduce.c rounding.c symmetric-shake.c
+OBJECTS = sign.o polyvec.o poly.o packing.o ntt.o reduce.o rounding.o symmetric-shake.o
 HEADERS = api.h params.h sign.h polyvec.h poly.h packing.h ntt.h \
-  reduce.h rounding.h symmetric.h stream.h
+  reduce.h rounding.h symmetric.h
 
 CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
