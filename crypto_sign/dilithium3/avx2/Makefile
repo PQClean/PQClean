@@ -7,7 +7,7 @@ KECCAK4XDIR=../../../common/keccak4x
 KECCAK4XOBJ=KeccakP-1600-times4-SIMD256.o
 KECCAK4X=$(KECCAK4XDIR)/$(KECCAK4XOBJ)
 
-CFLAGS=-mavx2 -mbmi2 -mpopcnt -O3 -Wall -Wextra -Wpedantic -Werror \
+CFLAGS=-mavx2 -mpopcnt -O3 -Wall -Wextra -Wpedantic -Werror \
           -Wmissing-prototypes -Wredundant-decls \
           -Wpointer-arith -Wshadow \
           -std=c99 -I../../../common $(EXTRAFLAGS)

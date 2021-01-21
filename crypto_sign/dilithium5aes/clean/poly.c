@@ -778,12 +778,12 @@ void PQCLEAN_DILITHIUM5AES_CLEAN_polyz_pack(uint8_t *r, const poly *a) {
         t[0] = GAMMA1 - a->coeffs[2 * i + 0];
         t[1] = GAMMA1 - a->coeffs[2 * i + 1];
 
-        r[5 * i + 0]  = t[0];
-        r[5 * i + 1]  = t[0] >> 8;
-        r[5 * i + 2]  = t[0] >> 16;
-        r[5 * i + 2] |= t[1] << 4;
-        r[5 * i + 3]  = t[1] >> 4;
-        r[5 * i + 4]  = t[1] >> 12;
+        r[5 * i + 0]  = (uint8_t) t[0];
+        r[5 * i + 1]  = (uint8_t) (t[0] >> 8);
+        r[5 * i + 2]  = (uint8_t) (t[0] >> 16);
+        r[5 * i + 2] |= (uint8_t) (t[1] << 4);
+        r[5 * i + 3]  = (uint8_t) (t[1] >> 4);
+        r[5 * i + 4]  = (uint8_t) (t[1] >> 12);
     }
 
     DBENCH_STOP(*tpack);
@@ -835,7 +835,7 @@ void PQCLEAN_DILITHIUM5AES_CLEAN_polyw1_pack(uint8_t *r, const poly *a) {
     DBENCH_START();
 
     for (i = 0; i < N / 2; ++i) {
-        r[i] = a->coeffs[2 * i + 0] | (a->coeffs[2 * i + 1] << 4);
+        r[i] = (uint8_t) (a->coeffs[2 * i + 0] | (a->coeffs[2 * i + 1] << 4));
     }
 
     DBENCH_STOP(*tpack);
