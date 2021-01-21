@@ -334,7 +334,7 @@ int PQCLEAN_DILITHIUM3_CLEAN_crypto_sign_open(uint8_t *m,
 
 badsig:
     /* Signature verification failed */
-    *mlen = -1;
+    *mlen = (size_t) -1;
     for (i = 0; i < smlen; ++i) {
         m[i] = 0;
     }

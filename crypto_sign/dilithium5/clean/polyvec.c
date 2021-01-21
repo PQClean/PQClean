@@ -19,7 +19,7 @@ void PQCLEAN_DILITHIUM5_CLEAN_polyvec_matrix_expand(polyvecl mat[K], const uint8
 
     for (i = 0; i < K; ++i) {
         for (j = 0; j < L; ++j) {
-            PQCLEAN_DILITHIUM5_CLEAN_poly_uniform(&mat[i].vec[j], rho, (i << 8) + j);
+            PQCLEAN_DILITHIUM5_CLEAN_poly_uniform(&mat[i].vec[j], rho, (uint16_t) ((i << 8) + j));
         }
     }
 }
@@ -48,7 +48,7 @@ void PQCLEAN_DILITHIUM5_CLEAN_polyvecl_uniform_gamma1(polyvecl *v, const uint8_t
     unsigned int i;
 
     for (i = 0; i < L; ++i) {
-        PQCLEAN_DILITHIUM5_CLEAN_poly_uniform_gamma1(&v->vec[i], seed, L * nonce + i);
+        PQCLEAN_DILITHIUM5_CLEAN_poly_uniform_gamma1(&v->vec[i], seed, (uint16_t) (L * nonce + i));
     }
 }
 

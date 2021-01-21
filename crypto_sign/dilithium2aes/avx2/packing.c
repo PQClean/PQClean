@@ -191,11 +191,11 @@ void PQCLEAN_DILITHIUM2AES_AVX2_pack_sig(uint8_t sig[PQCLEAN_DILITHIUM2AES_AVX2_
     for (i = 0; i < K; ++i) {
         for (j = 0; j < N; ++j) {
             if (h->vec[i].coeffs[j] != 0) {
-                sig[k++] = j;
+                sig[k++] = (uint8_t) j;
             }
         }
 
-        sig[OMEGA + i] = k;
+        sig[OMEGA + i] = (uint8_t) k;
     }
 }
 

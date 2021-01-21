@@ -5,8 +5,8 @@
 
 void PQCLEAN_DILITHIUM3_AVX2_dilithium_shake128_stream_init(shake128incctx *state, const uint8_t seed[SEEDBYTES], uint16_t nonce) {
     uint8_t t[2];
-    t[0] = nonce;
-    t[1] = nonce >> 8;
+    t[0] = (uint8_t) nonce;
+    t[1] = (uint8_t) (nonce >> 8);
 
     shake128_inc_init(state);
     shake128_inc_absorb(state, seed, SEEDBYTES);
@@ -16,8 +16,8 @@ void PQCLEAN_DILITHIUM3_AVX2_dilithium_shake128_stream_init(shake128incctx *stat
 
 void PQCLEAN_DILITHIUM3_AVX2_dilithium_shake256_stream_init(shake256incctx *state, const uint8_t seed[CRHBYTES], uint16_t nonce) {
     uint8_t t[2];
-    t[0] = nonce;
-    t[1] = nonce >> 8;
+    t[0] = (uint8_t) nonce;
+    t[1] = (uint8_t) (nonce >> 8);
 
     shake256_inc_init(state);
     shake256_inc_absorb(state, seed, CRHBYTES);
