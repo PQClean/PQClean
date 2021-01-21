@@ -13,14 +13,11 @@
 * Returns r.
 **************************************************/
 int32_t PQCLEAN_DILITHIUM5AES_CLEAN_montgomery_reduce(int64_t a) {
-    int64_t t;
-    int32_t u;
+    int32_t t;
 
-    u = (int32_t)(a * (int64_t)QINV);
-    t = (int64_t)u * Q;
-    t = a - t;
-    t >>= 32;
-    return (int32_t)t;
+    t = (int32_t)((uint64_t)a * (uint64_t)QINV);
+    t = (a - (int64_t)t * Q) >> 32;
+    return t;
 }
 
 /*************************************************
