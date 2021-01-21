@@ -1,11 +1,14 @@
 #include "params.h"
-#include "cdecl.inc"
+#include "cdecl.h"
 
+.text
 .global cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_avx)
+.global _cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_avx)
 cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_avx):
+_cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_avx):
 #consts
-vmovdqa		cdecl(PQCLEAN_DILITHIUM3_AVX2_8xqinv)(%rip),%ymm0
-vmovdqa		cdecl(PQCLEAN_DILITHIUM3_AVX2_8xq)(%rip),%ymm1
+vmovdqa		_8XQINV*4(%rcx),%ymm0
+vmovdqa		_8XQ*4(%rcx),%ymm1
 
 xor		%eax,%eax
 _looptop1:
@@ -18,41 +21,41 @@ vmovdqa		32(%rdx),%ymm12
 vmovdqa		64(%rdx),%ymm14
 vpsrlq		$32,%ymm2,%ymm3
 vpsrlq		$32,%ymm4,%ymm5
-vpsrlq		$32,%ymm6,%ymm7
+vmovshdup	%ymm6,%ymm7
 vpsrlq		$32,%ymm10,%ymm11
 vpsrlq		$32,%ymm12,%ymm13
-vpsrlq		$32,%ymm14,%ymm15
+vmovshdup	%ymm14,%ymm15
 
 #mul
-vpmuludq	%ymm2,%ymm10,%ymm2
-vpmuludq	%ymm3,%ymm11,%ymm3
-vpmuludq	%ymm4,%ymm12,%ymm4
-vpmuludq	%ymm5,%ymm13,%ymm5
-vpmuludq	%ymm6,%ymm14,%ymm6
-vpmuludq	%ymm7,%ymm15,%ymm7
+vpmuldq		%ymm2,%ymm10,%ymm2
+vpmuldq		%ymm3,%ymm11,%ymm3
+vpmuldq		%ymm4,%ymm12,%ymm4
+vpmuldq		%ymm5,%ymm13,%ymm5
+vpmuldq		%ymm6,%ymm14,%ymm6
+vpmuldq		%ymm7,%ymm15,%ymm7
 
 #reduce
-vpmuludq	%ymm0,%ymm2,%ymm10
-vpmuludq	%ymm0,%ymm3,%ymm11
-vpmuludq	%ymm0,%ymm4,%ymm12
-vpmuludq	%ymm0,%ymm5,%ymm13
-vpmuludq	%ymm0,%ymm6,%ymm14
-vpmuludq	%ymm0,%ymm7,%ymm15
-vpmuludq	%ymm1,%ymm10,%ymm10
-vpmuludq	%ymm1,%ymm11,%ymm11
-vpmuludq	%ymm1,%ymm12,%ymm12
-vpmuludq	%ymm1,%ymm13,%ymm13
-vpmuludq	%ymm1,%ymm14,%ymm14
-vpmuludq	%ymm1,%ymm15,%ymm15
-vpaddq		%ymm2,%ymm10,%ymm2
-vpaddq		%ymm3,%ymm11,%ymm3
-vpaddq		%ymm4,%ymm12,%ymm4
-vpaddq		%ymm5,%ymm13,%ymm5
-vpaddq		%ymm6,%ymm14,%ymm6
-vpaddq		%ymm7,%ymm15,%ymm7
+vpmuldq		%ymm0,%ymm2,%ymm10
+vpmuldq		%ymm0,%ymm3,%ymm11
+vpmuldq		%ymm0,%ymm4,%ymm12
+vpmuldq		%ymm0,%ymm5,%ymm13
+vpmuldq		%ymm0,%ymm6,%ymm14
+vpmuldq		%ymm0,%ymm7,%ymm15
+vpmuldq		%ymm1,%ymm10,%ymm10
+vpmuldq		%ymm1,%ymm11,%ymm11
+vpmuldq		%ymm1,%ymm12,%ymm12
+vpmuldq		%ymm1,%ymm13,%ymm13
+vpmuldq		%ymm1,%ymm14,%ymm14
+vpmuldq		%ymm1,%ymm15,%ymm15
+vpsubq		%ymm10,%ymm2,%ymm2
+vpsubq		%ymm11,%ymm3,%ymm3
+vpsubq		%ymm12,%ymm4,%ymm4
+vpsubq		%ymm13,%ymm5,%ymm5
+vpsubq		%ymm14,%ymm6,%ymm6
+vpsubq		%ymm15,%ymm7,%ymm7
 vpsrlq		$32,%ymm2,%ymm2
 vpsrlq		$32,%ymm4,%ymm4
-vpsrlq		$32,%ymm6,%ymm6
+vmovshdup	%ymm6,%ymm6
 
 #store
 vpblendd	$0xAA,%ymm3,%ymm2,%ymm2
@@ -67,7 +70,7 @@ add		$96,%rsi
 add		$96,%rdx
 add		$1,%eax
 cmp		$10,%eax
-jb _looptop1
+jb 		_looptop1
 
 vmovdqa		(%rsi),%ymm2
 vmovdqa		32(%rsi),%ymm4
@@ -75,30 +78,30 @@ vmovdqa		(%rdx),%ymm10
 vmovdqa		32(%rdx),%ymm12
 vpsrlq		$32,%ymm2,%ymm3
 vpsrlq		$32,%ymm4,%ymm5
-vpsrlq		$32,%ymm10,%ymm11
-vpsrlq		$32,%ymm12,%ymm13
+vmovshdup	%ymm10,%ymm11
+vmovshdup	%ymm12,%ymm13
 
 #mul
-vpmuludq	%ymm2,%ymm10,%ymm2
-vpmuludq	%ymm3,%ymm11,%ymm3
-vpmuludq	%ymm4,%ymm12,%ymm4
-vpmuludq	%ymm5,%ymm13,%ymm5
+vpmuldq		%ymm2,%ymm10,%ymm2
+vpmuldq		%ymm3,%ymm11,%ymm3
+vpmuldq		%ymm4,%ymm12,%ymm4
+vpmuldq		%ymm5,%ymm13,%ymm5
 
 #reduce
-vpmuludq	%ymm0,%ymm2,%ymm10
-vpmuludq	%ymm0,%ymm3,%ymm11
-vpmuludq	%ymm0,%ymm4,%ymm12
-vpmuludq	%ymm0,%ymm5,%ymm13
-vpmuludq	%ymm1,%ymm10,%ymm10
-vpmuludq	%ymm1,%ymm11,%ymm11
-vpmuludq	%ymm1,%ymm12,%ymm12
-vpmuludq	%ymm1,%ymm13,%ymm13
-vpaddq		%ymm2,%ymm10,%ymm2
-vpaddq		%ymm3,%ymm11,%ymm3
-vpaddq		%ymm4,%ymm12,%ymm4
-vpaddq		%ymm5,%ymm13,%ymm5
+vpmuldq		%ymm0,%ymm2,%ymm10
+vpmuldq		%ymm0,%ymm3,%ymm11
+vpmuldq		%ymm0,%ymm4,%ymm12
+vpmuldq		%ymm0,%ymm5,%ymm13
+vpmuldq		%ymm1,%ymm10,%ymm10
+vpmuldq		%ymm1,%ymm11,%ymm11
+vpmuldq		%ymm1,%ymm12,%ymm12
+vpmuldq		%ymm1,%ymm13,%ymm13
+vpsubq		%ymm10,%ymm2,%ymm2
+vpsubq		%ymm11,%ymm3,%ymm3
+vpsubq		%ymm12,%ymm4,%ymm4
+vpsubq		%ymm13,%ymm5,%ymm5
 vpsrlq		$32,%ymm2,%ymm2
-vpsrlq		$32,%ymm4,%ymm4
+vmovshdup	%ymm4,%ymm4
 
 #store
 vpblendd	$0x55,%ymm2,%ymm3,%ymm2
@@ -116,14 +119,14 @@ vmovdqa		\off(%rdx),%ymm10
 vmovdqa		\off+32(%rdx),%ymm12
 vpsrlq		$32,%ymm6,%ymm7
 vpsrlq		$32,%ymm8,%ymm9
-vpsrlq		$32,%ymm10,%ymm11
-vpsrlq		$32,%ymm12,%ymm13
+vmovshdup	%ymm10,%ymm11
+vmovshdup	%ymm12,%ymm13
 
 #mul
-vpmuludq	%ymm6,%ymm10,%ymm6
-vpmuludq	%ymm7,%ymm11,%ymm7
-vpmuludq	%ymm8,%ymm12,%ymm8
-vpmuludq	%ymm9,%ymm13,%ymm9
+vpmuldq		%ymm6,%ymm10,%ymm6
+vpmuldq		%ymm7,%ymm11,%ymm7
+vpmuldq		%ymm8,%ymm12,%ymm8
+vpmuldq		%ymm9,%ymm13,%ymm9
 .endm
 
 .macro acc
@@ -134,10 +137,12 @@ vpaddq		%ymm9,%ymm5,%ymm5
 .endm
 
 .global cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_acc_avx)
+.global _cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_acc_avx)
 cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_acc_avx):
+_cdecl(PQCLEAN_DILITHIUM3_AVX2_pointwise_acc_avx):
 #consts
-vmovdqa		cdecl(PQCLEAN_DILITHIUM3_AVX2_8xqinv)(%rip),%ymm0
-vmovdqa		cdecl(PQCLEAN_DILITHIUM3_AVX2_8xq)(%rip),%ymm1
+vmovdqa		_8XQINV*4(%rcx),%ymm0
+vmovdqa		_8XQ*4(%rcx),%ymm1
 
 xor		%eax,%eax
 _looptop2:
@@ -158,22 +163,26 @@ acc
 pointwise	3072
 acc
 
+pointwise	4096
+acc
+
+
 
 #reduce
-vpmuludq	%ymm0,%ymm2,%ymm6
-vpmuludq	%ymm0,%ymm3,%ymm7
-vpmuludq	%ymm0,%ymm4,%ymm8
-vpmuludq	%ymm0,%ymm5,%ymm9
-vpmuludq	%ymm1,%ymm6,%ymm6
-vpmuludq	%ymm1,%ymm7,%ymm7
-vpmuludq	%ymm1,%ymm8,%ymm8
-vpmuludq	%ymm1,%ymm9,%ymm9
-vpaddq		%ymm2,%ymm6,%ymm2
-vpaddq		%ymm3,%ymm7,%ymm3
-vpaddq		%ymm4,%ymm8,%ymm4
-vpaddq		%ymm5,%ymm9,%ymm5
+vpmuldq		%ymm0,%ymm2,%ymm6
+vpmuldq		%ymm0,%ymm3,%ymm7
+vpmuldq		%ymm0,%ymm4,%ymm8
+vpmuldq		%ymm0,%ymm5,%ymm9
+vpmuldq		%ymm1,%ymm6,%ymm6
+vpmuldq		%ymm1,%ymm7,%ymm7
+vpmuldq		%ymm1,%ymm8,%ymm8
+vpmuldq		%ymm1,%ymm9,%ymm9
+vpsubq		%ymm6,%ymm2,%ymm2
+vpsubq		%ymm7,%ymm3,%ymm3
+vpsubq		%ymm8,%ymm4,%ymm4
+vpsubq		%ymm9,%ymm5,%ymm5
 vpsrlq		$32,%ymm2,%ymm2
-vpsrlq		$32,%ymm4,%ymm4
+vmovshdup	%ymm4,%ymm4
 
 #store
 vpblendd	$0xAA,%ymm3,%ymm2,%ymm2

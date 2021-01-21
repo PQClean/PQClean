@@ -1,13 +1,10 @@
 # This Makefile can be used with GNU Make or BSD Make
 
 LIB=libdilithium3_clean.a
+HEADERS=api.h ntt.h packing.h params.h poly.h polyvec.h reduce.h rounding.h sign.h symmetric.h 
+OBJECTS=ntt.o packing.o poly.o polyvec.o reduce.o rounding.o sign.o symmetric-shake.o 
 
-SOURCES = sign.c polyvec.c poly.c packing.c ntt.c reduce.c rounding.c stream.c
-OBJECTS = sign.o polyvec.o poly.o packing.o ntt.o reduce.o rounding.o stream.o
-HEADERS = api.h params.h sign.h polyvec.h poly.h packing.h ntt.h \
-  reduce.h rounding.h symmetric.h stream.h
-
-CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS=-O3 -Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 

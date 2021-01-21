@@ -1,21 +1,17 @@
 #ifndef PQCLEAN_DILITHIUM2_CLEAN_REDUCE_H
 #define PQCLEAN_DILITHIUM2_CLEAN_REDUCE_H
-
+#include "params.h"
 #include <stdint.h>
 
-#define MONT 4193792U // 2^32 % Q
-#define QINV 4236238847U // -q^(-1) mod 2^32
+#define MONT (-4186625) // 2^32 % Q
+#define QINV 58728449 // q^(-1) mod 2^32
 
-/* a <= Q*2^32 => r < 2*Q */
-uint32_t PQCLEAN_DILITHIUM2_CLEAN_montgomery_reduce(uint64_t a);
+int32_t PQCLEAN_DILITHIUM2_CLEAN_montgomery_reduce(int64_t a);
 
-/* r < 2*Q */
-uint32_t PQCLEAN_DILITHIUM2_CLEAN_reduce32(uint32_t a);
+int32_t PQCLEAN_DILITHIUM2_CLEAN_reduce32(int32_t a);
 
-/* a < 2*Q => r < Q */
-uint32_t PQCLEAN_DILITHIUM2_CLEAN_csubq(uint32_t a);
+int32_t PQCLEAN_DILITHIUM2_CLEAN_caddq(int32_t a);
 
-/* r < Q */
-uint32_t PQCLEAN_DILITHIUM2_CLEAN_freeze(uint32_t a);
+int32_t PQCLEAN_DILITHIUM2_CLEAN_freeze(int32_t a);
 
 #endif
