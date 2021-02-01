@@ -1,0 +1,129 @@
+consistency_checks:
+    - source:
+        scheme: dilithium2
+        implementation: clean
+      files:
+      - packing.h
+      - sign.h
+      - packing.c
+    - source:
+        scheme: dilithium2
+        implementation: avx2
+      files:
+      - align.h
+      - cdecl.h
+      - consts.h
+      - ntt.h
+      - packing.h
+      - rejsample.h
+      - rounding.h
+      - sign.h
+      - consts.c
+      - packing.c
+      - rounding.c
+    - source:
+        scheme: dilithium2aes
+        implementation: clean
+      files:
+      - api.h
+      - packing.h
+      - params.h
+      - sign.h
+      - packing.c
+    - source:
+        scheme: dilithium3
+        implementation: clean
+      files:
+      - packing.h
+      - sign.h
+      - packing.c
+    - source:
+        scheme: dilithium3
+        implementation: avx2
+      files:
+      - align.h
+      - cdecl.h
+      - consts.h
+      - ntt.h
+      - packing.h
+      - rounding.h
+      - sign.h
+      - consts.c
+      - packing.c
+    - source:
+        scheme: dilithium3aes
+        implementation: clean
+      files:
+      - packing.h
+      - sign.h
+      - packing.c
+    - source:
+        scheme: dilithium3aes
+        implementation: avx2
+      files:
+      - aes256ctr.h
+      - align.h
+      - cdecl.h
+      - consts.h
+      - ntt.h
+      - packing.h
+      - poly.h
+      - polyvec.h
+      - rounding.h
+      - sign.h
+      - symmetric.h
+      - aes256ctr.c
+      - consts.c
+      - packing.c
+      - polyvec.c
+      - sign.c
+    - source:
+        scheme: dilithium5
+        implementation: clean
+      files:
+      - packing.h
+      - sign.h
+      - packing.c
+    - source:
+        scheme: dilithium5
+        implementation: avx2
+      files:
+      - align.h
+      - cdecl.h
+      - consts.h
+      - ntt.h
+      - packing.h
+      - rejsample.h
+      - rounding.h
+      - sign.h
+      - consts.c
+      - packing.c
+    - source:
+        scheme: dilithium5aes
+        implementation: clean
+      files:
+      - packing.h
+      - sign.h
+      - packing.c
+    - source:
+        scheme: dilithium5aes
+        implementation: avx2
+      files:
+      - aes256ctr.h
+      - align.h
+      - cdecl.h
+      - consts.h
+      - ntt.h
+      - packing.h
+      - poly.h
+      - polyvec.h
+      - rejsample.h
+      - rounding.h
+      - sign.h
+      - symmetric.h
+      - aes256ctr.c
+      - consts.c
+      - packing.c
+      - polyvec.c
+      - rejsample.c
+      - sign.c

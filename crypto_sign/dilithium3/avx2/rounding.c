@@ -1,115 +1,154 @@
+#include "consts.h"
+#include "params.h"
+#include "rejsample.h"
 #include "rounding.h"
+#include <immintrin.h>
+#include <stdint.h>
+#include <string.h>
+
+#define _mm256_blendv_epi32(a,b,mask) \
+    _mm256_castps_si256(_mm256_blendv_ps(_mm256_castsi256_ps(a), \
+                                         _mm256_castsi256_ps(b), \
+                                         _mm256_castsi256_ps(mask)))
 
 /*************************************************
 * Name:        power2round
 *
-* Description: For finite field element a, compute a0, a1 such that
-*              a mod Q = a1*2^D + a0 with -2^{D-1} < a0 <= 2^{D-1}.
-*              Assumes a to be standard representative.
+* Description: For finite field elements a, compute a0, a1 such that
+*              a mod^+ Q = a1*2^D + a0 with -2^{D-1} < a0 <= 2^{D-1}.
+*              Assumes a to be positive standard representative.
 *
-* Arguments:   - uint32_t a: input element
-*              - uint32_t *a0: pointer to output element Q + a0
+* Arguments:   - __m256i *a1: output array of length N/8 with high bits
+*              - __m256i *a0: output array of length N/8 with low bits a0
+*              - const __m256i *a: input array of length N/8
 *
-* Returns a1.
 **************************************************/
-uint32_t PQCLEAN_DILITHIUM3_AVX2_power2round(uint32_t a, uint32_t *a0)  {
-    int32_t t;
+void PQCLEAN_DILITHIUM3_AVX2_power2round_avx(__m256i *a1, __m256i *a0, const __m256i *a) {
+    unsigned int i;
+    __m256i f, f0, f1;
+    const __m256i mask = _mm256_set1_epi32(-(1 << D));
+    const __m256i half = _mm256_set1_epi32((1 << (D - 1)) - 1);
 
-    /* Centralized remainder mod 2^D */
-    t = a & ((1U << D) - 1);
-    t -= (1U << (D - 1)) + 1;
-    t += (t >> 31) & (1U << D);
-    t -= (1U << (D - 1)) - 1;
-    *a0 = Q + t;
-    a = (a - t) >> D;
-    return a;
+    for (i = 0; i < N / 8; ++i) {
+        f = _mm256_load_si256(&a[i]);
+        f1 = _mm256_add_epi32(f, half);
+        f0 = _mm256_and_si256(f1, mask);
+        f1 = _mm256_srli_epi32(f1, D);
+        f0 = _mm256_sub_epi32(f, f0);
+        _mm256_store_si256(&a1[i], f1);
+        _mm256_store_si256(&a0[i], f0);
+    }
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM3_AVX2_decompose
+* Name:        decompose
 *
-* Description: For finite field element a, compute high and low bits a0, a1 such
-*              that a mod Q = a1*ALPHA + a0 with -ALPHA/2 < a0 <= ALPHA/2 except
+* Description: For finite field element a, compute high and low parts a0, a1 such
+*              that a mod^+ Q = a1*ALPHA + a0 with -ALPHA/2 < a0 <= ALPHA/2 except
 *              if a1 = (Q-1)/ALPHA where we set a1 = 0 and
-*              -ALPHA/2 <= a0 = a mod Q - Q < 0. Assumes a to be standard
+*              -ALPHA/2 <= a0 = a mod Q - Q < 0. Assumes a to be positive standard
 *              representative.
 *
-* Arguments:   - uint32_t a: input element
-*              - uint32_t *a0: pointer to output element Q + a0
+* Arguments:   - __m256i *a1: output array of length N/8 with high parts
+*              - __m256i *a0: output array of length N/8 with low parts a0
+*              - const __m256i *a: input array of length N/8
 *
-* Returns a1.
 **************************************************/
-uint32_t PQCLEAN_DILITHIUM3_AVX2_decompose(uint32_t a, uint32_t *a0) {
-    int32_t t, u;
+void PQCLEAN_DILITHIUM3_AVX2_decompose_avx(__m256i *a1, __m256i *a0, const __m256i *a) {
+    unsigned int i;
+    __m256i f, f0, f1;
+    const __m256i q = _mm256_load_si256(&PQCLEAN_DILITHIUM3_AVX2_qdata.vec[_8XQ / 8]);
+    const __m256i hq = _mm256_srli_epi32(q, 1);
+    const __m256i v = _mm256_set1_epi32(1025);
+    const __m256i alpha = _mm256_set1_epi32(2 * GAMMA2);
+    const __m256i off = _mm256_set1_epi32(127);
+    const __m256i shift = _mm256_set1_epi32(512);
+    const __m256i mask = _mm256_set1_epi32(15);
 
-    /* Centralized remainder mod ALPHA */
-    t = a & 0x7FFFF;
-    t += (a >> 19) << 9;
-    t -= ALPHA / 2 + 1;
-    t += (t >> 31) & ALPHA;
-    t -= ALPHA / 2 - 1;
-    a -= t;
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a[i]);
+        f1 = _mm256_add_epi32(f, off);
+        f1 = _mm256_srli_epi32(f1, 7);
+        f1 = _mm256_mulhi_epu16(f1, v);
+        f1 = _mm256_mulhrs_epi16(f1, shift);
+        f1 = _mm256_and_si256(f1, mask);
+        f0 = _mm256_mullo_epi32(f1, alpha);
+        f0 = _mm256_sub_epi32(f, f0);
+        f = _mm256_cmpgt_epi32(f0, hq);
+        f = _mm256_and_si256(f, q);
+        f0 = _mm256_sub_epi32(f0, f);
+        _mm256_store_si256(&a1[i], f1);
+        _mm256_store_si256(&a0[i], f0);
+    }
+}
 
-    /* Divide by ALPHA (possible to avoid) */
-    u = a - 1;
-    u >>= 31;
-    a = (a >> 19) + 1;
-    a -= u & 1;
 
-    /* Border case */
-    *a0 = Q + t - (a >> 4);
-    a &= 0xF;
-    return a;
+/*************************************************
+* Name:        make_hint
+*
+* Description: Compute indices of polynomial coefficients whose low bits
+*              overflow into the high bits.
+*
+* Arguments:   - uint8_t *hint: hint array
+*              - const __m256i *a0: low bits of input elements
+*              - const __m256i *a1: high bits of input elements
+*
+* Returns number of overflowing low bits
+**************************************************/
+unsigned int PQCLEAN_DILITHIUM3_AVX2_make_hint_avx(uint8_t hint[N], const __m256i *restrict a0, const __m256i *restrict a1) {
+    unsigned int i, n = 0;
+    __m256i f0, f1, g0, g1;
+    uint32_t bad;
+    uint64_t idx;
+    const __m256i low = _mm256_set1_epi32(-GAMMA2);
+    const __m256i high = _mm256_set1_epi32(GAMMA2);
+
+    for (i = 0; i < N / 8; ++i) {
+        f0 = _mm256_load_si256(&a0[i]);
+        f1 = _mm256_load_si256(&a1[i]);
+        g0 = _mm256_abs_epi32(f0);
+        g0 = _mm256_cmpgt_epi32(g0, high);
+        g1 = _mm256_cmpeq_epi32(f0, low);
+        g1 = _mm256_sign_epi32(g1, f1);
+        g0 = _mm256_or_si256(g0, g1);
+
+        bad = _mm256_movemask_ps((__m256)g0);
+        memcpy(&idx, PQCLEAN_DILITHIUM3_AVX2_idxlut[bad], 8);
+        idx += (uint64_t)0x0808080808080808 * i;
+        memcpy(&hint[n], &idx, 8);
+        n += _mm_popcnt_u32(bad);
+    }
+
+    return n;
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM3_AVX2_make_hint
+* Name:        use_hint
 *
-* Description: Compute hint bit indicating whether the low bits of the
-*              input element overflow into the high bits. Inputs assumed to be
-*              standard representatives.
+* Description: Correct high parts according to hint.
 *
-* Arguments:   - uint32_t a0: low bits of input element
-*              - uint32_t a1: high bits of input element
+* Arguments:   - __m256i *b: output array of length N/8 with corrected high parts
+*              - const __m256i *a: input array of length N/8
+*              - const __m256i *a: input array of length N/8 with hint bits
 *
-* Returns 1 if high bits of a and b differ and 0 otherwise.
 **************************************************/
-unsigned int PQCLEAN_DILITHIUM3_AVX2_make_hint(const uint32_t a0, const uint32_t a1) {
-    if (a0 <= GAMMA2 || a0 > Q - GAMMA2 || (a0 == Q - GAMMA2 && a1 == 0)) {
-        return 0;
+void PQCLEAN_DILITHIUM3_AVX2_use_hint_avx(__m256i *b, const __m256i *a, const __m256i *restrict hint) {
+    unsigned int i;
+    __m256i a0[N / 8];
+    __m256i f, g, h, t;
+    const __m256i zero = _mm256_setzero_si256();
+    const __m256i mask = _mm256_set1_epi32(15);
+
+    PQCLEAN_DILITHIUM3_AVX2_decompose_avx(b, a0, a);
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a0[i]);
+        g = _mm256_load_si256(&b[i]);
+        h = _mm256_load_si256(&hint[i]);
+        t = _mm256_blendv_epi32(zero, h, f);
+        t = _mm256_slli_epi32(t, 1);
+        h = _mm256_sub_epi32(h, t);
+        g = _mm256_add_epi32(g, h);
+        g = _mm256_and_si256(g, mask);
+        _mm256_store_si256(&b[i], g);
     }
-
-    return 1;
-}
-
-/*************************************************
-* Name:        PQCLEAN_DILITHIUM3_AVX2_use_hint
-*
-* Description: Correct high bits according to hint.
-*
-* Arguments:   - uint32_t a: input element
-*              - unsigned int hint: hint bit
-*
-* Returns corrected high bits.
-**************************************************/
-uint32_t PQCLEAN_DILITHIUM3_AVX2_use_hint(const uint32_t a, const unsigned int hint) {
-    uint32_t a0, a1;
-
-    a1 = PQCLEAN_DILITHIUM3_AVX2_decompose(a, &a0);
-    if (hint == 0) {
-        return a1;
-    }
-    if (a0 > Q) {
-        return (a1 + 1) & 0xF;
-    }
-    return (a1 - 1) & 0xF;
-
-    /* If decompose does not divide out ALPHA:
-    if(hint == 0)
-      return a1;
-    else if(a0 > Q)
-      return (a1 + ALPHA) % (Q - 1);
-    else
-      return (a1 - ALPHA) % (Q - 1);
-    */
 }

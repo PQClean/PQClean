@@ -1,0 +1,31 @@
+name: Dilithium5-AES
+type: signature
+claimed-nist-level: 5
+length-public-key: 2592
+length-secret-key: 4880
+length-signature: 4595
+nistkat-sha256: 882d5050d6289875cbaa3bd920ec60ff3e2895257cbe8f76ed9d3735daa188c6
+testvectors-sha256: 8289af5b8aeb78bd6a642d1899364ce3ab9f3b2bd4c66da9a9031a9832e71545
+principal-submitters:
+  - Vadim Lyubashevsky
+auxiliary-submitters:
+  - Léo Ducas
+  - Eike Kiltz
+  - Tancrède Lepoint
+  - Peter Schwabe
+  - Gregor Seiler
+  - Damien Stehlé
+implementations:
+    - name: clean
+      version: https://github.com/pq-crystals/dilithium/commit/1e63a1e880401166f105ab44ec67464c9714a315 via https://github.com/jschanck/package-pqclean/tree/b158a891/dilithium
+    - name: avx2
+      version: https://github.com/pq-crystals/dilithium/commit/1e63a1e880401166f105ab44ec67464c9714a315 via https://github.com/jschanck/package-pqclean/tree/b158a891/dilithium
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+              - Linux
+              - Darwin
+          required_flags:
+              - aes
+              - avx2
+              - popcnt

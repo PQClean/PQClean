@@ -1,52 +1,94 @@
-#include <immintrin.h>
-#include <stdint.h>
-
+#include "align.h"
+#include "consts.h"
 #include "fips202x4.h"
 #include "ntt.h"
-#include "nttconsts.h"
 #include "params.h"
 #include "poly.h"
-#include "reduce.h"
 #include "rejsample.h"
 #include "rounding.h"
 #include "symmetric.h"
+#include <immintrin.h>
+#include <stdint.h>
+#include <string.h>
+
+#define DBENCH_START()
+#define DBENCH_STOP(t)
+
+#define _mm256_blendv_epi32(a,b,mask) \
+    _mm256_castps_si256(_mm256_blendv_ps(_mm256_castsi256_ps(a), \
+                                         _mm256_castsi256_ps(b), \
+                                         _mm256_castsi256_ps(mask)))
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_reduce
 *
-* Description: Reduce all coefficients of input polynomial to representative
-*              in [0,2*Q[.
+* Description: Inplace reduction of all coefficients of polynomial to
+*              representative in [-6283009,6283007]. Assumes input
+*              coefficients to be at most 2^31 - 2^22 - 1 in absolute value.
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM3_AVX2_poly_reduce(poly *a) {
-    PQCLEAN_DILITHIUM3_AVX2_reduce_avx(a->coeffs);
+    unsigned int i;
+    __m256i f, g;
+    const __m256i q = _mm256_load_si256(&PQCLEAN_DILITHIUM3_AVX2_qdata.vec[_8XQ / 8]);
+    const __m256i off = _mm256_set1_epi32(1 << 22);
+    DBENCH_START();
+
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a->vec[i]);
+        g = _mm256_add_epi32(f, off);
+        g = _mm256_srai_epi32(g, 23);
+        g = _mm256_mullo_epi32(g, q);
+        f = _mm256_sub_epi32(f, g);
+        _mm256_store_si256(&a->vec[i], f);
+    }
+
+    DBENCH_STOP(*tred);
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_csubq
+* Name:        poly_addq
 *
-* Description: For all coefficients of input polynomial subtract Q if
-*              coefficient is bigger than Q.
+* Description: For all coefficients of in/out polynomial add Q if
+*              coefficient is negative.
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_poly_csubq(poly *a) {
-    PQCLEAN_DILITHIUM3_AVX2_csubq_avx(a->coeffs);
+void PQCLEAN_DILITHIUM3_AVX2_poly_caddq(poly *a) {
+    unsigned int i;
+    __m256i f, g;
+    const __m256i q = _mm256_load_si256(&PQCLEAN_DILITHIUM3_AVX2_qdata.vec[_8XQ / 8]);
+    const __m256i zero = _mm256_setzero_si256();
+    DBENCH_START();
+
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a->vec[i]);
+        g = _mm256_blendv_epi32(zero, q, f);
+        f = _mm256_add_epi32(f, g);
+        _mm256_store_si256(&a->vec[i], f);
+    }
+
+    DBENCH_STOP(*tred);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_freeze
 *
-* Description: Reduce all coefficients of the polynomial to standard
-*              representatives.
+* Description: Inplace reduction of all coefficients of polynomial to
+*              positive standard representatives. Assumes input
+*              coefficients to be at most 2^31 - 2^22 + 1 in
+*              absolute value.
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM3_AVX2_poly_freeze(poly *a) {
-    PQCLEAN_DILITHIUM3_AVX2_reduce_avx(a->coeffs);
-    PQCLEAN_DILITHIUM3_AVX2_csubq_avx(a->coeffs);
+    DBENCH_START();
 
+    PQCLEAN_DILITHIUM3_AVX2_poly_reduce(a);
+    PQCLEAN_DILITHIUM3_AVX2_poly_caddq(a);
+
+    DBENCH_STOP(*tred);
 }
 
 /*************************************************
@@ -59,20 +101,24 @@ void PQCLEAN_DILITHIUM3_AVX2_poly_freeze(poly *a) {
 *              - const poly *b: pointer to second summand
 **************************************************/
 void PQCLEAN_DILITHIUM3_AVX2_poly_add(poly *c, const poly *a, const poly *b)  {
-    __m256i vec0, vec1;
-    for (size_t i = 0; i < N / 8; i++) {
-        vec0 = _mm256_load_si256(&a->coeffs_x8[i]);
-        vec1 = _mm256_load_si256(&b->coeffs_x8[i]);
-        vec0 = _mm256_add_epi32(vec0, vec1);
-        _mm256_store_si256(&c->coeffs_x8[i], vec0);
+    unsigned int i;
+    __m256i f, g;
+    DBENCH_START();
+
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a->vec[i]);
+        g = _mm256_load_si256(&b->vec[i]);
+        f = _mm256_add_epi32(f, g);
+        _mm256_store_si256(&c->vec[i], f);
     }
+
+    DBENCH_STOP(*tadd);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_sub
 *
-* Description: Subtract polynomials. Assumes coefficients of second input
-*              polynomial to be less than 2*Q. No modular reduction is
+* Description: Subtract polynomials. No modular reduction is
 *              performed.
 *
 * Arguments:   - poly *c: pointer to output polynomial
@@ -81,227 +127,239 @@ void PQCLEAN_DILITHIUM3_AVX2_poly_add(poly *c, const poly *a, const poly *b)  {
 *                               subtraced from first input polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM3_AVX2_poly_sub(poly *c, const poly *a, const poly *b) {
-    __m256i vec0, vec1;
-    const __m256i twoq = _mm256_load_si256(PQCLEAN_DILITHIUM3_AVX2_8x2q.as_vec);
+    unsigned int i;
+    __m256i f, g;
+    DBENCH_START();
 
-    for (size_t i = 0; i < N / 8; i++) {
-        vec0 = _mm256_load_si256(&a->coeffs_x8[i]);
-        vec1 = _mm256_load_si256(&b->coeffs_x8[i]);
-        vec0 = _mm256_add_epi32(vec0, twoq);
-        vec0 = _mm256_sub_epi32(vec0, vec1);
-        _mm256_store_si256(&c->coeffs_x8[i], vec0);
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a->vec[i]);
+        g = _mm256_load_si256(&b->vec[i]);
+        f = _mm256_sub_epi32(f, g);
+        _mm256_store_si256(&c->vec[i], f);
     }
+
+    DBENCH_STOP(*tadd);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_shiftl
 *
 * Description: Multiply polynomial by 2^D without modular reduction. Assumes
-*              input coefficients to be less than 2^{32-D}.
+*              input coefficients to be less than 2^{31-D} in absolute value.
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM3_AVX2_poly_shiftl(poly *a) {
-    __m256i vec;
+    unsigned int i;
+    __m256i f;
+    DBENCH_START();
 
-    for (size_t i = 0; i < N / 8; i++) {
-        vec = _mm256_load_si256(&a->coeffs_x8[i]);
-        vec = _mm256_slli_epi32(vec, D);
-        _mm256_store_si256(&a->coeffs_x8[i], vec);
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a->vec[i]);
+        f = _mm256_slli_epi32(f, D);
+        _mm256_store_si256(&a->vec[i], f);
     }
+
+    DBENCH_STOP(*tmul);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_ntt
 *
-* Description: Forward NTT. Output coefficients can be up to 16*Q larger than
-*              input coefficients.
+* Description: Inplace forward NTT. Coefficients can grow by up to
+*              8*Q in absolute value.
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
 void PQCLEAN_DILITHIUM3_AVX2_poly_ntt(poly *a) {
-    ALIGNED_UINT64(N) tmp;
+    DBENCH_START();
 
-    for (size_t i = 0; i < N / 32; ++i) {
-        PQCLEAN_DILITHIUM3_AVX2_ntt_levels0t2_avx(tmp.as_arr + 4 * i, a->coeffs + 4 * i, PQCLEAN_DILITHIUM3_AVX2_zetas.as_arr + 1);
-    }
-    for (size_t i = 0; i < N / 32; ++i) {
-        PQCLEAN_DILITHIUM3_AVX2_ntt_levels3t8_avx(a->coeffs + 32 * i, tmp.as_arr + 32 * i, PQCLEAN_DILITHIUM3_AVX2_zetas.as_arr + 8 + 31 * i);
-    }
+    PQCLEAN_DILITHIUM3_AVX2_ntt_avx(a->vec, PQCLEAN_DILITHIUM3_AVX2_qdata.vec);
+
+    DBENCH_STOP(*tmul);
 }
 
 /*************************************************
-* Name:        poly_invntt_montgomery
+* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_invntt_tomont
 *
-* Description: Inverse NTT and multiplication with 2^{32}. Input coefficients
-*              need to be less than 2*Q. Output coefficients are less than 2*Q.
+* Description: Inplace inverse NTT and multiplication by 2^{32}.
+*              Input coefficients need to be less than Q in absolute
+*              value and output coefficients are again bounded by Q.
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_poly_invntt_montgomery(poly *a) {
-    ALIGNED_UINT64(N) tmp;
+void PQCLEAN_DILITHIUM3_AVX2_poly_invntt_tomont(poly *a) {
+    DBENCH_START();
 
-    for (size_t i = 0; i < N / 32; i++) {
-        PQCLEAN_DILITHIUM3_AVX2_invntt_levels0t4_avx(tmp.as_arr + 32 * i, a->coeffs + 32 * i, PQCLEAN_DILITHIUM3_AVX2_zetas_inv.as_arr + 31 * i);
-    }
-    for (size_t i = 0; i < N / 32; i++) {
-        PQCLEAN_DILITHIUM3_AVX2_invntt_levels5t7_avx(a->coeffs + 4 * i, tmp.as_arr + 4 * i, PQCLEAN_DILITHIUM3_AVX2_zetas_inv.as_arr + 248);
-    }
+    PQCLEAN_DILITHIUM3_AVX2_invntt_avx(a->vec, PQCLEAN_DILITHIUM3_AVX2_qdata.vec);
+
+    DBENCH_STOP(*tmul);
+}
+
+void PQCLEAN_DILITHIUM3_AVX2_poly_nttunpack(poly *a) {
+    DBENCH_START();
+
+    PQCLEAN_DILITHIUM3_AVX2_nttunpack_avx(a->vec);
+
+    DBENCH_STOP(*tmul);
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_pointwise_invmontgomery
+* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_pointwise_montgomery
 *
 * Description: Pointwise multiplication of polynomials in NTT domain
 *              representation and multiplication of resulting polynomial
-*              with 2^{-32}. Output coefficients are less than 2*Q if input
-*              coefficient are less than 22*Q.
+*              by 2^{-32}.
 *
 * Arguments:   - poly *c: pointer to output polynomial
 *              - const poly *a: pointer to first input polynomial
 *              - const poly *b: pointer to second input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_poly_pointwise_invmontgomery(poly *c, const poly *a, const poly *b) {
-    PQCLEAN_DILITHIUM3_AVX2_pointwise_avx(c->coeffs, a->coeffs, b->coeffs);
+void PQCLEAN_DILITHIUM3_AVX2_poly_pointwise_montgomery(poly *c, const poly *a, const poly *b) {
+    DBENCH_START();
+
+    PQCLEAN_DILITHIUM3_AVX2_pointwise_avx(c->vec, a->vec, b->vec, PQCLEAN_DILITHIUM3_AVX2_qdata.vec);
+
+    DBENCH_STOP(*tmul);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_power2round
 *
 * Description: For all coefficients c of the input polynomial,
-*              compute c0, c1 such that c mod Q = c1*2^D + c0
+*              compute c0, c1 such that c mod^+ Q = c1*2^D + c0
 *              with -2^{D-1} < c0 <= 2^{D-1}. Assumes coefficients to be
-*              standard representatives.
+*              positive standard representatives.
 *
 * Arguments:   - poly *a1: pointer to output polynomial with coefficients c1
-*              - poly *a0: pointer to output polynomial with coefficients Q + a0
-*              - const poly *v: pointer to input polynomial
+*              - poly *a0: pointer to output polynomial with coefficients c0
+*              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_poly_power2round(poly *restrict a1,
-        poly *restrict a0,
-        const poly *restrict a) {
-    for (size_t i = 0; i < N; ++i) {
-        a1->coeffs[i] = PQCLEAN_DILITHIUM3_AVX2_power2round(a->coeffs[i], &a0->coeffs[i]);
-    }
+void PQCLEAN_DILITHIUM3_AVX2_poly_power2round(poly *a1, poly *a0, const poly *a) {
+    DBENCH_START();
+
+    PQCLEAN_DILITHIUM3_AVX2_power2round_avx(a1->vec, a0->vec, a->vec);
+
+    DBENCH_STOP(*tround);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_decompose
 *
 * Description: For all coefficients c of the input polynomial,
-*              compute high and low bits c0, c1 such c mod Q = c1*ALPHA + c0
-*              with -ALPHA/2 < c0 <= ALPHA/2 except c1 = (Q-1)/ALPHA where we
+*              compute high and low bits c0, c1 such c mod^+ Q = c1*ALPHA + c0
+*              with -ALPHA/2 < c0 <= ALPHA/2 except if c1 = (Q-1)/ALPHA where we
 *              set c1 = 0 and -ALPHA/2 <= c0 = c mod Q - Q < 0.
-*              Assumes coefficients to be standard representatives.
+*              Assumes coefficients to be positive standard representatives.
 *
 * Arguments:   - poly *a1: pointer to output polynomial with coefficients c1
-*              - poly *a0: pointer to output polynomial with coefficients Q + a0
-*              - const poly *c: pointer to input polynomial
+*              - poly *a0: pointer to output polynomial with coefficients c0
+*              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_poly_decompose(
-    poly *restrict a1,
-    poly *restrict a0,
-    const poly *restrict a) {
-    for (size_t i = 0; i < N; ++i) {
-        a1->coeffs[i] = PQCLEAN_DILITHIUM3_AVX2_decompose(a->coeffs[i], &a0->coeffs[i]);
-    }
+void PQCLEAN_DILITHIUM3_AVX2_poly_decompose(poly *a1, poly *a0, const poly *a) {
+    DBENCH_START();
+
+    PQCLEAN_DILITHIUM3_AVX2_decompose_avx(a1->vec, a0->vec, a->vec);
+
+    DBENCH_STOP(*tround);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_make_hint
 *
-* Description: Compute hint polynomial. The coefficients of which indicate
-*              whether the low bits of the corresponding coefficient of
-*              the input polynomial overflow into the high bits.
+* Description: Compute hint array. The coefficients of which are the
+*              indices of the coefficients of the input polynomial
+*              whose low bits overflow into the high bits.
 *
-* Arguments:   - poly *h: pointer to output hint polynomial
+* Arguments:   - uint8_t *h: pointer to output hint array (preallocated of length N)
 *              - const poly *a0: pointer to low part of input polynomial
 *              - const poly *a1: pointer to high part of input polynomial
 *
-* Returns number of 1 bits.
+* Returns number of hints, i.e. length of hint array.
 **************************************************/
-uint32_t PQCLEAN_DILITHIUM3_AVX2_poly_make_hint(
-    poly *restrict h,
-    const poly *restrict a0,
-    const poly *restrict a1) {
-    uint32_t s = 0;
-    for (size_t i = 0; i < N; ++i) {
-        h->coeffs[i] = PQCLEAN_DILITHIUM3_AVX2_make_hint(a0->coeffs[i], a1->coeffs[i]);
-        s += h->coeffs[i];
-    }
-    return s;
+unsigned int PQCLEAN_DILITHIUM3_AVX2_poly_make_hint(uint8_t hint[N], const poly *a0, const poly *a1) {
+    unsigned int r;
+    DBENCH_START();
+
+    r = PQCLEAN_DILITHIUM3_AVX2_make_hint_avx(hint, a0->vec, a1->vec);
+
+    DBENCH_STOP(*tround);
+    return r;
 }
 
 /*************************************************
- * Name:       PQCLEAN_DILITHIUM3_AVX2_poly_use_hint
- *
- * Description: Use hint polynomial to correct the high bits of a polynomial.
+* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_use_hint
 *
-* Arguments:   - poly *a: pointer to output polynomial with corrected high bits
-*              - const poly *b: pointer to input polynomial
+* Description: Use hint polynomial to correct the high bits of a polynomial.
+*
+* Arguments:   - poly *b: pointer to output polynomial with corrected high bits
+*              - const poly *a: pointer to input polynomial
 *              - const poly *h: pointer to input hint polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_poly_use_hint(
-    poly *restrict a,
-    const poly *restrict b,
-    const poly *restrict h) {
-    for (size_t i = 0; i < N; ++i) {
-        a->coeffs[i] = PQCLEAN_DILITHIUM3_AVX2_use_hint(b->coeffs[i], h->coeffs[i]);
-    }
+void PQCLEAN_DILITHIUM3_AVX2_poly_use_hint(poly *b, const poly *a, const poly *h) {
+    DBENCH_START();
+
+    PQCLEAN_DILITHIUM3_AVX2_use_hint_avx(b->vec, a->vec, h->vec);
+
+    DBENCH_STOP(*tround);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_poly_chknorm
 *
 * Description: Check infinity norm of polynomial against given bound.
-*              Assumes input coefficients to be standard representatives.
+*              Assumes input polynomial to be reduced by PQCLEAN_DILITHIUM3_AVX2_poly_reduce().
 *
 * Arguments:   - const poly *a: pointer to polynomial
-*              - uint32_t B: norm bound
+*              - int32_t B: norm bound
 *
-* Returns 0 if norm is strictly smaller than B and 1 otherwise.
+* Returns 0 if norm is strictly smaller than B <= (Q-1)/8 and 1 otherwise.
 **************************************************/
-int PQCLEAN_DILITHIUM3_AVX2_poly_chknorm(const poly *a, uint32_t B) {
-    int32_t t;
+int PQCLEAN_DILITHIUM3_AVX2_poly_chknorm(const poly *a, int32_t B) {
+    unsigned int i;
+    int r;
+    __m256i f, t;
+    const __m256i bound = _mm256_set1_epi32(B - 1);
+    DBENCH_START();
 
-    /* It is ok to leak which coefficient violates the bound since
-       the probability for each coefficient is independent of secret
-       data but we must not leak the sign of the centralized representative. */
-    for (size_t i = 0; i < N; ++i) {
-        /* Absolute value of centralized representative */
-        t = (Q - 1) / 2 - a->coeffs[i];
-        t ^= (t >> 31);
-        t = (Q - 1) / 2 - t;
-
-        if ((uint32_t)t >= B) {
-            return 1;
-        }
+    if (B > (Q - 1) / 8) {
+        return 1;
     }
 
-    return 0;
+    t = _mm256_setzero_si256();
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_load_si256(&a->vec[i]);
+        f = _mm256_abs_epi32(f);
+        f = _mm256_cmpgt_epi32(f, bound);
+        t = _mm256_or_si256(t, f);
+    }
+
+    r = 1 - _mm256_testz_si256(t, t);
+    DBENCH_STOP(*tsample);
+    return r;
 }
 
 /*************************************************
-* Name:        rej_uniform_ref
+* Name:        rej_uniform
 *
 * Description: Sample uniformly random coefficients in [0, Q-1] by
-*              performing rejection sampling using array of random bytes.
+*              performing rejection sampling on array of random bytes.
 *
-* Arguments:   - uint32_t *a: pointer to output array (allocated)
-*              - size_t len: number of coefficients to be sampled
+* Arguments:   - int32_t *a: pointer to output array (allocated)
+*              - unsigned int len: number of coefficients to be sampled
 *              - const uint8_t *buf: array of random bytes
-*              - size_t buflen: length of array of random bytes
+*              - unsigned int buflen: length of array of random bytes
 *
 * Returns number of sampled coefficients. Can be smaller than len if not enough
 * random bytes were given.
 **************************************************/
-static size_t rej_uniform_ref(
-    uint32_t *a,
-    size_t len,
-    const uint8_t *buf,
-    size_t buflen) {
-    size_t ctr, pos;
+static unsigned int rej_uniform(int32_t *a,
+                                unsigned int len,
+                                const uint8_t *buf,
+                                unsigned int buflen) {
+    unsigned int ctr, pos;
     uint32_t t;
+    DBENCH_START();
 
     ctr = pos = 0;
     while (ctr < len && pos + 3 <= buflen) {
@@ -315,101 +373,87 @@ static size_t rej_uniform_ref(
         }
     }
 
+    DBENCH_STOP(*tsample);
     return ctr;
 }
 
 /*************************************************
-* Name:        poly_uniform
+* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_uniform
 *
 * Description: Sample polynomial with uniformly random coefficients
-*              in [0,Q-1] by performing rejection sampling using the
-*              output stream from SHAKE256(seed|nonce).
+*              in [0,Q-1] by performing rejection sampling on the
+*              output stream of SHAKE256(seed|nonce) or AES256CTR(seed,nonce).
 *
 * Arguments:   - poly *a: pointer to output polynomial
-*              - const uint8_t seed[]: byte array with seed of length
-*                                            SEEDBYTES
+*              - const uint8_t seed[]: byte array with seed of length SEEDBYTES
 *              - uint16_t nonce: 2-byte nonce
 **************************************************/
-#define POLY_UNIFORM_NBLOCKS ((769 + STREAM128_BLOCKBYTES) / STREAM128_BLOCKBYTES)
-#define POLY_UNIFORM_BUFLEN (POLY_UNIFORM_NBLOCKS * STREAM128_BLOCKBYTES)
-void PQCLEAN_DILITHIUM3_AVX2_poly_uniform(poly *a,
-        const uint8_t seed[SEEDBYTES],
-        uint16_t nonce) {
-    size_t ctr, off;
-    size_t nblocks = POLY_UNIFORM_NBLOCKS;
-    size_t buflen = POLY_UNIFORM_BUFLEN;
-    uint8_t buf[POLY_UNIFORM_BUFLEN + 2];
-    stream128_state state;
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_preinit(poly *a, stream128_state *state) {
+    unsigned int ctr;
+    /* PQCLEAN_DILITHIUM3_AVX2_rej_uniform_avx reads up to 8 additional bytes */
+    ALIGNED_UINT8(REJ_UNIFORM_BUFLEN + 8) buf;
 
-    stream128_init(&state, seed, nonce);
-    stream128_squeezeblocks(buf, nblocks, &state);
-
-    ctr = PQCLEAN_DILITHIUM3_AVX2_rej_uniform(a->coeffs, N, buf, buflen);
+    stream128_squeezeblocks(buf.coeffs, REJ_UNIFORM_NBLOCKS, state);
+    ctr = PQCLEAN_DILITHIUM3_AVX2_rej_uniform_avx(a->coeffs, buf.coeffs);
 
     while (ctr < N) {
-        off = buflen % 3;
-        for (size_t i = 0; i < off; ++i) {
-            buf[i] = buf[buflen - off + i];
-        }
-
-        buflen = STREAM128_BLOCKBYTES + off;
-        stream128_squeezeblocks(buf + off, 1, &state);
-        ctr += rej_uniform_ref(a->coeffs + ctr, N - ctr, buf, buflen);
+        /* length of buf is always divisible by 3; hence, no bytes left */
+        stream128_squeezeblocks(buf.coeffs, 1, state);
+        ctr += rej_uniform(a->coeffs + ctr, N - ctr, buf.coeffs, STREAM128_BLOCKBYTES);
     }
-    stream128_ctx_release(&state);
+}
+
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform(poly *a, const uint8_t seed[SEEDBYTES], uint16_t nonce) {
+    stream128_state state;
+    stream128_init(&state, seed, nonce);
+    PQCLEAN_DILITHIUM3_AVX2_poly_uniform_preinit(a, &state);
+    stream128_release(&state);
 }
 
 void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_4x(poly *a0,
         poly *a1,
         poly *a2,
         poly *a3,
-        const uint8_t seed[SEEDBYTES],
+        const uint8_t seed[32],
         uint16_t nonce0,
         uint16_t nonce1,
         uint16_t nonce2,
         uint16_t nonce3) {
-    size_t ctr0, ctr1, ctr2, ctr3;
-    uint8_t inbuf[4][SEEDBYTES + 2];
-    uint8_t outbuf[4][5 * SHAKE128_RATE];
-    __m256i state[25];
+    unsigned int ctr0, ctr1, ctr2, ctr3;
+    ALIGNED_UINT8(REJ_UNIFORM_BUFLEN + 8) buf[4];
+    keccakx4_state state;
+    __m256i f;
 
-    for (size_t i = 0; i < SEEDBYTES; ++i) {
-        inbuf[0][i] = seed[i];
-        inbuf[1][i] = seed[i];
-        inbuf[2][i] = seed[i];
-        inbuf[3][i] = seed[i];
-    }
-    inbuf[0][SEEDBYTES + 0] = nonce0;
-    inbuf[0][SEEDBYTES + 1] = nonce0 >> 8;
-    inbuf[1][SEEDBYTES + 0] = nonce1;
-    inbuf[1][SEEDBYTES + 1] = nonce1 >> 8;
-    inbuf[2][SEEDBYTES + 0] = nonce2;
-    inbuf[2][SEEDBYTES + 1] = nonce2 >> 8;
-    inbuf[3][SEEDBYTES + 0] = nonce3;
-    inbuf[3][SEEDBYTES + 1] = nonce3 >> 8;
+    f = _mm256_loadu_si256((__m256i *)seed);
+    _mm256_store_si256(buf[0].vec, f);
+    _mm256_store_si256(buf[1].vec, f);
+    _mm256_store_si256(buf[2].vec, f);
+    _mm256_store_si256(buf[3].vec, f);
 
-    PQCLEAN_DILITHIUM3_AVX2_shake128_absorb4x(state, inbuf[0], inbuf[1], inbuf[2], inbuf[3],
-            SEEDBYTES + 2);
-    PQCLEAN_DILITHIUM3_AVX2_shake128_squeezeblocks4x(outbuf[0], outbuf[1], outbuf[2], outbuf[3], 5,
-            state);
+    buf[0].coeffs[SEEDBYTES + 0] = nonce0;
+    buf[0].coeffs[SEEDBYTES + 1] = nonce0 >> 8;
+    buf[1].coeffs[SEEDBYTES + 0] = nonce1;
+    buf[1].coeffs[SEEDBYTES + 1] = nonce1 >> 8;
+    buf[2].coeffs[SEEDBYTES + 0] = nonce2;
+    buf[2].coeffs[SEEDBYTES + 1] = nonce2 >> 8;
+    buf[3].coeffs[SEEDBYTES + 0] = nonce3;
+    buf[3].coeffs[SEEDBYTES + 1] = nonce3 >> 8;
 
-    ctr0 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform(a0->coeffs, N, outbuf[0], 5 * SHAKE128_RATE);
-    ctr1 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform(a1->coeffs, N, outbuf[1], 5 * SHAKE128_RATE);
-    ctr2 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform(a2->coeffs, N, outbuf[2], 5 * SHAKE128_RATE);
-    ctr3 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform(a3->coeffs, N, outbuf[3], 5 * SHAKE128_RATE);
+    PQCLEAN_DILITHIUM3_AVX2_shake128x4_absorb_once(&state, buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, SEEDBYTES + 2);
+    PQCLEAN_DILITHIUM3_AVX2_shake128x4_squeezeblocks(buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, REJ_UNIFORM_NBLOCKS, &state);
+
+    ctr0 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform_avx(a0->coeffs, buf[0].coeffs);
+    ctr1 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform_avx(a1->coeffs, buf[1].coeffs);
+    ctr2 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform_avx(a2->coeffs, buf[2].coeffs);
+    ctr3 = PQCLEAN_DILITHIUM3_AVX2_rej_uniform_avx(a3->coeffs, buf[3].coeffs);
 
     while (ctr0 < N || ctr1 < N || ctr2 < N || ctr3 < N) {
-        PQCLEAN_DILITHIUM3_AVX2_shake128_squeezeblocks4x(outbuf[0], outbuf[1], outbuf[2], outbuf[3], 1,
-                state);
+        PQCLEAN_DILITHIUM3_AVX2_shake128x4_squeezeblocks(buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, 1, &state);
 
-        ctr0 += rej_uniform_ref(a0->coeffs + ctr0, N - ctr0, outbuf[0],
-                                SHAKE128_RATE);
-        ctr1 += rej_uniform_ref(a1->coeffs + ctr1, N - ctr1, outbuf[1],
-                                SHAKE128_RATE);
-        ctr2 += rej_uniform_ref(a2->coeffs + ctr2, N - ctr2, outbuf[2],
-                                SHAKE128_RATE);
-        ctr3 += rej_uniform_ref(a3->coeffs + ctr3, N - ctr3, outbuf[3],
-                                SHAKE128_RATE);
+        ctr0 += rej_uniform(a0->coeffs + ctr0, N - ctr0, buf[0].coeffs, SHAKE128_RATE);
+        ctr1 += rej_uniform(a1->coeffs + ctr1, N - ctr1, buf[1].coeffs, SHAKE128_RATE);
+        ctr2 += rej_uniform(a2->coeffs + ctr2, N - ctr2, buf[2].coeffs, SHAKE128_RATE);
+        ctr3 += rej_uniform(a3->coeffs + ctr3, N - ctr3, buf[3].coeffs, SHAKE128_RATE);
     }
 }
 
@@ -417,433 +461,454 @@ void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_4x(poly *a0,
 * Name:        rej_eta
 *
 * Description: Sample uniformly random coefficients in [-ETA, ETA] by
-*              performing rejection sampling using array of random bytes.
+*              performing rejection sampling on array of random bytes.
 *
-* Arguments:   - uint32_t *a: pointer to output array (allocated)
-*              - size_t len: number of coefficients to be sampled
+* Arguments:   - int32_t *a: pointer to output array (allocated)
+*              - unsigned int len: number of coefficients to be sampled
 *              - const uint8_t *buf: array of random bytes
-*              - size_t buflen: length of array of random bytes
+*              - unsigned int buflen: length of array of random bytes
 *
 * Returns number of sampled coefficients. Can be smaller than len if not enough
 * random bytes were given.
 **************************************************/
-static size_t rej_eta_ref(
-    uint32_t *a,
-    size_t len,
-    const uint8_t *buf,
-    size_t buflen) {
-    size_t ctr, pos;
+static unsigned int rej_eta(int32_t *a,
+                            unsigned int len,
+                            const uint8_t *buf,
+                            unsigned int buflen) {
+    unsigned int ctr, pos;
     uint32_t t0, t1;
+    DBENCH_START();
 
     ctr = pos = 0;
     while (ctr < len && pos < buflen) {
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
 
-        if (t0 <= 2 * ETA) {
-            a[ctr++] = Q + ETA - t0;
+        if (t0 < 9) {
+            a[ctr++] = 4 - t0;
         }
-        if (t1 <= 2 * ETA && ctr < len) {
-            a[ctr++] = Q + ETA - t1;
+        if (t1 < 9 && ctr < len) {
+            a[ctr++] = 4 - t1;
         }
     }
 
+    DBENCH_STOP(*tsample);
     return ctr;
 }
 
 /*************************************************
-* Name:        poly_uniform_eta
+* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta
 *
 * Description: Sample polynomial with uniformly random coefficients
 *              in [-ETA,ETA] by performing rejection sampling using the
-*              output stream from SHAKE256(seed|nonce).
+*              output stream of SHAKE256(seed|nonce)
+*              or AES256CTR(seed,nonce).
 *
 * Arguments:   - poly *a: pointer to output polynomial
-*              - const uint8_t seed[]: byte array with seed of length
-*                                            SEEDBYTES
+*              - const uint8_t seed[]: byte array with seed of length  SEEDBYTES
 *              - uint16_t nonce: 2-byte nonce
 **************************************************/
-#define POLY_UNIFORM_ETA_NBLOCKS (((N / 2 * (1u << SETABITS)) / (2 * ETA + 1) + STREAM128_BLOCKBYTES) / STREAM128_BLOCKBYTES)
-#define POLY_UNIFORM_ETA_BUFLEN (POLY_UNIFORM_ETA_NBLOCKS*STREAM128_BLOCKBYTES)
-void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta(
-    poly *a,
-    const uint8_t seed[SEEDBYTES],
-    uint16_t nonce) {
-    size_t ctr;
-    uint8_t buf[POLY_UNIFORM_ETA_BUFLEN];
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta_preinit(poly *a, stream128_state *state) {
+    unsigned int ctr;
+    ALIGNED_UINT8(REJ_UNIFORM_BUFLEN * STREAM128_BLOCKBYTES) buf;
+
+    stream128_squeezeblocks(buf.coeffs, REJ_UNIFORM_ETA_NBLOCKS, state);
+    ctr = PQCLEAN_DILITHIUM3_AVX2_rej_eta_avx(a->coeffs, buf.coeffs);
+
+    while (ctr < N) {
+        stream128_squeezeblocks(buf.coeffs, 1, state);
+        ctr += rej_eta(a->coeffs + ctr, N - ctr, buf.coeffs, STREAM128_BLOCKBYTES);
+    }
+}
+
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[SEEDBYTES], uint16_t nonce) {
     stream128_state state;
-
     stream128_init(&state, seed, nonce);
-    stream128_squeezeblocks(buf, POLY_UNIFORM_ETA_NBLOCKS, &state);
-
-    ctr = PQCLEAN_DILITHIUM3_AVX2_rej_eta(a->coeffs, N, buf, POLY_UNIFORM_ETA_BUFLEN);
-
-    while (ctr < N) {
-        stream128_squeezeblocks(buf, 1, &state);
-        ctr += rej_eta_ref(a->coeffs + ctr, N - ctr, buf, STREAM128_BLOCKBYTES);
-    }
-    stream128_ctx_release(&state);
+    PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta_preinit(a, &state);
+    stream128_release(&state);
 }
 
-void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta_4x(
-    poly *a0,
-    poly *a1,
-    poly *a2,
-    poly *a3,
-    const uint8_t seed[SEEDBYTES],
-    uint16_t nonce0,
-    uint16_t nonce1,
-    uint16_t nonce2,
-    uint16_t nonce3) {
-    size_t ctr0, ctr1, ctr2, ctr3;
-    uint8_t inbuf[4][SEEDBYTES + 2];
-    uint8_t outbuf[4][2 * SHAKE128_RATE];
-    __m256i state[25];
-
-    for (size_t i = 0; i < SEEDBYTES; ++i) {
-        inbuf[0][i] = seed[i];
-        inbuf[1][i] = seed[i];
-        inbuf[2][i] = seed[i];
-        inbuf[3][i] = seed[i];
-    }
-    inbuf[0][SEEDBYTES + 0] = nonce0;
-    inbuf[0][SEEDBYTES + 1] = nonce0 >> 8;
-    inbuf[1][SEEDBYTES + 0] = nonce1;
-    inbuf[1][SEEDBYTES + 1] = nonce1 >> 8;
-    inbuf[2][SEEDBYTES + 0] = nonce2;
-    inbuf[2][SEEDBYTES + 1] = nonce2 >> 8;
-    inbuf[3][SEEDBYTES + 0] = nonce3;
-    inbuf[3][SEEDBYTES + 1] = nonce3 >> 8;
-
-    PQCLEAN_DILITHIUM3_AVX2_shake128_absorb4x(state, inbuf[0], inbuf[1], inbuf[2], inbuf[3],
-            SEEDBYTES + 2);
-    PQCLEAN_DILITHIUM3_AVX2_shake128_squeezeblocks4x(outbuf[0], outbuf[1], outbuf[2], outbuf[3], 2,
-            state);
-
-    ctr0 = PQCLEAN_DILITHIUM3_AVX2_rej_eta(a0->coeffs, N, outbuf[0], 2 * SHAKE128_RATE);
-    ctr1 = PQCLEAN_DILITHIUM3_AVX2_rej_eta(a1->coeffs, N, outbuf[1], 2 * SHAKE128_RATE);
-    ctr2 = PQCLEAN_DILITHIUM3_AVX2_rej_eta(a2->coeffs, N, outbuf[2], 2 * SHAKE128_RATE);
-    ctr3 = PQCLEAN_DILITHIUM3_AVX2_rej_eta(a3->coeffs, N, outbuf[3], 2 * SHAKE128_RATE);
-
-    while (ctr0 < N || ctr1 < N || ctr2 < N || ctr3 < N) {
-        PQCLEAN_DILITHIUM3_AVX2_shake128_squeezeblocks4x(outbuf[0], outbuf[1], outbuf[2], outbuf[3], 1,
-                state);
-
-        ctr0 += rej_eta_ref(a0->coeffs + ctr0, N - ctr0, outbuf[0], SHAKE128_RATE);
-        ctr1 += rej_eta_ref(a1->coeffs + ctr1, N - ctr1, outbuf[1], SHAKE128_RATE);
-        ctr2 += rej_eta_ref(a2->coeffs + ctr2, N - ctr2, outbuf[2], SHAKE128_RATE);
-        ctr3 += rej_eta_ref(a3->coeffs + ctr3, N - ctr3, outbuf[3], SHAKE128_RATE);
-    }
-}
-
-/*************************************************
-* Name:        rej_gamma1m1_ref
-*
-* Description: Sample uniformly random coefficients
-*              in [-(GAMMA1 - 1), GAMMA1 - 1] by performing rejection sampling
-*              using array of random bytes.
-*
-* Arguments:   - uint32_t *a: pointer to output array (allocated)
-*              - size_t len: number of coefficients to be sampled
-*              - const uint8_t *buf: array of random bytes
-*              - size_t buflen: length of array of random bytes
-*
-* Returns number of sampled coefficients. Can be smaller than len if not enough
-* random bytes were given.
-**************************************************/
-static size_t rej_gamma1m1_ref(
-    uint32_t *a,
-    size_t len,
-    const uint8_t *buf,
-    size_t buflen) {
-    size_t ctr, pos;
-    uint32_t t0, t1;
-
-    ctr = pos = 0;
-    while (ctr < len && pos + 5 <= buflen) {
-        t0  = buf[pos];
-        t0 |= (uint32_t)buf[pos + 1] << 8;
-        t0 |= (uint32_t)buf[pos + 2] << 16;
-        t0 &= 0xFFFFF;
-
-        t1  = buf[pos + 2] >> 4;
-        t1 |= (uint32_t)buf[pos + 3] << 4;
-        t1 |= (uint32_t)buf[pos + 4] << 12;
-
-        pos += 5;
-
-        if (t0 <= 2 * GAMMA1 - 2) {
-            a[ctr++] = Q + GAMMA1 - 1 - t0;
-        }
-        if (t1 <= 2 * GAMMA1 - 2 && ctr < len) {
-            a[ctr++] = Q + GAMMA1 - 1 - t1;
-        }
-    }
-    return ctr;
-}
-
-/*************************************************
-* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1m1
-*
-* Description: Sample polynomial with uniformly random coefficients
-*              in [-(GAMMA1 - 1), GAMMA1 - 1] by performing rejection
-*              sampling on output stream of SHAKE256(seed|nonce).
-*
-* Arguments:   - poly *a: pointer to output polynomial
-*              - const uint8_t seed[]: byte array with seed of length
-*                                            CRHBYTES
-*              - uint16_t nonce: 16-bit nonce
-**************************************************/
-#define POLY_UNIFORM_GAMMA1M1_NBLOCKS ((641 + STREAM256_BLOCKBYTES) / STREAM256_BLOCKBYTES)
-#define POLY_UNIFORM_GAMMA1M1_BUFLEN (POLY_UNIFORM_GAMMA1M1_NBLOCKS * STREAM256_BLOCKBYTES)
-void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1m1(
-    poly *a,
-    const uint8_t seed[CRHBYTES],
-    uint16_t nonce) {
-    size_t ctr, off;
-    size_t buflen = POLY_UNIFORM_GAMMA1M1_BUFLEN;
-    uint8_t buf[POLY_UNIFORM_GAMMA1M1_BUFLEN + 4];
-    stream256_state state;
-
-    stream256_init(&state, seed, nonce);
-    stream256_squeezeblocks(buf, POLY_UNIFORM_GAMMA1M1_NBLOCKS, &state);
-
-    ctr = PQCLEAN_DILITHIUM3_AVX2_rej_gamma1m1(a->coeffs, N, buf, POLY_UNIFORM_GAMMA1M1_BUFLEN);
-
-    while (ctr < N) {
-        off = buflen % 5;
-        for (size_t i = 0; i < off; ++i) {
-            buf[i] = buf[buflen - off + i];
-        }
-
-        buflen = STREAM256_BLOCKBYTES + off;
-        stream256_squeezeblocks(buf + off, 1, &state);
-        ctr += rej_gamma1m1_ref(a->coeffs + ctr, N - ctr, buf, buflen);
-    }
-    stream256_ctx_release(&state);
-}
-
-void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1m1_4x(poly *a0,
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta_4x(poly *a0,
         poly *a1,
         poly *a2,
         poly *a3,
-        const uint8_t seed[CRHBYTES],
+        const uint8_t seed[32],
         uint16_t nonce0,
         uint16_t nonce1,
         uint16_t nonce2,
         uint16_t nonce3) {
-    size_t ctr0, ctr1, ctr2, ctr3;
-    uint8_t inbuf[4][CRHBYTES + 2];
-    uint8_t outbuf[4][5 * SHAKE256_RATE];
-    __m256i state[25];
+    unsigned int ctr0, ctr1, ctr2, ctr3;
+    ALIGNED_UINT8(REJ_UNIFORM_ETA_BUFLEN) buf[4];
 
-    for (size_t i = 0; i < CRHBYTES; ++i) {
-        inbuf[0][i] = seed[i];
-        inbuf[1][i] = seed[i];
-        inbuf[2][i] = seed[i];
-        inbuf[3][i] = seed[i];
-    }
-    inbuf[0][CRHBYTES + 0] = nonce0 & 0xFF;
-    inbuf[0][CRHBYTES + 1] = nonce0 >> 8;
-    inbuf[1][CRHBYTES + 0] = nonce1 & 0xFF;
-    inbuf[1][CRHBYTES + 1] = nonce1 >> 8;
-    inbuf[2][CRHBYTES + 0] = nonce2 & 0xFF;
-    inbuf[2][CRHBYTES + 1] = nonce2 >> 8;
-    inbuf[3][CRHBYTES + 0] = nonce3 & 0xFF;
-    inbuf[3][CRHBYTES + 1] = nonce3 >> 8;
+    __m256i f;
+    keccakx4_state state;
 
-    PQCLEAN_DILITHIUM3_AVX2_shake256_absorb4x(state, inbuf[0], inbuf[1], inbuf[2], inbuf[3],
-            CRHBYTES + 2);
-    PQCLEAN_DILITHIUM3_AVX2_shake256_squeezeblocks4x(outbuf[0], outbuf[1], outbuf[2], outbuf[3], 5,
-            state);
+    f = _mm256_loadu_si256((__m256i *)seed);
+    _mm256_store_si256(buf[0].vec, f);
+    _mm256_store_si256(buf[1].vec, f);
+    _mm256_store_si256(buf[2].vec, f);
+    _mm256_store_si256(buf[3].vec, f);
 
-    ctr0 = rej_gamma1m1_ref(a0->coeffs, N, outbuf[0], 5 * SHAKE256_RATE);
-    ctr1 = rej_gamma1m1_ref(a1->coeffs, N, outbuf[1], 5 * SHAKE256_RATE);
-    ctr2 = rej_gamma1m1_ref(a2->coeffs, N, outbuf[2], 5 * SHAKE256_RATE);
-    ctr3 = rej_gamma1m1_ref(a3->coeffs, N, outbuf[3], 5 * SHAKE256_RATE);
+    buf[0].coeffs[SEEDBYTES + 0] = nonce0;
+    buf[0].coeffs[SEEDBYTES + 1] = nonce0 >> 8;
+    buf[1].coeffs[SEEDBYTES + 0] = nonce1;
+    buf[1].coeffs[SEEDBYTES + 1] = nonce1 >> 8;
+    buf[2].coeffs[SEEDBYTES + 0] = nonce2;
+    buf[2].coeffs[SEEDBYTES + 1] = nonce2 >> 8;
+    buf[3].coeffs[SEEDBYTES + 0] = nonce3;
+    buf[3].coeffs[SEEDBYTES + 1] = nonce3 >> 8;
+
+    PQCLEAN_DILITHIUM3_AVX2_shake128x4_absorb_once(&state, buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, SEEDBYTES + 2);
+    PQCLEAN_DILITHIUM3_AVX2_shake128x4_squeezeblocks(buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, REJ_UNIFORM_ETA_NBLOCKS, &state);
+
+    ctr0 = PQCLEAN_DILITHIUM3_AVX2_rej_eta_avx(a0->coeffs, buf[0].coeffs);
+    ctr1 = PQCLEAN_DILITHIUM3_AVX2_rej_eta_avx(a1->coeffs, buf[1].coeffs);
+    ctr2 = PQCLEAN_DILITHIUM3_AVX2_rej_eta_avx(a2->coeffs, buf[2].coeffs);
+    ctr3 = PQCLEAN_DILITHIUM3_AVX2_rej_eta_avx(a3->coeffs, buf[3].coeffs);
 
     while (ctr0 < N || ctr1 < N || ctr2 < N || ctr3 < N) {
-        PQCLEAN_DILITHIUM3_AVX2_shake256_squeezeblocks4x(outbuf[0], outbuf[1], outbuf[2], outbuf[3], 1,
-                state);
+        PQCLEAN_DILITHIUM3_AVX2_shake128x4_squeezeblocks(buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, 1, &state);
 
-        ctr0 += rej_gamma1m1_ref(a0->coeffs + ctr0, N - ctr0, outbuf[0],
-                                 SHAKE256_RATE);
-        ctr1 += rej_gamma1m1_ref(a1->coeffs + ctr1, N - ctr1, outbuf[1],
-                                 SHAKE256_RATE);
-        ctr2 += rej_gamma1m1_ref(a2->coeffs + ctr2, N - ctr2, outbuf[2],
-                                 SHAKE256_RATE);
-        ctr3 += rej_gamma1m1_ref(a3->coeffs + ctr3, N - ctr3, outbuf[3],
-                                 SHAKE256_RATE);
+        ctr0 += rej_eta(a0->coeffs + ctr0, N - ctr0, buf[0].coeffs, SHAKE128_RATE);
+        ctr1 += rej_eta(a1->coeffs + ctr1, N - ctr1, buf[1].coeffs, SHAKE128_RATE);
+        ctr2 += rej_eta(a2->coeffs + ctr2, N - ctr2, buf[2].coeffs, SHAKE128_RATE);
+        ctr3 += rej_eta(a3->coeffs + ctr3, N - ctr3, buf[3].coeffs, SHAKE128_RATE);
     }
+}
+
+/*************************************************
+* Name:        PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1
+*
+* Description: Sample polynomial with uniformly random coefficients
+*              in [-(GAMMA1 - 1), GAMMA1] by unpacking output stream
+*              of SHAKE256(seed|nonce) or AES256CTR(seed,nonce).
+*
+* Arguments:   - poly *a: pointer to output polynomial
+*              - const uint8_t seed[]: byte array with seed of length CRHBYTES
+*              - uint16_t nonce: 16-bit nonce
+**************************************************/
+#define POLY_UNIFORM_GAMMA1_NBLOCKS ((POLYZ_PACKEDBYTES+STREAM256_BLOCKBYTES-1)/STREAM256_BLOCKBYTES)
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1_preinit(poly *a, stream256_state *state) {
+    /* PQCLEAN_DILITHIUM3_AVX2_polyz_unpack reads 14 additional bytes */
+    ALIGNED_UINT8(POLY_UNIFORM_GAMMA1_NBLOCKS * STREAM256_BLOCKBYTES + 14) buf;
+    stream256_squeezeblocks(buf.coeffs, POLY_UNIFORM_GAMMA1_NBLOCKS, state);
+    PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(a, buf.coeffs);
+}
+
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1(poly *a, const uint8_t seed[CRHBYTES], uint16_t nonce) {
+    stream256_state state;
+    stream256_init(&state, seed, nonce);
+    PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1_preinit(a, &state);
+    stream256_release(&state);
+}
+
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1_4x(poly *a0,
+        poly *a1,
+        poly *a2,
+        poly *a3,
+        const uint8_t seed[48],
+        uint16_t nonce0,
+        uint16_t nonce1,
+        uint16_t nonce2,
+        uint16_t nonce3) {
+    ALIGNED_UINT8(POLY_UNIFORM_GAMMA1_NBLOCKS * STREAM256_BLOCKBYTES + 14) buf[4];
+    keccakx4_state state;
+    __m256i f;
+    __m128i g;
+
+    f = _mm256_loadu_si256((__m256i *)seed);
+    _mm256_store_si256(buf[0].vec, f);
+    _mm256_store_si256(buf[1].vec, f);
+    _mm256_store_si256(buf[2].vec, f);
+    _mm256_store_si256(buf[3].vec, f);
+    g = _mm_loadu_si128((__m128i *)&seed[32]);
+    _mm_store_si128((__m128i *)&buf[0].vec[1], g);
+    _mm_store_si128((__m128i *)&buf[1].vec[1], g);
+    _mm_store_si128((__m128i *)&buf[2].vec[1], g);
+    _mm_store_si128((__m128i *)&buf[3].vec[1], g);
+
+    buf[0].coeffs[CRHBYTES + 0] = nonce0;
+    buf[0].coeffs[CRHBYTES + 1] = nonce0 >> 8;
+    buf[1].coeffs[CRHBYTES + 0] = nonce1;
+    buf[1].coeffs[CRHBYTES + 1] = nonce1 >> 8;
+    buf[2].coeffs[CRHBYTES + 0] = nonce2;
+    buf[2].coeffs[CRHBYTES + 1] = nonce2 >> 8;
+    buf[3].coeffs[CRHBYTES + 0] = nonce3;
+    buf[3].coeffs[CRHBYTES + 1] = nonce3 >> 8;
+
+    PQCLEAN_DILITHIUM3_AVX2_shake256x4_absorb_once(&state, buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, CRHBYTES + 2);
+    PQCLEAN_DILITHIUM3_AVX2_shake256x4_squeezeblocks(buf[0].coeffs, buf[1].coeffs, buf[2].coeffs, buf[3].coeffs, POLY_UNIFORM_GAMMA1_NBLOCKS, &state);
+
+    PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(a0, buf[0].coeffs);
+    PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(a1, buf[1].coeffs);
+    PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(a2, buf[2].coeffs);
+    PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(a3, buf[3].coeffs);
+}
+
+/*************************************************
+* Name:        PQCLEAN_DILITHIUM3_AVX2_challenge
+*
+* Description: Implementation of H. Samples polynomial with TAU nonzero
+*              coefficients in {-1,1} using the output stream of
+*              SHAKE256(seed).
+*
+* Arguments:   - poly *c: pointer to output polynomial
+*              - const uint8_t mu[]: byte array containing seed of length SEEDBYTES
+**************************************************/
+void PQCLEAN_DILITHIUM3_AVX2_poly_challenge(poly *restrict c, const uint8_t seed[SEEDBYTES]) {
+    unsigned int i, b, pos;
+    uint64_t signs;
+    ALIGNED_UINT8(SHAKE256_RATE) buf;
+    shake256incctx state;
+
+    shake256_inc_init(&state);
+    shake256_inc_absorb(&state, seed, SEEDBYTES);
+    shake256_inc_finalize(&state);
+    shake256_inc_squeeze(buf.coeffs, SHAKE256_RATE, &state);
+
+    memcpy(&signs, buf.coeffs, 8);
+    pos = 8;
+
+    memset(c->vec, 0, sizeof(poly));
+    for (i = N - TAU; i < N; ++i) {
+        do {
+            if (pos >= SHAKE256_RATE) {
+                shake256_inc_squeeze(buf.coeffs, SHAKE256_RATE, &state);
+                pos = 0;
+            }
+
+            b = buf.coeffs[pos++];
+        } while (b > i);
+
+        c->coeffs[i] = c->coeffs[b];
+        c->coeffs[b] = 1 - 2 * (signs & 1);
+        signs >>= 1;
+    }
+    shake256_inc_ctx_release(&state);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyeta_pack
 *
 * Description: Bit-pack polynomial with coefficients in [-ETA,ETA].
-*              Input coefficients are assumed to lie in [Q-ETA,Q+ETA].
 *
 * Arguments:   - uint8_t *r: pointer to output byte array with at least
-*                                  POLETA_SIZE_PACKED bytes
+*                            POLYETA_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyeta_pack(uint8_t *restrict r, const poly *restrict a) {
-    uint8_t t[N / 2];
-    for (size_t i = 0; i < N / 2; ++i) {
-        t[0] = Q + ETA - a->coeffs[2 * i + 0];
-        t[1] = Q + ETA - a->coeffs[2 * i + 1];
+void PQCLEAN_DILITHIUM3_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const poly *restrict a) {
+    unsigned int i;
+    uint8_t t[8];
+    DBENCH_START();
+
+    for (i = 0; i < N / 2; ++i) {
+        t[0] = ETA - a->coeffs[2 * i + 0];
+        t[1] = ETA - a->coeffs[2 * i + 1];
         r[i] = t[0] | (t[1] << 4);
     }
+
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyeta_unpack
 *
 * Description: Unpack polynomial with coefficients in [-ETA,ETA].
-*              Output coefficients lie in [Q-ETA,Q+ETA].
 *
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyeta_unpack(poly *restrict r, const uint8_t *restrict a) {
-    for (size_t i = 0; i < N / 2; ++i) {
+void PQCLEAN_DILITHIUM3_AVX2_polyeta_unpack(poly *restrict r, const uint8_t a[POLYETA_PACKEDBYTES]) {
+    unsigned int i;
+    DBENCH_START();
+
+    for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
         r->coeffs[2 * i + 1] = a[i] >> 4;
-        r->coeffs[2 * i + 0] = Q + ETA - r->coeffs[2 * i + 0];
-        r->coeffs[2 * i + 1] = Q + ETA - r->coeffs[2 * i + 1];
+        r->coeffs[2 * i + 0] = ETA - r->coeffs[2 * i + 0];
+        r->coeffs[2 * i + 1] = ETA - r->coeffs[2 * i + 1];
     }
+
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyt1_pack
 *
-* Description: Bit-pack polynomial t1 with coefficients fitting in 9 bits.
-*              Input coefficients are assumed to be standard representatives.
+* Description: Bit-pack polynomial t1 with coefficients fitting in 10 bits.
+*              Input coefficients are assumed to be positive standard representatives.
 *
 * Arguments:   - uint8_t *r: pointer to output byte array with at least
-*                                  POLT1_SIZE_PACKED bytes
+*                            POLYT1_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyt1_pack(uint8_t *restrict r, const poly *restrict a) {
-    for (size_t i = 0; i < N / 8; ++i) {
-        r[9 * i + 0]  = (uint8_t)((a->coeffs[8 * i + 0] >> 0));
-        r[9 * i + 1]  = (uint8_t)((a->coeffs[8 * i + 0] >> 8) | (a->coeffs[8 * i + 1] << 1));
-        r[9 * i + 2]  = (uint8_t)((a->coeffs[8 * i + 1] >> 7) | (a->coeffs[8 * i + 2] << 2));
-        r[9 * i + 3]  = (uint8_t)((a->coeffs[8 * i + 2] >> 6) | (a->coeffs[8 * i + 3] << 3));
-        r[9 * i + 4]  = (uint8_t)((a->coeffs[8 * i + 3] >> 5) | (a->coeffs[8 * i + 4] << 4));
-        r[9 * i + 5]  = (uint8_t)((a->coeffs[8 * i + 4] >> 4) | (a->coeffs[8 * i + 5] << 5));
-        r[9 * i + 6]  = (uint8_t)((a->coeffs[8 * i + 5] >> 3) | (a->coeffs[8 * i + 6] << 6));
-        r[9 * i + 7]  = (uint8_t)((a->coeffs[8 * i + 6] >> 2) | (a->coeffs[8 * i + 7] << 7));
-        r[9 * i + 8]  = (uint8_t)((a->coeffs[8 * i + 7] >> 1));
+void PQCLEAN_DILITHIUM3_AVX2_polyt1_pack(uint8_t r[POLYT1_PACKEDBYTES], const poly *restrict a) {
+    unsigned int i;
+    DBENCH_START();
+
+    for (i = 0; i < N / 4; ++i) {
+        r[5 * i + 0] = (a->coeffs[4 * i + 0] >> 0);
+        r[5 * i + 1] = (a->coeffs[4 * i + 0] >> 8) | (a->coeffs[4 * i + 1] << 2);
+        r[5 * i + 2] = (a->coeffs[4 * i + 1] >> 6) | (a->coeffs[4 * i + 2] << 4);
+        r[5 * i + 3] = (a->coeffs[4 * i + 2] >> 4) | (a->coeffs[4 * i + 3] << 6);
+        r[5 * i + 4] = (a->coeffs[4 * i + 3] >> 2);
     }
+
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyt1_unpack
 *
-* Description: Unpack polynomial t1 with 9-bit coefficients.
-*              Output coefficients are standard representatives.
+* Description: Unpack polynomial t1 with 10-bit coefficients.
+*              Output coefficients are positive standard representatives.
 *
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyt1_unpack(poly *restrict r, const uint8_t *restrict a) {
-    for (size_t i = 0; i < N / 8; ++i) {
-        r->coeffs[8 * i + 0] = ((a[9 * i + 0] >> 0) | ((uint32_t)a[9 * i + 1] << 8)) & 0x1FF;
-        r->coeffs[8 * i + 1] = ((a[9 * i + 1] >> 1) | ((uint32_t)a[9 * i + 2] << 7)) & 0x1FF;
-        r->coeffs[8 * i + 2] = ((a[9 * i + 2] >> 2) | ((uint32_t)a[9 * i + 3] << 6)) & 0x1FF;
-        r->coeffs[8 * i + 3] = ((a[9 * i + 3] >> 3) | ((uint32_t)a[9 * i + 4] << 5)) & 0x1FF;
-        r->coeffs[8 * i + 4] = ((a[9 * i + 4] >> 4) | ((uint32_t)a[9 * i + 5] << 4)) & 0x1FF;
-        r->coeffs[8 * i + 5] = ((a[9 * i + 5] >> 5) | ((uint32_t)a[9 * i + 6] << 3)) & 0x1FF;
-        r->coeffs[8 * i + 6] = ((a[9 * i + 6] >> 6) | ((uint32_t)a[9 * i + 7] << 2)) & 0x1FF;
-        r->coeffs[8 * i + 7] = ((a[9 * i + 7] >> 7) | ((uint32_t)a[9 * i + 8] << 1)) & 0x1FF;
+void PQCLEAN_DILITHIUM3_AVX2_polyt1_unpack(poly *restrict r, const uint8_t a[POLYT1_PACKEDBYTES]) {
+    unsigned int i;
+    DBENCH_START();
+
+    for (i = 0; i < N / 4; ++i) {
+        r->coeffs[4 * i + 0] = ((a[5 * i + 0] >> 0) | ((uint32_t)a[5 * i + 1] << 8)) & 0x3FF;
+        r->coeffs[4 * i + 1] = ((a[5 * i + 1] >> 2) | ((uint32_t)a[5 * i + 2] << 6)) & 0x3FF;
+        r->coeffs[4 * i + 2] = ((a[5 * i + 2] >> 4) | ((uint32_t)a[5 * i + 3] << 4)) & 0x3FF;
+        r->coeffs[4 * i + 3] = ((a[5 * i + 3] >> 6) | ((uint32_t)a[5 * i + 4] << 2)) & 0x3FF;
     }
+
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyt0_pack
 *
 * Description: Bit-pack polynomial t0 with coefficients in ]-2^{D-1}, 2^{D-1}].
-*              Input coefficients are assumed to lie in ]Q-2^{D-1}, Q+2^{D-1}].
 *
 * Arguments:   - uint8_t *r: pointer to output byte array with at least
-*                                  POLT0_SIZE_PACKED bytes
+*                            POLYT0_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyt0_pack(uint8_t *restrict r, const poly *restrict a) {
-    uint32_t t[4];
+void PQCLEAN_DILITHIUM3_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const poly *restrict a) {
+    unsigned int i;
+    uint32_t t[8];
+    DBENCH_START();
 
-    for (size_t i = 0; i < N / 4; ++i) {
-        t[0] = Q + (1U << (D - 1)) - a->coeffs[4 * i + 0];
-        t[1] = Q + (1U << (D - 1)) - a->coeffs[4 * i + 1];
-        t[2] = Q + (1U << (D - 1)) - a->coeffs[4 * i + 2];
-        t[3] = Q + (1U << (D - 1)) - a->coeffs[4 * i + 3];
+    for (i = 0; i < N / 8; ++i) {
+        t[0] = (1 << (D - 1)) - a->coeffs[8 * i + 0];
+        t[1] = (1 << (D - 1)) - a->coeffs[8 * i + 1];
+        t[2] = (1 << (D - 1)) - a->coeffs[8 * i + 2];
+        t[3] = (1 << (D - 1)) - a->coeffs[8 * i + 3];
+        t[4] = (1 << (D - 1)) - a->coeffs[8 * i + 4];
+        t[5] = (1 << (D - 1)) - a->coeffs[8 * i + 5];
+        t[6] = (1 << (D - 1)) - a->coeffs[8 * i + 6];
+        t[7] = (1 << (D - 1)) - a->coeffs[8 * i + 7];
 
-        r[7 * i + 0]  =  t[0];
-        r[7 * i + 1]  =  t[0] >> 8;
-        r[7 * i + 1] |=  t[1] << 6;
-        r[7 * i + 2]  =  t[1] >> 2;
-        r[7 * i + 3]  =  t[1] >> 10;
-        r[7 * i + 3] |=  t[2] << 4;
-        r[7 * i + 4]  =  t[2] >> 4;
-        r[7 * i + 5]  =  t[2] >> 12;
-        r[7 * i + 5] |=  t[3] << 2;
-        r[7 * i + 6]  =  t[3] >> 6;
+        r[13 * i + 0]  =  t[0];
+        r[13 * i + 1]  =  t[0] >>  8;
+        r[13 * i + 1] |=  t[1] <<  5;
+        r[13 * i + 2]  =  t[1] >>  3;
+        r[13 * i + 3]  =  t[1] >> 11;
+        r[13 * i + 3] |=  t[2] <<  2;
+        r[13 * i + 4]  =  t[2] >>  6;
+        r[13 * i + 4] |=  t[3] <<  7;
+        r[13 * i + 5]  =  t[3] >>  1;
+        r[13 * i + 6]  =  t[3] >>  9;
+        r[13 * i + 6] |=  t[4] <<  4;
+        r[13 * i + 7]  =  t[4] >>  4;
+        r[13 * i + 8]  =  t[4] >> 12;
+        r[13 * i + 8] |=  t[5] <<  1;
+        r[13 * i + 9]  =  t[5] >>  7;
+        r[13 * i + 9] |=  t[6] <<  6;
+        r[13 * i + 10]  =  t[6] >>  2;
+        r[13 * i + 11]  =  t[6] >> 10;
+        r[13 * i + 11] |=  t[7] <<  3;
+        r[13 * i + 12]  =  t[7] >>  5;
     }
+
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyt0_unpack
 *
 * Description: Unpack polynomial t0 with coefficients in ]-2^{D-1}, 2^{D-1}].
-*              Output coefficients lie in ]Q-2^{D-1},Q+2^{D-1}].
 *
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyt0_unpack(poly *restrict r, const uint8_t *restrict a) {
-    for (size_t i = 0; i < N / 4; ++i) {
-        r->coeffs[4 * i + 0]  = a[7 * i + 0];
-        r->coeffs[4 * i + 0] |= (uint32_t)(a[7 * i + 1] & 0x3F) << 8;
+void PQCLEAN_DILITHIUM3_AVX2_polyt0_unpack(poly *restrict r, const uint8_t a[POLYT0_PACKEDBYTES]) {
+    unsigned int i;
+    DBENCH_START();
 
-        r->coeffs[4 * i + 1]  = a[7 * i + 1] >> 6;
-        r->coeffs[4 * i + 1] |= (uint32_t)a[7 * i + 2] << 2;
-        r->coeffs[4 * i + 1] |= (uint32_t)(a[7 * i + 3] & 0x0F) << 10;
+    for (i = 0; i < N / 8; ++i) {
+        r->coeffs[8 * i + 0]  = a[13 * i + 0];
+        r->coeffs[8 * i + 0] |= (uint32_t)a[13 * i + 1] << 8;
+        r->coeffs[8 * i + 0] &= 0x1FFF;
 
-        r->coeffs[4 * i + 2]  = a[7 * i + 3] >> 4;
-        r->coeffs[4 * i + 2] |= (uint32_t)a[7 * i + 4] << 4;
-        r->coeffs[4 * i + 2] |= (uint32_t)(a[7 * i + 5] & 0x03) << 12;
+        r->coeffs[8 * i + 1]  = a[13 * i + 1] >> 5;
+        r->coeffs[8 * i + 1] |= (uint32_t)a[13 * i + 2] << 3;
+        r->coeffs[8 * i + 1] |= (uint32_t)a[13 * i + 3] << 11;
+        r->coeffs[8 * i + 1] &= 0x1FFF;
 
-        r->coeffs[4 * i + 3]  = a[7 * i + 5] >> 2;
-        r->coeffs[4 * i + 3] |= (uint32_t)a[7 * i + 6] << 6;
+        r->coeffs[8 * i + 2]  = a[13 * i + 3] >> 2;
+        r->coeffs[8 * i + 2] |= (uint32_t)a[13 * i + 4] << 6;
+        r->coeffs[8 * i + 2] &= 0x1FFF;
 
-        r->coeffs[4 * i + 0] = Q + (1U << (D - 1)) - r->coeffs[4 * i + 0];
-        r->coeffs[4 * i + 1] = Q + (1U << (D - 1)) - r->coeffs[4 * i + 1];
-        r->coeffs[4 * i + 2] = Q + (1U << (D - 1)) - r->coeffs[4 * i + 2];
-        r->coeffs[4 * i + 3] = Q + (1U << (D - 1)) - r->coeffs[4 * i + 3];
+        r->coeffs[8 * i + 3]  = a[13 * i + 4] >> 7;
+        r->coeffs[8 * i + 3] |= (uint32_t)a[13 * i + 5] << 1;
+        r->coeffs[8 * i + 3] |= (uint32_t)a[13 * i + 6] << 9;
+        r->coeffs[8 * i + 3] &= 0x1FFF;
+
+        r->coeffs[8 * i + 4]  = a[13 * i + 6] >> 4;
+        r->coeffs[8 * i + 4] |= (uint32_t)a[13 * i + 7] << 4;
+        r->coeffs[8 * i + 4] |= (uint32_t)a[13 * i + 8] << 12;
+        r->coeffs[8 * i + 4] &= 0x1FFF;
+
+        r->coeffs[8 * i + 5]  = a[13 * i + 8] >> 1;
+        r->coeffs[8 * i + 5] |= (uint32_t)a[13 * i + 9] << 7;
+        r->coeffs[8 * i + 5] &= 0x1FFF;
+
+        r->coeffs[8 * i + 6]  = a[13 * i + 9] >> 6;
+        r->coeffs[8 * i + 6] |= (uint32_t)a[13 * i + 10] << 2;
+        r->coeffs[8 * i + 6] |= (uint32_t)a[13 * i + 11] << 10;
+        r->coeffs[8 * i + 6] &= 0x1FFF;
+
+        r->coeffs[8 * i + 7]  = a[13 * i + 11] >> 3;
+        r->coeffs[8 * i + 7] |= (uint32_t)a[13 * i + 12] << 5;
+        r->coeffs[8 * i + 7] &= 0x1FFF;
+
+        r->coeffs[8 * i + 0] = (1 << (D - 1)) - r->coeffs[8 * i + 0];
+        r->coeffs[8 * i + 1] = (1 << (D - 1)) - r->coeffs[8 * i + 1];
+        r->coeffs[8 * i + 2] = (1 << (D - 1)) - r->coeffs[8 * i + 2];
+        r->coeffs[8 * i + 3] = (1 << (D - 1)) - r->coeffs[8 * i + 3];
+        r->coeffs[8 * i + 4] = (1 << (D - 1)) - r->coeffs[8 * i + 4];
+        r->coeffs[8 * i + 5] = (1 << (D - 1)) - r->coeffs[8 * i + 5];
+        r->coeffs[8 * i + 6] = (1 << (D - 1)) - r->coeffs[8 * i + 6];
+        r->coeffs[8 * i + 7] = (1 << (D - 1)) - r->coeffs[8 * i + 7];
     }
+
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyz_pack
 *
-* Description: Bit-pack polynomial z with coefficients
-*              in [-(GAMMA1 - 1), GAMMA1 - 1].
-*              Input coefficients are assumed to be standard representatives.
+* Description: Bit-pack polynomial with coefficients
+*              in [-(GAMMA1 - 1), GAMMA1].
 *
 * Arguments:   - uint8_t *r: pointer to output byte array with at least
-*                                  POLZ_SIZE_PACKED bytes
+*                            POLYZ_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyz_pack(uint8_t *restrict r, const poly *restrict a) {
-    uint32_t t[2];
+void PQCLEAN_DILITHIUM3_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly *restrict a) {
+    unsigned int i;
+    uint32_t t[4];
+    DBENCH_START();
 
-    for (size_t i = 0; i < N / 2; ++i) {
-        /* Map to {0,...,2*GAMMA1 - 2} */
-        t[0] = GAMMA1 - 1 - a->coeffs[2 * i + 0];
-        t[0] += ((int32_t)t[0] >> 31) & Q;
-        t[1] = GAMMA1 - 1 - a->coeffs[2 * i + 1];
-        t[1] += ((int32_t)t[1] >> 31) & Q;
+    for (i = 0; i < N / 2; ++i) {
+        t[0] = GAMMA1 - a->coeffs[2 * i + 0];
+        t[1] = GAMMA1 - a->coeffs[2 * i + 1];
 
         r[5 * i + 0]  = t[0];
         r[5 * i + 1]  = t[0] >> 8;
@@ -852,50 +917,82 @@ void PQCLEAN_DILITHIUM3_AVX2_polyz_pack(uint8_t *restrict r, const poly *restric
         r[5 * i + 3]  = t[1] >> 4;
         r[5 * i + 4]  = t[1] >> 12;
     }
+
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyz_unpack
 *
 * Description: Unpack polynomial z with coefficients
-*              in [-(GAMMA1 - 1), GAMMA1 - 1].
-*              Output coefficients are standard representatives.
+*              in [-(GAMMA1 - 1), GAMMA1].
 *
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(poly *restrict r, const uint8_t *restrict a) {
-    for (size_t i = 0; i < N / 2; ++i) {
-        r->coeffs[2 * i + 0]  = a[5 * i + 0];
-        r->coeffs[2 * i + 0] |= (uint32_t)a[5 * i + 1] << 8;
-        r->coeffs[2 * i + 0] |= (uint32_t)(a[5 * i + 2] & 0x0F) << 16;
+void PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(poly *restrict r, const uint8_t a[POLYZ_PACKEDBYTES + 12]) {
+    unsigned int i;
+    __m256i f;
+    const __m256i shufbidx = _mm256_set_epi8(-1, 11, 10, 9, -1, 9, 8, 7, -1, 6, 5, 4, -1, 4, 3, 2,
+                             -1, 9, 8, 7, -1, 7, 6, 5, -1, 4, 3, 2, -1, 2, 1, 0);
+    const __m256i srlvdidx = _mm256_set1_epi64x((uint64_t)4 << 32);
+    const __m256i mask = _mm256_set1_epi32(0xFFFFF);
+    const __m256i gamma1 = _mm256_set1_epi32(GAMMA1);
+    DBENCH_START();
 
-        r->coeffs[2 * i + 1]  = a[5 * i + 2] >> 4;
-        r->coeffs[2 * i + 1] |= (uint32_t)a[5 * i + 3] << 4;
-        r->coeffs[2 * i + 1] |= (uint32_t)a[5 * i + 4] << 12;
-
-        r->coeffs[2 * i + 0] = GAMMA1 - 1 - r->coeffs[2 * i + 0];
-        r->coeffs[2 * i + 0] += ((int32_t)r->coeffs[2 * i + 0] >> 31) & Q;
-        r->coeffs[2 * i + 1] = GAMMA1 - 1 - r->coeffs[2 * i + 1];
-        r->coeffs[2 * i + 1] += ((int32_t)r->coeffs[2 * i + 1] >> 31) & Q;
+    for (i = 0; i < N / 8; i++) {
+        f = _mm256_loadu_si256((__m256i *)&a[20 * i]);
+        f = _mm256_permute4x64_epi64(f, 0x94);
+        f = _mm256_shuffle_epi8(f, shufbidx);
+        f = _mm256_srlv_epi32(f, srlvdidx);
+        f = _mm256_and_si256(f, mask);
+        f = _mm256_sub_epi32(gamma1, f);
+        _mm256_store_si256(&r->vec[i], f);
     }
 
+    DBENCH_STOP(*tpack);
 }
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_polyw1_pack
 *
-* Description: Bit-pack polynomial w1 with coefficients in [0, 15].
-*              Input coefficients are assumed to be standard representatives.
+* Description: Bit-pack polynomial w1 with coefficients in [0,15] or [0,43].
+*              Input coefficients are assumed to be positive standard representatives.
 *
 * Arguments:   - uint8_t *r: pointer to output byte array with at least
-*                                  POLW1_SIZE_PACKED bytes
+*                            POLYW1_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM3_AVX2_polyw1_pack(
-    uint8_t *restrict r,
-    const poly *restrict a) {
-    for (size_t i = 0; i < N / 2; ++i) {
-        r[i] = a->coeffs[2 * i + 0] | (a->coeffs[2 * i + 1] << 4);
+void PQCLEAN_DILITHIUM3_AVX2_polyw1_pack(uint8_t r[POLYW1_PACKEDBYTES], const poly *restrict a) {
+    unsigned int i;
+    __m256i f0, f1, f2, f3, f4, f5, f6, f7;
+    const __m256i shift = _mm256_set1_epi16((16 << 8) + 1);
+    const __m256i shufbidx = _mm256_set_epi8(15, 14, 7, 6, 13, 12, 5, 4, 11, 10, 3, 2, 9, 8, 1, 0,
+                             15, 14, 7, 6, 13, 12, 5, 4, 11, 10, 3, 2, 9, 8, 1, 0);
+    DBENCH_START();
+
+    for (i = 0; i < N / 64; ++i) {
+        f0 = _mm256_load_si256(&a->vec[8 * i + 0]);
+        f1 = _mm256_load_si256(&a->vec[8 * i + 1]);
+        f2 = _mm256_load_si256(&a->vec[8 * i + 2]);
+        f3 = _mm256_load_si256(&a->vec[8 * i + 3]);
+        f4 = _mm256_load_si256(&a->vec[8 * i + 4]);
+        f5 = _mm256_load_si256(&a->vec[8 * i + 5]);
+        f6 = _mm256_load_si256(&a->vec[8 * i + 6]);
+        f7 = _mm256_load_si256(&a->vec[8 * i + 7]);
+        f0 = _mm256_packus_epi32(f0, f1);
+        f1 = _mm256_packus_epi32(f2, f3);
+        f2 = _mm256_packus_epi32(f4, f5);
+        f3 = _mm256_packus_epi32(f6, f7);
+        f0 = _mm256_packus_epi16(f0, f1);
+        f1 = _mm256_packus_epi16(f2, f3);
+        f0 = _mm256_maddubs_epi16(f0, shift);
+        f1 = _mm256_maddubs_epi16(f1, shift);
+        f0 = _mm256_packus_epi16(f0, f1);
+        f0 = _mm256_permute4x64_epi64(f0, 0xD8);
+        f0 = _mm256_shuffle_epi8(f0, shufbidx);
+        _mm256_storeu_si256((__m256i *)&r[32 * i], f0);
     }
+
+    DBENCH_STOP(*tpack);
 }
