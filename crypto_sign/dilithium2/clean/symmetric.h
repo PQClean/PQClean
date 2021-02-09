@@ -20,7 +20,6 @@ void PQCLEAN_DILITHIUM2_CLEAN_dilithium_shake256_stream_init(shake256incctx *sta
 #define STREAM128_BLOCKBYTES SHAKE128_RATE
 #define STREAM256_BLOCKBYTES SHAKE256_RATE
 
-#define crh(OUT, IN, INBYTES) shake256(OUT, CRHBYTES, IN, INBYTES)
 #define stream128_init(STATE, SEED, NONCE) \
     PQCLEAN_DILITHIUM2_CLEAN_dilithium_shake128_stream_init(STATE, SEED, NONCE)
 #define stream128_squeezeblocks(OUT, OUTBLOCKS, STATE) \

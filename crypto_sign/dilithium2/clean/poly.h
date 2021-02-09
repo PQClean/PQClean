@@ -29,7 +29,7 @@ void PQCLEAN_DILITHIUM2_CLEAN_poly_uniform(poly *a,
         const uint8_t seed[SEEDBYTES],
         uint16_t nonce);
 void PQCLEAN_DILITHIUM2_CLEAN_poly_uniform_eta(poly *a,
-        const uint8_t seed[SEEDBYTES],
+        const uint8_t seed[CRHBYTES],
         uint16_t nonce);
 void PQCLEAN_DILITHIUM2_CLEAN_poly_uniform_gamma1(poly *a,
         const uint8_t seed[CRHBYTES],

@@ -21,8 +21,8 @@
 * Returns 0 (success)
 **************************************************/
 int PQCLEAN_DILITHIUM3AES_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
-    uint8_t seedbuf[3 * SEEDBYTES];
-    uint8_t tr[CRHBYTES];
+    uint8_t seedbuf[2 * SEEDBYTES + CRHBYTES];
+    uint8_t tr[SEEDBYTES];
     const uint8_t *rho, *rhoprime, *key;
     polyvecl mat[K];
     polyvecl s1, s1hat;
@@ -30,10 +30,10 @@ int PQCLEAN_DILITHIUM3AES_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 
     /* Get randomness for rho, rhoprime and key */
     randombytes(seedbuf, SEEDBYTES);
-    shake256(seedbuf, 3 * SEEDBYTES, seedbuf, SEEDBYTES);
+    shake256(seedbuf, 2 * SEEDBYTES + CRHBYTES, seedbuf, SEEDBYTES);
     rho = seedbuf;
-    rhoprime = seedbuf + SEEDBYTES;
-    key = seedbuf + 2 * SEEDBYTES;
+    rhoprime = rho + SEEDBYTES;
+    key = rhoprime + CRHBYTES;
 
     /* Expand matrix */
     PQCLEAN_DILITHIUM3AES_CLEAN_polyvec_matrix_expand(mat, rho);
@@ -57,8 +57,8 @@ int PQCLEAN_DILITHIUM3AES_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
     PQCLEAN_DILITHIUM3AES_CLEAN_polyveck_power2round(&t1, &t0, &t1);
     PQCLEAN_DILITHIUM3AES_CLEAN_pack_pk(pk, rho, &t1);
 
-    /* Compute CRH(rho, t1) and write secret key */
-    crh(tr, pk, PQCLEAN_DILITHIUM3AES_CLEAN_CRYPTO_PUBLICKEYBYTES);
+    /* Compute H(rho, t1) and write secret key */
+    shake256(tr, SEEDBYTES, pk, PQCLEAN_DILITHIUM3AES_CLEAN_CRYPTO_PUBLICKEYBYTES);
     PQCLEAN_DILITHIUM3AES_CLEAN_pack_sk(sk, rho, tr, key, &t0, &s1, &s2);
 
     return 0;
@@ -83,7 +83,7 @@ int PQCLEAN_DILITHIUM3AES_CLEAN_crypto_sign_signature(uint8_t *sig,
         size_t mlen,
         const uint8_t *sk) {
     unsigned int n;
-    uint8_t seedbuf[2 * SEEDBYTES + 3 * CRHBYTES];
+    uint8_t seedbuf[3 * SEEDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime;
     uint16_t nonce = 0;
     polyvecl mat[K], s1, y, z;
@@ -93,20 +93,20 @@ int PQCLEAN_DILITHIUM3AES_CLEAN_crypto_sign_signature(uint8_t *sig,
 
     rho = seedbuf;
     tr = rho + SEEDBYTES;
-    key = tr + CRHBYTES;
+    key = tr + SEEDBYTES;
     mu = key + SEEDBYTES;
     rhoprime = mu + CRHBYTES;
     PQCLEAN_DILITHIUM3AES_CLEAN_unpack_sk(rho, tr, key, &t0, &s1, &s2, sk);
 
     /* Compute CRH(tr, msg) */
     shake256_inc_init(&state);
-    shake256_inc_absorb(&state, tr, CRHBYTES);
+    shake256_inc_absorb(&state, tr, SEEDBYTES);
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
     shake256_inc_ctx_release(&state);
 
-    crh(rhoprime, key, SEEDBYTES + CRHBYTES);
+    shake256(rhoprime, CRHBYTES, key, SEEDBYTES + CRHBYTES);
 
     /* Expand matrix and transform vectors */
     PQCLEAN_DILITHIUM3AES_CLEAN_polyvec_matrix_expand(mat, rho);
@@ -250,10 +250,10 @@ int PQCLEAN_DILITHIUM3AES_CLEAN_crypto_sign_verify(const uint8_t *sig,
         return -1;
     }
 
-    /* Compute CRH(CRH(rho, t1), msg) */
-    crh(mu, pk, PQCLEAN_DILITHIUM3AES_CLEAN_CRYPTO_PUBLICKEYBYTES);
+    /* Compute CRH(H(rho, t1), msg) */
+    shake256(mu, SEEDBYTES, pk, PQCLEAN_DILITHIUM3AES_CLEAN_CRYPTO_PUBLICKEYBYTES);
     shake256_inc_init(&state);
-    shake256_inc_absorb(&state, mu, CRHBYTES);
+    shake256_inc_absorb(&state, mu, SEEDBYTES);
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
