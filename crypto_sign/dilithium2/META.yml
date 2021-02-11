@@ -2,10 +2,10 @@ name: Dilithium2
 type: signature
 claimed-nist-level: 2
 length-public-key: 1312
-length-secret-key: 2544
+length-secret-key: 2528
 length-signature: 2420
-nistkat-sha256: 9c636528bf81c03df6ad8f9471cb1b4d9097d66af825d4f60b7ff0d941ca4d37
-testvectors-sha256: 166fc2481358d5a1b7a528b30af36ad069b049b5755cf63b843ce0f25f35aeb6
+nistkat-sha256: faa8998108fa541309c9df5044018c5d26cc23654594bef639dd64b838646cbd
+testvectors-sha256: 84f3da742881007e3d1d29c7390c7d707261ab8b20068a22b728e38e2fbac94b
 principal-submitters:
   - Vadim Lyubashevsky
 auxiliary-submitters:
@@ -17,9 +17,9 @@ auxiliary-submitters:
   - Damien Stehlé
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/dilithium/commit/1e63a1e880401166f105ab44ec67464c9714a315 via https://github.com/jschanck/package-pqclean/tree/b158a891/dilithium
+      version: https://github.com/pq-crystals/dilithium/commit/adf7476d645fb808b5c5d2dd1ef1aaeefdc0c897 via https://github.com/jschanck/package-pqclean/tree/80749c85/dilithium
     - name: avx2
-      version: https://github.com/pq-crystals/dilithium/commit/1e63a1e880401166f105ab44ec67464c9714a315 via https://github.com/jschanck/package-pqclean/tree/b158a891/dilithium
+      version: https://github.com/pq-crystals/dilithium/commit/adf7476d645fb808b5c5d2dd1ef1aaeefdc0c897 via https://github.com/jschanck/package-pqclean/tree/80749c85/dilithium
       supported_platforms:
         - architecture: x86_64
           operating_systems:

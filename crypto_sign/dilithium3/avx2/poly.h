@@ -28,8 +28,8 @@ void PQCLEAN_DILITHIUM3_AVX2_poly_use_hint(poly *b, const poly *a, const poly *h
 int PQCLEAN_DILITHIUM3_AVX2_poly_chknorm(const poly *a, int32_t B);
 void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_preinit(poly *a, stream128_state *state);
 void PQCLEAN_DILITHIUM3_AVX2_poly_uniform(poly *a, const uint8_t seed[SEEDBYTES], uint16_t nonce);
-void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta_preinit(poly *a, stream128_state *state);
-void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[SEEDBYTES], uint16_t nonce);
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta_preinit(poly *a, stream256_state *state);
+void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[CRHBYTES], uint16_t nonce);
 void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1_preinit(poly *a, stream256_state *state);
 void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_gamma1(poly *a, const uint8_t seed[CRHBYTES], uint16_t nonce);
 void PQCLEAN_DILITHIUM3_AVX2_poly_challenge(poly *c, const uint8_t seed[SEEDBYTES]);
@@ -47,7 +47,7 @@ void PQCLEAN_DILITHIUM3_AVX2_poly_uniform_eta_4x(poly *a0,
         poly *a1,
         poly *a2,
         poly *a3,
-        const uint8_t seed[SEEDBYTES],
+        const uint8_t seed[CRHBYTES],
         uint16_t nonce0,
         uint16_t nonce1,
         uint16_t nonce2,

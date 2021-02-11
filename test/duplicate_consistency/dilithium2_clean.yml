@@ -7,7 +7,6 @@ consistency_checks:
       - packing.h
       - params.h
       - sign.h
-      - symmetric.h
       - packing.c
       - symmetric-shake.c
     - source:
@@ -59,7 +58,6 @@ consistency_checks:
       files:
       - packing.h
       - sign.h
-      - symmetric.h
       - packing.c
       - symmetric-shake.c
     - source:
@@ -109,7 +107,6 @@ consistency_checks:
       files:
       - packing.h
       - sign.h
-      - symmetric.h
       - packing.c
       - symmetric-shake.c
     - source:

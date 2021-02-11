@@ -67,7 +67,7 @@ void PQCLEAN_DILITHIUM2AES_AVX2_unpack_pk(uint8_t rho[SEEDBYTES],
 **************************************************/
 void PQCLEAN_DILITHIUM2AES_AVX2_pack_sk(uint8_t sk[PQCLEAN_DILITHIUM2AES_AVX2_CRYPTO_SECRETKEYBYTES],
                                         const uint8_t rho[SEEDBYTES],
-                                        const uint8_t tr[CRHBYTES],
+                                        const uint8_t tr[SEEDBYTES],
                                         const uint8_t key[SEEDBYTES],
                                         const polyveck *t0,
                                         const polyvecl *s1,
@@ -84,10 +84,10 @@ void PQCLEAN_DILITHIUM2AES_AVX2_pack_sk(uint8_t sk[PQCLEAN_DILITHIUM2AES_AVX2_CR
     }
     sk += SEEDBYTES;
 
-    for (i = 0; i < CRHBYTES; ++i) {
+    for (i = 0; i < SEEDBYTES; ++i) {
         sk[i] = tr[i];
     }
-    sk += CRHBYTES;
+    sk += SEEDBYTES;
 
     for (i = 0; i < L; ++i) {
         PQCLEAN_DILITHIUM2AES_AVX2_polyeta_pack(sk + i * POLYETA_PACKEDBYTES, &s1->vec[i]);
@@ -118,7 +118,7 @@ void PQCLEAN_DILITHIUM2AES_AVX2_pack_sk(uint8_t sk[PQCLEAN_DILITHIUM2AES_AVX2_CR
 *              - uint8_t sk[]: byte array containing bit-packed sk
 **************************************************/
 void PQCLEAN_DILITHIUM2AES_AVX2_unpack_sk(uint8_t rho[SEEDBYTES],
-        uint8_t tr[CRHBYTES],
+        uint8_t tr[SEEDBYTES],
         uint8_t key[SEEDBYTES],
         polyveck *t0,
         polyvecl *s1,
@@ -136,10 +136,10 @@ void PQCLEAN_DILITHIUM2AES_AVX2_unpack_sk(uint8_t rho[SEEDBYTES],
     }
     sk += SEEDBYTES;
 
-    for (i = 0; i < CRHBYTES; ++i) {
+    for (i = 0; i < SEEDBYTES; ++i) {
         tr[i] = sk[i];
     }
-    sk += CRHBYTES;
+    sk += SEEDBYTES;
 
     for (i = 0; i < L; ++i) {
         PQCLEAN_DILITHIUM2AES_AVX2_polyeta_unpack(&s1->vec[i], sk + i * POLYETA_PACKEDBYTES);

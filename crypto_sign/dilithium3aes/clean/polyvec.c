@@ -36,7 +36,7 @@ void PQCLEAN_DILITHIUM3AES_CLEAN_polyvec_matrix_pointwise_montgomery(polyveck *t
 /************ Vectors of polynomials of length L **************/
 /**************************************************************/
 
-void PQCLEAN_DILITHIUM3AES_CLEAN_polyvecl_uniform_eta(polyvecl *v, const uint8_t seed[SEEDBYTES], uint16_t nonce) {
+void PQCLEAN_DILITHIUM3AES_CLEAN_polyvecl_uniform_eta(polyvecl *v, const uint8_t seed[CRHBYTES], uint16_t nonce) {
     unsigned int i;
 
     for (i = 0; i < L; ++i) {
@@ -178,7 +178,7 @@ int PQCLEAN_DILITHIUM3AES_CLEAN_polyvecl_chknorm(const polyvecl *v, int32_t boun
 /************ Vectors of polynomials of length K **************/
 /**************************************************************/
 
-void PQCLEAN_DILITHIUM3AES_CLEAN_polyveck_uniform_eta(polyveck *v, const uint8_t seed[SEEDBYTES], uint16_t nonce) {
+void PQCLEAN_DILITHIUM3AES_CLEAN_polyveck_uniform_eta(polyveck *v, const uint8_t seed[CRHBYTES], uint16_t nonce) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {

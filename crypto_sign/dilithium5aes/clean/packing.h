@@ -8,7 +8,7 @@ void PQCLEAN_DILITHIUM5AES_CLEAN_pack_pk(uint8_t pk[PQCLEAN_DILITHIUM5AES_CLEAN_
 
 void PQCLEAN_DILITHIUM5AES_CLEAN_pack_sk(uint8_t sk[PQCLEAN_DILITHIUM5AES_CLEAN_CRYPTO_SECRETKEYBYTES],
         const uint8_t rho[SEEDBYTES],
-        const uint8_t tr[CRHBYTES],
+        const uint8_t tr[SEEDBYTES],
         const uint8_t key[SEEDBYTES],
         const polyveck *t0,
         const polyvecl *s1,
@@ -19,7 +19,7 @@ void PQCLEAN_DILITHIUM5AES_CLEAN_pack_sig(uint8_t sig[PQCLEAN_DILITHIUM5AES_CLEA
 void PQCLEAN_DILITHIUM5AES_CLEAN_unpack_pk(uint8_t rho[SEEDBYTES], polyveck *t1, const uint8_t pk[PQCLEAN_DILITHIUM5AES_CLEAN_CRYPTO_PUBLICKEYBYTES]);
 
 void PQCLEAN_DILITHIUM5AES_CLEAN_unpack_sk(uint8_t rho[SEEDBYTES],
-        uint8_t tr[CRHBYTES],
+        uint8_t tr[SEEDBYTES],
         uint8_t key[SEEDBYTES],
         polyveck *t0,
         polyvecl *s1,

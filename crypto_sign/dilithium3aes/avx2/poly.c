@@ -458,27 +458,27 @@ static unsigned int rej_eta(int32_t *a,
 *              or AES256CTR(seed,nonce).
 *
 * Arguments:   - poly *a: pointer to output polynomial
-*              - const uint8_t seed[]: byte array with seed of length  SEEDBYTES
+*              - const uint8_t seed[]: byte array with seed of length CRHBYTES
 *              - uint16_t nonce: 2-byte nonce
 **************************************************/
-void PQCLEAN_DILITHIUM3AES_AVX2_poly_uniform_eta_preinit(poly *a, stream128_state *state) {
+void PQCLEAN_DILITHIUM3AES_AVX2_poly_uniform_eta_preinit(poly *a, stream256_state *state) {
     unsigned int ctr;
-    ALIGNED_UINT8(REJ_UNIFORM_BUFLEN * STREAM128_BLOCKBYTES) buf;
+    ALIGNED_UINT8(REJ_UNIFORM_ETA_BUFLEN) buf;
 
-    stream128_squeezeblocks(buf.coeffs, REJ_UNIFORM_ETA_NBLOCKS, state);
+    stream256_squeezeblocks(buf.coeffs, REJ_UNIFORM_ETA_NBLOCKS, state);
     ctr = PQCLEAN_DILITHIUM3AES_AVX2_rej_eta_avx(a->coeffs, buf.coeffs);
 
     while (ctr < N) {
-        stream128_squeezeblocks(buf.coeffs, 1, state);
-        ctr += rej_eta(a->coeffs + ctr, N - ctr, buf.coeffs, STREAM128_BLOCKBYTES);
+        stream256_squeezeblocks(buf.coeffs, 1, state);
+        ctr += rej_eta(a->coeffs + ctr, N - ctr, buf.coeffs, STREAM256_BLOCKBYTES);
     }
 }
 
-void PQCLEAN_DILITHIUM3AES_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[SEEDBYTES], uint16_t nonce) {
-    stream128_state state;
-    stream128_init(&state, seed, nonce);
+void PQCLEAN_DILITHIUM3AES_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[CRHBYTES], uint16_t nonce) {
+    stream256_state state;
+    stream256_init(&state, seed, nonce);
     PQCLEAN_DILITHIUM3AES_AVX2_poly_uniform_eta_preinit(a, &state);
-    stream128_release(&state);
+    stream256_release(&state);
 }
 
 
