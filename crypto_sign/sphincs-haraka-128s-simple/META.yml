@@ -3,9 +3,9 @@ type: signature
 claimed-nist-level: 1
 length-public-key: 32
 length-secret-key: 64
-length-signature: 8080
-testvectors-sha256: 526b848d03142746354042329e174aedda2acd70269a57017e37edd5b1b8976a
-nistkat-sha256: a83a6512c773b1f305f07a383ececf607ecfbd0e5ad49b4ab444faed019f66c8
+length-signature: 7856
+testvectors-sha256: eb437d54cd786aec4b5a9aa9c7459a111a7343b809d553af9a51797963f379ee
+nistkat-sha256: 625422a71b884ecf4d42e21f96091a18635e4862b68d0627e21a4a0033819603
 principal-submitters:
   - Andreas Hülsing
 auxiliary-submitters:
