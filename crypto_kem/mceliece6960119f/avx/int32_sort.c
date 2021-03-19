@@ -3,6 +3,9 @@
 
 #include <immintrin.h>
 
+// compatibility for __m256i_u
+#include "compat.h"
+
 typedef __m256i int32x8;
 #define int32x8_load(z) _mm256_loadu_si256((__m256i_u *) (z))
 #define int32x8_store(z,i) _mm256_storeu_si256((__m256i_u *) (z),(i))
