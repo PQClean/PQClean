@@ -1,0 +1,21 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY=libledacrypt23371_clean.lib
+OBJECTS=aes256.obj bf_decoding.obj dfr_test.obj djbsort.obj gf2x_arith.obj gf2x_arith_mod_xPplusOne.obj \
+        	  H_Q_matrices_generation.obj kem.obj niederreiter_decrypt.obj niederreiter_encrypt.obj \
+        	  niederreiter_keygen.obj rng.obj
+
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)

@@ -1,6 +1,6 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIB = ledacrypt.a
+LIB = libledacrypt23371_clean.a
 
 HEADERS = H_Q_matrices_generation.h djbsort.h gf2x_limbs.h \
       gf2x_arith.h rng.h gf2x_arith_mod_xPplusOne.h \
