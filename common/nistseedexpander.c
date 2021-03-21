@@ -84,7 +84,7 @@ seedexpander(AES_XOF_struct *ctx, uint8_t *x, size_t xlen)
         xlen -= 16-ctx->buffer_pos;
         offset += 16-ctx->buffer_pos;
 
-        PQCLEAN_LEDACRYPT23371_CLEAN_AES256_ECB(ctx->key, ctx->ctr, ctx->buffer);
+        AES256_ECB(ctx->key, ctx->ctr, ctx->buffer);
         ctx->buffer_pos = 0;
 
         //increment the counter
