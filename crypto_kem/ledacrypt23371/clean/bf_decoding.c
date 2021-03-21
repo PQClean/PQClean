@@ -7,13 +7,13 @@
 
 /* The second threshold is updated before decoding retrieving it from the
  * private key field secondIterThreshold*/
-int thresholds[2] = {B0, (V)/2+1};
+int PQCLEAN_LEDACRYPT23371_CLEAN_thresholds[2] = {B0, (V) / 2 + 1};
 
 
-int bf_decoding(DIGIT out[], // N0 polynomials
-                const POSITION_T HtrPosOnes[N0][V],
-                DIGIT privateSyndrome[]  //  1 polynomial
-               )
+int PQCLEAN_LEDACRYPT23371_CLEAN_bf_decoding(DIGIT out[], // N0 polynomials
+                                             const POSITION_T HtrPosOnes[N0][V],
+                                             DIGIT privateSyndrome[]  //  1 polynomial
+)
 {
 
    uint8_t unsatParityChecks[N0*P];
@@ -36,7 +36,7 @@ int bf_decoding(DIGIT out[], // N0 polynomials
       }
 
       /* iteration based threshold determination*/
-      int corrt_syndrome_based= thresholds[iteration];
+      int corrt_syndrome_based= PQCLEAN_LEDACRYPT23371_CLEAN_thresholds[iteration];
 
       //Computation of correlation  with a full Q matrix
       for (int i = 0; i < N0; i++) {

@@ -5,11 +5,11 @@
 #include "gf2x_limbs.h"
 #define  ITERATIONS_MAX   (2)
 
-int bf_decoding(DIGIT err[],
-                const POSITION_T HtrPosOnes[N0][V],
-                DIGIT privateSyndrome[]       //  1 polynomial  -- param. in/out
-               );
-/* thresholds and tbars for imaxin = 0imaxout = 2 CCA ledadecoder */
+int PQCLEAN_LEDACRYPT23371_CLEAN_bf_decoding(DIGIT err[],
+                                             const POSITION_T HtrPosOnes[N0][V],
+                                             DIGIT privateSyndrome[]       //  1 polynomial  -- param. in/out
+);
+/* PQCLEAN_LEDACRYPT23371_CLEAN_thresholds and tbars for imaxin = 0imaxout = 2 CCA ledadecoder */
 #if (CATEGORY == 1) && (N0 == 2) && (DFR_SL_LEVEL == 0)
 #define T_BAR 10
 #define B0 39

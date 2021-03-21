@@ -10,8 +10,8 @@ int PQCLEAN_LEDACRYPT23371_CLEAN_crypto_kem_keypair(uint8_t *pk,
                                                    uint8_t *sk )
 {
 
-   key_gen_niederreiter((publicKeyNiederreiter_t *const) pk,
-                        (privateKeyNiederreiter_t *const) sk);
+    PQCLEAN_LEDACRYPT23371_CLEAN_key_gen_niederreiter((publicKeyNiederreiter_t *const) pk,
+                                                      (privateKeyNiederreiter_t *const) sk);
 
    return 0; // NIST convention: 0 == zero errors
 } // end PQCLEAN_LEDACRYPTXXXX_CLEAN_crypto_kem_keypair
@@ -27,10 +27,10 @@ int PQCLEAN_LEDACRYPT23371_CLEAN_crypto_kem_enc(uint8_t *ct,
                                                const uint8_t *pk )
 {
 
-   encrypt_niederreiter_indcca2((unsigned char *const)
-                                ct, /* ciphertext - output   */
-                                (unsigned char *const) ss,  /* shared secret - output*/
-                                (const publicKeyNiederreiter_t *const) pk);
+    PQCLEAN_LEDACRYPT23371_CLEAN_encrypt_niederreiter_indcca2((unsigned char *const)
+                                                                      ct, /* ciphertext - output   */
+                                                              (unsigned char *const) ss,  /* shared secret - output*/
+                                                              (const publicKeyNiederreiter_t *const) pk);
 
    return 0; // NIST convention: 0 == zero errors
 } //end PQCLEAN_LEDACRYPT23371_CLEAN_crypto_kem_enc
@@ -46,9 +46,9 @@ int PQCLEAN_LEDACRYPT23371_CLEAN_crypto_kem_dec(uint8_t *ss,
                                                const uint8_t *sk)
 {
 
-   decrypt_niederreiter_indcca2((unsigned char *const) ss,
-                                (const unsigned char *const) ct,
-                                (const privateKeyNiederreiter_t *const) sk);
+    PQCLEAN_LEDACRYPT23371_CLEAN_decrypt_niederreiter_indcca2((unsigned char *const) ss,
+                                                              (const unsigned char *const) ct,
+                                                              (const privateKeyNiederreiter_t *const) sk);
 
    return 0; // NIST convention: 0 == zero errors
 } // end PQCLEAN_LEDACRYPTXXXX_CLEAN_crypto_kem_dec

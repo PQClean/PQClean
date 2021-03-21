@@ -7,13 +7,13 @@
 
 /*----------------------------------------------------------------------------*/
 
-void generateHPosOnes(POSITION_T HPosOnes[N0][V], /* output*/
-                      AES_XOF_struct *niederreiter_keys_expander);
+void PQCLEAN_LEDACRYPT23371_CLEAN_generateHPosOnes(POSITION_T HPosOnes[N0][V], /* output*/
+                                                   AES_XOF_struct *niederreiter_keys_expander);
 
 /*----------------------------------------------------------------------------*/
 
-void transposeHPosOnes(POSITION_T HtrPosOnes[N0][V], /* output*/
-                       POSITION_T const HPosOnes[N0][V]);
+void PQCLEAN_LEDACRYPT23371_CLEAN_transposeHPosOnes(POSITION_T HtrPosOnes[N0][V], /* output*/
+                                                    POSITION_T const HPosOnes[N0][V]);
 
 /*----------------------------------------------------------------------------*/
 

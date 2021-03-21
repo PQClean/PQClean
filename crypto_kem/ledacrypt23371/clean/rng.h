@@ -18,26 +18,26 @@ typedef struct {
 
 
 void
-AES256_CTR_DRBG_Update(unsigned char *provided_data,
-                       unsigned char *Key,
-                       unsigned char *Vee);
+PQCLEAN_LEDACRYPT23371_CLEAN_AES256_CTR_DRBG_Update(unsigned char *provided_data,
+                                                    unsigned char *Key,
+                                                    unsigned char *Vee);
 
 void
-randombytes_init(unsigned char *entropy_input, unsigned char *personalization_string);
+PQCLEAN_LEDACRYPT23371_CLEAN_randombytes_init(unsigned char *entropy_input, unsigned char *personalization_string);
 
 
 /******  End of NIST supplied code ****************/
 #include "fips202.h"
 
-void initialize_pseudo_random_generator_seed(int seedFixed, char *seed);
+void PQCLEAN_LEDACRYPT23371_CLEAN_initialize_pseudo_random_generator_seed(int seedFixed, char *seed);
 
-void deterministic_random_byte_generator(unsigned char *const output,
-      const unsigned long long output_len,
-      const unsigned char *const seed,
-      const unsigned long long seed_length);
+void PQCLEAN_LEDACRYPT23371_CLEAN_deterministic_random_byte_generator(unsigned char *const output,
+                                                                      const unsigned long long output_len,
+                                                                      const unsigned char *const seed,
+                                                                      const unsigned long long seed_length);
 
-void seedexpander_from_trng(AES_XOF_struct *ctx,
-                            const unsigned char *trng_entropy
+void PQCLEAN_LEDACRYPT23371_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx,
+                                                         const unsigned char *trng_entropy
                             /* TRNG_BYTE_LENGTH wide buffer */);
 
 /* Return a uniform random value in the range 0..n-1 inclusive,
@@ -45,7 +45,7 @@ void seedexpander_from_trng(AES_XOF_struct *ctx,
  * the NIST seedexpander seeded with the proper key.
  * Assumes that the maximum value for the range n is 2^32-1
  */
-uint32_t rand_range(const int n, const int logn, AES_XOF_struct *seed_expander_ctx);
+uint32_t PQCLEAN_LEDACRYPT23371_CLEAN_rand_range(const int n, const int logn, AES_XOF_struct *seed_expander_ctx);
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -66,14 +66,14 @@ struct xof_shake {
 } xof_shake_t;
 
 
-void shake_seedexpander_init(xof_shake_t *st,
-                             const unsigned char *trng_entropy
+void PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_init(xof_shake_t *st,
+                                                          const unsigned char *trng_entropy
                              /* TRNG_BYTE_LENGTH wide buffer */);
 
-void shake_seedexpander_extract(xof_shake_t *st,
-                                unsigned char *output,
-                                unsigned int outputByteLen);
+void PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_extract(xof_shake_t *st,
+                                                             unsigned char *output,
+                                                             unsigned int outputByteLen);
 
-int rand_range_shake(const int n, const int logn, xof_shake_t *st);
+int PQCLEAN_LEDACRYPT23371_CLEAN_rand_range_shake(const int n, const int logn, xof_shake_t *st);
 
 #endif

@@ -16,22 +16,22 @@ static inline void zeroize( void *v, size_t n )
 
 /*----------------------------------------------------------------------------*/
 
-void key_gen_niederreiter(publicKeyNiederreiter_t   *const pk,
-                          privateKeyNiederreiter_t *const sk)
+void PQCLEAN_LEDACRYPT23371_CLEAN_key_gen_niederreiter(publicKeyNiederreiter_t   *const pk,
+                                                       privateKeyNiederreiter_t *const sk)
 {
    AES_XOF_struct keys_expander;
    memset(&keys_expander,0x00,sizeof(AES_XOF_struct));
    randombytes(sk->prng_seed, TRNG_BYTE_LENGTH);
-   seedexpander_from_trng(&keys_expander, sk->prng_seed);
+    PQCLEAN_LEDACRYPT23371_CLEAN_seedexpander_from_trng(&keys_expander, sk->prng_seed);
 
    POSITION_T HPosOnes[N0][V];
 
    int isDFRok;
    sk->rejections = (uint8_t) 0;
    do {
-      generateHPosOnes(HPosOnes, &keys_expander);
+       PQCLEAN_LEDACRYPT23371_CLEAN_generateHPosOnes(HPosOnes, &keys_expander);
       sk->rejections = sk->rejections + 1;
-      isDFRok = DFR_test(HPosOnes, &(sk->secondIterThreshold));
+      isDFRok = PQCLEAN_LEDACRYPT23371_CLEAN_DFR_test(HPosOnes, &(sk->secondIterThreshold));
    } while(!isDFRok);
 
    sk->rejections = sk->rejections - 1;
@@ -45,32 +45,32 @@ void key_gen_niederreiter(publicKeyNiederreiter_t   *const pk,
       gf2x_set_coeff(Ln0dense,HPosOnes[N0-1][j],1);
    }
    DIGIT Ln0Inv[NUM_DIGITS_GF2X_ELEMENT] = {0x00};
-   GF2X_DIGIT_MOD_INVERSE(Ln0Inv, Ln0dense);
+    GF2X_DIGIT_MOD_INVERSE(Ln0Inv, Ln0dense);
    for (int i = 0; i < N0-1; i++) {
-      gf2x_mod_mul_dense_to_sparse(pk->Mtr+i*NUM_DIGITS_GF2X_ELEMENT,
-                                   Ln0Inv,
-                                   HPosOnes[i],
-                                   V);
+       PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_mul_dense_to_sparse(pk->Mtr + i * NUM_DIGITS_GF2X_ELEMENT,
+                                                                 Ln0Inv,
+                                                                 HPosOnes[i],
+                                                                 V);
    }
 
    for (int i = 0; i < N0-1; i++) {
-      gf2x_transpose_in_place(pk->Mtr+i*NUM_DIGITS_GF2X_ELEMENT);
+       PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_transpose_in_place(pk->Mtr + i * NUM_DIGITS_GF2X_ELEMENT);
    }
-} // end key_gen_niederreiter
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_key_gen_niederreiter
 
 /*----------------------------------------------------------------------------*/
 
-void publicKey_deletion_niederreiter(publicKeyNiederreiter_t   *const pk)
+void PQCLEAN_LEDACRYPT23371_CLEAN_publicKey_deletion_niederreiter(publicKeyNiederreiter_t   *const pk)
 {
 
    zeroize(pk,sizeof(publicKeyNiederreiter_t));
-} // publicKey_deletion_niederreiter
+} // PQCLEAN_LEDACRYPT23371_CLEAN_publicKey_deletion_niederreiter
 
 /*----------------------------------------------------------------------------*/
 
-void privateKey_deletion_niederreiter(privateKeyNiederreiter_t *const sk)
+void PQCLEAN_LEDACRYPT23371_CLEAN_privateKey_deletion_niederreiter(privateKeyNiederreiter_t *const sk)
 {
    zeroize(sk, sizeof(privateKeyNiederreiter_t));
-} // privateKey_deletion_niederreiter
+} // PQCLEAN_LEDACRYPT23371_CLEAN_privateKey_deletion_niederreiter
 
 /*----------------------------------------------------------------------------*/

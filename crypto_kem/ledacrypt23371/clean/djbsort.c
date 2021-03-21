@@ -13,9 +13,9 @@ do { \
   b ^= c; \
 } while(0)
 
-void int32_sort(int32 *x, long long n);
+void PQCLEAN_LEDACRYPT23371_CLEAN_int32_sort(int32 *x, long long n);
 
-void int32_sort(int32 *x,long long n)
+void PQCLEAN_LEDACRYPT23371_CLEAN_int32_sort(int32 *x, long long n)
 {
    long long top,p,q,r,i,j;
 

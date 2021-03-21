@@ -6,9 +6,9 @@
 
 /*----------------------------------------------------------------------------*/
 
-void decrypt_niederreiter_indcca2(unsigned char *const ss,
-                                  const unsigned char *const ct,
-                                  const privateKeyNiederreiter_t *const sk);
+void PQCLEAN_LEDACRYPT23371_CLEAN_decrypt_niederreiter_indcca2(unsigned char *const ss,
+                                                               const unsigned char *const ct,
+                                                               const privateKeyNiederreiter_t *const sk);
 
 /*----------------------------------------------------------------------------*/
 

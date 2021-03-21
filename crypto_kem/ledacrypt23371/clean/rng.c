@@ -19,7 +19,7 @@
 /*----------------------------------------------------------------------------*/
 
 
-void initialize_pseudo_random_generator_seed(int seedFixed, char *seed)
+void PQCLEAN_LEDACRYPT23371_CLEAN_initialize_pseudo_random_generator_seed(int seedFixed, char *seed)
 {
 
    if (seedFixed == 1)
@@ -31,8 +31,8 @@ void initialize_pseudo_random_generator_seed(int seedFixed, char *seed)
    } // end else-if
    unsigned char pseudo_entropy[48];
    for (int i=0; i< 48; i++) pseudo_entropy[i] = rand() & 0xff;
-    randombytes_init(pseudo_entropy,
-                     NULL);
+    PQCLEAN_LEDACRYPT23371_CLEAN_randombytes_init(pseudo_entropy,
+                                                  NULL);
 
 
 } // end initilize_pseudo_random_sequence_seed
@@ -49,10 +49,10 @@ void initialize_pseudo_random_generator_seed(int seedFixed, char *seed)
 /*              end PSEUDO-RAND GENERATOR ROUTINES for rnd.h                  */
 /*----------------------------------------------------------------------------*/
 
-AES256_CTR_DRBG_struct  DRBG_ctx;
+AES256_CTR_DRBG_struct  PQCLEAN_LEDACRYPT23371_CLEAN_DRBG_ctx;
 
-void    AES256_ECB(unsigned char *key, unsigned char *ctr,
-                   unsigned char *buffer);
+void    PQCLEAN_LEDACRYPT23371_CLEAN_AES256_ECB(unsigned char *key, unsigned char *ctr,
+                                                unsigned char *buffer);
 
 
 // Use whatever AES implementation you have. This uses AES from openSSL library
@@ -61,15 +61,15 @@ void    AES256_ECB(unsigned char *key, unsigned char *ctr,
 //    ctx - a 128-bit ciphertext value
 
 void
-AES256_ECB(unsigned char *key, unsigned char *ptx, unsigned char *ctx)
+PQCLEAN_LEDACRYPT23371_CLEAN_AES256_ECB(unsigned char *key, unsigned char *ptx, unsigned char *ctx)
 {
    uint32_t round_key[4*(NROUNDS + 1)] = {0x00};
-   rijndaelKeySetupEnc(round_key, key);
-   rijndaelEncrypt(round_key, NROUNDS, ptx, ctx);
+    PQCLEAN_LEDACRYPT23371_CLEAN_rijndaelKeySetupEnc(round_key, key);
+    PQCLEAN_LEDACRYPT23371_CLEAN_rijndaelEncrypt(round_key, NROUNDS, ptx, ctx);
 }
 
 void
-randombytes_init(unsigned char *entropy_input, unsigned char *personalization_string)
+PQCLEAN_LEDACRYPT23371_CLEAN_randombytes_init(unsigned char *entropy_input, unsigned char *personalization_string)
 {
    unsigned char   seed_material[48];
 
@@ -77,16 +77,17 @@ randombytes_init(unsigned char *entropy_input, unsigned char *personalization_st
    if (personalization_string)
       for (int i=0; i<48; i++)
          seed_material[i] ^= personalization_string[i];
-   memset(DRBG_ctx.Key, 0x00, 32);
-   memset(DRBG_ctx.Vee, 0x00, 16);
-   AES256_CTR_DRBG_Update(seed_material, DRBG_ctx.Key, DRBG_ctx.Vee);
-   DRBG_ctx.reseed_counter = 1;
+   memset(PQCLEAN_LEDACRYPT23371_CLEAN_DRBG_ctx.Key, 0x00, 32);
+   memset(PQCLEAN_LEDACRYPT23371_CLEAN_DRBG_ctx.Vee, 0x00, 16);
+    PQCLEAN_LEDACRYPT23371_CLEAN_AES256_CTR_DRBG_Update(seed_material, PQCLEAN_LEDACRYPT23371_CLEAN_DRBG_ctx.Key,
+                                                        PQCLEAN_LEDACRYPT23371_CLEAN_DRBG_ctx.Vee);
+    PQCLEAN_LEDACRYPT23371_CLEAN_DRBG_ctx.reseed_counter = 1;
 }
 
 void
-AES256_CTR_DRBG_Update(unsigned char *provided_data,
-                       unsigned char *Key,
-                       unsigned char *Vee)
+PQCLEAN_LEDACRYPT23371_CLEAN_AES256_CTR_DRBG_Update(unsigned char *provided_data,
+                                                    unsigned char *Key,
+                                                    unsigned char *Vee)
 {
    unsigned char   temp[48];
 
@@ -101,7 +102,7 @@ AES256_CTR_DRBG_Update(unsigned char *provided_data,
          }
       }
 
-      AES256_ECB(Key, Vee, temp+16*i);
+       PQCLEAN_LEDACRYPT23371_CLEAN_AES256_ECB(Key, Vee, temp + 16 * i);
    }
    if ( provided_data != NULL )
       for (int i=0; i<48; i++)
@@ -112,10 +113,10 @@ AES256_CTR_DRBG_Update(unsigned char *provided_data,
 
 
 
-void deterministic_random_byte_generator(unsigned char *const output,
-      const unsigned long long output_len,
-      const unsigned char *const seed,
-      const unsigned long long seed_length
+void PQCLEAN_LEDACRYPT23371_CLEAN_deterministic_random_byte_generator(unsigned char *const output,
+                                                                      const unsigned long long output_len,
+                                                                      const unsigned char *const seed,
+                                                                      const unsigned long long seed_length
                                         )
 {
    /* DRBG context initialization */
@@ -126,7 +127,7 @@ void deterministic_random_byte_generator(unsigned char *const output,
 
    memset(ctx.Key, 0x00, 32);
    memset(ctx.Vee, 0x00, 16);
-   AES256_CTR_DRBG_Update(seed_material, ctx.Key, ctx.Vee);
+    PQCLEAN_LEDACRYPT23371_CLEAN_AES256_CTR_DRBG_Update(seed_material, ctx.Key, ctx.Vee);
    ctx.reseed_counter = 1;
 
    /* Actual DRBG computation as from the randombytes(unsigned char *x,
@@ -147,7 +148,7 @@ void deterministic_random_byte_generator(unsigned char *const output,
             break;
          }
       }
-      AES256_ECB(ctx.Key, ctx.Vee, block);
+       PQCLEAN_LEDACRYPT23371_CLEAN_AES256_ECB(ctx.Key, ctx.Vee, block);
       if ( length_remaining > 15 ) {
          memcpy(output+i, block, 16);
          i += 16;
@@ -157,13 +158,13 @@ void deterministic_random_byte_generator(unsigned char *const output,
          length_remaining = 0;
       }
    }
-   AES256_CTR_DRBG_Update(NULL, ctx.Key, ctx.Vee);
+    PQCLEAN_LEDACRYPT23371_CLEAN_AES256_CTR_DRBG_Update(NULL, ctx.Key, ctx.Vee);
    ctx.reseed_counter++;
 
-} // end deterministic_random_byte_generator
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_deterministic_random_byte_generator
 
-void seedexpander_from_trng(AES_XOF_struct *ctx,
-                            const unsigned char *trng_entropy
+void PQCLEAN_LEDACRYPT23371_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx,
+                                                         const unsigned char *trng_entropy
                             /* TRNG_BYTE_LENGTH wide buffer */)
 {
 
@@ -191,7 +192,7 @@ void seedexpander_from_trng(AES_XOF_struct *ctx,
  * the NIST seedexpander seeded with the proper key.
  * Assumes that the maximum value for the range n is 2^32-1
  */
-uint32_t rand_range(const int n, const int logn, AES_XOF_struct *seed_expander_ctx)
+uint32_t PQCLEAN_LEDACRYPT23371_CLEAN_rand_range(const int n, const int logn, AES_XOF_struct *seed_expander_ctx)
 {
 
    unsigned long required_rnd_bytes = (logn+7)/8;
@@ -211,10 +212,10 @@ uint32_t rand_range(const int n, const int logn, AES_XOF_struct *seed_expander_c
    } while (rnd_value >= (uint32_t)n);
 
    return rnd_value;
-} // end rand_range
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rand_range
 
-void shake_seedexpander_init(xof_shake_t *st,
-                             const unsigned char *trng_entropy
+void PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_init(xof_shake_t *st,
+                                                          const unsigned char *trng_entropy
                              /* TRNG_BYTE_LENGTH wide buffer */)
 {
    memset(st, 0x00, sizeof(xof_shake_t));
@@ -241,11 +242,11 @@ void shake_seedexpander_init(xof_shake_t *st,
 #endif
 
    st->idx = 0;
-} // end shake_seedexpander_init
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_init
 
-void shake_seedexpander_extract(xof_shake_t *st,
-                                unsigned char *output,
-                                unsigned int outputByteLen)
+void PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_extract(xof_shake_t *st,
+                                                             unsigned char *output,
+                                                             unsigned int outputByteLen)
 {
    int remaining_bytes_to_output = outputByteLen;
    uint32_t outIdx = 0;
@@ -280,9 +281,9 @@ void shake_seedexpander_extract(xof_shake_t *st,
          outIdx += 1;
       } // end for
    } // end while
-} // end shake_seedexpander_extract
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_extract
 
-int rand_range_shake(const int n, const int logn, xof_shake_t *st)
+int PQCLEAN_LEDACRYPT23371_CLEAN_rand_range_shake(const int n, const int logn, xof_shake_t *st)
 {
    unsigned long required_rnd_bytes = (logn+7)/8;
    unsigned char rnd_char_buffer[4];
@@ -290,7 +291,7 @@ int rand_range_shake(const int n, const int logn, xof_shake_t *st)
    uint32_t mask = ( (uint32_t)1 << logn) - 1;
 
    do {
-      shake_seedexpander_extract(st, rnd_char_buffer, required_rnd_bytes);
+       PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_extract(st, rnd_char_buffer, required_rnd_bytes);
       /* obtain an endianness independent representation of the generated random
        bytes into an unsigned integer */
       rnd_value =  ((uint32_t)rnd_char_buffer[3] << 24) +
@@ -301,4 +302,4 @@ int rand_range_shake(const int n, const int logn, xof_shake_t *st)
    } while (rnd_value >= (uint32_t)n);
 
    return rnd_value;
-} // end rand_range_shake
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rand_range_shake

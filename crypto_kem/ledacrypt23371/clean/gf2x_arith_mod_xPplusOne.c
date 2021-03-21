@@ -5,9 +5,9 @@
 #include "djbsort.h"
 #include "nistseedexpander.h"
 
-void left_bit_shift_wide_n(const int length, DIGIT in[], int amount);
-void rotate_bit_left(DIGIT in[]);
-void rotate_bit_right(DIGIT in[]);
+void PQCLEAN_LEDACRYPT23371_CLEAN_left_bit_shift_wide_n(const int length, DIGIT *in, int amount);
+void PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_left(DIGIT *in);
+void PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_right(DIGIT *in);
 
 /*----------------------------------------------------------------------------*/
 
@@ -19,8 +19,8 @@ void gf2x_mod(DIGIT out[], const DIGIT in[])
    DIGIT aux[NUM_DIGITS_GF2X_ELEMENT+1];
    memcpy(aux, in, (NUM_DIGITS_GF2X_ELEMENT+1)*DIGIT_SIZE_B);
 #if MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS != 0
-   right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT+1, aux,
-                     MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
+    PQCLEAN_LEDACRYPT23371_CLEAN_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT + 1, aux,
+                                                   MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
 #endif
    gf2x_add(NUM_DIGITS_GF2X_ELEMENT,out,
             aux+1,in+NUM_DIGITS_GF2X_ELEMENT);
@@ -70,16 +70,16 @@ void left_DIGIT_shift_n(const int length, DIGIT in[], int amount)
    for (; j < length; j++) {
       in[j] = (DIGIT)0;
    }
-} // end left_bit_shift_n
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_left_bit_shift_n
 
 /*----------------------------------------------------------------------------*/
 /* may shift by an arbitrary amount*/
 
-void left_bit_shift_wide_n(const int length, DIGIT in[], int amount)
+void PQCLEAN_LEDACRYPT23371_CLEAN_left_bit_shift_wide_n(const int length, DIGIT *in, int amount)
 {
    left_DIGIT_shift_n(length, in, amount / DIGIT_SIZE_b);
-   left_bit_shift_n(length, in, amount % DIGIT_SIZE_b);
-} // end left_bit_shift_n
+    PQCLEAN_LEDACRYPT23371_CLEAN_left_bit_shift_n(length, in, amount % DIGIT_SIZE_b);
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_left_bit_shift_n
 
 /*----------------------------------------------------------------------------*/
 
@@ -154,7 +154,7 @@ with this CPU word bitsize !!! "
 
 /*----------------------------------------------------------------------------*/
 
-void gf2x_transpose_in_place(DIGIT A[])
+void PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_transpose_in_place(DIGIT *A)
 {
    /* it keeps the lsb in the same position and
     * inverts the sequence of the remaining bits
@@ -188,13 +188,13 @@ void gf2x_transpose_in_place(DIGIT A[])
       A[NUM_DIGITS_GF2X_ELEMENT/2] = reverse_digit(A[NUM_DIGITS_GF2X_ELEMENT/2]);
 
    if (slack_bits_amount)
-      right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A,slack_bits_amount);
+       PQCLEAN_LEDACRYPT23371_CLEAN_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT, A, slack_bits_amount);
    A[NUM_DIGITS_GF2X_ELEMENT-1] = (A[NUM_DIGITS_GF2X_ELEMENT-1] & (~mask)) | a00;
 } // end transpose_in_place
 
 /*----------------------------------------------------------------------------*/
 
-void rotate_bit_left(DIGIT in[])   /*  equivalent to x * in(x) mod x^P+1 */
+void PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_left(DIGIT *in)   /*  equivalent to x * in(x) mod x^P+1 */
 {
 
    DIGIT mask,rotated_bit;
@@ -217,13 +217,13 @@ void rotate_bit_left(DIGIT in[])   /*  equivalent to x * in(x) mod x^P+1 */
 
    }
    in[NUM_DIGITS_GF2X_ELEMENT-1] |= rotated_bit;
-} // end rotate_bit_left
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_left
 
 
 
 /*----------------------------------------------------------------------------*/
 
-void rotate_bit_right(DIGIT in[])   /*  x^{-1} * in(x) mod x^P+1 */
+void PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_right(DIGIT *in)   /*  x^{-1} * in(x) mod x^P+1 */
 {
 
    DIGIT rotated_bit = in[NUM_DIGITS_GF2X_ELEMENT-1] & ((DIGIT)0x1);
@@ -239,7 +239,7 @@ void rotate_bit_right(DIGIT in[])   /*  x^{-1} * in(x) mod x^P+1 */
       rotated_bit = rotated_bit << (DIGIT_SIZE_b-1);
    }
    in[0] |= rotated_bit;
-} // end rotate_bit_right
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_right
 
 static
 void gf2x_swap(const int length,
@@ -274,7 +274,7 @@ void gf2x_swap(const int length,
  */
 
 
-int gf2x_mod_inverse(DIGIT out[], const DIGIT in[])     /* in^{-1} mod x^P-1 */
+int PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_inverse(DIGIT *out, const DIGIT *in)     /* in^{-1} mod x^P-1 */
 {
    int i;
    long int delta = 0;
@@ -305,7 +305,7 @@ int gf2x_mod_inverse(DIGIT out[], const DIGIT in[])     /* in^{-1} mod x^P-1 */
    for (i = 1; i <= 2*P; i++) {
       if ( (f[0] & mask) == 0 ) {
          left_bit_shift(NUM_DIGITS_GF2X_MODULUS, f);
-         rotate_bit_left(u);
+          PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_left(u);
          delta += 1;
       } else {
          if ( (s[0] & mask) != 0) {
@@ -317,31 +317,31 @@ int gf2x_mod_inverse(DIGIT out[], const DIGIT in[])     /* in^{-1} mod x^P-1 */
          if ( delta == 0 ) {
             gf2x_swap(NUM_DIGITS_GF2X_MODULUS, f, s);
             gf2x_swap(NUM_DIGITS_GF2X_ELEMENT, u, v);
-            rotate_bit_left(u);
+             PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_left(u);
             delta = 1;
          } else {
-            rotate_bit_right(u);
+             PQCLEAN_LEDACRYPT23371_CLEAN_rotate_bit_right(u);
             delta = delta - 1;
          }
       }
    }
    for (i = NUM_DIGITS_GF2X_ELEMENT-1; i >= 0 ; i--) out[i] = u[i];
    return (delta == 0);
-} // end gf2x_mod_inverse
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_inverse
 
 
 /*----------------------------------------------------------------------------*/
 
-void gf2x_mod_mul(DIGIT Res[], const DIGIT A[], const DIGIT B[])
+void PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_mul(DIGIT *Res, const DIGIT *A, const DIGIT *B)
 {
 
    DIGIT aux[2*NUM_DIGITS_GF2X_ELEMENT];
-   GF2X_MUL(2*NUM_DIGITS_GF2X_ELEMENT, aux,
-            NUM_DIGITS_GF2X_ELEMENT, A,
-            NUM_DIGITS_GF2X_ELEMENT, B);
+    GF2X_MUL(2 * NUM_DIGITS_GF2X_ELEMENT, aux,
+             NUM_DIGITS_GF2X_ELEMENT, A,
+             NUM_DIGITS_GF2X_ELEMENT, B);
     gf2x_mod(Res, aux);
 
-} // end gf2x_mod_mul
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_mul
 
 /*----------------------------------------------------------------------------*/
 /* computes operand*x^shiftAmt + Res. assumes res is
@@ -369,10 +369,10 @@ void gf2x_fmac(DIGIT Res[],
 
 /*PRE: the representation of the sparse coefficients is sorted in increasing
  order of the coefficients themselves */
-void gf2x_mod_mul_dense_to_sparse(DIGIT Res[],
-                                  const DIGIT dense[],
-                                  const POSITION_T sparse[],
-                                  unsigned int nPos)
+void PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_mul_dense_to_sparse(DIGIT *Res,
+                                                               const DIGIT *dense,
+                                                               const uint32_t *sparse,
+                                                               unsigned int nPos)
 {
    DIGIT resDouble[2*NUM_DIGITS_GF2X_ELEMENT] = {0};
 
@@ -384,12 +384,12 @@ void gf2x_mod_mul_dense_to_sparse(DIGIT Res[],
 
     gf2x_mod(Res, resDouble);
 
-} // end gf2x_mod_mul
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_mul
 
 /*----------------------------------------------------------------------------*/
 
 
-void gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[])
+void PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_transpose_in_place_sparse(int sizeA, uint32_t *A)
 {
 
    POSITION_T t;
@@ -410,23 +410,23 @@ void gf2x_transpose_in_place_sparse(int sizeA, POSITION_T A[])
       A[i] = t;
    }
 
-} // end gf2x_transpose_in_place_sparse
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_transpose_in_place_sparse
 
 /*----------------------------------------------------------------------------*/
 /* Obtains fresh randomness and seed-expands it until all the required positions
  * for the '1's in the circulant block are obtained */
 
-void rand_circulant_sparse_block(POSITION_T *pos_ones,
-                                 const int countOnes,
-                                 AES_XOF_struct *seed_expander_ctx)
+void PQCLEAN_LEDACRYPT23371_CLEAN_rand_circulant_sparse_block(POSITION_T *pos_ones,
+                                                              const int countOnes,
+                                                              AES_XOF_struct *seed_expander_ctx)
 {
 
    int duplicated, placedOnes = 0;
 
    while (placedOnes < countOnes) {
-      int p = rand_range(NUM_BITS_GF2X_ELEMENT,
-                         BITS_TO_REPRESENT(P),
-                         seed_expander_ctx);
+      int p = PQCLEAN_LEDACRYPT23371_CLEAN_rand_range(NUM_BITS_GF2X_ELEMENT,
+                                                      BITS_TO_REPRESENT(P),
+                                                      seed_expander_ctx);
       duplicated = 0;
       for (int j = 0; j < placedOnes; j++) if (pos_ones[j] == (uint32_t)p) duplicated = 1;
       if (duplicated == 0) {
@@ -434,13 +434,13 @@ void rand_circulant_sparse_block(POSITION_T *pos_ones,
          placedOnes++;
       }
    }
-} // rand_circulant_sparse_block
+} // PQCLEAN_LEDACRYPT23371_CLEAN_rand_circulant_sparse_block
 
 /*----------------------------------------------------------------------------*/
 
-void rand_circulant_blocks_sequence(DIGIT sequence[N0*NUM_DIGITS_GF2X_ELEMENT],
-                                    const int countOnes,
-                                    AES_XOF_struct *seed_expander_ctx)
+void PQCLEAN_LEDACRYPT23371_CLEAN_rand_circulant_blocks_sequence(DIGIT *sequence,
+                                                                 const int countOnes,
+                                                                 AES_XOF_struct *seed_expander_ctx)
 {
 
    int rndPos[countOnes],  duplicated, counter = 0;
@@ -448,8 +448,8 @@ void rand_circulant_blocks_sequence(DIGIT sequence[N0*NUM_DIGITS_GF2X_ELEMENT],
 
 
    while (counter < countOnes) {
-      int p = rand_range(N0*NUM_BITS_GF2X_ELEMENT,BITS_TO_REPRESENT(P),
-                         seed_expander_ctx);
+      int p = PQCLEAN_LEDACRYPT23371_CLEAN_rand_range(N0 * NUM_BITS_GF2X_ELEMENT, BITS_TO_REPRESENT(P),
+                                                      seed_expander_ctx);
       duplicated = 0;
       for (int j = 0; j < counter; j++) if (rndPos[j] == p) duplicated = 1;
       if (duplicated == 0) {
@@ -463,18 +463,18 @@ void rand_circulant_blocks_sequence(DIGIT sequence[N0*NUM_DIGITS_GF2X_ELEMENT],
       gf2x_set_coeff( sequence + NUM_DIGITS_GF2X_ELEMENT*polyIndex, exponent,
                       ( (DIGIT) 1));
    }
-} // end rand_circulant_blocks_sequence
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rand_circulant_blocks_sequence
 /*----------------------------------------------------------------------------*/
 
-void rand_error_pos(POSITION_T errorPos[NUM_ERRORS_T],
-                    AES_XOF_struct *seed_expander_ctx)
+void PQCLEAN_LEDACRYPT23371_CLEAN_rand_error_pos(uint32_t *errorPos,
+                                                 AES_XOF_struct *seed_expander_ctx)
 {
 
    int duplicated, counter = 0;
 
    while (counter < NUM_ERRORS_T) {
-      int p = rand_range(N0*NUM_BITS_GF2X_ELEMENT,BITS_TO_REPRESENT(P),
-                         seed_expander_ctx);
+      int p = PQCLEAN_LEDACRYPT23371_CLEAN_rand_range(N0 * NUM_BITS_GF2X_ELEMENT, BITS_TO_REPRESENT(P),
+                                                      seed_expander_ctx);
       duplicated = 0;
       for (int j = 0; j < counter; j++) if (errorPos[j] == (uint32_t)p) duplicated = 1;
       if (duplicated == 0) {
@@ -482,19 +482,19 @@ void rand_error_pos(POSITION_T errorPos[NUM_ERRORS_T],
          counter++;
       }
    }
-} // end rand_error_pos
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rand_error_pos
 
 /*----------------------------------------------------------------------------*/
 
-void rand_error_pos_shake(POSITION_T errorPos[NUM_ERRORS_T],
-                          xof_shake_t *state)
+void PQCLEAN_LEDACRYPT23371_CLEAN_rand_error_pos_shake(uint32_t *errorPos,
+                                                       xof_shake_t *state)
 {
 
    int duplicated, counter = 0;
 
    while (counter < NUM_ERRORS_T) {
-      int p = rand_range_shake(N0*NUM_BITS_GF2X_ELEMENT,BITS_TO_REPRESENT(P),
-                               state);
+      int p = PQCLEAN_LEDACRYPT23371_CLEAN_rand_range_shake(N0 * NUM_BITS_GF2X_ELEMENT, BITS_TO_REPRESENT(P),
+                                                            state);
       duplicated = 0;
       for (int j = 0; j < counter; j++) if (errorPos[j] == (uint32_t)p) duplicated = 1;
       if (duplicated == 0) {
@@ -502,12 +502,12 @@ void rand_error_pos_shake(POSITION_T errorPos[NUM_ERRORS_T],
          counter++;
       }
    }
-} // end rand_error_pos_shake
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rand_error_pos_shake
 
 /*----------------------------------------------------------------------------*/
 
-void expand_error(DIGIT sequence[N0*NUM_DIGITS_GF2X_ELEMENT],
-                  POSITION_T errorPos[NUM_ERRORS_T])
+void PQCLEAN_LEDACRYPT23371_CLEAN_expand_error(DIGIT *sequence,
+                                               uint32_t *errorPos)
 {
    memset(sequence, 0x00, N0*NUM_DIGITS_GF2X_ELEMENT*DIGIT_SIZE_B);
 
@@ -517,6 +517,6 @@ void expand_error(DIGIT sequence[N0*NUM_DIGITS_GF2X_ELEMENT],
       gf2x_set_coeff( sequence + NUM_DIGITS_GF2X_ELEMENT*polyIndex, exponent,
                       ( (DIGIT) 1));
    }
-} // end rand_circulant_blocks_sequence
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_rand_circulant_blocks_sequence
 
 /*----------------------------------------------------------------------------*/

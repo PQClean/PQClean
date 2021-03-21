@@ -46,7 +46,7 @@
 
 #define MIN_KAR_DIGITS 9
 #define MIN_TOOM_DIGITS 50
-#define GF2X_MUL gf2x_mul_TC3
+#define GF2X_MUL PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mul_TC3
 
 /*----------------------------------------------------------------------------*/
 
@@ -60,16 +60,16 @@ static inline void gf2x_add(const int nr, DIGIT Res[],
 
 /*----------------------------------------------------------------------------*/
 
-void GF2X_MUL(const int nr, DIGIT Res[],
-              const int na, const DIGIT A[],
-              const int nb, const DIGIT B[]
-             );
+void GF2X_MUL(const int nr, DIGIT *Res,
+              const int na, const DIGIT *A,
+              const int nb, const DIGIT *B
+);
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void right_bit_shift_n(const int length, DIGIT in[], const int amount);
+void PQCLEAN_LEDACRYPT23371_CLEAN_right_bit_shift_n(const int length, DIGIT *in, const int amount);
 
 /* PRE: MAX ALLOWED ROTATION AMOUNT : DIGIT_SIZE_b */
-void left_bit_shift_n(const int length, DIGIT in[], const int amount);
+void PQCLEAN_LEDACRYPT23371_CLEAN_left_bit_shift_n(const int length, DIGIT *in, const int amount);
 /*----------------------------------------------------------------------------*/
 
 #endif

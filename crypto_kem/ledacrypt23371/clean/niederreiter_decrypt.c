@@ -10,42 +10,42 @@
 #include "fips202.h"
 #include <string.h>
 
-extern int thresholds[2];
+extern int PQCLEAN_LEDACRYPT23371_CLEAN_thresholds[2];
 /*----------------------------------------------------------------------------*/
 static
-int decrypt_niederreiter(DIGIT err[],            // N0 circ poly
+int decrypt_niederreiter(DIGIT *err,            // N0 circ poly
                          const privateKeyNiederreiter_t *const sk,
-                         const DIGIT syndrome[]  // 1 circ poly
+                         const DIGIT *syndrome  // 1 circ poly
                         )
 {
    AES_XOF_struct niederreiter_decrypt_expander;
-   seedexpander_from_trng(&niederreiter_decrypt_expander,
-                          sk->prng_seed);
+    PQCLEAN_LEDACRYPT23371_CLEAN_seedexpander_from_trng(&niederreiter_decrypt_expander,
+                                                        sk->prng_seed);
    /* rebuild secret key values */
    POSITION_T HPosOnes[N0][V];
 
    int rejections =  sk->rejections;
-   thresholds[1] = sk->secondIterThreshold;
+   PQCLEAN_LEDACRYPT23371_CLEAN_thresholds[1] = sk->secondIterThreshold;
 
    do {
-      generateHPosOnes(HPosOnes, &niederreiter_decrypt_expander);
+      PQCLEAN_LEDACRYPT23371_CLEAN_generateHPosOnes(HPosOnes, &niederreiter_decrypt_expander);
       rejections--;
    } while(rejections>=0);
 
    POSITION_T HtrPosOnes[N0][V];
-   transposeHPosOnes(HtrPosOnes, (const POSITION_T(*)[V]) HPosOnes);
+   PQCLEAN_LEDACRYPT23371_CLEAN_transposeHPosOnes(HtrPosOnes, (const POSITION_T(*)[V]) HPosOnes);
 
    DIGIT privateSyndrome[NUM_DIGITS_GF2X_ELEMENT];
    int decryptOk = 0;
    DIGIT err_computed[N0*NUM_DIGITS_GF2X_ELEMENT*DIGIT_SIZE_B] = {0};
-   gf2x_mod_mul_dense_to_sparse(privateSyndrome,
-                                syndrome,
-                                HtrPosOnes[N0-1],
-                                V);
+    PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_mod_mul_dense_to_sparse(privateSyndrome,
+                                                              syndrome,
+                                                              HtrPosOnes[N0 - 1],
+                                                              V);
 
-   decryptOk = bf_decoding(err_computed,
-                           (const POSITION_T (*)[V]) HtrPosOnes,
-                           privateSyndrome);
+   decryptOk = PQCLEAN_LEDACRYPT23371_CLEAN_bf_decoding(err_computed,
+                                                        (const POSITION_T (*)[V]) HtrPosOnes,
+                                                        privateSyndrome);
    int err_weight = 0;
    for (int i =0 ; i < N0; i++) {
       err_weight += population_count(err_computed+(NUM_DIGITS_GF2X_ELEMENT*i));
@@ -75,15 +75,15 @@ int decrypt_niederreiter(DIGIT err[],            // N0 circ poly
 
 /*----------------------------------------------------------------------------*/
 
-void decrypt_niederreiter_indcca2(unsigned char *const ss,
-                                  const unsigned char *const ct,
-                                  const privateKeyNiederreiter_t *const sk)
+void PQCLEAN_LEDACRYPT23371_CLEAN_decrypt_niederreiter_indcca2(unsigned char *const ss,
+                                                               const unsigned char *const ct,
+                                                               const privateKeyNiederreiter_t *const sk)
 {
    DIGIT decoded_error_vector[N0*NUM_DIGITS_GF2X_ELEMENT];
 
    int decode_ok = decrypt_niederreiter(decoded_error_vector,
                                         sk,
-                                        (DIGIT *)ct);
+                                        (DIGIT *) ct);
    // the masked seed is appended to the syndrome (ct) by the encryptor ...
    // this call to decrypt_niederreiter(....) is ok!
 
@@ -125,14 +125,14 @@ void decrypt_niederreiter_indcca2(unsigned char *const ss,
 
    AES_XOF_struct hashedAndTruncaedSeed_expander;
    memset(&hashedAndTruncaedSeed_expander, 0x00, sizeof(AES_XOF_struct));
-   seedexpander_from_trng(&hashedAndTruncaedSeed_expander,
-                          hashed_decoded_seed);
+    PQCLEAN_LEDACRYPT23371_CLEAN_seedexpander_from_trng(&hashedAndTruncaedSeed_expander,
+                                                        hashed_decoded_seed);
 
    POSITION_T reconstructed_errorPos[NUM_ERRORS_T];
-   rand_error_pos(reconstructed_errorPos, &hashedAndTruncaedSeed_expander);
+    PQCLEAN_LEDACRYPT23371_CLEAN_rand_error_pos(reconstructed_errorPos, &hashedAndTruncaedSeed_expander);
 
    DIGIT reconstructed_error_vector[N0*NUM_DIGITS_GF2X_ELEMENT];
-   expand_error(reconstructed_error_vector, reconstructed_errorPos);
+    PQCLEAN_LEDACRYPT23371_CLEAN_expand_error(reconstructed_error_vector, reconstructed_errorPos);
 
    int equal = (0 == memcmp((const unsigned char *) decoded_error_vector,
                             (const unsigned char *) reconstructed_error_vector,
@@ -162,4 +162,4 @@ void decrypt_niederreiter_indcca2(unsigned char *const ss,
                  2*TRNG_BYTE_LENGTH                // input Length
                  );
 
-} // end decrypt_niederreiter_indcca2
+} // end PQCLEAN_LEDACRYPT23371_CLEAN_decrypt_niederreiter_indcca2

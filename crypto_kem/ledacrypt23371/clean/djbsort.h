@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void int32_sort(int32_t *x,long long n);
+void PQCLEAN_LEDACRYPT23371_CLEAN_int32_sort(int32_t *x, long long n);
 
 #endif
 
