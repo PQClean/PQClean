@@ -18,15 +18,11 @@ void gf2x_mod(DIGIT out[], const DIGIT in[])
 {
    DIGIT aux[NUM_DIGITS_GF2X_ELEMENT+1];
    memcpy(aux, in, (NUM_DIGITS_GF2X_ELEMENT+1)*DIGIT_SIZE_B);
-#if MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS != 0
     PQCLEAN_LEDACRYPT23371_CLEAN_right_bit_shift_n(NUM_DIGITS_GF2X_ELEMENT + 1, aux,
                                                    MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS);
-#endif
    gf2x_add(NUM_DIGITS_GF2X_ELEMENT,out,
             aux+1,in+NUM_DIGITS_GF2X_ELEMENT);
-#if MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS != 0
    out[0] &=  ((DIGIT)1 << MSb_POSITION_IN_MSB_DIGIT_OF_MODULUS) - 1 ;
-#endif
 
 } // end gf2x_mod
 
@@ -83,40 +79,13 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_left_bit_shift_wide_n(const int length, DIGIT 
 
 /*----------------------------------------------------------------------------*/
 
-#if (defined(DIGIT_IS_UINT8) || defined(DIGIT_IS_UINT16))
-static
-uint8_t byte_reverse_with_less32bitDIGIT(uint8_t b)
-{
-   uint8_t r = b;
-   int s = (sizeof(b) << 3) - 1;
-   for (b >>= 1; b; b >>= 1) {
-      r <<= 1;
-      r |= b & 1;
-      s--;
-   }
-   r <<= s;
-   return r;
-} // end byte_reverse_less32bitDIGIT
-#endif
 
-#if defined(DIGIT_IS_UINT32)
-static
-uint8_t byte_reverse_with_32bitDIGIT(uint8_t b)
-{
-   b = ( (b * 0x0802LU & 0x22110LU) | (b * 0x8020LU & 0x88440LU)
-       ) * 0x10101LU >> 16;
-   return b;
-} // end byte_reverse_32bitDIGIT
-#endif
-
-#if defined(DIGIT_IS_UINT64)
 static
 uint8_t byte_reverse_with_64bitDIGIT(uint8_t b)
 {
    b = (b * 0x0202020202ULL & 0x010884422010ULL) % 1023;
    return b;
 } // end byte_reverse_64bitDIGIT
-#endif
 
 /*----------------------------------------------------------------------------*/
 
@@ -130,24 +99,9 @@ DIGIT reverse_digit(const DIGIT b)
    } toReverse;
 
    toReverse.digitValue = b;
-#if defined(DIGIT_IS_UINT64)
    for (i = 0; i < DIGIT_SIZE_B; i++)
       toReverse.inByte[i] = byte_reverse_with_64bitDIGIT(toReverse.inByte[i]);
    return __builtin_bswap64(toReverse.digitValue);
-#elif defined(DIGIT_IS_UINT32)
-   for (i = 0; i < DIGIT_SIZE_B; i++)
-      toReverse.inByte[i] = byte_reverse_with_32bitDIGIT(toReverse.inByte[i]);
-   return __builtin_bswap32(toReverse.digitValue);
-#elif defined(DIGIT_IS_UINT16)
-   for (i = 0; i < DIGIT_SIZE_B; i++)
-      toReverse.inByte[i] = byte_reverse_with_less32bitDIGIT(toReverse.inByte[i]);
-   reversed = __builtin_bswap16(toReverse.digitValue);
-#elif defined(DIGIT_IS_UINT8)
-   return byte_reverse_with_less32bitDIGIT(toReverse.inByte[0]);
-#else
-#error "Missing implementation for reverse_digit(...) \
-with this CPU word bitsize !!! "
-#endif
    return toReverse.digitValue;
 } // end reverse_digit
 
@@ -168,9 +122,6 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_gf2x_transpose_in_place(DIGIT *A)
       a00 = A[0] & mask;
       right_bit_shift(1, A);
       rev1 = reverse_digit(A[0]);
-#if (NUM_DIGITS_GF2X_MOD_P_ELEMENT*DIGIT_SIZE_b - P)
-      rev1 >>= (DIGIT_SIZE_b-(P%DIGIT_SIZE_b));
-#endif
       A[0] = (rev1 & (~mask)) | a00;
       return;
    }

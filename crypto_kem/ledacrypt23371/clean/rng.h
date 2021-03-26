@@ -51,18 +51,11 @@ uint32_t PQCLEAN_LEDACRYPT23371_CLEAN_rand_range(const int n, const int logn, AE
 
 typedef
 struct xof_shake {
-#if SHAKE_FUNCTION == shake_128
 #define SHAKE_BUFFER_LENGTH (168)
     shake128incctx state;
-#elif SHAKE_FUNCTION == shake_256
-#define SHAKE_BUFFER_LENGTH (136)
-    shake256incctx state;
-#else
-#error "SHAKE FUNCTION SELECTION FAILED !"
-#endif
-   uint8_t buffer[SHAKE_BUFFER_LENGTH];
-   int last_filled_byte_idx;
-   int idx;
+    uint8_t buffer[SHAKE_BUFFER_LENGTH];
+    int last_filled_byte_idx;
+    int idx;
 } xof_shake_t;
 
 

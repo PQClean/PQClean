@@ -175,11 +175,7 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_seedexpander_from_trng(AES_XOF_struct *ctx,
           trng_entropy,
           TRNG_BYTE_LENGTH < prng_buffer_size ? TRNG_BYTE_LENGTH : prng_buffer_size);
    /* if extra entropy is provided, add it to the diversifier */
-#if TRNG_BYTE_LENGTH == 40
-   unsigned char *diversifier = ((unsigned char *)trng_entropy)+32;
-#else
    unsigned char diversifier[8] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-#endif
    /* the required seed expansion will be quite small, set the max number of
     * bytes conservatively to 10 MiB*/
    seedexpander_init(ctx,prng_buffer,diversifier,10*1024*1024);
@@ -219,7 +215,6 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_init(xof_shake_t *st,
                              /* TRNG_BYTE_LENGTH wide buffer */)
 {
    memset(st, 0x00, sizeof(xof_shake_t));
-#if SHAKE_FUNCTION == shake_128
     shake128_inc_init(&(st->state));
     shake128_inc_absorb(&(st->state),
                         (const uint8_t *) trng_entropy,
@@ -228,18 +223,6 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_init(xof_shake_t *st,
     shake128_inc_finalize(&(st->state)
     );
     st->last_filled_byte_idx = 15;
-#elif SHAKE_FUNCTION == shake_256
-    shake256_inc_init(&(st->state));
-    shake256_inc_absorb(&(st->state),
-                     (const uint8_t *) trng_entropy,
-                     (size_t) (TRNG_BYTE_LENGTH*8)
-                    );
-    shake256_inc_finalize(&(st->state)
-                   );
-    st->last_filled_byte_idx = 31;
-#else
-#error "SHAKE FUNCTION SELECTION FAILED !"
-#endif
 
    st->idx = 0;
 } // end PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_init
@@ -258,19 +241,11 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_shake_seedexpander_extract(xof_shake_t *st,
       outIdx += 1;
    } // end for
    while (remaining_bytes_to_output > 0) {
-#if SHAKE_FUNCTION == shake_128
        shake128_inc_squeeze((st->buffer),
                          (size_t) (SHAKE_BUFFER_LENGTH*8),
                          &(st->state)
                         );
-#elif SHAKE_FUNCTION == shake_256
-       shake256_inc_squeeze((st->buffer),
-                         (size_t) (SHAKE_BUFFER_LENGTH*8),
-                         &(st->state)
-                        );
-#else
-#error "SHAKE FUNCTION SELECTION FAILED !"
-#endif
+
       st->last_filled_byte_idx = SHAKE_BUFFER_LENGTH-1;
       st->idx = 0;
       for ( ; st->idx <= st->last_filled_byte_idx &&

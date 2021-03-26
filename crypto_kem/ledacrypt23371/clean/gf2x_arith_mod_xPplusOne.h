@@ -93,21 +93,7 @@ static inline int population_count(DIGIT upc[])
 {
    int ret = 0;
    for(int i = NUM_DIGITS_GF2X_ELEMENT - 1; i >= 0; i--) {
-#if defined(DIGIT_IS_ULLONG)
       ret += __builtin_popcountll((unsigned long long int) (upc[i]));
-#elif defined(DIGIT_IS_ULONG)
-      ret += __builtin_popcountl((unsigned long int) (upc[i]));
-#elif defined(DIGIT_IS_UINT)
-      ret += __builtin_popcount((unsigned int) (upc[i]));
-#elif defined(DIGIT_IS_UCHAR)
-      const unsigned char split_lookup[] = {
-         0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4
-      };
-      ret += split_lookup[upc[i]&0xF] + split_lookup[upc[i]>>4];
-#else
-#error "Missing implementation for population_count(...) \
-with this CPU word bitsize !!! "
-#endif
    }
    return ret;
 } // end population_count

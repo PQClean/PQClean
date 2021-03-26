@@ -94,11 +94,7 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_decrypt_niederreiter_indcca2(unsigned char *co
                  );
 
    uint8_t hashedAndTruncaedErrorVector[TRNG_BYTE_LENGTH] = {0};
-#if (TRNG_BYTE_LENGTH <= HASH_BYTE_LENGTH)
    memcpy(hashedAndTruncaedErrorVector, hashedErrorVector, TRNG_BYTE_LENGTH);
-#else
-   memcpy(hashedAndTruncaedErrorVector, hashedErrorVector, HASH_BYTE_LENGTH);
-#endif
 
    uint8_t decoded_seed[TRNG_BYTE_LENGTH];
    for (int i = 0; i < TRNG_BYTE_LENGTH; ++i) {
@@ -113,15 +109,10 @@ void PQCLEAN_LEDACRYPT23371_CLEAN_decrypt_niederreiter_indcca2(unsigned char *co
                  TRNG_BYTE_LENGTH                    // input Length
                  );
 
-#if (TRNG_BYTE_LENGTH <= HASH_BYTE_LENGTH)
    memcpy(hashedAndTruncaed_decoded_seed,
           hashed_decoded_seed,
           TRNG_BYTE_LENGTH);
-#else
-   memcpy(hashedAndTruncaed_decoded_seed,
-          hashed_decoded_seed,
-          HASH_BYTE_LENGTH);
-#endif
+
 
    AES_XOF_struct hashedAndTruncaedSeed_expander;
    memset(&hashedAndTruncaedSeed_expander, 0x00, sizeof(AES_XOF_struct));
