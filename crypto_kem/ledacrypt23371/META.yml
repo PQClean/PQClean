@@ -8,13 +8,13 @@ length-ciphertext: 2952
 length-shared-secret: 32
 nistkat-sha256: c0b5a0c5ea96c69f172e5362bdd95a82e70cdec78c3b501b459d355717a30b86
 principal-submitters:
-  - Alice
-  - Bob
-  - ...
+  - Marco Baldi
+  - Alessandro Barenghi
+  - Franco Chiaraluce
+  - Gerardo Pelosi
+  - Paolo Santini
 auxiliary-submitters:
-  - Alice
-  - Bob
-  - ...
+  - Emanuele Pisano
 implementations:
   - name: clean
     version: 1
