@@ -38,7 +38,7 @@ name: Test kyber512-90s
 
 jobs:
   test-native:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     container:
       image: pqclean/ci-container:${{ matrix.arch }}
       env:
@@ -90,7 +90,7 @@ jobs:
   test-emulated:
     needs:
       - test-native
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     strategy:
       matrix:
         arch:
