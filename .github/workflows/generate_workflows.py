@@ -56,7 +56,13 @@ if __name__ == "__main__":
     root = Path("../..")
 
     paths = root.glob("crypto_*/*")
+    result = 0
     for path in paths:
-        result = render_workflow(path)
+        result |= render_workflow(path)
+    for workflow in Path(".").glob("*_*.yml"):
+        scheme_type, scheme_name = str(workflow)[:-4].split("_", 1)
+        if not (root / f"crypto_{scheme_type}" / scheme_name).exists():
+            print(f"{workflow} seems stale and should be deleted!")
+            result = 1
 
     sys.exit(result)
