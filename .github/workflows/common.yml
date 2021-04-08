@@ -4,7 +4,7 @@ name: Test common files and sanity checks
 
 jobs:
   test-native:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     container:
       image: pqclean/ci-container:${{ matrix.arch }}
       env:
@@ -47,7 +47,7 @@ jobs:
           python3 test_common.py --numprocesses=auto
           python3 test_workflows.py
   test-emulated:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, linux]
     strategy:
       matrix:
         arch:
