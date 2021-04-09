@@ -47,6 +47,7 @@ jobs:
         CCACHE_NOSTATS: 1
         CCACHE_DIR: /ccache
         CCACHE_SLOPPINESS: include_file_mtime
+      options: "--user actions"
     strategy:
       matrix:
         arch:
