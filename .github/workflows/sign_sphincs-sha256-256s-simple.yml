@@ -47,7 +47,6 @@ jobs:
         CCACHE_NOSTATS: 1
         CCACHE_DIR: /ccache
         CCACHE_SLOPPINESS: include_file_mtime
-      options: "--user actions"
     strategy:
       matrix:
         arch:
@@ -125,7 +124,7 @@ jobs:
           key: v1-python-pip
       - name: Run tests in container
         run: |
-          docker run -u $USER --rm -e CI -e CC -e PQCLEAN_ONLY_SCHEMES=sphincs-sha256-256s-simple -v $PWD:$PWD -w $PWD -v ~/ccache:/ccache pqclean/ci-container:${{ matrix.arch }} /bin/bash -c "\
+          docker run -u $(id -u) --rm -e CI -e CC -e PQCLEAN_ONLY_SCHEMES=sphincs-sha256-256s-simple -v $PWD:$PWD -w $PWD -v ~/ccache:/ccache pqclean/ci-container:${{ matrix.arch }} /bin/bash -c "\
           export CCACHE_NOSTATS=1 && \
           export CCACHE_DIR=/ccache && \
           export CCACHE_SLOPPINESS=include_file_mtime && \
