@@ -1,0 +1,1 @@
+/** Empty on purpose so preprocessor / compiler-specific stuff does not choke test_char.py **/

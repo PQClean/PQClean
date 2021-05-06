@@ -55,6 +55,7 @@ def test_char(implementation):
                 '-E',
                 '-std=c99',
                 '-nostdinc',  # pycparser cannot deal with e.g. __attribute__
+                '-I{}'.format(os.path.join(tdir, "common")),  # include test common files to overrule compat.h
                 '-I{}'.format(os.path.join(tdir, "../common")),
                 # necessary to mock e.g. <stdint.h>
                 '-I{}'.format(
