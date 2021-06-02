@@ -4,6 +4,7 @@ consistency_checks:
     implementation: clean
   files:
       - crypto_core_multsntrup653.h
+      - crypto_declassify.h
       - crypto_decode_653x1541.h
       - crypto_decode_653x3.h
       - crypto_decode_653xint16.h
@@ -14,7 +15,6 @@ consistency_checks:
       - crypto_encode_653xint16.h
       - crypto_sort_int32.h
       - crypto_sort_uint32.h
-      - crypto_stream_aes256ctr.h
       - crypto_core_multsntrup653.c
       - crypto_decode_653x1541.c
       - crypto_decode_653x3.c
@@ -26,12 +26,12 @@ consistency_checks:
       - crypto_encode_653xint16.c
       - crypto_sort_int32.c
       - crypto_sort_uint32.c
-      - crypto_stream_aes256ctr.c
 - source:
     scheme: sntrup653
     implementation: avx2
   files:
       - crypto_core_multsntrup653.h
+      - crypto_declassify.h
       - crypto_decode_653x1541.h
       - crypto_decode_653x3.h
       - crypto_decode_653xint16.h
@@ -41,54 +41,49 @@ consistency_checks:
       - crypto_encode_653x3.h
       - crypto_encode_653xint16.h
       - crypto_sort_uint32.h
-      - crypto_stream_aes256ctr.h
       - crypto_decode_653xint16.c
       - crypto_decode_653xint32.c
       - crypto_encode_653xint16.c
       - crypto_sort_uint32.c
-      - crypto_stream_aes256ctr.c
 - source:
     scheme: sntrup761
     implementation: clean
   files:
+      - crypto_declassify.h
       - crypto_sort_int32.h
       - crypto_sort_uint32.h
-      - crypto_stream_aes256ctr.h
       - crypto_sort_int32.c
       - crypto_sort_uint32.c
-      - crypto_stream_aes256ctr.c
 - source:
     scheme: sntrup761
     implementation: avx2
   files:
+      - crypto_declassify.h
       - crypto_sort_uint32.h
-      - crypto_stream_aes256ctr.h
       - crypto_sort_uint32.c
-      - crypto_stream_aes256ctr.c
 - source:
     scheme: sntrup857
     implementation: clean
   files:
+      - crypto_declassify.h
       - crypto_sort_int32.h
       - crypto_sort_uint32.h
-      - crypto_stream_aes256ctr.h
       - crypto_sort_int32.c
       - crypto_sort_uint32.c
-      - crypto_stream_aes256ctr.c
 - source:
     scheme: sntrup857
     implementation: avx2
   files:
+      - crypto_declassify.h
       - crypto_sort_uint32.h
-      - crypto_stream_aes256ctr.h
       - crypto_sort_uint32.c
-      - crypto_stream_aes256ctr.c
 - source:
     scheme: ntrulpr653
     implementation: avx2
   files:
       - api.h
       - crypto_core_multsntrup653.h
+      - crypto_declassify.h
       - crypto_decode_256x16.h
       - crypto_decode_256x2.h
       - crypto_decode_653x1541.h
@@ -116,6 +111,7 @@ consistency_checks:
     scheme: ntrulpr761
     implementation: clean
   files:
+      - crypto_declassify.h
       - crypto_decode_256x16.h
       - crypto_decode_256x2.h
       - crypto_encode_256x16.h
@@ -135,6 +131,7 @@ consistency_checks:
     scheme: ntrulpr761
     implementation: avx2
   files:
+      - crypto_declassify.h
       - crypto_decode_256x16.h
       - crypto_decode_256x2.h
       - crypto_encode_256x16.h
@@ -150,6 +147,7 @@ consistency_checks:
     scheme: ntrulpr857
     implementation: clean
   files:
+      - crypto_declassify.h
       - crypto_decode_256x16.h
       - crypto_decode_256x2.h
       - crypto_encode_256x16.h
@@ -169,6 +167,7 @@ consistency_checks:
     scheme: ntrulpr857
     implementation: avx2
   files:
+      - crypto_declassify.h
       - crypto_decode_256x16.h
       - crypto_decode_256x2.h
       - crypto_encode_256x16.h

@@ -29,6 +29,10 @@ static inline __m256i signedshiftrightconst(__m256i x, int16 y) {
     return _mm256_srai_epi16(x, y);
 }
 
+static inline __m256i addconst(__m256i x, int16 y) {
+    return add(x, _mm256_set1_epi16(y));
+}
+
 static inline __m256i subconst(__m256i x, int16 y) {
     return sub(x, _mm256_set1_epi16(y));
 }

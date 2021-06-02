@@ -4,7 +4,7 @@
 #include "params.h"
 #include "randombytes.h"
 #include "sha2.h"
-
+#include <stdlib.h> /* for abort() in case of OpenSSL failures */
 
 
 #define int8 int8_t
@@ -35,7 +35,7 @@ typedef int8 small;
 #define q12 ((q-1)/2)
 typedef int16 Fq;
 
-/* works for -14000000 < x < 14000000 if q in 4591, 4621, 5167 */
+/* works for -7000000 < x < 7000000 if q in 4591, 4621, 5167, 6343, 7177, 7879 */
 /* assumes twos complement; use, e.g., gcc -fwrapv */
 static Fq Fq_freeze(int32 x) {
     x -= (int32) (q * ((q18 * x) >> 18));
@@ -126,7 +126,9 @@ static void Generator(Fq *G, const unsigned char *pk) {
     uint32 L[p];
     int i;
 
-    PQCLEAN_NTRULPR761_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, pk);
+    if (PQCLEAN_NTRULPR761_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, pk) != 0) {
+        abort();
+    }
     crypto_decode_pxint32(L, (unsigned char *) L);
     for (i = 0; i < p; ++i) {
         G[i] = Fq_bigfreeze(L[i]) - q12;
@@ -156,7 +158,9 @@ static void Hide(unsigned char *c, unsigned char *r_enc, const Inputs r, const u
             s[0] = 5;
             Hash(h, s, sizeof s);
         }
-        PQCLEAN_NTRULPR761_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, h);
+        if (PQCLEAN_NTRULPR761_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, h) != 0) {
+            abort();
+        }
         crypto_decode_pxint32(L, (unsigned char *) L);
         Short_fromlist(b, L);
     }

@@ -14,9 +14,9 @@ principal-submitters:
   - Christine van Vredendaal
 implementations:
     - name: clean
-      version: supercop-20200826
+      version: supercop-20210529 via https://github.com/jschanck/package-pqclean/tree/a1b23384/ntruprime
     - name: avx2
-      version: supercop-20200826
+      version: supercop-20210529 via https://github.com/jschanck/package-pqclean/tree/a1b23384/ntruprime
       supported_platforms:
           - architecture: x86_64
             operating_systems:

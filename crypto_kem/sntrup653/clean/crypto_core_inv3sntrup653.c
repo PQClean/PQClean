@@ -88,10 +88,10 @@ int PQCLEAN_SNTRUP653_CLEAN_crypto_core_inv3sntrup653(unsigned char *outbytes, c
         }
 
         for (i = 0; i < p + 1; ++i) {
-            g[i] = F3_freeze((int16) (g[i] + sign * f[i]));
+            g[i] = F3_freeze((int16) g[i] + sign * f[i]);
         }
         for (i = 0; i < p + 1; ++i) {
-            r[i] = F3_freeze((int16) (r[i] + sign * v[i]));
+            r[i] = F3_freeze((int16) r[i] + sign * v[i]);
         }
 
         for (i = 0; i < p; ++i) {
@@ -100,11 +100,11 @@ int PQCLEAN_SNTRUP653_CLEAN_crypto_core_inv3sntrup653(unsigned char *outbytes, c
         g[p] = 0;
     }
 
-    sign = f[0];
+    sign = (int) f[0];
     for (i = 0; i < p; ++i) {
         out[i] = (small) (sign * v[p - 1 - i]);
     }
 
-    out[p] = (small) int16_nonzero_mask((int16) delta);
+    out[p] = (small) int16_nonzero_mask(delta);
     return 0;
 }
