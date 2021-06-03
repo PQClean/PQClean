@@ -105,6 +105,6 @@ int PQCLEAN_SNTRUP653_CLEAN_crypto_core_inv3sntrup653(unsigned char *outbytes, c
         out[i] = (small) (sign * v[p - 1 - i]);
     }
 
-    out[p] = (small) int16_nonzero_mask(delta);
+    out[p] = (small) int16_nonzero_mask((int16) delta);
     return 0;
 }
