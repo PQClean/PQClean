@@ -4,7 +4,7 @@
 #include "params.h"
 #include "randombytes.h"
 #include "sha2.h"
-#include <stdlib.h> /* for abort() in case of OpenSSL failures */
+
 
 
 #define int8 int8_t
@@ -126,9 +126,7 @@ static void Generator(Fq *G, const unsigned char *pk) {
     uint32 L[p];
     int i;
 
-    if (PQCLEAN_NTRULPR857_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, pk) != 0) {
-        abort();
-    }
+    PQCLEAN_NTRULPR857_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, pk);
     crypto_decode_pxint32(L, (unsigned char *) L);
     for (i = 0; i < p; ++i) {
         G[i] = Fq_bigfreeze(L[i]) - q12;
@@ -158,9 +156,7 @@ static void Hide(unsigned char *c, unsigned char *r_enc, const Inputs r, const u
             s[0] = 5;
             Hash(h, s, sizeof s);
         }
-        if (PQCLEAN_NTRULPR857_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, h) != 0) {
-            abort();
-        }
+        PQCLEAN_NTRULPR857_AVX2_crypto_stream_aes256ctr((unsigned char *) L, 4 * p, aes_nonce, h);
         crypto_decode_pxint32(L, (unsigned char *) L);
         Short_fromlist(b, L);
     }
