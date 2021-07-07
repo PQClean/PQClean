@@ -1,0 +1,19 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY=libgemss-192_clean.lib
+OBJECTS=add_gf2n.obj changeVariablesMQS_gf2.obj chooseRootHFE_gf2nx.obj conv_gf2nx.obj convMQ_gf2.obj convMQS_gf2.obj determinantn_gf2.obj determinantnv_gf2.obj div_gf2nx.obj dotProduct_gf2n.obj evalMQnocst_gf2.obj evalMQShybrid_gf2.obj evalMQSnocst8_gf2.obj evalMQSnocst8_quo_gf2.obj evalMQSv_gf2.obj findRoots_gf2nx.obj findRootsSplit_gf2nx.obj frobeniusMap_gf2nx.obj gcd_gf2nx.obj genCanonicalBasis_gf2n.obj genSecretMQS_gf2.obj initListDifferences_gf2nx.obj initMatrixId_gf2.obj inv_gf2n.obj invMatrixn_gf2.obj invMatrixnv_gf2.obj mixEquationsMQS_gf2.obj mul_gf2n.obj predicate.obj rand_gf2nx.obj randMatrix_gf2.obj rem_gf2n.obj sign.obj signHFE.obj sign_keypairHFE.obj sign_openHFE.obj sort_gf2n.obj sqr_gf2n.obj sqr_gf2nx.obj vecMatProduct_gf2.obj 
+
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)
