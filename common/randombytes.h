@@ -3,7 +3,7 @@
 #include <stdint.h>
 
 #ifdef _WIN32
-#include <CRTDEFS.H>
+#include <crtdefs.h>
 #else
 #include <unistd.h>
 #endif
