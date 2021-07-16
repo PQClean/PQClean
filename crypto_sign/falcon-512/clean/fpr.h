@@ -126,6 +126,7 @@ typedef uint64_t fpr;
  *
  * Shift count n MUST be in the 0..63 range.
  */
+#define fpr_ursh   PQCLEAN_FALCON512_CLEAN_fpr_ursh
 uint64_t fpr_ursh(uint64_t x, int n);
 
 /*
@@ -134,6 +135,7 @@ uint64_t fpr_ursh(uint64_t x, int n);
  *
  * Shift count n MUST be in the 0..63 range.
  */
+#define fpr_irsh   PQCLEAN_FALCON512_CLEAN_fpr_irsh
 int64_t fpr_irsh(int64_t x, int n);
 
 /*
@@ -142,6 +144,7 @@ int64_t fpr_irsh(int64_t x, int n);
  *
  * Shift count n MUST be in the 0..63 range.
  */
+#define fpr_ulsh   PQCLEAN_FALCON512_CLEAN_fpr_ulsh
 uint64_t fpr_ulsh(uint64_t x, int n);
 
 /*
@@ -159,12 +162,14 @@ uint64_t fpr_ulsh(uint64_t x, int n);
  * If e >= -1076 and e != 0, m must be within the expected range
  * (2^54 to 2^55-1).
  */
+#define FPR   PQCLEAN_FALCON512_CLEAN_FPR
 fpr FPR(int s, int e, uint64_t m);
 
 
 #define fpr_scaled   PQCLEAN_FALCON512_CLEAN_fpr_scaled
 fpr fpr_scaled(int64_t i, int sc);
 
+#define fpr_of   PQCLEAN_FALCON512_CLEAN_fpr_of
 fpr fpr_of(int64_t i);
 
 static const fpr fpr_q = 4667981563525332992;
@@ -189,36 +194,46 @@ static const fpr fpr_ptwo63m1 = 4890909195324358656;
 static const fpr fpr_mtwo63m1 = 14114281232179134464U;
 static const fpr fpr_ptwo63 = 4890909195324358656;
 
+#define fpr_rint   PQCLEAN_FALCON512_CLEAN_fpr_rint
 int64_t fpr_rint(fpr x);
 
+#define fpr_floor   PQCLEAN_FALCON512_CLEAN_fpr_floor
 int64_t fpr_floor(fpr x);
 
+#define fpr_trunc   PQCLEAN_FALCON512_CLEAN_fpr_trunc
 int64_t fpr_trunc(fpr x);
 
 #define fpr_add   PQCLEAN_FALCON512_CLEAN_fpr_add
 fpr fpr_add(fpr x, fpr y);
 
+#define fpr_sub   PQCLEAN_FALCON512_CLEAN_fpr_sub
 fpr fpr_sub(fpr x, fpr y);
 
+#define fpr_neg   PQCLEAN_FALCON512_CLEAN_fpr_neg
 fpr fpr_neg(fpr x);
 
+#define fpr_half   PQCLEAN_FALCON512_CLEAN_fpr_half
 fpr fpr_half(fpr x);
 
+#define fpr_double   PQCLEAN_FALCON512_CLEAN_fpr_double
 fpr fpr_double(fpr x);
 
 #define fpr_mul   PQCLEAN_FALCON512_CLEAN_fpr_mul
 fpr fpr_mul(fpr x, fpr y);
 
+#define fpr_sqr   PQCLEAN_FALCON512_CLEAN_fpr_sqr
 fpr fpr_sqr(fpr x);
 
 #define fpr_div   PQCLEAN_FALCON512_CLEAN_fpr_div
 fpr fpr_div(fpr x, fpr y);
 
+#define fpr_inv   PQCLEAN_FALCON512_CLEAN_fpr_inv
 fpr fpr_inv(fpr x);
 
 #define fpr_sqrt   PQCLEAN_FALCON512_CLEAN_fpr_sqrt
 fpr fpr_sqrt(fpr x);
 
+#define fpr_lt   PQCLEAN_FALCON512_CLEAN_fpr_lt
 int fpr_lt(fpr x, fpr y);
 
 /*

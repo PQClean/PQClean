@@ -99,6 +99,7 @@
  * targets other than 32-bit x86, or when the native 'double' type is
  * not used, the set_fpu_cw() function does nothing at all.
  */
+#define set_fpu_cw PQCLEAN_FALCON1024_CLEAN_set_fpu_cw
 unsigned set_fpu_cw(unsigned x);
 
 
@@ -491,10 +492,13 @@ void PQCLEAN_FALCON1024_CLEAN_prng_get_bytes(prng *p, void *dst, size_t len);
 /*
  * Get a 64-bit random value from a PRNG.
  */
+#define prng_get_u64 PQCLEAN_FALCON1024_CLEAN_prng_get_u64
 uint64_t prng_get_u64(prng *p);
+
 /*
  * Get an 8-bit random value from a PRNG.
  */
+#define prng_get_u8 PQCLEAN_FALCON1024_CLEAN_prng_get_u8
 unsigned prng_get_u8(prng *p);
 
 /* ==================================================================== */

@@ -1,4 +1,6 @@
-/* 
+#include "inner.h"
+
+/*
  * ==========================(LICENSE BEGIN)============================
  *
  * Copyright (c) 2017-2019  Falcon Project
@@ -25,13 +27,12 @@
  * ===========================(LICENSE END)=============================
  */
 
-unsigned
-set_fpu_cw(unsigned x) {
+unsigned set_fpu_cw(unsigned x) {
     return x;
 }
 
-uint64_t
-prng_get_u64(prng *p) {
+
+uint64_t prng_get_u64(prng *p) {
     size_t u;
 
     /*
@@ -47,10 +48,6 @@ prng_get_u64(prng *p) {
     }
     p->ptr = u + 8;
 
-    /*
-     * On systems that use little-endian encoding and allow
-     * unaligned accesses, we can simply read the data where it is.
-     */
     return (uint64_t)p->buf.d[u + 0]
            | ((uint64_t)p->buf.d[u + 1] << 8)
            | ((uint64_t)p->buf.d[u + 2] << 16)
@@ -61,8 +58,8 @@ prng_get_u64(prng *p) {
            | ((uint64_t)p->buf.d[u + 7] << 56);
 }
 
-unsigned
-prng_get_u8(prng *p) {
+
+unsigned prng_get_u8(prng *p) {
     unsigned v;
 
     v = p->buf.d[p->ptr ++];
