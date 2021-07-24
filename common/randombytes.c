@@ -38,6 +38,10 @@ THE SOFTWARE.
 #include <wincrypt.h> /* CryptAcquireContext, CryptGenRandom */
 #endif /* defined(_WIN32) */
 
+#if defined(__wasi__)
+#include <stdlib.h>
+#endif
+
 #if defined(__linux__)
 /* Linux */
 // We would need to include <linux/random.h>, but not every target has access
@@ -132,7 +136,7 @@ static int randombytes_linux_randombytes_getrandom(void *buf, size_t n) {
 
 #if defined(__wasi__)
 static int randombytes_wasi_randombytes(void *buf, size_t n) {
-    getentropy(buf, n);
+    arc4random_buf(buf, n);
     return 0;
 }
 #endif /* defined(__linux__) && defined(SYS_getrandom) */
