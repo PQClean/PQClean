@@ -130,6 +130,13 @@ static int randombytes_linux_randombytes_getrandom(void *buf, size_t n) {
 }
 #endif /* defined(__linux__) && defined(SYS_getrandom) */
 
+#if defined(__wasi__)
+static int randombytes_wasi_randombytes(void *buf, size_t n) {
+    getentropy(buf, n);
+    return 0;
+}
+#endif /* defined(__linux__) && defined(SYS_getrandom) */
+
 #if defined(__linux__) && !defined(SYS_getrandom)
 static int randombytes_linux_read_entropy_ioctl(int device, int *entropy) {
     return ioctl(device, RNDGETENTCNT, entropy);
@@ -319,6 +326,9 @@ int randombytes(uint8_t *buf, size_t n) {
     #elif defined(_WIN32)
     /* Use windows API */
     return randombytes_win32_randombytes(buf, n);
+    #elif defined(__wasi__)
+    /* Use WASI */
+    return randombytes_wasi_randombytes(buf, n);
     #else
 #error "randombytes(...) is not supported on this platform"
     #endif
