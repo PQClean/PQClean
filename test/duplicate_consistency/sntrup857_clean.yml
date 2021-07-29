@@ -31,3 +31,25 @@ consistency_checks:
       - crypto_encode_int16.c
       - crypto_sort_uint32.c
       - kem.c
+- source:
+    scheme: sntrup953
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup953
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - kem.c

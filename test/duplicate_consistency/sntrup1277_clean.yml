@@ -1,0 +1,121 @@
+consistency_checks:
+- source:
+    scheme: sntrup653
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup653
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup761
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup761
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup857
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup857
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup953
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup953
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - kem.c
+- source:
+    scheme: sntrup1277
+    implementation: avx2
+  files:
+      - api.h
+      - crypto_core_inv3sntrup1277.h
+      - crypto_core_invsntrup1277.h
+      - crypto_core_mult3sntrup1277.h
+      - crypto_core_multsntrup1277.h
+      - crypto_core_scale3sntrup1277.h
+      - crypto_core_weightsntrup1277.h
+      - crypto_declassify.h
+      - crypto_decode_1277x2627.h
+      - crypto_decode_1277x3.h
+      - crypto_decode_1277x7879.h
+      - crypto_decode_1277xint16.h
+      - crypto_decode_1277xint32.h
+      - crypto_encode_1277x2627.h
+      - crypto_encode_1277x2627round.h
+      - crypto_encode_1277x3.h
+      - crypto_encode_1277x7879.h
+      - crypto_encode_1277xfreeze3.h
+      - crypto_encode_1277xint16.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_verify_1847.h
+      - crypto_decode_1277xint16.c
+      - crypto_decode_1277xint32.c
+      - crypto_encode_1277xint16.c
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - kem.c

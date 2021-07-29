@@ -1,0 +1,33 @@
+consistency_checks:
+- source:
+    scheme: sntrup953
+    implementation: clean
+  files:
+      - api.h
+      - crypto_core_inv3sntrup953.h
+      - crypto_core_invsntrup953.h
+      - crypto_core_mult3sntrup953.h
+      - crypto_core_multsntrup953.h
+      - crypto_core_scale3sntrup953.h
+      - crypto_core_weightsntrup953.h
+      - crypto_declassify.h
+      - crypto_decode_953x2115.h
+      - crypto_decode_953x3.h
+      - crypto_decode_953x6343.h
+      - crypto_decode_953xint16.h
+      - crypto_decode_953xint32.h
+      - crypto_encode_953x2115.h
+      - crypto_encode_953x2115round.h
+      - crypto_encode_953x3.h
+      - crypto_encode_953x6343.h
+      - crypto_encode_953xfreeze3.h
+      - crypto_encode_953xint16.h
+      - crypto_encode_int16.h
+      - crypto_sort_uint32.h
+      - crypto_verify_1349.h
+      - crypto_decode_953xint16.c
+      - crypto_decode_953xint32.c
+      - crypto_encode_953xint16.c
+      - crypto_encode_int16.c
+      - crypto_sort_uint32.c
+      - kem.c

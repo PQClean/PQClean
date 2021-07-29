@@ -1,0 +1,11 @@
+#ifndef PQCLEAN_SNTRUP953_AVX2_CRYPTO_CORE_WEIGHTSNTRUP953_H
+#define PQCLEAN_SNTRUP953_AVX2_CRYPTO_CORE_WEIGHTSNTRUP953_H
+
+#include <stdint.h>
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_weightsntrup953_OUTPUTBYTES 2
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_weightsntrup953_INPUTBYTES 953
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_weightsntrup953_KEYBYTES 0
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_weightsntrup953_CONSTBYTES 0
+
+int PQCLEAN_SNTRUP953_AVX2_crypto_core_weightsntrup953(unsigned char *outbytes, const unsigned char *inbytes);
+#endif

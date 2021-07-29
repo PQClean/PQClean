@@ -1,0 +1,10 @@
+#ifndef PQCLEAN_SNTRUP953_CLEAN_CRYPTO_ENCODE_953XFREEZE3_H
+#define PQCLEAN_SNTRUP953_CLEAN_CRYPTO_ENCODE_953XFREEZE3_H
+
+#include <stdint.h>
+#define PQCLEAN_SNTRUP953_CLEAN_crypto_encode_953xfreeze3_STRBYTES 953
+#define PQCLEAN_SNTRUP953_CLEAN_crypto_encode_953xfreeze3_ITEMS 953
+#define PQCLEAN_SNTRUP953_CLEAN_crypto_encode_953xfreeze3_ITEMBYTES 2
+
+void PQCLEAN_SNTRUP953_CLEAN_crypto_encode_953xfreeze3(unsigned char *s, const void *v);
+#endif
