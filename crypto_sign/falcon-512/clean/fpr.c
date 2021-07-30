@@ -78,7 +78,6 @@
         (e) += (int)(nt); \
     } while (0)
 
-
 uint64_t
 fpr_ursh(uint64_t x, int n) {
     x ^= (x ^ (x >> 32)) & -(uint64_t)(n >> 5);
