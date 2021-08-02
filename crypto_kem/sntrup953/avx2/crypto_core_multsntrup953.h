@@ -1,0 +1,11 @@
+#ifndef PQCLEAN_SNTRUP953_AVX2_CRYPTO_CORE_MULTSNTRUP953_H
+#define PQCLEAN_SNTRUP953_AVX2_CRYPTO_CORE_MULTSNTRUP953_H
+
+#include <stdint.h>
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_multsntrup953_OUTPUTBYTES 1906
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_multsntrup953_INPUTBYTES 1906
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_multsntrup953_KEYBYTES 953
+#define PQCLEAN_SNTRUP953_AVX2_crypto_core_multsntrup953_CONSTBYTES 0
+
+int PQCLEAN_SNTRUP953_AVX2_crypto_core_multsntrup953(unsigned char *outbytes, const unsigned char *inbytes, const unsigned char *kbytes);
+#endif

@@ -1,0 +1,32 @@
+name: sntrup953
+type: kem
+claimed-nist-level: 4
+claimed-security: IND-CCA2
+length-public-key: 1505
+length-secret-key: 2254
+length-ciphertext: 1349
+length-shared-secret: 32
+nistkat-sha256: 8c786712c07f62d81a1f5e3952db73d0b789d55ca72fd601ba23d20a309bf85c
+principal-submitters:
+  - Daniel J. Bernstein
+  - Billy Bob Brumley
+  - Ming-Shing Chen
+  - Chitchanok Chuengsatiansup
+  - Tanja Lange
+  - Adrian Marotzke
+  - Bo-Yuan Peng
+  - Nicola Tuveri
+  - Christine van Vredendaal
+  - Bo-Yin Yang
+implementations:
+    - name: clean
+      version: supercop-20210604 via https://github.com/mkannwischer/package-pqclean/tree/5714c895/ntruprime
+    - name: avx2
+      version: supercop-20210604 via https://github.com/mkannwischer/package-pqclean/tree/5714c895/ntruprime
+      supported_platforms:
+          - architecture: x86_64
+            operating_systems:
+                - Linux
+                - Darwin
+            required_flags:
+                - avx2

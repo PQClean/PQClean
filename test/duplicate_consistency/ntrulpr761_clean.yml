@@ -78,6 +78,54 @@ consistency_checks:
       - crypto_sort_uint32.h
       - crypto_sort_uint32.c
 - source:
+    scheme: sntrup953
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+- source:
+    scheme: sntrup953
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_sort_uint32.h
+      - crypto_sort_uint32.c
+- source:
+    scheme: sntrup1013
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+- source:
+    scheme: sntrup1013
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_sort_uint32.h
+      - crypto_sort_uint32.c
+- source:
+    scheme: sntrup1277
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+- source:
+    scheme: sntrup1277
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_sort_uint32.h
+      - crypto_sort_uint32.c
+- source:
     scheme: ntrulpr761
     implementation: avx2
   files:
@@ -129,6 +177,42 @@ consistency_checks:
       - kem.c
 - source:
     scheme: ntrulpr857
+    implementation: avx2
+  files:
+      - crypto_declassify.h
+      - crypto_decode_256x16.h
+      - crypto_decode_256x2.h
+      - crypto_encode_256x16.h
+      - crypto_encode_256x2.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_decode_256x16.c
+      - crypto_encode_256x16.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c
+- source:
+    scheme: ntrulpr953
+    implementation: clean
+  files:
+      - crypto_declassify.h
+      - crypto_decode_256x16.h
+      - crypto_decode_256x2.h
+      - crypto_encode_256x16.h
+      - crypto_encode_256x2.h
+      - crypto_sort_int32.h
+      - crypto_sort_uint32.h
+      - crypto_stream_aes256ctr.h
+      - crypto_decode_256x16.c
+      - crypto_decode_256x2.c
+      - crypto_encode_256x16.c
+      - crypto_encode_256x2.c
+      - crypto_sort_int32.c
+      - crypto_sort_uint32.c
+      - crypto_stream_aes256ctr.c
+      - kem.c
+- source:
+    scheme: ntrulpr953
     implementation: avx2
   files:
       - crypto_declassify.h

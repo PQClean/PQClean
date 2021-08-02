@@ -1,0 +1,10 @@
+#ifndef PQCLEAN_SNTRUP1013_AVX2_CRYPTO_ENCODE_1013X2393ROUND_H
+#define PQCLEAN_SNTRUP1013_AVX2_CRYPTO_ENCODE_1013X2393ROUND_H
+
+#include <stdint.h>
+#define PQCLEAN_SNTRUP1013_AVX2_crypto_encode_1013x2393round_STRBYTES 1423
+#define PQCLEAN_SNTRUP1013_AVX2_crypto_encode_1013x2393round_ITEMS 1013
+#define PQCLEAN_SNTRUP1013_AVX2_crypto_encode_1013x2393round_ITEMBYTES 2
+
+void PQCLEAN_SNTRUP1013_AVX2_crypto_encode_1013x2393round(unsigned char *out, const void *v);
+#endif
