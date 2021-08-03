@@ -69,7 +69,7 @@ EXPECTED_FIELDS = {
                         'spec': {
                             'architecture': {
                                 'type': str,
-                                'values': ['x86', 'x86_64', 'aarch64']},
+                                'values': ['x86', 'x86_64', 'arm_8']},
                             'required_flags': {
                                 'type': list,
                                 'optional': True,
