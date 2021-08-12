@@ -1,5 +1,5 @@
 ---
-Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo,-google-readability-casting,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-init-variables,-readability-isolate-declaration,-readability-uppercase-literal-suffix,-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,-clang-analyzer-valist.*,-llvmlibc-*,-bugprone-reserved-identifier,-cert-dcl37-c,-cert-dcl51-cpp,-bugprone-signed-char-misuse'
+Checks:          '*,-llvm-header-guard,-hicpp-*,-readability-function-size,-google-readability-todo,-google-readability-casting,-readability-magic-numbers,-cppcoreguidelines-avoid-magic-numbers,-cppcoreguidelines-init-variables,-readability-isolate-declaration,-readability-uppercase-literal-suffix,-clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling,-clang-analyzer-valist.*,-llvmlibc-*,-bugprone-reserved-identifier,-cert-dcl37-c,-cert-dcl51-cpp,-bugprone-signed-char-misuse,-cert-str34-c,-misc-no-recursion'
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
