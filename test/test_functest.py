@@ -76,7 +76,10 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
                  IMPLEMENTATION=implementation.name,
                  EXTRAFLAGS=(
                      '-g -fsanitize=address,undefined '
-                     '-fno-sanitize-recover=undefined'),
+                     '-fno-sanitize-recover=undefined '
+                     # TODO(JMS) Remove explicit -latomic if/when gcc fixes:
+                     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81358
+                     '-Wno-unused-command-line-argument -latomic'),
                  SCHEME_DIR=impl_path,
                  DEST_DIR=dest_dir,
                  working_dir=os.path.join(test_dir, 'test'),
