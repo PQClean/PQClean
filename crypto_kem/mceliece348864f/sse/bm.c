@@ -130,7 +130,7 @@ static inline void get_coefs(gf *out, vec128 *in) {
 
 /* input: in, sequence of field elements */
 /* output: out, minimal polynomial of in */
-void PQCLEAN_MCELIECE348864F_SSE_bm(uint64_t out[ GFBITS ], vec128 in[ GFBITS ]) {
+void PQCLEAN_MCELIECE348864F_SSE_bm(uint64_t *out, vec128 *in) {
     uint16_t i;
     uint16_t N, L;
 
