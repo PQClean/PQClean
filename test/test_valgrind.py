@@ -33,7 +33,7 @@ def valgrind_supports_exit_early():
 @helpers.filtered_test
 def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
                   init, destr):
-    if (platform.machine() not in ('i386', 'x86_64') or
+    if (platform.machine() not in ('i386', 'x86_64', 'aarch64') or
             platform.system() != 'Linux'):
         raise unittest.SkipTest()
     init()

@@ -7,8 +7,10 @@ This is ambiguous; compilers can freely choose `signed` or `unsigned` char.
 import os
 
 import pytest
+import unittest
 
 import helpers
+import platform
 import pqclean
 import pycparser
 
@@ -43,6 +45,12 @@ def walk_tree(ast, parent=[]):
 @helpers.filtered_test
 def test_char(implementation):
     errors = []
+    # pyparser's fake_libc does not support the Arm headers
+    if 'supported_platforms' in implementation.metadata():
+        for platform in implementation.metadata()['supported_platforms']:
+            if platform['architecture'] == "arm_8":
+                raise unittest.SkipTest()
+
     for fname in os.listdir(implementation.path()):
         if not fname.endswith(".c"):
             continue
