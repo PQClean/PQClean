@@ -35,6 +35,7 @@ implementations:
             - Darwin
           required_flags:
             - sse4_1
+            - bmi1
             - popcnt
     - name: avx
       version: SUPERCOP-20191221
