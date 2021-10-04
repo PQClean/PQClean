@@ -16,6 +16,7 @@ extern "C" {
 /*
  * Write `n` bytes of high quality random bytes to `buf`
  */
+#define randombytes     PQCLEAN_randombytes
 int randombytes(void *buf, size_t n);
 
 #ifdef __cplusplus
