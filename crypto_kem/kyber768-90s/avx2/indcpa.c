@@ -11,6 +11,7 @@
 #include <immintrin.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 /*************************************************
 * Name:        pack_pk
@@ -29,11 +30,8 @@
 static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
                     polyvec *pk,
                     const uint8_t seed[KYBER_SYMBYTES]) {
-    size_t i;
     PQCLEAN_KYBER76890S_AVX2_polyvec_tobytes(r, pk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
-        r[i + KYBER_POLYVECBYTES] = seed[i];
-    }
+    memcpy(r + KYBER_POLYVECBYTES, seed, KYBER_SYMBYTES);
 }
 
 /*************************************************
@@ -49,11 +47,8 @@ static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
 static void unpack_pk(polyvec *pk,
                       uint8_t seed[KYBER_SYMBYTES],
                       const uint8_t packedpk[KYBER_INDCPA_PUBLICKEYBYTES]) {
-    size_t i;
     PQCLEAN_KYBER76890S_AVX2_polyvec_frombytes(pk, packedpk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
-        seed[i] = packedpk[i + KYBER_POLYVECBYTES];
-    }
+    memcpy(seed, packedpk + KYBER_POLYVECBYTES, KYBER_SYMBYTES);
 }
 
 /*************************************************
@@ -138,7 +133,7 @@ static unsigned int rej_uniform(int16_t *r,
     uint16_t val0, val1;
 
     ctr = pos = 0;
-    while (ctr < len && pos + 3 <= buflen) {
+    while (ctr < len && pos <= buflen - 3) { // buflen is always at least 3
         val0 = ((buf[pos + 0] >> 0) | ((uint16_t)buf[pos + 1] << 8)) & 0xFFF;
         val1 = ((buf[pos + 1] >> 4) | ((uint16_t)buf[pos + 2] << 4)) & 0xFFF;
         pos += 3;

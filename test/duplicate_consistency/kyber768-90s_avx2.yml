@@ -4,7 +4,6 @@ consistency_checks:
         implementation: clean
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber512
@@ -15,7 +14,6 @@ consistency_checks:
       - cdecl.h
       - consts.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - polyvec.h
       - reduce.h
@@ -31,7 +29,6 @@ consistency_checks:
         implementation: clean
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber512-90s
@@ -43,7 +40,6 @@ consistency_checks:
       - cdecl.h
       - consts.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - poly.h
       - polyvec.h
@@ -64,7 +60,6 @@ consistency_checks:
         implementation: clean
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber768
@@ -75,7 +70,6 @@ consistency_checks:
       - cdecl.h
       - consts.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - params.h
       - polyvec.h
@@ -101,7 +95,6 @@ consistency_checks:
         implementation: clean
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber1024
@@ -112,7 +105,6 @@ consistency_checks:
       - cdecl.h
       - consts.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - polyvec.h
       - reduce.h
@@ -128,7 +120,6 @@ consistency_checks:
         implementation: clean
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber1024-90s
@@ -140,7 +131,6 @@ consistency_checks:
       - cdecl.h
       - consts.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - poly.h
       - polyvec.h

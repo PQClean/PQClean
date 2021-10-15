@@ -17,7 +17,8 @@ static void keccakx4_absorb_once(__m256i s[25],
                                  const uint8_t *in3,
                                  size_t inlen,
                                  uint8_t p) {
-    size_t i, pos = 0;
+    size_t i;
+    uint64_t pos = 0;
     __m256i t, idx;
 
     for (i = 0; i < 25; ++i) {
@@ -65,16 +66,21 @@ static void keccakx4_squeezeblocks(uint8_t *out0,
                                    __m256i s[25]) {
     unsigned int i;
     __m128d t;
+    double tmp;
 
     while (nblocks > 0) {
         KeccakF1600_StatePermute4x(s);
         for (i = 0; i < r / 8; ++i) {
             t = _mm_castsi128_pd(_mm256_castsi256_si128(s[i]));
-            _mm_storel_pd((double *)&out0[8 * i], t);
-            _mm_storeh_pd((double *)&out1[8 * i], t);
+            _mm_storel_pd(&tmp, t);
+            memcpy(&out0[8 * i], &tmp, 8);
+            _mm_storeh_pd(&tmp, t);
+            memcpy(&out1[8 * i], &tmp, 8);
             t = _mm_castsi128_pd(_mm256_extracti128_si256(s[i], 1));
-            _mm_storel_pd((double *)&out2[8 * i], t);
-            _mm_storeh_pd((double *)&out3[8 * i], t);
+            _mm_storel_pd(&tmp, t);
+            memcpy(&out2[8 * i], &tmp, 8);
+            _mm_storeh_pd(&tmp, t);
+            memcpy(&out3[8 * i], &tmp, 8);
         }
 
         out0 += r;

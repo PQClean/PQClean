@@ -47,10 +47,10 @@ int PQCLEAN_KYBER76890S_AVX2_verify(const uint8_t *a, const uint8_t *b, size_t l
 *              assumes two's complement representation of negative integers.
 *              Runs in constant time.
 *
-* Arguments:   unsigned char *r: pointer to output byte array
-*              const unsigned char *x: pointer to input byte array
+* Arguments:   uint8_t *r: pointer to output byte array
+*              const uint8_t *x: pointer to input byte array
 *              size_t len: Amount of bytes to be copied
-*              unsigned char b: Condition bit; has to be in {0,1}
+*              uint8_t b: Condition bit; has to be in {0,1}
 **************************************************/
 void PQCLEAN_KYBER76890S_AVX2_cmov(uint8_t *restrict r, const uint8_t *x, size_t len, uint8_t b) {
     size_t i;

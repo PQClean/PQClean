@@ -8,6 +8,7 @@
 #include "symmetric.h"
 #include <immintrin.h>
 #include <stdint.h>
+#include <string.h>
 
 /*************************************************
 * Name:        PQCLEAN_KYBER1024_AVX2_poly_compress
@@ -23,7 +24,6 @@
 **************************************************/
 void PQCLEAN_KYBER1024_AVX2_poly_compress(uint8_t r[160], const poly *restrict a) {
     size_t i;
-    uint32_t low;
     __m256i f0, f1;
     __m128i t0, t1;
     const __m256i v = _mm256_load_si256(&PQCLEAN_KYBER1024_AVX2_qdata.vec[_16XV / 16]);
@@ -54,19 +54,15 @@ void PQCLEAN_KYBER1024_AVX2_poly_compress(uint8_t r[160], const poly *restrict a
         t1 = _mm256_extracti128_si256(f0, 1);
         t0 = _mm_blendv_epi8(t0, t1, _mm256_castsi256_si128(shufbidx));
         _mm_storeu_si128((__m128i *)&r[20 * i + 0], t0);
-        _mm_store_ss((float *)&low, _mm_castsi128_ps(t1));
-        r[20 * i + 16] = (uint8_t)low;
-        r[20 * i + 17] = (uint8_t)(low >> 0x08);
-        r[20 * i + 18] = (uint8_t)(low >> 0x10);
-        r[20 * i + 19] = (uint8_t)(low >> 0x18);
+        memcpy(&r[20 * i + 16], &t1, 4);
     }
 }
 
 void PQCLEAN_KYBER1024_AVX2_poly_decompress(poly *restrict r, const uint8_t a[160]) {
     unsigned int i;
-    int16_t h;
     __m128i t;
     __m256i f;
+    int16_t ti;
     const __m256i q = _mm256_load_si256(&PQCLEAN_KYBER1024_AVX2_qdata.vec[_16XQ / 16]);
     const __m256i shufbidx = _mm256_set_epi8(9, 9, 9, 8, 8, 8, 8, 7, 7, 6, 6, 6, 6, 5, 5, 5,
                              4, 4, 4, 3, 3, 3, 3, 2, 2, 1, 1, 1, 1, 0, 0, 0);
@@ -77,8 +73,8 @@ void PQCLEAN_KYBER1024_AVX2_poly_decompress(poly *restrict r, const uint8_t a[16
 
     for (i = 0; i < KYBER_N / 16; i++) {
         t = _mm_loadl_epi64((__m128i *)&a[10 * i + 0]);
-        h = (a[10 * i + 9] << 8) + a[10 * i + 8];
-        t = _mm_insert_epi16(t, h, 4);
+        memcpy(&ti, &a[10 * i + 8], 2);
+        t = _mm_insert_epi16(t, ti, 4);
         f = _mm256_broadcastsi128_si256(t);
         f = _mm256_shuffle_epi8(f, shufbidx);
         f = _mm256_and_si256(f, mask);
@@ -103,7 +99,7 @@ void PQCLEAN_KYBER1024_AVX2_poly_decompress(poly *restrict r, const uint8_t a[16
 *                            (needs space for KYBER_POLYBYTES bytes)
 *              - poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_KYBER1024_AVX2_poly_tobytes(uint8_t r[KYBER_POLYBYTES], poly *a) {
+void PQCLEAN_KYBER1024_AVX2_poly_tobytes(uint8_t r[KYBER_POLYBYTES], const poly *a) {
     PQCLEAN_KYBER1024_AVX2_ntttobytes_avx(r, a->vec, PQCLEAN_KYBER1024_AVX2_qdata.vec);
 }
 
@@ -181,7 +177,7 @@ void PQCLEAN_KYBER1024_AVX2_poly_frommsg(poly *restrict r, const uint8_t msg[KYB
 * Arguments:   - uint8_t *msg: pointer to output message
 *              - poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_KYBER1024_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], poly *restrict a) {
+void PQCLEAN_KYBER1024_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const poly *restrict a) {
     unsigned int i;
     uint32_t small;
     __m256i f0, f1, g0, g1;
@@ -200,11 +196,9 @@ void PQCLEAN_KYBER1024_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], poly 
         f0 = _mm256_sub_epi16(f0, hhq);
         f1 = _mm256_sub_epi16(f1, hhq);
         f0 = _mm256_packs_epi16(f0, f1);
+        f0 = _mm256_permute4x64_epi64(f0, 0xD8);
         small = _mm256_movemask_epi8(f0);
-        msg[4 * i + 0] = small;
-        msg[4 * i + 1] = small >> 16;
-        msg[4 * i + 2] = small >>  8;
-        msg[4 * i + 3] = small >> 24;
+        memcpy(&msg[4 * i], &small, 4);
     }
 }
 

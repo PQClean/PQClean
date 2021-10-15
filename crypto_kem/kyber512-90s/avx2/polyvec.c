@@ -5,10 +5,10 @@
 #include "polyvec.h"
 #include <immintrin.h>
 #include <stdint.h>
+#include <string.h>
 
 static void poly_compress10(uint8_t r[320], const poly *restrict a) {
     size_t i;
-    uint32_t low;
     __m256i f0, f1, f2;
     __m128i t0, t1;
     const __m256i v = _mm256_load_si256(&PQCLEAN_KYBER51290S_AVX2_qdata.vec[_16XV / 16]);
@@ -41,11 +41,7 @@ static void poly_compress10(uint8_t r[320], const poly *restrict a) {
         t1 = _mm256_extracti128_si256(f0, 1);
         t0 = _mm_blend_epi16(t0, t1, 0xE0);
         _mm_storeu_si128((__m128i *)&r[20 * i + 0], t0);
-        _mm_store_ss((float *)&low, _mm_castsi128_ps(t1));
-        r[20 * i + 16] = (uint8_t)low;
-        r[20 * i + 17] = (uint8_t)(low >> 0x08);
-        r[20 * i + 18] = (uint8_t)(low >> 0x10);
-        r[20 * i + 19] = (uint8_t)(low >> 0x18);
+        memcpy(&r[20 * i + 16], &t1, 4);
     }
 }
 
@@ -82,7 +78,7 @@ static void poly_decompress10(poly *restrict r, const uint8_t a[320 + 12]) {
 *                            (needs space for KYBER_POLYVECCOMPRESSEDBYTES)
 *              - polyvec *a: pointer to input vector of polynomials
 **************************************************/
-void PQCLEAN_KYBER51290S_AVX2_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES + 2], polyvec *a) {
+void PQCLEAN_KYBER51290S_AVX2_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES + 2], const polyvec *a) {
     size_t i;
 
     for (i = 0; i < KYBER_K; i++) {
@@ -117,7 +113,7 @@ void PQCLEAN_KYBER51290S_AVX2_polyvec_decompress(polyvec *r, const uint8_t a[KYB
 *                            (needs space for KYBER_POLYVECBYTES)
 *              - polyvec *a: pointer to input vector of polynomials
 **************************************************/
-void PQCLEAN_KYBER51290S_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], polyvec *a) {
+void PQCLEAN_KYBER51290S_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], const polyvec *a) {
     size_t i;
     for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER51290S_AVX2_poly_tobytes(r + i * KYBER_POLYBYTES, &a->vec[i]);

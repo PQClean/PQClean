@@ -1,5 +1,9 @@
 #ifndef PQCLEAN_KYBER102490S_CLEAN_SYMMETRIC_AES_H
 #define PQCLEAN_KYBER102490S_CLEAN_SYMMETRIC_AES_H
+
+
+
+#define AES256CTR_BLOCKBYTES 64
 #include "aes.h"
 #include <stddef.h>
 #include <stdint.h>
