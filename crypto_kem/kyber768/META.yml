@@ -34,3 +34,13 @@ implementations:
               - avx2
               - bmi2
               - popcnt
+    - name: aarch64
+      version: https://github.com/neon-ntt/neon-ntt/tree/b011eeff3515fb168aa4dbaa671d760009d98dbb
+      supported_platforms:
+        - architecture: arm_8
+          operating_systems:
+              - Linux
+              - Darwin
+          required_flags:
+              - asimd
+
