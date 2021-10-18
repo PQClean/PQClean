@@ -335,32 +335,25 @@ static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
 int randombytes(uint8_t *output, size_t n) {
     void *buf = (void *)output;
     #if defined(__EMSCRIPTEN__)
-# pragma message("Using crypto api from NodeJS")
     return randombytes_js_randombytes_nodejs(buf, n);
     #elif defined(__linux__)
     # if defined(USE_GLIBC)
-#  pragma message("Using getrandom function call")
     /* Use getrandom system call */
     return randombytes_linux_randombytes_getrandom(buf, n);
     # elif defined(SYS_getrandom)
-#  pragma message("Using getrandom system call")
     /* Use getrandom system call */
     return randombytes_linux_randombytes_getrandom(buf, n);
     # else
-#  pragma message("Using /dev/urandom device")
     /* When we have enough entropy, we can read from /dev/urandom */
     return randombytes_linux_randombytes_urandom(buf, n);
     # endif
     #elif defined(BSD)
-# pragma message("Using arc4random system call")
     /* Use arc4random system call */
     return randombytes_bsd_randombytes(buf, n);
     #elif defined(_WIN32)
-# pragma message("Using Windows cryptographic API")
     /* Use windows API */
     return randombytes_win32_randombytes(buf, n);
     #elif defined(__wasi__)
-# pragma message("Using WASI arc4random_buf system call")
     /* Use WASI */
     return randombytes_wasi_randombytes(buf, n);
     #else
