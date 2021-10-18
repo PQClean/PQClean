@@ -3,8 +3,8 @@
 #include "params.h"
 #include <stdint.h>
 
-#define MONT 2285 // 2^16 mod q
-#define QINV 62209 // q^-1 mod 2^16
+#define MONT (-1044) // 2^16 mod q
+#define QINV (-3327) // q^-1 mod 2^16
 
 int16_t PQCLEAN_KYBER102490S_CLEAN_montgomery_reduce(int32_t a);
 

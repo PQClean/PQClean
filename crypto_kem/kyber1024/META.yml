@@ -21,9 +21,9 @@ auxiliary-submitters:
   - Damien Stehlé
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/kyber/commit/e7faae9f662f5b92fee4e966f09b2f23e1e91c65 via https://github.com/jschanck/package-pqclean/tree/231c9bec/kyber
+      version: https://github.com/pq-crystals/kyber/commit/faf5c3fe33e0b61c7c8a7888dd862bf5def17ad2 via https://github.com/jschanck/package-pqclean/tree/08ef5e0d/kyber
     - name: avx2
-      version: https://github.com/pq-crystals/kyber/commit/e7faae9f662f5b92fee4e966f09b2f23e1e91c65 via https://github.com/jschanck/package-pqclean/tree/231c9bec/kyber
+      version: https://github.com/pq-crystals/kyber/commit/faf5c3fe33e0b61c7c8a7888dd862bf5def17ad2 via https://github.com/jschanck/package-pqclean/tree/08ef5e0d/kyber
       supported_platforms:
         - architecture: x86_64
           operating_systems:

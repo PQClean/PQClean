@@ -5,6 +5,7 @@
 #include "polyvec.h"
 #include <immintrin.h>
 #include <stdint.h>
+#include <string.h>
 
 static void poly_compress11(uint8_t r[352 + 2], const poly *restrict a) {
     unsigned int i;
@@ -85,7 +86,7 @@ static void poly_decompress11(poly *restrict r, const uint8_t a[352 + 10]) {
 *                            (needs space for KYBER_POLYVECCOMPRESSEDBYTES)
 *              - polyvec *a: pointer to input vector of polynomials
 **************************************************/
-void PQCLEAN_KYBER1024_AVX2_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES + 2], polyvec *a) {
+void PQCLEAN_KYBER1024_AVX2_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES + 2], const polyvec *a) {
     size_t i;
 
     for (i = 0; i < KYBER_K; i++) {
@@ -120,7 +121,7 @@ void PQCLEAN_KYBER1024_AVX2_polyvec_decompress(polyvec *r, const uint8_t a[KYBER
 *                            (needs space for KYBER_POLYVECBYTES)
 *              - polyvec *a: pointer to input vector of polynomials
 **************************************************/
-void PQCLEAN_KYBER1024_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], polyvec *a) {
+void PQCLEAN_KYBER1024_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], const polyvec *a) {
     size_t i;
     for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER1024_AVX2_poly_tobytes(r + i * KYBER_POLYBYTES, &a->vec[i]);

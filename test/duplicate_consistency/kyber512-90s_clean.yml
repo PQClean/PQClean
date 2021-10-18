@@ -5,7 +5,6 @@ consistency_checks:
       files:
       - cbd.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - params.h
       - poly.h
@@ -25,7 +24,6 @@ consistency_checks:
         implementation: avx2
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber512-90s
@@ -41,7 +39,6 @@ consistency_checks:
       files:
       - cbd.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - poly.h
       - polyvec.h
@@ -59,7 +56,6 @@ consistency_checks:
         implementation: avx2
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber768-90s
@@ -67,7 +63,6 @@ consistency_checks:
       files:
       - cbd.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - poly.h
       - polyvec.h
@@ -88,7 +83,6 @@ consistency_checks:
         implementation: avx2
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber1024
@@ -96,7 +90,6 @@ consistency_checks:
       files:
       - cbd.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - poly.h
       - polyvec.h
@@ -112,7 +105,6 @@ consistency_checks:
         implementation: avx2
       files:
       - indcpa.h
-      - kem.h
       - verify.h
     - source:
         scheme: kyber1024-90s
@@ -120,7 +112,6 @@ consistency_checks:
       files:
       - cbd.h
       - indcpa.h
-      - kem.h
       - ntt.h
       - poly.h
       - polyvec.h
@@ -139,5 +130,4 @@ consistency_checks:
         implementation: avx2
       files:
       - indcpa.h
-      - kem.h
       - verify.h

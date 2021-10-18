@@ -3,6 +3,7 @@
 #include "symmetric.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 /*************************************************
 * Name:        PQCLEAN_KYBER768_AVX2_kyber_shake128_absorb
@@ -18,12 +19,9 @@ void PQCLEAN_KYBER768_AVX2_kyber_shake128_absorb(xof_state *state,
         const uint8_t seed[KYBER_SYMBYTES],
         uint8_t x,
         uint8_t y) {
-    unsigned int i;
     uint8_t extseed[KYBER_SYMBYTES + 2];
 
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
-        extseed[i] = seed[i];
-    }
+    memcpy(extseed, seed, KYBER_SYMBYTES);
     extseed[KYBER_SYMBYTES + 0] = x;
     extseed[KYBER_SYMBYTES + 1] = y;
 
@@ -42,12 +40,9 @@ void PQCLEAN_KYBER768_AVX2_kyber_shake128_absorb(xof_state *state,
 *              - uint8_t nonce: single-byte nonce (public PRF input)
 **************************************************/
 void PQCLEAN_KYBER768_AVX2_kyber_shake256_prf(uint8_t *out, size_t outlen, const uint8_t key[KYBER_SYMBYTES], uint8_t nonce) {
-    unsigned int i;
     uint8_t extkey[KYBER_SYMBYTES + 1];
 
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
-        extkey[i] = key[i];
-    }
+    memcpy(extkey, key, KYBER_SYMBYTES);
     extkey[KYBER_SYMBYTES] = nonce;
 
     shake256(out, outlen, extkey, sizeof(extkey));

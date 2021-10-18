@@ -8,6 +8,7 @@
 #include "symmetric.h"
 #include <immintrin.h>
 #include <stdint.h>
+#include <string.h>
 
 /*************************************************
 * Name:        PQCLEAN_KYBER51290S_AVX2_poly_compress
@@ -93,7 +94,7 @@ void PQCLEAN_KYBER51290S_AVX2_poly_decompress(poly *restrict r, const uint8_t a[
 *                            (needs space for KYBER_POLYBYTES bytes)
 *              - poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_KYBER51290S_AVX2_poly_tobytes(uint8_t r[KYBER_POLYBYTES], poly *a) {
+void PQCLEAN_KYBER51290S_AVX2_poly_tobytes(uint8_t r[KYBER_POLYBYTES], const poly *a) {
     PQCLEAN_KYBER51290S_AVX2_ntttobytes_avx(r, a->vec, PQCLEAN_KYBER51290S_AVX2_qdata.vec);
 }
 
@@ -171,7 +172,7 @@ void PQCLEAN_KYBER51290S_AVX2_poly_frommsg(poly *restrict r, const uint8_t msg[K
 * Arguments:   - uint8_t *msg: pointer to output message
 *              - poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_KYBER51290S_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], poly *restrict a) {
+void PQCLEAN_KYBER51290S_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const poly *restrict a) {
     unsigned int i;
     uint32_t small;
     __m256i f0, f1, g0, g1;
@@ -190,11 +191,9 @@ void PQCLEAN_KYBER51290S_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], pol
         f0 = _mm256_sub_epi16(f0, hhq);
         f1 = _mm256_sub_epi16(f1, hhq);
         f0 = _mm256_packs_epi16(f0, f1);
+        f0 = _mm256_permute4x64_epi64(f0, 0xD8);
         small = _mm256_movemask_epi8(f0);
-        msg[4 * i + 0] = small;
-        msg[4 * i + 1] = small >> 16;
-        msg[4 * i + 2] = small >>  8;
-        msg[4 * i + 3] = small >> 24;
+        memcpy(&msg[4 * i], &small, 4);
     }
 }
 

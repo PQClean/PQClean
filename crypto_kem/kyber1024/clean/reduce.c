@@ -14,14 +14,11 @@
 * Returns:     integer in {-q+1,...,q-1} congruent to a * R^-1 modulo q.
 **************************************************/
 int16_t PQCLEAN_KYBER1024_CLEAN_montgomery_reduce(int32_t a) {
-    int32_t t;
-    int16_t u;
+    int16_t t;
 
-    u = (int16_t)(a * (int64_t)QINV);
-    t = (int32_t)u * KYBER_Q;
-    t = a - t;
-    t >>= 16;
-    return (int16_t)t;
+    t = (int16_t)a * QINV;
+    t = (a - (int32_t)t * KYBER_Q) >> 16;
+    return t;
 }
 
 /*************************************************
@@ -36,7 +33,7 @@ int16_t PQCLEAN_KYBER1024_CLEAN_montgomery_reduce(int32_t a) {
 **************************************************/
 int16_t PQCLEAN_KYBER1024_CLEAN_barrett_reduce(int16_t a) {
     int16_t t;
-    const int16_t v = ((1U << 26) + KYBER_Q / 2) / KYBER_Q;
+    const int16_t v = ((1 << 26) + KYBER_Q / 2) / KYBER_Q;
 
     t  = ((int32_t)v * a + (1 << 25)) >> 26;
     t *= KYBER_Q;

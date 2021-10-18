@@ -6,6 +6,7 @@
 #include "verify.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <string.h>
 
 /*************************************************
 * Name:        PQCLEAN_KYBER76890S_AVX2_crypto_kem_keypair
@@ -13,20 +14,17 @@
 * Description: Generates public and private key
 *              for CCA-secure Kyber key encapsulation mechanism
 *
-* Arguments:   - unsigned char *pk: pointer to output public key
+* Arguments:   - uint8_t *pk: pointer to output public key
 *                (an already allocated array of KYBER_PUBLICKEYBYTES bytes)
-*              - unsigned char *sk: pointer to output private key
+*              - uint8_t *sk: pointer to output private key
 *                (an already allocated array of KYBER_SECRETKEYBYTES bytes)
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_KYBER76890S_AVX2_crypto_kem_keypair(unsigned char pk[KYBER_PUBLICKEYBYTES],
-        unsigned char sk[KYBER_SECRETKEYBYTES]) {
-    size_t i;
+int PQCLEAN_KYBER76890S_AVX2_crypto_kem_keypair(uint8_t *pk,
+        uint8_t *sk) {
     PQCLEAN_KYBER76890S_AVX2_indcpa_keypair(pk, sk);
-    for (i = 0; i < KYBER_INDCPA_PUBLICKEYBYTES; i++) {
-        sk[i + KYBER_INDCPA_SECRETKEYBYTES] = pk[i];
-    }
+    memcpy(sk + KYBER_INDCPA_SECRETKEYBYTES, pk, KYBER_INDCPA_PUBLICKEYBYTES);
     hash_h(sk + KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES, pk, KYBER_PUBLICKEYBYTES);
     /* Value z for pseudo-random output on reject */
     randombytes(sk + KYBER_SECRETKEYBYTES - KYBER_SYMBYTES, KYBER_SYMBYTES);
@@ -39,18 +37,18 @@ int PQCLEAN_KYBER76890S_AVX2_crypto_kem_keypair(unsigned char pk[KYBER_PUBLICKEY
 * Description: Generates cipher text and shared
 *              secret for given public key
 *
-* Arguments:   - unsigned char *ct: pointer to output cipher text
+* Arguments:   - uint8_t *ct: pointer to output cipher text
 *                (an already allocated array of KYBER_CIPHERTEXTBYTES bytes)
-*              - unsigned char *ss: pointer to output shared secret
+*              - uint8_t *ss: pointer to output shared secret
 *                (an already allocated array of KYBER_SSBYTES bytes)
-*              - const unsigned char *pk: pointer to input public key
+*              - const uint8_t *pk: pointer to input public key
 *                (an already allocated array of KYBER_PUBLICKEYBYTES bytes)
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_KYBER76890S_AVX2_crypto_kem_enc(unsigned char ct[KYBER_CIPHERTEXTBYTES],
-        unsigned char ss[KYBER_SSBYTES],
-        const unsigned char pk[KYBER_PUBLICKEYBYTES]) {
+int PQCLEAN_KYBER76890S_AVX2_crypto_kem_enc(uint8_t *ct,
+        uint8_t *ss,
+        const uint8_t *pk) {
     uint8_t buf[2 * KYBER_SYMBYTES];
     /* Will contain key, coins */
     uint8_t kr[2 * KYBER_SYMBYTES];
@@ -79,21 +77,20 @@ int PQCLEAN_KYBER76890S_AVX2_crypto_kem_enc(unsigned char ct[KYBER_CIPHERTEXTBYT
 * Description: Generates shared secret for given
 *              cipher text and private key
 *
-* Arguments:   - unsigned char *ss: pointer to output shared secret
+* Arguments:   - uint8_t *ss: pointer to output shared secret
 *                (an already allocated array of KYBER_SSBYTES bytes)
-*              - const unsigned char *ct: pointer to input cipher text
+*              - const uint8_t *ct: pointer to input cipher text
 *                (an already allocated array of KYBER_CIPHERTEXTBYTES bytes)
-*              - const unsigned char *sk: pointer to input private key
+*              - const uint8_t *sk: pointer to input private key
 *                (an already allocated array of KYBER_SECRETKEYBYTES bytes)
 *
 * Returns 0.
 *
 * On failure, ss will contain a pseudo-random value.
 **************************************************/
-int PQCLEAN_KYBER76890S_AVX2_crypto_kem_dec(unsigned char ss[KYBER_SSBYTES],
-        const unsigned char ct[KYBER_CIPHERTEXTBYTES],
-        const unsigned char sk[KYBER_SECRETKEYBYTES]) {
-    size_t i;
+int PQCLEAN_KYBER76890S_AVX2_crypto_kem_dec(uint8_t *ss,
+        const uint8_t *ct,
+        const uint8_t *sk) {
     int fail;
     uint8_t buf[2 * KYBER_SYMBYTES];
     /* Will contain key, coins */
@@ -104,9 +101,7 @@ int PQCLEAN_KYBER76890S_AVX2_crypto_kem_dec(unsigned char ss[KYBER_SSBYTES],
     PQCLEAN_KYBER76890S_AVX2_indcpa_dec(buf, ct, sk);
 
     /* Multitarget countermeasure for coins + contributory KEM */
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
-        buf[KYBER_SYMBYTES + i] = sk[KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES + i];
-    }
+    memcpy(buf + KYBER_SYMBYTES, sk + KYBER_SECRETKEYBYTES - 2 * KYBER_SYMBYTES, KYBER_SYMBYTES);
     hash_g(kr, buf, 2 * KYBER_SYMBYTES);
 
     /* coins are in kr+KYBER_SYMBYTES */

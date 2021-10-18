@@ -15,7 +15,7 @@ void PQCLEAN_KYBER51290S_CLEAN_kyber_aes256xof_absorb(aes256xof_ctx *state, cons
 
 void PQCLEAN_KYBER51290S_CLEAN_kyber_aes256ctr_prf(uint8_t *out, size_t outlen, const uint8_t key[32], uint8_t nonce);
 
-#define XOF_BLOCKBYTES 64
+#define XOF_BLOCKBYTES AES256CTR_BLOCKBYTES
 
 #define hash_h(OUT, IN, INBYTES) sha256(OUT, IN, INBYTES)
 #define hash_g(OUT, IN, INBYTES) sha512(OUT, IN, INBYTES)

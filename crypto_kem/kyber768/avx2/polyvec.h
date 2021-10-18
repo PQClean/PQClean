@@ -8,10 +8,10 @@ typedef struct {
     poly vec[KYBER_K];
 } polyvec;
 
-void PQCLEAN_KYBER768_AVX2_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES + 2], polyvec *a);
+void PQCLEAN_KYBER768_AVX2_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES + 2], const polyvec *a);
 void PQCLEAN_KYBER768_AVX2_polyvec_decompress(polyvec *r, const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES + 12]);
 
-void PQCLEAN_KYBER768_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], polyvec *a);
+void PQCLEAN_KYBER768_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], const polyvec *a);
 void PQCLEAN_KYBER768_AVX2_polyvec_frombytes(polyvec *r, const uint8_t a[KYBER_POLYVECBYTES]);
 
 void PQCLEAN_KYBER768_AVX2_polyvec_ntt(polyvec *r);
