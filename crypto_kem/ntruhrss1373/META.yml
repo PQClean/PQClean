@@ -23,4 +23,4 @@ auxiliary-submitters:
   - Zhenfei Zhang
 implementations:
     - name: clean
-      version: https://github.com/jschanck/ntru/tree/bc5e7efe reference implementation
+      version: https://github.com/jschanck/ntru/tree/6d96ed37 reference implementation

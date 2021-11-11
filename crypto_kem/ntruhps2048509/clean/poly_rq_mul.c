@@ -22,7 +22,7 @@ static void toom4_k2x2_basemul(uint16_t r[18 * K], const uint16_t a[9 * K], cons
 static inline void schoolbook_KxK(uint16_t r[2 * K], const uint16_t a[K], const uint16_t b[K]);
 
 static void toom4_k2x2_interpolate(uint16_t r[2 * L], const uint16_t a[63 * 2 * K]);
-static inline void k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[9 * K]);
+static inline void k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[18 * K]);
 
 void PQCLEAN_NTRUHPS2048509_CLEAN_poly_Rq_mul(poly *r, const poly *a, const poly *b) {
     size_t i;
@@ -189,7 +189,7 @@ static inline void schoolbook_KxK(uint16_t r[2 * K], const uint16_t a[K], const 
     r[2 * K - 1] = 0;
 }
 
-static void toom4_k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[7 * 18 * K]) {
+static void toom4_k2x2_interpolate(uint16_t r[2 * L], const uint16_t a[7 * 18 * K]) {
     size_t i;
 
     uint16_t P1[2 * M];
@@ -242,7 +242,7 @@ static void toom4_k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[7 * 18 * 
     }
 }
 
-static inline void k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[9 * K]) {
+static inline void k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[18 * K]) {
     size_t i;
     uint16_t tmp[4 * K];
 
