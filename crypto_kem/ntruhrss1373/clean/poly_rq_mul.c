@@ -9,22 +9,22 @@
 
 static void k2x4_mul(uint16_t ab[2 * L], const uint16_t a[L], const uint16_t b[L]);
 
-static void k2x4_eval_00(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_01(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_0inf(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_10(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_11(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_1inf(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_inf0(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_inf1(uint16_t r[9 * K], const uint16_t a[M]);
-static void k2x4_eval_infinf(uint16_t r[9 * K], const uint16_t a[M]);
+static void k2x4_eval_00(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_01(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_0inf(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_10(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_11(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_1inf(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_inf0(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_inf1(uint16_t r[9 * K], const uint16_t a[L]);
+static void k2x4_eval_infinf(uint16_t r[9 * K], const uint16_t a[L]);
 static inline void k2x2_eval(uint16_t r[9 * K]);
 
 static void k2x4_basemul(uint16_t r[18 * K], const uint16_t a[9 * K], const uint16_t b[9 * K]);
 static inline void schoolbook_KxK(uint16_t r[2 * K], const uint16_t a[K], const uint16_t b[K]);
 
-static void k2x4_interpolate(uint16_t r[2 * M], const uint16_t a[81 * 2 * K]);
-static inline void k2x2_interpolate(uint16_t r[M], const uint16_t a[9 * K]);
+static void k2x4_interpolate(uint16_t r[2 * L], const uint16_t a[81 * 2 * K]);
+static inline void k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[9 * K]);
 
 void PQCLEAN_NTRUHRSS1373_CLEAN_poly_Rq_mul(poly *r, const poly *a, const poly *b) {
     size_t i;
@@ -90,14 +90,14 @@ static void k2x4_mul(uint16_t ab[2 * L], const uint16_t a[L], const uint16_t b[L
     k2x4_interpolate(ab, eC);
 }
 
-static void k2x4_eval_00(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_00(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i] = a[i];
     }
     k2x2_eval(r);
 }
 
-static void k2x4_eval_01(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_01(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i] = a[0 * M + i];
         r[i] += a[1 * M + i];
@@ -105,14 +105,14 @@ static void k2x4_eval_01(uint16_t r[9 * K], const uint16_t a[M]) {
     k2x2_eval(r);
 }
 
-static void k2x4_eval_0inf(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_0inf(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i] = a[1 * M + i];
     }
     k2x2_eval(r);
 }
 
-static void k2x4_eval_10(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_10(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i]  = a[0 * M + i];
         r[i] += a[2 * M + i];
@@ -120,7 +120,7 @@ static void k2x4_eval_10(uint16_t r[9 * K], const uint16_t a[M]) {
     k2x2_eval(r);
 }
 
-static void k2x4_eval_11(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_11(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i]  = a[0 * M + i];
         r[i] += a[1 * M + i];
@@ -130,7 +130,7 @@ static void k2x4_eval_11(uint16_t r[9 * K], const uint16_t a[M]) {
     k2x2_eval(r);
 }
 
-static void k2x4_eval_1inf(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_1inf(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i]  = a[1 * M + i];
         r[i] += a[3 * M + i];
@@ -138,14 +138,14 @@ static void k2x4_eval_1inf(uint16_t r[9 * K], const uint16_t a[M]) {
     k2x2_eval(r);
 }
 
-static void k2x4_eval_inf0(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_inf0(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i] = a[2 * M + i];
     }
     k2x2_eval(r);
 }
 
-static void k2x4_eval_inf1(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_inf1(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i]  = a[2 * M + i];
         r[i] += a[3 * M + i];
@@ -153,7 +153,7 @@ static void k2x4_eval_inf1(uint16_t r[9 * K], const uint16_t a[M]) {
     k2x2_eval(r);
 }
 
-static void k2x4_eval_infinf(uint16_t r[9 * K], const uint16_t a[M]) {
+static void k2x4_eval_infinf(uint16_t r[9 * K], const uint16_t a[L]) {
     for (size_t i = 0; i < M; i++) {
         r[i] = a[3 * M + i];
     }
@@ -204,7 +204,7 @@ static inline void schoolbook_KxK(uint16_t r[2 * K], const uint16_t a[K], const 
     r[2 * K - 1] = 0;
 }
 
-static void k2x4_interpolate(uint16_t r[2 * M], const uint16_t a[81 * 2 * K]) {
+static void k2x4_interpolate(uint16_t r[2 * L], const uint16_t a[81 * 2 * K]) {
     size_t i;
 
     uint16_t tmp[4 * M];
@@ -258,7 +258,7 @@ static void k2x4_interpolate(uint16_t r[2 * M], const uint16_t a[81 * 2 * K]) {
     }
 }
 
-static inline void k2x2_interpolate(uint16_t r[M], const uint16_t a[9 * K]) {
+static inline void k2x2_interpolate(uint16_t r[2 * M], const uint16_t a[9 * K]) {
     size_t i;
     uint16_t tmp[4 * K];
 
