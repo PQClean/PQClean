@@ -1,0 +1,19 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY=libntruhps40961229_clean.lib
+OBJECTS=cmov.obj crypto_sort_int32.obj kem.obj owcpa.obj pack3.obj packq.obj poly.obj poly_lift.obj poly_mod.obj poly_r2_inv.obj poly_rq_mul.obj poly_s3_inv.obj sample.obj sample_iid.obj 
+
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX /wd4127
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)

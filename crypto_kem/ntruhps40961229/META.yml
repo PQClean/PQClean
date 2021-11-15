@@ -1,0 +1,26 @@
+name: ntruhps40961229
+type: kem
+claimed-nist-level: 5
+claimed-security: IND-CCA2
+length-public-key: 1842
+length-secret-key: 2366
+length-ciphertext: 1842
+length-shared-secret: 32
+nistkat-sha256: 89fee43b0809f927ab78db68c46d34e9c2f71ad76903767c42c0bdd3b9f5c262
+principal-submitters:
+  - John M. Schanck
+auxiliary-submitters:
+  - Cong Chen
+  - Oussama Danba
+  - Jeffrey Hoffstein
+  - Andreas Hülsing
+  - Joost Rijneveld
+  - Tsunekazu Saito
+  - Peter Schwabe
+  - William Whyte
+  - Keita Xagawa
+  - Takashi Yamakawa
+  - Zhenfei Zhang
+implementations:
+    - name: clean
+      version: https://github.com/jschanck/ntru/tree/6d96ed37 reference implementation
