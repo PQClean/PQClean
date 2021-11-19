@@ -30,7 +30,7 @@ implementations:
               - avx2
               - popcnt
     - name: aarch64
-      version: https://github.com/neon-ntt/neon-ntt/tree/b011eeff3515fb168aa4dbaa671d760009d98dbb
+      version: https://github.com/neon-ntt/neon-ntt/tree/014d2a0c21d705a523b3bfd2a740f8f0a2ba7a27
       supported_platforms:
         - architecture: arm_8
           operating_systems:
