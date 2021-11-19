@@ -21,9 +21,9 @@ extern void PQCLEAN_DILITHIUM2_AARCH64_asm_intt_SIMD_bot(int *des, const int *ta
     }
 
 #define ntt DILITHIUM_NAMESPACE(ntt)
-void ntt(int32_t a[]);
+void ntt(int32_t a[N]);
 #define invntt_tomont DILITHIUM_NAMESPACE(invntt_tomont)
-void invntt_tomont(int32_t a[]);
+void invntt_tomont(int32_t a[N]);
 
 static const int constants[16] = {
     Q1, -Q1prime, RmodQ1_prime_half, RmodQ1_doubleprime,

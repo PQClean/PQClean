@@ -21,7 +21,7 @@ void dilithium_shake256_stream_init(shake256incctx *state,
 
 #define dilithium_shake128x2_stream_init DILITHIUM_NAMESPACE(dilithium_shake128x2_stream_init)
 void dilithium_shake128x2_stream_init(keccakx2_state *state,
-                                      const uint8_t seed[CRHBYTES],
+                                      const uint8_t seed[SEEDBYTES],
                                       uint16_t nonce1, uint16_t nonce2);
 #define dilithium_shake256x2_stream_init DILITHIUM_NAMESPACE(dilithium_shake256x2_stream_init)
 void dilithium_shake256x2_stream_init(keccakx2_state *state,
