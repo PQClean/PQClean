@@ -25,7 +25,7 @@ implementations:
             required_flags:
                 - avx2
     - name: aarch64
-      version: https://github.com/neon-ntt/neon-ntt/tree/b011eeff3515fb168aa4dbaa671d760009d98dbb
+      version: https://github.com/neon-ntt/neon-ntt/tree/b24c6d429124cd9f06e2cb1ee4e3f0e7cf4a511b
       supported_platforms:
           - architecture: arm_8
             operating_systems:
