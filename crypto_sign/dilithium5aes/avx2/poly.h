@@ -9,7 +9,6 @@ typedef ALIGNED_INT32(N) poly;
 
 void PQCLEAN_DILITHIUM5AES_AVX2_poly_reduce(poly *a);
 void PQCLEAN_DILITHIUM5AES_AVX2_poly_caddq(poly *a);
-void PQCLEAN_DILITHIUM5AES_AVX2_poly_freeze(poly *a);
 
 void PQCLEAN_DILITHIUM5AES_AVX2_poly_add(poly *c, const poly *a, const poly *b);
 void PQCLEAN_DILITHIUM5AES_AVX2_poly_sub(poly *c, const poly *a, const poly *b);
@@ -45,8 +44,8 @@ void PQCLEAN_DILITHIUM5AES_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const
 void PQCLEAN_DILITHIUM5AES_AVX2_polyt0_unpack(poly *r, const uint8_t a[POLYT0_PACKEDBYTES]);
 
 void PQCLEAN_DILITHIUM5AES_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly *a);
-void PQCLEAN_DILITHIUM5AES_AVX2_polyz_unpack(poly *r, const uint8_t a[POLYZ_PACKEDBYTES + 14]);
+void PQCLEAN_DILITHIUM5AES_AVX2_polyz_unpack(poly *r, const uint8_t *a);
 
-void PQCLEAN_DILITHIUM5AES_AVX2_polyw1_pack(uint8_t r[POLYW1_PACKEDBYTES + 8], const poly *a);
+void PQCLEAN_DILITHIUM5AES_AVX2_polyw1_pack(uint8_t *r, const poly *a);
 
 #endif

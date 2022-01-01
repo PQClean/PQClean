@@ -21,9 +21,4 @@ void PQCLEAN_DILITHIUM2AES_AVX2_aes256ctr_squeezeblocks(uint8_t *out,
         size_t nblocks,
         aes256ctr_ctx *state);
 
-void PQCLEAN_DILITHIUM2AES_AVX2_aes256ctr_prf(uint8_t *out,
-        size_t outlen,
-        const uint8_t seed[32],
-        uint64_t nonce);
-
 #endif

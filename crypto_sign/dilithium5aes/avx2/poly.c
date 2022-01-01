@@ -72,25 +72,6 @@ void PQCLEAN_DILITHIUM5AES_AVX2_poly_caddq(poly *a) {
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM5AES_AVX2_poly_freeze
-*
-* Description: Inplace reduction of all coefficients of polynomial to
-*              positive standard representatives. Assumes input
-*              coefficients to be at most 2^31 - 2^22 + 1 in
-*              absolute value.
-*
-* Arguments:   - poly *a: pointer to input/output polynomial
-**************************************************/
-void PQCLEAN_DILITHIUM5AES_AVX2_poly_freeze(poly *a) {
-    DBENCH_START();
-
-    PQCLEAN_DILITHIUM5AES_AVX2_poly_reduce(a);
-    PQCLEAN_DILITHIUM5AES_AVX2_poly_caddq(a);
-
-    DBENCH_STOP(*tred);
-}
-
-/*************************************************
 * Name:        PQCLEAN_DILITHIUM5AES_AVX2_poly_add
 *
 * Description: Add polynomials. No modular reduction is performed.
@@ -818,7 +799,7 @@ void PQCLEAN_DILITHIUM5AES_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const p
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5AES_AVX2_polyz_unpack(poly *restrict r, const uint8_t a[POLYZ_PACKEDBYTES + 12]) {
+void PQCLEAN_DILITHIUM5AES_AVX2_polyz_unpack(poly *restrict r, const uint8_t *a) {
     unsigned int i;
     __m256i f;
     const __m256i shufbidx = _mm256_set_epi8(-1, 11, 10, 9, -1, 9, 8, 7, -1, 6, 5, 4, -1, 4, 3, 2,
@@ -851,7 +832,7 @@ void PQCLEAN_DILITHIUM5AES_AVX2_polyz_unpack(poly *restrict r, const uint8_t a[P
 *                            POLYW1_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5AES_AVX2_polyw1_pack(uint8_t r[POLYW1_PACKEDBYTES], const poly *restrict a) {
+void PQCLEAN_DILITHIUM5AES_AVX2_polyw1_pack(uint8_t *r, const poly *restrict a) {
     unsigned int i;
     __m256i f0, f1, f2, f3, f4, f5, f6, f7;
     const __m256i shift = _mm256_set1_epi16((16 << 8) + 1);

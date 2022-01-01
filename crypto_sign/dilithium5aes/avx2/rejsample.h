@@ -14,6 +14,6 @@ extern const uint8_t PQCLEAN_DILITHIUM5AES_AVX2_idxlut[256][8];
 
 unsigned int PQCLEAN_DILITHIUM5AES_AVX2_rej_uniform_avx(int32_t *r, const uint8_t buf[REJ_UNIFORM_BUFLEN + 8]);
 
-unsigned int PQCLEAN_DILITHIUM5AES_AVX2_rej_eta_avx(int32_t *r, const uint8_t buf[REJ_UNIFORM_BUFLEN]);
+unsigned int PQCLEAN_DILITHIUM5AES_AVX2_rej_eta_avx(int32_t *r, const uint8_t buf[REJ_UNIFORM_ETA_BUFLEN]);
 
 #endif

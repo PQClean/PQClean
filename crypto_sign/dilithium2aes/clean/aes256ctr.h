@@ -12,11 +12,6 @@ typedef struct {
     uint32_t ivw[16];
 } aes256ctr_ctx;
 
-void PQCLEAN_DILITHIUM2AES_CLEAN_aes256ctr_prf(uint8_t *out,
-        size_t outlen,
-        const uint8_t key[32],
-        const uint8_t nonce[12]);
-
 void PQCLEAN_DILITHIUM2AES_CLEAN_aes256ctr_init(aes256ctr_ctx *state,
         const uint8_t key[32],
         const uint8_t nonce[12]);

@@ -17,9 +17,9 @@ auxiliary-submitters:
   - Damien Stehlé
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/dilithium/commit/adf7476d645fb808b5c5d2dd1ef1aaeefdc0c897 via https://github.com/jschanck/package-pqclean/tree/80749c85/dilithium
+      version: https://github.com/pq-crystals/dilithium/commit/61b51a71701b8ae9f546a1e5d220e1950ed20d06 via https://github.com/jschanck/package-pqclean/tree/98146649/dilithium
     - name: avx2
-      version: https://github.com/pq-crystals/dilithium/commit/adf7476d645fb808b5c5d2dd1ef1aaeefdc0c897 via https://github.com/jschanck/package-pqclean/tree/80749c85/dilithium
+      version: https://github.com/pq-crystals/dilithium/commit/61b51a71701b8ae9f546a1e5d220e1950ed20d06 via https://github.com/jschanck/package-pqclean/tree/98146649/dilithium
       supported_platforms:
         - architecture: x86_64
           operating_systems:
@@ -29,6 +29,7 @@ implementations:
               - aes
               - avx2
               - popcnt
+
     - name: aarch64
       version: https://github.com/neon-ntt/neon-ntt/tree/014d2a0c21d705a523b3bfd2a740f8f0a2ba7a27
       supported_platforms:

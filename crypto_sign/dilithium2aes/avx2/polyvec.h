@@ -15,8 +15,6 @@ void PQCLEAN_DILITHIUM2AES_AVX2_polyvecl_uniform_gamma1(polyvecl *v, const uint8
 
 void PQCLEAN_DILITHIUM2AES_AVX2_polyvecl_reduce(polyvecl *v);
 
-void PQCLEAN_DILITHIUM2AES_AVX2_polyvecl_freeze(polyvecl *v);
-
 void PQCLEAN_DILITHIUM2AES_AVX2_polyvecl_add(polyvecl *w, const polyvecl *u, const polyvecl *v);
 
 void PQCLEAN_DILITHIUM2AES_AVX2_polyvecl_ntt(polyvecl *v);
@@ -37,7 +35,6 @@ void PQCLEAN_DILITHIUM2AES_AVX2_polyveck_uniform_eta(polyveck *v, const uint8_t 
 
 void PQCLEAN_DILITHIUM2AES_AVX2_polyveck_reduce(polyveck *v);
 void PQCLEAN_DILITHIUM2AES_AVX2_polyveck_caddq(polyveck *v);
-void PQCLEAN_DILITHIUM2AES_AVX2_polyveck_freeze(polyveck *v);
 
 void PQCLEAN_DILITHIUM2AES_AVX2_polyveck_add(polyveck *w, const polyveck *u, const polyveck *v);
 void PQCLEAN_DILITHIUM2AES_AVX2_polyveck_sub(polyveck *w, const polyveck *u, const polyveck *v);

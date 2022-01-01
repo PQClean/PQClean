@@ -48,25 +48,6 @@ void PQCLEAN_DILITHIUM3_CLEAN_poly_caddq(poly *a) {
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM3_CLEAN_poly_freeze
-*
-* Description: Inplace reduction of all coefficients of polynomial to
-*              standard representatives.
-*
-* Arguments:   - poly *a: pointer to input/output polynomial
-**************************************************/
-void PQCLEAN_DILITHIUM3_CLEAN_poly_freeze(poly *a) {
-    unsigned int i;
-    DBENCH_START();
-
-    for (i = 0; i < N; ++i) {
-        a->coeffs[i] = PQCLEAN_DILITHIUM3_CLEAN_freeze(a->coeffs[i]);
-    }
-
-    DBENCH_STOP(*tred);
-}
-
-/*************************************************
 * Name:        PQCLEAN_DILITHIUM3_CLEAN_poly_add
 *
 * Description: Add polynomials. No modular reduction is performed.
