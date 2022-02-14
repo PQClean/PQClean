@@ -104,7 +104,7 @@ jobs:
     steps:
       - name: Register qemu-user-static
         run: |
-          docker run --rm --privileged multiarch/qemu-user-static:register --reset
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
       - uses: actions/checkout@v2
         with:
           submodules: true
@@ -173,24 +173,25 @@ jobs:
       PQCLEAN_ONLY_SCHEMES: rainbowIII-classic
       CCACHE_NOSTATS: 1
       CCACHE_SLOPPINESS: include_file_mtime
-      # XCode version
-      DEVELOPER_DIR: /Applications/Xcode_11.5.app/Contents/Developer
     strategy:
       matrix:
         compiler:
           - clang  # XCode (Apple LLVM/Clang)
-          - gcc9   # GNU (Homebrew)
+          - gcc11   # GNU (Homebrew)
     runs-on: macos-latest
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - uses: actions/checkout@v2
         with:
           submodules: true
       - name: Install astyle
         run: |
           brew install astyle
-      - name: Set up GCC9 compiler
-        run: 'export PATH="/usr/local/bin:$PATH" && export CC=gcc-9'
-        if: matrix.compiler == 'gcc9'
+      - name: Set up GCC11 compiler
+        run: 'export PATH="/usr/local/bin:$PATH" && export CC=gcc-11'
+        if: matrix.compiler == 'gcc11'
       - name: Setup Python
         uses: actions/setup-python@main
         with:
