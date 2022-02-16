@@ -61,22 +61,6 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_reduce(polyvecl *v) {
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyvecl_freeze
-*
-* Description: Reduce coefficients of polynomials in vector of length L
-*              to standard representatives.
-*
-* Arguments:   - polyvecl *v: pointer to input/output vector
-**************************************************/
-void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_freeze(polyvecl *v) {
-    unsigned int i;
-
-    for (i = 0; i < L; ++i) {
-        PQCLEAN_DILITHIUM3_CLEAN_poly_freeze(&v->vec[i]);
-    }
-}
-
-/*************************************************
 * Name:        PQCLEAN_DILITHIUM3_CLEAN_polyvecl_add
 *
 * Description: Add vectors of polynomials of length L.
@@ -215,22 +199,6 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_caddq(polyveck *v) {
 
     for (i = 0; i < K; ++i) {
         PQCLEAN_DILITHIUM3_CLEAN_poly_caddq(&v->vec[i]);
-    }
-}
-
-/*************************************************
-* Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_freeze
-*
-* Description: Reduce coefficients of polynomials in vector of length K
-*              to standard representatives.
-*
-* Arguments:   - polyveck *v: pointer to input/output vector
-**************************************************/
-void PQCLEAN_DILITHIUM3_CLEAN_polyveck_freeze(polyveck *v)  {
-    unsigned int i;
-
-    for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUM3_CLEAN_poly_freeze(&v->vec[i]);
     }
 }
 

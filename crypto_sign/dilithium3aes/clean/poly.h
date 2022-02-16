@@ -9,7 +9,6 @@ typedef struct {
 
 void PQCLEAN_DILITHIUM3AES_CLEAN_poly_reduce(poly *a);
 void PQCLEAN_DILITHIUM3AES_CLEAN_poly_caddq(poly *a);
-void PQCLEAN_DILITHIUM3AES_CLEAN_poly_freeze(poly *a);
 
 void PQCLEAN_DILITHIUM3AES_CLEAN_poly_add(poly *c, const poly *a, const poly *b);
 void PQCLEAN_DILITHIUM3AES_CLEAN_poly_sub(poly *c, const poly *a, const poly *b);

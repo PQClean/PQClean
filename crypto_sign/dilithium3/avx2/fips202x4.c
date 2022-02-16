@@ -100,13 +100,13 @@ static void keccakx4_squeezeblocks(uint8_t *out0,
             t = _mm_castsi128_pd(_mm256_castsi256_si128(s[i]));
             _mm_storel_pd(&temp0, t);
             _mm_storeh_pd(&temp1, t);
-            memmove(&out0[8 * i], &temp0, sizeof(double));
-            memmove(&out1[8 * i], &temp1, sizeof(double));
+            memcpy(&out0[8 * i], &temp0, sizeof(double));
+            memcpy(&out1[8 * i], &temp1, sizeof(double));
             t = _mm_castsi128_pd(_mm256_extracti128_si256(s[i], 1));
             _mm_storel_pd(&temp0, t);
             _mm_storeh_pd(&temp1, t);
-            memmove(&out2[8 * i], &temp0, sizeof(double));
-            memmove(&out3[8 * i], &temp1, sizeof(double));
+            memcpy(&out2[8 * i], &temp0, sizeof(double));
+            memcpy(&out3[8 * i], &temp1, sizeof(double));
         }
 
         out0 += r;
