@@ -21,22 +21,25 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-
 // In the case that are compiling on linux, we need to define _GNU_SOURCE
 // *before* randombytes.h is included. Otherwise SYS_getrandom will not be
 // declared.
 #if defined(__linux__)
-#define _GNU_SOURCE
+# define _GNU_SOURCE
 #endif /* defined(__linux__) */
 
 #include "randombytes.h"
 
 #if defined(_WIN32)
 /* Windows */
-// NOLINTNEXTLINE(llvm-include-order): Include order required by Windows
-#include <windows.h>
-#include <wincrypt.h> /* CryptAcquireContext, CryptGenRandom */
+# include <windows.h>
+# include <wincrypt.h> /* CryptAcquireContext, CryptGenRandom */
 #endif /* defined(_WIN32) */
+
+/* wasi */
+#if defined(__wasi__)
+#include <stdlib.h>
+#endif
 
 #if defined(__linux__)
 /* Linux */
@@ -44,41 +47,47 @@ THE SOFTWARE.
 // to the linux headers. We only need RNDGETENTCNT, so we instead inline it.
 // RNDGETENTCNT is originally defined in `include/uapi/linux/random.h` in the
 // linux repo.
-#define RNDGETENTCNT 0x80045200
+# define RNDGETENTCNT 0x80045200
 
-#include <assert.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <poll.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <sys/ioctl.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <unistd.h>
+# include <assert.h>
+# include <errno.h>
+# include <fcntl.h>
+# include <poll.h>
+# include <stdint.h>
+# include <stdio.h>
+# include <sys/ioctl.h>
+# if defined(__linux__) && defined(__GLIBC__) && ((__GLIBC__ > 2) || (__GLIBC_MINOR__ > 24))
+#  define USE_GLIBC
+#  include <sys/random.h>
+# endif /* defined(__linux__) && defined(__GLIBC__) && ((__GLIBC__ > 2) || (__GLIBC_MINOR__ > 24)) */
+# include <sys/stat.h>
+# include <sys/syscall.h>
+# include <sys/types.h>
+# include <unistd.h>
 
 // We need SSIZE_MAX as the maximum read len from /dev/urandom
-#if !defined(SSIZE_MAX)
-#define SSIZE_MAX (SIZE_MAX / 2 - 1)
-#endif /* defined(SSIZE_MAX) */
+# if !defined(SSIZE_MAX)
+#  define SSIZE_MAX (SIZE_MAX / 2 - 1)
+# endif /* defined(SSIZE_MAX) */
 
 #endif /* defined(__linux__) */
 
+
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 /* Dragonfly, FreeBSD, NetBSD, OpenBSD (has arc4random) */
-#include <sys/param.h>
-#if defined(BSD)
-#include <stdlib.h>
-#endif
+# include <sys/param.h>
+# if defined(BSD)
+#  include <stdlib.h>
+# endif
 #endif
 
 #if defined(__EMSCRIPTEN__)
-#include <assert.h>
-#include <emscripten.h>
-#include <errno.h>
-#include <stdbool.h>
+# include <assert.h>
+# include <emscripten.h>
+# include <errno.h>
+# include <stdbool.h>
 #endif /* defined(__EMSCRIPTEN__) */
+
 
 #if defined(_WIN32)
 static int randombytes_win32_randombytes(void *buf, const size_t n) {
@@ -91,7 +100,7 @@ static int randombytes_win32_randombytes(void *buf, const size_t n) {
         return -1;
     }
 
-    tmp = CryptGenRandom(ctx, (DWORD)n, (BYTE *)buf);
+    tmp = CryptGenRandom(ctx, n, (BYTE *) buf);
     if (tmp == FALSE) {
         return -1;
     }
@@ -105,30 +114,46 @@ static int randombytes_win32_randombytes(void *buf, const size_t n) {
 }
 #endif /* defined(_WIN32) */
 
-#if defined(__linux__) && defined(SYS_getrandom)
+#if defined(__wasi__)
+static int randombytes_wasi_randombytes(void *buf, size_t n) {
+    arc4random_buf(buf, n);
+    return 0;
+}
+#endif /* defined(__wasi__) */
+
+#if defined(__linux__) && (defined(USE_GLIBC) || defined(SYS_getrandom))
+# if defined(USE_GLIBC)
+// getrandom is declared in glibc.
+# elif defined(SYS_getrandom)
+static ssize_t getrandom(void *buf, size_t buflen, unsigned int flags) {
+    return syscall(SYS_getrandom, buf, buflen, flags);
+}
+# endif
+
 static int randombytes_linux_randombytes_getrandom(void *buf, size_t n) {
     /* I have thought about using a separate PRF, seeded by getrandom, but
      * it turns out that the performance of getrandom is good enough
      * (250 MB/s on my laptop).
      */
     size_t offset = 0, chunk;
-    long int ret;
+    int ret;
     while (n > 0) {
         /* getrandom does not allow chunks larger than 33554431 */
         chunk = n <= 33554431 ? n : 33554431;
         do {
-            ret = syscall(SYS_getrandom, (char *)buf + offset, chunk, 0);
+            ret = getrandom((char *)buf + offset, chunk, 0);
         } while (ret == -1 && errno == EINTR);
         if (ret < 0) {
-            return (int) ret;
+            return ret;
         }
-        offset += (size_t) ret;
-        n -= (size_t) ret;
+        offset += ret;
+        n -= ret;
     }
     assert(n == 0);
     return 0;
 }
-#endif /* defined(__linux__) && defined(SYS_getrandom) */
+#endif // defined(__linux__) && (defined(USE_GLIBC) || defined(SYS_getrandom))
+
 
 #if defined(__linux__) && !defined(SYS_getrandom)
 static int randombytes_linux_read_entropy_ioctl(int device, int *entropy) {
@@ -151,24 +176,27 @@ static int randombytes_linux_wait_for_entropy(int device) {
     /* We will block on /dev/random, because any increase in the OS' entropy
      * level will unblock the request. I use poll here (as does libsodium),
      * because we don't *actually* want to read from the device. */
-    enum { IOCTL,
-           PROC
-         } strategy = IOCTL;
+    enum { IOCTL, PROC } strategy = IOCTL;
     const int bits = 128;
     struct pollfd pfd;
     int fd;
     FILE *proc_file;
-    int retcode,
-        retcode_error = 0; // Used as return codes throughout this function
+    int retcode, retcode_error = 0; // Used as return codes throughout this function
     int entropy = 0;
 
     /* If the device has enough entropy already, we will want to return early */
     retcode = randombytes_linux_read_entropy_ioctl(device, &entropy);
-    if (retcode != 0 && errno == ENOTTY) {
-        /* The ioctl call on /dev/urandom has failed due to a ENOTTY (i.e.
-         * unsupported action). We will fall back to reading from
-         * `/proc/sys/kernel/random/entropy_avail`. This is obviously less
-         * ideal, but at this point it seems we have no better option. */
+    // printf("errno: %d (%s)\n", errno, strerror(errno));
+    if (retcode != 0 && (errno == ENOTTY || errno == ENOSYS)) {
+        // The ioctl call on /dev/urandom has failed due to a
+        //   - ENOTTY (unsupported action), or
+        //   - ENOSYS (invalid ioctl; this happens on MIPS, see #22).
+        //
+        // We will fall back to reading from
+        // `/proc/sys/kernel/random/entropy_avail`.  This less ideal,
+        // because it allocates a file descriptor, and it may not work
+        // in a chroot.  But at this point it seems we have no better
+        // options left.
         strategy = PROC;
         // Open the entropy count file
         proc_file = fopen("/proc/sys/kernel/random/entropy_avail", "r");
@@ -196,11 +224,9 @@ static int randombytes_linux_wait_for_entropy(int device) {
             continue;
         } else if (retcode == 1) {
             if (strategy == IOCTL) {
-                retcode =
-                    randombytes_linux_read_entropy_ioctl(device, &entropy);
+                retcode = randombytes_linux_read_entropy_ioctl(device, &entropy);
             } else if (strategy == PROC) {
-                retcode =
-                    randombytes_linux_read_entropy_proc(proc_file, &entropy);
+                retcode = randombytes_linux_read_entropy_proc(proc_file, &entropy);
             } else {
                 return -1; // Unreachable
             }
@@ -233,6 +259,7 @@ static int randombytes_linux_wait_for_entropy(int device) {
     return retcode;
 }
 
+
 static int randombytes_linux_randombytes_urandom(void *buf, size_t n) {
     int fd;
     size_t offset = 0, count;
@@ -254,15 +281,17 @@ static int randombytes_linux_randombytes_urandom(void *buf, size_t n) {
             continue;
         }
         if (tmp == -1) {
-            return -1; /* Unrecoverable IO error */
+            return -1;    /* Unrecoverable IO error */
         }
         offset += tmp;
         n -= tmp;
     }
+    close(fd);
     assert(n == 0);
     return 0;
 }
 #endif /* defined(__linux__) && !defined(SYS_getrandom) */
+
 
 #if defined(BSD)
 static int randombytes_bsd_randombytes(void *buf, size_t n) {
@@ -270,6 +299,7 @@ static int randombytes_bsd_randombytes(void *buf, size_t n) {
     return 0;
 }
 #endif /* defined(BSD) */
+
 
 #if defined(__EMSCRIPTEN__)
 static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
@@ -286,8 +316,7 @@ static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
         } catch (error) {
             return -1;
         }
-    },
-    buf, n);
+    }, buf, n);
     switch (ret) {
     case 0:
         return 0;
@@ -302,24 +331,32 @@ static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
 }
 #endif /* defined(__EMSCRIPTEN__) */
 
-int randombytes(uint8_t *buf, size_t n) {
+
+int randombytes(uint8_t *output, size_t n) {
+    void *buf = (void *)output;
     #if defined(__EMSCRIPTEN__)
     return randombytes_js_randombytes_nodejs(buf, n);
     #elif defined(__linux__)
-    #if defined(SYS_getrandom)
+    # if defined(USE_GLIBC)
     /* Use getrandom system call */
     return randombytes_linux_randombytes_getrandom(buf, n);
-    #else
+    # elif defined(SYS_getrandom)
+    /* Use getrandom system call */
+    return randombytes_linux_randombytes_getrandom(buf, n);
+    # else
     /* When we have enough entropy, we can read from /dev/urandom */
     return randombytes_linux_randombytes_urandom(buf, n);
-    #endif
+    # endif
     #elif defined(BSD)
     /* Use arc4random system call */
     return randombytes_bsd_randombytes(buf, n);
     #elif defined(_WIN32)
     /* Use windows API */
     return randombytes_win32_randombytes(buf, n);
+    #elif defined(__wasi__)
+    /* Use WASI */
+    return randombytes_wasi_randombytes(buf, n);
     #else
-#error "randombytes(...) is not supported on this platform"
+# error "randombytes(...) is not supported on this platform"
     #endif
 }
