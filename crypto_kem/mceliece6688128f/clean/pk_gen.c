@@ -7,8 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "controlbits.h"
 #include "benes.h"
+#include "controlbits.h"
 #include "params.h"
 #include "pk_gen.h"
 #include "root.h"
