@@ -92,14 +92,17 @@ jobs:
   test-windows:
     strategy:
       matrix:
-        bits:
-          - 64
-          - 32
+        arch:
+          - x64
+          - x86
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
       - name: Setup astyle
         run: |
           # Setup strong crypto
@@ -115,7 +118,6 @@ jobs:
         run: python -m pip install -r requirements.txt
       - name: Run tests
         run: |
-          call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvars${{ matrix.bits }}.bat"
           cd test
           python -m pytest --verbose --numprocesses=auto
           python test_common.py --numprocesses=auto
