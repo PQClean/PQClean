@@ -1,5 +1,5 @@
-#include "poly_r2_inv.h"
 #include "poly.h"
+#include "poly_r2_inv.h"
 
 // TODO this costs 1764 cycles.. (implementing as S3_to_bytes results in 2108)
 // This can be implemented nicely in assembly using pdep / pext functions

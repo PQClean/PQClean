@@ -1,7 +1,7 @@
 #include <immintrin.h>
 
-#include "poly_r2_inv.h"
 #include "poly.h"
+#include "poly_r2_inv.h"
 
 // Using pdep/pext for these two functions is faster but not a lot since they work on uint64_t which means
 // we can only do 4 coefficients at a time. Per byte (where we store 8 coefficients) we will thus need 2 pdeps/pexts
