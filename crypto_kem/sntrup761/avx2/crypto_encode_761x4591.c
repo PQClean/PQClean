@@ -32,10 +32,10 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x4591(unsigned char *out, const voi
         x2 = _mm256_loadu_si256((__m256i *) (reading + 16));
         x = _mm256_add_epi16(x, _mm256_set1_epi16(2295));
         x2 = _mm256_add_epi16(x2, _mm256_set1_epi16(2295));
-        x &= _mm256_set1_epi16(16383);
-        x2 &= _mm256_set1_epi16(16383);
-        y = x & _mm256_set1_epi32(65535);
-        y2 = x2 & _mm256_set1_epi32(65535);
+        x = _mm256_and_si256(x, _mm256_set1_epi16(16383));
+        x2 = _mm256_and_si256(x2, _mm256_set1_epi16(16383));
+        y = _mm256_and_si256(x, _mm256_set1_epi32(65535));
+        y2 = _mm256_and_si256(x2, _mm256_set1_epi32(65535));
         x = _mm256_srli_epi32(x, 16);
         x2 = _mm256_srli_epi32(x2, 16);
         x = _mm256_mullo_epi32(x, _mm256_set1_epi32(4591));
@@ -72,7 +72,7 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x4591(unsigned char *out, const voi
             out -= 2;
         }
         x = _mm256_loadu_si256((__m256i *) reading);
-        y = x & _mm256_set1_epi32(65535);
+        y = _mm256_and_si256(x, _mm256_set1_epi32(65535));
         x = _mm256_srli_epi32(x, 16);
         x = _mm256_mullo_epi32(x, _mm256_set1_epi32(322));
         x = _mm256_add_epi32(y, x);
@@ -115,7 +115,7 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x4591(unsigned char *out, const voi
             out -= 1;
         }
         x = _mm256_loadu_si256((__m256i *) reading);
-        y = x & _mm256_set1_epi32(65535);
+        y = _mm256_and_si256(x, _mm256_set1_epi32(65535));
         x = _mm256_srli_epi32(x, 16);
         x = _mm256_mullo_epi32(x, _mm256_set1_epi32(406));
         x = _mm256_add_epi32(y, x);
@@ -153,7 +153,7 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x4591(unsigned char *out, const voi
         __m256i x, y;
         --i;
         x = _mm256_loadu_si256((__m256i *) reading);
-        y = x & _mm256_set1_epi32(65535);
+        y = _mm256_and_si256(x, _mm256_set1_epi32(65535));
         x = _mm256_srli_epi32(x, 16);
         x = _mm256_mullo_epi32(x, _mm256_set1_epi32(644));
         x = _mm256_add_epi32(y, x);
@@ -195,7 +195,7 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_encode_761x4591(unsigned char *out, const voi
             out -= 1;
         }
         x = _mm256_loadu_si256((__m256i *) reading);
-        y = x & _mm256_set1_epi32(65535);
+        y = _mm256_and_si256(x, _mm256_set1_epi32(65535));
         x = _mm256_srli_epi32(x, 16);
         x = _mm256_mullo_epi32(x, _mm256_set1_epi32(1621));
         x = _mm256_add_epi32(y, x);

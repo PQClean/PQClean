@@ -44,11 +44,11 @@ static inline __m256i mulhiconst(__m256i x, int16 y) {
 static inline __m256i ifgesubconst(__m256i x, int16 y) {
     __m256i y16 = _mm256_set1_epi16(y);
     __m256i top16 = _mm256_set1_epi16((int16)(y - 1));
-    return sub(x, _mm256_cmpgt_epi16(x, top16) & y16);
+    return sub(x, _mm256_and_si256(_mm256_cmpgt_epi16(x, top16), y16));
 }
 
 static inline __m256i ifnegaddconst(__m256i x, int16 y) {
-    return add(x, signedshiftrightconst(x, 15) & _mm256_set1_epi16(y));
+    return add(x, _mm256_and_si256(signedshiftrightconst(x, 15), _mm256_set1_epi16(y)));
 }
 
 void PQCLEAN_SNTRUP761_AVX2_crypto_decode_761x1531(void *v, const unsigned char *s) {
@@ -287,7 +287,7 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_decode_761x1531(void *v, const unsigned char 
         A2 = A0 = _mm256_loadu_si256((__m256i *) &R4[i]);
         S0 = _mm256_loadu_si256((__m256i *) (s + 2 * i));
         S1 = _mm256_srli_epi16(S0, 8);
-        S0 &= _mm256_set1_epi16(255);
+        S0 = _mm256_and_si256(S0, _mm256_set1_epi16(255));
         A0 = sub(mulhiconst(A0, 2816), mulhiconst(mulloconst(A0, -2621), 6400)); /* -3200...3904 */
         A0 = add(A0, S1); /* -3200...4159 */
         A0 = sub(mulhiconst(A0, 2816), mulhiconst(mulloconst(A0, -2621), 6400)); /* -3338...3378 */
@@ -361,7 +361,7 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_decode_761x1531(void *v, const unsigned char 
         A0 = _mm256_loadu_si256((__m256i *) &R2[i]);
         S0 = _mm256_loadu_si256((__m256i *) (s + 2 * i));
         S1 = _mm256_srli_epi16(S0, 8);
-        S0 &= _mm256_set1_epi16(255);
+        S0 = _mm256_and_si256(S0, _mm256_set1_epi16(255));
         A0 = sub(mulhiconst(A0, 1592), mulhiconst(mulloconst(A0, -1832), 9157)); /* -4579...4976 */
         A0 = add(A0, S1); /* -4579...5231 */
         A0 = sub(mulhiconst(A0, 1592), mulhiconst(mulloconst(A0, -1832), 9157)); /* -4690...4705 */

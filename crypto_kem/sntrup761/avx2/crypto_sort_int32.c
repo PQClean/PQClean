@@ -88,8 +88,8 @@ static void merge16_finish(int32 *x, int32x8 x0, int32x8 x1, int flagdown) {
 
     if (flagdown) {
         mask = _mm256_set1_epi32(-1);
-        x0 ^= mask;
-        x1 ^= mask;
+        x0 = _mm256_xor_si256(x0, mask);
+        x1 = _mm256_xor_si256(x1, mask);
     }
 
     int32x8_store(&x[0], x0);
@@ -225,8 +225,8 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
 
         mask = _mm256_set_epi32(0, 0, -1, -1, 0, 0, -1, -1);
 
-        x0 ^= mask; /* A01234567 */
-        x1 ^= mask; /* B01234567 */
+        x0 = _mm256_xor_si256(x0, mask); /* A01234567 */
+        x1 = _mm256_xor_si256(x1, mask); /* B01234567 */
 
         b0 = _mm256_unpacklo_epi32(x0, x1); /* AB0AB1AB4AB5 */
         b1 = _mm256_unpackhi_epi32(x0, x1); /* AB2AB3AB6AB7 */
@@ -237,8 +237,8 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
         int32x8_MINMAX(c0, c1);
 
         mask = _mm256_set_epi32(0, 0, -1, -1, -1, -1, 0, 0);
-        c0 ^= mask;
-        c1 ^= mask;
+        c0 = _mm256_xor_si256(c0, mask);
+        c1 = _mm256_xor_si256(c1, mask);
 
         b0 = _mm256_unpacklo_epi32(c0, c1); /* A01B01A45B45 */
         b1 = _mm256_unpackhi_epi32(c0, c1); /* A23B23A67B67 */
@@ -259,8 +259,8 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
         b0 = _mm256_unpacklo_epi32(c0, c1); /* A01B01A45B45 */
         b1 = _mm256_unpackhi_epi32(c0, c1); /* A23B23A67B67 */
 
-        b0 ^= mask;
-        b1 ^= mask;
+        b0 = _mm256_xor_si256(b0, mask);
+        b1 = _mm256_xor_si256(b1, mask);
 
         c0 = _mm256_permute2x128_si256(b0, b1, 0x20); /* A01B01A23B23 */
         c1 = _mm256_permute2x128_si256(b0, b1, 0x31); /* A45B45A67B67 */
@@ -291,9 +291,9 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
 
         mask = _mm256_set1_epi32(-1);
         if (flagdown) {
-            x1 ^= mask;
+            x1 = _mm256_xor_si256(x1, mask);
         } else {
-            x0 ^= mask;
+            x0 = _mm256_xor_si256(x0, mask);
         }
 
         merge16_finish(x, x0, x1, flagdown);
@@ -313,10 +313,10 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
 
         if (flagdown) {
             mask = _mm256_set1_epi32(-1);
-            x0 ^= mask;
-            x1 ^= mask;
-            x2 ^= mask;
-            x3 ^= mask;
+            x0 = _mm256_xor_si256(x0, mask);
+            x1 = _mm256_xor_si256(x1, mask);
+            x2 = _mm256_xor_si256(x2, mask);
+            x3 = _mm256_xor_si256(x3, mask);
         }
 
         int32x8_MINMAX(x0, x2);
@@ -372,8 +372,8 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
         for (j = 0; j < n; j += 32) {
             int32x8 x0 = int32x8_load(&x[j]);
             int32x8 x1 = int32x8_load(&x[j + 16]);
-            x0 ^= mask;
-            x1 ^= mask;
+            x0 = _mm256_xor_si256(x0, mask);
+            x1 = _mm256_xor_si256(x1, mask);
             int32x8_store(&x[j], x0);
             int32x8_store(&x[j + 16], x1);
         }
@@ -493,14 +493,14 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
                         int32x8_MINMAX(x3, x7);
 
                         if (flip) {
-                            x0 ^= mask;
-                            x1 ^= mask;
-                            x2 ^= mask;
-                            x3 ^= mask;
-                            x4 ^= mask;
-                            x5 ^= mask;
-                            x6 ^= mask;
-                            x7 ^= mask;
+                            x0 = _mm256_xor_si256(x0, mask);
+                            x1 = _mm256_xor_si256(x1, mask);
+                            x2 = _mm256_xor_si256(x2, mask);
+                            x3 = _mm256_xor_si256(x3, mask);
+                            x4 = _mm256_xor_si256(x4, mask);
+                            x5 = _mm256_xor_si256(x5, mask);
+                            x6 = _mm256_xor_si256(x6, mask);
+                            x7 = _mm256_xor_si256(x7, mask);
                         }
 
                         int32x8_store(&x[i], x0);
@@ -532,8 +532,8 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
             while (z != target) {
                 int32x8 x0 = int32x8_load(&z[0]);
                 int32x8 x1 = int32x8_load(&z[8]);
-                x0 ^= mask;
-                x1 ^= mask;
+                x0 = _mm256_xor_si256(x0, mask);
+                x1 = _mm256_xor_si256(x1, mask);
                 int32x8_store(&z[0], x0);
                 int32x8_store(&z[8], x1);
                 z += 16;
@@ -543,8 +543,8 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
             while (z != target) {
                 int32x8 x0 = int32x8_load(&z[0]);
                 int32x8 x1 = int32x8_load(&z[8]);
-                x0 ^= mask;
-                x1 ^= mask;
+                x0 = _mm256_xor_si256(x0, mask);
+                x1 = _mm256_xor_si256(x1, mask);
                 int32x8 b0 = _mm256_permute2x128_si256(x0, x1, 0x20);
                 int32x8 b1 = _mm256_permute2x128_si256(x0, x1, 0x31);
                 int32x8_MINMAX(b0, b1);
@@ -559,8 +559,8 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
             while (z != target) {
                 int32x8 x0 = int32x8_load(&z[0]);
                 int32x8 x1 = int32x8_load(&z[8]);
-                x0 ^= mask;
-                x1 ^= mask;
+                x0 = _mm256_xor_si256(x0, mask);
+                x1 = _mm256_xor_si256(x1, mask);
                 int32x8 b0 = _mm256_permute2x128_si256(x0, x1, 0x20); /* A0123B0123 */
                 int32x8 b1 = _mm256_permute2x128_si256(x0, x1, 0x31); /* A4567B4567 */
                 int32x8 c0 = _mm256_unpacklo_epi64(b0, b1); /* A0145B0145 */
@@ -683,15 +683,15 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
         int32x8 c7 = _mm256_unpackhi_epi64(b5, b7); /* EFGH3EFGH7 */
 
         if (flagdown) {
-            c2 ^= mask;
-            c3 ^= mask;
-            c6 ^= mask;
-            c7 ^= mask;
+            c2 = _mm256_xor_si256(c2, mask);
+            c3 = _mm256_xor_si256(c3, mask);
+            c6 = _mm256_xor_si256(c6, mask);
+            c7 = _mm256_xor_si256(c7, mask);
         } else {
-            c0 ^= mask;
-            c1 ^= mask;
-            c4 ^= mask;
-            c5 ^= mask;
+            c0 = _mm256_xor_si256(c0, mask);
+            c1 = _mm256_xor_si256(c1, mask);
+            c4 = _mm256_xor_si256(c4, mask);
+            c5 = _mm256_xor_si256(c5, mask);
         }
 
         int32x8 d0 = _mm256_permute2x128_si256(c0, c4, 0x20); /* ABCDEFGH0 */
@@ -872,14 +872,14 @@ static void int32_sort_2power(int32 *x, long long n, int flagdown) {
         int32x8 d7 = _mm256_permute2x128_si256(c3, c7, 0x31); /* AECGBFDH7 */
 
         if (flagdown) {
-            d0 ^= mask;
-            d1 ^= mask;
-            d2 ^= mask;
-            d3 ^= mask;
-            d4 ^= mask;
-            d5 ^= mask;
-            d6 ^= mask;
-            d7 ^= mask;
+            d0 = _mm256_xor_si256(d0, mask);
+            d1 = _mm256_xor_si256(d1, mask);
+            d2 = _mm256_xor_si256(d2, mask);
+            d3 = _mm256_xor_si256(d3, mask);
+            d4 = _mm256_xor_si256(d4, mask);
+            d5 = _mm256_xor_si256(d5, mask);
+            d6 = _mm256_xor_si256(d6, mask);
+            d7 = _mm256_xor_si256(d7, mask);
         }
 
         int32x8_store(&x[i], d0);

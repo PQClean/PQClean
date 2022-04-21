@@ -17,8 +17,8 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_decode_761x3(void *v, const unsigned char *s)
         s = nexts;
         nexts += 32;
 
-        __m256i s1 = _mm256_srli_epi16(s0 & _mm256_set1_epi8(-16), 4);
-        s0 &= _mm256_set1_epi8(15);
+        __m256i s1 = _mm256_srli_epi16(_mm256_and_si256(s0, _mm256_set1_epi8(-16)), 4);
+        s0 = _mm256_and_si256(s0, _mm256_set1_epi8(15));
 
         __m256i a0 = _mm256_unpacklo_epi8(s0, s1);
         /* 0 0>>4 1 1>>4 2 2>>4 3 3>>4 4 4>>4 5 5>>4 6 6>>4 7 7>>4 */
@@ -27,10 +27,10 @@ void PQCLEAN_SNTRUP761_AVX2_crypto_decode_761x3(void *v, const unsigned char *s)
         /* 8 8>>4 9 9>>4 10 10>>4 ... */
         /* 24 24>>4 ... */
 
-        __m256i a2 = _mm256_srli_epi16(a0 & _mm256_set1_epi8(12), 2);
-        __m256i a3 = _mm256_srli_epi16(a1 & _mm256_set1_epi8(12), 2);
-        a0 &= _mm256_set1_epi8(3);
-        a1 &= _mm256_set1_epi8(3);
+        __m256i a2 = _mm256_srli_epi16(_mm256_and_si256(a0, _mm256_set1_epi8(12)), 2);
+        __m256i a3 = _mm256_srli_epi16(_mm256_and_si256(a1, _mm256_set1_epi8(12)), 2);
+        a0 = _mm256_and_si256(a0, _mm256_set1_epi8(3));
+        a1 = _mm256_and_si256(a1, _mm256_set1_epi8(3));
 
         __m256i b0 = _mm256_unpacklo_epi8(a0, a2);
         /* 0 0>>2 0>>4 0>>6 1 1>>2 1>>4 1>>6 */

@@ -25,9 +25,9 @@ int PQCLEAN_SNTRUP761_AVX2_crypto_core_wforcesntrup761(unsigned char *out, const
     for (;;) {
         do {
             __m256i x = _mm256_loadu_si256((__m256i *) in);
-            x ^= _mm256_set1_epi8(1);
-            x &= maskvec;
-            x ^= _mm256_set1_epi8(1);
+            x = _mm256_xor_si256(x, _mm256_set1_epi8(1));
+            x = _mm256_and_si256(x, maskvec);
+            x = _mm256_xor_si256(x, _mm256_set1_epi8(1));
             _mm256_storeu_si256((__m256i *) out, x);
             in += 32;
             out += 32;
@@ -44,7 +44,7 @@ int PQCLEAN_SNTRUP761_AVX2_crypto_core_wforcesntrup761(unsigned char *out, const
     for (;;) {
         do {
             __m256i x = _mm256_loadu_si256((__m256i *) in);
-            x &= maskvec;
+            x = _mm256_and_si256(x, maskvec);
             _mm256_storeu_si256((__m256i *) out, x);
             in += 32;
             out += 32;

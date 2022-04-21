@@ -81,9 +81,9 @@ static void good(int16 fpad[3][512], const int16 f[768]) {
     for (;;) {
         f0 = load_x16(f + j);
         f1 = load_x16(f + 512 + j);
-        store_x16(&fpad[0][j], (f0 & mask0) | (f1 & mask1));
-        store_x16(&fpad[1][j], (f0 & mask1) | (f1 & mask2));
-        store_x16(&fpad[2][j], (f0 & mask2) | (f1 & mask0));
+        store_x16(&fpad[0][j], _mm256_or_si256(_mm256_and_si256(f0, mask0), _mm256_and_si256(f1, mask1)));
+        store_x16(&fpad[1][j], _mm256_or_si256(_mm256_and_si256(f0, mask1), _mm256_and_si256(f1, mask2)));
+        store_x16(&fpad[2][j], _mm256_or_si256(_mm256_and_si256(f0, mask2), _mm256_and_si256(f1, mask0)));
         j += 16;
         if (j == 256) {
             break;
@@ -91,38 +91,38 @@ static void good(int16 fpad[3][512], const int16 f[768]) {
 
         f0 = load_x16(f + j);
         f1 = load_x16(f + 512 + j);
-        store_x16(&fpad[0][j], (f0 & mask2) | (f1 & mask0));
-        store_x16(&fpad[1][j], (f0 & mask0) | (f1 & mask1));
-        store_x16(&fpad[2][j], (f0 & mask1) | (f1 & mask2));
+		store_x16(&fpad[0][j], _mm256_or_si256(_mm256_and_si256(f0, mask2), _mm256_and_si256(f1, mask0)));
+		store_x16(&fpad[1][j], _mm256_or_si256(_mm256_and_si256(f0, mask0), _mm256_and_si256(f1, mask1)));
+		store_x16(&fpad[2][j], _mm256_or_si256(_mm256_and_si256(f0, mask1), _mm256_and_si256(f1, mask2)));
         j += 16;
 
         f0 = load_x16(f + j);
         f1 = load_x16(f + 512 + j);
-        store_x16(&fpad[0][j], (f0 & mask1) | (f1 & mask2));
-        store_x16(&fpad[1][j], (f0 & mask2) | (f1 & mask0));
-        store_x16(&fpad[2][j], (f0 & mask0) | (f1 & mask1));
+        store_x16(&fpad[0][j], _mm256_or_si256(_mm256_and_si256(f0, mask1), _mm256_and_si256(f1, mask2)));
+        store_x16(&fpad[1][j], _mm256_or_si256(_mm256_and_si256(f0, mask2), _mm256_and_si256(f1, mask0)));
+        store_x16(&fpad[2][j], _mm256_or_si256(_mm256_and_si256(f0, mask0), _mm256_and_si256(f1, mask1)));
         j += 16;
     }
     for (;;) {
         f0 = load_x16(f + j);
-        store_x16(&fpad[0][j], f0 & mask2);
-        store_x16(&fpad[1][j], f0 & mask0);
-        store_x16(&fpad[2][j], f0 & mask1);
+        store_x16(&fpad[0][j], _mm256_and_si256(f0, mask2));
+        store_x16(&fpad[1][j], _mm256_and_si256(f0, mask0));
+        store_x16(&fpad[2][j], _mm256_and_si256(f0, mask1));
         j += 16;
         if (j == 512) {
             break;
         }
 
         f0 = load_x16(f + j);
-        store_x16(&fpad[0][j], f0 & mask1);
-        store_x16(&fpad[1][j], f0 & mask2);
-        store_x16(&fpad[2][j], f0 & mask0);
+        store_x16(&fpad[0][j], _mm256_and_si256(f0, mask1));
+        store_x16(&fpad[1][j], _mm256_and_si256(f0, mask2));
+        store_x16(&fpad[2][j], _mm256_and_si256(f0, mask0));
         j += 16;
 
         f0 = load_x16(f + j);
-        store_x16(&fpad[0][j], f0 & mask0);
-        store_x16(&fpad[1][j], f0 & mask1);
-        store_x16(&fpad[2][j], f0 & mask2);
+        store_x16(&fpad[0][j], _mm256_and_si256(f0, mask0));
+        store_x16(&fpad[1][j], _mm256_and_si256(f0, mask1));
+        store_x16(&fpad[2][j], _mm256_and_si256(f0, mask2));
         j += 16;
     }
 }
@@ -137,9 +137,9 @@ static void ungood(int16 f[1536], const int16 fpad[3][512]) {
         f0 = load_x16(&fpad[0][j]);
         f1 = load_x16(&fpad[1][j]);
         f2 = load_x16(&fpad[2][j]);
-        g0 = (f0 & mask0) | (f1 & mask1) | (f2 & mask2);
-        g1 = (f0 & mask1) | (f1 & mask2) | (f2 & mask0);
-        g2 = f0 ^ f1 ^ f2 ^ g0 ^ g1; /* same as (f0&mask2)|(f1&mask0)|(f2&mask1) */
+        g0 = _mm256_or_si256(_mm256_or_si256(_mm256_and_si256(f0, mask0), _mm256_and_si256(f1, mask1)), _mm256_and_si256(f2, mask2));
+        g1 = _mm256_or_si256(_mm256_or_si256(_mm256_and_si256(f0, mask1), _mm256_and_si256(f1, mask2)), _mm256_and_si256(f2, mask0));
+		g2 = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(f0, f1), f2), g0), g1); /* same as (f0&mask1)|(f1&mask2)|(f2&mask0) */
         store_x16(f + 0 + j, g0);
         store_x16(f + 512 + j, g1);
         store_x16(f + 1024 + j, g2);
@@ -148,9 +148,9 @@ static void ungood(int16 f[1536], const int16 fpad[3][512]) {
         f0 = load_x16(&fpad[0][j]);
         f1 = load_x16(&fpad[1][j]);
         f2 = load_x16(&fpad[2][j]);
-        g0 = (f0 & mask2) | (f1 & mask0) | (f2 & mask1);
-        g1 = (f0 & mask0) | (f1 & mask1) | (f2 & mask2);
-        g2 = f0 ^ f1 ^ f2 ^ g0 ^ g1; /* same as (f0&mask1)|(f1&mask2)|(f2&mask0) */
+        g0 = _mm256_or_si256(_mm256_or_si256(_mm256_and_si256(f0, mask2), _mm256_and_si256(f1, mask0)), _mm256_and_si256(f2, mask1));
+        g1 = _mm256_or_si256(_mm256_or_si256(_mm256_and_si256(f0, mask0), _mm256_and_si256(f1, mask1)), _mm256_and_si256(f2, mask2));
+		g2 = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(f0, f1), f2), g0), g1); /* same as (f0&mask1)|(f1&mask2)|(f2&mask0) */
         store_x16(f + 0 + j, g0);
         store_x16(f + 512 + j, g1);
         store_x16(f + 1024 + j, g2);
@@ -162,9 +162,9 @@ static void ungood(int16 f[1536], const int16 fpad[3][512]) {
         f0 = load_x16(&fpad[0][j]);
         f1 = load_x16(&fpad[1][j]);
         f2 = load_x16(&fpad[2][j]);
-        g0 = (f0 & mask1) | (f1 & mask2) | (f2 & mask0);
-        g1 = (f0 & mask2) | (f1 & mask0) | (f2 & mask1);
-        g2 = f0 ^ f1 ^ f2 ^ g0 ^ g1; /* same as (f0&mask0)|(f1&mask1)|(f2&mask2) */
+        g0 = _mm256_or_si256(_mm256_or_si256(_mm256_and_si256(f0, mask1), _mm256_and_si256(f1, mask2)), _mm256_and_si256(f2, mask0));
+        g1 = _mm256_or_si256(_mm256_or_si256(_mm256_and_si256(f0, mask2), _mm256_and_si256(f1, mask0)), _mm256_and_si256(f2, mask1));
+		g2 = _mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(_mm256_xor_si256(f0, f1), f2), g0), g1); /* same as (f0&mask1)|(f1&mask2)|(f2&mask0) */
         store_x16(f + 0 + j, g0);
         store_x16(f + 512 + j, g1);
         store_x16(f + 1024 + j, g2);
@@ -257,7 +257,7 @@ static void mult768(int16 h[1536], const int16 f[768], const int16 g[768]) {
 
 static inline int16x16 freeze_4591_x16(int16x16 x) {
     int16x16 mask, xq;
-    x = add_x16(x, const_x16(q)&signmask_x16(x));
+    x = add_x16(x, _mm256_and_si256(const_x16(q), signmask_x16(x)));
     mask = signmask_x16(sub_x16(x, const_x16((q + 1) / 2)));
     xq = sub_x16(x, const_x16(q));
     x = _mm256_blendv_epi8(xq, x, mask);

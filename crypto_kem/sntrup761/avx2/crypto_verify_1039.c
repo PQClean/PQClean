@@ -11,7 +11,7 @@ int PQCLEAN_SNTRUP761_AVX2_crypto_verify_1039(const unsigned char *x, const unsi
         do {
             __m256i x0 = _mm256_loadu_si256((__m256i *) x);
             __m256i y0 = _mm256_loadu_si256((__m256i *) y);
-            diff |= x0 ^ y0;
+            diff = _mm256_or_si256(diff, _mm256_xor_si256(x0, y0));
             i -= 32;
             x += 32;
             y += 32;
@@ -23,9 +23,9 @@ int PQCLEAN_SNTRUP761_AVX2_crypto_verify_1039(const unsigned char *x, const unsi
         y += i;
     }
 
-    diff |= _mm256_srli_epi16(diff, 8);
-    diff |= _mm256_srli_epi32(diff, 16);
-    diff |= _mm256_srli_epi64(diff, 32);
+    diff = _mm256_or_si256(diff, _mm256_srli_epi16(diff, 8));
+    diff = _mm256_or_si256(diff, _mm256_srli_epi32(diff, 16));
+    diff = _mm256_or_si256(diff, _mm256_srli_epi64(diff, 32));
 
     differentbits = (unsigned int) _mm256_extract_epi8(diff, 0);
     differentbits |= (unsigned int) _mm256_extract_epi8(diff, 8);

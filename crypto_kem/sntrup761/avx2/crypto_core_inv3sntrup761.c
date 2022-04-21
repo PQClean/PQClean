@@ -51,23 +51,23 @@ static inline void vec256_frombits(vec256 *v, const small *b) {
         vec256 c6 = _mm256_unpacklo_epi32(b6, b7);
         vec256 c7 = _mm256_unpackhi_epi32(b6, b7);
 
-        vec256 d0 = c0 | _mm256_slli_epi32(c1, 2); /* 0 8, 1 9, 2 10, 3 11, 32 40, 33 41, ..., 55 63 */
-        vec256 d2 = c2 | _mm256_slli_epi32(c3, 2);
-        vec256 d4 = c4 | _mm256_slli_epi32(c5, 2);
-        vec256 d6 = c6 | _mm256_slli_epi32(c7, 2);
+        vec256 d0 = _mm256_or_si256(c0, _mm256_slli_epi32(c1, 2)); /* 0 8, 1 9, 2 10, 3 11, 32 40, 33 41, ..., 55 63 */
+        vec256 d2 = _mm256_or_si256(c2, _mm256_slli_epi32(c3, 2));
+        vec256 d4 = _mm256_or_si256(c4, _mm256_slli_epi32(c5, 2));
+        vec256 d6 = _mm256_or_si256(c6, _mm256_slli_epi32(c7, 2));
 
         vec256 e0 = _mm256_unpacklo_epi64(d0, d2);
         vec256 e2 = _mm256_unpackhi_epi64(d0, d2);
         vec256 e4 = _mm256_unpacklo_epi64(d4, d6);
         vec256 e6 = _mm256_unpackhi_epi64(d4, d6);
 
-        vec256 f0 = e0 | _mm256_slli_epi32(e2, 1);
-        vec256 f4 = e4 | _mm256_slli_epi32(e6, 1);
+        vec256 f0 = _mm256_or_si256(e0, _mm256_slli_epi32(e2, 1));
+        vec256 f4 = _mm256_or_si256(e4, _mm256_slli_epi32(e6, 1));
 
         vec256 g0 = _mm256_permute2x128_si256(f0, f4, 0x20);
         vec256 g4 = _mm256_permute2x128_si256(f0, f4, 0x31);
 
-        vec256 h = g0 | _mm256_slli_epi32(g4, 4);
+        vec256 h = _mm256_or_si256(g0, _mm256_slli_epi32(g4, 4));
 
 #define TRANSPOSE _mm256_set_epi8( 31,27,23,19, 30,26,22,18, 29,25,21,17, 28,24,20,16, 15,11,7,3, 14,10,6,2, 13,9,5,1, 12,8,4,0 )
         h = _mm256_shuffle_epi8(h, TRANSPOSE);
@@ -88,30 +88,30 @@ static inline void vec256_tobits(const vec256 *v, small *b) {
         h = _mm256_permute4x64_epi64(h, 0xd8);
         h = _mm256_shuffle_epi8(h, TRANSPOSE);
 
-        vec256 g0 = h & _mm256_set1_epi8(15);
-        vec256 g4 = _mm256_srli_epi32(h, 4) & _mm256_set1_epi8(15);
+        vec256 g0 = _mm256_and_si256(h, _mm256_set1_epi8(15));
+        vec256 g4 = _mm256_and_si256(_mm256_srli_epi32(h, 4), _mm256_set1_epi8(15));
 
         vec256 f0 = _mm256_permute2x128_si256(g0, g4, 0x20);
         vec256 f4 = _mm256_permute2x128_si256(g0, g4, 0x31);
 
-        vec256 e0 = f0 & _mm256_set1_epi8(5);
-        vec256 e2 = _mm256_srli_epi32(f0, 1) & _mm256_set1_epi8(5);
-        vec256 e4 = f4 & _mm256_set1_epi8(5);
-        vec256 e6 = _mm256_srli_epi32(f4, 1) & _mm256_set1_epi8(5);
+        vec256 e0 = _mm256_and_si256(f0, _mm256_set1_epi8(5));
+        vec256 e2 = _mm256_and_si256(_mm256_srli_epi32(f0, 1), _mm256_set1_epi8(5));
+        vec256 e4 = _mm256_and_si256(f4, _mm256_set1_epi8(5));
+        vec256 e6 = _mm256_and_si256(_mm256_srli_epi32(f4, 1), _mm256_set1_epi8(5));
 
         vec256 d0 = _mm256_unpacklo_epi32(e0, e2);
         vec256 d2 = _mm256_unpackhi_epi32(e0, e2);
         vec256 d4 = _mm256_unpacklo_epi32(e4, e6);
         vec256 d6 = _mm256_unpackhi_epi32(e4, e6);
 
-        vec256 c0 = d0 & _mm256_set1_epi8(1);
-        vec256 c1 = _mm256_srli_epi32(d0, 2) & _mm256_set1_epi8(1);
-        vec256 c2 = d2 & _mm256_set1_epi8(1);
-        vec256 c3 = _mm256_srli_epi32(d2, 2) & _mm256_set1_epi8(1);
-        vec256 c4 = d4 & _mm256_set1_epi8(1);
-        vec256 c5 = _mm256_srli_epi32(d4, 2) & _mm256_set1_epi8(1);
-        vec256 c6 = d6 & _mm256_set1_epi8(1);
-        vec256 c7 = _mm256_srli_epi32(d6, 2) & _mm256_set1_epi8(1);
+        vec256 c0 = _mm256_and_si256(d0, _mm256_set1_epi8(1));
+        vec256 c1 = _mm256_and_si256(_mm256_srli_epi32(d0, 2), _mm256_set1_epi8(1));
+        vec256 c2 = _mm256_and_si256(d2, _mm256_set1_epi8(1));
+        vec256 c3 = _mm256_and_si256(_mm256_srli_epi32(d2, 2), _mm256_set1_epi8(1));
+        vec256 c4 = _mm256_and_si256(d4, _mm256_set1_epi8(1));
+        vec256 c5 = _mm256_and_si256(_mm256_srli_epi32(d4, 2), _mm256_set1_epi8(1));
+        vec256 c6 = _mm256_and_si256(d6, _mm256_set1_epi8(1));
+        vec256 c7 = _mm256_and_si256(_mm256_srli_epi32(d6, 2), _mm256_set1_epi8(1));
 
         vec256 b0 = _mm256_unpacklo_epi64(c0, c1);
         vec256 b1 = _mm256_unpackhi_epi64(c0, c1);
@@ -203,9 +203,9 @@ static inline void vec256_swap(vec256 *f, vec256 *g, int len, vec256 mask) {
     int i;
 
     for (i = 0; i < len; ++i) {
-        flip = mask & (f[i] ^ g[i]);
-        f[i] ^= flip;
-        g[i] ^= flip;
+        flip = _mm256_and_si256(mask, _mm256_xor_si256(f[i], g[i]));
+        f[i] = _mm256_xor_si256(f[i], flip);
+        g[i] = _mm256_xor_si256(g[i], flip);
     }
 }
 
@@ -216,9 +216,9 @@ static inline void vec256_scale(vec256 *f0, vec256 *f1, const vec256 c0, const v
         vec256 f0i = f0[i];
         vec256 f1i = f1[i];
 
-        f0i &= c0;
-        f1i ^= c1;
-        f1i &= f0i;
+        f0i = _mm256_and_si256(f0i, c0);
+        f1i = _mm256_xor_si256(f1i, c1);
+        f1i = _mm256_and_si256(f1i, f0i);
 
         f0[i] = f0i;
         f1[i] = f1i;
@@ -235,13 +235,13 @@ static inline void vec256_eliminate(vec256 *f0, vec256 *f1, vec256 *g0, vec256 *
         vec256 g1i = g1[i];
         vec256 t;
 
-        f0i &= c0;
-        f1i ^= c1;
-        f1i &= f0i;
+        f0i = _mm256_and_si256(f0i, c0);
+        f1i = _mm256_xor_si256(f1i, c1);
+        f1i = _mm256_and_si256(f1i, f0i);
 
-        t = g0i ^ f0i;
-        g0[i] = t | (g1i ^ f1i);
-        g1[i] = (g1i ^ f0i) & (f1i ^ t);
+        t = _mm256_xor_si256(g0i, f0i);
+        g0[i] = _mm256_or_si256(t, _mm256_xor_si256(g1i, f1i));
+        g1[i] = _mm256_and_si256(_mm256_xor_si256(g1i, f0i), _mm256_xor_si256(f1i, t));
     }
 }
 

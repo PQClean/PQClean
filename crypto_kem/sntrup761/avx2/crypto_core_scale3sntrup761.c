@@ -25,9 +25,9 @@ int PQCLEAN_SNTRUP761_AVX2_crypto_core_scale3sntrup761(unsigned char *outbytes, 
             x = _mm256_mullo_epi16(x, _mm256_set1_epi16(3));
             x = _mm256_sub_epi16(x, _mm256_set1_epi16((q + 1) / 2));
             xneg = _mm256_srai_epi16(x, 15);
-            x = _mm256_add_epi16(x, _mm256_set1_epi16(q)&xneg);
+            x = _mm256_add_epi16(x, _mm256_and_si256(_mm256_set1_epi16(q), xneg));
             xneg = _mm256_srai_epi16(x, 15);
-            x = _mm256_add_epi16(x, _mm256_set1_epi16(q)&xneg);
+            x = _mm256_add_epi16(x, _mm256_and_si256(_mm256_set1_epi16(q), xneg));
             x = _mm256_sub_epi16(x, _mm256_set1_epi16((q - 1) / 2));
             _mm256_storeu_si256((__m256i *) outbytes, x);
 

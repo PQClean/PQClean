@@ -15,18 +15,18 @@ int PQCLEAN_SNTRUP761_AVX2_crypto_core_weightsntrup761(unsigned char *outbytes, 
     int16 weight;
 
     sum = _mm256_loadu_si256((__m256i *) (in + p - 32));
-    sum &= endingmask;
+    sum = _mm256_and_si256(sum, endingmask);
 
     for (i = p - 32; i >= 0; i -= 32) {
         __m256i bits = _mm256_loadu_si256((__m256i *) in);
-        bits &= _mm256_set1_epi8(1);
+        bits = _mm256_and_si256(bits, _mm256_set1_epi8(1));
         sum = _mm256_add_epi8(sum, bits);
         in += 32;
     }
 
     /* sum is 32xint8; want to add these int8 */
     sumhi = _mm256_srli_epi16(sum, 8);
-    sum &= _mm256_set1_epi16(0xff);
+    sum = _mm256_and_si256(sum, _mm256_set1_epi16(0xff));
     sum = _mm256_add_epi16(sum, sumhi);
 
     /* sum is 16xint16; want to add these int16 */
