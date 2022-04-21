@@ -28,5 +28,6 @@ implementations:
             operating_systems:
                 - Linux
                 - Darwin
+                - Windows
             required_flags:
                 - avx2
