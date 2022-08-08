@@ -267,7 +267,7 @@ inline void hadamard(__m256i *src, __m256i *dst) {
 inline uint32_t find_peaks(__m256i *transform) {
     // a whole lot of vector variables
     __m256i bitmap, abs_rows[8], bound, active_row, max_abs_rows;
-    __m256i tmp = _mm256_setzero_si256();
+    __m256i tmp;
     __m256i vect_mask;
     __m256i res;
     int32_t lower;
