@@ -59,6 +59,7 @@ static uint16_t extract_epi16(__m256i v, int pos) {
 }
 
 
+
 /**
  * @brief Encode a single byte into a single codeword using RM(1,7)
  *
