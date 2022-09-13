@@ -104,6 +104,67 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
     return 0;
 }
 
+int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair_from_seed(uint8_t *seed, uint8_t *pk, uint8_t *sk) {
+    unsigned int i;
+    uint8_t seedbuf[2 * SEEDBYTES + CRHBYTES];
+    const uint8_t *rho, *rhoprime, *key;
+    polyvecl rowbuf[2];
+    polyvecl s1, *row = rowbuf;
+    polyveck s2;
+    poly t1, t0;
+
+    /* Get randomness for rho, rhoprime and key */
+    randombytes(seedbuf, SEEDBYTES);
+    shake256(seedbuf, 2 * SEEDBYTES + CRHBYTES, seedbuf, SEEDBYTES);
+    rho = seedbuf;
+    rhoprime = rho + SEEDBYTES;
+    key = rhoprime + CRHBYTES;
+
+    /* Store rho, key */
+    memcpy(pk, rho, SEEDBYTES);
+    memcpy(sk, rho, SEEDBYTES);
+    memcpy(sk + SEEDBYTES, key, SEEDBYTES);
+
+    /* Sample short vectors s1 and s2 */
+    PQCLEAN_DILITHIUM2_AVX2_poly_uniform_eta_4x(&s1.vec[0], &s1.vec[1], &s1.vec[2], &s1.vec[3], rhoprime, 0, 1, 2, 3);
+    PQCLEAN_DILITHIUM2_AVX2_poly_uniform_eta_4x(&s2.vec[0], &s2.vec[1], &s2.vec[2], &s2.vec[3], rhoprime, 4, 5, 6, 7);
+
+    /* Pack secret vectors */
+    for (i = 0; i < L; i++) {
+        PQCLEAN_DILITHIUM2_AVX2_polyeta_pack(sk + 3 * SEEDBYTES + i * POLYETA_PACKEDBYTES, &s1.vec[i]);
+    }
+    for (i = 0; i < K; i++) {
+        PQCLEAN_DILITHIUM2_AVX2_polyeta_pack(sk + 3 * SEEDBYTES + (L + i)*POLYETA_PACKEDBYTES, &s2.vec[i]);
+    }
+
+    /* Transform s1 */
+    PQCLEAN_DILITHIUM2_AVX2_polyvecl_ntt(&s1);
+
+
+    for (i = 0; i < K; i++) {
+        /* Expand matrix row */
+        polyvec_matrix_expand_row(&row, rowbuf, rho, i);
+
+        /* Compute inner-product */
+        PQCLEAN_DILITHIUM2_AVX2_polyvecl_pointwise_acc_montgomery(&t1, row, &s1);
+        PQCLEAN_DILITHIUM2_AVX2_poly_invntt_tomont(&t1);
+
+        /* Add error polynomial */
+        PQCLEAN_DILITHIUM2_AVX2_poly_add(&t1, &t1, &s2.vec[i]);
+
+        /* Round t and pack t1, t0 */
+        PQCLEAN_DILITHIUM2_AVX2_poly_caddq(&t1);
+        PQCLEAN_DILITHIUM2_AVX2_poly_power2round(&t1, &t0, &t1);
+        PQCLEAN_DILITHIUM2_AVX2_polyt1_pack(pk + SEEDBYTES + i * POLYT1_PACKEDBYTES, &t1);
+        PQCLEAN_DILITHIUM2_AVX2_polyt0_pack(sk + 3 * SEEDBYTES + (L + K)*POLYETA_PACKEDBYTES + i * POLYT0_PACKEDBYTES, &t0);
+    }
+
+    /* Compute H(rho, t1) and store in secret key */
+    shake256(sk + 2 * SEEDBYTES, SEEDBYTES, pk, PQCLEAN_DILITHIUM2_AVX2_CRYPTO_PUBLICKEYBYTES);
+
+    return 0;
+}
+
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature
 *

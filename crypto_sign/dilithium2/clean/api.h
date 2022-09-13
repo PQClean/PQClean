@@ -12,6 +12,8 @@
 
 int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
 
+int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_keypair_from_seed(uint8_t *seed, uint8_t *pk, uint8_t *sk);
+
 int PQCLEAN_DILITHIUM2_CLEAN_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
     const uint8_t *m, size_t mlen, const uint8_t *sk);
