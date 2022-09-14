@@ -1,4 +1,4 @@
-# PQClean
+# PQCleanK
 
 _[See the build status for each component here](.github/workflows/BADGES.md)_
 
