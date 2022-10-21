@@ -17,8 +17,11 @@ If an issue is marked with a date, the issue has been resolved since any commits
 Again, we emphasise that the code in this repository has not seen any formal analysis or audit!
 Use at your own risk.
 
-### Open issues
+### Historic issues
 * LEDAcryptKEM `leaktime` implementations are known to not be constant-time and expected to have timing side channel vulnerabilities.
+  * LEDA support has since been dropped from PQClean as it got eliminated from the NIST PQC standardization project in round 3.
+* Rainbow level I has been shown to be insecure by Ward Beullens. 
+  * Rainbow was eliminated from the NIST PQC standardization project and removed from PQClean in round 4.
 
 <!-- new date line
 ### 2019-XX-XX
