@@ -63,18 +63,18 @@ jobs:
           access_token: ${{ github.token }}
         continue-on-error: true
         if: matrix.arch == 'amd64' && matrix.cc == 'gcc'
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - name: Cache ccache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-ccache
         with:
           path: /ccache
           key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-python-pip
         with:
@@ -105,18 +105,18 @@ jobs:
       - name: Register qemu-user-static
         run: |
           docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - name: Cache ccache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-ccache
         with:
           path: ~/ccache
           key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
       - name: Cache pip
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-python-pip
         with:
@@ -144,7 +144,7 @@ jobs:
       PQCLEAN_ONLY_SCHEMES: dilithium3aes
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - uses: ilammy/msvc-dev-cmd@v1
@@ -158,7 +158,7 @@ jobs:
           Invoke-WebRequest -OutFile "test\\astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
         shell: powershell
       - name: Setup Python
-        uses: actions/setup-python@main
+        uses: actions/setup-python@v4
         with:
           python-version: "3.x"
       - name: Install python requirements
@@ -185,7 +185,7 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: true
       - name: Install astyle
@@ -195,7 +195,7 @@ jobs:
         run: 'export PATH="/usr/local/bin:$PATH" && export CC=gcc-11'
         if: matrix.compiler == 'gcc11'
       - name: Setup Python
-        uses: actions/setup-python@main
+        uses: actions/setup-python@v4
         with:
           python-version: "3.x"
       - name: Install Python dependencies
