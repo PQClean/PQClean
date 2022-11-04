@@ -20,9 +20,9 @@ auxiliary-submitters:
   - Zhenfei Zhang
 implementations:
     - name: clean
-      version: supercop-20201018 via https://github.com/jschanck/package-pqclean/tree/cea1fa5a/falcon
+      version: supercop-20221028 via https://github.com/jschanck/package-pqclean/tree/98146649/falcon
     - name: avx2
-      version: supercop-20201018 via https://github.com/jschanck/package-pqclean/tree/cea1fa5a/falcon
+      version: supercop-20221028 via https://github.com/jschanck/package-pqclean/tree/98146649/falcon
       supported_platforms:
           - architecture: x86_64
             operating_systems:
