@@ -2,27 +2,44 @@
   This file is for public-key generation
 */
 
+#include <assert.h>
+#include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
-#include "benes.h"
 #include "controlbits.h"
-#include "gf.h"
+#include "benes.h"
+#include "crypto_declassify.h"
+#include "crypto_uint64.h"
 #include "params.h"
 #include "pk_gen.h"
 #include "root.h"
+#include "uint64_sort.h"
 #include "util.h"
+
+static crypto_uint64 uint64_is_equal_declassify(uint64_t t, uint64_t u) {
+    crypto_uint64 mask = crypto_uint64_equal_mask(t, u);
+    crypto_declassify(&mask, sizeof mask);
+    return mask;
+}
+
+static crypto_uint64 uint64_is_zero_declassify(uint64_t t) {
+    crypto_uint64 mask = crypto_uint64_zero_mask(t);
+    crypto_declassify(&mask, sizeof mask);
+    return mask;
+}
 
 /* input: secret key sk */
 /* output: public key pk */
-int PQCLEAN_MCELIECE460896_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8_t *sk) {
+int pk_gen(unsigned char *pk, unsigned char *sk, const uint32_t *perm, int16_t *pi) {
     int i, j, k;
     int row, c;
 
     uint64_t buf[ 1 << GFBITS ];
 
-    uint8_t mat[ GFBITS * SYS_T ][ SYS_N / 8 ];
-    uint8_t mask;
-    uint8_t b;
+    unsigned char mat[ PK_NROWS ][ SYS_N / 8 ];
+    unsigned char mask;
+    unsigned char b;
 
     gf g[ SYS_T + 1 ]; // Goppa polynomial
     gf L[ SYS_N ]; // support
@@ -33,8 +50,7 @@ int PQCLEAN_MCELIECE460896_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8
     g[ SYS_T ] = 1;
 
     for (i = 0; i < SYS_T; i++) {
-        g[i] = PQCLEAN_MCELIECE460896_CLEAN_load2(sk);
-        g[i] &= GFMASK;
+        g[i] = load_gf(sk);
         sk += 2;
     }
 
@@ -44,21 +60,27 @@ int PQCLEAN_MCELIECE460896_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8
         buf[i] |= i;
     }
 
-    PQCLEAN_MCELIECE460896_CLEAN_sort_63b(1 << GFBITS, buf);
+    uint64_sort(buf, 1 << GFBITS);
+
+    for (i = 1; i < (1 << GFBITS); i++) {
+        if (uint64_is_equal_declassify(buf[i - 1] >> 31, buf[i] >> 31)) {
+            return -1;
+        }
+    }
 
     for (i = 0; i < (1 << GFBITS); i++) {
-        perm[i] = buf[i] & GFMASK;
+        pi[i] = buf[i] & GFMASK;
     }
     for (i = 0; i < SYS_N;         i++) {
-        L[i] = PQCLEAN_MCELIECE460896_CLEAN_bitrev((gf)perm[i]);
+        L[i] = bitrev(pi[i]);
     }
 
     // filling the matrix
 
-    PQCLEAN_MCELIECE460896_CLEAN_root(inv, g, L);
+    root(inv, g, L);
 
     for (i = 0; i < SYS_N; i++) {
-        inv[i] = PQCLEAN_MCELIECE460896_CLEAN_gf_inv(inv[i]);
+        inv[i] = gf_inv(inv[i]);
     }
 
     for (i = 0; i < PK_NROWS; i++) {
@@ -91,22 +113,22 @@ int PQCLEAN_MCELIECE460896_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8
         }
 
         for (j = 0; j < SYS_N; j++) {
-            inv[j] = PQCLEAN_MCELIECE460896_CLEAN_gf_mul(inv[j], L[j]);
+            inv[j] = gf_mul(inv[j], L[j]);
         }
 
     }
 
     // gaussian elimination
 
-    for (i = 0; i < (GFBITS * SYS_T + 7) / 8; i++) {
+    for (i = 0; i < (PK_NROWS + 7) / 8; i++) {
         for (j = 0; j < 8; j++) {
             row = i * 8 + j;
 
-            if (row >= GFBITS * SYS_T) {
+            if (row >= PK_NROWS) {
                 break;
             }
 
-            for (k = row + 1; k < GFBITS * SYS_T; k++) {
+            for (k = row + 1; k < PK_NROWS; k++) {
                 mask = mat[ row ][ i ] ^ mat[ k ][ i ];
                 mask >>= j;
                 mask &= 1;
@@ -117,11 +139,11 @@ int PQCLEAN_MCELIECE460896_CLEAN_pk_gen(uint8_t *pk, uint32_t *perm, const uint8
                 }
             }
 
-            if ( ((mat[ row ][ i ] >> j) & 1) == 0 ) { // return if not systematic
+            if ( uint64_is_zero_declassify((mat[ row ][ i ] >> j) & 1) ) { // return if not systematic
                 return -1;
             }
 
-            for (k = 0; k < GFBITS * SYS_T; k++) {
+            for (k = 0; k < PK_NROWS; k++) {
                 if (k != row) {
                     mask = mat[ k ][ i ] >> j;
                     mask &= 1;

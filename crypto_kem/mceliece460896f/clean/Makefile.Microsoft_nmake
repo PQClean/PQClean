@@ -2,8 +2,10 @@
 
 LIBRARY = libmceliece460896f_clean.lib
 
-OBJECTS = aes256ctr.obj benes.obj bm.obj controlbits.obj decrypt.obj encrypt.obj gf.obj \
-	  operations.obj pk_gen.obj root.obj sk_gen.obj synd.obj transpose.obj util.obj
+OBJECTS = aes256ctr.obj benes.obj bm.obj controlbits.obj crypto_int16.obj \
+		crypto_int32.obj crypto_uint16.obj crypto_uint32.obj crypto_uint64.obj \
+		decrypt.obj encrypt.obj gf.obj operations.obj pk_gen.obj root.obj sk_gen.obj \
+		synd.obj transpose.obj util.obj
 
 # Warning C4146 is raised when a unary minus operator is applied to an
 # unsigned type; this has nonetheless been standard and portable for as

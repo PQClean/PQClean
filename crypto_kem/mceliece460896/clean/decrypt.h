@@ -1,10 +1,15 @@
-#ifndef PQCLEAN_MCELIECE460896_CLEAN_DECRYPT_H
-#define PQCLEAN_MCELIECE460896_CLEAN_DECRYPT_H
+#ifndef DECRYPT_H
+#define DECRYPT_H
 /*
   This file is for Nieddereiter decryption
 */
 
-int PQCLEAN_MCELIECE460896_CLEAN_decrypt(unsigned char * /*e*/, const unsigned char * /*sk*/, const unsigned char * /*c*/);
+
+#include "namespace.h"
+
+#define decrypt CRYPTO_NAMESPACE(decrypt)
+
+int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c);
 
 #endif
 

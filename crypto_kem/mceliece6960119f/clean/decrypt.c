@@ -18,7 +18,7 @@
 /*         c, ciphertext */
 /* output: e, error vector */
 /* return: 0 for success; 1 for failure */
-int PQCLEAN_MCELIECE6960119F_CLEAN_decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
+int decrypt(unsigned char *e, const unsigned char *sk, const unsigned char *c) {
     int i, w = 0;
     uint16_t check;
 
@@ -39,25 +39,23 @@ int PQCLEAN_MCELIECE6960119F_CLEAN_decrypt(unsigned char *e, const unsigned char
     for (i = 0; i < SYND_BYTES; i++) {
         r[i] = c[i];
     }
-    r[i - 1] &= (1 << ((GFBITS * SYS_T) % 8)) - 1;
     for (i = SYND_BYTES; i < SYS_N / 8; i++) {
         r[i] = 0;
     }
 
     for (i = 0; i < SYS_T; i++) {
-        g[i] = PQCLEAN_MCELIECE6960119F_CLEAN_load2(sk);
-        g[i] &= GFMASK;
+        g[i] = load_gf(sk);
         sk += 2;
     }
     g[ SYS_T ] = 1;
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_support_gen(L, sk);
+    support_gen(L, sk);
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_synd(s, g, L, r);
+    synd(s, g, L, r);
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_bm(locator, s);
+    bm(locator, s);
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_root(images, locator, L);
+    root(images, locator, L);
 
     //
 
@@ -66,14 +64,15 @@ int PQCLEAN_MCELIECE6960119F_CLEAN_decrypt(unsigned char *e, const unsigned char
     }
 
     for (i = 0; i < SYS_N; i++) {
-        t = PQCLEAN_MCELIECE6960119F_CLEAN_gf_iszero(images[i]) & 1;
+        t = gf_iszero(images[i]) & 1;
 
         e[ i / 8 ] |= t << (i % 8);
         w += t;
 
     }
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_synd(s_cmp, g, L, e);
+
+    synd(s_cmp, g, L, e);
 
     //
 
