@@ -3,10 +3,10 @@ type: kem
 claimed-nist-level: 5
 claimed-security: IND-CCA2
 length-public-key: 1044992
-length-secret-key: 13892
-length-ciphertext: 240
+length-secret-key: 13932
+length-ciphertext: 208
 length-shared-secret: 32
-nistkat-sha256: 2946eb61d1505967d2ba223ff64c9baadbefa18ec6849fcbc068c0348a39f6f8
+nistkat-sha256: 4c825bf86378d76b197caca6f957942c0cc98b50ce4a6b26cad6efa25d1d20c6
 principal-submitters:
   - Daniel J. Bernstein
   - Tung Chou
@@ -23,21 +23,9 @@ principal-submitters:
 auxiliary-submitters: []
 implementations:
     - name: clean
-      version: SUPERCOP-20191221
-    - name: vec
-      version: SUPERCOP-20191221
-    - name: sse
-      version: SUPERCOP-20191221
-      supported_platforms:
-        - architecture: x86_64
-          operating_systems:
-            - Linux
-            - Darwin
-          required_flags:
-            - sse4_1
-            - popcnt
-    - name: avx
-      version: SUPERCOP-20191221
+      version: SUPERCOP-20221025
+    - name: avx2
+      version: SUPERCOP-20221025
       supported_platforms:
         - architecture: x86_64
           operating_systems:

@@ -6,8 +6,11 @@
 
 #include "aes.h"
 
+#include "namespace.h"
 
-void PQCLEAN_MCELIECE6688128F_CLEAN_aes256ctr(
+#define aes256ctr CRYPTO_NAMESPACE(aes256ctr)
+
+void aes256ctr(
     uint8_t *out,
     size_t outlen,
     const uint8_t nonce[AESCTR_NONCEBYTES],

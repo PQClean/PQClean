@@ -2,8 +2,8 @@
   This file is for the Berlekamp-Massey algorithm
   see http://crypto.stanford.edu/~mironov/cs359/massey.pdf
 */
-#include "bm.h"
 
+#include "bm.h"
 #include "params.h"
 
 #define min(a, b) (((a) < (b)) ? (a) : (b))
@@ -11,7 +11,7 @@
 /* the Berlekamp-Massey algorithm */
 /* input: s, sequence of field elements */
 /* output: out, minimal polynomial of s */
-void PQCLEAN_MCELIECE6960119_CLEAN_bm(gf *out, gf *s) {
+void bm(gf *out, gf *s) {
     int i;
 
     uint16_t N = 0;
@@ -39,7 +39,7 @@ void PQCLEAN_MCELIECE6960119_CLEAN_bm(gf *out, gf *s) {
         d = 0;
 
         for (i = 0; i <= min(N, SYS_T); i++) {
-            d ^= PQCLEAN_MCELIECE6960119_CLEAN_gf_mul(C[i], s[ N - i]);
+            d ^= gf_mul(C[i], s[ N - i]);
         }
 
         mne = d;
@@ -56,10 +56,10 @@ void PQCLEAN_MCELIECE6960119_CLEAN_bm(gf *out, gf *s) {
             T[i] = C[i];
         }
 
-        f = PQCLEAN_MCELIECE6960119_CLEAN_gf_frac(b, d);
+        f = gf_frac(b, d);
 
         for (i = 0; i <= SYS_T; i++) {
-            C[i] ^= PQCLEAN_MCELIECE6960119_CLEAN_gf_mul(f, B[i]) & mne;
+            C[i] ^= gf_mul(f, B[i]) & mne;
         }
 
         L = (L & ~mle) | ((N + 1 - L) & mle);

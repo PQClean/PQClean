@@ -1,12 +1,17 @@
-#ifndef PQCLEAN_MCELIECE8192128F_CLEAN_SYND_H
-#define PQCLEAN_MCELIECE8192128F_CLEAN_SYND_H
+#ifndef SYND_H
+#define SYND_H
 /*
   This file is for syndrome computation
 */
 
+
+#include "namespace.h"
+
+#define synd CRYPTO_NAMESPACE(synd)
+
 #include "gf.h"
 
-void PQCLEAN_MCELIECE8192128F_CLEAN_synd(gf * /*out*/, gf * /*f*/, gf * /*L*/, const unsigned char * /*r*/);
+void synd(gf *out, gf *f, gf *L, const unsigned char *r);
 
 #endif
 
