@@ -209,6 +209,7 @@ void controlbitsfrompermutation(unsigned char *out, const int16 *pi, long long w
     int i;
     unsigned char *ptr;
 
+    memset(temp, 0, (size_t)n * 2);
     memset(pi_test, 0, (size_t)n);
 
     while (1) {
