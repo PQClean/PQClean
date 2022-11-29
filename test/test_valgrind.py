@@ -45,7 +45,7 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
                  SCHEME_DIR=os.path.abspath(impl_path),
                  IMPLEMENTATION=implementation.name,
                  DEST_DIR=dest_dir,
-                 EXTRAFLAGS="-g3",
+                 EXTRAFLAGS="-gdwarf-4",
                  NTESTS=1,
                  working_dir=os.path.join(test_dir, 'test'))
     functest_name = './functest_{}_{}'.format(implementation.scheme.name,
