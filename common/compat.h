@@ -32,7 +32,7 @@ UNALIGNED_VECTOR_POLYFILL_GCC
 UNALIGNED_VECTOR_POLYFILL_GCC
 #  endif
 
-#elif defined(_MSVC_VER)
+#elif defined(_MSC_VER)
 // MSVC simply doesn't have these types
 #define __m256_u    __m256
 #define __m256d_u   __m256d
