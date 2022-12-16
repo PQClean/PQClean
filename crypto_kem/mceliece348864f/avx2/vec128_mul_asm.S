@@ -171,8 +171,6 @@
 
 # qhasm: enter vec128_mul_asm
 .p2align 5
-.hidden _vec128_mul_asm
-.hidden vec128_mul_asm
 .global _vec128_mul_asm
 .global vec128_mul_asm
 _vec128_mul_asm:

@@ -117,8 +117,6 @@
 
 # qhasm: enter vec256_ama_asm
 .p2align 5
-.hidden _vec256_ama_asm
-.hidden vec256_ama_asm
 .global _vec256_ama_asm
 .global vec256_ama_asm
 _vec256_ama_asm:

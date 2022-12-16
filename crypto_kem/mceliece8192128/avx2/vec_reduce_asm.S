@@ -43,8 +43,6 @@
 
 # qhasm: enter vec_reduce_asm
 .p2align 5
-.hidden _vec_reduce_asm
-.hidden vec_reduce_asm
 .global _vec_reduce_asm
 .global vec_reduce_asm
 _vec_reduce_asm:

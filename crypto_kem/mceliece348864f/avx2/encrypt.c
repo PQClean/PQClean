@@ -4,15 +4,17 @@
   This file is for Niederreiter encryption
 */
 
-#include "encrypt.h"
 
+#include "util.h"
 #include "crypto_declassify.h"
 #include "crypto_uint16.h"
 #include "crypto_uint32.h"
 #include "int32_sort.h"
 #include "params.h"
 #include "randombytes.h"
-#include "util.h"
+
+/* include last because of conflict with unistd.h's encrypt function */
+#include "encrypt.h"
 
 static inline crypto_uint16 uint16_is_smaller_declassify(uint16_t t, uint16_t u) {
     crypto_uint16 mask = crypto_uint16_smaller_mask(t, u);

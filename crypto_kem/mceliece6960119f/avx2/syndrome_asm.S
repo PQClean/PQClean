@@ -73,8 +73,6 @@
 
 # qhasm: enter syndrome_asm
 .p2align 5
-.hidden _syndrome_asm
-.hidden syndrome_asm
 .global _syndrome_asm
 .global syndrome_asm
 _syndrome_asm:

@@ -1,5 +1,11 @@
 #include "namespace.h"
 
+#if defined(__APPLE__)
+#define ASM_HIDDEN .private_extern
+#else
+#define ASM_HIDDEN .hidden
+#endif
+
 #define MASK0_0 CRYPTO_NAMESPACE(MASK0_0)
 #define _MASK0_0 _CRYPTO_NAMESPACE(MASK0_0)
 #define MASK0_1 CRYPTO_NAMESPACE(MASK0_1)
@@ -25,20 +31,19 @@
 #define MASK5_1 CRYPTO_NAMESPACE(MASK5_1)
 #define _MASK5_1 _CRYPTO_NAMESPACE(MASK5_1)
 .data
-.section .rodata
 
-.hidden MASK0_0
-.hidden MASK0_1
-.hidden MASK1_0
-.hidden MASK1_1
-.hidden MASK2_0
-.hidden MASK2_1
-.hidden MASK3_0
-.hidden MASK3_1
-.hidden MASK4_0
-.hidden MASK4_1
-.hidden MASK5_0
-.hidden MASK5_1
+ASM_HIDDEN MASK0_0
+ASM_HIDDEN MASK0_1
+ASM_HIDDEN MASK1_0
+ASM_HIDDEN MASK1_1
+ASM_HIDDEN MASK2_0
+ASM_HIDDEN MASK2_1
+ASM_HIDDEN MASK3_0
+ASM_HIDDEN MASK3_1
+ASM_HIDDEN MASK4_0
+ASM_HIDDEN MASK4_1
+ASM_HIDDEN MASK5_0
+ASM_HIDDEN MASK5_1
 
 .globl MASK0_0
 .globl MASK0_1

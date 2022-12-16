@@ -2,11 +2,9 @@
   This file is for Niederreiter encryption
 */
 
-#include "encrypt.h"
-
+#include "util.h"
 #include "params.h"
 #include "randombytes.h"
-#include "util.h"
 
 #include <assert.h>
 #include <stdint.h>
@@ -16,6 +14,9 @@
 #include "crypto_declassify.h"
 #include "crypto_uint32.h"
 #include "gf.h"
+
+/* include last because of conflict with unistd.h encrypt definition */
+#include "encrypt.h"
 
 static inline crypto_uint32 uint32_is_equal_declassify(uint32_t t, uint32_t u) {
     crypto_uint32 mask = crypto_uint32_equal_mask(t, u);
