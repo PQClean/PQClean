@@ -3,7 +3,6 @@
 #include "controlbits.h"
 #include "crypto_hash.h"
 #include "decrypt.h"
-#include "encrypt.h"
 #include "params.h"
 #include "pk_gen.h"
 #include "randombytes.h"
@@ -12,6 +11,9 @@
 
 #include <stdint.h>
 #include <string.h>
+
+/* Include last because of issues with unistd.h's encrypt definition */
+#include "encrypt.h"
 
 /* check if the padding bits of pk are all zero */
 static int check_pk_padding(const unsigned char *pk) {
