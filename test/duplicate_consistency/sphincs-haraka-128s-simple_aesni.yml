@@ -1,0 +1,159 @@
+consistency_checks:
+- source:
+    scheme: sphincs-sha2-128s-robust
+    implementation: clean
+  files:
+  - address.h
+  - fors.h
+  - sign.c
+  - merkle.h
+  - utils.c
+  - utils.h
+  - wots.h
+- source:
+    scheme: sphincs-haraka-128s-simple
+    implementation: clean
+  files:
+  - address.c
+  - api.h
+  - fors.h
+  - hash.h
+  - hash_haraka.c
+  - merkle.h
+  - params.h
+  - sign.c
+  - thash.h
+  - utils.c
+  - utils.h
+  - thash_haraka_simple.c
+  - context_haraka.c
+- source:
+    scheme: sphincs-haraka-128f-simple
+    implementation: aesni
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - harakax4.h
+  - hash_haraka.c
+  - hash_harakax4.c
+  - thash_haraka_simple.c
+  - thash_haraka_simplex4.c
+  - thashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-128s-simple
+    implementation: avx2
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-192s-simple
+    implementation: aesni
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - harakax4.h
+  - hash_haraka.c
+  - hash_harakax4.c
+  - thash_haraka_simple.c
+  - thash_haraka_simplex4.c
+  - thashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-128s-simple
+    implementation: avx2
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-192f-simple
+    implementation: aesni
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - harakax4.h
+  - hash_haraka.c
+  - hash_harakax4.c
+  - thash_haraka_simple.c
+  - thash_haraka_simplex4.c
+  - thashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-128s-simple
+    implementation: avx2
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-256s-simple
+    implementation: aesni
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - harakax4.h
+  - hash_haraka.c
+  - hash_harakax4.c
+  - thash_haraka_simple.c
+  - thash_haraka_simplex4.c
+  - thashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-128s-simple
+    implementation: avx2
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-256f-simple
+    implementation: aesni
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - harakax4.h
+  - hash_haraka.c
+  - hash_harakax4.c
+  - thash_haraka_simple.c
+  - thash_haraka_simplex4.c
+  - thashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-128s-simple
+    implementation: avx2
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h

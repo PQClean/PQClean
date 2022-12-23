@@ -1,0 +1,21 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY = libsphincs-shake-192f-simple_clean.lib
+OBJECTS = address.obj context_shake.obj fors.obj hash_shake.obj merkle.obj sign.obj thash_shake_simple.obj utils.obj utilsx1.obj wots.obj wotsx1.obj
+
+CFLAGS = /nologo /O2 /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+$(OBJECTS): *.h
+
+
+
+$(LIBRARY): $(OBJECTS) 
+	LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+	-DEL $(OBJECTS)
+	-DEL $(LIBRARY)
+

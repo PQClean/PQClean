@@ -1,23 +1,21 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIBRARY=libsphincs-haraka-256s-robust_aesni.lib
-OBJECTS=address.obj wots.obj utils.obj utilsx4.obj fors.obj sign.obj hash_haraka.obj thash_haraka_robust.obj hash_harakax4.obj thash_haraka_robustx4.obj haraka.obj
+LIBRARY = libsphincs-haraka-256s-robust_aesni.lib
+OBJECTS = address.obj context_haraka.obj fors.obj haraka.obj hash_haraka.obj hash_harakax4.obj merkle.obj sign.obj thash_haraka_robust.obj thash_haraka_robustx4.obj utils.obj utilsx4.obj wots.obj
 
-# We ignore warning C4127: in thash_haraka_*x4.c we use a conditional
-# that when the macro is generated for inblocks = 1 results in a case
-# with `if (1 == 1)`. The compiler should just optimise this away, but
-# on MSVC we get a compiler complaint.
-CFLAGS=/nologo /arch:AVX /O2 /I ..\..\..\common /W4 /WX /wd4127
+CFLAGS = /nologo /O2 /arch:AVX /I ..\..\..\common /W4 /WX
 
 all: $(LIBRARY)
 
-# Make sure objects are recompiled if headers change.
 $(OBJECTS): *.h
 
-$(LIBRARY): $(OBJECTS)
+
+
+$(LIBRARY): $(OBJECTS) 
 	LIB.EXE /NOLOGO /WX /OUT:$@ $**
 
 clean:
-    -DEL $(OBJECTS)
-    -DEL $(LIBRARY)
+	-DEL $(OBJECTS)
+	-DEL $(LIBRARY)
+

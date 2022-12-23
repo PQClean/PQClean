@@ -1,0 +1,21 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY = libsphincs-sha2-192s-simple_avx2.lib
+OBJECTS = address.obj context_sha2.obj fors.obj hash_sha2.obj hash_sha2x8.obj merkle.obj sha256avx.obj sha256x8.obj sha512x4.obj sign.obj thash_sha2_simple.obj thash_sha2_simplex8.obj utils.obj utilsx8.obj wots.obj
+
+CFLAGS = /nologo /O2 /arch:AVX /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+$(OBJECTS): *.h
+
+
+
+$(LIBRARY): $(OBJECTS) 
+	LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+	-DEL $(OBJECTS)
+	-DEL $(LIBRARY)
+

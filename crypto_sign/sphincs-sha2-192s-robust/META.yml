@@ -1,0 +1,36 @@
+name: SPHINCS+-sha2-192s-robust
+type: signature
+claimed-nist-level: 3
+length-public-key: 48
+length-secret-key: 96
+length-signature: 16224
+testvectors-sha256: 958f1a22a8a4f2ab65d7da39b05846c26fa5f905370155087042ac1b430c8312
+nistkat-sha256: 68b4118d5d1f31ea6bd17bfd339a87b93104bd75c532ea7a513aa8115aec3fdd
+principal-submitters:
+  - Andreas Hülsing
+auxiliary-submitters:
+  - Jean-Philippe Aumasson
+  - Daniel J. Bernstein,
+  - Ward Beullens
+  - Christoph Dobraunig
+  - Maria Eichlseder
+  - Scott Fluhrer
+  - Stefan-Lukas Gazdag
+  - Panos Kampanakis
+  - Stefan Kölbl
+  - Tanja Lange
+  - Martin M. Lauridsen
+  - Florian Mendel
+  - Ruben Niederhagen
+  - Christian Rechberger
+  - Joost Rijneveld
+  - Peter Schwabe
+  - Bas Westerbaan
+implementations:
+  - name: clean
+    version: https://github.com/sphincs/sphincsplus/commit/ed15dd78658f63288c7492c00260d86154b84637
+  - name: avx2
+    version: https://github.com/sphincs/sphincsplus/commit/ed15dd78658f63288c7492c00260d86154b84637
+    supported_platforms:
+      - architecture: x86_64
+        required_flags: ['avx2']
