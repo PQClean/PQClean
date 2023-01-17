@@ -2,6 +2,10 @@ on: ['push', 'pull_request']
 
 name: Test common files and sanity checks
 
+concurrency:
+  group: ci-common-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-native:
     runs-on: ubuntu-latest
@@ -152,4 +156,3 @@ jobs:
         run: |
           cd test
           python test_common.py --numprocesses=auto
-

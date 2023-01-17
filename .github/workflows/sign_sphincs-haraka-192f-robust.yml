@@ -1,5 +1,7 @@
 on:
   push:
+    branches:
+      - 'master'
     paths:
       # build if tests change
       - 'test/**'
@@ -36,6 +38,10 @@ on:
 
 name: Test sphincs-haraka-192f-robust
 
+concurrency:
+  group: ci-sphincs-haraka-192f-robust-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-native:
     runs-on: ubuntu-latest
@@ -56,13 +62,6 @@ jobs:
           - gcc
           - clang
     steps:
-      - name: Cancel Previous Runs
-        uses: thomwiggers/cancel-workflow-action@all_but_latest
-        with:
-          all_but_latest: true
-          access_token: ${{ github.token }}
-        continue-on-error: true
-        if: matrix.arch == 'amd64' && matrix.cc == 'gcc'
       - uses: actions/checkout@v3
         with:
           submodules: true
