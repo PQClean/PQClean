@@ -26,6 +26,34 @@ listed below. We also accept optimised implementations, but still requiring high
 
 Please also review our [guidelines for contributors](CONTRIBUTING.md) if you are interested in adding a scheme to PQClean.
 
+## PQClean paper
+
+For a summary of the lessons learnt while working on PQClean, please refer to:
+
+> Matthias J. Kannwischer, Peter Schwabe, Douglas Stebila, and Thom Wiggers. “Improving Software Quality in Cryptography Standardization Projects.” In: Security Standardization Research – EuroS&P Workshops 2022. 2022.
+
+Find the paper at https://eprint.iacr.org/2022/337
+
+Please cite this work when referring to PQClean:
+
+```bibtex
+@inproceedings{SSR:KSSW22,,
+  author    = {Matthias J. Kannwischer and
+               Peter Schwabe and
+               Douglas Stebila and
+               Thom Wiggers},
+  title     = {Improving Software Quality in Cryptography Standardization Projects},
+  booktitle = {{IEEE} European Symposium on Security and Privacy, EuroS{\&amp;}P
+               2022 - Workshops, Genoa, Italy, June 6-10, 2022},
+  pages     = {19--30},
+  publisher = {IEEE Computer Society},
+  address = {Los Alamitos, CA, USA},
+  year      = {2022},
+  url       = {https://eprint.iacr.org/2022/337},
+  doi       = {10.1109/EuroSPW55150.2022.00010},
+}
+```
+
 ## Requirements on C implementations that are automatically checked
 
 _The checking of items on this list is still being developed. Checked items should be working._
