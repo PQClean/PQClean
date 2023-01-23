@@ -169,11 +169,14 @@ class Implementation:
         for platform_ in self.metadata()['supported_platforms']:
             if platform_['architecture'] == cpuinfo['arch'].lower():
                 # Detect actually running on emulated i386
-                if (platform_['architecture'] == 'x86_64' and
-                        platform.architecture()[0] == '32bit'):
-                    continue
-                if all([flag in cpuinfo['flags']
-                        for flag in platform_['required_flags']]):
+                if platform_['architecture'] == 'x86_64':
+                    if platform.architecture()[0] == '32bit':
+                        continue
+                    if (platform.system() == "Windows"
+                            and os.environ.get("PLATFORM") == "x86"):
+                        continue
+                if all(flag in cpuinfo['flags']
+                       for flag in platform_['required_flags']):
                     return True
         return False
 
