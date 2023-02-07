@@ -22,7 +22,7 @@ static inline vec128 vec128_set1_16b(uint16_t a) {
     return _mm_set1_epi16(a);
 }
 
-static inline vec128 vec128_setzero() {
+static inline vec128 vec128_setzero(void) {
     return _mm_setzero_si128();
 }
 

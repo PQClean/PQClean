@@ -28,7 +28,7 @@ static inline vec256 vec256_set1_32b(uint64_t a) {
     return _mm256_set1_epi32(a);
 }
 
-static inline vec256 vec256_setzero() {
+static inline vec256 vec256_setzero(void) {
     return  _mm256_setzero_si256();
 }
 
