@@ -1,7 +1,7 @@
 ---
 name: Falcon-1024
 type: signature
-claimed-nist-level: 3
+claimed-nist-level: 5
 length-public-key: 1793
 length-secret-key: 2305
 length-signature: 1280
