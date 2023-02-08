@@ -1005,7 +1005,7 @@ PQCLEAN_FALCON512_AVX2_gaussian0_sampler(prng *p) {
      * values. We need both a "greater than" and an "equal"
      * comparisons.
      */
-    xhi = _mm256_broadcastw_epi16(_mm_cvtsi32_si128(hi));
+    xhi = _mm256_broadcastw_epi16(_mm_cvtsi32_si128((int)hi));
     rhi = _mm256_loadu_si256(&rhi15.ymm[0]);
     gthi = _mm256_cmpgt_epi16(rhi, xhi);
     eqhi = _mm256_cmpeq_epi16(rhi, xhi);
