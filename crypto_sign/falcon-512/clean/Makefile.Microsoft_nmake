@@ -2,13 +2,13 @@
 #    nmake /f Makefile.Microsoft_nmake
 
 LIBRARY=libfalcon-512_clean.lib
-OBJECTS=codec.obj common.obj fft.obj fpr.obj inner.obj keygen.obj pqclean.obj rng.obj sign.obj vrfy.obj 
+OBJECTS=codec.obj common.obj fft.obj fpr.obj keygen.obj pqclean.obj rng.obj sign.obj vrfy.obj
 
 # Warning C4146 is raised when a unary minus operator is applied to an
 # unsigned type; this has nonetheless been standard and portable for as
 # long as there has been a C standard, and we do that a lot, especially
 # for constant-time computations. Thus, we disable that spurious warning.
-CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /wd4146 /WX
+CFLAGS=/nologo /I ..\..\..\common /O /W4 /wd4146 /WX
 
 all: $(LIBRARY)
 
@@ -16,7 +16,7 @@ all: $(LIBRARY)
 $(OBJECTS): *.h
 
 $(LIBRARY): $(OBJECTS)
-        LIB.EXE /NOLOGO /WX /OUT:$@ $**
+	LIB.EXE /NOLOGO /WX /OUT:$@ $**
 
 clean:
     -DEL $(OBJECTS)

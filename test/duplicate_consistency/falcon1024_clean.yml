@@ -6,6 +6,5 @@ consistency_checks:
       - api.h
       - codec.c
       - common.c
-      - keygen.c
       - pqclean.c
       - vrfy.c

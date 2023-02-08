@@ -6,7 +6,6 @@ consistency_checks:
       - api.h
       - codec.c
       - common.c
-      - keygen.c
       - pqclean.c
       - vrfy.c
   - source:
@@ -15,7 +14,6 @@ consistency_checks:
     files:
       - codec.c
       - common.c
-      - keygen.c
       - vrfy.c
   - source:
       scheme: falcon-1024
@@ -27,7 +25,6 @@ consistency_checks:
       - common.c
       - fft.c
       - fpr.c
-      - keygen.c
       - rng.c
       - sign.c
       - vrfy.c

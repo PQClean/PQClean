@@ -1,5 +1,3 @@
-#include "inner.h"
-#include <assert.h>
 /*
  * PRNG and interface to the system RNG.
  *
@@ -31,22 +29,10 @@
  * @author   Thomas Pornin <thomas.pornin@nccgroup.com>
  */
 
+#include <assert.h>
 
+#include "inner.h"
 
-/*
- * Include relevant system header files. For Win32, this will also need
- * linking with advapi32.dll, which we trigger with an appropriate #pragma.
- */
-
-/* see inner.h */
-int
-PQCLEAN_FALCON512_CLEAN_get_seed(void *seed, size_t len) {
-    (void)seed;
-    if (len == 0) {
-        return 1;
-    }
-    return 0;
-}
 
 /* see inner.h */
 void
