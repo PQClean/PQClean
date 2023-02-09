@@ -6,7 +6,6 @@ consistency_checks:
       - api.h
       - codec.c
       - common.c
-      - keygen.c
       - pqclean.c
       - vrfy.c
   - source:
@@ -28,5 +27,4 @@ consistency_checks:
     files:
       - codec.c
       - common.c
-      - keygen.c
       - vrfy.c
