@@ -2656,11 +2656,21 @@ make_fg(uint32_t *data, const int8_t *f, const int8_t *g,
         return;
     }
 
+    if (depth == 0) {
+        return;
+    }
+
+    if (depth == 1) {
+        make_fg_step(data, logn, 0, 0, out_ntt);
+        return;
+    }
+
     make_fg_step(data, logn, 0, 0, 1);
-    for (d = 1; (d + 1) < depth; d ++) {
+    for (d = 1; d + 1 < depth; d ++) {
         make_fg_step(data, logn - d, d, 1, 1);
     }
     make_fg_step(data, logn - depth + 1, depth - 1, 1, out_ntt);
+
 }
 
 /*
