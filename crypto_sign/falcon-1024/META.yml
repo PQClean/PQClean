@@ -22,9 +22,9 @@ auxiliary-submitters:
   - Zhenfei Zhang
 implementations:
   - name: clean
-    version: 20230207
+    version: 20211101 with PQClean patches
   - name: avx2
-    version: 20230207
+    version: 20211101 with PQClean patches
     supported_platforms:
       - architecture: x86_64
         required_flags:

@@ -131,7 +131,7 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
         fpr dummy_fpr;
     } tmp;
     int8_t f[1024], g[1024], F[1024], G[1024];
-    union {
+    struct {
         int16_t sig[1024];
         uint16_t hm[1024];
     } r;
