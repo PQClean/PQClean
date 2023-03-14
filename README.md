@@ -156,11 +156,12 @@ List of required dependencies: ``gcc or clang, make, python3, python-yaml librar
 
 ## Using source code from PQClean in your own project
 
-Each implementation directory in PQClean (e.g., crypto\_kem/kyber768\clean) can be extracted for use in your own project.  You will need to:
+Each implementation directory in PQClean (e.g., crypto\_kem/kyber768\_clean) can be extracted for use in your own project.  You will need to:
 
 1. Copy the source code from the implementation's directory into your project.
 2. Add the files to your project's build system.
 3. Provide instantiations of any of the common cryptographic algorithms used by the implementation.  This likely includes `common/randombytes.h` (a cryptographic random number generator), and possibly `common/sha2.h` (the SHA-2 hash function family), `common/aes.h` (AES implementations), `common/fips202.h` (the SHA-3 hash function family) and `common/sp800-185.h` (the cSHAKE family).
+   It is possible to use the implementations from the `common/` folder, but note that they may not be the most performant implementations and may do unnecessary things (like heap allocations) for our testing purposes.
 
 Regarding #2, adding the files to your project's build system, each implementation in PQClean is accompanied by example two makefiles that show how one could build the files for that implementation:
 
