@@ -98,6 +98,9 @@ jobs:
         cc:
           - gcc
           - clang
+        exclude:
+          - arch: armhf
+            cc: gcc
     env:
       CC: ${{ matrix.cc }}
     steps:
