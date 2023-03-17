@@ -1,0 +1,30 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY = libsphincs-shake-128s-simple_avx2.lib
+OBJECTS = address.obj context_shake.obj fips202x4.obj fors.obj hash_shake.obj hash_shakex4.obj merkle.obj sign.obj thash_shake_simple.obj thash_shake_simplex4.obj utils.obj utilsx4.obj wots.obj
+
+CFLAGS = /nologo /O2 /arch:AVX /I ..\..\..\common /W4 /WX
+
+all: $(LIBRARY)
+
+$(OBJECTS): *.h
+
+
+KECCAK4XDIR=..\..\..\common\keccak4x
+KECCAK4XOBJ=KeccakP-1600-times4-SIMD256.obj
+KECCAK4X=$(KECCAK4XDIR)\$(KECCAK4XOBJ)
+
+$(KECCAK4X):
+	cd $(KECCAK4XDIR) && $(MAKE) /f Makefile.Microsoft_nmake $(KECCAK4XOBJ)
+
+
+
+$(LIBRARY): $(OBJECTS) $(KECCAK4X)
+	LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+	-DEL $(OBJECTS)
+	-DEL $(LIBRARY)
+	-DEL $(KECCAK4X)
+

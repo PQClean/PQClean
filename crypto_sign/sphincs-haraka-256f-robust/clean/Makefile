@@ -1,20 +1,21 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIB=libsphincs-haraka-256f-robust_clean.a
+LIB = libsphincs-haraka-256f-robust_clean.a
 
-HEADERS = params.h address.h wots.h utils.h fors.h api.h hash.h hash_state.h thash.h haraka.h
-OBJECTS =          address.o wots.o utils.o fors.o sign.o hash_haraka.o thash_haraka_robust.o haraka.o
+HEADERS = address.h api.h context.h fors.h haraka.h haraka_offsets.h hash.h merkle.h nistapi.h params.h thash.h utils.h utilsx1.h wots.h wotsx1.h
+OBJECTS = address.o context_haraka.o fors.o haraka.o hash_haraka.o merkle.o sign.o thash_haraka_robust.o utils.o utilsx1.o wots.o wotsx1.o
 
-CFLAGS=-O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS  = -std=c99 -O3 -Wall -Wconversion -Werror -Wextra -Wmissing-prototypes -Wpedantic -Wredundant-decls -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(LIB): $(OBJECTS)
-	$(AR) -r $@ $(OBJECTS)
+$(LIB): $(OBJECTS) 
+	$(AR) -r $@ $(OBJECTS) 
 
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(LIB)
+

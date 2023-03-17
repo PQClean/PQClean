@@ -1,16 +1,17 @@
-name: SPHINCS+
+name: SPHINCS+-haraka-256f-robust
 type: signature
-claimed-nist-level: 5
+claimed-nist-level: 2
 length-public-key: 64
 length-secret-key: 128
 length-signature: 49856
-testvectors-sha256: 267f7430ac689daf4da146bb98f345611d6e3339f39fc5b3d9e2169d8bcfba96
-nistkat-sha256: 7e346ad1ab94be33b757d833f1a934e23af6251e7aac7072d098ef15dc3264fd
+testvectors-sha256: 668872459798dc5e2437da3fc13addeb503a14e9811c3ea1bee8bf32f765031b
+nistkat-sha256: febb3162e4d99a0eaab69d55929f84233d76a0070da07e36275579408bb73fff
 principal-submitters:
   - Andreas Hülsing
 auxiliary-submitters:
   - Jean-Philippe Aumasson
   - Daniel J. Bernstein,
+  - Ward Beullens
   - Christoph Dobraunig
   - Maria Eichlseder
   - Scott Fluhrer
@@ -24,12 +25,12 @@ auxiliary-submitters:
   - Christian Rechberger
   - Joost Rijneveld
   - Peter Schwabe
+  - Bas Westerbaan
 implementations:
-    - name: clean
-      version: https://github.com/sphincs/sphincsplus/commit/77755c94d0bc744478044d6efbb888dc13156441
-    - name: aesni
-      version: https://github.com/sphincs/sphincsplus/commit/77755c94d0bc744478044d6efbb888dc13156441
-      supported_platforms:
-        - architecture: x86_64
-          required_flags:
-            - aes
+  - name: clean
+    version: https://github.com/sphincs/sphincsplus/commit/ed15dd78658f63288c7492c00260d86154b84637
+  - name: aesni
+    version: https://github.com/sphincs/sphincsplus/commit/ed15dd78658f63288c7492c00260d86154b84637
+    supported_platforms:
+      - architecture: x86_64
+        required_flags: ['aes']

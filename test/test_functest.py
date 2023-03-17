@@ -57,7 +57,9 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
     if platform.machine() == 'ppc' and 'clang' in os.environ.get('CC', 'gcc'):
         raise unittest.SkipTest("Clang does not support ASAN on ppc")
     elif platform.machine() == 'armv7l' and 'clang' in os.environ.get('CC', 'gcc'):
-            raise unittest.SkipTest("A bug with asan on armv7l, see #471")
+        raise unittest.SkipTest("A bug with asan on armv7l, see #471")
+    elif platform.machine() == 'armv7l' and 'gcc' in os.environ.get('CC', 'gcc') and 'sphincs' in implementation.scheme.name:
+        raise unittest.SkipTest("asan for sphincs on armv7l with gcc hangs, see #470")
     elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
     elif platform.system() == 'Darwin':

@@ -1,20 +1,21 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIB=libsphincs-haraka-256f-robust_aesni.a
+LIB = libsphincs-haraka-256f-robust_aesni.a
 
-HEADERS = params.h address.h wots.h utils.h utilsx4.h fors.h api.h hash.h hashx4.h hash_state.h thash.h thashx4.h haraka.h
-OBJECTS =          address.o wots.o utils.o utilsx4.o fors.o sign.o hash_haraka.o thash_haraka_robust.o hash_harakax4.o thash_haraka_robustx4.o haraka.o
+HEADERS = address.h api.h context.h fors.h haraka.h haraka_offsets.h harakax4.h hash.h hashx4.h merkle.h nistapi.h params.h thash.h thashx4.h utils.h utilsx4.h wots.h wotsx4.h
+OBJECTS = address.o context_haraka.o fors.o haraka.o hash_haraka.o hash_harakax4.o merkle.o sign.o thash_haraka_robust.o thash_haraka_robustx4.o utils.o utilsx4.o wots.o
 
-CFLAGS=-maes -O3 -Wall -Wconversion -Wextra -Wpedantic -Wvla -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
+CFLAGS  = -std=c99 -O3 -Wall -Wconversion -Werror -Wextra -Wmissing-prototypes -Wpedantic -Wredundant-decls -maes -I../../../common $(EXTRAFLAGS)
 
 all: $(LIB)
 
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(LIB): $(OBJECTS)
-	$(AR) -r $@ $(OBJECTS)
+$(LIB): $(OBJECTS) 
+	$(AR) -r $@ $(OBJECTS) 
 
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(LIB)
+

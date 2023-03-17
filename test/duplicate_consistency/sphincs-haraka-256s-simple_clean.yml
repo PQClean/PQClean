@@ -1,31 +1,69 @@
 consistency_checks:
 - source:
-    scheme: sphincs-shake256-256s-robust
+    scheme: sphincs-sha2-256s-robust
     implementation: clean
   files:
-    - address.c
-    - address.h
-    - fors.c
-    - fors.h
-    - hash.h
-    - sign.c
-    - thash.h
-    - utils.c
-    - utils.h
-    - wots.c
-    - wots.h
-- source:
-    scheme: sphincs-shake256-256s-robust
-    implementation: clean
-  files:
-    - params.h
-- source:
-    scheme: sphincs-haraka-256s-robust
-    implementation: clean
-  files:
-    - hash_haraka.c
+  - address.h
+  - fors.h
+  - sign.c
+  - merkle.h
+  - utils.c
+  - utils.h
+  - wots.h
 - source:
     scheme: sphincs-haraka-256s-simple
     implementation: clean
   files:
-    - thash_haraka_simple.c
+  - address.c
+  - api.h
+  - fors.h
+  - hash.h
+  - hash_haraka.c
+  - merkle.h
+  - params.h
+  - sign.c
+  - thash.h
+  - utils.c
+  - utils.h
+  - thash_haraka_simple.c
+  - context_haraka.c
+- source:
+    scheme: sphincs-haraka-128s-simple
+    implementation: clean
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - hash_haraka.c
+  - thash_haraka_simple.c
+- source:
+    scheme: sphincs-haraka-128f-simple
+    implementation: clean
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - hash_haraka.c
+  - thash_haraka_simple.c
+- source:
+    scheme: sphincs-haraka-192s-simple
+    implementation: clean
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - hash_haraka.c
+  - thash_haraka_simple.c
+- source:
+    scheme: sphincs-haraka-192f-simple
+    implementation: clean
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - hash_haraka.c
+  - thash_haraka_simple.c
+- source:
+    scheme: sphincs-haraka-256f-simple
+    implementation: clean
+  files:
+  - context_haraka.c
+  - haraka_offsets.h
+  - hash_haraka.c
+  - thash_haraka_simple.c

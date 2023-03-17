@@ -1,0 +1,169 @@
+consistency_checks:
+- source:
+    scheme: sphincs-sha2-192s-robust
+    implementation: clean
+  files:
+  - address.h
+  - fors.h
+  - sign.c
+  - merkle.h
+  - utils.c
+  - utils.h
+  - wots.h
+- source:
+    scheme: sphincs-shake-192f-robust
+    implementation: clean
+  files:
+  - address.c
+  - api.h
+  - fors.h
+  - hash.h
+  - hash_shake.c
+  - merkle.h
+  - params.h
+  - sign.c
+  - thash.h
+  - utils.c
+  - utils.h
+  - thash_shake_robust.c
+  - context_shake.c
+- source:
+    scheme: sphincs-shake-128s-robust
+    implementation: avx2
+  files:
+  - context_shake.c
+  - fips202x4.c
+  - fips202x4.h
+  - hash_shake.c
+  - hash_shakex4.c
+  - hash_shakex4.c
+  - hashx4.h
+  - shake_offsets.h
+  - thash_shake_robust.c
+  - thash_shake_robustx4.c
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-192f-robust
+    implementation: aesni
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-128f-robust
+    implementation: avx2
+  files:
+  - context_shake.c
+  - fips202x4.c
+  - fips202x4.h
+  - hash_shake.c
+  - hash_shakex4.c
+  - hash_shakex4.c
+  - hashx4.h
+  - shake_offsets.h
+  - thash_shake_robust.c
+  - thash_shake_robustx4.c
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-192f-robust
+    implementation: aesni
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-192s-robust
+    implementation: avx2
+  files:
+  - context_shake.c
+  - fips202x4.c
+  - fips202x4.h
+  - hash_shake.c
+  - hash_shakex4.c
+  - hash_shakex4.c
+  - hashx4.h
+  - shake_offsets.h
+  - thash_shake_robust.c
+  - thash_shake_robustx4.c
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-192f-robust
+    implementation: aesni
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-256s-robust
+    implementation: avx2
+  files:
+  - context_shake.c
+  - fips202x4.c
+  - fips202x4.h
+  - hash_shake.c
+  - hash_shakex4.c
+  - hash_shakex4.c
+  - hashx4.h
+  - shake_offsets.h
+  - thash_shake_robust.c
+  - thash_shake_robustx4.c
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-192f-robust
+    implementation: aesni
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-shake-256f-robust
+    implementation: avx2
+  files:
+  - context_shake.c
+  - fips202x4.c
+  - fips202x4.h
+  - hash_shake.c
+  - hash_shakex4.c
+  - hash_shakex4.c
+  - hashx4.h
+  - shake_offsets.h
+  - thash_shake_robust.c
+  - thash_shake_robustx4.c
+  - utilsx4.c
+  - utilsx4.h
+  - wotsx4.h
+- source:
+    scheme: sphincs-haraka-192f-robust
+    implementation: aesni
+  files:
+  - thashx4.h
+  - merkle.c
+  - hashx4.h
+  - utilsx4.c
+  - utilsx4.h
+  - wots.h
+  - wotsx4.h
