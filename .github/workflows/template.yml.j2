@@ -98,11 +98,6 @@ jobs:
         cc:
           - gcc
           - clang
-{%- if scheme_name.startswith('sphincs-shake') or scheme_name.startswith('sphincs-sha2') %}
-        exclude:
-          - arch: armhf
-            cc: gcc
-{%- endif %}
     env:
       CC: ${{ matrix.cc }}
     steps:
