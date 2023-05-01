@@ -5,7 +5,7 @@
 #define EVALUATOR(x, y) PASTER(x, y)
 #define NAMESPACE(fun) EVALUATOR(PQCLEAN_NAMESPACE, fun)
 
-int main() {
+int main(void) {
     printf("{\n");
     printf("\t\"CRYPTO_SECRETKEYBYTES\": %u,\n",  NAMESPACE(CRYPTO_SECRETKEYBYTES));
     printf("\t\"CRYPTO_PUBLICKEYBYTES\": %u,\n",  NAMESPACE(CRYPTO_PUBLICKEYBYTES));
