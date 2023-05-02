@@ -37,8 +37,7 @@ static void fprintBstr(FILE *fp, const char *S, const uint8_t *A, size_t L) {
     fprintf(fp, "\n");
 }
 
-int main() {
-
+int main(void) {
     uint8_t entropy_input[48];
     uint8_t seed[48];
     FILE *fh = stdout;
