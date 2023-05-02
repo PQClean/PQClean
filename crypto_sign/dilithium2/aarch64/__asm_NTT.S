@@ -28,7 +28,7 @@
 #include "macros.inc"
 
 .align 2
-.global __asm_ntt_SIMD_top
+.global PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_top
 .global _PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_top
 PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_top:
 _PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_top:
@@ -206,7 +206,7 @@ _PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_top:
     br lr
 
 .align 2
-.global __asm_ntt_SIMD_bot
+.global PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_bot
 .global _PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_bot
 PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_bot:
 _PQCLEAN_dilithium2_AARCH64__asm_ntt_SIMD_bot:

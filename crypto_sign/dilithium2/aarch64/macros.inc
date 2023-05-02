@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-#include "macros_common.i"
+#include "macros_common.inc"
 
 .macro wrap_trn_4x4 a0, a1, a2, a3, t0, t1, t2, t3, qS, dD
 

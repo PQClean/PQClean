@@ -29,8 +29,8 @@
 #include "params.h"
 
 .align 2
-.global __asm_10_to_32
-.global ___asm_10_to_32
+.global PQCLEAN_dilithium2_AARCH64__asm_10_to_32
+.global _PQCLEAN_dilithium2_AARCH64__asm_10_to_32
 PQCLEAN_dilithium2_AARCH64__asm_10_to_32:
 _PQCLEAN_dilithium2_AARCH64__asm_10_to_32:
 
@@ -102,8 +102,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_10_to_32:
     br lr
 
 .align 2
-.global __asm_poly_reduce
-.global ___asm_poly_reduce
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_reduce
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_reduce
 PQCLEAN_dilithium2_AARCH64__asm_poly_reduce:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_reduce:
 
@@ -195,8 +195,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_reduce:
     br lr
 
 .align 2
-.global __asm_poly_caddq
-.global ___asm_poly_caddq
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_caddq
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_caddq
 PQCLEAN_dilithium2_AARCH64__asm_poly_caddq:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_caddq:
 
@@ -288,8 +288,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_caddq:
     br lr
 
 .align 2
-.global __asm_poly_freeze
-.global ___asm_poly_freeze
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_freeze
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_freeze
 PQCLEAN_dilithium2_AARCH64__asm_poly_freeze:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_freeze:
 
@@ -417,8 +417,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_freeze:
     br lr
 
 .align 2
-.global __asm_poly_power2round
-.global ___asm_poly_power2round
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_power2round
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_power2round
 PQCLEAN_dilithium2_AARCH64__asm_poly_power2round:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_power2round:
 
@@ -563,8 +563,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_power2round:
     br lr
 
 .align 2
-.global __asm_poly_add
-.global ___asm_poly_add
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_add
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_add
 PQCLEAN_dilithium2_AARCH64__asm_poly_add:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_add:
 
@@ -612,8 +612,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_add:
     br lr
 
 .align 2
-.global __asm_poly_sub
-.global ___asm_poly_sub
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_sub
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_sub
 PQCLEAN_dilithium2_AARCH64__asm_poly_sub:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_sub:
 
@@ -661,8 +661,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_sub:
     br lr
 
 .align 2
-.global __asm_poly_shiftl
-.global ___asm_poly_shiftl
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_shiftl
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_shiftl
 PQCLEAN_dilithium2_AARCH64__asm_poly_shiftl:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_shiftl:
 
@@ -728,8 +728,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_shiftl:
     br lr
 
 .align 2
-.global __asm_poly_pointwise_montgomery
-.global ___asm_poly_pointwise_montgomery
+.global PQCLEAN_dilithium2_AARCH64__asm_poly_pointwise_montgomery
+.global _PQCLEAN_dilithium2_AARCH64__asm_poly_pointwise_montgomery
 PQCLEAN_dilithium2_AARCH64__asm_poly_pointwise_montgomery:
 _PQCLEAN_dilithium2_AARCH64__asm_poly_pointwise_montgomery:
 
@@ -847,8 +847,8 @@ _PQCLEAN_dilithium2_AARCH64__asm_poly_pointwise_montgomery:
 
 
 .align 2
-.global __asm_polyvecl_pointwise_acc_montgomery
-.global ___asm_polyvecl_pointwise_acc_montgomery
+.global PQCLEAN_dilithium2_AARCH64__asm_polyvecl_pointwise_acc_montgomery
+.global _PQCLEAN_dilithium2_AARCH64__asm_polyvecl_pointwise_acc_montgomery
 PQCLEAN_dilithium2_AARCH64__asm_polyvecl_pointwise_acc_montgomery:
 _PQCLEAN_dilithium2_AARCH64__asm_polyvecl_pointwise_acc_montgomery:
 
