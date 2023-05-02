@@ -25,11 +25,11 @@
  * SOFTWARE.
  */
 
-#include "macros.i"
+#include "macros.inc"
 
 .align 2
-.global __asm_ntt_SIMD_top
-.global ___asm_ntt_SIMD_top
+.global PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_top
+.global _PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_top
 PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_top:
 _PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_top:
 
@@ -194,8 +194,8 @@ _PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_top:
 
 
 .align 2
-.global __asm_ntt_SIMD_bot
-.global ___asm_ntt_SIMD_bot
+.global PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_bot
+.global _PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_bot
 PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_bot:
 _PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_bot:
 

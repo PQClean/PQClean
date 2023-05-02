@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-#include "macros.i"
+#include "macros.inc"
 
 .align 2
 .global __asm_intt_SIMD_top

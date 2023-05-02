@@ -39,28 +39,28 @@ void ntt(int16_t r[256]);
 void invntt(int16_t r[256]);
 
 
-extern void __asm_ntt_SIMD_top(int16_t*, const int16_t*, const int16_t*);
-extern void __asm_ntt_SIMD_bot(int16_t*, const int16_t*, const int16_t*);
+extern void PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_top(int16_t*, const int16_t*, const int16_t*);
+extern void PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_bot(int16_t*, const int16_t*, const int16_t*);
 
-extern void __asm_intt_SIMD_bot(int16_t*, const int16_t*, const int16_t*);
-extern void __asm_intt_SIMD_top(int16_t*, const int16_t*, const int16_t*);
+extern void PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot(int16_t*, const int16_t*, const int16_t*);
+extern void PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top(int16_t*, const int16_t*, const int16_t*);
 
-extern void __asm_point_mul_extended(int16_t*, const int16_t*, const int16_t*, const int16_t*);
-extern void __asm_asymmetric_mul(const int16_t*, const int16_t*, const int16_t*, const int16_t*, int16_t*);
-extern void __asm_asymmetric_mul_montgomery(const int16_t*, const int16_t*, const int16_t*, const int16_t*, int16_t*);
+extern void PQCLEAN_KYBER512_AARCH64__asm_point_mul_extended(int16_t*, const int16_t*, const int16_t*, const int16_t*);
+extern void PQCLEAN_KYBER512_AARCH64__asm_asymmetric_mul(const int16_t*, const int16_t*, const int16_t*, const int16_t*, int16_t*);
+extern void PQCLEAN_KYBER512_AARCH64__asm_asymmetric_mul_montgomery(const int16_t*, const int16_t*, const int16_t*, const int16_t*, int16_t*);
 
 static const int16_t asymmetric_const[16] = {
 Q1, Q1prime2, RmodQ1, RmodQ1Q1prime, R3modQ1_prime_half, R3modQ1_doubleprime
 };
 
 #define NTT(in) { \
-        __asm_ntt_SIMD_top(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
-        __asm_ntt_SIMD_bot(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
+        PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_top(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
+        PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_bot(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
     }
 
 #define iNTT(in) { \
-	__asm_intt_SIMD_bot(in, streamlined_inv_CT_table_Q1_extended, constants); \
-	__asm_intt_SIMD_top(in, streamlined_inv_CT_table_Q1_extended, constants); \
+	PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot(in, streamlined_inv_CT_table_Q1_extended, constants); \
+	PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top(in, streamlined_inv_CT_table_Q1_extended, constants); \
     }
 
 static const int16_t constants[16] = {

@@ -25,11 +25,11 @@
  * SOFTWARE.
  */
 
-#include "macros.i"
+#include "macros.inc"
 
 .align 2
-.global __asm_add_reduce
-.global ___asm_add_reduce
+.global PQCLEAN_KYBER512_AARCH64__asm_add_reduce
+.global _PQCLEAN_KYBER512_AARCH64__asm_add_reduce
 PQCLEAN_KYBER512_AARCH64__asm_add_reduce:
 _PQCLEAN_KYBER512_AARCH64__asm_add_reduce:
 
@@ -89,8 +89,8 @@ _PQCLEAN_KYBER512_AARCH64__asm_add_reduce:
     br lr
 
 .align 2
-.global __asm_sub_reduce
-.global ___asm_sub_reduce
+.global PQCLEAN_KYBER512_AARCH64__asm_sub_reduce
+.global _PQCLEAN_KYBER512_AARCH64__asm_sub_reduce
 PQCLEAN_KYBER512_AARCH64__asm_sub_reduce:
 _PQCLEAN_KYBER512_AARCH64__asm_sub_reduce:
 
@@ -150,8 +150,8 @@ _PQCLEAN_KYBER512_AARCH64__asm_sub_reduce:
     br lr
 
 .align 2
-.global __asm_add_add_reduce
-.global ___asm_add_add_reduce
+.global PQCLEAN_KYBER512_AARCH64__asm_add_add_reduce
+.global _PQCLEAN_KYBER512_AARCH64__asm_add_add_reduce
 PQCLEAN_KYBER512_AARCH64__asm_add_add_reduce:
 _PQCLEAN_KYBER512_AARCH64__asm_add_add_reduce:
 

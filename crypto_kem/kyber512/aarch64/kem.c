@@ -12,7 +12,7 @@
 #include "verify.h"
 #include "symmetric.h"
 #include "randombytes.h"
-#include "crypto_kem.h"
+#include "kem.h"
 
 
 /*************************************************

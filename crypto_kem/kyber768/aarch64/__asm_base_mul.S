@@ -25,13 +25,13 @@
  * SOFTWARE.
  */
 
-#include "macros.i"
+#include "macros.inc"
 
 #include "params.h"
 
 .align 2
-.global __asm_point_mul_extended
-.global ___asm_point_mul_extended
+.global PQCLEAN_KYBER768_AARCH64__asm_point_mul_extended
+.global _PQCLEAN_KYBER768_AARCH64__asm_point_mul_extended
 PQCLEAN_KYBER768_AARCH64__asm_point_mul_extended:
 _PQCLEAN_KYBER768_AARCH64__asm_point_mul_extended:
 
@@ -94,8 +94,8 @@ _PQCLEAN_KYBER768_AARCH64__asm_point_mul_extended:
 
 
 .align 2
-.global __asm_asymmetric_mul
-.global ___asm_asymmetric_mul
+.global PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul
+.global _PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul
 PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul:
 _PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul:
 
@@ -246,8 +246,8 @@ _PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul:
 
 
 .align 2
-.global __asm_asymmetric_mul_montgomery
-.global ___asm_asymmetric_mul_montgomery
+.global PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul_montgomery
+.global _PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul_montgomery
 PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul_montgomery:
 _PQCLEAN_KYBER768_AARCH64__asm_asymmetric_mul_montgomery:
 

@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-#include "macros.i"
+#include "macros.inc"
 #include "params.h"
 
 .align 2

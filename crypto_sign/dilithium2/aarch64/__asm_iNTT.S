@@ -25,7 +25,7 @@
  * SOFTWARE.
  */
 
-#include "macros.i"
+#include "macros.inc"
 
 .align 2
 .global PQCLEAN_dilithium2_AARCH64__asm_intt_SIMD_top

@@ -25,11 +25,11 @@
  * SOFTWARE.
  */
 
-#include "macros.i"
+#include "macros.inc"
 
 .align 2
-.global __asm_intt_SIMD_bot
-.global ___asm_intt_SIMD_bot
+.global PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_bot
+.global _PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_bot
 PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_bot:
 _PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_bot:
 
@@ -111,8 +111,8 @@ _PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_bot:
     br lr
 
 .align 2
-.global __asm_intt_SIMD_top
-.global ___asm_intt_SIMD_top
+.global PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_top
+.global _PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_top
 PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_top:
 _PQCLEAN_KYBER768_AARCH64__asm_intt_SIMD_top:
 
