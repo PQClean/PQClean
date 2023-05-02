@@ -34,8 +34,9 @@
 
 extern const int16_t zetas[128];
 
+#define ntt KYBER_NAMESPACE(ntt)
 void ntt(int16_t r[256]);
-
+#define invntt KYBER_NAMESPACE(invntt)
 void invntt(int16_t r[256]);
 
 
