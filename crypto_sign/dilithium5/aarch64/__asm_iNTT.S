@@ -28,8 +28,8 @@
 #include "macros.inc"
 
 .align 2
-.global __asm_intt_SIMD_top
-.global ___asm_intt_SIMD_top
+.global PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_top
+.global _PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_top
 PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_top:
 _PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_top:
 
@@ -435,8 +435,8 @@ _PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_top:
     br lr
 
 .align 2
-.global __asm_intt_SIMD_bot
-.global ___asm_intt_SIMD_bot
+.global PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_bot
+.global _PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_bot
 PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_bot:
 _PQCLEAN_dilithium5_AARCH64__asm_intt_SIMD_bot:
 

@@ -101,12 +101,12 @@ static const uint64_t neon_KeccakF_RoundConstants[NROUNDS] = {
 *
 * Arguments:   - uint64_t *state: pointer to input/output Keccak state
 **************************************************/
-extern void f1600x2(v128*, const uint64_t*);
+extern void PQCLEAN_dilithium5_AARCH64_f1600x2(v128*, const uint64_t*);
 static inline
 void KeccakF1600_StatePermutex2(v128 state[25])
 {
 #if (__APPLE__ && __ARM_FEATURE_CRYPTO) || (__ARM_FEATURE_SHA3) /* although not sure what is being implemented, we find something fast */
-  f1600x2(state, neon_KeccakF_RoundConstants);
+  PQCLEAN_dilithium5_AARCH64_f1600x2(state, neon_KeccakF_RoundConstants);
 #else
   v128 Aba, Abe, Abi, Abo, Abu;
   v128 Aga, Age, Agi, Ago, Agu;
