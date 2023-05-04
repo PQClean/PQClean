@@ -56,7 +56,7 @@ static void gen_chains(
         total = newTotal;
     }
     for (i = 0; i < SPX_WOTS_LEN; i++) {
-        idxs[counts[steps[i]]] = i;
+        idxs[counts[steps[i]]] = (uint16_t)i;
         counts[steps[i]]++;
     }
 
@@ -190,7 +190,7 @@ void wots_gen_leafx2(unsigned char *dest,
     uint32_t wots_k_mask;
     unsigned wots_sign_index;
 
-    if (((leaf_idx ^ info->wots_sign_leaf) & ~1) == 0) {
+    if (((leaf_idx ^ info->wots_sign_leaf) & ~1U) == 0) {
         /* We're traversing the leaf that's signing; generate the WOTS */
         /* signature */
         wots_k_mask = 0;
@@ -198,7 +198,7 @@ void wots_gen_leafx2(unsigned char *dest,
         /* slots do the signatures come from */
     } else {
         /* Nope, we're just generating pk's; turn off the signature logic */
-        wots_k_mask = ~0;
+        wots_k_mask = ~0U;
         wots_sign_index = 0;
     }
 
