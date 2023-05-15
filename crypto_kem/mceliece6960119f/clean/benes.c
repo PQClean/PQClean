@@ -1,11 +1,14 @@
 /*
   This file is for Benes network related functions
+
+  For the implementation strategy, see
+  https://eprint.iacr.org/2017/793.pdf
 */
 
+#include "util.h"
 #include "benes.h"
 #include "params.h"
 #include "transpose.h"
-#include "util.h"
 
 /* middle layers of the benes network */
 static void layer_in(uint64_t data[2][64], uint64_t *bits, int lgs) {
@@ -54,7 +57,7 @@ static void layer_ex(uint64_t *data, uint64_t *bits, int lgs) {
 /*        bits, condition bits of the Benes network */
 /*        rev, 0 for normal application; !0 for inverse */
 /* output: r, permuted bits */
-void PQCLEAN_MCELIECE6960119F_CLEAN_apply_benes(unsigned char *r, const unsigned char *bits, int rev) {
+void apply_benes(unsigned char *r, const unsigned char *bits, int rev) {
     int i, iter, inc;
 
     unsigned char *r_ptr = r;
@@ -76,32 +79,32 @@ void PQCLEAN_MCELIECE6960119F_CLEAN_apply_benes(unsigned char *r, const unsigned
     }
 
     for (i = 0; i < 64; i++) {
-        r_int_v[0][i] = PQCLEAN_MCELIECE6960119F_CLEAN_load8(r_ptr + i * 16 + 0);
-        r_int_v[1][i] = PQCLEAN_MCELIECE6960119F_CLEAN_load8(r_ptr + i * 16 + 8);
+        r_int_v[0][i] = load8(r_ptr + i * 16 + 0);
+        r_int_v[1][i] = load8(r_ptr + i * 16 + 8);
     }
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_h[0], r_int_v[0]);
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_h[1], r_int_v[1]);
+    transpose_64x64(r_int_h[0], r_int_v[0]);
+    transpose_64x64(r_int_h[1], r_int_v[1]);
 
     for (iter = 0; iter <= 6; iter++) {
         for (i = 0; i < 64; i++) {
-            b_int_v[i] = PQCLEAN_MCELIECE6960119F_CLEAN_load8(bits_ptr);
+            b_int_v[i] = load8(bits_ptr);
             bits_ptr += 8;
         }
 
         bits_ptr += inc;
 
-        PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(b_int_h, b_int_v);
+        transpose_64x64(b_int_h, b_int_v);
 
         layer_ex(r_int_h[0], b_int_h, iter);
     }
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_v[0], r_int_h[0]);
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_v[1], r_int_h[1]);
+    transpose_64x64(r_int_v[0], r_int_h[0]);
+    transpose_64x64(r_int_v[1], r_int_h[1]);
 
     for (iter = 0; iter <= 5; iter++) {
         for (i = 0; i < 64; i++) {
-            b_int_v[i] = PQCLEAN_MCELIECE6960119F_CLEAN_load8(bits_ptr);
+            b_int_v[i] = load8(bits_ptr);
             bits_ptr += 8;
         }
         bits_ptr += inc;
@@ -111,7 +114,7 @@ void PQCLEAN_MCELIECE6960119F_CLEAN_apply_benes(unsigned char *r, const unsigned
 
     for (iter = 4; iter >= 0; iter--) {
         for (i = 0; i < 64; i++) {
-            b_int_v[i] = PQCLEAN_MCELIECE6960119F_CLEAN_load8(bits_ptr);
+            b_int_v[i] = load8(bits_ptr);
             bits_ptr += 8;
         }
         bits_ptr += inc;
@@ -119,34 +122,34 @@ void PQCLEAN_MCELIECE6960119F_CLEAN_apply_benes(unsigned char *r, const unsigned
         layer_in(r_int_v, b_int_v, iter);
     }
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_h[0], r_int_v[0]);
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_h[1], r_int_v[1]);
+    transpose_64x64(r_int_h[0], r_int_v[0]);
+    transpose_64x64(r_int_h[1], r_int_v[1]);
 
     for (iter = 6; iter >= 0; iter--) {
         for (i = 0; i < 64; i++) {
-            b_int_v[i] = PQCLEAN_MCELIECE6960119F_CLEAN_load8(bits_ptr);
+            b_int_v[i] = load8(bits_ptr);
             bits_ptr += 8;
         }
 
         bits_ptr += inc;
 
-        PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(b_int_h, b_int_v);
+        transpose_64x64(b_int_h, b_int_v);
 
         layer_ex(r_int_h[0], b_int_h, iter);
     }
 
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_v[0], r_int_h[0]);
-    PQCLEAN_MCELIECE6960119F_CLEAN_transpose_64x64(r_int_v[1], r_int_h[1]);
+    transpose_64x64(r_int_v[0], r_int_h[0]);
+    transpose_64x64(r_int_v[1], r_int_h[1]);
 
     for (i = 0; i < 64; i++) {
-        PQCLEAN_MCELIECE6960119F_CLEAN_store8(r_ptr + i * 16 + 0, r_int_v[0][i]);
-        PQCLEAN_MCELIECE6960119F_CLEAN_store8(r_ptr + i * 16 + 8, r_int_v[1][i]);
+        store8(r_ptr + i * 16 + 0, r_int_v[0][i]);
+        store8(r_ptr + i * 16 + 8, r_int_v[1][i]);
     }
 }
 
 /* input: condition bits c */
 /* output: support s */
-void PQCLEAN_MCELIECE6960119F_CLEAN_support_gen(gf *s, const unsigned char *c) {
+void support_gen(gf *s, const unsigned char *c) {
     gf a;
     int i, j;
     unsigned char L[ GFBITS ][ (1 << GFBITS) / 8 ];
@@ -158,7 +161,7 @@ void PQCLEAN_MCELIECE6960119F_CLEAN_support_gen(gf *s, const unsigned char *c) {
     }
 
     for (i = 0; i < (1 << GFBITS); i++) {
-        a = PQCLEAN_MCELIECE6960119F_CLEAN_bitrev((gf) i);
+        a = bitrev((gf) i);
 
         for (j = 0; j < GFBITS; j++) {
             L[j][ i / 8 ] |= ((a >> j) & 1) << (i % 8);
@@ -166,7 +169,7 @@ void PQCLEAN_MCELIECE6960119F_CLEAN_support_gen(gf *s, const unsigned char *c) {
     }
 
     for (j = 0; j < GFBITS; j++) {
-        PQCLEAN_MCELIECE6960119F_CLEAN_apply_benes(L[j], c, 0);
+        apply_benes(L[j], c, 0);
     }
 
     for (i = 0; i < SYS_N; i++) {

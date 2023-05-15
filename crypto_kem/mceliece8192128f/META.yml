@@ -1,12 +1,12 @@
-name: Classic McEliece 8192128f
+name: Classic McEliece 8192128
 type: kem
 claimed-nist-level: 5
 claimed-security: IND-CCA2
 length-public-key: 1357824
-length-secret-key: 14080
-length-ciphertext: 240
+length-secret-key: 14120
+length-ciphertext: 208
 length-shared-secret: 32
-nistkat-sha256: 464f27c8eeef313c1bb024330fdc00125bbf0a28fccd9053e232a9cb0a1a0ac0
+nistkat-sha256: f497b217022465568f0ed6c7987c462b74ba2d3e39f963ac357436c727ed9bdb
 principal-submitters:
   - Daniel J. Bernstein
   - Tung Chou
@@ -23,22 +23,9 @@ principal-submitters:
 auxiliary-submitters: []
 implementations:
     - name: clean
-      version: SUPERCOP-20191221
-    - name: vec
-      version: SUPERCOP-20191221
-    - name: sse
-      version: SUPERCOP-20191221
-      supported_platforms:
-        - architecture: x86_64
-          operating_systems:
-            - Linux
-            - Darwin
-          required_flags:
-            - sse4_1
-            - popcnt
-            - bmi1
-    - name: avx
-      version: SUPERCOP-20191221
+      version: SUPERCOP-20221025
+    - name: avx2
+      version: SUPERCOP-20221025
       supported_platforms:
         - architecture: x86_64
           operating_systems:

@@ -2,18 +2,38 @@
   This file is for Niederreiter encryption
 */
 
-#include "encrypt.h"
 
+#include "util.h"
 #include "params.h"
 #include "randombytes.h"
-#include "util.h"
 
+#include <assert.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 
+#include "crypto_declassify.h"
+#include "crypto_uint16.h"
+#include "crypto_uint32.h"
 #include "gf.h"
 
-static inline uint8_t same_mask(uint16_t x, uint16_t y) {
+/* include last because of conflict with unistd.h encrypt function */
+#include "encrypt.h"
+
+
+static inline crypto_uint16 uint16_is_smaller_declassify(uint16_t t, uint16_t u) {
+    crypto_uint16 mask = crypto_uint16_smaller_mask(t, u);
+    crypto_declassify(&mask, sizeof mask);
+    return mask;
+}
+
+static inline crypto_uint32 uint32_is_equal_declassify(uint32_t t, uint32_t u) {
+    crypto_uint32 mask = crypto_uint32_equal_mask(t, u);
+    crypto_declassify(&mask, sizeof mask);
+    return mask;
+}
+
+static inline unsigned char same_mask(uint16_t x, uint16_t y) {
     uint32_t mask;
 
     mask = x ^ y;
@@ -21,37 +41,35 @@ static inline uint8_t same_mask(uint16_t x, uint16_t y) {
     mask >>= 31;
     mask = -mask;
 
-    return (uint8_t)mask;
+    return mask & 0xFF;
 }
 
 /* output: e, an error vector of weight t */
 static void gen_e(unsigned char *e) {
-    size_t i, j;
-    int eq, count;
+    int i, j, eq, count;
 
-    uint16_t ind_[ SYS_T * 2 ];
-    uint8_t *ind_8 = (uint8_t *)ind_;
-    uint16_t ind[ SYS_T * 2 ];
-    uint8_t mask;
+    union {
+        uint16_t nums[ SYS_T * 2 ];
+        unsigned char bytes[ SYS_T * 2 * sizeof(uint16_t) ];
+    } buf;
+
+    uint16_t ind[ SYS_T ];
+    unsigned char mask;
     unsigned char val[ SYS_T ];
 
     while (1) {
-        randombytes(ind_8, sizeof(ind_));
-        // Copy to uint16_t ind_ in a little-endian way
-        for (i = 0; i < sizeof(ind_); i += 2) {
-            ind_[i / 2] = ((uint16_t)ind_8[i + 1]) << 8 | (uint16_t)ind_8[i];
-        }
+        randombytes(buf.bytes, sizeof(buf));
 
         for (i = 0; i < SYS_T * 2; i++) {
-            ind_[i] &= GFMASK;
+            buf.nums[i] = load_gf(buf.bytes + i * 2);
         }
 
         // moving and counting indices in the correct range
 
         count = 0;
-        for (i = 0; i < SYS_T * 2; i++) {
-            if (ind_[i] < SYS_N) {
-                ind[ count++ ] = ind_[i];
+        for (i = 0; i < SYS_T * 2 && count < SYS_T; i++) {
+            if (uint16_is_smaller_declassify(buf.nums[i], SYS_N)) {
+                ind[ count++ ] = buf.nums[i];
             }
         }
 
@@ -65,7 +83,7 @@ static void gen_e(unsigned char *e) {
 
         for (i = 1; i < SYS_T; i++) {
             for (j = 0; j < i; j++) {
-                if (ind[i] == ind[j]) {
+                if (uint32_is_equal_declassify(ind[i], ind[j])) {
                     eq = 1;
                 }
             }
@@ -84,7 +102,7 @@ static void gen_e(unsigned char *e) {
         e[i] = 0;
 
         for (j = 0; j < SYS_T; j++) {
-            mask = same_mask((uint16_t)i, (ind[j] >> 3));
+            mask = same_mask((uint16_t)i, ind[j] >> 3);
 
             e[i] |= val[j] & mask;
         }
@@ -130,8 +148,9 @@ static void syndrome(unsigned char *s, const unsigned char *pk, const unsigned c
     }
 }
 
-void PQCLEAN_MCELIECE460896F_CLEAN_encrypt(unsigned char *s, unsigned char *e, const unsigned char *pk) {
+void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e) {
     gen_e(e);
+
 
     syndrome(s, pk, e);
 }

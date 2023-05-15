@@ -1,18 +1,33 @@
 consistency_checks:
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
+  - benes.h
   - bm.c
   - bm.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - decrypt.c
   - decrypt.h
   - encrypt.c
   - encrypt.h
-  - gf.h
+  - int32_sort.h
+  - namespace.h
   - operations.c
+  - operations.h
   - pk_gen.c
   - pk_gen.h
   - root.c
@@ -23,40 +38,66 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
-  - util.h
+  - uint64_sort.h
   source:
     implementation: clean
     scheme: mceliece348864
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
+  - int32_sort.h
+  - namespace.h
   - operations.c
-  - pk_gen.h
-  - sk_gen.c
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece348864
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
+  - benes.h
   - bm.c
   - bm.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - decrypt.c
   - decrypt.h
   - encrypt.c
   - encrypt.h
-  - gf.h
-  - operations.c
-  - pk_gen.h
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - root.c
   - root.h
   - sk_gen.c
@@ -65,26 +106,39 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
-  - util.h
+  - uint64_sort.h
   source:
     implementation: clean
     scheme: mceliece348864f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
-  - operations.c
-  - pk_gen.h
-  - sk_gen.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece348864f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - benes.c
@@ -94,12 +148,25 @@ consistency_checks:
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - decrypt.c
   - decrypt.h
   - encrypt.c
   - encrypt.h
-  - gf.h
+  - int32_sort.h
+  - namespace.h
   - operations.c
+  - operations.h
   - pk_gen.c
   - pk_gen.h
   - root.c
@@ -110,27 +177,42 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
+  - uint64_sort.h
   - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece460896
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
+  - int32_sort.h
+  - namespace.h
   - operations.c
-  - pk_gen.h
-  - sk_gen.c
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece460896
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - benes.c
@@ -140,13 +222,24 @@ consistency_checks:
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - decrypt.c
   - decrypt.h
   - encrypt.c
   - encrypt.h
-  - gf.h
-  - operations.c
-  - pk_gen.h
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - root.c
   - root.h
   - sk_gen.c
@@ -155,44 +248,71 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
+  - uint64_sort.h
   - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece460896f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
-  - operations.c
-  - pk_gen.h
-  - sk_gen.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece460896f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - api.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
+  - int32_sort.h
+  - namespace.h
   - operations.c
+  - operations.h
   - params.h
-  - pk_gen.h
-  - sk_gen.c
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece6688128
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - api.h
@@ -203,15 +323,26 @@ consistency_checks:
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - decrypt.c
   - decrypt.h
   - encrypt.c
   - encrypt.h
   - gf.c
-  - gf.h
-  - operations.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - params.h
-  - pk_gen.h
   - root.c
   - root.h
   - sk_gen.c
@@ -220,29 +351,43 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
+  - uint64_sort.h
   - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece6688128f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - api.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
-  - operations.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - params.h
-  - pk_gen.h
-  - sk_gen.c
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece6688128f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - benes.c
@@ -252,10 +397,23 @@ consistency_checks:
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
+  - decrypt.c
   - decrypt.h
   - encrypt.h
-  - gf.h
-  - operations.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - pk_gen.h
   - root.c
   - root.h
@@ -265,26 +423,41 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
+  - uint64_sort.h
   - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece6960119
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
-  - operations.c
-  - sk_gen.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece6960119
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - benes.c
@@ -294,11 +467,23 @@ consistency_checks:
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
+  - decrypt.c
   - decrypt.h
   - encrypt.h
-  - gf.h
-  - operations.c
-  - pk_gen.h
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - root.c
   - root.h
   - sk_gen.c
@@ -307,26 +492,41 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
+  - uint64_sort.h
   - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece6960119f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
-  - operations.c
-  - sk_gen.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece6960119f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - benes.c
@@ -336,12 +536,25 @@ consistency_checks:
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - decrypt.c
   - decrypt.h
   - encrypt.h
   - gf.c
-  - gf.h
+  - int32_sort.h
+  - namespace.h
   - operations.c
+  - operations.h
   - pk_gen.c
   - pk_gen.h
   - root.c
@@ -352,26 +565,42 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
+  - uint64_sort.h
   - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece8192128
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
+  - int32_sort.h
+  - namespace.h
   - operations.c
-  - sk_gen.c
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece8192128
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - benes.c
@@ -381,13 +610,24 @@ consistency_checks:
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - decrypt.c
   - decrypt.h
   - encrypt.h
   - gf.c
-  - gf.h
-  - operations.c
-  - pk_gen.h
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - root.c
   - root.h
   - sk_gen.c
@@ -396,22 +636,36 @@ consistency_checks:
   - synd.h
   - transpose.c
   - transpose.h
+  - uint64_sort.h
   - util.c
   - util.h
   source:
     implementation: clean
     scheme: mceliece8192128f
 - files:
+  - LICENSE
   - aes256ctr.c
   - aes256ctr.h
   - controlbits.c
   - controlbits.h
   - crypto_hash.h
-  - decrypt.h
+  - crypto_int16.c
+  - crypto_int16.h
+  - crypto_int32.c
+  - crypto_int32.h
+  - crypto_kem.h
+  - crypto_uint16.c
+  - crypto_uint16.h
+  - crypto_uint32.c
+  - crypto_uint32.h
+  - crypto_uint64.c
+  - crypto_uint64.h
   - encrypt.h
-  - operations.c
-  - sk_gen.c
+  - int32_sort.h
+  - namespace.h
+  - operations.h
   - sk_gen.h
+  - uint64_sort.h
   source:
-    implementation: vec
+    implementation: avx2
     scheme: mceliece8192128f

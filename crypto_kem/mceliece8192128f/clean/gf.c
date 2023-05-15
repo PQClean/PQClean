@@ -6,7 +6,7 @@
 
 #include "params.h"
 
-gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_iszero(gf a) {
+gf gf_iszero(gf a) {
     uint32_t t = a;
 
     t -= 1;
@@ -15,11 +15,11 @@ gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_iszero(gf a) {
     return (gf) t;
 }
 
-gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_add(gf in0, gf in1) {
+gf gf_add(gf in0, gf in1) {
     return in0 ^ in1;
 }
 
-gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_mul(gf in0, gf in1) {
+gf gf_mul(gf in0, gf in1) {
     int i;
 
     uint64_t tmp;
@@ -159,7 +159,7 @@ static inline gf gf_sq2mul(gf in, gf m) {
 
 /* input: field element den, num */
 /* return: (num/den) */
-gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_frac(gf den, gf num) {
+gf gf_frac(gf den, gf num) {
     gf tmp_11;
     gf tmp_1111;
     gf out;
@@ -174,13 +174,13 @@ gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_frac(gf den, gf num) {
     return gf_sqmul(out, num); // ^1111111111110 = ^-1
 }
 
-gf PQCLEAN_MCELIECE8192128F_CLEAN_gf_inv(gf in) {
-    return PQCLEAN_MCELIECE8192128F_CLEAN_gf_frac(in, ((gf) 1));
+gf gf_inv(gf den) {
+    return gf_frac(den, ((gf) 1));
 }
 
 /* input: in0, in1 in GF((2^m)^t)*/
 /* output: out = in0*in1 */
-void PQCLEAN_MCELIECE8192128F_CLEAN_GF_mul(gf *out, const gf *in0, const gf *in1) {
+void GF_mul(gf *out, gf *in0, gf *in1) {
     int i, j;
 
     gf prod[ SYS_T * 2 - 1 ];
@@ -191,16 +191,17 @@ void PQCLEAN_MCELIECE8192128F_CLEAN_GF_mul(gf *out, const gf *in0, const gf *in1
 
     for (i = 0; i < SYS_T; i++) {
         for (j = 0; j < SYS_T; j++) {
-            prod[i + j] ^= PQCLEAN_MCELIECE8192128F_CLEAN_gf_mul(in0[i], in1[j]);
+            prod[i + j] ^= gf_mul(in0[i], in1[j]);
         }
     }
 
     //
 
     for (i = (SYS_T - 1) * 2; i >= SYS_T; i--) {
-        prod[i - SYS_T + 5] ^= PQCLEAN_MCELIECE8192128F_CLEAN_gf_mul(prod[i], (gf) 7682);
-        prod[i - SYS_T + 3] ^= PQCLEAN_MCELIECE8192128F_CLEAN_gf_mul(prod[i], (gf) 2159);
-        prod[i - SYS_T + 0] ^= PQCLEAN_MCELIECE8192128F_CLEAN_gf_mul(prod[i], (gf) 3597);
+        prod[i - SYS_T + 7] ^= prod[i];
+        prod[i - SYS_T + 2] ^= prod[i];
+        prod[i - SYS_T + 1] ^= prod[i];
+        prod[i - SYS_T + 0] ^= prod[i];
     }
 
     for (i = 0; i < SYS_T; i++) {

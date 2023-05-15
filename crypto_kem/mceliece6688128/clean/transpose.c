@@ -8,7 +8,7 @@
 
 /* input: in, a 64x64 matrix over GF(2) */
 /* output: out, transpose of in */
-void PQCLEAN_MCELIECE6688128_CLEAN_transpose_64x64(uint64_t *out, const uint64_t *in) {
+void transpose_64x64(uint64_t *out, const uint64_t *in) {
     int i, j, s, d;
 
     uint64_t x, y;

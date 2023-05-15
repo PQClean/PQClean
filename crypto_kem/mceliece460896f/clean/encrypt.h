@@ -1,11 +1,15 @@
-#ifndef PQCLEAN_MCELIECE460896F_CLEAN_ENCRYPT_H
-#define PQCLEAN_MCELIECE460896F_CLEAN_ENCRYPT_H
+#ifndef ENCRYPT_H
+#define ENCRYPT_H
 /*
   This file is for Niederreiter encryption
 */
 
 
-void PQCLEAN_MCELIECE460896F_CLEAN_encrypt(unsigned char * /*s*/, unsigned char * /*e*/, const unsigned char * /*pk*/);
+#include "namespace.h"
+
+#define encrypt CRYPTO_NAMESPACE(encrypt)
+
+void encrypt(unsigned char *s, const unsigned char *pk, unsigned char *e);
 
 #endif
 
