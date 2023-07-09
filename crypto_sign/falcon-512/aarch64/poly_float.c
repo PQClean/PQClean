@@ -190,7 +190,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_adj_fft(fpr *c, const fpr *restrict a,
 
 static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(
     fpr *restrict c, const fpr *restrict a, const fpr *restrict b) {
-    #if COMPLEX == 1
+    #if COMPLEX_MUL == 1
     // n = 2
     float64x2_t neon_a, neon_b, neon_c;
     // re | im
@@ -316,7 +316,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_fft(fpr *c, const fpr *a,
 static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log1(
     fpr *restrict c, const fpr *restrict d, const fpr *restrict a,
     const fpr *restrict b) {
-    #if COMPLEX == 1
+    #if COMPLEX_MUL == 1
     // n = 2
     float64x2_t neon_a, neon_b, neon_c, neon_d;
 
@@ -866,7 +866,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(
 
     vload(g01_re.val[0], &g01[0]);
     vload(neon_1i2, &imagine[0]);
-    #if COMPLEX == 1
+    #if COMPLEX_MUL == 1
     // re: g01_re * g00_re + g01_im * g00_im
     // im: g01_im * g00_re - g01_re * g00_im
     // vfmul_lane(mu_re.val[0], g01_re.val[0], g00_re.val[0], 0);
@@ -886,7 +886,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(
     #endif
     vfmul(mu_re.val[0], mu_re.val[0], m.val[0]);
 
-    #if COMPLEX == 1
+    #if COMPLEX_MUL == 1
     vswap(mu_re.val[1], mu_re.val[0]);
     // im: mu_im * g01_re - mu_re * g01_im
     // re: mu_im * g01_im + mu_re * g01_re
@@ -1161,7 +1161,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(
 
     vload(g01_re.val[0], &g01[0]);
     vload(neon_1i2, &imagine[0]);
-    #if COMPLEX == 1
+    #if COMPLEX_MUL == 1
     // re: g01_re * g00_re + g01_im * g00_im
     // im: g01_im * g00_re - g01_re * g00_im
     // vfmul_lane(mu_re.val[0], g01_re.val[0], g00_re.val[0], 0);
@@ -1181,7 +1181,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(
     #endif
     vfmul(mu_re.val[0], mu_re.val[0], m.val[0]);
 
-    #if COMPLEX == 1
+    #if COMPLEX_MUL == 1
     vswap(mu_re.val[1], mu_re.val[0]);
     // im: mu_im * g01_re - mu_re * g01_im
     // re: mu_im * g01_im + mu_re * g01_re

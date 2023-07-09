@@ -32,13 +32,13 @@
 #endif
 
 /*
- * By default, complex instruction on ARMv8.2 is auto enable on M1
+ * By default, complex multiply instruction on ARMv8.2 is auto enable on M1
  * otherwise it is disable
  */
 #if APPLE_M1 == 1
-#define COMPLEX 1
+#define COMPLEX_MUL 1
 #else
-#define COMPLEX 0
+#define COMPLEX_MUL 0
 #endif
 
 /*
