@@ -32,7 +32,7 @@
  * Assume Input in the range [-Q/2, Q/2]
  * Total Barrett point for N = 512, 1024: 2048, 4096
  */
-void ZfN(poly_ntt)(int16_t a[FALCON_N], ntt_domain_t mont)
+void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
 {
     // Total SIMD registers 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
@@ -606,7 +606,7 @@ void ZfN(poly_ntt)(int16_t a[FALCON_N], ntt_domain_t mont)
  * Assume input in range [-Q, Q]
  * Total Barrett point N = 512, 1024: 1792, 3840
  */
-void ZfN(poly_invntt)(int16_t a[FALCON_N], invntt_domain_t ninv)
+void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t ninv)
 {
     // Total SIMD registers: 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
@@ -1349,7 +1349,7 @@ void ZfN(poly_invntt)(int16_t a[FALCON_N], invntt_domain_t ninv)
 #endif
 }
 
-void ZfN(poly_montmul_ntt)(int16_t f[FALCON_N], const int16_t g[FALCON_N])
+void PQCLEAN_FALCON512_AARCH64_poly_montmul_ntt(int16_t f[FALCON_N], const int16_t g[FALCON_N])
 {
     // Total SIMD registers: 29 = 28 + 1
     int16x8x4_t a, b, c, d, e1, e2, t, k; // 28

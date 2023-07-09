@@ -23,18 +23,18 @@
 #include "poly.h"
 
 /* see inner.h */
-void Zf(to_ntt)(int16_t *h)
+void PQCLEAN_FALCON512_AARCH64_to_ntt(int16_t *h)
 {
-    ZfN(poly_ntt)(h, NTT_NONE);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_NONE);
 }
 
-void Zf(to_ntt_monty)(int16_t *h)
+void PQCLEAN_FALCON512_AARCH64_to_ntt_monty(int16_t *h)
 {
-    ZfN(poly_ntt)(h, NTT_MONT);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_MONT);
 }
 
 /* see inner.h */
-int Zf(verify_raw)(const int16_t *c0, const int16_t *s2,
+int PQCLEAN_FALCON512_AARCH64_verify_raw(const int16_t *c0, const int16_t *s2,
                    int16_t *h, int16_t *tmp)
 {
     int16_t *tt = tmp;
@@ -44,45 +44,45 @@ int Zf(verify_raw)(const int16_t *c0, const int16_t *s2,
      */
 
     memcpy(tt, s2, sizeof(int16_t) * FALCON_N);
-    ZfN(poly_ntt)(h, NTT_NONE);
-    ZfN(poly_ntt)(tt, NTT_MONT_INV);
-    ZfN(poly_montmul_ntt)(tt, h);
-    ZfN(poly_invntt)(tt, INVNTT_NONE);
-    ZfN(poly_sub_barrett)(tt, c0, tt);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_NONE);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(tt, NTT_MONT_INV);
+    PQCLEAN_FALCON512_AARCH64_poly_montmul_ntt(tt, h);
+    PQCLEAN_FALCON512_AARCH64_poly_invntt(tt, INVNTT_NONE);
+    PQCLEAN_FALCON512_AARCH64_poly_sub_barrett(tt, c0, tt);
 
     /*
      * Signature is valid if and only if the aggregate (s1,s2) vector
      * is short enough.
      */
-    return ZfN(is_short)(tt, s2);
+    return PQCLEAN_FALCON512_AARCH64_is_short(tt, s2);
 }
 
 /* see inner.h */
-int Zf(compute_public)(int16_t *h, const int8_t *f, const int8_t *g, int16_t *tmp)
+int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f, const int8_t *g, int16_t *tmp)
 {
     int16_t *tt = tmp;
 
-    ZfN(poly_int8_to_int16)(h, g);
-    ZfN(poly_ntt)(h, NTT_NONE);
+    PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(h, g);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_NONE);
    
-    ZfN(poly_int8_to_int16)(tt, f);
-    ZfN(poly_ntt)(tt, NTT_MONT);
+    PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(tt, f);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(tt, NTT_MONT);
 
-    if (ZfN(poly_compare_with_zero)(tt))
+    if (PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(tt))
     {
         return 0;
     }
-    ZfN(poly_div_12289)(h, tt);
+    PQCLEAN_FALCON512_AARCH64_poly_div_12289(h, tt);
 
-    ZfN(poly_invntt)(h, INVNTT_NINV);
+    PQCLEAN_FALCON512_AARCH64_poly_invntt(h, INVNTT_NINV);
 
-    ZfN(poly_convert_to_unsigned)(h);
+    PQCLEAN_FALCON512_AARCH64_poly_convert_to_unsigned(h);
 
     return 1;
 }
 
 /* see inner.h */
-int Zf(complete_private)(int8_t *G, const int8_t *f,
+int PQCLEAN_FALCON512_AARCH64_complete_private(int8_t *G, const int8_t *f,
                          const int8_t *g, const int8_t *F,
                          uint8_t *tmp)
 {
@@ -91,26 +91,26 @@ int Zf(complete_private)(int8_t *G, const int8_t *f,
     t1 = (int16_t *)tmp;
     t2 = t1 + FALCON_N;
 
-    ZfN(poly_int8_to_int16)(t1, g);
-    ZfN(poly_ntt)(t1, NTT_NONE);
+    PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(t1, g);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(t1, NTT_NONE);
 
-    ZfN(poly_int8_to_int16)(t2, F);
-    ZfN(poly_ntt)(t2, NTT_MONT);
+    PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(t2, F);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(t2, NTT_MONT);
 
-    ZfN(poly_montmul_ntt)(t1, t2);
+    PQCLEAN_FALCON512_AARCH64_poly_montmul_ntt(t1, t2);
 
-    ZfN(poly_int8_to_int16)(t2, f);
-    ZfN(poly_ntt)(t2, NTT_MONT);
+    PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(t2, f);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(t2, NTT_MONT);
 
-    if (ZfN(poly_compare_with_zero)(t2))
+    if (PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(t2))
     {
         return 0;
     }
-    ZfN(poly_div_12289)(t1, t2);
+    PQCLEAN_FALCON512_AARCH64_poly_div_12289(t1, t2);
 
-    ZfN(poly_invntt)(t1, INVNTT_NINV);
+    PQCLEAN_FALCON512_AARCH64_poly_invntt(t1, INVNTT_NINV);
 
-    if (ZfN(poly_int16_to_int8)(G, t1))
+    if (PQCLEAN_FALCON512_AARCH64_poly_int16_to_int8(G, t1))
     {
         return 0;
     }
@@ -118,21 +118,21 @@ int Zf(complete_private)(int8_t *G, const int8_t *f,
 }
 
 /* see inner.h */
-int Zf(is_invertible)(const int16_t *s2, uint8_t *tmp)
+int PQCLEAN_FALCON512_AARCH64_is_invertible(const int16_t *s2, uint8_t *tmp)
 {
     int16_t *tt = (int16_t *)tmp;
     uint16_t r;
 
     memcpy(tt, s2, sizeof(int16_t) * FALCON_N);
-    ZfN(poly_ntt)(tt, NTT_MONT);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(tt, NTT_MONT);
 
-    r = ZfN(poly_compare_with_zero)(tt);
+    r = PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(tt);
 
     return (int)(1u - (r >> 15));
 }
 
 /* see inner.h */
-int Zf(verify_recover)(int16_t *h, const int16_t *c0,
+int PQCLEAN_FALCON512_AARCH64_verify_recover(int16_t *h, const int16_t *c0,
                        const int16_t *s1, const int16_t *s2,
                        uint8_t *tmp)
 {
@@ -147,19 +147,19 @@ int Zf(verify_recover)(int16_t *h, const int16_t *c0,
      * s2 are non-zero, then the high bit of r will be zero.
      */
 
-    ZfN(poly_sub_barrett)(h, c0, s1);
-    ZfN(poly_ntt)(h, NTT_NONE);
+    PQCLEAN_FALCON512_AARCH64_poly_sub_barrett(h, c0, s1);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_NONE);
 
     /*
      * Reduce elements of s1 and s2 modulo q; then write s2 into tt[]
      * and c0 - s1 into h[].
      */
     memcpy(tt, s2, sizeof(int16_t) * FALCON_N);
-    ZfN(poly_ntt)(tt, NTT_MONT);
-    r = ZfN(poly_compare_with_zero)(tt);
-    ZfN(poly_div_12289)(h, tt);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(tt, NTT_MONT);
+    r = PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(tt);
+    PQCLEAN_FALCON512_AARCH64_poly_div_12289(h, tt);
 
-    ZfN(poly_invntt)(h, INVNTT_NINV);
+    PQCLEAN_FALCON512_AARCH64_poly_invntt(h, INVNTT_NINV);
 
     /*
      * Signature is acceptable if and only if it is short enough,
@@ -167,19 +167,19 @@ int Zf(verify_recover)(int16_t *h, const int16_t *c0,
      * check that the rebuilt public key matches the expected
      * value (e.g. through a hash).
      */
-    r = ~r & (uint16_t)-ZfN(is_short)(s1, s2);
+    r = ~r & (uint16_t)-PQCLEAN_FALCON512_AARCH64_is_short(s1, s2);
     return (int)(r >> 15);
 }
 
 /* see inner.h */
-int Zf(count_nttzero)(const int16_t *sig, uint8_t *tmp)
+int PQCLEAN_FALCON512_AARCH64_count_nttzero(const int16_t *sig, uint8_t *tmp)
 {
     int16_t *s2 = (int16_t *)tmp;
 
     memcpy(s2, sig, sizeof(int16_t) * FALCON_N);
-    ZfN(poly_ntt)(s2, NTT_MONT);
+    PQCLEAN_FALCON512_AARCH64_poly_ntt(s2, NTT_MONT);
 
-    int r = ZfN(poly_compare_with_zero)(s2);
+    int r = PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(s2);
 
     return r;
 }

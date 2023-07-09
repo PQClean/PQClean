@@ -42,7 +42,7 @@
  *
  *
  *  - All public functions (i.e. the non-static ones) must be referenced
- *    with the Zf() macro (e.g. Zf(verify_raw) for the verify_raw()
+ *    with the PQCLEAN_FALCON512_AARCH64_ macro (e.g. PQCLEAN_FALCON512_AARCH64_verify_raw for the verify_raw()
  *    function). That macro adds a prefix to the name, which is
  *    configurable with the FALCON_PREFIX macro. This allows compiling
  *    the code into a specific "namespace" and potentially including
@@ -65,7 +65,7 @@
  *    word. The caller MUST use set_fpu_cw() to ensure proper precision:
  *
  *      oldcw = set_fpu_cw(2);
- *      Zf(sign_dyn)(...);
+ *      PQCLEAN_FALCON512_AARCH64_sign_dyn(...);
  *      set_fpu_cw(oldcw);
  *
  *    On systems where the native floating-point precision is already
@@ -76,21 +76,9 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
-/*
- * "Naming" macro used to apply a consistent prefix over all global
- * symbols.
- */
-#ifndef FALCON_PREFIX
-#define FALCON_PREFIX   falcon_inner
-#define NEON_FALCON_PREFIX   neon_falcon_inner
-#endif
-#define Zf(name)             Zf_(FALCON_PREFIX, name)
-#define ZfN(name)             Zf_(NEON_FALCON_PREFIX, name)
-#define Zf_(prefix, name)    Zf__(prefix, name)
-#define Zf__(prefix, name)   prefix ## _ ## name  
+
 
 
 /*
@@ -109,71 +97,13 @@
  * targets other than 32-bit x86, or when the native 'double' type is
  * not used, the set_fpu_cw() function does nothing at all.
  */
-#if defined __GNUC__ && defined __i386__
 static inline unsigned
-set_fpu_cw(unsigned x)
-{
-	unsigned short t;
-	unsigned old;
-
-	__asm__ __volatile__ ("fstcw %0" : "=m" (t) : : );
-	old = (t & 0x0300u) >> 8;
-	t = (unsigned short)((t & ~0x0300u) | (x << 8));
-	__asm__ __volatile__ ("fldcw %0" : : "m" (t) : );
-	return old;
+set_fpu_cw(unsigned x) {
+    return x;
 }
-#elif defined _M_IX86
-static inline unsigned
-set_fpu_cw(unsigned x)
-{
-	unsigned short t;
-	unsigned old;
 
-	__asm { fstcw t }
-	old = (t & 0x0300u) >> 8;
-	t = (unsigned short)((t & ~0x0300u) | (x << 8));
-	__asm { fldcw t }
-	return old;
-}
-#else
-static inline unsigned
-set_fpu_cw(unsigned x)
-{
-	return x;
-}
-#endif
 
-/*
- * If using the native 'double' type but not AVX2 code, on an x86
- * machine with SSE2 activated for maths, then we will use the
- * SSE2 intrinsics.
- */
-#if defined __GNUC__ && defined __SSE2_MATH__
-#include <immintrin.h>
-#endif
 
-/*
- * For optimal reproducibility of values, we need to disable contraction
- * of floating-point expressions; otherwise, on some architectures (e.g.
- * PowerPC), the compiler may generate fused-multiply-add opcodes that
- * may round differently than two successive separate opcodes. C99 defines
- * a standard pragma for that, but GCC-6.2.2 appears to ignore it,
- * hence the GCC-specific pragma (that Clang does not support).
- */
-#if defined __clang__
-#pragma STDC FP_CONTRACT OFF
-#elif defined __GNUC__
-#pragma GCC optimize ("fp-contract=off")
-#endif
-
-/*
- * MSVC 2015 does not know the C99 keyword 'restrict'.
- */
-#if defined _MSC_VER && _MSC_VER
-#ifndef restrict
-#define restrict   __restrict
-#endif
-#endif
 
 /* ==================================================================== */
 /*
@@ -183,30 +113,16 @@ set_fpu_cw(unsigned x)
  * as part of PQClean.
  */
 
-typedef struct {
-	union {
-		uint64_t A[25];
-		uint8_t dbuf[200];
-	} st;
-	uint64_t dptr;
-} inner_shake256_context;
 
-#define inner_shake256_init      Zf(i_shake256_init)
-#define inner_shake256_inject    Zf(i_shake256_inject)
-#define inner_shake256_flip      Zf(i_shake256_flip)
-#define inner_shake256_extract   Zf(i_shake256_extract)
+#include "fips202.h"
 
-void Zf(i_shake256_init)(
-	inner_shake256_context *sc);
-void Zf(i_shake256_inject)(
-	inner_shake256_context *sc, const uint8_t *in, size_t len);
-void Zf(i_shake256_flip)(
-	inner_shake256_context *sc);
-void Zf(i_shake256_extract)(
-	inner_shake256_context *sc, uint8_t *out, size_t len);
+#define inner_shake256_context                shake256incctx
+#define inner_shake256_init(sc)               shake256_inc_init(sc)
+#define inner_shake256_inject(sc, in, len)    shake256_inc_absorb(sc, in, len)
+#define inner_shake256_flip(sc)               shake256_inc_finalize(sc)
+#define inner_shake256_extract(sc, out, len)  shake256_inc_squeeze(out, len, sc)
+#define inner_shake256_ctx_release(sc)        shake256_inc_ctx_release(sc)
 
-/*
- */
 
 /* ==================================================================== */
 /*
@@ -248,32 +164,33 @@ void Zf(i_shake256_extract)(
  *
  */
 
-size_t Zf(modq_encode)(void *out, size_t max_out_len, const uint16_t *x, unsigned logn);
-size_t Zf(trim_i16_encode)(void *out, size_t max_out_len,
-	const int16_t *x, unsigned logn, unsigned bits);
-size_t Zf(trim_i8_encode)(void *out, size_t max_out_len, 
-                        const int8_t *x, uint8_t bits);
-size_t Zf(comp_encode)(void *out, size_t max_out_len, const int16_t *x);
+size_t PQCLEAN_FALCON512_AARCH64_modq_encode(void *out, size_t max_out_len,
+        const uint16_t *x, unsigned logn);
+size_t PQCLEAN_FALCON512_AARCH64_trim_i16_encode(void *out, size_t max_out_len,
+        const int16_t *x, unsigned logn, unsigned bits);
+size_t PQCLEAN_FALCON512_AARCH64_trim_i8_encode(void *out, size_t max_out_len, const int8_t *x, uint8_t bits);
+size_t PQCLEAN_FALCON512_AARCH64_comp_encode(void *out, size_t max_out_len, const int16_t *x);
 
-size_t Zf(modq_decode)(uint16_t *x, const void *in, size_t max_in_len, unsigned logn);
-size_t Zf(trim_i16_decode)(int16_t *x, unsigned logn, unsigned bits,
-	const void *in, size_t max_in_len);
-size_t Zf(trim_i8_decode)(int8_t *x, unsigned bits, const void *in, size_t max_in_len);
-size_t Zf(comp_decode)(int16_t *x, const void *in, size_t max_in_len);
+size_t PQCLEAN_FALCON512_AARCH64_modq_decode(uint16_t *x, const void *in,
+        size_t max_in_len, unsigned logn);
+size_t PQCLEAN_FALCON512_AARCH64_trim_i16_decode(int16_t *x, unsigned logn, unsigned bits,
+        const void *in, size_t max_in_len);
+size_t PQCLEAN_FALCON512_AARCH64_trim_i8_decode(int8_t *x, unsigned bits, const void *in, size_t max_in_len);
+size_t PQCLEAN_FALCON512_AARCH64_comp_decode(int16_t *x, const void *in, size_t max_in_len);
 
 /*
  * Number of bits for key elements, indexed by logn (1 to 10). This
  * is at most 8 bits for all degrees, but some degrees may have shorter
  * elements.
  */
-extern const uint8_t Zf(max_fg_bits)[];
-extern const uint8_t Zf(max_FG_bits)[];
+extern const uint8_t PQCLEAN_FALCON512_AARCH64_max_fg_bits[];
+extern const uint8_t PQCLEAN_FALCON512_AARCH64_max_FG_bits[];
 
 /*
  * Maximum size, in bits, of elements in a signature, indexed by logn
  * (1 to 10). The size includes the sign bit.
  */
-extern const uint8_t Zf(max_sig_bits)[];
+extern const uint8_t PQCLEAN_FALCON512_AARCH64_max_sig_bits[];
 
 /* ==================================================================== */
 /*
@@ -287,19 +204,19 @@ extern const uint8_t Zf(max_sig_bits)[];
  * information to serve as a stop condition on a brute force attack on
  * the hashed message (provided that the nonce value is known).
  */
-void Zf(hash_to_point_vartime)(inner_shake256_context *sc,
-	uint16_t *x, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_hash_to_point_vartime(inner_shake256_context *sc,
+        uint16_t *x, unsigned logn);
 
 /*
  * From a SHAKE256 context (must be already flipped), produce a new
  * point. The temporary buffer (tmp) must have room for 2*2^logn bytes.
  * This function is constant-time but is typically more expensive than
- * Zf(hash_to_point_vartime)().
+ * PQCLEAN_FALCON512_AARCH64_hash_to_point_vartime().
  *
  * tmp[] must have 16-bit alignment.
  */
-void Zf(hash_to_point_ct)(inner_shake256_context *sc,
-	uint16_t *x, unsigned logn, uint8_t *tmp);
+void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(inner_shake256_context *sc,
+        uint16_t *x, unsigned logn, uint8_t *tmp);
 
 /*
  * Tell whether a given vector (2N coordinates, in two halves) is
@@ -307,7 +224,7 @@ void Zf(hash_to_point_ct)(inner_shake256_context *sc,
  * vector with the acceptance bound. Returned value is 1 on success
  * (vector is short enough to be acceptable), 0 otherwise.
  */
-int ZfN(is_short)(const int16_t *s1, const int16_t *s2);
+int PQCLEAN_FALCON512_AARCH64_is_short(const int16_t *s1, const int16_t *s2);
 
 /*
  * Tell whether a given vector (2N coordinates, in two halves) is
@@ -319,7 +236,7 @@ int ZfN(is_short)(const int16_t *s1, const int16_t *s2);
  * Returned value is 1 on success (vector is short enough to be
  * acceptable), 0 otherwise.
  */
-int ZfN(is_short_tmp)(int16_t *s1tmp, int16_t *s2tmp,
+int PQCLEAN_FALCON512_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
                       const int16_t *hm, const double *t0,
                       const double *t1);
 
@@ -330,12 +247,12 @@ int ZfN(is_short_tmp)(int16_t *s1tmp, int16_t *s2tmp,
 /*
  * Convert a public key to NTT. Conversion is done in place.
  */
-void Zf(to_ntt)(int16_t *h);
+void PQCLEAN_FALCON512_AARCH64_to_ntt(int16_t *h);
 /*
  * Convert a public key to NTT + Montgomery format. Conversion is done
  * in place.
  */
-void Zf(to_ntt_monty)(int16_t *h);
+void PQCLEAN_FALCON512_AARCH64_to_ntt_monty(int16_t *h);
 
 /*
  * Internal signature verification code:
@@ -348,8 +265,8 @@ void Zf(to_ntt_monty)(int16_t *h);
  *
  * tmp[] must have 16-bit alignment.
  */
-int Zf(verify_raw)(const int16_t *c0, const int16_t *s2,
-	               int16_t *h, int16_t *tmp);
+int PQCLEAN_FALCON512_AARCH64_verify_raw(const int16_t *c0, const int16_t *s2,
+                                         int16_t *h, int16_t *tmp);
 
 /*
  * Compute the public key h[], given the private key elements f[] and
@@ -360,8 +277,8 @@ int Zf(verify_raw)(const int16_t *c0, const int16_t *s2,
  * The tmp[] array must have room for at least 2*2^logn elements.
  * tmp[] must have 16-bit alignment.
  */
-int Zf(compute_public)(int16_t *h, const int8_t *f, 
-                       const int8_t *g, int16_t *tmp);
+int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f, 
+                                             const int8_t *g, int16_t *tmp);
 
 /*
  * Recompute the fourth private key element. Private key consists in
@@ -374,7 +291,7 @@ int Zf(compute_public)(int16_t *h, const int8_t *f,
  * Returned value is 1 in success, 0 on error (f not invertible).
  * tmp[] must have 16-bit alignment.
  */
-int Zf(complete_private)(int8_t *G, const int8_t *f, 
+int PQCLEAN_FALCON512_AARCH64_complete_private(int8_t *G, const int8_t *f,
                          const int8_t *g, const int8_t *F,
 	                     uint8_t *tmp);
 
@@ -384,7 +301,7 @@ int Zf(complete_private)(int8_t *G, const int8_t *f,
  *
  * tmp[] must have 16-bit alignment.
  */
-int Zf(is_invertible)(const int16_t *s2, uint8_t *tmp);
+int PQCLEAN_FALCON512_AARCH64_is_invertible(const int16_t *s2, uint8_t *tmp);
 
 /*
  * Count the number of elements of value zero in the NTT representation
@@ -394,7 +311,7 @@ int Zf(is_invertible)(const int16_t *s2, uint8_t *tmp);
  *
  * tmp[] must have 16-bit alignment.
  */
-int Zf(count_nttzero)(const int16_t *sig, uint8_t *tmp);
+int PQCLEAN_FALCON512_AARCH64_count_nttzero(const int16_t *sig, uint8_t *tmp);
 
 /*
  * Internal signature verification with public key recovery:
@@ -414,7 +331,7 @@ int Zf(count_nttzero)(const int16_t *sig, uint8_t *tmp);
  *
  * tmp[] must have 16-bit alignment.
  */
-int Zf(verify_recover)(int16_t *h, const int16_t *c0,
+int PQCLEAN_FALCON512_AARCH64_verify_recover(int16_t *h, const int16_t *c0,
                        const int16_t *s1, const int16_t *s2,
                        uint8_t *tmp);
 
@@ -535,7 +452,7 @@ int Zf(verify_recover)(int16_t *h, const int16_t *c0,
  *
  * Returned value is 1 on success, 0 on error.
  */
-int Zf(get_seed)(void *seed, size_t seed_len);
+int PQCLEAN_FALCON512_AARCH64_get_seed(void *seed, size_t seed_len);
 
 /*
  * Structure for a PRNG. This includes a large buffer so that values
@@ -546,83 +463,77 @@ int Zf(get_seed)(void *seed, size_t seed_len);
  * 64-bit direct access.
  */
 typedef struct {
-	union {
-		uint8_t d[512]; /* MUST be 512, exactly */
-		uint64_t dummy_u64;
-	} buf;
-	size_t ptr;
-	union {
-		uint8_t d[256];
-		uint64_t dummy_u64;
-	} state;
-	int type;
+    union {
+        uint8_t d[512]; /* MUST be 512, exactly */
+        uint64_t dummy_u64;
+    } buf;
+    size_t ptr;
+    union {
+        uint8_t d[256];
+        uint64_t dummy_u64;
+    } state;
+    int type;
 } prng;
 
 /*
  * Instantiate a PRNG. That PRNG will feed over the provided SHAKE256
  * context (in "flipped" state) to obtain its initial state.
  */
-void Zf(prng_init)(prng *p, inner_shake256_context *src);
+void PQCLEAN_FALCON512_AARCH64_prng_init(prng *p, inner_shake256_context *src);
 
 /*
  * Refill the PRNG buffer. This is normally invoked automatically, and
  * is declared here only so that prng_get_u64() may be inlined.
  */
-void Zf(prng_refill)(prng *p);
+void PQCLEAN_FALCON512_AARCH64_prng_refill(prng *p);
 
 /*
  * Get some bytes from a PRNG.
  */
-void Zf(prng_get_bytes)(prng *p, void *dst, size_t len);
+void PQCLEAN_FALCON512_AARCH64_prng_get_bytes(prng *p, void *dst, size_t len);
 
 /*
  * Get a 64-bit random value from a PRNG.
  */
 static inline uint64_t
-prng_get_u64(prng *p)
-{
-	size_t u;
+prng_get_u64(prng *p) {
+    size_t u;
 
-	/*
-	 * If there are less than 9 bytes in the buffer, we refill it.
-	 * This means that we may drop the last few bytes, but this allows
-	 * for faster extraction code. Also, it means that we never leave
-	 * an empty buffer.
-	 */
-	u = p->ptr;
-	if (u >= (sizeof p->buf.d) - 9) {
-		Zf(prng_refill)(p);
-		u = 0;
-	}
-	p->ptr = u + 8;
+    /*
+     * If there are less than 9 bytes in the buffer, we refill it.
+     * This means that we may drop the last few bytes, but this allows
+     * for faster extraction code. Also, it means that we never leave
+     * an empty buffer.
+     */
+    u = p->ptr;
+    if (u >= (sizeof p->buf.d) - 9) {
+        PQCLEAN_FALCON512_AARCH64_prng_refill(p);
+        u = 0;
+    }
+    p->ptr = u + 8;
 
-	/*
-	 * On systems that use little-endian encoding and allow
-	 * unaligned accesses, we can simply read the data where it is.
-	 */
-	return (uint64_t)p->buf.d[u + 0]
-		| ((uint64_t)p->buf.d[u + 1] << 8)
-		| ((uint64_t)p->buf.d[u + 2] << 16)
-		| ((uint64_t)p->buf.d[u + 3] << 24)
-		| ((uint64_t)p->buf.d[u + 4] << 32)
-		| ((uint64_t)p->buf.d[u + 5] << 40)
-		| ((uint64_t)p->buf.d[u + 6] << 48)
-		| ((uint64_t)p->buf.d[u + 7] << 56);
+    return (uint64_t)p->buf.d[u + 0]
+           | ((uint64_t)p->buf.d[u + 1] << 8)
+           | ((uint64_t)p->buf.d[u + 2] << 16)
+           | ((uint64_t)p->buf.d[u + 3] << 24)
+           | ((uint64_t)p->buf.d[u + 4] << 32)
+           | ((uint64_t)p->buf.d[u + 5] << 40)
+           | ((uint64_t)p->buf.d[u + 6] << 48)
+           | ((uint64_t)p->buf.d[u + 7] << 56);
 }
 
 /*
  * Get an 8-bit random value from a PRNG.
  */
 static inline unsigned
-prng_get_u8(prng *p)
-{
-	unsigned v;
+prng_get_u8(prng *p) {
+    unsigned v;
 
-	v = p->buf.d[p->ptr ++];
-	if (p->ptr == sizeof p->buf.d) {
-		Zf(prng_refill)(p);
-	}
-	return v;
+    v = p->buf.d[p->ptr ++];
+    if (p->ptr == sizeof p->buf.d) {
+        PQCLEAN_FALCON512_AARCH64_prng_refill(p);
+    }
+    return v;
 }
 
 /* ==================================================================== */
@@ -643,7 +554,7 @@ prng_get_u8(prng *p)
  *
  * 'logn' MUST lie between 1 and 10 (inclusive).
  */
-void ZfN(FFT)(fpr *f, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_FFT(fpr *f, unsigned logn);
 
 /*
  * Compute the inverse FFT in-place: the source array should contain the
@@ -653,71 +564,63 @@ void ZfN(FFT)(fpr *f, unsigned logn);
  *
  * 'logn' MUST lie between 1 and 10 (inclusive).
  */
-void ZfN(iFFT)(fpr *f, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_iFFT(fpr *f, unsigned logn);
 
 /*
  * Add polynomial b to polynomial a. a and b MUST NOT overlap. This
  * function works in both normal and FFT representations.
  */
-// void ZfN(poly_add)(fpr *restrict a, const fpr *restrict b, unsigned logn);
-void ZfN(poly_add)(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_add(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn);
 
 /*
  * Subtract polynomial b from polynomial a. a and b MUST NOT overlap. This
  * function works in both normal and FFT representations.
  */
-// void ZfN(poly_sub)(fpr *restrict a, const fpr *restrict b, unsigned logn);
-void ZfN(poly_sub)(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_sub(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn);
 
 /*
  * Negate polynomial a. This function works in both normal and FFT
  * representations.
  */
-// void ZfN(poly_neg)(fpr *a, unsigned logn);
-void ZfN(poly_neg)(fpr *c, const fpr *restrict a, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_neg(fpr *c, const fpr *restrict a, unsigned logn);
 
 /*
  * Compute adjoint of polynomial a. This function works only in FFT
  * representation.
  */
-// void ZfN(poly_adj_fft)(fpr *a, unsigned logn);
-void ZfN(poly_adj_fft)(fpr *c, const fpr *restrict a, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_adj_fft(fpr *c, const fpr *restrict a, unsigned logn);
 
 /*
  * Multiply polynomial a with polynomial b. a and b MUST NOT overlap.
  * This function works only in FFT representation.
  */
-// void ZfN(poly_mul_fft)(fpr *restrict a, const fpr *restrict b, unsigned logn);
-void ZfN(poly_mul_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn);
-
-void ZfN(poly_mul_add_fft)(fpr *c, const fpr *a, const fpr *restrict b, const fpr *restrict d, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_mul_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(fpr *c, const fpr *a, const fpr *restrict b, const fpr *restrict d, unsigned logn);
 /*
  * Multiply polynomial a with the adjoint of polynomial b. a and b MUST NOT
  * overlap. This function works only in FFT representation.
  */
-// void ZfN(poly_muladj_fft)(fpr *restrict a, const fpr *restrict b, unsigned logn);
-void ZfN(poly_muladj_fft)(fpr *d, fpr *a, const fpr *restrict b, unsigned logn);
-void ZfN(poly_muladj_add_fft)(fpr *c, fpr *d,
+void PQCLEAN_FALCON512_AARCH64_poly_muladj_fft(fpr *d, fpr *a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_muladj_add_fft(fpr *c, fpr *d,
                               const fpr *a, const fpr *restrict b, unsigned logn);
 /*
  * Multiply polynomial with its own adjoint. This function works only in FFT
  * representation.
  */
-// void ZfN(poly_mulselfadj_fft)(fpr *a, unsigned logn);
-void ZfN(poly_mulselfadj_fft)(fpr *c, const fpr *restrict a, unsigned logn);
-void ZfN(poly_mulselfadj_add_fft)(fpr *c, const fpr *restrict d, const fpr *restrict a, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(fpr *c, const fpr *restrict a, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(fpr *c, const fpr *restrict d, const fpr *restrict a, unsigned logn);
 /*
  * Multiply polynomial with a real constant. This function works in both
  * normal and FFT representations.
  */
-// void ZfN(poly_mulconst)(fpr *a, fpr x, unsigned logn);
-void ZfN(poly_mulconst)(fpr *c, const fpr *a, const fpr x, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_mulconst(fpr *c, const fpr *a, const fpr x, unsigned logn);
+
 /*
  * Divide polynomial a by polynomial b, modulo X^N+1 (FFT representation).
  * a and b MUST NOT overlap.
  */
-// void ZfN(poly_div_fft)(fpr *restrict a, const fpr *restrict b, unsigned logn);
-void ZfN(poly_div_fft)(fpr *restrict c,const fpr *restrict a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c,const fpr *restrict a, const fpr *restrict b, unsigned logn);
+
 /*
  * Given f and g (in FFT representation), compute 1/(f*adj(f)+g*adj(g))
  * (also in FFT representation). Since the result is auto-adjoint, all its
@@ -726,7 +629,7 @@ void ZfN(poly_div_fft)(fpr *restrict c,const fpr *restrict a, const fpr *restric
  *
  * Array d MUST NOT overlap with either a or b.
  */
-void ZfN(poly_invnorm2_fft)(fpr *restrict d,
+void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d,
 	const fpr *restrict a, const fpr *restrict b, unsigned logn);
 
 /*
@@ -734,7 +637,7 @@ void ZfN(poly_invnorm2_fft)(fpr *restrict d,
  * (also in FFT representation). Destination d MUST NOT overlap with
  * any of the source arrays.
  */
-void ZfN(poly_add_muladj_fft)(fpr *restrict d,
+void PQCLEAN_FALCON512_AARCH64_poly_add_muladj_fft(fpr *restrict d,
 	const fpr *restrict F, const fpr *restrict G,
 	const fpr *restrict f, const fpr *restrict g, unsigned logn);
 
@@ -744,8 +647,7 @@ void ZfN(poly_add_muladj_fft)(fpr *restrict d,
  * FFT coefficients are real, and the array b contains only N/2 elements.
  * a and b MUST NOT overlap.
  */
-// void ZfN(poly_mul_autoadj_fft)(fpr *restrict a, const fpr *restrict b, unsigned logn);
-void ZfN(poly_mul_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn);
 
 /*
  * Divide polynomial a by polynomial b, where b is autoadjoint. Both
@@ -753,9 +655,7 @@ void ZfN(poly_mul_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsi
  * FFT coefficients are real, and the array b contains only N/2 elements.
  * a and b MUST NOT overlap.
  */
-// void ZfN(poly_div_autoadj_fft)(fpr *restrict a,
-// 	const fpr *restrict b, unsigned logn);
-void ZfN(poly_div_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_div_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn);
 
 /*
  * Perform an LDL decomposition of an auto-adjoint matrix G, in FFT
@@ -765,7 +665,7 @@ void ZfN(poly_div_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsi
  * (with D = [[d00, 0], [0, d11]] and L = [[1, 0], [l10, 1]]).
  * (In fact, d00 = g00, so the g00 operand is left unmodified.)
  */
-void ZfN(poly_LDL_fft)(const fpr *restrict g00,
+void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00,
 	fpr *restrict g01, fpr *restrict g11, unsigned logn);
 
 /*
@@ -774,7 +674,7 @@ void ZfN(poly_LDL_fft)(const fpr *restrict g00,
  * g00, g01 and g11 are unmodified; the outputs d11 and l10 are written
  * in two other separate buffers provided as extra parameters.
  */
-void ZfN(poly_LDLmv_fft)(fpr *restrict d11, fpr *restrict l10,
+void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l10,
 	const fpr *restrict g00, const fpr *restrict g01,
 	const fpr *restrict g11, unsigned logn);
 
@@ -783,7 +683,7 @@ void ZfN(poly_LDLmv_fft)(fpr *restrict d11, fpr *restrict l10,
  * f = f0(x^2) + x*f1(x^2), for half-size polynomials f0 and f1
  * (polynomials modulo X^(N/2)+1). f0, f1 and f MUST NOT overlap.
  */
-void ZfN(poly_split_fft)(fpr *restrict f0, fpr *restrict f1,
+void PQCLEAN_FALCON512_AARCH64_poly_split_fft(fpr *restrict f0, fpr *restrict f1,
 	const fpr *restrict f, unsigned logn);
 
 /*
@@ -792,14 +692,14 @@ void ZfN(poly_split_fft)(fpr *restrict f0, fpr *restrict f1,
  * f = f0(x^2) + x*f1(x^2), in FFT representation modulo X^N+1.
  * f MUST NOT overlap with either f0 or f1.
  */
-void ZfN(poly_merge_fft)(fpr *restrict f,
+void PQCLEAN_FALCON512_AARCH64_poly_merge_fft(fpr *restrict f,
 	const fpr *restrict f0, const fpr *restrict f1, unsigned logn);
 
-void ZfN(poly_fpr_of_s16)(fpr *t0, const uint16_t *hm, const unsigned falcon_n);
+void PQCLEAN_FALCON512_AARCH64_poly_fpr_of_s16(fpr *t0, const uint16_t *hm, const unsigned falcon_n);
 
-fpr ZfN(compute_bnorm)(const fpr *rt1, const fpr *rt2);
+fpr PQCLEAN_FALCON512_AARCH64_compute_bnorm(const fpr *rt1, const fpr *rt2);
 
-int32_t ZfN(poly_small_sqnorm)(const int8_t *f); // common.c
+int32_t PQCLEAN_FALCON512_AARCH64_poly_small_sqnorm(const int8_t *f); // common.c
 /* ==================================================================== */
 /*
  * Key pair generation.
@@ -836,9 +736,9 @@ int32_t ZfN(poly_small_sqnorm)(const int8_t *f); // common.c
  * tmp[] must have 64-bit alignment.
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
-void Zf(keygen)(inner_shake256_context *rng,
-	int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
-	unsigned logn, uint8_t *tmp);
+void PQCLEAN_FALCON512_AARCH64_keygen(inner_shake256_context *rng,
+                                    int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
+                                    unsigned logn, uint8_t *tmp);
 
 /* ==================================================================== */
 /*
@@ -855,14 +755,14 @@ void Zf(keygen)(inner_shake256_context *rng,
  * tmp[] must have 64-bit alignment.
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
-void Zf(expand_privkey)(fpr *restrict expanded_key,
+void PQCLEAN_FALCON512_AARCH64_expand_privkey(fpr *restrict expanded_key,
 	const int8_t *f, const int8_t *g, const int8_t *F, const int8_t *G,
 	uint8_t *restrict tmp);
 
 /*
  * Compute a signature over the provided hashed message (hm); the
  * signature value is one short vector. This function uses an
- * expanded key (as generated by Zf(expand_privkey)()).
+ * expanded key (as generated by PQCLEAN_FALCON512_AARCH64_expand_privkey()).
  *
  * The sig[] and hm[] buffers may overlap.
  *
@@ -874,9 +774,9 @@ void Zf(expand_privkey)(fpr *restrict expanded_key,
  * tmp[] must have 64-bit alignment.
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
-void Zf(sign_tree)(int16_t *sig, inner_shake256_context *rng,
-	const fpr *restrict expanded_key,
-	const uint16_t *hm, uint8_t *tmp);
+void PQCLEAN_FALCON512_AARCH64_sign_tree(int16_t *sig, inner_shake256_context *rng,
+                                         const fpr *restrict expanded_key,
+                                         const uint16_t *hm, uint8_t *tmp);
 
 /*
  * Compute a signature over the provided hashed message (hm); the
@@ -895,10 +795,10 @@ void Zf(sign_tree)(int16_t *sig, inner_shake256_context *rng,
  * tmp[] must have 64-bit alignment.
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
-void Zf(sign_dyn)(int16_t *sig, inner_shake256_context *rng,
-	const int8_t *restrict f, const int8_t *restrict g,
-	const int8_t *restrict F, const int8_t *restrict G,
-	const uint16_t *hm, uint8_t *tmp);
+void PQCLEAN_FALCON512_AARCH64_sign_dyn(int16_t *sig, inner_shake256_context *rng,
+                                        const int8_t *restrict f, const int8_t *restrict g,
+                                        const int8_t *restrict F, const int8_t *restrict G,
+                                        const uint16_t *hm, uint8_t *tmp);
 
 /*
  * Internal sampler engine. Exported for tests.
@@ -920,13 +820,13 @@ void Zf(sign_dyn)(int16_t *sig, inner_shake256_context *rng,
  */
 
 typedef struct {
-	prng p;
-	fpr sigma_min;
+    prng p;
+    fpr sigma_min;
 } sampler_context;
 
-int Zf(sampler)(void *ctx, fpr mu, fpr isigma);
+int PQCLEAN_FALCON512_AARCH64_sampler(void *ctx, fpr mu, fpr isigma);
 
-int ZfN(gaussian0_sampler)(prng *p);
+int PQCLEAN_FALCON512_AARCH64_gaussian0_sampler(prng *p);
 
 /* ==================================================================== */
 

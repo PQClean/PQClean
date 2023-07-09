@@ -25,7 +25,7 @@
 // #include <assert.h>
 
 /* see inner.h */
-void ZfN(poly_add)(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_add(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
 {
     float64x2x4_t neon_a, neon_b, neon_c;
     float64x2x2_t neon_a2, neon_b2, neon_c2;
@@ -71,7 +71,7 @@ void ZfN(poly_add)(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigne
 /*
  * c = a - b
  */
-void ZfN(poly_sub)(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_sub(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
 {
     float64x2x4_t neon_a, neon_b, neon_c;
     float64x2x2_t neon_a2, neon_b2, neon_c2;
@@ -115,7 +115,7 @@ void ZfN(poly_sub)(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigne
 /*
  * c = -a
  */
-void ZfN(poly_neg)(fpr *c, const fpr *restrict a, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_neg(fpr *c, const fpr *restrict a, unsigned logn)
 {
     float64x2x4_t neon_a, neon_c;
     float64x2x2_t neon_a2, neon_c2;
@@ -154,7 +154,7 @@ void ZfN(poly_neg)(fpr *c, const fpr *restrict a, unsigned logn)
 }
 
 /* see inner.h */
-void ZfN(poly_adj_fft)(fpr *c, const fpr *restrict a, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_adj_fft(fpr *c, const fpr *restrict a, unsigned logn)
 {
 
     float64x2x4_t neon_a, neon_c;
@@ -197,7 +197,7 @@ void ZfN(poly_adj_fft)(fpr *c, const fpr *restrict a, unsigned logn)
     }
 }
 
-static inline void ZfN(poly_mul_fft_log1)(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
 {
 #if COMPLEX == 1
     // n = 2
@@ -228,7 +228,7 @@ static inline void ZfN(poly_mul_fft_log1)(fpr *restrict c, const fpr *restrict a
 #endif
 }
 
-static inline void ZfN(poly_mul_fft_log2)(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log2(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
 {
     // n = 4
     float64x2x2_t neon_a, neon_b, neon_c;
@@ -252,7 +252,7 @@ static inline void ZfN(poly_mul_fft_log2)(fpr *restrict c, const fpr *restrict a
     vstorex2(&c[0], neon_c);
 }
 
-static inline void ZfN(poly_mul_fft_log3)(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log3(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
 {
     // n = 8
     float64x2x4_t neon_a, neon_b, neon_c;
@@ -285,7 +285,7 @@ static inline void ZfN(poly_mul_fft_log3)(fpr *restrict c, const fpr *restrict a
 /*
  * c = a * b
  */
-void ZfN(poly_mul_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_mul_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
 {
     // Total 32 registers
     float64x2x4_t a_re, b_re, a_im, b_im; // 24
@@ -295,15 +295,15 @@ void ZfN(poly_mul_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned log
     switch (logn)
     {
     case 1:
-        ZfN(poly_mul_fft_log1)(c, a, b);
+        PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(c, a, b);
         break;
 
     case 2:
-        ZfN(poly_mul_fft_log2)(c, a, b);
+        PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log2(c, a, b);
         break;
 
     case 3:
-        ZfN(poly_mul_fft_log3)(c, a, b);
+        PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log3(c, a, b);
         break;
 
     default:
@@ -323,7 +323,7 @@ void ZfN(poly_mul_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned log
     }
 }
 
-static inline void ZfN(poly_mul_fft_add_log1)(fpr *restrict c, const fpr *restrict d,
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log1(fpr *restrict c, const fpr *restrict d,
                                               const fpr *restrict a, const fpr *restrict b)
 {
 #if COMPLEX == 1
@@ -358,7 +358,7 @@ static inline void ZfN(poly_mul_fft_add_log1)(fpr *restrict c, const fpr *restri
 #endif
 }
 
-static inline void ZfN(poly_mul_fft_add_log2)(fpr *restrict c, const fpr *restrict d,
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log2(fpr *restrict c, const fpr *restrict d,
                                               const fpr *restrict a, const fpr *restrict b)
 {
     // n = 4
@@ -386,7 +386,7 @@ static inline void ZfN(poly_mul_fft_add_log2)(fpr *restrict c, const fpr *restri
     vstorex2(&c[0], neon_d);
 }
 
-static inline void ZfN(poly_mul_fft_add_log3)(fpr *restrict c, const fpr *restrict d,
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log3(fpr *restrict c, const fpr *restrict d,
                                               const fpr *restrict a, const fpr *restrict b)
 {
     // n = 8
@@ -426,7 +426,7 @@ static inline void ZfN(poly_mul_fft_add_log3)(fpr *restrict c, const fpr *restri
 /*
  * c = d + a * b
  */
-void ZfN(poly_mul_add_fft)(fpr *c, const fpr *restrict d,
+void PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(fpr *c, const fpr *restrict d,
                            const fpr *a, const fpr *restrict b, unsigned logn)
 {
     // Total 32 registers
@@ -436,15 +436,15 @@ void ZfN(poly_mul_add_fft)(fpr *c, const fpr *restrict d,
     switch (logn)
     {
     case 1:
-        ZfN(poly_mul_fft_add_log1)(c, d, a, b);
+        PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log1(c, d, a, b);
         break;
 
     case 2:
-        ZfN(poly_mul_fft_add_log2)(c, d, a, b);
+        PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log2(c, d, a, b);
         break;
 
     case 3:
-        ZfN(poly_mul_fft_add_log3)(c, d, a, b);
+        PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log3(c, d, a, b);
         break;
 
     default:
@@ -467,7 +467,7 @@ void ZfN(poly_mul_add_fft)(fpr *c, const fpr *restrict d,
 }
 
 /* see inner.h */
-void ZfN(poly_muladj_fft)(fpr *d, fpr *a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_muladj_fft(fpr *d, fpr *a, const fpr *restrict b, unsigned logn)
 {
     // assert(logn >= 4);
     float64x2x4_t a_re, b_re, d_re, a_im, b_im, d_im; // 24
@@ -488,7 +488,7 @@ void ZfN(poly_muladj_fft)(fpr *d, fpr *a, const fpr *restrict b, unsigned logn)
 }
 
 // c = d + a*b
-void ZfN(poly_muladj_add_fft)(fpr *c, fpr *d,
+void PQCLEAN_FALCON512_AARCH64_poly_muladj_add_fft(fpr *c, fpr *d,
                               const fpr *a, const fpr *restrict b, unsigned logn)
 {
     // assert(logn >= 4);
@@ -515,7 +515,7 @@ void ZfN(poly_muladj_add_fft)(fpr *c, fpr *d,
 /*
  * c = a * adj(a)
  */
-void ZfN(poly_mulselfadj_fft)(fpr *c, const fpr *restrict a, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(fpr *c, const fpr *restrict a, unsigned logn)
 {
     // assert(logn >= 4);
     /*
@@ -550,7 +550,7 @@ void ZfN(poly_mulselfadj_fft)(fpr *c, const fpr *restrict a, unsigned logn)
 /*
  * c = d + a * adj(a)
  */
-void ZfN(poly_mulselfadj_add_fft)(fpr *c, const fpr *restrict d, const fpr *restrict a, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(fpr *c, const fpr *restrict d, const fpr *restrict a, unsigned logn)
 {
     // assert(logn >= 4);
     /*
@@ -584,7 +584,7 @@ void ZfN(poly_mulselfadj_add_fft)(fpr *c, const fpr *restrict d, const fpr *rest
 /*
  * c = a * scalar_x
  */
-void ZfN(poly_mulconst)(fpr *c, const fpr *a, const fpr x, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_mulconst(fpr *c, const fpr *a, const fpr x, unsigned logn)
 {
     // assert(logn >= 3);
     // Total SIMD registers: 9
@@ -606,7 +606,7 @@ void ZfN(poly_mulconst)(fpr *c, const fpr *a, const fpr x, unsigned logn)
  * Unused in the implementation
  */
 
-void ZfN(poly_div_fft)(fpr *restrict c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
 {
     // assert(logn >= 4);
     const int falcon_n = 1 << logn;
@@ -639,7 +639,7 @@ void ZfN(poly_div_fft)(fpr *restrict c, const fpr *restrict a, const fpr *restri
 }
 
 /* see inner.h */
-void ZfN(poly_invnorm2_fft)(fpr *restrict d, const fpr *restrict a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d, const fpr *restrict a, const fpr *restrict b, unsigned logn)
 {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
@@ -739,7 +739,7 @@ void ZfN(poly_invnorm2_fft)(fpr *restrict d, const fpr *restrict a, const fpr *r
 }
 
 /* see inner.h */
-void ZfN(poly_add_muladj_fft)(fpr *restrict d,
+void PQCLEAN_FALCON512_AARCH64_poly_add_muladj_fft(fpr *restrict d,
                               const fpr *restrict F, const fpr *restrict G,
                               const fpr *restrict f, const fpr *restrict g, unsigned logn)
 {
@@ -773,7 +773,7 @@ void ZfN(poly_add_muladj_fft)(fpr *restrict d,
 }
 
 /* see inner.h */
-void ZfN(poly_mul_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
 {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
@@ -841,7 +841,7 @@ void ZfN(poly_mul_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsi
 }
 
 /* see inner.h */
-void ZfN(poly_div_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_div_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
 {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
@@ -863,7 +863,7 @@ void ZfN(poly_div_autoadj_fft)(fpr *c, const fpr *a, const fpr *restrict b, unsi
     }
 }
 
-static inline void ZfN(poly_LDL_fft_log1)(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
 {
     float64x2x4_t g00_re, g01_re, g11_re;
     float64x2x4_t mu_re, m;
@@ -929,7 +929,7 @@ static inline void ZfN(poly_LDL_fft_log1)(const fpr *restrict g00, fpr *restrict
     vstore(&g01[0], mu_re.val[0]);
 }
 
-static inline void ZfN(poly_LDL_fft_log2)(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log2(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
 {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
     float64x2x4_t mu_re, mu_im, m, d_re, d_im;
@@ -977,7 +977,7 @@ static inline void ZfN(poly_LDL_fft_log2)(const fpr *restrict g00, fpr *restrict
     vstorex2(&g01[0], tmp);
 }
 
-static inline void ZfN(poly_LDL_fft_log3)(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log3(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
 {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re;
     float64x2x4_t mu_re, mu_im, m, d_re;
@@ -1038,7 +1038,7 @@ static inline void ZfN(poly_LDL_fft_log3)(const fpr *restrict g00, fpr *restrict
 }
 
 /* see inner.h */
-void ZfN(poly_LDL_fft)(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11, unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11, unsigned logn)
 {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
@@ -1048,17 +1048,17 @@ void ZfN(poly_LDL_fft)(const fpr *restrict g00, fpr *restrict g01, fpr *restrict
     switch (logn)
     {
     case 1:
-        ZfN(poly_LDL_fft_log1)(g00, g01, g11);
+        PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(g00, g01, g11);
 
         break;
 
     case 2:
-        ZfN(poly_LDL_fft_log2)(g00, g01, g11);
+        PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log2(g00, g01, g11);
 
         break;
 
     case 3:
-        ZfN(poly_LDL_fft_log3)(g00, g01, g11);
+        PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log3(g00, g01, g11);
 
         break;
 
@@ -1158,7 +1158,7 @@ void ZfN(poly_LDL_fft)(const fpr *restrict g00, fpr *restrict g01, fpr *restrict
     }
 }
 
-static inline void ZfN(poly_LDLmv_fft_log1)(fpr *restrict d11, fpr *restrict l10,
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(fpr *restrict d11, fpr *restrict l10,
                                             const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11)
 {
     float64x2x4_t g00_re, g01_re, g11_re;
@@ -1225,7 +1225,7 @@ static inline void ZfN(poly_LDLmv_fft_log1)(fpr *restrict d11, fpr *restrict l10
     vstore(&l10[0], mu_re.val[0]);
 }
 
-static inline void ZfN(poly_LDLmv_fft_log2)(fpr *restrict d11, fpr *restrict l10,
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log2(fpr *restrict d11, fpr *restrict l10,
                                             const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11)
 {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
@@ -1274,7 +1274,7 @@ static inline void ZfN(poly_LDLmv_fft_log2)(fpr *restrict d11, fpr *restrict l10
     vstorex2(&l10[0], tmp);
 }
 
-static inline void ZfN(poly_LDLmv_fft_log3)(fpr *restrict d11, fpr *restrict l10,
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log3(fpr *restrict d11, fpr *restrict l10,
                                             const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11)
 {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re;
@@ -1335,7 +1335,7 @@ static inline void ZfN(poly_LDLmv_fft_log3)(fpr *restrict d11, fpr *restrict l10
     vstorex4(&l10[0], mu_re);
 }
 
-void ZfN(poly_LDLmv_fft)(fpr *restrict d11, fpr *restrict l10,
+void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l10,
                          const fpr *restrict g00, const fpr *restrict g01,
                          const fpr *restrict g11, unsigned logn)
 {
@@ -1347,15 +1347,15 @@ void ZfN(poly_LDLmv_fft)(fpr *restrict d11, fpr *restrict l10,
     switch (logn)
     {
     case 1:
-        ZfN(poly_LDLmv_fft_log1)(d11, l10, g00, g01, g11);
+        PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(d11, l10, g00, g01, g11);
         break;
 
     case 2:
-        ZfN(poly_LDLmv_fft_log2)(d11, l10, g00, g01, g11);
+        PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log2(d11, l10, g00, g01, g11);
         break;
 
     case 3:
-        ZfN(poly_LDLmv_fft_log3)(d11, l10, g00, g01, g11);
+        PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log3(d11, l10, g00, g01, g11);
         break;
 
     default:
@@ -1453,7 +1453,7 @@ void ZfN(poly_LDLmv_fft)(fpr *restrict d11, fpr *restrict l10,
     }
 }
 
-void ZfN(poly_fpr_of_s16)(fpr *t0, const uint16_t *hm, const unsigned falcon_n)
+void PQCLEAN_FALCON512_AARCH64_poly_fpr_of_s16(fpr *t0, const uint16_t *hm, const unsigned falcon_n)
 {
     float64x2x4_t neon_t0;
     uint16x8x4_t neon_hm;
@@ -1508,7 +1508,7 @@ void ZfN(poly_fpr_of_s16)(fpr *t0, const uint16_t *hm, const unsigned falcon_n)
     }
 }
 
-fpr ZfN(compute_bnorm)(const fpr *rt1, const fpr *rt2)
+fpr PQCLEAN_FALCON512_AARCH64_compute_bnorm(const fpr *rt1, const fpr *rt2)
 {
     float64x2x4_t r1, r11, r2, r22;
     float64x2x4_t bnorm, bnorm2;

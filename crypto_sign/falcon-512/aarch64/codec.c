@@ -35,7 +35,7 @@
 
 /* see inner.h */
 size_t
-Zf(modq_encode)(
+PQCLEAN_FALCON512_AARCH64_modq_encode(
 	void *out, size_t max_out_len,
 	const uint16_t *x, unsigned logn)
 {
@@ -77,7 +77,7 @@ Zf(modq_encode)(
 
 /* see inner.h */
 size_t
-Zf(modq_decode)(uint16_t *x, const void *in, size_t max_in_len, unsigned logn)
+PQCLEAN_FALCON512_AARCH64_modq_decode(uint16_t *x, const void *in, size_t max_in_len, unsigned logn)
 {
 	size_t n, in_len, u;
 	const uint8_t *buf;
@@ -115,7 +115,7 @@ Zf(modq_decode)(uint16_t *x, const void *in, size_t max_in_len, unsigned logn)
 
 /* see inner.h */
 size_t
-Zf(trim_i16_encode)(
+PQCLEAN_FALCON512_AARCH64_trim_i16_encode(
 	void *out, size_t max_out_len,
 	const int16_t *x, unsigned logn, unsigned bits)
 {
@@ -160,7 +160,7 @@ Zf(trim_i16_encode)(
 
 /* see inner.h */
 size_t
-Zf(trim_i16_decode)(
+PQCLEAN_FALCON512_AARCH64_trim_i16_decode(
 	int16_t *x, unsigned logn, unsigned bits,
 	const void *in, size_t max_in_len)
 {
@@ -211,7 +211,7 @@ Zf(trim_i16_decode)(
 
 /* see inner.h */
 size_t
-Zf(trim_i8_encode)(void *out, size_t max_out_len,
+PQCLEAN_FALCON512_AARCH64_trim_i8_encode(void *out, size_t max_out_len,
 	               const int8_t *x, uint8_t bits)
 {
 	size_t u, out_len;
@@ -230,7 +230,7 @@ Zf(trim_i8_encode)(void *out, size_t max_out_len,
 	
 	maxv = (int8_t) (1 << (bits - 1)) - 1;
 	minv = -maxv;
-    if (ZfN(poly_check_bound_int8)(x, minv, maxv))
+    if (PQCLEAN_FALCON512_AARCH64_poly_check_bound_int8(x, minv, maxv))
     {
         return 0;
     }
@@ -254,7 +254,7 @@ Zf(trim_i8_encode)(void *out, size_t max_out_len,
 
 /* see inner.h */
 size_t
-Zf(trim_i8_decode)(int8_t *x, unsigned bits,
+PQCLEAN_FALCON512_AARCH64_trim_i8_decode(int8_t *x, unsigned bits,
 	               const void *in, size_t max_in_len)
 {
 	size_t in_len;
@@ -302,7 +302,7 @@ Zf(trim_i8_decode)(int8_t *x, unsigned bits,
 
 /* see inner.h */
 size_t
-Zf(comp_encode)(void *out, size_t max_out_len, const int16_t *x)
+PQCLEAN_FALCON512_AARCH64_comp_encode(void *out, size_t max_out_len, const int16_t *x)
 {
 	uint8_t *buf;
 	size_t u, v;
@@ -314,7 +314,7 @@ Zf(comp_encode)(void *out, size_t max_out_len, const int16_t *x)
 	/*
 	 * Make sure that all values are within the -2047..+2047 range.
 	 */
-    if (ZfN(poly_check_bound_int16)(x, -2047, 2047))
+    if (PQCLEAN_FALCON512_AARCH64_poly_check_bound_int16(x, -2047, 2047))
     {
         return 0;
     }
@@ -395,7 +395,7 @@ Zf(comp_encode)(void *out, size_t max_out_len, const int16_t *x)
 
 /* see inner.h */
 size_t
-Zf(comp_decode)(int16_t *x, const void *in, size_t max_in_len)
+PQCLEAN_FALCON512_AARCH64_comp_decode(int16_t *x, const void *in, size_t max_in_len)
 {
 	const uint8_t *buf;
 	size_t u, v;
@@ -494,7 +494,7 @@ Zf(comp_decode)(int16_t *x, const void *in, size_t max_in_len)
  * of max_fg_bits[] and max_FG_bits[] shall be greater than 8.
  */
 
-const uint8_t Zf(max_fg_bits)[] = {
+const uint8_t PQCLEAN_FALCON512_AARCH64_max_fg_bits[] = {
 	0, /* unused */
 	8,
 	8,
@@ -508,7 +508,7 @@ const uint8_t Zf(max_fg_bits)[] = {
 	5
 };
 
-const uint8_t Zf(max_FG_bits)[] = {
+const uint8_t PQCLEAN_FALCON512_AARCH64_max_FG_bits[] = {
 	0, /* unused */
 	8,
 	8,
@@ -550,7 +550,7 @@ const uint8_t Zf(max_FG_bits)[] = {
  * in -2047..2047, i.e. 12 bits.
  */
 
-const uint8_t Zf(max_sig_bits)[] = {
+const uint8_t PQCLEAN_FALCON512_AARCH64_max_sig_bits[] = {
 	0, /* unused */
 	10,
 	11,

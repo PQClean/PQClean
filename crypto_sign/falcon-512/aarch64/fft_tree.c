@@ -26,7 +26,7 @@
 /*
  * 1 layer of Merge FFT for 2 complex points (4 coefficients).
  */
-static inline void ZfN(poly_mergeFFT_log2)(fpr *f, const fpr *f0, const fpr *f1)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log2(fpr *f, const fpr *f0, const fpr *f1)
 {
     fpr a_re, a_im, b_re, b_im, d_re, d_im, s;
     a_re = f0[0];
@@ -47,7 +47,7 @@ static inline void ZfN(poly_mergeFFT_log2)(fpr *f, const fpr *f0, const fpr *f1)
 /*
  * Vectorized 1 layer of Merge FFT for 4 complex points (8 coefficients).
  */
-static inline void ZfN(poly_mergeFFT_log3)(fpr *f, const fpr *f0, const fpr *f1)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log3(fpr *f, const fpr *f0, const fpr *f1)
 {
     // Total SIMD registers: 12 = 10 + 2
     float64x2x2_t g1, g0, g_re, g_im, s_re_im; // 10
@@ -71,7 +71,7 @@ static inline void ZfN(poly_mergeFFT_log3)(fpr *f, const fpr *f0, const fpr *f1)
 /*
  * Vectorized 1 layer of Merge FFT for 8 complex points (16 coefficients).
  */
-static inline void ZfN(poly_mergeFFT_log4)(fpr *f, const fpr *f0, const fpr *f1, const unsigned logn)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log4(fpr *f, const fpr *f0, const fpr *f1, const unsigned logn)
 {
     const unsigned n = 1 << logn;
     const unsigned ht = n >> 2;
@@ -108,7 +108,7 @@ static inline void ZfN(poly_mergeFFT_log4)(fpr *f, const fpr *f0, const fpr *f1,
  * 1 layer of Split FFT for 2 complex points (4 coefficients).
  */
 static void
-ZfN(poly_splitFFT_log2)(fpr *restrict f0, fpr *restrict f1, const fpr *restrict f)
+PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log2(fpr *restrict f0, fpr *restrict f1, const fpr *restrict f)
 {
     fpr a_re, a_im, b_re, b_im, d_re, d_im, s;
     a_re = f[0];
@@ -130,7 +130,7 @@ ZfN(poly_splitFFT_log2)(fpr *restrict f0, fpr *restrict f1, const fpr *restrict 
 /*
  * Vectorized 1 layer of Split FFT for 4 complex points (8 coefficients).
  */
-static inline void ZfN(poly_splitFFT_log3)(fpr *f0, fpr *f1, const fpr *f)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log3(fpr *f0, fpr *f1, const fpr *f)
 {
     // Total SIMD registers: 12
     float64x2x2_t re, im, g0, g1, s_re_im, tm; // 12
@@ -157,7 +157,7 @@ static inline void ZfN(poly_splitFFT_log3)(fpr *f0, fpr *f1, const fpr *f)
 /*
  * Vectorized 1 layer of Split FFT for 8 complex points (16 coefficients).
  */
-static inline void ZfN(poly_splitFFT_log4)(fpr *f0, fpr *f1, const fpr *f, const unsigned logn)
+static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log4(fpr *f0, fpr *f1, const fpr *f, const unsigned logn)
 {
     const unsigned n = 1 << logn;
     const unsigned hn = n >> 1;
@@ -206,7 +206,7 @@ static inline void ZfN(poly_splitFFT_log4)(fpr *f0, fpr *f1, const fpr *f, const
 /*
  * Vectorized Split FFT implementation
  */
-void ZfN(poly_split_fft)(fpr *restrict f0, fpr *restrict f1, const fpr *f, const unsigned logn)
+void PQCLEAN_FALCON512_AARCH64_poly_split_fft(fpr *restrict f0, fpr *restrict f1, const fpr *f, const unsigned logn)
 {
     switch (logn)
     {
@@ -217,15 +217,15 @@ void ZfN(poly_split_fft)(fpr *restrict f0, fpr *restrict f1, const fpr *f, const
         break;
 
     case 2:
-        ZfN(poly_splitFFT_log2)(f0, f1, f);
+        PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log2(f0, f1, f);
         break;
 
     case 3:
-        ZfN(poly_splitFFT_log3)(f0, f1, f);
+        PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log3(f0, f1, f);
         break;
 
     default:
-        ZfN(poly_splitFFT_log4)(f0, f1, f, logn);
+        PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log4(f0, f1, f, logn);
         break;
     }
 }
@@ -233,7 +233,7 @@ void ZfN(poly_split_fft)(fpr *restrict f0, fpr *restrict f1, const fpr *f, const
 /*
  * Vectorized Merge FFT implementation
  */
-void ZfN(poly_merge_fft)(fpr *restrict f, const fpr *restrict f0,
+void PQCLEAN_FALCON512_AARCH64_poly_merge_fft(fpr *restrict f, const fpr *restrict f0,
                          const fpr *restrict f1, const unsigned logn)
 {
     switch (logn)
@@ -245,15 +245,15 @@ void ZfN(poly_merge_fft)(fpr *restrict f, const fpr *restrict f0,
         break;
 
     case 2:
-        ZfN(poly_mergeFFT_log2)(f, f0, f1);
+        PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log2(f, f0, f1);
         break;
 
     case 3:
-        ZfN(poly_mergeFFT_log3)(f, f0, f1);
+        PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log3(f, f0, f1);
         break;
 
     default:
-        ZfN(poly_mergeFFT_log4)(f, f0, f1, logn);
+        PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log4(f, f0, f1, logn);
         break;
     }
 }

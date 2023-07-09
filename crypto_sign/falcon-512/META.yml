@@ -29,3 +29,12 @@ implementations:
       - architecture: x86_64
         required_flags:
           - avx2
+  - name: aarch64
+    version: https://github.com/GMUCERG/FALCON_NEON/commit/3308af6e2b26cd9c16d8065199e70d4c8a8c302e
+    supported_platforms:
+      - architecture: arm_8
+        operating_systems:
+            - Linux
+            - Darwin
+        required_flags:
+            - asimd
