@@ -30,10 +30,10 @@
  */
 
 #include "inner.h"
-#include "macrofx4.h"
 #include "macrof.h"
-#include <arm_neon.h>
+#include "macrofx4.h"
 #include "util.h"
+#include <arm_neon.h>
 #include <stdio.h>
 /* =================================================================== */
 

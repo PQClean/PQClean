@@ -2023,7 +2023,7 @@ poly_big_to_fp(fpr *d, const uint32_t *f, size_t flen, size_t fstride,
         cc = neg & 1;
         x = fpr_zero;
         fsc = fpr_one;
-        for (v = 0; v < flen; v ++, fsc = fpr_mul(fsc, fpr_ptwo31)) {
+        for (v = 0; v < flen; v++, fsc = fpr_mul(fsc, fpr_ptwo31)) {
             uint32_t w;
 
             w = (f[v] ^ xm) + cc;

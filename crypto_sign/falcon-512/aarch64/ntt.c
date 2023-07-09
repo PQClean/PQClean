@@ -19,14 +19,14 @@
  * @author   Duc Tri Nguyen <dnguye69@gmu.edu>
  */
 
-#include <arm_neon.h>
 #include "config.h"
+#include "inner.h"
 #include "macrous.h"
 #include "ntt_consts.h"
 #include "poly.h"
-#include "inner.h"
 
-#include <stdio.h>
+#include <arm_neon.h>
+
 
 /*
  * Assume Input in the range [-Q/2, Q/2]

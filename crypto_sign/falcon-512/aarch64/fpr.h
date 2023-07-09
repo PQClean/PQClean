@@ -32,10 +32,10 @@
 
 /* ====================================================================== */
 
-#include <math.h>
 #include <arm_neon.h>
-#include "macrof.h"
+#include <math.h>
 
+#include "macrof.h"
 /*
  * We wrap the native 'double' type into a structure so that the C compiler
  * complains if we inadvertently use raw arithmetic operators on the 'fpr'

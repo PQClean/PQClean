@@ -30,8 +30,8 @@
  */
 
 #include "inner.h"
-#include "macrous.h"
 #include "macrofx4.h"
+#include "macrous.h"
 
 /* see inner.h */
 void PQCLEAN_FALCON512_AARCH64_hash_to_point_vartime(

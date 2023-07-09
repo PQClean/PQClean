@@ -42,23 +42,8 @@
 #endif
 
 /*
- * By default, FMA is disabled due to rounding error between (FADD, FMUL) and FMA
+ * By default, FMA is enable, there will be rounding error between (FADD, FMUL) and FMA
  */
-#define FMA 0
-
-/*
- * By default, NEON is little Edian, either 0 or 1 will must pass the test
- * FALCON_LE: Little Edian flag
- */
-#define FALCON_LE 0
-
-/*
- * By default, FPEMU is 0 on NEON implementation
- * FALCON_FPEMU: Floating-point emulator flag
- */
-#define FALCON_FPEMU 0
-#if FALCON_FPEMU != 0
-#error "FPEMU is not support in NEON implementation"
-#endif
+#define FMA 1
 
 #endif
