@@ -25,13 +25,11 @@
 // #include <assert.h>
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_poly_add(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_add(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn) {
     float64x2x4_t neon_a, neon_b, neon_c;
     float64x2x2_t neon_a2, neon_b2, neon_c2;
     const int falcon_n = 1 << logn;
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         // n = 2;
         vload(neon_a.val[0], &a[0]);
@@ -54,8 +52,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_add(fpr *c, const fpr *restrict a, const fpr
         break;
 
     default:
-        for (int i = 0; i < falcon_n; i += 8)
-        {
+        for (int i = 0; i < falcon_n; i += 8) {
             vloadx4(neon_a, &a[i]);
             vloadx4(neon_b, &b[i]);
 
@@ -71,13 +68,11 @@ void PQCLEAN_FALCON512_AARCH64_poly_add(fpr *c, const fpr *restrict a, const fpr
 /*
  * c = a - b
  */
-void PQCLEAN_FALCON512_AARCH64_poly_sub(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_sub(fpr *c, const fpr *restrict a, const fpr *restrict b, unsigned logn) {
     float64x2x4_t neon_a, neon_b, neon_c;
     float64x2x2_t neon_a2, neon_b2, neon_c2;
     const int falcon_n = 1 << logn;
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         vload(neon_a.val[0], &a[0]);
         vload(neon_b.val[0], &b[0]);
@@ -98,8 +93,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_sub(fpr *c, const fpr *restrict a, const fpr
         break;
 
     default:
-        for (int i = 0; i < falcon_n; i += 8)
-        {
+        for (int i = 0; i < falcon_n; i += 8) {
             vloadx4(neon_a, &a[i]);
             vloadx4(neon_b, &b[i]);
 
@@ -115,14 +109,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_sub(fpr *c, const fpr *restrict a, const fpr
 /*
  * c = -a
  */
-void PQCLEAN_FALCON512_AARCH64_poly_neg(fpr *c, const fpr *restrict a, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_neg(fpr *c, const fpr *restrict a, unsigned logn) {
     float64x2x4_t neon_a, neon_c;
     float64x2x2_t neon_a2, neon_c2;
     const int falcon_n = 1 << logn;
 
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         vload(neon_a.val[0], &a[0]);
 
@@ -141,8 +133,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_neg(fpr *c, const fpr *restrict a, unsigned 
         break;
 
     default:
-        for (int i = 0; i < falcon_n; i += 8)
-        {
+        for (int i = 0; i < falcon_n; i += 8) {
             vloadx4(neon_a, &a[i]);
 
             vfnegx4(neon_c, neon_a);
@@ -154,16 +145,14 @@ void PQCLEAN_FALCON512_AARCH64_poly_neg(fpr *c, const fpr *restrict a, unsigned 
 }
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_poly_adj_fft(fpr *c, const fpr *restrict a, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_adj_fft(fpr *c, const fpr *restrict a, unsigned logn) {
 
     float64x2x4_t neon_a, neon_c;
     float64x2x2_t neon_a2, neon_c2;
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
 
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         // n = 2; hn = 1;
         c[1] = fpr_neg(a[1]);
@@ -185,8 +174,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_adj_fft(fpr *c, const fpr *restrict a, unsig
         break;
 
     default:
-        for (int i = hn; i < falcon_n; i += 8)
-        {
+        for (int i = hn; i < falcon_n; i += 8) {
             vloadx4(neon_a, &a[i]);
 
             vfnegx4(neon_c, neon_a);
@@ -197,9 +185,8 @@ void PQCLEAN_FALCON512_AARCH64_poly_adj_fft(fpr *c, const fpr *restrict a, unsig
     }
 }
 
-static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
-{
-#if COMPLEX == 1
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(fpr *restrict c, const fpr *restrict a, const fpr *restrict b) {
+    #if COMPLEX == 1
     // n = 2
     float64x2_t neon_a, neon_b, neon_c;
     // re | im
@@ -211,7 +198,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(fpr *restrict c, 
     FPC_CMUL(neon_c, neon_a, neon_b);
 
     vstore(&c[0], neon_c);
-#else
+    #else
     fpr a_re, a_im, b_re, b_im, c_re, c_im;
 
     a_re = a[0];
@@ -225,11 +212,10 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(fpr *restrict c, 
     c[0] = c_re;
     c[1] = c_im;
 
-#endif
+    #endif
 }
 
-static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log2(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log2(fpr *restrict c, const fpr *restrict a, const fpr *restrict b) {
     // n = 4
     float64x2x2_t neon_a, neon_b, neon_c;
     float64x2_t a_re, a_im, b_re, b_im, c_re, c_im;
@@ -252,8 +238,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log2(fpr *restrict c, 
     vstorex2(&c[0], neon_c);
 }
 
-static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log3(fpr *restrict c, const fpr *restrict a, const fpr *restrict b)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log3(fpr *restrict c, const fpr *restrict a, const fpr *restrict b) {
     // n = 8
     float64x2x4_t neon_a, neon_b, neon_c;
     float64x2x2_t a_re, a_im, b_re, b_im, c_re, c_im;
@@ -285,15 +270,13 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log3(fpr *restrict c, 
 /*
  * c = a * b
  */
-void PQCLEAN_FALCON512_AARCH64_poly_mul_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_mul_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn) {
     // Total 32 registers
     float64x2x4_t a_re, b_re, a_im, b_im; // 24
     float64x2x4_t c_re, c_im;             // 8
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         PQCLEAN_FALCON512_AARCH64_poly_mul_fft_log1(c, a, b);
         break;
@@ -307,8 +290,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_fft(fpr *c, const fpr *a, const fpr *res
         break;
 
     default:
-        for (int i = 0; i < hn; i += 8)
-        {
+        for (int i = 0; i < hn; i += 8) {
             vloadx4(a_re, &a[i]);
             vloadx4(a_im, &a[i + hn]);
             vloadx4(b_re, &b[i]);
@@ -324,9 +306,8 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_fft(fpr *c, const fpr *a, const fpr *res
 }
 
 static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log1(fpr *restrict c, const fpr *restrict d,
-                                              const fpr *restrict a, const fpr *restrict b)
-{
-#if COMPLEX == 1
+        const fpr *restrict a, const fpr *restrict b) {
+    #if COMPLEX == 1
     // n = 2
     float64x2_t neon_a, neon_b, neon_c, neon_d;
 
@@ -339,7 +320,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log1(fpr *restrict
     vfcmla_90(neon_c, neon_a, neon_b);
 
     vstore(&c[0], neon_c);
-#else
+    #else
     fpr a_re, a_im, b_re, b_im, c_re, c_im, d_re, d_im;
 
     a_re = a[0];
@@ -355,12 +336,11 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log1(fpr *restrict
     c[0] = c_re + d_re;
     c[1] = c_im + d_im;
 
-#endif
+    #endif
 }
 
 static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log2(fpr *restrict c, const fpr *restrict d,
-                                              const fpr *restrict a, const fpr *restrict b)
-{
+        const fpr *restrict a, const fpr *restrict b) {
     // n = 4
     float64x2x2_t neon_a, neon_b, neon_d;
     float64x2_t a_re, a_im, b_re, b_im, d_re, d_im;
@@ -387,8 +367,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log2(fpr *restrict
 }
 
 static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log3(fpr *restrict c, const fpr *restrict d,
-                                              const fpr *restrict a, const fpr *restrict b)
-{
+        const fpr *restrict a, const fpr *restrict b) {
     // n = 8
     float64x2x4_t neon_a, neon_b, neon_d;
     float64x2x2_t a_re, a_im, b_re, b_im, d_re, d_im;
@@ -427,14 +406,12 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log3(fpr *restrict
  * c = d + a * b
  */
 void PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(fpr *c, const fpr *restrict d,
-                           const fpr *a, const fpr *restrict b, unsigned logn)
-{
+        const fpr *a, const fpr *restrict b, unsigned logn) {
     // Total 32 registers
     float64x2x4_t a_re, b_re, a_im, b_im, d_re, d_im; // 32
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         PQCLEAN_FALCON512_AARCH64_poly_mul_fft_add_log1(c, d, a, b);
         break;
@@ -448,8 +425,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(fpr *c, const fpr *restrict d,
         break;
 
     default:
-        for (int i = 0; i < hn; i += 8)
-        {
+        for (int i = 0; i < hn; i += 8) {
             vloadx4(a_re, &a[i]);
             vloadx4(a_im, &a[i + hn]);
             vloadx4(b_re, &b[i]);
@@ -467,14 +443,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(fpr *c, const fpr *restrict d,
 }
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_poly_muladj_fft(fpr *d, fpr *a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_muladj_fft(fpr *d, fpr *a, const fpr *restrict b, unsigned logn) {
     // assert(logn >= 4);
     float64x2x4_t a_re, b_re, d_re, a_im, b_im, d_im; // 24
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
-    for (int i = 0; i < hn; i += 8)
-    {
+    for (int i = 0; i < hn; i += 8) {
         vloadx4(a_re, &a[i]);
         vloadx4(a_im, &a[i + hn]);
         vloadx4(b_re, &b[i]);
@@ -489,14 +463,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_muladj_fft(fpr *d, fpr *a, const fpr *restri
 
 // c = d + a*b
 void PQCLEAN_FALCON512_AARCH64_poly_muladj_add_fft(fpr *c, fpr *d,
-                              const fpr *a, const fpr *restrict b, unsigned logn)
-{
+        const fpr *a, const fpr *restrict b, unsigned logn) {
     // assert(logn >= 4);
     float64x2x4_t a_re, b_re, d_re, a_im, b_im, d_im; // 24
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
-    for (int i = 0; i < hn; i += 8)
-    {
+    for (int i = 0; i < hn; i += 8) {
         vloadx4(a_re, &a[i]);
         vloadx4(a_im, &a[i + hn]);
         vloadx4(b_re, &b[i]);
@@ -515,8 +487,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_muladj_add_fft(fpr *c, fpr *d,
 /*
  * c = a * adj(a)
  */
-void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(fpr *c, const fpr *restrict a, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(fpr *c, const fpr *restrict a, unsigned logn) {
     // assert(logn >= 4);
     /*
      * Since each coefficient is multiplied with its own conjugate,
@@ -528,8 +499,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(fpr *c, const fpr *restrict a
 
     vfdupx4(c_im, 0);
 
-    for (int i = 0; i < hn; i += 8)
-    {
+    for (int i = 0; i < hn; i += 8) {
         vloadx4(a_re, &a[i]);
         vloadx4(a_im, &a[i + hn]);
 
@@ -550,8 +520,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(fpr *c, const fpr *restrict a
 /*
  * c = d + a * adj(a)
  */
-void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(fpr *c, const fpr *restrict d, const fpr *restrict a, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(fpr *c, const fpr *restrict d, const fpr *restrict a, unsigned logn) {
     // assert(logn >= 4);
     /*
      * Since each coefficient is multiplied with its own conjugate,
@@ -561,8 +530,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(fpr *c, const fpr *restri
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
 
-    for (int i = 0; i < hn; i += 8)
-    {
+    for (int i = 0; i < hn; i += 8) {
         vloadx4(a_re, &a[i]);
         vloadx4(a_im, &a[i + hn]);
         vloadx4(d_re, &d[i]);
@@ -584,16 +552,14 @@ void PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(fpr *c, const fpr *restri
 /*
  * c = a * scalar_x
  */
-void PQCLEAN_FALCON512_AARCH64_poly_mulconst(fpr *c, const fpr *a, const fpr x, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_mulconst(fpr *c, const fpr *a, const fpr x, unsigned logn) {
     // assert(logn >= 3);
     // Total SIMD registers: 9
     const int falcon_n = 1 << logn;
     float64x2x4_t neon_a, neon_c; // 8
     float64x2_t neon_x;           // 1
     neon_x = vdupq_n_f64(x);
-    for (int i = 0; i < falcon_n; i += 8)
-    {
+    for (int i = 0; i < falcon_n; i += 8) {
         vloadx4(neon_a, &a[i]);
 
         vfmulx4_i(neon_c, neon_a, neon_x);
@@ -606,14 +572,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_mulconst(fpr *c, const fpr *a, const fpr x, 
  * Unused in the implementation
  */
 
-void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c, const fpr *restrict a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c, const fpr *restrict a, const fpr *restrict b, unsigned logn) {
     // assert(logn >= 4);
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
     float64x2x4_t a_re, a_im, b_re, b_im, c_re, c_im, m;
-    for (int i = 0; i < hn; i += 8)
-    {
+    for (int i = 0; i < hn; i += 8) {
         vloadx4(a_re, &a[i]);
         vloadx4(a_im, &a[i + hn]);
         vloadx4(b_re, &b[i]);
@@ -639,16 +603,14 @@ void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c, const fpr *restrict
 }
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d, const fpr *restrict a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d, const fpr *restrict a, const fpr *restrict b, unsigned logn) {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
     float64x2x4_t a_re, a_im, b_re, b_im, c_re;
     float64x2x2_t x, y;
     float64x2_t z;
 
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         // n = 2; hn = 1; i = 0
         /*
@@ -701,8 +663,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d, const fpr *res
 
     default:
         // assert(logn >= 4);
-        for (int i = 0; i < hn; i += 8)
-        {
+        for (int i = 0; i < hn; i += 8) {
             vloadx4(a_re, &a[i]);
             vloadx4(a_im, &a[i + hn]);
             vloadx4(b_re, &b[i]);
@@ -740,9 +701,8 @@ void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d, const fpr *res
 
 /* see inner.h */
 void PQCLEAN_FALCON512_AARCH64_poly_add_muladj_fft(fpr *restrict d,
-                              const fpr *restrict F, const fpr *restrict G,
-                              const fpr *restrict f, const fpr *restrict g, unsigned logn)
-{
+        const fpr *restrict F, const fpr *restrict G,
+        const fpr *restrict f, const fpr *restrict g, unsigned logn) {
     // assert(logn >= 4);
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
@@ -750,8 +710,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_add_muladj_fft(fpr *restrict d,
     float64x2x4_t f_re, f_im, g_re, g_im;
     float64x2x4_t a_re, a_im;
 
-    for (int i = 0; i < hn; i += 8)
-    {
+    for (int i = 0; i < hn; i += 8) {
         vloadx4(F_re, &F[i]);
         vloadx4(F_im, &F[i + hn]);
         vloadx4(f_re, &f[i]);
@@ -773,14 +732,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_add_muladj_fft(fpr *restrict d,
 }
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn) {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
     float64x2x4_t a_re, a_im, b_re, c_re, c_im;
     float64x2x2_t a_re_im, b_re_im, c_re_im;
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         // n = 2; hn = 1; i = 0
         // c[0] = a[0] * b[0];
@@ -824,8 +781,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(fpr *c, const fpr *a, const 
 
     default:
         // assert(logn >= 4);
-        for (int i = 0; i < hn; i += 8)
-        {
+        for (int i = 0; i < hn; i += 8) {
             vloadx4(a_re, &a[i]);
             vloadx4(a_im, &a[i + hn]);
             vloadx4(b_re, &b[i]);
@@ -841,14 +797,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(fpr *c, const fpr *a, const 
 }
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_poly_div_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_div_autoadj_fft(fpr *c, const fpr *a, const fpr *restrict b, unsigned logn) {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
     float64x2x4_t a_re, a_im, b_re, binv, c_re, c_im;
 
-    for (int i = 0; i < hn; i += 8)
-    {
+    for (int i = 0; i < hn; i += 8) {
         vloadx4(b_re, &b[i]);
         vfinvx4(binv, b_re);
 
@@ -863,8 +817,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_div_autoadj_fft(fpr *c, const fpr *a, const 
     }
 }
 
-static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11) {
     float64x2x4_t g00_re, g01_re, g11_re;
     float64x2x4_t mu_re, m;
     float64x2_t neon_1i2;
@@ -880,13 +833,13 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restri
 
     vload(g01_re.val[0], &g01[0]);
     vload(neon_1i2, &imagine[0]);
-#if COMPLEX == 1
+    #if COMPLEX == 1
     // re: g01_re * g00_re + g01_im * g00_im
     // im: g01_im * g00_re - g01_re * g00_im
     // vfmul_lane(mu_re.val[0], g01_re.val[0], g00_re.val[0], 0);
     // vfcmla_270(mu_re.val[0], g00_re.val[0], g01_re.val[0]);
     FPC_CMUL_CONJ(mu_re.val[0], g01_re.val[0], g00_re.val[0]);
-#else
+    #else
     // g01_re * g00_re | g01_im * g01_im
     vfmul(g01_re.val[2], g01_re.val[0], g00_re.val[0]);
 
@@ -897,10 +850,10 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restri
     vfmul(g01_re.val[1], g01_re.val[1], g00_re.val[0]);
     mu_re.val[0] = vpaddq_f64(g01_re.val[2], g01_re.val[1]);
 
-#endif
+    #endif
     vfmul(mu_re.val[0], mu_re.val[0], m.val[0]);
 
-#if COMPLEX == 1
+    #if COMPLEX == 1
     vswap(mu_re.val[1], mu_re.val[0]);
     // im: mu_im * g01_re - mu_re * g01_im
     // re: mu_im * g01_im + mu_re * g01_re
@@ -909,7 +862,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restri
     FPC_CMUL(g01_re.val[1], g01_re.val[0], mu_re.val[1]);
 
     vswap(g01_re.val[0], g01_re.val[1]);
-#else
+    #else
     // re: mu_re * g01_re + mu_im * g01_im
     vfmul(g01_re.val[1], mu_re.val[0], g01_re.val[0]);
 
@@ -919,7 +872,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restri
     vfmul(g01_re.val[2], g01_re.val[2], mu_re.val[0]);
     g01_re.val[0] = vpaddq_f64(g01_re.val[1], g01_re.val[2]);
 
-#endif
+    #endif
     vload(g11_re.val[0], &g11[0]);
 
     vfsub(g11_re.val[0], g11_re.val[0], g01_re.val[0]);
@@ -929,8 +882,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(const fpr *restri
     vstore(&g01[0], mu_re.val[0]);
 }
 
-static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log2(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log2(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11) {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
     float64x2x4_t mu_re, mu_im, m, d_re, d_im;
     float64x2x2_t tmp;
@@ -977,8 +929,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log2(const fpr *restri
     vstorex2(&g01[0], tmp);
 }
 
-static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log3(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log3(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11) {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re;
     float64x2x4_t mu_re, mu_im, m, d_re;
     //  n = 8; hn = 4
@@ -1038,15 +989,13 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log3(const fpr *restri
 }
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11, unsigned logn)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00, fpr *restrict g01, fpr *restrict g11, unsigned logn) {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
     float64x2x4_t mu_re, mu_im, m, d_re, d_im;
 
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         PQCLEAN_FALCON512_AARCH64_poly_LDL_fft_log1(g00, g01, g11);
 
@@ -1064,8 +1013,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00, fpr *restri
 
     default:
         // assert(logn >= 4);
-        for (int i = 0; i < hn; i += 8)
-        {
+        for (int i = 0; i < hn; i += 8) {
             vloadx4(g00_re, &g00[i]);
             vloadx4(g00_im, &g00[i + hn]);
 
@@ -1159,8 +1107,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00, fpr *restri
 }
 
 static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(fpr *restrict d11, fpr *restrict l10,
-                                            const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11)
-{
+        const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11) {
     float64x2x4_t g00_re, g01_re, g11_re;
     float64x2x4_t mu_re, m;
     float64x2_t neon_1i2;
@@ -1176,13 +1123,13 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(fpr *restrict d
 
     vload(g01_re.val[0], &g01[0]);
     vload(neon_1i2, &imagine[0]);
-#if COMPLEX == 1
+    #if COMPLEX == 1
     // re: g01_re * g00_re + g01_im * g00_im
     // im: g01_im * g00_re - g01_re * g00_im
     // vfmul_lane(mu_re.val[0], g01_re.val[0], g00_re.val[0], 0);
     // vfcmla_270(mu_re.val[0], g00_re.val[0], g01_re.val[0]);
     FPC_CMUL_CONJ(mu_re.val[0], g01_re.val[0], g00_re.val[0]);
-#else
+    #else
     // g01_re * g00_re | g01_im * g01_im
     vfmul(g01_re.val[2], g01_re.val[0], g00_re.val[0]);
 
@@ -1193,10 +1140,10 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(fpr *restrict d
     vfmul(g01_re.val[1], g01_re.val[1], g00_re.val[0]);
     mu_re.val[0] = vpaddq_f64(g01_re.val[2], g01_re.val[1]);
 
-#endif
+    #endif
     vfmul(mu_re.val[0], mu_re.val[0], m.val[0]);
 
-#if COMPLEX == 1
+    #if COMPLEX == 1
     vswap(mu_re.val[1], mu_re.val[0]);
     // im: mu_im * g01_re - mu_re * g01_im
     // re: mu_im * g01_im + mu_re * g01_re
@@ -1205,7 +1152,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(fpr *restrict d
     FPC_CMUL(g01_re.val[1], mu_re.val[1], g01_re.val[0]);
 
     vswap(g01_re.val[0], g01_re.val[1]);
-#else
+    #else
     // re: mu_re * g01_re + mu_im * g01_im
     vfmul(g01_re.val[1], mu_re.val[0], g01_re.val[0]);
 
@@ -1215,7 +1162,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(fpr *restrict d
     vfmul(g01_re.val[2], g01_re.val[2], mu_re.val[0]);
     g01_re.val[0] = vpaddq_f64(g01_re.val[1], g01_re.val[2]);
 
-#endif
+    #endif
     vload(g11_re.val[0], &g11[0]);
 
     vfsub(g11_re.val[0], g11_re.val[0], g01_re.val[0]);
@@ -1226,8 +1173,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(fpr *restrict d
 }
 
 static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log2(fpr *restrict d11, fpr *restrict l10,
-                                            const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11)
-{
+        const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11) {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
     float64x2x4_t mu_re, mu_im, m, d_re, d_im;
     float64x2x2_t tmp;
@@ -1275,8 +1221,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log2(fpr *restrict d
 }
 
 static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log3(fpr *restrict d11, fpr *restrict l10,
-                                            const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11)
-{
+        const fpr *restrict g00, const fpr *restrict g01, const fpr *restrict g11) {
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re;
     float64x2x4_t mu_re, mu_im, m, d_re;
     //  n = 8; hn = 4
@@ -1336,16 +1281,14 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log3(fpr *restrict d
 }
 
 void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l10,
-                         const fpr *restrict g00, const fpr *restrict g01,
-                         const fpr *restrict g11, unsigned logn)
-{
+        const fpr *restrict g00, const fpr *restrict g01,
+        const fpr *restrict g11, unsigned logn) {
     const int falcon_n = 1 << logn;
     const int hn = falcon_n >> 1;
     float64x2x4_t g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
     float64x2x4_t mu_re, mu_im, m, d_re, d_im;
 
-    switch (logn)
-    {
+    switch (logn) {
     case 1:
         PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft_log1(d11, l10, g00, g01, g11);
         break;
@@ -1359,8 +1302,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l
         break;
 
     default:
-        for (int i = 0; i < hn; i += 8)
-        {
+        for (int i = 0; i < hn; i += 8) {
             vloadx4(g00_re, &g00[i]);
             vloadx4(g00_im, &g00[i + hn]);
 
@@ -1453,16 +1395,14 @@ void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l
     }
 }
 
-void PQCLEAN_FALCON512_AARCH64_poly_fpr_of_s16(fpr *t0, const uint16_t *hm, const unsigned falcon_n)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_fpr_of_s16(fpr *t0, const uint16_t *hm, const unsigned falcon_n) {
     float64x2x4_t neon_t0;
     uint16x8x4_t neon_hm;
     uint16x8_t neon_zero;
     uint32x4x4_t neon_hmu32[2];
     int64x2x4_t neon_hms64[4];
     neon_zero = vdupq_n_u16(0);
-    for (unsigned u = 0; u < falcon_n; u += 32)
-    {
+    for (unsigned u = 0; u < falcon_n; u += 32) {
         neon_hm = vld1q_u16_x4(&hm[u]);
         neon_hmu32[0].val[0] = (uint32x4_t)vzip1q_u16(neon_hm.val[0], neon_zero);
         neon_hmu32[0].val[1] = (uint32x4_t)vzip2q_u16(neon_hm.val[0], neon_zero);
@@ -1508,16 +1448,14 @@ void PQCLEAN_FALCON512_AARCH64_poly_fpr_of_s16(fpr *t0, const uint16_t *hm, cons
     }
 }
 
-fpr PQCLEAN_FALCON512_AARCH64_compute_bnorm(const fpr *rt1, const fpr *rt2)
-{
+fpr PQCLEAN_FALCON512_AARCH64_compute_bnorm(const fpr *rt1, const fpr *rt2) {
     float64x2x4_t r1, r11, r2, r22;
     float64x2x4_t bnorm, bnorm2;
 
     vfdupx4(bnorm, 0);
     vfdupx4(bnorm2, 0);
 
-    for (int i = 0; i < FALCON_N;)
-    {
+    for (int i = 0; i < FALCON_N;) {
         vloadx4(r1, &rt1[i]);
         i += 8;
 
@@ -1535,8 +1473,7 @@ fpr PQCLEAN_FALCON512_AARCH64_compute_bnorm(const fpr *rt1, const fpr *rt2)
         vfmla(bnorm2.val[3], bnorm2.val[3], r11.val[3], r11.val[3]);
     }
 
-    for (int i = 0; i < FALCON_N;)
-    {
+    for (int i = 0; i < FALCON_N;) {
         vloadx4(r2, &rt2[i]);
         i += 8;
 

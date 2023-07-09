@@ -54,8 +54,7 @@
  * 2^logn. The size is expressed in the number of elements.
  */
 static inline unsigned
-ffLDL_treesize(unsigned logn)
-{
+ffLDL_treesize(unsigned logn) {
     /*
      * For logn = 0 (polynomials are constant), the "tree" is a
      * single element. Otherwise, the tree node has size 2^logn, and
@@ -77,8 +76,7 @@ ffLDL_treesize(unsigned logn)
  */
 static void
 ffLDL_fft_inner(fpr *restrict tree,
-    fpr *restrict g0, fpr *restrict g1, unsigned logn, fpr *restrict tmp)
-{
+                fpr *restrict g0, fpr *restrict g1, unsigned logn, fpr *restrict tmp) {
     size_t n, hn;
 
     n = MKN(logn);
@@ -109,9 +107,9 @@ ffLDL_fft_inner(fpr *restrict tree,
      * quasicyclic matrix for the next recursive step.
      */
     ffLDL_fft_inner(tree + n,
-        g1, g1 + hn, logn - 1, tmp);
+                    g1, g1 + hn, logn - 1, tmp);
     ffLDL_fft_inner(tree + n + ffLDL_treesize(logn - 1),
-        g0, g0 + hn, logn - 1, tmp);
+                    g0, g0 + hn, logn - 1, tmp);
 }
 
 /*
@@ -127,9 +125,8 @@ ffLDL_fft_inner(fpr *restrict tree,
  */
 static void
 ffLDL_fft(fpr *restrict tree, const fpr *restrict g00,
-    const fpr *restrict g01, const fpr *restrict g11,
-    unsigned logn, fpr *restrict tmp)
-{
+          const fpr *restrict g01, const fpr *restrict g11,
+          unsigned logn, fpr *restrict tmp) {
     size_t n, hn;
     fpr *d00, *d11;
 
@@ -143,11 +140,11 @@ ffLDL_fft(fpr *restrict tree, const fpr *restrict g00,
     d11 = tmp + n;
     tmp += n << 1;
 
-    memcpy(d00, g00, n * sizeof *g00);
+    memcpy(d00, g00, n * sizeof * g00);
     PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(d11, tree, g00, g01, g11, logn);
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(tmp, tmp + hn, d00, logn);
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(d00, d00 + hn, d11, logn);
-    memcpy(d11, tmp, n * sizeof *tmp);
+    memcpy(d11, tmp, n * sizeof * tmp);
 
     ffLDL_fft_inner(tree + n, d11, d11 + hn, logn - 1, tmp);
     ffLDL_fft_inner(tree + n + ffLDL_treesize(logn - 1), d00, d00 + hn, logn - 1, tmp);
@@ -159,8 +156,7 @@ ffLDL_fft(fpr *restrict tree, const fpr *restrict g00,
  * sigma / sqrt(x).
  */
 static void
-ffLDL_binary_normalize(fpr *tree, unsigned orig_logn, unsigned logn)
-{
+ffLDL_binary_normalize(fpr *tree, unsigned orig_logn, unsigned logn) {
     /*
      * TODO: make an iterative version.
      */
@@ -173,15 +169,15 @@ ffLDL_binary_normalize(fpr *tree, unsigned orig_logn, unsigned logn)
          * the value mandated by the specification: this
          * saves a division both here and in the sampler.
          */
-#if FALCON_LOGN == 9
+        #if FALCON_LOGN == 9
         tree[0] = fpr_mul(fpr_sqrt(tree[0]), fpr_inv_sigma_9);
-#elif FALCON_LOGN == 10
+        #elif FALCON_LOGN == 10
         tree[0] = fpr_mul(fpr_sqrt(tree[0]), fpr_inv_sigma_10);
-#endif
+        #endif
     } else {
         ffLDL_binary_normalize(tree + n, orig_logn, logn - 1);
         ffLDL_binary_normalize(tree + n + ffLDL_treesize(logn - 1),
-            orig_logn, logn - 1);
+                               orig_logn, logn - 1);
     }
 }
 
@@ -194,43 +190,37 @@ ffLDL_binary_normalize(fpr *tree, unsigned orig_logn, unsigned logn)
  */
 
 static inline size_t
-skoff_b00(unsigned logn)
-{
+skoff_b00(unsigned logn) {
     (void)logn;
     return 0;
 }
 
 static inline size_t
-skoff_b01(unsigned logn)
-{
+skoff_b01(unsigned logn) {
     return MKN(logn);
 }
 
 static inline size_t
-skoff_b10(unsigned logn)
-{
+skoff_b10(unsigned logn) {
     return 2 * MKN(logn);
 }
 
 static inline size_t
-skoff_b11(unsigned logn)
-{
+skoff_b11(unsigned logn) {
     return 3 * MKN(logn);
 }
 
 static inline size_t
-skoff_tree(unsigned logn)
-{
+skoff_tree(unsigned logn) {
     return 4 * MKN(logn);
 }
 
 /* see inner.h */
 void
 PQCLEAN_FALCON512_AARCH64_expand_privkey(fpr *restrict expanded_key,
-    const int8_t *f, const int8_t *g,
-    const int8_t *F, const int8_t *G,
-    uint8_t *restrict tmp)
-{
+        const int8_t *f, const int8_t *g,
+        const int8_t *F, const int8_t *G,
+        uint8_t *restrict tmp) {
     fpr *rf, *rg, *rF, *rG;
     fpr *b00, *b01, *b10, *b11;
     fpr *g00, *g01, *g11, *gxx;
@@ -286,13 +276,13 @@ PQCLEAN_FALCON512_AARCH64_expand_privkey(fpr *restrict expanded_key,
 
     PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(g00, b00, FALCON_LOGN);
     PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(g00, g00, b01, FALCON_LOGN);
-        
+
     PQCLEAN_FALCON512_AARCH64_poly_muladj_fft(g01, b00, b10, FALCON_LOGN);
     PQCLEAN_FALCON512_AARCH64_poly_muladj_add_fft(g01, g01, b01, b11, FALCON_LOGN);
-    
+
     PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(g11, b10, FALCON_LOGN);
     PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_add_fft(g11, g11, b11, FALCON_LOGN);
-    
+
     /*
      * Compute the Falcon tree.
      */
@@ -314,10 +304,9 @@ typedef int (*samplerZ)(void *ctx, fpr mu, fpr sigma);
  */
 static void
 ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
-    fpr *restrict t0, fpr *restrict t1,
-    fpr *restrict g00, fpr *restrict g01, fpr *restrict g11,
-    unsigned orig_logn, unsigned logn, fpr *restrict tmp)
-{
+                       fpr *restrict t0, fpr *restrict t1,
+                       fpr *restrict g00, fpr *restrict g01, fpr *restrict g11,
+                       unsigned orig_logn, unsigned logn, fpr *restrict tmp) {
     size_t n, hn;
     fpr *z0, *z1;
 
@@ -330,11 +319,11 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
         fpr leaf;
 
         leaf = g00[0];
-#if FALCON_LOGN == 9
+        #if FALCON_LOGN == 9
         leaf = fpr_mul(fpr_sqrt(leaf), fpr_inv_sigma_9);
-#elif FALCON_LOGN == 10
+        #elif FALCON_LOGN == 10
         leaf = fpr_mul(fpr_sqrt(leaf), fpr_inv_sigma_10);
-#endif
+        #endif
         t0[0] = fpr_of(samp(samp_ctx, t0[0], leaf));
         t1[0] = fpr_of(samp(samp_ctx, t1[0], leaf));
         return;
@@ -354,12 +343,12 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
      * Gram matrices. We also save l10 in tmp[].
      */
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(tmp, tmp + hn, g00, logn);
-    memcpy(g00, tmp, n * sizeof *tmp);
+    memcpy(g00, tmp, n * sizeof * tmp);
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(tmp, tmp + hn, g11, logn);
-    memcpy(g11, tmp, n * sizeof *tmp);
-    memcpy(tmp, g01, n * sizeof *g01);
-    memcpy(g01, g00, hn * sizeof *g00);
-    memcpy(g01 + hn, g11, hn * sizeof *g00);
+    memcpy(g11, tmp, n * sizeof * tmp);
+    memcpy(tmp, g01, n * sizeof * g01);
+    memcpy(g01, g00, hn * sizeof * g00);
+    memcpy(g01 + hn, g11, hn * sizeof * g00);
 
     /*
      * The half-size Gram matrices for the recursive LDL tree
@@ -377,7 +366,7 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
     z1 = tmp + n;
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(z1, z1 + hn, t1, logn);
     ffSampling_fft_dyntree(samp, samp_ctx, z1, z1 + hn,
-        g11, g11 + hn, g01 + hn, orig_logn, logn - 1, z1 + n);
+                           g11, g11 + hn, g01 + hn, orig_logn, logn - 1, z1 + n);
     PQCLEAN_FALCON512_AARCH64_poly_merge_fft(tmp + (n << 1), z1, z1 + hn, logn);
 
     /*
@@ -388,7 +377,7 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
      * In the end, z1 is written over t1, and tb0 is in t0.
      */
     PQCLEAN_FALCON512_AARCH64_poly_sub(z1, t1, tmp + (n << 1), logn);
-    memcpy(t1, tmp + (n << 1), n * sizeof *tmp);
+    memcpy(t1, tmp + (n << 1), n * sizeof * tmp);
     PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(t0, t0, tmp, z1, logn);
 
     /*
@@ -398,7 +387,7 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
     z0 = tmp;
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(z0, z0 + hn, t0, logn);
     ffSampling_fft_dyntree(samp, samp_ctx, z0, z0 + hn,
-        g00, g00 + hn, g01, orig_logn, logn - 1, z0 + n);
+                           g00, g00 + hn, g01, orig_logn, logn - 1, z0 + n);
     PQCLEAN_FALCON512_AARCH64_poly_merge_fft(t0, z0, z0 + hn, logn);
 }
 
@@ -408,11 +397,10 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
  */
 static void
 ffSampling_fft(samplerZ samp, void *samp_ctx,
-    fpr *restrict z0, fpr *restrict z1,
-    const fpr *restrict tree,
-    const fpr *restrict t0, const fpr *restrict t1, unsigned logn,
-    fpr *restrict tmp)
-{
+               fpr *restrict z0, fpr *restrict z1,
+               const fpr *restrict tree,
+               const fpr *restrict t0, const fpr *restrict t1, unsigned logn,
+               fpr *restrict tmp) {
     size_t n, hn;
     const fpr *tree0, *tree1;
 
@@ -425,7 +413,7 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
 
         tree0 = tree + 4;
         tree1 = tree + 8;
-        
+
         /*
          * We split t1 into w*, then do the recursive invocation,
          * with output in w*. We finally merge back into z1.
@@ -556,7 +544,7 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
      * of course way too insecure to be of any use).
      */
     if (logn == 1) {
-#if COMPLEX == 1
+        #if COMPLEX == 1
         float64x2_t x, y, a, b, c, w;
         fpr buf[2];
 
@@ -567,7 +555,7 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
         vload(x, &t1[0]);
         vload(y, &z1[0]);
         vload(b, &tree[0]);
-        
+
         vfsub(a, x, y);
         vfmul_lane(c, b, a, 0);
         vfcmla_90(c, a, b);
@@ -578,7 +566,7 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
         z0[0] = fpr_of(samp(samp_ctx, buf[0], tree[2]));
         z0[1] = fpr_of(samp(samp_ctx, buf[1], tree[2]));
 
-#else 
+        #else
         fpr x0, x1, y0, y1, sigma;
         fpr a_re, a_im, b_re, b_im, c_re, c_im;
 
@@ -598,7 +586,7 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
         sigma = tree[2];
         z0[0] = fpr_of(samp(samp_ctx, x0, sigma));
         z0[1] = fpr_of(samp(samp_ctx, x1, sigma));
-#endif
+        #endif
 
         return;
     }
@@ -619,7 +607,7 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
      */
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(z1, z1 + hn, t1, logn);
     ffSampling_fft(samp, samp_ctx, tmp, tmp + hn,
-        tree1, z1, z1 + hn, logn - 1, tmp + n);
+                   tree1, z1, z1 + hn, logn - 1, tmp + n);
     PQCLEAN_FALCON512_AARCH64_poly_merge_fft(z1, tmp, tmp + hn, logn);
 
     /*
@@ -633,7 +621,7 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
      */
     PQCLEAN_FALCON512_AARCH64_poly_split_fft(z0, z0 + hn, tmp, logn);
     ffSampling_fft(samp, samp_ctx, tmp, tmp + hn,
-        tree0, z0, z0 + hn, logn - 1, tmp + n);
+                   tree0, z0, z0 + hn, logn - 1, tmp + n);
     PQCLEAN_FALCON512_AARCH64_poly_merge_fft(z0, tmp, tmp + hn, logn);
 }
 
@@ -649,9 +637,8 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
  */
 static int
 do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
-    const fpr *restrict expanded_key,
-    const uint16_t *hm, fpr *restrict tmp)
-{
+             const fpr *restrict expanded_key,
+             const uint16_t *hm, fpr *restrict tmp) {
     fpr *t0, *t1, *tx, *ty;
     const fpr *b00, *b01, *b10, *b11, *tree;
     fpr ni;
@@ -683,7 +670,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
 
     tx = t1 + FALCON_N;
     ty = tx + FALCON_N;
-    
+
     /*
      * Apply sampling. Output is written back in [tx, ty].
      */
@@ -699,7 +686,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
     PQCLEAN_FALCON512_AARCH64_poly_mul_fft(t1, tx, b01, FALCON_LOGN);
     PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(t1, t1, ty, b11, FALCON_LOGN);
     PQCLEAN_FALCON512_AARCH64_iFFT(t1, FALCON_LOGN);
-    
+
     /*
      * Compute the signature.
      */
@@ -717,9 +704,9 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
     s1tmp = (int16_t *)tx;
     s2tmp = (int16_t *)tmp;
 
-    if (PQCLEAN_FALCON512_AARCH64_is_short_tmp(s1tmp, s2tmp, (int16_t *) hm, t0, t1)){
-        memcpy(s2, s2tmp, FALCON_N * sizeof *s2);
-        memcpy(tmp, s1tmp, FALCON_N * sizeof *s1tmp);
+    if (PQCLEAN_FALCON512_AARCH64_is_short_tmp(s1tmp, s2tmp, (int16_t *) hm, t0, t1)) {
+        memcpy(s2, s2tmp, FALCON_N * sizeof * s2);
+        memcpy(tmp, s1tmp, FALCON_N * sizeof * s1tmp);
         return 1;
     }
     return 0;
@@ -736,10 +723,9 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
  */
 static int
 do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
-    const int8_t *restrict f, const int8_t *restrict g,
-    const int8_t *restrict F, const int8_t *restrict G,
-    const uint16_t *hm, fpr *restrict tmp)
-{
+            const int8_t *restrict f, const int8_t *restrict g,
+            const int8_t *restrict F, const int8_t *restrict G,
+            const uint16_t *hm, fpr *restrict tmp) {
     fpr *t0, *t1, *tx, *ty;
     fpr *b00, *b01, *b10, *b11, *g00, *g01, *g11;
     fpr ni;
@@ -782,8 +768,8 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      *
      * We _replace_ the matrix B with the Gram matrix, but we
      * must keep b01 and b11 for computing the target vector.
-     * 
-     * Memory layout: 
+     *
+     * Memory layout:
      * b00 | b01 | b10 | b11 | t0 | t1
      * g00 | g01 | g11 | b01 | t0 | t1
      */
@@ -793,8 +779,8 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(t0, b01, FALCON_LOGN);    // t0 <- b01*adj(b01)
     PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(b00, b00, FALCON_LOGN);   // b00 <- b00*adj(b00)
     PQCLEAN_FALCON512_AARCH64_poly_add(b00, b00, t0, FALCON_LOGN);      // b00 <- g00
-    
-    memcpy(t0, b01, FALCON_N * sizeof *b01);
+
+    memcpy(t0, b01, FALCON_N * sizeof * b01);
     PQCLEAN_FALCON512_AARCH64_poly_muladj_add_fft(b01, t1, b01, b11, FALCON_LOGN);  // b01 <- b01*adj(b11)
 
     PQCLEAN_FALCON512_AARCH64_poly_mulselfadj_fft(b10, b10, FALCON_LOGN);   // b10 <- b10*adj(b10)
@@ -822,7 +808,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      */
     PQCLEAN_FALCON512_AARCH64_poly_fpr_of_s16(t0, hm, FALCON_N);
 
-    
+
     /*
      * Apply the lattice basis to obtain the real target
      * vector (after normalization with regards to modulus).
@@ -833,13 +819,13 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     PQCLEAN_FALCON512_AARCH64_poly_mulconst(t1, t1, fpr_neg(ni), FALCON_LOGN);
     PQCLEAN_FALCON512_AARCH64_poly_mul_fft(t0, t0, b11, FALCON_LOGN);
     PQCLEAN_FALCON512_AARCH64_poly_mulconst(t0, t0, ni, FALCON_LOGN);
-  
+
     /*
      * b01 and b11 can be discarded, so we move back (t0,t1).
      * Memory layout is now:
      *      g00 g01 g11 t0 t1
      */
-    memcpy(b11, t0, FALCON_N * 2 * sizeof *t0);
+    memcpy(b11, t0, FALCON_N * 2 * sizeof * t0);
     t0 = g11 + FALCON_N;
     t1 = t0 + FALCON_N;
 
@@ -848,8 +834,8 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      * t1, g00
      */
     ffSampling_fft_dyntree(samp, samp_ctx,
-        t0, t1, g00, g01, g11, FALCON_LOGN, FALCON_LOGN, t1 + FALCON_N);
-    
+                           t0, t1, g00, g01, g11, FALCON_LOGN, FALCON_LOGN, t1 + FALCON_N);
+
     /*
      * We arrange the layout back to:
      *     b00 b01 b10 b11 t0 t1
@@ -861,7 +847,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     b01 = b00 + FALCON_N;
     b10 = b01 + FALCON_N;
     b11 = b10 + FALCON_N;
-    memmove(b11 + FALCON_N, t0, FALCON_N * 2 * sizeof *t0);
+    memmove(b11 + FALCON_N, t0, FALCON_N * 2 * sizeof * t0);
     t0 = b11 + FALCON_N;
     t1 = t0 + FALCON_N;
 
@@ -907,10 +893,10 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      */
     s1tmp = (int16_t *)tx;
     s2tmp = (int16_t *)tmp;
-    
-    if (PQCLEAN_FALCON512_AARCH64_is_short_tmp(s1tmp, s2tmp, (int16_t *) hm, t0, t1)){
-        memcpy(s2, s2tmp, FALCON_N * sizeof *s2);
-        memcpy(tmp, s1tmp, FALCON_N * sizeof *s1tmp);
+
+    if (PQCLEAN_FALCON512_AARCH64_is_short_tmp(s1tmp, s2tmp, (int16_t *) hm, t0, t1)) {
+        memcpy(s2, s2tmp, FALCON_N * sizeof * s2);
+        memcpy(tmp, s1tmp, FALCON_N * sizeof * s1tmp);
         return 1;
     }
     return 0;
@@ -920,9 +906,8 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
 /* see inner.h */
 void
 PQCLEAN_FALCON512_AARCH64_sign_tree(int16_t *sig, inner_shake256_context *rng,
-    const fpr *restrict expanded_key,
-    const uint16_t *hm, uint8_t *tmp)
-{
+                                    const fpr *restrict expanded_key,
+                                    const uint16_t *hm, uint8_t *tmp) {
     fpr *ftmp;
 
     ftmp = (fpr *)tmp;
@@ -945,13 +930,13 @@ PQCLEAN_FALCON512_AARCH64_sign_tree(int16_t *sig, inner_shake256_context *rng,
          * Normal sampling. We use a fast PRNG seeded from our
          * SHAKE context ('rng').
          */
-#if FALCON_LOGN == 9
+        #if FALCON_LOGN == 9
         spc.sigma_min = fpr_sigma_min_9;
-#elif FALCON_LOGN == 10
+        #elif FALCON_LOGN == 10
         spc.sigma_min = fpr_sigma_min_10;
-#else 
+        #else
 #error "Support 512, 1024 only"
-#endif
+        #endif
         PQCLEAN_FALCON512_AARCH64_prng_init(&spc.p, rng);
         samp = PQCLEAN_FALCON512_AARCH64_sampler;
         samp_ctx = &spc;
@@ -959,8 +944,7 @@ PQCLEAN_FALCON512_AARCH64_sign_tree(int16_t *sig, inner_shake256_context *rng,
         /*
          * Do the actual signature.
          */
-        if (do_sign_tree(samp, samp_ctx, sig, expanded_key, hm, ftmp))
-        {
+        if (do_sign_tree(samp, samp_ctx, sig, expanded_key, hm, ftmp)) {
             break;
         }
     }
@@ -969,10 +953,9 @@ PQCLEAN_FALCON512_AARCH64_sign_tree(int16_t *sig, inner_shake256_context *rng,
 /* see inner.h */
 void
 PQCLEAN_FALCON512_AARCH64_sign_dyn(int16_t *sig, inner_shake256_context *rng,
-    const int8_t *restrict f, const int8_t *restrict g,
-    const int8_t *restrict F, const int8_t *restrict G,
-    const uint16_t *hm, uint8_t *tmp)
-{
+                                   const int8_t *restrict f, const int8_t *restrict g,
+                                   const int8_t *restrict F, const int8_t *restrict G,
+                                   const uint16_t *hm, uint8_t *tmp) {
     fpr *ftmp;
 
     ftmp = (fpr *)tmp;
@@ -996,13 +979,13 @@ PQCLEAN_FALCON512_AARCH64_sign_dyn(int16_t *sig, inner_shake256_context *rng,
          * Normal sampling. We use a fast PRNG seeded from our
          * SHAKE context ('rng').
          */
-#if FALCON_LOGN == 9
+        #if FALCON_LOGN == 9
         spc.sigma_min = fpr_sigma_min_9;
-#elif FALCON_LOGN == 10
+        #elif FALCON_LOGN == 10
         spc.sigma_min = fpr_sigma_min_10;
-#else 
+        #else
 #error "Support 512, 1024 only"
-#endif
+        #endif
         PQCLEAN_FALCON512_AARCH64_prng_init(&spc.p, rng);
         samp = PQCLEAN_FALCON512_AARCH64_sampler;
         samp_ctx = &spc;
@@ -1010,8 +993,7 @@ PQCLEAN_FALCON512_AARCH64_sign_dyn(int16_t *sig, inner_shake256_context *rng,
         /*
          * Do the actual signature.
          */
-        if (do_sign_dyn(samp, samp_ctx, sig, f, g, F, G, hm, ftmp))
-        {
+        if (do_sign_dyn(samp, samp_ctx, sig, f, g, F, G, hm, ftmp)) {
             break;
         }
     }

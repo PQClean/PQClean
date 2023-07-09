@@ -237,8 +237,8 @@ int PQCLEAN_FALCON512_AARCH64_is_short(const int16_t *s1, const int16_t *s2);
  * acceptable), 0 otherwise.
  */
 int PQCLEAN_FALCON512_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
-                      const int16_t *hm, const double *t0,
-                      const double *t1);
+        const int16_t *hm, const double *t0,
+        const double *t1);
 
 /* ==================================================================== */
 /*
@@ -266,7 +266,7 @@ void PQCLEAN_FALCON512_AARCH64_to_ntt_monty(int16_t *h);
  * tmp[] must have 16-bit alignment.
  */
 int PQCLEAN_FALCON512_AARCH64_verify_raw(const int16_t *c0, const int16_t *s2,
-                                         int16_t *h, int16_t *tmp);
+        int16_t *h, int16_t *tmp);
 
 /*
  * Compute the public key h[], given the private key elements f[] and
@@ -277,8 +277,8 @@ int PQCLEAN_FALCON512_AARCH64_verify_raw(const int16_t *c0, const int16_t *s2,
  * The tmp[] array must have room for at least 2*2^logn elements.
  * tmp[] must have 16-bit alignment.
  */
-int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f, 
-                                             const int8_t *g, int16_t *tmp);
+int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f,
+        const int8_t *g, int16_t *tmp);
 
 /*
  * Recompute the fourth private key element. Private key consists in
@@ -292,8 +292,8 @@ int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f,
  * tmp[] must have 16-bit alignment.
  */
 int PQCLEAN_FALCON512_AARCH64_complete_private(int8_t *G, const int8_t *f,
-                         const int8_t *g, const int8_t *F,
-	                     uint8_t *tmp);
+        const int8_t *g, const int8_t *F,
+        uint8_t *tmp);
 
 /*
  * Test whether a given polynomial is invertible modulo phi and q.
@@ -332,8 +332,8 @@ int PQCLEAN_FALCON512_AARCH64_count_nttzero(const int16_t *sig, uint8_t *tmp);
  * tmp[] must have 16-bit alignment.
  */
 int PQCLEAN_FALCON512_AARCH64_verify_recover(int16_t *h, const int16_t *c0,
-                       const int16_t *s1, const int16_t *s2,
-                       uint8_t *tmp);
+        const int16_t *s1, const int16_t *s2,
+        uint8_t *tmp);
 
 /* ==================================================================== */
 /*
@@ -602,7 +602,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mul_add_fft(fpr *c, const fpr *a, const fpr 
  */
 void PQCLEAN_FALCON512_AARCH64_poly_muladj_fft(fpr *d, fpr *a, const fpr *restrict b, unsigned logn);
 void PQCLEAN_FALCON512_AARCH64_poly_muladj_add_fft(fpr *c, fpr *d,
-                              const fpr *a, const fpr *restrict b, unsigned logn);
+        const fpr *a, const fpr *restrict b, unsigned logn);
 /*
  * Multiply polynomial with its own adjoint. This function works only in FFT
  * representation.
@@ -619,7 +619,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_mulconst(fpr *c, const fpr *a, const fpr x, 
  * Divide polynomial a by polynomial b, modulo X^N+1 (FFT representation).
  * a and b MUST NOT overlap.
  */
-void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c,const fpr *restrict a, const fpr *restrict b, unsigned logn);
+void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c, const fpr *restrict a, const fpr *restrict b, unsigned logn);
 
 /*
  * Given f and g (in FFT representation), compute 1/(f*adj(f)+g*adj(g))
@@ -630,7 +630,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_div_fft(fpr *restrict c,const fpr *restrict 
  * Array d MUST NOT overlap with either a or b.
  */
 void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d,
-	const fpr *restrict a, const fpr *restrict b, unsigned logn);
+        const fpr *restrict a, const fpr *restrict b, unsigned logn);
 
 /*
  * Given F, G, f and g (in FFT representation), compute F*adj(f)+G*adj(g)
@@ -638,8 +638,8 @@ void PQCLEAN_FALCON512_AARCH64_poly_invnorm2_fft(fpr *restrict d,
  * any of the source arrays.
  */
 void PQCLEAN_FALCON512_AARCH64_poly_add_muladj_fft(fpr *restrict d,
-	const fpr *restrict F, const fpr *restrict G,
-	const fpr *restrict f, const fpr *restrict g, unsigned logn);
+        const fpr *restrict F, const fpr *restrict G,
+        const fpr *restrict f, const fpr *restrict g, unsigned logn);
 
 /*
  * Multiply polynomial a by polynomial b, where b is autoadjoint. Both
@@ -666,7 +666,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_div_autoadj_fft(fpr *c, const fpr *a, const 
  * (In fact, d00 = g00, so the g00 operand is left unmodified.)
  */
 void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00,
-	fpr *restrict g01, fpr *restrict g11, unsigned logn);
+        fpr *restrict g01, fpr *restrict g11, unsigned logn);
 
 /*
  * Perform an LDL decomposition of an auto-adjoint matrix G, in FFT
@@ -675,8 +675,8 @@ void PQCLEAN_FALCON512_AARCH64_poly_LDL_fft(const fpr *restrict g00,
  * in two other separate buffers provided as extra parameters.
  */
 void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l10,
-	const fpr *restrict g00, const fpr *restrict g01,
-	const fpr *restrict g11, unsigned logn);
+        const fpr *restrict g00, const fpr *restrict g01,
+        const fpr *restrict g11, unsigned logn);
 
 /*
  * Apply "split" operation on a polynomial in FFT representation:
@@ -684,7 +684,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_LDLmv_fft(fpr *restrict d11, fpr *restrict l
  * (polynomials modulo X^(N/2)+1). f0, f1 and f MUST NOT overlap.
  */
 void PQCLEAN_FALCON512_AARCH64_poly_split_fft(fpr *restrict f0, fpr *restrict f1,
-	const fpr *restrict f, unsigned logn);
+        const fpr *restrict f, unsigned logn);
 
 /*
  * Apply "merge" operation on two polynomials in FFT representation:
@@ -693,7 +693,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_split_fft(fpr *restrict f0, fpr *restrict f1
  * f MUST NOT overlap with either f0 or f1.
  */
 void PQCLEAN_FALCON512_AARCH64_poly_merge_fft(fpr *restrict f,
-	const fpr *restrict f0, const fpr *restrict f1, unsigned logn);
+        const fpr *restrict f0, const fpr *restrict f1, unsigned logn);
 
 void PQCLEAN_FALCON512_AARCH64_poly_fpr_of_s16(fpr *t0, const uint16_t *hm, const unsigned falcon_n);
 
@@ -737,8 +737,8 @@ int32_t PQCLEAN_FALCON512_AARCH64_poly_small_sqnorm(const int8_t *f); // common.
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON512_AARCH64_keygen(inner_shake256_context *rng,
-                                    int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
-                                    unsigned logn, uint8_t *tmp);
+                                      int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
+                                      unsigned logn, uint8_t *tmp);
 
 /* ==================================================================== */
 /*
@@ -756,8 +756,8 @@ void PQCLEAN_FALCON512_AARCH64_keygen(inner_shake256_context *rng,
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON512_AARCH64_expand_privkey(fpr *restrict expanded_key,
-	const int8_t *f, const int8_t *g, const int8_t *F, const int8_t *G,
-	uint8_t *restrict tmp);
+        const int8_t *f, const int8_t *g, const int8_t *F, const int8_t *G,
+        uint8_t *restrict tmp);
 
 /*
  * Compute a signature over the provided hashed message (hm); the
@@ -775,8 +775,8 @@ void PQCLEAN_FALCON512_AARCH64_expand_privkey(fpr *restrict expanded_key,
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON512_AARCH64_sign_tree(int16_t *sig, inner_shake256_context *rng,
-                                         const fpr *restrict expanded_key,
-                                         const uint16_t *hm, uint8_t *tmp);
+        const fpr *restrict expanded_key,
+        const uint16_t *hm, uint8_t *tmp);
 
 /*
  * Compute a signature over the provided hashed message (hm); the

@@ -26,8 +26,7 @@
 /*
  * 1 layer of Merge FFT for 2 complex points (4 coefficients).
  */
-static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log2(fpr *f, const fpr *f0, const fpr *f1)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log2(fpr *f, const fpr *f0, const fpr *f1) {
     fpr a_re, a_im, b_re, b_im, d_re, d_im, s;
     a_re = f0[0];
     a_im = f0[1];
@@ -47,8 +46,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log2(fpr *f, const fp
 /*
  * Vectorized 1 layer of Merge FFT for 4 complex points (8 coefficients).
  */
-static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log3(fpr *f, const fpr *f0, const fpr *f1)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log3(fpr *f, const fpr *f0, const fpr *f1) {
     // Total SIMD registers: 12 = 10 + 2
     float64x2x2_t g1, g0, g_re, g_im, s_re_im; // 10
     float64x2_t t_re, t_im;                    // 2
@@ -71,8 +69,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log3(fpr *f, const fp
 /*
  * Vectorized 1 layer of Merge FFT for 8 complex points (16 coefficients).
  */
-static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log4(fpr *f, const fpr *f0, const fpr *f1, const unsigned logn)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log4(fpr *f, const fpr *f0, const fpr *f1, const unsigned logn) {
     const unsigned n = 1 << logn;
     const unsigned ht = n >> 2;
     const fpr *fpr_merge = fpr_table[logn];
@@ -81,8 +78,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log4(fpr *f, const fp
     float64x2x2_t g1_re, g1_im, g0_re, g0_im, s_re_im, t_re, t_im; // 14
     float64x2x4_t g_re, g_im;                                      // 8
 
-    for (unsigned j = 0; j < ht; j += 4)
-    {
+    for (unsigned j = 0; j < ht; j += 4) {
         vload2(g1_re, &f1[j]);
         vload2(g1_im, &f1[j + ht]);
 
@@ -108,8 +104,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_mergeFFT_log4(fpr *f, const fp
  * 1 layer of Split FFT for 2 complex points (4 coefficients).
  */
 static void
-PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log2(fpr *restrict f0, fpr *restrict f1, const fpr *restrict f)
-{
+PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log2(fpr *restrict f0, fpr *restrict f1, const fpr *restrict f) {
     fpr a_re, a_im, b_re, b_im, d_re, d_im, s;
     a_re = f[0];
     b_re = f[1];
@@ -130,8 +125,7 @@ PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log2(fpr *restrict f0, fpr *restrict f1,
 /*
  * Vectorized 1 layer of Split FFT for 4 complex points (8 coefficients).
  */
-static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log3(fpr *f0, fpr *f1, const fpr *f)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log3(fpr *f0, fpr *f1, const fpr *f) {
     // Total SIMD registers: 12
     float64x2x2_t re, im, g0, g1, s_re_im, tm; // 12
 
@@ -157,8 +151,7 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log3(fpr *f0, fpr *f1
 /*
  * Vectorized 1 layer of Split FFT for 8 complex points (16 coefficients).
  */
-static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log4(fpr *f0, fpr *f1, const fpr *f, const unsigned logn)
-{
+static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log4(fpr *f0, fpr *f1, const fpr *f, const unsigned logn) {
     const unsigned n = 1 << logn;
     const unsigned hn = n >> 1;
     const unsigned ht = n >> 2;
@@ -168,10 +161,9 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log4(fpr *f0, fpr *f1
     float64x2_t half;                                              // 1
     float64x2x4_t g_re, g_im;                                      // 8
     float64x2x2_t s_re_im, t_re, t_im, g1_re, g1_im, g0_re, g0_im; // 14
-    
+
     half = vdupq_n_f64(0.5);
-    for (unsigned j = 0; j < ht; j += 4)
-    {
+    for (unsigned j = 0; j < ht; j += 4) {
         unsigned j2 = j << 1;
         vload4(g_re, &f[j2]);
         vload4(g_im, &f[j2 + hn]);
@@ -206,10 +198,8 @@ static inline void PQCLEAN_FALCON512_AARCH64_poly_splitFFT_log4(fpr *f0, fpr *f1
 /*
  * Vectorized Split FFT implementation
  */
-void PQCLEAN_FALCON512_AARCH64_poly_split_fft(fpr *restrict f0, fpr *restrict f1, const fpr *f, const unsigned logn)
-{
-    switch (logn)
-    {
+void PQCLEAN_FALCON512_AARCH64_poly_split_fft(fpr *restrict f0, fpr *restrict f1, const fpr *f, const unsigned logn) {
+    switch (logn) {
     case 1:
         //  n = 2; hn = 1; qn = 0;
         f0[0] = f[0];
@@ -234,10 +224,8 @@ void PQCLEAN_FALCON512_AARCH64_poly_split_fft(fpr *restrict f0, fpr *restrict f1
  * Vectorized Merge FFT implementation
  */
 void PQCLEAN_FALCON512_AARCH64_poly_merge_fft(fpr *restrict f, const fpr *restrict f0,
-                         const fpr *restrict f1, const unsigned logn)
-{
-    switch (logn)
-    {
+        const fpr *restrict f1, const unsigned logn) {
+    switch (logn) {
     case 1:
         // n = 2; hn = 1;
         f[0] = f0[0];

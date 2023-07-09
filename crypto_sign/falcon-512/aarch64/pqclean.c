@@ -239,7 +239,7 @@ do_verify(
         return -1;
     }
     if (PQCLEAN_FALCON512_AARCH64_modq_decode( (uint16_t *) h,
-                                            pk + 1, PQCLEAN_FALCON512_AARCH64_CRYPTO_PUBLICKEYBYTES - 1, 9)
+            pk + 1, PQCLEAN_FALCON512_AARCH64_CRYPTO_PUBLICKEYBYTES - 1, 9)
             != PQCLEAN_FALCON512_AARCH64_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }

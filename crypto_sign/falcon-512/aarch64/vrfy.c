@@ -23,20 +23,17 @@
 #include "poly.h"
 
 /* see inner.h */
-void PQCLEAN_FALCON512_AARCH64_to_ntt(int16_t *h)
-{
+void PQCLEAN_FALCON512_AARCH64_to_ntt(int16_t *h) {
     PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_NONE);
 }
 
-void PQCLEAN_FALCON512_AARCH64_to_ntt_monty(int16_t *h)
-{
+void PQCLEAN_FALCON512_AARCH64_to_ntt_monty(int16_t *h) {
     PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_MONT);
 }
 
 /* see inner.h */
 int PQCLEAN_FALCON512_AARCH64_verify_raw(const int16_t *c0, const int16_t *s2,
-                   int16_t *h, int16_t *tmp)
-{
+        int16_t *h, int16_t *tmp) {
     int16_t *tt = tmp;
 
     /*
@@ -58,18 +55,16 @@ int PQCLEAN_FALCON512_AARCH64_verify_raw(const int16_t *c0, const int16_t *s2,
 }
 
 /* see inner.h */
-int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f, const int8_t *g, int16_t *tmp)
-{
+int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f, const int8_t *g, int16_t *tmp) {
     int16_t *tt = tmp;
 
     PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(h, g);
     PQCLEAN_FALCON512_AARCH64_poly_ntt(h, NTT_NONE);
-   
+
     PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(tt, f);
     PQCLEAN_FALCON512_AARCH64_poly_ntt(tt, NTT_MONT);
 
-    if (PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(tt))
-    {
+    if (PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(tt)) {
         return 0;
     }
     PQCLEAN_FALCON512_AARCH64_poly_div_12289(h, tt);
@@ -83,9 +78,8 @@ int PQCLEAN_FALCON512_AARCH64_compute_public(int16_t *h, const int8_t *f, const 
 
 /* see inner.h */
 int PQCLEAN_FALCON512_AARCH64_complete_private(int8_t *G, const int8_t *f,
-                         const int8_t *g, const int8_t *F,
-                         uint8_t *tmp)
-{
+        const int8_t *g, const int8_t *F,
+        uint8_t *tmp) {
     int16_t *t1, *t2;
 
     t1 = (int16_t *)tmp;
@@ -102,24 +96,21 @@ int PQCLEAN_FALCON512_AARCH64_complete_private(int8_t *G, const int8_t *f,
     PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(t2, f);
     PQCLEAN_FALCON512_AARCH64_poly_ntt(t2, NTT_MONT);
 
-    if (PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(t2))
-    {
+    if (PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(t2)) {
         return 0;
     }
     PQCLEAN_FALCON512_AARCH64_poly_div_12289(t1, t2);
 
     PQCLEAN_FALCON512_AARCH64_poly_invntt(t1, INVNTT_NINV);
 
-    if (PQCLEAN_FALCON512_AARCH64_poly_int16_to_int8(G, t1))
-    {
+    if (PQCLEAN_FALCON512_AARCH64_poly_int16_to_int8(G, t1)) {
         return 0;
     }
     return 1;
 }
 
 /* see inner.h */
-int PQCLEAN_FALCON512_AARCH64_is_invertible(const int16_t *s2, uint8_t *tmp)
-{
+int PQCLEAN_FALCON512_AARCH64_is_invertible(const int16_t *s2, uint8_t *tmp) {
     int16_t *tt = (int16_t *)tmp;
     uint16_t r;
 
@@ -133,9 +124,8 @@ int PQCLEAN_FALCON512_AARCH64_is_invertible(const int16_t *s2, uint8_t *tmp)
 
 /* see inner.h */
 int PQCLEAN_FALCON512_AARCH64_verify_recover(int16_t *h, const int16_t *c0,
-                       const int16_t *s1, const int16_t *s2,
-                       uint8_t *tmp)
-{
+        const int16_t *s1, const int16_t *s2,
+        uint8_t *tmp) {
     int16_t *tt = (int16_t *)tmp;
     uint16_t r;
 
@@ -167,13 +157,12 @@ int PQCLEAN_FALCON512_AARCH64_verify_recover(int16_t *h, const int16_t *c0,
      * check that the rebuilt public key matches the expected
      * value (e.g. through a hash).
      */
-    r = ~r & (uint16_t)-PQCLEAN_FALCON512_AARCH64_is_short(s1, s2);
+    r = ~r & (uint16_t) - PQCLEAN_FALCON512_AARCH64_is_short(s1, s2);
     return (int)(r >> 15);
 }
 
 /* see inner.h */
-int PQCLEAN_FALCON512_AARCH64_count_nttzero(const int16_t *sig, uint8_t *tmp)
-{
+int PQCLEAN_FALCON512_AARCH64_count_nttzero(const int16_t *sig, uint8_t *tmp) {
     int16_t *s2 = (int16_t *)tmp;
 
     memcpy(s2, sig, sizeof(int16_t) * FALCON_N);

@@ -33,11 +33,9 @@
 #include <stdio.h>
 #include "inner.h"
 
-int PQCLEAN_FALCON512_AARCH64_get_seed(void *seed, size_t len)
-{
+int PQCLEAN_FALCON512_AARCH64_get_seed(void *seed, size_t len) {
     unsigned char tmp[48];
-    for (size_t i = 0; i < len; i++)
-    {
+    for (size_t i = 0; i < len; i++) {
         tmp[i] = (unsigned char) i;
     }
     memcpy(seed, tmp, len);
@@ -48,8 +46,7 @@ int PQCLEAN_FALCON512_AARCH64_get_seed(void *seed, size_t len)
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512_AARCH64_prng_init(prng *p, inner_shake256_context *src)
-{
+PQCLEAN_FALCON512_AARCH64_prng_init(prng *p, inner_shake256_context *src) {
     /*
      * To ensure reproducibility for a given seed, we
      * must enforce little-endian interpretation of
@@ -90,8 +87,7 @@ PQCLEAN_FALCON512_AARCH64_prng_init(prng *p, inner_shake256_context *src)
  * The block counter is XORed into the first 8 bytes of the IV.
  */
 void
-PQCLEAN_FALCON512_AARCH64_prng_refill(prng *p)
-{
+PQCLEAN_FALCON512_AARCH64_prng_refill(prng *p) {
 
     static const uint32_t CW[] = {
         0x61707865, 0x3320646e, 0x79622d32, 0x6b206574
@@ -151,9 +147,9 @@ PQCLEAN_FALCON512_AARCH64_prng_refill(prng *p)
             state[v] += ((uint32_t *)p->state.d)[v - 4];
         }
         state[14] += ((uint32_t *)p->state.d)[10]
-            ^ (uint32_t)cc;
+                     ^ (uint32_t)cc;
         state[15] += ((uint32_t *)p->state.d)[11]
-            ^ (uint32_t)(cc >> 32);
+                     ^ (uint32_t)(cc >> 32);
         cc ++;
 
         /*
@@ -179,8 +175,7 @@ PQCLEAN_FALCON512_AARCH64_prng_refill(prng *p)
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512_AARCH64_prng_get_bytes(prng *p, void *dst, size_t len)
-{
+PQCLEAN_FALCON512_AARCH64_prng_get_bytes(prng *p, void *dst, size_t len) {
     uint8_t *buf;
 
     buf = dst;

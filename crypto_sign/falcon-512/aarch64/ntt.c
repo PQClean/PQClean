@@ -32,8 +32,7 @@
  * Assume Input in the range [-Q/2, Q/2]
  * Total Barrett point for N = 512, 1024: 2048, 4096
  */
-void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) {
     // Total SIMD registers 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
     int16x8x4_t zl, zh, t, t2;  // 12
@@ -48,10 +47,9 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
     ptr_ntt_br += 8;
     ptr_ntt_qinv_br += 8;
 
-#if FALCON_N == 512
+    #if FALCON_N == 512
     // Layer 8, 7
-    for (unsigned j = 0; j < 128; j += 32)
-    {
+    for (unsigned j = 0; j < 128; j += 32) {
         vload_s16_x4(v0, &a[j]);
         vload_s16_x4(v1, &a[j + 128]);
         vload_s16_x4(v2, &a[j + 256]);
@@ -101,12 +99,11 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         vstore_s16_x4(&a[j + 256], v2);
         vstore_s16_x4(&a[j + 384], v3);
     }
-#elif FALCON_N == 1024
+    #elif FALCON_N == 1024
     // Layer 9, 8, 7
     int16x8x2_t u0, u1, u2, u3, u4, u5, u6, u7;
 
-    for (unsigned j = 0; j < 128; j += 16)
-    {
+    for (unsigned j = 0; j < 128; j += 16) {
         vload_s16_x2(u0, &a[j]);
         vload_s16_x2(u1, &a[j + 128]);
         vload_s16_x2(u2, &a[j + 256]);
@@ -257,13 +254,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         vstore_s16_x2(&a[j + 768], u6);
         vstore_s16_x2(&a[j + 896], u7);
     }
-#else
+    #else
 #error "FALCON_N is either 512 or 1024"
-#endif
+    #endif
 
     // Layer 6, 5, 4, 3, 2, 1, 0
-    for (unsigned j = 0; j < FALCON_N; j += 128)
-    {
+    for (unsigned j = 0; j < FALCON_N; j += 128) {
         vload_s16_x4(v0, &a[j]);
         vload_s16_x4(v1, &a[j + 32]);
         vload_s16_x4(v2, &a[j + 64]);
@@ -285,15 +281,15 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         ctbf_bot_x4(v0, v2, t);
         ctbf_bot_x4(v1, v3, t2);
 
-#if FALCON_N == 1024
+        #if FALCON_N == 1024
         // 2.3 -> 0.5
         barrett_x4(v0, neon_qmvq, t);
         barrett_x4(v1, neon_qmvq, t);
         barrett_x4(v2, neon_qmvq, t);
         barrett_x4(v3, neon_qmvq, t);
-#elif FALCON_N == 512
+        #elif FALCON_N == 512
         // 1.3
-#endif
+        #endif
 
         // Layer 5
         // v0 - v1, v2 - v3
@@ -306,15 +302,15 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         ctbf_bot_x4(v0, v1, t);
         ctbf_bot_x4(v2, v3, t2);
 
-#if FALCON_N == 1024
+        #if FALCON_N == 1024
         // 1.3
-#elif FALCON_N == 512
+        #elif FALCON_N == 512
         // 2.3 -> 0.5
         barrett_x4(v0, neon_qmvq, t);
         barrett_x4(v1, neon_qmvq, t);
         barrett_x4(v2, neon_qmvq, t2);
         barrett_x4(v3, neon_qmvq, t2);
-#endif
+        #endif
 
         // Layer 4
         // v0(0, 1 - 2, 3)
@@ -351,15 +347,15 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         ctbf_bot(v3.val[0], v3.val[2], t2.val[2]);
         ctbf_bot(v3.val[1], v3.val[3], t2.val[3]);
 
-#if FALCON_N == 1024
+        #if FALCON_N == 1024
         // 2.3 -> 0.5
         barrett_x4(v0, neon_qmvq, t);
         barrett_x4(v1, neon_qmvq, t);
         barrett_x4(v2, neon_qmvq, t2);
         barrett_x4(v3, neon_qmvq, t2);
-#elif FALCON_N == 512
+        #elif FALCON_N == 512
         // 1.3
-#endif
+        #endif
 
         // Layer 3
         // v0(0, 2 - 1, 3)
@@ -396,15 +392,15 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         ctbf_bot(v3.val[0], v3.val[1], t2.val[2]);
         ctbf_bot(v3.val[2], v3.val[3], t2.val[3]);
 
-#if FALCON_N == 1024
+        #if FALCON_N == 1024
         // 1.3
-#elif FALCON_N == 512
+        #elif FALCON_N == 512
         // 2.3 -> 0.5
         barrett_x4(v0, neon_qmvq, t);
         barrett_x4(v1, neon_qmvq, t);
         barrett_x4(v2, neon_qmvq, t2);
         barrett_x4(v3, neon_qmvq, t2);
-#endif
+        #endif
 
         // Layer 2
         // Input:
@@ -465,15 +461,15 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         ctbf_bot(v2.val[2], v2.val[3], t.val[2]);
         ctbf_bot(v3.val[2], v3.val[3], t.val[3]);
 
-#if FALCON_N == 1024
+        #if FALCON_N == 1024
         // 2.3 -> 0.5
         barrett_x4(v0, neon_qmvq, t);
         barrett_x4(v1, neon_qmvq, t);
         barrett_x4(v2, neon_qmvq, t2);
         barrett_x4(v3, neon_qmvq, t2);
-#elif FALCON_N == 512
+        #elif FALCON_N == 512
         // 1.3
-#endif
+        #endif
 
         // Layer 1: v0.val[0] x v0.val[2] | v0.val[1] x v0.val[3]
         // v0.val[0]: 0,  1,  2,  3  | 16, 17, 18, 19
@@ -525,15 +521,15 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         ctbf_bot(v3.val[0], v3.val[2], t.val[2]);
         ctbf_bot(v3.val[1], v3.val[3], t.val[3]);
 
-#if FALCON_N == 1024
+        #if FALCON_N == 1024
         // 1.3
-#elif FALCON_N == 512
+        #elif FALCON_N == 512
         // 2.3 -> 0.5
         barrett_x4(v0, neon_qmvq, t);
         barrett_x4(v1, neon_qmvq, t);
         barrett_x4(v2, neon_qmvq, t2);
         barrett_x4(v3, neon_qmvq, t2);
-#endif
+        #endif
 
         // Layer 0
         // v(0, 2 - 1, 3)
@@ -577,20 +573,17 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
         ctbf_bot(v2.val[2], v2.val[3], t.val[2]);
         ctbf_bot(v3.val[2], v3.val[3], t.val[3]);
 
-#if FALCON_N == 1024
+        #if FALCON_N == 1024
         // 2.3
-#elif FALCON_N == 512
+        #elif FALCON_N == 512
         // 1.3
-#endif
+        #endif
 
-        if (mont == NTT_MONT)
-        {
+        if (mont == NTT_MONT) {
             // Convert to Montgomery domain by multiply with FALCON_MONT
             barmuli_mont_x8(v0, v1, neon_qmvq, t, t2);
             barmuli_mont_x8(v2, v3, neon_qmvq, t, t2);
-        }
-        else if (mont == NTT_MONT_INV)
-        {
+        } else if (mont == NTT_MONT_INV) {
             barmuli_mont_ninv_x8(v0, v1, neon_qmvq, t, t2);
             barmuli_mont_ninv_x8(v2, v3, neon_qmvq, t, t2);
         }
@@ -606,8 +599,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont)
  * Assume input in range [-Q, Q]
  * Total Barrett point N = 512, 1024: 1792, 3840
  */
-void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t ninv)
-{
+void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t ninv) {
     // Total SIMD registers: 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
     int16x8x4_t zl, zh, t, t2;  // 12
@@ -620,8 +612,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
     unsigned j;
 
     // Layer 0, 1, 2, 3, 4, 5, 6
-    for (j = 0; j < FALCON_N; j += 128)
-    {
+    for (j = 0; j < FALCON_N; j += 128) {
         vload_s16_4(v0, &a[j]);
         vload_s16_4(v1, &a[j + 32]);
         vload_s16_4(v2, &a[j + 64]);
@@ -994,20 +985,19 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         vstore_s16_x4(&a[j + 96], v3);
     }
 
-#if FALCON_N == 512
+    #if FALCON_N == 512
     zl.val[0] = vld1q_s16(ptr_invntt_br);
     zh.val[0] = vld1q_s16(ptr_invntt_qinv_br);
-#elif FALCON_N == 1024
+    #elif FALCON_N == 1024
     ptr_invntt_br += 8 * ninv;
     ptr_invntt_qinv_br += 8 * ninv;
     zl.val[0] = vld1q_s16(ptr_invntt_br);
     zh.val[0] = vld1q_s16(ptr_invntt_qinv_br);
-#endif
+    #endif
 
-#if FALCON_N == 512
+    #if FALCON_N == 512
     // Layer 7, 8
-    for (j = 0; j < 64; j += 32)
-    {
+    for (j = 0; j < 64; j += 32) {
         vload_s16_x4(v0, &a[j]);
         vload_s16_x4(v1, &a[j + 128]);
         vload_s16_x4(v2, &a[j + 256]);
@@ -1052,15 +1042,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         // v1: 1.75
         // v2: 1.25
         // v3: 1.15
-        if (ninv == INVNTT_NINV)
-        {
+        if (ninv == INVNTT_NINV) {
             gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t);
             gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t2);
             barmul_invntt_x4(v0, zl.val[0], zh.val[0], 3, neon_qmvq, t);
             barmul_invntt_x4(v1, zl.val[0], zh.val[0], 3, neon_qmvq, t2);
-        }
-        else
-        {
+        } else {
             gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t);
             gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t2);
         }
@@ -1082,8 +1069,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         vstore_s16_x4(&a[j + 256], v2);
         vstore_s16_x4(&a[j + 384], v3);
     }
-    for (; j < 128; j += 32)
-    {
+    for (; j < 128; j += 32) {
         vload_s16_x4(v0, &a[j]);
         vload_s16_x4(v1, &a[j + 128]);
         vload_s16_x4(v2, &a[j + 256]);
@@ -1132,15 +1118,12 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         // v1: 1
         // v2: .87
         // v3: .87
-        if (ninv == INVNTT_NINV)
-        {
+        if (ninv == INVNTT_NINV) {
             gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t);
             gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t2);
             barmul_invntt_x4(v0, zl.val[0], zh.val[0], 3, neon_qmvq, t);
             barmul_invntt_x4(v1, zl.val[0], zh.val[0], 3, neon_qmvq, t2);
-        }
-        else
-        {
+        } else {
             gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t);
             gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t2);
         }
@@ -1155,12 +1138,11 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         vstore_s16_x4(&a[j + 256], v2);
         vstore_s16_x4(&a[j + 384], v3);
     }
-#elif FALCON_N == 1024
+    #elif FALCON_N == 1024
     // Layer 7, 8, 9
     int16x8x2_t u0, u1, u2, u3, u4, u5, u6, u7;
 
-    for (j = 0; j < 128; j += 16)
-    {
+    for (j = 0; j < 128; j += 16) {
         vload_s16_x2(u0, &a[j]);
         vload_s16_x2(u1, &a[j + 128]);
         vload_s16_x2(u2, &a[j + 256]);
@@ -1311,8 +1293,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         // u1, 5: 1, .87
         // u3, 7: 2.3, 1.4
 
-        if (ninv == INVNTT_NINV)
-        {
+        if (ninv == INVNTT_NINV) {
             barmul_invntt_x2(u0, zl.val[0], zh.val[0], 7, neon_qmvq, t);
             barmul_invntt_x2(u1, zl.val[0], zh.val[0], 7, neon_qmvq, t);
             barmul_invntt_x2(u2, zl.val[0], zh.val[0], 7, neon_qmvq, t2);
@@ -1344,20 +1325,18 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         vstore_s16_x2(&a[j + 768], u6);
         vstore_s16_x2(&a[j + 896], u7);
     }
-#else
+    #else
 #error "FALCON_N is either 512 or 1024"
-#endif
+    #endif
 }
 
-void PQCLEAN_FALCON512_AARCH64_poly_montmul_ntt(int16_t f[FALCON_N], const int16_t g[FALCON_N])
-{
+void PQCLEAN_FALCON512_AARCH64_poly_montmul_ntt(int16_t f[FALCON_N], const int16_t g[FALCON_N]) {
     // Total SIMD registers: 29 = 28 + 1
     int16x8x4_t a, b, c, d, e1, e2, t, k; // 28
     int16x8_t neon_qmvm;                  // 1
     neon_qmvm = vld1q_s16(qmvq);
 
-    for (int i = 0; i < FALCON_N; i += 64)
-    {
+    for (int i = 0; i < FALCON_N; i += 64) {
         vload_s16_x4(a, &f[i]);
         vload_s16_x4(b, &g[i]);
         vload_s16_x4(c, &f[i + 32]);

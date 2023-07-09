@@ -22,4 +22,4 @@ extern const int16_t ntt_qinv_br[];
 extern const int16_t invntt_br[];
 extern const int16_t invntt_qinv_br[];
 
-#endif 
+#endif

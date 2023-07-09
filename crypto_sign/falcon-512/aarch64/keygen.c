@@ -629,8 +629,7 @@ static const small_prime PRIMES[] = {
  * value x MUST be such that -p < x < p.
  */
 static inline uint32_t
-modp_set(int32_t x, uint32_t p)
-{
+modp_set(int32_t x, uint32_t p) {
     uint32_t w;
 
     w = (uint32_t)x;
@@ -642,8 +641,7 @@ modp_set(int32_t x, uint32_t p)
  * Normalize a modular integer around 0.
  */
 static inline int32_t
-modp_norm(uint32_t x, uint32_t p)
-{
+modp_norm(uint32_t x, uint32_t p) {
     return (int32_t)(x - (p & (((x - ((p + 1) >> 1)) >> 31) - 1)));
 }
 
@@ -652,8 +650,7 @@ modp_norm(uint32_t x, uint32_t p)
  * on 31 bits.
  */
 static uint32_t
-modp_ninv31(uint32_t p)
-{
+modp_ninv31(uint32_t p) {
     uint32_t y;
 
     y = 2 - p;
@@ -668,8 +665,7 @@ modp_ninv31(uint32_t p)
  * Compute R = 2^31 mod p.
  */
 static inline uint32_t
-modp_R(uint32_t p)
-{
+modp_R(uint32_t p) {
     /*
      * Since 2^30 < p < 2^31, we know that 2^31 mod p is simply
      * 2^31 - p.
@@ -681,8 +677,7 @@ modp_R(uint32_t p)
  * Addition modulo p.
  */
 static inline uint32_t
-modp_add(uint32_t a, uint32_t b, uint32_t p)
-{
+modp_add(uint32_t a, uint32_t b, uint32_t p) {
     uint32_t d;
 
     d = a + b - p;
@@ -694,8 +689,7 @@ modp_add(uint32_t a, uint32_t b, uint32_t p)
  * Subtraction modulo p.
  */
 static inline uint32_t
-modp_sub(uint32_t a, uint32_t b, uint32_t p)
-{
+modp_sub(uint32_t a, uint32_t b, uint32_t p) {
     uint32_t d;
 
     d = a - b;
@@ -720,8 +714,7 @@ modp_half(uint32_t a, uint32_t p)
  * It is required that p is an odd integer.
  */
 static inline uint32_t
-modp_montymul(uint32_t a, uint32_t b, uint32_t p, uint32_t p0i)
-{
+modp_montymul(uint32_t a, uint32_t b, uint32_t p, uint32_t p0i) {
     uint64_t z, w;
     uint32_t d;
 
@@ -736,8 +729,7 @@ modp_montymul(uint32_t a, uint32_t b, uint32_t p, uint32_t p0i)
  * Compute R2 = 2^62 mod p.
  */
 static uint32_t
-modp_R2(uint32_t p, uint32_t p0i)
-{
+modp_R2(uint32_t p, uint32_t p0i) {
     uint32_t z;
 
     /*
@@ -770,8 +762,7 @@ modp_R2(uint32_t p, uint32_t p0i)
  * -1/p mod 2^31; R2 must be equal to 2^62 mod p.
  */
 static inline uint32_t
-modp_Rx(unsigned x, uint32_t p, uint32_t p0i, uint32_t R2)
-{
+modp_Rx(unsigned x, uint32_t p, uint32_t p0i, uint32_t R2) {
     int i;
     uint32_t r, z;
 
@@ -803,8 +794,7 @@ modp_Rx(unsigned x, uint32_t p, uint32_t p0i, uint32_t R2)
  *   R     2^31 mod R
  */
 static uint32_t
-modp_div(uint32_t a, uint32_t b, uint32_t p, uint32_t p0i, uint32_t R)
-{
+modp_div(uint32_t a, uint32_t b, uint32_t p, uint32_t p0i, uint32_t R) {
     uint32_t z, e;
     int i;
 
@@ -837,92 +827,92 @@ modp_div(uint32_t a, uint32_t b, uint32_t p, uint32_t p0i, uint32_t R)
  * Bit-reversal index table.
  */
 static const uint16_t REV10[] = {
-       0,  512,  256,  768,  128,  640,  384,  896,   64,  576,  320,  832,
-     192,  704,  448,  960,   32,  544,  288,  800,  160,  672,  416,  928,
-      96,  608,  352,  864,  224,  736,  480,  992,   16,  528,  272,  784,
-     144,  656,  400,  912,   80,  592,  336,  848,  208,  720,  464,  976,
-      48,  560,  304,  816,  176,  688,  432,  944,  112,  624,  368,  880,
-     240,  752,  496, 1008,    8,  520,  264,  776,  136,  648,  392,  904,
-      72,  584,  328,  840,  200,  712,  456,  968,   40,  552,  296,  808,
-     168,  680,  424,  936,  104,  616,  360,  872,  232,  744,  488, 1000,
-      24,  536,  280,  792,  152,  664,  408,  920,   88,  600,  344,  856,
-     216,  728,  472,  984,   56,  568,  312,  824,  184,  696,  440,  952,
-     120,  632,  376,  888,  248,  760,  504, 1016,    4,  516,  260,  772,
-     132,  644,  388,  900,   68,  580,  324,  836,  196,  708,  452,  964,
-      36,  548,  292,  804,  164,  676,  420,  932,  100,  612,  356,  868,
-     228,  740,  484,  996,   20,  532,  276,  788,  148,  660,  404,  916,
-      84,  596,  340,  852,  212,  724,  468,  980,   52,  564,  308,  820,
-     180,  692,  436,  948,  116,  628,  372,  884,  244,  756,  500, 1012,
-      12,  524,  268,  780,  140,  652,  396,  908,   76,  588,  332,  844,
-     204,  716,  460,  972,   44,  556,  300,  812,  172,  684,  428,  940,
-     108,  620,  364,  876,  236,  748,  492, 1004,   28,  540,  284,  796,
-     156,  668,  412,  924,   92,  604,  348,  860,  220,  732,  476,  988,
-      60,  572,  316,  828,  188,  700,  444,  956,  124,  636,  380,  892,
-     252,  764,  508, 1020,    2,  514,  258,  770,  130,  642,  386,  898,
-      66,  578,  322,  834,  194,  706,  450,  962,   34,  546,  290,  802,
-     162,  674,  418,  930,   98,  610,  354,  866,  226,  738,  482,  994,
-      18,  530,  274,  786,  146,  658,  402,  914,   82,  594,  338,  850,
-     210,  722,  466,  978,   50,  562,  306,  818,  178,  690,  434,  946,
-     114,  626,  370,  882,  242,  754,  498, 1010,   10,  522,  266,  778,
-     138,  650,  394,  906,   74,  586,  330,  842,  202,  714,  458,  970,
-      42,  554,  298,  810,  170,  682,  426,  938,  106,  618,  362,  874,
-     234,  746,  490, 1002,   26,  538,  282,  794,  154,  666,  410,  922,
-      90,  602,  346,  858,  218,  730,  474,  986,   58,  570,  314,  826,
-     186,  698,  442,  954,  122,  634,  378,  890,  250,  762,  506, 1018,
-       6,  518,  262,  774,  134,  646,  390,  902,   70,  582,  326,  838,
-     198,  710,  454,  966,   38,  550,  294,  806,  166,  678,  422,  934,
-     102,  614,  358,  870,  230,  742,  486,  998,   22,  534,  278,  790,
-     150,  662,  406,  918,   86,  598,  342,  854,  214,  726,  470,  982,
-      54,  566,  310,  822,  182,  694,  438,  950,  118,  630,  374,  886,
-     246,  758,  502, 1014,   14,  526,  270,  782,  142,  654,  398,  910,
-      78,  590,  334,  846,  206,  718,  462,  974,   46,  558,  302,  814,
-     174,  686,  430,  942,  110,  622,  366,  878,  238,  750,  494, 1006,
-      30,  542,  286,  798,  158,  670,  414,  926,   94,  606,  350,  862,
-     222,  734,  478,  990,   62,  574,  318,  830,  190,  702,  446,  958,
-     126,  638,  382,  894,  254,  766,  510, 1022,    1,  513,  257,  769,
-     129,  641,  385,  897,   65,  577,  321,  833,  193,  705,  449,  961,
-      33,  545,  289,  801,  161,  673,  417,  929,   97,  609,  353,  865,
-     225,  737,  481,  993,   17,  529,  273,  785,  145,  657,  401,  913,
-      81,  593,  337,  849,  209,  721,  465,  977,   49,  561,  305,  817,
-     177,  689,  433,  945,  113,  625,  369,  881,  241,  753,  497, 1009,
-       9,  521,  265,  777,  137,  649,  393,  905,   73,  585,  329,  841,
-     201,  713,  457,  969,   41,  553,  297,  809,  169,  681,  425,  937,
-     105,  617,  361,  873,  233,  745,  489, 1001,   25,  537,  281,  793,
-     153,  665,  409,  921,   89,  601,  345,  857,  217,  729,  473,  985,
-      57,  569,  313,  825,  185,  697,  441,  953,  121,  633,  377,  889,
-     249,  761,  505, 1017,    5,  517,  261,  773,  133,  645,  389,  901,
-      69,  581,  325,  837,  197,  709,  453,  965,   37,  549,  293,  805,
-     165,  677,  421,  933,  101,  613,  357,  869,  229,  741,  485,  997,
-      21,  533,  277,  789,  149,  661,  405,  917,   85,  597,  341,  853,
-     213,  725,  469,  981,   53,  565,  309,  821,  181,  693,  437,  949,
-     117,  629,  373,  885,  245,  757,  501, 1013,   13,  525,  269,  781,
-     141,  653,  397,  909,   77,  589,  333,  845,  205,  717,  461,  973,
-      45,  557,  301,  813,  173,  685,  429,  941,  109,  621,  365,  877,
-     237,  749,  493, 1005,   29,  541,  285,  797,  157,  669,  413,  925,
-      93,  605,  349,  861,  221,  733,  477,  989,   61,  573,  317,  829,
-     189,  701,  445,  957,  125,  637,  381,  893,  253,  765,  509, 1021,
-       3,  515,  259,  771,  131,  643,  387,  899,   67,  579,  323,  835,
-     195,  707,  451,  963,   35,  547,  291,  803,  163,  675,  419,  931,
-      99,  611,  355,  867,  227,  739,  483,  995,   19,  531,  275,  787,
-     147,  659,  403,  915,   83,  595,  339,  851,  211,  723,  467,  979,
-      51,  563,  307,  819,  179,  691,  435,  947,  115,  627,  371,  883,
-     243,  755,  499, 1011,   11,  523,  267,  779,  139,  651,  395,  907,
-      75,  587,  331,  843,  203,  715,  459,  971,   43,  555,  299,  811,
-     171,  683,  427,  939,  107,  619,  363,  875,  235,  747,  491, 1003,
-      27,  539,  283,  795,  155,  667,  411,  923,   91,  603,  347,  859,
-     219,  731,  475,  987,   59,  571,  315,  827,  187,  699,  443,  955,
-     123,  635,  379,  891,  251,  763,  507, 1019,    7,  519,  263,  775,
-     135,  647,  391,  903,   71,  583,  327,  839,  199,  711,  455,  967,
-      39,  551,  295,  807,  167,  679,  423,  935,  103,  615,  359,  871,
-     231,  743,  487,  999,   23,  535,  279,  791,  151,  663,  407,  919,
-      87,  599,  343,  855,  215,  727,  471,  983,   55,  567,  311,  823,
-     183,  695,  439,  951,  119,  631,  375,  887,  247,  759,  503, 1015,
-      15,  527,  271,  783,  143,  655,  399,  911,   79,  591,  335,  847,
-     207,  719,  463,  975,   47,  559,  303,  815,  175,  687,  431,  943,
-     111,  623,  367,  879,  239,  751,  495, 1007,   31,  543,  287,  799,
-     159,  671,  415,  927,   95,  607,  351,  863,  223,  735,  479,  991,
-      63,  575,  319,  831,  191,  703,  447,  959,  127,  639,  383,  895,
-     255,  767,  511, 1023
+    0,  512,  256,  768,  128,  640,  384,  896,   64,  576,  320,  832,
+    192,  704,  448,  960,   32,  544,  288,  800,  160,  672,  416,  928,
+    96,  608,  352,  864,  224,  736,  480,  992,   16,  528,  272,  784,
+    144,  656,  400,  912,   80,  592,  336,  848,  208,  720,  464,  976,
+    48,  560,  304,  816,  176,  688,  432,  944,  112,  624,  368,  880,
+    240,  752,  496, 1008,    8,  520,  264,  776,  136,  648,  392,  904,
+    72,  584,  328,  840,  200,  712,  456,  968,   40,  552,  296,  808,
+    168,  680,  424,  936,  104,  616,  360,  872,  232,  744,  488, 1000,
+    24,  536,  280,  792,  152,  664,  408,  920,   88,  600,  344,  856,
+    216,  728,  472,  984,   56,  568,  312,  824,  184,  696,  440,  952,
+    120,  632,  376,  888,  248,  760,  504, 1016,    4,  516,  260,  772,
+    132,  644,  388,  900,   68,  580,  324,  836,  196,  708,  452,  964,
+    36,  548,  292,  804,  164,  676,  420,  932,  100,  612,  356,  868,
+    228,  740,  484,  996,   20,  532,  276,  788,  148,  660,  404,  916,
+    84,  596,  340,  852,  212,  724,  468,  980,   52,  564,  308,  820,
+    180,  692,  436,  948,  116,  628,  372,  884,  244,  756,  500, 1012,
+    12,  524,  268,  780,  140,  652,  396,  908,   76,  588,  332,  844,
+    204,  716,  460,  972,   44,  556,  300,  812,  172,  684,  428,  940,
+    108,  620,  364,  876,  236,  748,  492, 1004,   28,  540,  284,  796,
+    156,  668,  412,  924,   92,  604,  348,  860,  220,  732,  476,  988,
+    60,  572,  316,  828,  188,  700,  444,  956,  124,  636,  380,  892,
+    252,  764,  508, 1020,    2,  514,  258,  770,  130,  642,  386,  898,
+    66,  578,  322,  834,  194,  706,  450,  962,   34,  546,  290,  802,
+    162,  674,  418,  930,   98,  610,  354,  866,  226,  738,  482,  994,
+    18,  530,  274,  786,  146,  658,  402,  914,   82,  594,  338,  850,
+    210,  722,  466,  978,   50,  562,  306,  818,  178,  690,  434,  946,
+    114,  626,  370,  882,  242,  754,  498, 1010,   10,  522,  266,  778,
+    138,  650,  394,  906,   74,  586,  330,  842,  202,  714,  458,  970,
+    42,  554,  298,  810,  170,  682,  426,  938,  106,  618,  362,  874,
+    234,  746,  490, 1002,   26,  538,  282,  794,  154,  666,  410,  922,
+    90,  602,  346,  858,  218,  730,  474,  986,   58,  570,  314,  826,
+    186,  698,  442,  954,  122,  634,  378,  890,  250,  762,  506, 1018,
+    6,  518,  262,  774,  134,  646,  390,  902,   70,  582,  326,  838,
+    198,  710,  454,  966,   38,  550,  294,  806,  166,  678,  422,  934,
+    102,  614,  358,  870,  230,  742,  486,  998,   22,  534,  278,  790,
+    150,  662,  406,  918,   86,  598,  342,  854,  214,  726,  470,  982,
+    54,  566,  310,  822,  182,  694,  438,  950,  118,  630,  374,  886,
+    246,  758,  502, 1014,   14,  526,  270,  782,  142,  654,  398,  910,
+    78,  590,  334,  846,  206,  718,  462,  974,   46,  558,  302,  814,
+    174,  686,  430,  942,  110,  622,  366,  878,  238,  750,  494, 1006,
+    30,  542,  286,  798,  158,  670,  414,  926,   94,  606,  350,  862,
+    222,  734,  478,  990,   62,  574,  318,  830,  190,  702,  446,  958,
+    126,  638,  382,  894,  254,  766,  510, 1022,    1,  513,  257,  769,
+    129,  641,  385,  897,   65,  577,  321,  833,  193,  705,  449,  961,
+    33,  545,  289,  801,  161,  673,  417,  929,   97,  609,  353,  865,
+    225,  737,  481,  993,   17,  529,  273,  785,  145,  657,  401,  913,
+    81,  593,  337,  849,  209,  721,  465,  977,   49,  561,  305,  817,
+    177,  689,  433,  945,  113,  625,  369,  881,  241,  753,  497, 1009,
+    9,  521,  265,  777,  137,  649,  393,  905,   73,  585,  329,  841,
+    201,  713,  457,  969,   41,  553,  297,  809,  169,  681,  425,  937,
+    105,  617,  361,  873,  233,  745,  489, 1001,   25,  537,  281,  793,
+    153,  665,  409,  921,   89,  601,  345,  857,  217,  729,  473,  985,
+    57,  569,  313,  825,  185,  697,  441,  953,  121,  633,  377,  889,
+    249,  761,  505, 1017,    5,  517,  261,  773,  133,  645,  389,  901,
+    69,  581,  325,  837,  197,  709,  453,  965,   37,  549,  293,  805,
+    165,  677,  421,  933,  101,  613,  357,  869,  229,  741,  485,  997,
+    21,  533,  277,  789,  149,  661,  405,  917,   85,  597,  341,  853,
+    213,  725,  469,  981,   53,  565,  309,  821,  181,  693,  437,  949,
+    117,  629,  373,  885,  245,  757,  501, 1013,   13,  525,  269,  781,
+    141,  653,  397,  909,   77,  589,  333,  845,  205,  717,  461,  973,
+    45,  557,  301,  813,  173,  685,  429,  941,  109,  621,  365,  877,
+    237,  749,  493, 1005,   29,  541,  285,  797,  157,  669,  413,  925,
+    93,  605,  349,  861,  221,  733,  477,  989,   61,  573,  317,  829,
+    189,  701,  445,  957,  125,  637,  381,  893,  253,  765,  509, 1021,
+    3,  515,  259,  771,  131,  643,  387,  899,   67,  579,  323,  835,
+    195,  707,  451,  963,   35,  547,  291,  803,  163,  675,  419,  931,
+    99,  611,  355,  867,  227,  739,  483,  995,   19,  531,  275,  787,
+    147,  659,  403,  915,   83,  595,  339,  851,  211,  723,  467,  979,
+    51,  563,  307,  819,  179,  691,  435,  947,  115,  627,  371,  883,
+    243,  755,  499, 1011,   11,  523,  267,  779,  139,  651,  395,  907,
+    75,  587,  331,  843,  203,  715,  459,  971,   43,  555,  299,  811,
+    171,  683,  427,  939,  107,  619,  363,  875,  235,  747,  491, 1003,
+    27,  539,  283,  795,  155,  667,  411,  923,   91,  603,  347,  859,
+    219,  731,  475,  987,   59,  571,  315,  827,  187,  699,  443,  955,
+    123,  635,  379,  891,  251,  763,  507, 1019,    7,  519,  263,  775,
+    135,  647,  391,  903,   71,  583,  327,  839,  199,  711,  455,  967,
+    39,  551,  295,  807,  167,  679,  423,  935,  103,  615,  359,  871,
+    231,  743,  487,  999,   23,  535,  279,  791,  151,  663,  407,  919,
+    87,  599,  343,  855,  215,  727,  471,  983,   55,  567,  311,  823,
+    183,  695,  439,  951,  119,  631,  375,  887,  247,  759,  503, 1015,
+    15,  527,  271,  783,  143,  655,  399,  911,   79,  591,  335,  847,
+    207,  719,  463,  975,   47,  559,  303,  815,  175,  687,  431,  943,
+    111,  623,  367,  879,  239,  751,  495, 1007,   31,  543,  287,  799,
+    159,  671,  415,  927,   95,  607,  351,  863,  223,  735,  479,  991,
+    63,  575,  319,  831,  191,  703,  447,  959,  127,  639,  383,  895,
+    255,  767,  511, 1023
 };
 
 /*
@@ -940,8 +930,7 @@ static const uint16_t REV10[] = {
  */
 static void
 modp_mkgm2(uint32_t *restrict gm, uint32_t *restrict igm, unsigned logn,
-    uint32_t g, uint32_t p, uint32_t p0i)
-{
+           uint32_t g, uint32_t p, uint32_t p0i) {
     size_t u, n;
     unsigned k;
     uint32_t ig, x1, x2, R2;
@@ -978,8 +967,7 @@ modp_mkgm2(uint32_t *restrict gm, uint32_t *restrict igm, unsigned logn,
  */
 static void
 modp_NTT2_ext(uint32_t *a, size_t stride, const uint32_t *gm, unsigned logn,
-    uint32_t p, uint32_t p0i)
-{
+              uint32_t p, uint32_t p0i) {
     size_t t, m, n;
 
     if (logn == 0) {
@@ -1017,8 +1005,7 @@ modp_NTT2_ext(uint32_t *a, size_t stride, const uint32_t *gm, unsigned logn,
  */
 static void
 modp_iNTT2_ext(uint32_t *a, size_t stride, const uint32_t *igm, unsigned logn,
-    uint32_t p, uint32_t p0i)
-{
+               uint32_t p, uint32_t p0i) {
     size_t t, m, n, k;
     uint32_t ni;
     uint32_t *r;
@@ -1048,7 +1035,7 @@ modp_iNTT2_ext(uint32_t *a, size_t stride, const uint32_t *igm, unsigned logn,
                 y = *r2;
                 *r1 = modp_add(x, y, p);
                 *r2 = modp_montymul(
-                    modp_sub(x, y, p), s, p, p0i);;
+                          modp_sub(x, y, p), s, p, p0i);;
             }
         }
         t = dt;
@@ -1088,8 +1075,7 @@ modp_iNTT2_ext(uint32_t *a, size_t stride, const uint32_t *igm, unsigned logn,
  */
 static void
 modp_poly_rec_res(uint32_t *f, unsigned logn,
-    uint32_t p, uint32_t p0i, uint32_t R2)
-{
+                  uint32_t p, uint32_t p0i, uint32_t R2) {
     size_t hn, u;
 
     hn = (size_t)1 << (logn - 1);
@@ -1145,8 +1131,7 @@ modp_poly_rec_res(uint32_t *f, unsigned logn,
  */
 static uint32_t
 zint_sub(uint32_t *restrict a, const uint32_t *restrict b, size_t len,
-    uint32_t ctl)
-{
+         uint32_t ctl) {
     size_t u;
     uint32_t cc, m;
 
@@ -1169,8 +1154,7 @@ zint_sub(uint32_t *restrict a, const uint32_t *restrict b, size_t len,
  * This function assumes that x < 2^31. The carry word is returned.
  */
 static uint32_t
-zint_mul_small(uint32_t *m, size_t mlen, uint32_t x)
-{
+zint_mul_small(uint32_t *m, size_t mlen, uint32_t x) {
     size_t u;
     uint32_t cc;
 
@@ -1196,8 +1180,7 @@ zint_mul_small(uint32_t *m, size_t mlen, uint32_t x)
  */
 static uint32_t
 zint_mod_small_unsigned(const uint32_t *d, size_t dlen,
-    uint32_t p, uint32_t p0i, uint32_t R2)
-{
+                        uint32_t p, uint32_t p0i, uint32_t R2) {
     uint32_t x;
     size_t u;
 
@@ -1226,8 +1209,7 @@ zint_mod_small_unsigned(const uint32_t *d, size_t dlen,
  */
 static uint32_t
 zint_mod_small_signed(const uint32_t *d, size_t dlen,
-    uint32_t p, uint32_t p0i, uint32_t R2, uint32_t Rx)
-{
+                      uint32_t p, uint32_t p0i, uint32_t R2, uint32_t Rx) {
     uint32_t z;
 
     if (dlen == 0) {
@@ -1245,8 +1227,7 @@ zint_mod_small_signed(const uint32_t *d, size_t dlen,
  */
 static void
 zint_add_mul_small(uint32_t *restrict x,
-    const uint32_t *restrict y, size_t len, uint32_t s)
-{
+                   const uint32_t *restrict y, size_t len, uint32_t s) {
     size_t u;
     uint32_t cc;
 
@@ -1270,8 +1251,7 @@ zint_add_mul_small(uint32_t *restrict x,
  * untouched. The two integers x and p are encoded over the same length.
  */
 static void
-zint_norm_zero(uint32_t *restrict x, const uint32_t *restrict p, size_t len)
-{
+zint_norm_zero(uint32_t *restrict x, const uint32_t *restrict p, size_t len) {
     size_t u;
     uint32_t r, bb;
 
@@ -1332,9 +1312,8 @@ zint_norm_zero(uint32_t *restrict x, const uint32_t *restrict p, size_t len)
  */
 static void
 zint_rebuild_CRT(uint32_t *restrict xx, size_t xlen, size_t xstride,
-    size_t num, const small_prime *primes, int normalize_signed,
-    uint32_t *restrict tmp)
-{
+                 size_t num, const small_prime *primes, int normalize_signed,
+                 uint32_t *restrict tmp) {
     size_t u;
     uint32_t *x;
 
@@ -1395,8 +1374,7 @@ zint_rebuild_CRT(uint32_t *restrict xx, size_t xlen, size_t xstride,
  * and only if ctl = 1. Control value ctl must be 0 or 1.
  */
 static void
-zint_negate(uint32_t *a, size_t len, uint32_t ctl)
-{
+zint_negate(uint32_t *a, size_t len, uint32_t ctl) {
     size_t u;
     uint32_t cc, m;
 
@@ -1433,8 +1411,7 @@ zint_negate(uint32_t *a, size_t len, uint32_t ctl)
  */
 static uint32_t
 zint_co_reduce(uint32_t *a, uint32_t *b, size_t len,
-    int64_t xa, int64_t xb, int64_t ya, int64_t yb)
-{
+               int64_t xa, int64_t xb, int64_t ya, int64_t yb) {
     size_t u;
     int64_t cca, ccb;
     uint32_t nega, negb;
@@ -1477,8 +1454,7 @@ zint_co_reduce(uint32_t *a, uint32_t *b, size_t len,
  * Modulus m must be odd.
  */
 static void
-zint_finish_mod(uint32_t *a, size_t len, const uint32_t *m, uint32_t neg)
-{
+zint_finish_mod(uint32_t *a, size_t len, const uint32_t *m, uint32_t neg) {
     size_t u;
     uint32_t cc, xm, ym;
 
@@ -1521,8 +1497,7 @@ zint_finish_mod(uint32_t *a, size_t len, const uint32_t *m, uint32_t neg)
  */
 static void
 zint_co_reduce_mod(uint32_t *a, uint32_t *b, const uint32_t *m, size_t len,
-    uint32_t m0i, int64_t xa, int64_t xb, int64_t ya, int64_t yb)
-{
+                   uint32_t m0i, int64_t xa, int64_t xb, int64_t ya, int64_t yb) {
     size_t u;
     int64_t cca, ccb;
     uint32_t fa, fb;
@@ -1541,9 +1516,9 @@ zint_co_reduce_mod(uint32_t *a, uint32_t *b, const uint32_t *m, size_t len,
         wa = a[u];
         wb = b[u];
         za = wa * (uint64_t)xa + wb * (uint64_t)xb
-            + m[u] * (uint64_t)fa + (uint64_t)cca;
+             + m[u] * (uint64_t)fa + (uint64_t)cca;
         zb = wa * (uint64_t)ya + wb * (uint64_t)yb
-            + m[u] * (uint64_t)fb + (uint64_t)ccb;
+             + m[u] * (uint64_t)fb + (uint64_t)ccb;
         if (u > 0) {
             a[u - 1] = (uint32_t)za & 0x7FFFFFFF;
             b[u - 1] = (uint32_t)zb & 0x7FFFFFFF;
@@ -1581,9 +1556,8 @@ zint_co_reduce_mod(uint32_t *a, uint32_t *b, const uint32_t *m, size_t len,
  */
 static int
 zint_bezout(uint32_t *restrict u, uint32_t *restrict v,
-    const uint32_t *restrict x, const uint32_t *restrict y,
-    size_t len, uint32_t *restrict tmp)
-{
+            const uint32_t *restrict x, const uint32_t *restrict y,
+            size_t len, uint32_t *restrict tmp) {
     /*
      * Algorithm is an extended binary GCD. We maintain 6 values
      * a, b, u0, u1, v0 and v1 with the following invariants:
@@ -1725,13 +1699,13 @@ zint_bezout(uint32_t *restrict u, uint32_t *restrict v,
      *  b = y   u1 = y   v1 = x-1
      * Note that x is odd, so computing x-1 is easy.
      */
-    memcpy(a, x, len * sizeof *x);
-    memcpy(b, y, len * sizeof *y);
+    memcpy(a, x, len * sizeof * x);
+    memcpy(b, y, len * sizeof * y);
     u0[0] = 1;
-    memset(u0 + 1, 0, (len - 1) * sizeof *u0);
-    memset(v0, 0, len * sizeof *v0);
-    memcpy(u1, y, len * sizeof *u1);
-    memcpy(v1, x, len * sizeof *v1);
+    memset(u0 + 1, 0, (len - 1) * sizeof * u0);
+    memset(v0, 0, len * sizeof * v0);
+    memcpy(u1, y, len * sizeof * u1);
+    memcpy(v1, x, len * sizeof * v1);
     v1[0] --;
 
     /*
@@ -1754,8 +1728,8 @@ zint_bezout(uint32_t *restrict u, uint32_t *restrict v,
          * If a and b are down to one word each, then we use
          * a[0] and b[0].
          */
-        c0 = (uint32_t)-1;
-        c1 = (uint32_t)-1;
+        c0 = (uint32_t) -1;
+        c1 = (uint32_t) -1;
         a0 = 0;
         a1 = 0;
         b0 = 0;
@@ -1823,7 +1797,7 @@ zint_bezout(uint32_t *restrict u, uint32_t *restrict v,
              */
             rz = b_hi - a_hi;
             rt = (uint32_t)((rz ^ ((a_hi ^ b_hi)
-                & (a_hi ^ rz))) >> 63);
+                                   & (a_hi ^ rz))) >> 63);
 
             /*
              * cAB = 1 if b must be subtracted from a
@@ -1907,9 +1881,8 @@ zint_bezout(uint32_t *restrict u, uint32_t *restrict v,
  */
 static void
 zint_add_scaled_mul_small(uint32_t *restrict x, size_t xlen,
-    const uint32_t *restrict y, size_t ylen, int32_t k,
-    uint32_t sch, uint32_t scl)
-{
+                          const uint32_t *restrict y, size_t ylen, int32_t k,
+                          uint32_t sch, uint32_t scl) {
     size_t u;
     uint32_t ysign, tw;
     int32_t cc;
@@ -1968,8 +1941,7 @@ zint_add_scaled_mul_small(uint32_t *restrict x, size_t xlen,
  */
 static void
 zint_sub_scaled(uint32_t *restrict x, size_t xlen,
-    const uint32_t *restrict y, size_t ylen, uint32_t sch, uint32_t scl)
-{
+                const uint32_t *restrict y, size_t ylen, uint32_t sch, uint32_t scl) {
     size_t u;
     uint32_t ysign, tw;
     uint32_t cc;
@@ -2003,8 +1975,7 @@ zint_sub_scaled(uint32_t *restrict x, size_t xlen,
  * Convert a one-word signed big integer into a signed value.
  */
 static inline int32_t
-zint_one_to_plain(const uint32_t *x)
-{
+zint_one_to_plain(const uint32_t *x) {
     uint32_t w;
 
     w = x[0];
@@ -2027,8 +1998,7 @@ zint_one_to_plain(const uint32_t *x)
  */
 static void
 poly_big_to_fp(fpr *d, const uint32_t *f, size_t flen, size_t fstride,
-    unsigned logn)
-{
+               unsigned logn) {
     size_t n, u;
 
     n = MKN(logn);
@@ -2077,8 +2047,7 @@ poly_big_to_fp(fpr *d, const uint32_t *f, size_t flen, size_t fstride,
  * and the (f,g) polynomials will be discarded.
  */
 static int
-poly_big_to_small(int8_t *d, const uint32_t *s, int lim, unsigned logn)
-{
+poly_big_to_small(int8_t *d, const uint32_t *s, int lim, unsigned logn) {
     size_t n, u;
 
     n = MKN(logn);
@@ -2106,9 +2075,8 @@ poly_big_to_small(int8_t *d, const uint32_t *s, int lim, unsigned logn)
  */
 static void
 poly_sub_scaled(uint32_t *restrict F, size_t Flen, size_t Fstride,
-    const uint32_t *restrict f, size_t flen, size_t fstride,
-    const int32_t *restrict k, uint32_t sch, uint32_t scl, unsigned logn)
-{
+                const uint32_t *restrict f, size_t flen, size_t fstride,
+                const int32_t *restrict k, uint32_t sch, uint32_t scl, unsigned logn) {
     size_t n, u;
 
     n = MKN(logn);
@@ -2143,10 +2111,9 @@ poly_sub_scaled(uint32_t *restrict F, size_t Flen, size_t Fstride,
  */
 static void
 poly_sub_scaled_ntt(uint32_t *restrict F, size_t Flen, size_t Fstride,
-    const uint32_t *restrict f, size_t flen, size_t fstride,
-    const int32_t *restrict k, uint32_t sch, uint32_t scl, unsigned logn,
-    uint32_t *restrict tmp)
-{
+                    const uint32_t *restrict f, size_t flen, size_t fstride,
+                    const int32_t *restrict k, uint32_t sch, uint32_t scl, unsigned logn,
+                    uint32_t *restrict tmp) {
     uint32_t *gm, *igm, *fk, *t1, *x;
     const uint32_t *y;
     size_t n, u, tlen;
@@ -2179,14 +2146,13 @@ poly_sub_scaled_ntt(uint32_t *restrict F, size_t Flen, size_t Fstride,
         }
         modp_NTT2(t1, gm, logn, p, p0i);
         for (v = 0, y = f, x = fk + u;
-            v < n; v ++, y += fstride, x += tlen)
-        {
+                v < n; v ++, y += fstride, x += tlen) {
             *x = zint_mod_small_signed(y, flen, p, p0i, R2, Rx);
         }
         modp_NTT2_ext(fk + u, tlen, gm, logn, p, p0i);
         for (v = 0, x = fk + u; v < n; v ++, x += tlen) {
             *x = modp_montymul(
-                modp_montymul(t1[v], *x, p, p0i), R2, p, p0i);
+                     modp_montymul(t1[v], *x, p, p0i), R2, p, p0i);
         }
         modp_iNTT2_ext(fk + u, tlen, igm, logn, p, p0i);
     }
@@ -2216,8 +2182,7 @@ poly_sub_scaled_ntt(uint32_t *restrict F, size_t Flen, size_t Fstride,
  * a known seed is used.
  */
 static inline uint64_t
-get_rng_u64(inner_shake256_context *rng)
-{
+get_rng_u64(inner_shake256_context *rng) {
     /*
      * We enforce little-endian representation.
      */
@@ -2226,13 +2191,13 @@ get_rng_u64(inner_shake256_context *rng)
 
     inner_shake256_extract(rng, tmp, sizeof tmp);
     return (uint64_t)tmp[0]
-        | ((uint64_t)tmp[1] << 8)
-        | ((uint64_t)tmp[2] << 16)
-        | ((uint64_t)tmp[3] << 24)
-        | ((uint64_t)tmp[4] << 32)
-        | ((uint64_t)tmp[5] << 40)
-        | ((uint64_t)tmp[6] << 48)
-        | ((uint64_t)tmp[7] << 56);
+           | ((uint64_t)tmp[1] << 8)
+           | ((uint64_t)tmp[2] << 16)
+           | ((uint64_t)tmp[3] << 24)
+           | ((uint64_t)tmp[4] << 32)
+           | ((uint64_t)tmp[5] << 40)
+           | ((uint64_t)tmp[6] << 48)
+           | ((uint64_t)tmp[7] << 56);
 }
 
 
@@ -2245,15 +2210,15 @@ get_rng_u64(inner_shake256_context *rng)
  * Probabilities are scaled up by 2^63.
  */
 static const uint64_t gauss_1024_12289[] = {
-     1283868770400643928u,  6416574995475331444u,  4078260278032692663u,
-     2353523259288686585u,  1227179971273316331u,   575931623374121527u,
-      242543240509105209u,    91437049221049666u,    30799446349977173u,
-        9255276791179340u,     2478152334826140u,      590642893610164u,
-         125206034929641u,       23590435911403u,        3948334035941u,
-            586753615614u,          77391054539u,           9056793210u,
-               940121950u,             86539696u,              7062824u,
-                  510971u,                32764u,                 1862u,
-                      94u,                    4u,                    0u
+    1283868770400643928u,  6416574995475331444u,  4078260278032692663u,
+    2353523259288686585u,  1227179971273316331u,   575931623374121527u,
+    242543240509105209u,    91437049221049666u,    30799446349977173u,
+    9255276791179340u,     2478152334826140u,      590642893610164u,
+    125206034929641u,       23590435911403u,        3948334035941u,
+    586753615614u,          77391054539u,           9056793210u,
+    940121950u,             86539696u,              7062824u,
+    510971u,                32764u,                 1862u,
+    94u,                    4u,                    0u
 };
 
 /*
@@ -2267,8 +2232,7 @@ static const uint64_t gauss_1024_12289[] = {
  * together for lower dimensions.
  */
 static int
-mkgauss(RNG_CONTEXT *rng, unsigned logn)
-{
+mkgauss(RNG_CONTEXT *rng, unsigned logn) {
     unsigned u, g;
     int val;
 
@@ -2313,8 +2277,7 @@ mkgauss(RNG_CONTEXT *rng, unsigned logn)
         r = get_rng_u64(rng);
         r &= ~((uint64_t)1 << 63);
         for (k = 1; k < (sizeof gauss_1024_12289)
-            / (sizeof gauss_1024_12289[0]); k ++)
-        {
+                / (sizeof gauss_1024_12289[0]); k ++) {
             uint32_t t;
 
             t = (uint32_t)((r - gauss_1024_12289[k]) >> 63) ^ 1;
@@ -2433,8 +2396,7 @@ static const struct {
  * 2^32-1 if it is not lower than 2^31.
  */
 static uint32_t
-poly_small_sqnorm(const int8_t *f, unsigned logn)
-{
+poly_small_sqnorm(const int8_t *f, unsigned logn) {
     size_t n, u;
     uint32_t s, ng;
 
@@ -2456,8 +2418,7 @@ poly_small_sqnorm(const int8_t *f, unsigned logn)
  * so that the offset is a multiple of the size of 'fpr'.
  */
 static fpr *
-align_fpr(void *base, void *data)
-{
+align_fpr(void *base, void *data) {
     uint8_t *cb, *cd;
     size_t k, km;
 
@@ -2476,8 +2437,7 @@ align_fpr(void *base, void *data)
  * so that the offset is a multiple of the size of 'uint32_t'.
  */
 static uint32_t *
-align_u32(void *base, void *data)
-{
+align_u32(void *base, void *data) {
     uint8_t *cb, *cd;
     size_t k, km;
 
@@ -2503,8 +2463,7 @@ align_u32(void *base, void *data)
  */
 static void
 make_fg_step(uint32_t *data, unsigned logn, unsigned depth,
-    int in_ntt, int out_ntt)
-{
+             int in_ntt, int out_ntt) {
     size_t n, hn, u;
     size_t slen, tlen;
     uint32_t *fd, *gd, *fs, *gs, *gm, *igm, *t1;
@@ -2526,7 +2485,7 @@ make_fg_step(uint32_t *data, unsigned logn, unsigned depth,
     gm = gs + n * slen;
     igm = gm + n;
     t1 = igm + n;
-    memmove(fs, data, 2 * n * slen * sizeof *data);
+    memmove(fs, data, 2 * n * slen * sizeof * data);
 
     /*
      * First slen words: we use the input values directly, and apply
@@ -2554,7 +2513,7 @@ make_fg_step(uint32_t *data, unsigned logn, unsigned depth,
             w0 = t1[(v << 1) + 0];
             w1 = t1[(v << 1) + 1];
             *x = modp_montymul(
-                modp_montymul(w0, w1, p, p0i), R2, p, p0i);
+                     modp_montymul(w0, w1, p, p0i), R2, p, p0i);
         }
         if (in_ntt) {
             modp_iNTT2_ext(fs + u, slen, igm, logn, p, p0i);
@@ -2572,7 +2531,7 @@ make_fg_step(uint32_t *data, unsigned logn, unsigned depth,
             w0 = t1[(v << 1) + 0];
             w1 = t1[(v << 1) + 1];
             *x = modp_montymul(
-                modp_montymul(w0, w1, p, p0i), R2, p, p0i);
+                     modp_montymul(w0, w1, p, p0i), R2, p, p0i);
         }
         if (in_ntt) {
             modp_iNTT2_ext(gs + u, slen, igm, logn, p, p0i);
@@ -2614,7 +2573,7 @@ make_fg_step(uint32_t *data, unsigned logn, unsigned depth,
             w0 = t1[(v << 1) + 0];
             w1 = t1[(v << 1) + 1];
             *x = modp_montymul(
-                modp_montymul(w0, w1, p, p0i), R2, p, p0i);
+                     modp_montymul(w0, w1, p, p0i), R2, p, p0i);
         }
         for (v = 0, x = gs; v < n; v ++, x += slen) {
             t1[v] = zint_mod_small_signed(x, slen, p, p0i, R2, Rx);
@@ -2626,7 +2585,7 @@ make_fg_step(uint32_t *data, unsigned logn, unsigned depth,
             w0 = t1[(v << 1) + 0];
             w1 = t1[(v << 1) + 1];
             *x = modp_montymul(
-                modp_montymul(w0, w1, p, p0i), R2, p, p0i);
+                     modp_montymul(w0, w1, p, p0i), R2, p, p0i);
         }
 
         if (!out_ntt) {
@@ -2649,8 +2608,7 @@ make_fg_step(uint32_t *data, unsigned logn, unsigned depth,
  */
 static void
 make_fg(uint32_t *data, const int8_t *f, const int8_t *g,
-    unsigned logn, unsigned depth, int out_ntt)
-{
+        unsigned logn, unsigned depth, int out_ntt) {
     size_t n, u;
     uint32_t *ft, *gt, p0;
     unsigned d;
@@ -2682,7 +2640,7 @@ make_fg(uint32_t *data, const int8_t *f, const int8_t *g,
 
     for (d = 0; d < depth; d ++) {
         make_fg_step(data, logn - d, d,
-            d != 0, (d + 1) < depth || out_ntt);
+                     d != 0, (d + 1) < depth || out_ntt);
     }
 }
 
@@ -2695,8 +2653,7 @@ make_fg(uint32_t *data, const int8_t *f, const int8_t *g,
  */
 static int
 solve_NTRU_deepest(unsigned logn_top,
-    const int8_t *f, const int8_t *g, uint32_t *tmp)
-{
+                   const int8_t *f, const int8_t *g, uint32_t *tmp) {
     size_t len;
     uint32_t *Fp, *Gp, *fp, *gp, *t1, q;
     const small_prime *primes;
@@ -2740,8 +2697,7 @@ solve_NTRU_deepest(unsigned logn_top,
      */
     q = 12289;
     if (zint_mul_small(Fp, len, q) != 0
-        || zint_mul_small(Gp, len, q) != 0)
-    {
+            || zint_mul_small(Gp, len, q) != 0) {
         return 0;
     }
 
@@ -2757,8 +2713,7 @@ solve_NTRU_deepest(unsigned logn_top,
  */
 static int
 solve_NTRU_intermediate(unsigned logn_top,
-    const int8_t *f, const int8_t *g, unsigned depth, uint32_t *tmp)
-{
+                        const int8_t *f, const int8_t *g, unsigned depth, uint32_t *tmp) {
     /*
      * In this function, 'logn' is the log2 of the degree for
      * this step. If N = 2^logn, then:
@@ -2816,7 +2771,7 @@ solve_NTRU_intermediate(unsigned logn_top,
     Ft = tmp;
     Gt = Ft + n * llen;
     t1 = Gt + n * llen;
-    memmove(t1, ft, 2 * n * slen * sizeof *ft);
+    memmove(t1, ft, 2 * n * slen * sizeof * ft);
     ft = t1;
     gt = ft + slen * n;
     t1 = gt + slen * n;
@@ -2824,7 +2779,7 @@ solve_NTRU_intermediate(unsigned logn_top,
     /*
      * Move Fd and Gd _after_ f and g.
      */
-    memmove(t1, Fd, 2 * hn * dlen * sizeof *Fd);
+    memmove(t1, Fd, 2 * hn * dlen * sizeof * Fd);
     Fd = t1;
     Gd = Fd + hn * dlen;
 
@@ -2842,9 +2797,8 @@ solve_NTRU_intermediate(unsigned logn_top,
         R2 = modp_R2(p, p0i);
         Rx = modp_Rx((unsigned)dlen, p, p0i, R2);
         for (v = 0, xs = Fd, ys = Gd, xd = Ft + u, yd = Gt + u;
-            v < hn;
-            v ++, xs += dlen, ys += dlen, xd += llen, yd += llen)
-        {
+                v < hn;
+                v ++, xs += dlen, ys += dlen, xd += llen, yd += llen) {
             *xd = zint_mod_small_signed(xs, dlen, p, p0i, R2, Rx);
             *yd = zint_mod_small_signed(ys, dlen, p, p0i, R2, Rx);
         }
@@ -2887,8 +2841,7 @@ solve_NTRU_intermediate(unsigned logn_top,
 
         if (u < slen) {
             for (v = 0, x = ft + u, y = gt + u;
-                v < n; v ++, x += slen, y += slen)
-            {
+                    v < n; v ++, x += slen, y += slen) {
                 fx[v] = *x;
                 gx[v] = *y;
             }
@@ -2899,12 +2852,11 @@ solve_NTRU_intermediate(unsigned logn_top,
 
             Rx = modp_Rx((unsigned)slen, p, p0i, R2);
             for (v = 0, x = ft, y = gt;
-                v < n; v ++, x += slen, y += slen)
-            {
+                    v < n; v ++, x += slen, y += slen) {
                 fx[v] = zint_mod_small_signed(x, slen,
-                    p, p0i, R2, Rx);
+                                              p, p0i, R2, Rx);
                 gx[v] = zint_mod_small_signed(y, slen,
-                    p, p0i, R2, Rx);
+                                              p, p0i, R2, Rx);
             }
             modp_NTT2(fx, gm, logn, p, p0i);
             modp_NTT2(gx, gm, logn, p, p0i);
@@ -2918,8 +2870,7 @@ solve_NTRU_intermediate(unsigned logn_top,
         Fp = gx + n;
         Gp = Fp + hn;
         for (v = 0, x = Ft + u, y = Gt + u;
-            v < hn; v ++, x += llen, y += llen)
-        {
+                v < hn; v ++, x += llen, y += llen) {
             Fp[v] = *x;
             Gp[v] = *y;
         }
@@ -2957,8 +2908,7 @@ solve_NTRU_intermediate(unsigned logn_top,
          * from the same group are consecutive in RAM.
          */
         for (v = 0, x = Ft + u, y = Gt + u; v < hn;
-            v ++, x += (llen << 1), y += (llen << 1))
-        {
+                v ++, x += (llen << 1), y += (llen << 1)) {
             uint32_t ftA, ftB, gtA, gtB;
             uint32_t mFp, mGp;
 
@@ -3211,8 +3161,7 @@ solve_NTRU_intermediate(unsigned logn_top,
              * secret key (f,g).
              */
             if (!fpr_lt(fpr_mtwo31m1, xv)
-                || !fpr_lt(xv, fpr_ptwo31m1))
-            {
+                    || !fpr_lt(xv, fpr_ptwo31m1)) {
                 return 0;
             }
             k[u] = (int32_t)fpr_rint(xv);
@@ -3229,14 +3178,14 @@ solve_NTRU_intermediate(unsigned logn_top,
         scl = (uint32_t)(scale_k % 31);
         if (depth <= DEPTH_INT_FG) {
             poly_sub_scaled_ntt(Ft, FGlen, llen, ft, slen, slen,
-                k, sch, scl, logn, t1);
+                                k, sch, scl, logn, t1);
             poly_sub_scaled_ntt(Gt, FGlen, llen, gt, slen, slen,
-                k, sch, scl, logn, t1);
+                                k, sch, scl, logn, t1);
         } else {
             poly_sub_scaled(Ft, FGlen, llen, ft, slen, slen,
-                k, sch, scl, logn);
+                            k, sch, scl, logn);
             poly_sub_scaled(Gt, FGlen, llen, gt, slen, slen,
-                k, sch, scl, logn);
+                            k, sch, scl, logn);
         }
 
         /*
@@ -3292,9 +3241,8 @@ solve_NTRU_intermediate(unsigned logn_top,
      * expected output format).
      */
     for (u = 0, x = tmp, y = tmp;
-        u < (n << 1); u ++, x += slen, y += llen)
-    {
-        memmove(x, y, slen * sizeof *y);
+            u < (n << 1); u ++, x += slen, y += llen) {
+        memmove(x, y, slen * sizeof * y);
     }
     return 1;
 }
@@ -3307,8 +3255,7 @@ solve_NTRU_intermediate(unsigned logn_top,
  */
 static int
 solve_NTRU_binary_depth1(unsigned logn_top,
-    const int8_t *f, const int8_t *g, uint32_t *tmp)
-{
+                         const int8_t *f, const int8_t *g, uint32_t *tmp) {
     /*
      * The first half of this function is a copy of the corresponding
      * part in solve_NTRU_intermediate(), for the reconstruction of
@@ -3381,9 +3328,8 @@ solve_NTRU_binary_depth1(unsigned logn_top,
         R2 = modp_R2(p, p0i);
         Rx = modp_Rx((unsigned)dlen, p, p0i, R2);
         for (v = 0, xs = Fd, ys = Gd, xd = Ft + u, yd = Gt + u;
-            v < hn;
-            v ++, xs += dlen, ys += dlen, xd += llen, yd += llen)
-        {
+                v < hn;
+                v ++, xs += dlen, ys += dlen, xd += llen, yd += llen) {
             *xd = zint_mod_small_signed(xs, dlen, p, p0i, R2, Rx);
             *yd = zint_mod_small_signed(ys, dlen, p, p0i, R2, Rx);
         }
@@ -3454,11 +3400,11 @@ solve_NTRU_binary_depth1(unsigned logn_top,
          * degree n, so we can save some space.
          */
         if (depth > 0) { /* always true */
-            memmove(gm + n, igm, n * sizeof *igm);
+            memmove(gm + n, igm, n * sizeof * igm);
             igm = gm + n;
-            memmove(igm + n, fx, n * sizeof *ft);
+            memmove(igm + n, fx, n * sizeof * ft);
             fx = igm + n;
-            memmove(fx + n, gx, n * sizeof *gt);
+            memmove(fx + n, gx, n * sizeof * gt);
             gx = fx + n;
         }
 
@@ -3470,8 +3416,7 @@ solve_NTRU_binary_depth1(unsigned logn_top,
         Fp = gx + n;
         Gp = Fp + hn;
         for (v = 0, x = Ft + u, y = Gt + u;
-            v < hn; v ++, x += llen, y += llen)
-        {
+                v < hn; v ++, x += llen, y += llen) {
             Fp[v] = *x;
             Gp[v] = *y;
         }
@@ -3516,8 +3461,7 @@ solve_NTRU_binary_depth1(unsigned logn_top,
          * in our bit-reversal encoding.
          */
         for (v = 0, x = Ft + u, y = Gt + u;
-            v < hn; v ++, x += (llen << 1), y += (llen << 1))
-        {
+                v < hn; v ++, x += (llen << 1), y += (llen << 1)) {
             uint32_t ftA, ftB, gtA, gtB;
             uint32_t mFp, mGp;
 
@@ -3542,8 +3486,7 @@ solve_NTRU_binary_depth1(unsigned logn_top,
             modp_iNTT2(fx, igm, logn, p, p0i);
             modp_iNTT2(gx, igm, logn, p, p0i);
             for (v = 0, x = ft + u, y = gt + u;
-                v < n; v ++, x += slen, y += slen)
-            {
+                    v < n; v ++, x += slen, y += slen) {
                 *x = fx[v];
                 *y = gx[v];
             }
@@ -3578,11 +3521,11 @@ solve_NTRU_binary_depth1(unsigned logn_top,
      * Integer representation of F and G is no longer needed, we
      * can remove it.
      */
-    memmove(tmp, ft, 2 * slen * n * sizeof *ft);
+    memmove(tmp, ft, 2 * slen * n * sizeof * ft);
     ft = tmp;
     gt = ft + slen * n;
     rt3 = align_fpr(tmp, gt + slen * n);
-    memmove(rt3, rt1, 2 * n * sizeof *rt1);
+    memmove(rt3, rt1, 2 * n * sizeof * rt1);
     rt1 = rt3;
     rt2 = rt1 + n;
     rt3 = rt2 + n;
@@ -3597,7 +3540,7 @@ solve_NTRU_binary_depth1(unsigned logn_top,
     /*
      * Remove unneeded ft and gt.
      */
-    memmove(tmp, rt1, 4 * n * sizeof *rt1);
+    memmove(tmp, rt1, 4 * n * sizeof * rt1);
     rt1 = (fpr *)tmp;
     rt2 = rt1 + n;
     rt3 = rt2 + n;
@@ -3658,7 +3601,7 @@ solve_NTRU_binary_depth1(unsigned logn_top,
     PQCLEAN_FALCON512_AARCH64_poly_mul_fft(rt3, rt3, rt5, logn);
     PQCLEAN_FALCON512_AARCH64_poly_sub(rt1, rt1, rt3, logn);
     PQCLEAN_FALCON512_AARCH64_iFFT(rt1, logn);
-    
+
     PQCLEAN_FALCON512_AARCH64_poly_mul_fft(rt4, rt4, rt5, logn);
     PQCLEAN_FALCON512_AARCH64_poly_sub(rt2, rt2, rt4, logn);
     PQCLEAN_FALCON512_AARCH64_iFFT(rt2, logn);
@@ -3669,7 +3612,7 @@ solve_NTRU_binary_depth1(unsigned logn_top,
     Ft = tmp;
     Gt = Ft + n;
     rt3 = align_fpr(tmp, Gt + n);
-    memmove(rt3, rt1, 2 * n * sizeof *rt1);
+    memmove(rt3, rt1, 2 * n * sizeof * rt1);
     rt1 = rt3;
     rt2 = rt1 + n;
     for (u = 0; u < n; u ++) {
@@ -3688,8 +3631,7 @@ solve_NTRU_binary_depth1(unsigned logn_top,
  */
 static int
 solve_NTRU_binary_depth0(unsigned logn,
-    const int8_t *f, const int8_t *g, uint32_t *tmp)
-{
+                         const int8_t *f, const int8_t *g, uint32_t *tmp) {
     size_t n, hn, u;
     uint32_t p, p0i, R2;
     uint32_t *Fp, *Gp, *t1, *t2, *t3, *t4, *t5;
@@ -3770,7 +3712,7 @@ solve_NTRU_binary_depth0(unsigned logn,
 
     Gp = Fp + n;
     t1 = Gp + n;
-    memmove(Fp, ft, 2 * n * sizeof *ft);
+    memmove(Fp, ft, 2 * n * sizeof * ft);
 
     /*
      * We now need to apply the Babai reduction. At that point,
@@ -3840,9 +3782,9 @@ solve_NTRU_binary_depth0(unsigned logn,
 
         w = modp_montymul(t5[u], R2, p, p0i);
         t2[u] = modp_add(t2[u],
-            modp_montymul(w, Gp[u], p, p0i), p);
+                         modp_montymul(w, Gp[u], p, p0i), p);
         t3[u] = modp_add(t3[u],
-            modp_montymul(w, t4[u], p, p0i), p);
+                         modp_montymul(w, t4[u], p, p0i), p);
     }
 
     /*
@@ -3883,7 +3825,7 @@ solve_NTRU_binary_depth0(unsigned logn,
     }
     PQCLEAN_FALCON512_AARCH64_FFT(rt3, logn);
     rt2 = align_fpr(tmp, t2);
-    memmove(rt2, rt3, hn * sizeof *rt3);
+    memmove(rt2, rt3, hn * sizeof * rt3);
 
     /*
      * Convert F*adj(f)+G*adj(g) in FFT representation.
@@ -3930,9 +3872,9 @@ solve_NTRU_binary_depth0(unsigned logn,
 
         kw = modp_montymul(t1[u], R2, p, p0i);
         Fp[u] = modp_sub(Fp[u],
-            modp_montymul(kw, t4[u], p, p0i), p);
+                         modp_montymul(kw, t4[u], p, p0i), p);
         Gp[u] = modp_sub(Gp[u],
-            modp_montymul(kw, t5[u], p, p0i), p);
+                         modp_montymul(kw, t5[u], p, p0i), p);
     }
     modp_iNTT2(Fp, t3, logn, p, p0i);
     modp_iNTT2(Gp, t3, logn, p, p0i);
@@ -3952,8 +3894,7 @@ solve_NTRU_binary_depth0(unsigned logn,
  */
 static int
 solve_NTRU(unsigned logn, int8_t *F, int8_t *G,
-    const int8_t *f, const int8_t *g, int lim, uint32_t *tmp)
-{
+           const int8_t *f, const int8_t *g, int lim, uint32_t *tmp) {
     size_t n, u;
     uint32_t *ft, *gt, *Ft, *Gt, *gm;
     uint32_t p, p0i, r;
@@ -4008,8 +3949,7 @@ solve_NTRU(unsigned logn, int8_t *F, int8_t *G,
      * (signed value over 31 bits).
      */
     if (!poly_big_to_small(F, tmp, lim, logn)
-        || !poly_big_to_small(G, tmp + n, lim, logn))
-    {
+            || !poly_big_to_small(G, tmp + n, lim, logn)) {
         return 0;
     }
 
@@ -4048,7 +3988,7 @@ solve_NTRU(unsigned logn, int8_t *F, int8_t *G,
         uint32_t z;
 
         z = modp_sub(modp_montymul(ft[u], Gt[u], p, p0i),
-            modp_montymul(gt[u], Ft[u], p, p0i), p);
+                     modp_montymul(gt[u], Ft[u], p, p0i), p);
         if (z != r) {
             return 0;
         }
@@ -4062,8 +4002,7 @@ solve_NTRU(unsigned logn, int8_t *F, int8_t *G,
  * also makes sure that the resultant of the polynomial with phi is odd.
  */
 static void
-poly_small_mkgauss(RNG_CONTEXT *rng, int8_t *f, unsigned logn)
-{
+poly_small_mkgauss(RNG_CONTEXT *rng, int8_t *f, unsigned logn) {
     size_t n, u;
     unsigned mod2;
 
@@ -4072,7 +4011,7 @@ poly_small_mkgauss(RNG_CONTEXT *rng, int8_t *f, unsigned logn)
     for (u = 0; u < n; u ++) {
         int s;
 
-    restart:
+restart:
         s = mkgauss(rng, logn);
 
         /*
@@ -4104,9 +4043,8 @@ poly_small_mkgauss(RNG_CONTEXT *rng, int8_t *f, unsigned logn)
 /* see falcon.h */
 void
 PQCLEAN_FALCON512_AARCH64_keygen(inner_shake256_context *rng,
-    int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
-    unsigned logn, uint8_t *tmp)
-{
+                                 int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
+                                 unsigned logn, uint8_t *tmp) {
     /*
      * Algorithm is the following:
      *
@@ -4180,8 +4118,7 @@ PQCLEAN_FALCON512_AARCH64_keygen(inner_shake256_context *rng,
              * we will discard f and g.
              */
             if (f[u] >= lim || f[u] <= -lim
-                || g[u] >= lim || g[u] <= -lim)
-            {
+                    || g[u] >= lim || g[u] <= -lim) {
                 lim = -1;
                 break;
             }
@@ -4226,7 +4163,7 @@ PQCLEAN_FALCON512_AARCH64_keygen(inner_shake256_context *rng,
         PQCLEAN_FALCON512_AARCH64_poly_mulconst(rt1, rt1, fpr_q, logn);
         PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(rt1, rt1, rt3, logn);
         PQCLEAN_FALCON512_AARCH64_iFFT(rt1, logn);
-        
+
         PQCLEAN_FALCON512_AARCH64_poly_mulconst(rt2, rt2, fpr_q, logn);
         PQCLEAN_FALCON512_AARCH64_poly_mul_autoadj_fft(rt2, rt2, rt3, logn);
         PQCLEAN_FALCON512_AARCH64_iFFT(rt2, logn);
@@ -4248,7 +4185,7 @@ PQCLEAN_FALCON512_AARCH64_keygen(inner_shake256_context *rng,
             h2 = (int16_t *)h;
             tmp2 = (int16_t *)tmp;
         }
-        
+
         if (!PQCLEAN_FALCON512_AARCH64_compute_public(h2, f, g, tmp2)) {
             continue;
         }

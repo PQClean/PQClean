@@ -45,18 +45,16 @@
 typedef double fpr;
 
 static inline fpr
-FPR(double v)
-{
-	fpr x;
+FPR(double v) {
+    fpr x;
 
-	x = v;
-	return x;
+    x = v;
+    return x;
 }
 
 static inline fpr
-fpr_of(int64_t i)
-{
-	return (double)i;
+fpr_of(int64_t i) {
+    return (double)i;
 }
 
 static const fpr fpr_q = 12289.0 ;
@@ -81,108 +79,93 @@ static const fpr fpr_mtwo63m1 = -9223372036854775807.0 ;
 static const fpr fpr_ptwo63 = 9223372036854775808.0 ;
 
 static inline int64_t
-fpr_rint(fpr x)
-{
+fpr_rint(fpr x) {
     int64_t t;
     __asm__ ( "fcvtns   %x0, %d1": "=r" (t) : "w" (x));
     return t;
 }
 
 static inline int64_t
-fpr_floor(fpr x)
-{
-	int64_t r;
+fpr_floor(fpr x) {
+    int64_t r;
 
-	/*
-	 * The cast performs a trunc() (rounding toward 0) and thus is
-	 * wrong by 1 for most negative values. The correction below is
-	 * constant-time as long as the compiler turns the
-	 * floating-point conversion result into a 0/1 integer without a
-	 * conditional branch or another non-constant-time construction.
-	 * This should hold on all modern architectures with an FPU (and
-	 * if it is false on a given arch, then chances are that the FPU
-	 * itself is not constant-time, making the point moot).
-	 */
-	r = (int64_t)x;
-	return r - (x < (double)r);
+    /*
+     * The cast performs a trunc() (rounding toward 0) and thus is
+     * wrong by 1 for most negative values. The correction below is
+     * constant-time as long as the compiler turns the
+     * floating-point conversion result into a 0/1 integer without a
+     * conditional branch or another non-constant-time construction.
+     * This should hold on all modern architectures with an FPU (and
+     * if it is false on a given arch, then chances are that the FPU
+     * itself is not constant-time, making the point moot).
+     */
+    r = (int64_t)x;
+    return r - (x < (double)r);
 }
 
 static inline int64_t
-fpr_trunc(fpr x)
-{
-	return (int64_t)x;
+fpr_trunc(fpr x) {
+    return (int64_t)x;
 }
 
 static inline fpr
-fpr_add(fpr x, fpr y)
-{
-	return (x + y);
+fpr_add(fpr x, fpr y) {
+    return (x + y);
 }
 
 static inline fpr
-fpr_sub(fpr x, fpr y)
-{
-	return (x - y);
+fpr_sub(fpr x, fpr y) {
+    return (x - y);
 }
 
 static inline fpr
-fpr_neg(fpr x)
-{
-	return (-x);
+fpr_neg(fpr x) {
+    return (-x);
 }
 
 static inline fpr
-fpr_half(fpr x)
-{
-	return (x * 0.5);
+fpr_half(fpr x) {
+    return (x * 0.5);
 }
 
 static inline fpr
-fpr_double(fpr x)
-{
-	return (x + x);
+fpr_double(fpr x) {
+    return (x + x);
 }
 
 static inline fpr
-fpr_mul(fpr x, fpr y)
-{
-	return (x * y);
+fpr_mul(fpr x, fpr y) {
+    return (x * y);
 }
 
 static inline fpr
-fpr_sqr(fpr x)
-{
-	return (x * x);
+fpr_sqr(fpr x) {
+    return (x * x);
 }
 
 static inline fpr
-fpr_inv(fpr x)
-{
-	return (1.0 / x);
+fpr_inv(fpr x) {
+    return (1.0 / x);
 }
 
 static inline fpr
-fpr_div(fpr x, fpr y)
-{
-	return (x / y);
+fpr_div(fpr x, fpr y) {
+    return (x / y);
 }
 
 static inline fpr
-fpr_sqrt(fpr x)
-{
-	__asm__ ( "fsqrt   %d0, %d0" : "+w" (x) : : );
-	return x;
+fpr_sqrt(fpr x) {
+    __asm__ ( "fsqrt   %d0, %d0" : "+w" (x) : : );
+    return x;
 }
 
 static inline int
-fpr_lt(fpr x, fpr y)
-{
-	return x < y;
+fpr_lt(fpr x, fpr y) {
+    return x < y;
 }
 
 static inline uint64_t
-fpr_expm_p63(fpr x, fpr ccs)
-{
+fpr_expm_p63(fpr x, fpr ccs) {
     static const double C_expm[] = {
         1.000000000000000000000000000000,  // c0
         -0.999999999999994892974086724280, // c1
@@ -199,13 +182,13 @@ fpr_expm_p63(fpr x, fpr ccs)
         0.000000002073772366009083061987,  // c12
         0.000000000000000000000000000000,
     };
-    float64x2_t neon_x, neon_1x, neon_x2, 
+    float64x2_t neon_x, neon_1x, neon_x2,
                 neon_x4, neon_x8, neon_x12, neon_ccs;
     float64x2x4_t neon_exp0;
     float64x2x3_t neon_exp1;
     float64x2_t y1, y2, y3, y;
     double ret;
-    
+
     neon_exp0 = vld1q_f64_x4(&C_expm[0]);
     neon_exp1 = vld1q_f64_x3(&C_expm[8]);
     neon_ccs = vdupq_n_f64(ccs);
@@ -226,7 +209,7 @@ fpr_expm_p63(fpr x, fpr ccs)
 
     y1 = vmulq_f64(y1, neon_1x);
     y2 = vmulq_f64(y2, neon_1x);
-    y3 = vmulq_f64(y3, neon_1x);    
+    y3 = vmulq_f64(y3, neon_1x);
 
     vfmla(y, y1, y2, neon_x4);
     vfmla(y,  y, y3, neon_x8);

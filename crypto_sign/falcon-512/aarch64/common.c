@@ -36,8 +36,7 @@
 /* see inner.h */
 void PQCLEAN_FALCON512_AARCH64_hash_to_point_vartime(
     inner_shake256_context *sc,
-    uint16_t *x, unsigned logn)
-{
+    uint16_t *x, unsigned logn) {
     /*
      * This is the straightforward per-the-spec implementation. It
      * is not constant-time, thus it might reveal information on the
@@ -51,17 +50,14 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_vartime(
     size_t n;
 
     n = (size_t)1 << logn;
-    while (n > 0)
-    {
+    while (n > 0) {
         uint8_t buf[2];
         uint32_t w;
 
         inner_shake256_extract(sc, (void *)buf, sizeof buf);
         w = ((unsigned)buf[0] << 8) | (unsigned)buf[1];
-        if (w < 5 * FALCON_Q)
-        {
-            while (w >= FALCON_Q)
-            {
+        if (w < 5 * FALCON_Q) {
+            while (w >= FALCON_Q) {
                 w -= FALCON_Q;
             }
             *x++ = (uint16_t)w;
@@ -73,8 +69,7 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_vartime(
 /* see inner.h */
 void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(
     inner_shake256_context *sc,
-    uint16_t *x, unsigned logn, uint8_t *tmp)
-{
+    uint16_t *x, unsigned logn, uint8_t *tmp) {
     /*
      * Each 16-bit sample is a value in 0..65535. The value is
      * kept if it falls in 0..61444 (because 61445 = 5*12289)
@@ -114,7 +109,8 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(
         122,
         154,
         205,
-        287};
+        287
+    };
 
     unsigned n, n2, u, m, p, over;
     uint16_t *tt1, tt2[63];
@@ -130,8 +126,7 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(
     over = overtab[logn];
     m = n + over;
     tt1 = (uint16_t *)tmp;
-    for (u = 0; u < m; u++)
-    {
+    for (u = 0; u < m; u++) {
         uint8_t buf[2];
         uint32_t w, wr;
 
@@ -141,16 +136,11 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(
         wr = wr - ((uint32_t)24578 & (((wr - 24578) >> 31) - 1));
         wr = wr - ((uint32_t)12289 & (((wr - 12289) >> 31) - 1));
         wr |= ((w - 61445) >> 31) - 1;
-        if (u < n)
-        {
+        if (u < n) {
             x[u] = (uint16_t)wr;
-        }
-        else if (u < n2)
-        {
+        } else if (u < n2) {
             tt1[u - n] = (uint16_t)wr;
-        }
-        else
-        {
+        } else {
             tt2[u - n2] = (uint16_t)wr;
         }
     }
@@ -164,8 +154,7 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(
      * has to be moved down by p slots, the destination slot is
      * "free" (i.e. contains an invalid value).
      */
-    for (p = 1; p <= over; p <<= 1)
-    {
+    for (p = 1; p <= over; p <<= 1) {
         unsigned v;
 
         /*
@@ -182,21 +171,15 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(
          *     u-p. The address of the swap destination is d.
          */
         v = 0;
-        for (u = 0; u < m; u++)
-        {
+        for (u = 0; u < m; u++) {
             uint16_t *s, *d;
             unsigned j, sv, dv, mk;
 
-            if (u < n)
-            {
+            if (u < n) {
                 s = &x[u];
-            }
-            else if (u < n2)
-            {
+            } else if (u < n2) {
                 s = &tt1[u - n];
-            }
-            else
-            {
+            } else {
                 s = &tt2[u - n2];
             }
             sv = *s;
@@ -220,24 +203,18 @@ void PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(
              * In this loop we consider jumps by p slots; if
              * u < p then there is nothing more to do.
              */
-            if (u < p)
-            {
+            if (u < p) {
                 continue;
             }
 
             /*
              * Destination for the swap: value at address u-p.
              */
-            if ((u - p) < n)
-            {
+            if ((u - p) < n) {
                 d = &x[u - p];
-            }
-            else if ((u - p) < n2)
-            {
+            } else if ((u - p) < n2) {
                 d = &tt1[(u - p) - n];
-            }
-            else
-            {
+            } else {
                 d = &tt2[(u - p) - n2];
             }
             dv = *d;
@@ -270,15 +247,15 @@ static const uint32_t l2bound[] = {
     7959734,
     16468416,
     34034726,
-    70265242};
+    70265242
+};
 
 /* see inner.h
  * In NEON, there is sign saturating doubling add instruction sqdmlal/sqdmlal2,
  * thus, we enable 2 parallel dependency rather than 1 for better scheduling.
  * Each for loop is tuned for cache locality.
  */
-int PQCLEAN_FALCON512_AARCH64_is_short(const int16_t *s1, const int16_t *s2)
-{
+int PQCLEAN_FALCON512_AARCH64_is_short(const int16_t *s1, const int16_t *s2) {
     // Total SIMD register 18 = 16 + 2
     int16x8x4_t neon_s1, neon_s2, neon_s3, neon_s4; // 16
     int32x4_t neon_s, neon_sh;                      // 2
@@ -287,8 +264,7 @@ int PQCLEAN_FALCON512_AARCH64_is_short(const int16_t *s1, const int16_t *s2)
     neon_s = vdupq_n_s32(0);
     neon_sh = vdupq_n_s32(0);
 
-    for (unsigned u = 0; u < FALCON_N; u += 128)
-    {
+    for (unsigned u = 0; u < FALCON_N; u += 128) {
         vload_s16_x4(neon_s1, &s1[u]);
 
         neon_s = vqdmlal_s16(neon_s, vget_low_s16(neon_s1.val[0]), vget_low_s16(neon_s1.val[0]));
@@ -337,8 +313,7 @@ int PQCLEAN_FALCON512_AARCH64_is_short(const int16_t *s1, const int16_t *s2)
         neon_sh = vqdmlal_high_s16(neon_sh, neon_s4.val[2], neon_s4.val[2]);
         neon_sh = vqdmlal_high_s16(neon_sh, neon_s4.val[3], neon_s4.val[3]);
     }
-    for (unsigned u = 0; u < FALCON_N; u += 128)
-    {
+    for (unsigned u = 0; u < FALCON_N; u += 128) {
         vload_s16_x4(neon_s1, &s2[u]);
 
         neon_s = vqdmlal_s16(neon_s, vget_low_s16(neon_s1.val[0]), vget_low_s16(neon_s1.val[0]));
@@ -400,9 +375,8 @@ int PQCLEAN_FALCON512_AARCH64_is_short(const int16_t *s1, const int16_t *s2)
 }
 
 int PQCLEAN_FALCON512_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
-                      const int16_t *hm, const fpr *t0,
-                      const fpr *t1)
-{
+        const int16_t *hm, const fpr *t0,
+        const fpr *t1) {
     // Total SIMD registers: 26 = 16 + 8 + 2
     int16x8x4_t neon_hm, neon_ts;                         // 8
     float64x2x4_t neon_tf0, neon_tf1, neon_tf2, neon_tf3; // 16
@@ -416,8 +390,7 @@ int PQCLEAN_FALCON512_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
     neon_sh = vdupq_n_s32(0);
 
     // s1tmp
-    for (int i = 0; i < FALCON_N; i += 32)
-    {
+    for (int i = 0; i < FALCON_N; i += 32) {
         vloadx4(neon_tf0, &t0[i]);
         vloadx4(neon_tf1, &t0[i + 8]);
         vfrintx4(neon_ts0, neon_tf0);
@@ -463,8 +436,7 @@ int PQCLEAN_FALCON512_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
     }
 
     // s2tmp
-    for (int i = 0; i < FALCON_N; i += 32)
-    {
+    for (int i = 0; i < FALCON_N; i += 32) {
         vloadx4(neon_tf0, &t1[i]);
         vloadx4(neon_tf1, &t1[i + 8]);
 
@@ -521,8 +493,7 @@ int PQCLEAN_FALCON512_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
     return s <= l2bound[FALCON_LOGN];
 }
 
-int32_t PQCLEAN_FALCON512_AARCH64_poly_small_sqnorm(const int8_t *f)
-{
+int32_t PQCLEAN_FALCON512_AARCH64_poly_small_sqnorm(const int8_t *f) {
     int8x16x4_t a;
     int16x8x4_t b, c;
     int32x4_t norm, norm_sh;
@@ -530,8 +501,7 @@ int32_t PQCLEAN_FALCON512_AARCH64_poly_small_sqnorm(const int8_t *f)
     norm = vdupq_n_s32(0);
     norm_sh = vdupq_n_s32(0);
 
-    for (int i = 0; i < FALCON_N; i += 64)
-    {
+    for (int i = 0; i < FALCON_N; i += 64) {
         a = vld1q_s8_x4(&f[0]);
 
         b.val[0] = vmovl_s8(vget_low_s8(a.val[0]));

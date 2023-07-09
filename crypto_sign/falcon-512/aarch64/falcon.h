@@ -306,85 +306,85 @@ extern "C" {
  * Private key size (in bytes). The size is exact.
  */
 #define FALCON_PRIVKEY_SIZE(logn) \
-        (((logn) <= 3 \
-                ? (3u << (logn)) \
-                : ((10u - ((logn) >> 1)) << ((logn) - 2)) + (1 << (logn))) \
-        + 1)
+    (((logn) <= 3 \
+      ? (3u << (logn)) \
+      : ((10u - ((logn) >> 1)) << ((logn) - 2)) + (1 << (logn))) \
+     + 1)
 
 /*
  * Public key size (in bytes). The size is exact.
  */
 #define FALCON_PUBKEY_SIZE(logn) \
-        (((logn) <= 1 \
-                ? 4u \
-                : (7u << ((logn) - 2))) \
-        + 1)
+    (((logn) <= 1 \
+      ? 4u \
+      : (7u << ((logn) - 2))) \
+     + 1)
 
 /*
  * Maximum signature size (in bytes) when using the COMPRESSED format.
  * In practice, the signature will be shorter.
  */
 #define FALCON_SIG_COMPRESSED_MAXSIZE(logn) \
-        (((((11u << (logn)) + (101u >> (10 - (logn)))) \
-        + 7) >> 3) + 41)
+    (((((11u << (logn)) + (101u >> (10 - (logn)))) \
+       + 7) >> 3) + 41)
 
 /*
  * Signature size (in bytes) when using the PADDED format. The size
  * is exact.
  */
 #define FALCON_SIG_PADDED_SIZE(logn) \
-        (44u + 3 * (256u >> (10 - (logn))) + 2 * (128u >> (10 - (logn))) \
-        + 3 * (64u >> (10 - (logn))) + 2 * (16u >> (10 - (logn))) \
-        - 2 * (2u >> (10 - (logn))) - 8 * (1u >> (10 - (logn))))
+    (44u + 3 * (256u >> (10 - (logn))) + 2 * (128u >> (10 - (logn))) \
+     + 3 * (64u >> (10 - (logn))) + 2 * (16u >> (10 - (logn))) \
+     - 2 * (2u >> (10 - (logn))) - 8 * (1u >> (10 - (logn))))
 
 /*
  * Signature size (in bytes) when using the CT format. The size is exact.
  */
 #define FALCON_SIG_CT_SIZE(logn) \
-        ((3u << ((logn) - 1)) - ((logn) == 3) + 41)
+    ((3u << ((logn) - 1)) - ((logn) == 3) + 41)
 
 /*
  * Temporary buffer size for key pair generation.
  */
 #define FALCON_TMPSIZE_KEYGEN(logn) \
-        (((logn) <= 3 ? 272u : (28u << (logn))) + (3u << (logn)) + 7)
+    (((logn) <= 3 ? 272u : (28u << (logn))) + (3u << (logn)) + 7)
 
 /*
  * Temporary buffer size for computing the pubic key from the private key.
  */
 #define FALCON_TMPSIZE_MAKEPUB(logn) \
-        ((6u << (logn)) + 1)
+    ((6u << (logn)) + 1)
 
 /*
  * Temporary buffer size for generating a signature ("dynamic" variant).
  */
 #define FALCON_TMPSIZE_SIGNDYN(logn) \
-        ((78u << (logn)) + 7)
+    ((78u << (logn)) + 7)
 
 /*
  * Temporary buffer size for generating a signature ("tree" variant, with
  * an expanded key).
  */
 #define FALCON_TMPSIZE_SIGNTREE(logn) \
-        ((50u << (logn)) + 7)
+    ((50u << (logn)) + 7)
 
 /*
  * Temporary buffer size for expanding a private key.
  */
 #define FALCON_TMPSIZE_EXPANDPRIV(logn) \
-        ((52u << (logn)) + 7)
+    ((52u << (logn)) + 7)
 
 /*
  * Size of an expanded private key.
  */
 #define FALCON_EXPANDEDKEY_SIZE(logn) \
-        (((8u * (logn) + 40) << (logn)) + 8)
+    (((8u * (logn) + 40) << (logn)) + 8)
 
 /*
  * Temporary buffer size for verifying a signature.
  */
 #define FALCON_TMPSIZE_VERIFY(logn) \
-        ((8u << (logn)) + 1)
+    ((8u << (logn)) + 1)
 
 /* ==================================================================== */
 /*
@@ -399,7 +399,7 @@ extern "C" {
  * typically on the stack.
  */
 typedef struct {
-        uint64_t opaque_contents[26];
+    uint64_t opaque_contents[26];
 } shake256_context;
 
 /*
@@ -440,7 +440,7 @@ void shake256_extract(shake256_context *sc, void *out, size_t len);
  * to output mode to make it ready to produce bytes.
  */
 void shake256_init_prng_from_seed(shake256_context *sc,
-        const void *seed, size_t seed_len);
+                                  const void *seed, size_t seed_len);
 
 /*
  * Initialize a SHAKE256 context as a PRNG, using an initial seed from
@@ -492,11 +492,11 @@ int shake256_init_prng_from_system(shake256_context *sc);
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_keygen_make(
-        shake256_context *rng,
-        uint8_t logn,
-        void *privkey, size_t privkey_len,
-        void *pubkey, size_t pubkey_len,
-        void *tmp, size_t tmp_len);
+    shake256_context *rng,
+    uint8_t logn,
+    void *privkey, size_t privkey_len,
+    void *pubkey, size_t pubkey_len,
+    void *tmp, size_t tmp_len);
 
 /*
  * Recompute the public key from the private key.
@@ -518,9 +518,9 @@ int falcon_keygen_make(
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_make_public(
-        void *pubkey, size_t pubkey_len,
-        const void *privkey, size_t privkey_len,
-        void *tmp, size_t tmp_len);
+    void *pubkey, size_t pubkey_len,
+    const void *privkey, size_t privkey_len,
+    void *tmp, size_t tmp_len);
 
 /*
  * Get the Falcon degree from an encoded private key, public key or
@@ -563,10 +563,10 @@ int falcon_get_logn(void *obj, size_t len);
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_sign_dyn(shake256_context *rng,
-        void *sig, size_t *sig_len, int sig_type,
-        const void *privkey, size_t privkey_len,
-        const void *data, size_t data_len,
-        void *tmp, size_t tmp_len);
+                    void *sig, size_t *sig_len, int sig_type,
+                    const void *privkey, size_t privkey_len,
+                    const void *data, size_t data_len,
+                    void *tmp, size_t tmp_len);
 
 /*
  * Expand a private key. The provided Falcon private key (privkey, of
@@ -585,8 +585,8 @@ int falcon_sign_dyn(shake256_context *rng,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_expand_privkey(void *expanded_key, size_t expanded_key_len,
-        const void *privkey, size_t privkey_len,
-        void *tmp, size_t tmp_len);
+                          const void *privkey, size_t privkey_len,
+                          void *tmp, size_t tmp_len);
 
 /*
  * Sign the data provided in buffer data[] (of length data_len bytes),
@@ -618,10 +618,10 @@ int falcon_expand_privkey(void *expanded_key, size_t expanded_key_len,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_sign_tree(shake256_context *rng,
-        void *sig, size_t *sig_len, int sig_type,
-        const void *expanded_key,
-        const void *data, size_t data_len,
-        void *tmp, size_t tmp_len);
+                     void *sig, size_t *sig_len, int sig_type,
+                     const void *expanded_key,
+                     const void *data, size_t data_len,
+                     void *tmp, size_t tmp_len);
 
 /* ==================================================================== */
 /*
@@ -649,8 +649,8 @@ int falcon_sign_tree(shake256_context *rng,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_sign_start(shake256_context *rng,
-        void *nonce,
-        shake256_context *hash_data);
+                      void *nonce,
+                      shake256_context *hash_data);
 
 /*
  * Finish a signature generation operation, using the private key held
@@ -688,10 +688,10 @@ int falcon_sign_start(shake256_context *rng,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_sign_dyn_finish(shake256_context *rng,
-        void *sig, size_t *sig_len, int sig_type,
-        const void *privkey, size_t privkey_len,
-        shake256_context *hash_data, const void *nonce,
-        void *tmp, size_t tmp_len);
+                           void *sig, size_t *sig_len, int sig_type,
+                           const void *privkey, size_t privkey_len,
+                           shake256_context *hash_data, const void *nonce,
+                           void *tmp, size_t tmp_len);
 
 /*
  * Finish a signature generation operation, using the expanded private
@@ -730,10 +730,10 @@ int falcon_sign_dyn_finish(shake256_context *rng,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_sign_tree_finish(shake256_context *rng,
-        void *sig, size_t *sig_len, int sig_type,
-        const void *expanded_key,
-        shake256_context *hash_data, const void *nonce,
-        void *tmp, size_t tmp_len);
+                            void *sig, size_t *sig_len, int sig_type,
+                            const void *expanded_key,
+                            shake256_context *hash_data, const void *nonce,
+                            void *tmp, size_t tmp_len);
 
 /* ==================================================================== */
 /*
@@ -758,9 +758,9 @@ int falcon_sign_tree_finish(shake256_context *rng,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_verify(const void *sig, size_t sig_len, int sig_type,
-        const void *pubkey, size_t pubkey_len,
-        const void *data, size_t data_len,
-        void *tmp, size_t tmp_len);
+                  const void *pubkey, size_t pubkey_len,
+                  const void *data, size_t data_len,
+                  void *tmp, size_t tmp_len);
 
 /*
  * Start a streamed signature verification. The provided SHAKE256 context
@@ -772,7 +772,7 @@ int falcon_verify(const void *sig, size_t sig_len, int sig_type,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_verify_start(shake256_context *hash_data,
-        const void *sig, size_t sig_len);
+                        const void *sig, size_t sig_len);
 
 /*
  * Finish a streamed signature verification. The signature sig[] (of
@@ -798,9 +798,9 @@ int falcon_verify_start(shake256_context *hash_data,
  * Returned value: 0 on success, or a negative error code.
  */
 int falcon_verify_finish(const void *sig, size_t sig_len, int sig_type,
-        const void *pubkey, size_t pubkey_len,
-        shake256_context *hash_data,
-        void *tmp, size_t tmp_len);
+                         const void *pubkey, size_t pubkey_len,
+                         shake256_context *hash_data,
+                         void *tmp, size_t tmp_len);
 
 /* ==================================================================== */
 

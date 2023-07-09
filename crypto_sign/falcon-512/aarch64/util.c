@@ -28,8 +28,7 @@
  * Convert an integer polynomial (with small values) into the
  * representation with complex numbers.
  */
-void smallints_to_fpr(fpr *r, const int8_t *t, const unsigned logn)
-{
+void smallints_to_fpr(fpr *r, const int8_t *t, const unsigned logn) {
     float64x2x4_t neon_flo64, neon_fhi64;
     int64x2x4_t neon_lo64, neon_hi64;
     int32x4_t neon_lo32[2], neon_hi32[2];
@@ -38,8 +37,7 @@ void smallints_to_fpr(fpr *r, const int8_t *t, const unsigned logn)
 
     const unsigned falcon_n =  1 << logn;
 
-    for (unsigned i = 0; i < falcon_n; i += 16)
-    {
+    for (unsigned i = 0; i < falcon_n; i += 16) {
         neon_8 = vld1q_s8(&t[i]);
 
         // Extend from 8 to 16 bit

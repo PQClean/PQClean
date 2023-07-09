@@ -37,28 +37,27 @@
  * on zero and standard deviation 1.8205, with a precision of 72 bits.
  */
 int
-PQCLEAN_FALCON512_AARCH64_gaussian0_sampler(prng *p)
-{
+PQCLEAN_FALCON512_AARCH64_gaussian0_sampler(prng *p) {
 
     static const uint32_t dist[] = {
         10745844u,  3068844u,  3741698u,
-         5559083u,  1580863u,  8248194u,
-         2260429u, 13669192u,  2736639u,
-          708981u,  4421575u, 10046180u,
-          169348u,  7122675u,  4136815u,
-           30538u, 13063405u,  7650655u,
-            4132u, 14505003u,  7826148u,
-             417u, 16768101u, 11363290u,
-              31u,  8444042u,  8086568u,
-               1u, 12844466u,   265321u,
-               0u,  1232676u, 13644283u,
-               0u,    38047u,  9111839u,
-               0u,      870u,  6138264u,
-               0u,       14u, 12545723u,
-               0u,        0u,  3104126u,
-               0u,        0u,    28824u,
-               0u,        0u,      198u,
-               0u,        0u,        1u
+        5559083u,  1580863u,  8248194u,
+        2260429u, 13669192u,  2736639u,
+        708981u,  4421575u, 10046180u,
+        169348u,  7122675u,  4136815u,
+        30538u, 13063405u,  7650655u,
+        4132u, 14505003u,  7826148u,
+        417u, 16768101u, 11363290u,
+        31u,  8444042u,  8086568u,
+        1u, 12844466u,   265321u,
+        0u,  1232676u, 13644283u,
+        0u,    38047u,  9111839u,
+        0u,      870u,  6138264u,
+        0u,       14u, 12545723u,
+        0u,        0u,  3104126u,
+        0u,        0u,    28824u,
+        0u,        0u,      198u,
+        0u,        0u,        1u
     };
 
     uint32_t v0, v1, v2, hi;
@@ -147,8 +146,7 @@ PQCLEAN_FALCON512_AARCH64_gaussian0_sampler(prng *p)
  * Sample a bit with probability exp(-x) for some x >= 0.
  */
 static int
-BerExp(prng *p, fpr x, fpr ccs)
-{
+BerExp(prng *p, fpr x, fpr ccs) {
     int s, i;
     fpr r;
     uint32_t sw, w;
@@ -210,8 +208,7 @@ BerExp(prng *p, fpr x, fpr ccs)
  * 0.5 and 1); in Falcon, sigma should always be between 1.2 and 1.9.
  */
 int
-PQCLEAN_FALCON512_AARCH64_sampler(void *ctx, fpr mu, fpr isigma)
-{
+PQCLEAN_FALCON512_AARCH64_sampler(void *ctx, fpr mu, fpr isigma) {
     sampler_context *spc;
     int s;
     fpr r, dss, ccs;
