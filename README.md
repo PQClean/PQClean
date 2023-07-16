@@ -37,7 +37,7 @@ Find the paper at https://eprint.iacr.org/2022/337
 Please cite this work when referring to PQClean:
 
 ```bibtex
-@inproceedings{SSR:KSSW22,,
+@inproceedings{SSR:KSSW22,
   author    = {Matthias J. Kannwischer and
                Peter Schwabe and
                Douglas Stebila and
