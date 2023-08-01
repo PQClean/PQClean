@@ -2,7 +2,6 @@
 #define POLY_H
 
 #include "inner.h"
-#include "config.h"
 
 typedef enum ntt_domain {
     NTT_NONE = 0,

@@ -27,7 +27,7 @@
  * 1 layer of Forward FFT for 2 complex points (4 coefficients).
  * Note: The scalar version is faster than vectorized code.
  */
-static void PQCLEAN_FALCON512_AARCH64_FFT_log2(fpr *f) {
+static void PQCLEAN_FALCON1024_AARCH64_FFT_log2(fpr *f) {
     fpr x_re, x_im, y_re, y_im, v_re, v_im, t_re, t_im, s;
 
     x_re = f[0];
@@ -51,7 +51,7 @@ static void PQCLEAN_FALCON512_AARCH64_FFT_log2(fpr *f) {
 /*
  * Vectorized 2 layers of Forward FFT for 4 complex points (8 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_FFT_log3(fpr *f) {
+static void PQCLEAN_FALCON1024_AARCH64_FFT_log3(fpr *f) {
     // Total SIMD registers: 18 = 4 + 6 + 8
     float64x2x4_t tmp;                                        // 4
     float64x2x2_t s_re_im, x, y;                              // 6
@@ -91,7 +91,7 @@ static void PQCLEAN_FALCON512_AARCH64_FFT_log3(fpr *f) {
 /*
  * Vectorized 3 layers of Forward FFT for 8 complex points (16 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_FFT_log4(fpr *f) {
+static void PQCLEAN_FALCON1024_AARCH64_FFT_log4(fpr *f) {
     // Total SIMD register: 26 = 8 + 18
     float64x2x4_t t0, t1;                                          // 8
     float64x2x2_t x_re, x_im, y_re, y_im, v1, v2, tx, ty, s_re_im; // 18
@@ -158,7 +158,7 @@ static void PQCLEAN_FALCON512_AARCH64_FFT_log4(fpr *f) {
 /*
  * Vectorized 4 layers of Forward FFT for 16 complex points (32 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_FFT_log5(fpr *f, const unsigned logn) {
+static void PQCLEAN_FALCON1024_AARCH64_FFT_log5(fpr *f, const unsigned logn) {
     // Total SIMD register: 34 = 2 + 32
     float64x2x2_t s_re_im;                                        // 2
     float64x2x4_t x_re, x_im, y_re, y_im, t_re, t_im, v_re, v_im; // 32
@@ -287,7 +287,7 @@ static void PQCLEAN_FALCON512_AARCH64_FFT_log5(fpr *f, const unsigned logn) {
 /*
  * Vectorized 1 layer of Forward FFT for 16 complex points (32 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_FFT_logn1(fpr *f, const unsigned logn) {
+static void PQCLEAN_FALCON1024_AARCH64_FFT_logn1(fpr *f, const unsigned logn) {
     const unsigned n = 1 << logn;
     const unsigned hn = n >> 1;
     const unsigned ht = n >> 2;
@@ -322,7 +322,7 @@ static void PQCLEAN_FALCON512_AARCH64_FFT_logn1(fpr *f, const unsigned logn) {
 /*
  * Vectorized 2 layers of Forward FFT for 16 complex points (32 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_FFT_logn2(fpr *f, const unsigned logn, const unsigned level) {
+static void PQCLEAN_FALCON1024_AARCH64_FFT_logn2(fpr *f, const unsigned logn, const unsigned level) {
     const unsigned int falcon_n = 1 << logn;
     const unsigned int hn = falcon_n >> 1;
 
@@ -456,7 +456,7 @@ static void PQCLEAN_FALCON512_AARCH64_FFT_logn2(fpr *f, const unsigned logn, con
  * 1 layer of Inverse FFT for 2 complex points (4 coefficients).
  * Note: The scalar version is faster than vectorized code.
  */
-static void PQCLEAN_FALCON512_AARCH64_iFFT_log2(fpr *f) {
+static void PQCLEAN_FALCON1024_AARCH64_iFFT_log2(fpr *f) {
     fpr x_re, x_im, y_re, y_im, s;
     x_re = f[0];
     y_re = f[1];
@@ -477,7 +477,7 @@ static void PQCLEAN_FALCON512_AARCH64_iFFT_log2(fpr *f) {
 /*
  * Vectorized 2 layers of Inverse FFT for 4 complex point (8 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_iFFT_log3(fpr *f) {
+static void PQCLEAN_FALCON1024_AARCH64_iFFT_log3(fpr *f) {
     // Total SIMD registers: 12 = 4 + 8
     float64x2x4_t tmp;                          // 4
     float64x2x2_t x_re_im, y_re_im, v, s_re_im; // 8
@@ -526,7 +526,7 @@ static void PQCLEAN_FALCON512_AARCH64_iFFT_log3(fpr *f) {
 /*
  * Vectorized 3 layers of Inverse FFT for 8 complex point (16 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_iFFT_log4(fpr *f) {
+static void PQCLEAN_FALCON1024_AARCH64_iFFT_log4(fpr *f) {
     // Total SIMD registers: 18 = 12 + 6
     float64x2x4_t re, im, t;           // 12
     float64x2x2_t t_re, t_im, s_re_im; // 6
@@ -598,7 +598,7 @@ static void PQCLEAN_FALCON512_AARCH64_iFFT_log4(fpr *f) {
 /*
  * Vectorized 4 layers of Inverse FFT for 16 complex point (32 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_iFFT_log5(fpr *f, const unsigned logn, const unsigned last) {
+static void PQCLEAN_FALCON1024_AARCH64_iFFT_log5(fpr *f, const unsigned logn, const unsigned last) {
     // Total SIMD register: 26 = 24 + 2
     float64x2x4_t x_re, x_im, y_re, y_im, t_re, t_im; // 24
     float64x2x2_t s_re_im;                            // 2
@@ -734,7 +734,7 @@ static void PQCLEAN_FALCON512_AARCH64_iFFT_log5(fpr *f, const unsigned logn, con
 /*
  * Vectorized 1 layer of Inverse FFT for 16 complex points (32 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_iFFT_logn1(fpr *f, const unsigned logn, const unsigned last) {
+static void PQCLEAN_FALCON1024_AARCH64_iFFT_logn1(fpr *f, const unsigned logn, const unsigned last) {
     // Total SIMD register 26 = 24 + 2
     float64x2x4_t a_re, a_im, b_re, b_im, t_re, t_im; // 24
     float64x2_t s_re_im;                              // 2
@@ -776,7 +776,7 @@ static void PQCLEAN_FALCON512_AARCH64_iFFT_logn1(fpr *f, const unsigned logn, co
 /*
  * Vectorized 2 layers of Inverse FFT for 16 complex points (32 coefficients).
  */
-static void PQCLEAN_FALCON512_AARCH64_iFFT_logn2(fpr *f, const unsigned logn, const unsigned level, unsigned last) {
+static void PQCLEAN_FALCON1024_AARCH64_iFFT_logn2(fpr *f, const unsigned logn, const unsigned level, unsigned last) {
     const unsigned int falcon_n = 1 << logn;
     const unsigned int hn = falcon_n >> 1;
 
@@ -948,41 +948,41 @@ static void PQCLEAN_FALCON512_AARCH64_iFFT_logn2(fpr *f, const unsigned logn, co
  * Support logn from [1, 10]
  * Can be easily extended to logn > 10
  */
-void PQCLEAN_FALCON512_AARCH64_FFT(fpr *f, const unsigned logn) {
+void PQCLEAN_FALCON1024_AARCH64_FFT(fpr *f, const unsigned logn) {
     unsigned level = logn;
     switch (logn) {
     case 2:
-        PQCLEAN_FALCON512_AARCH64_FFT_log2(f);
+        PQCLEAN_FALCON1024_AARCH64_FFT_log2(f);
         break;
 
     case 3:
-        PQCLEAN_FALCON512_AARCH64_FFT_log3(f);
+        PQCLEAN_FALCON1024_AARCH64_FFT_log3(f);
         break;
 
     case 4:
-        PQCLEAN_FALCON512_AARCH64_FFT_log4(f);
+        PQCLEAN_FALCON1024_AARCH64_FFT_log4(f);
         break;
 
     case 5:
-        PQCLEAN_FALCON512_AARCH64_FFT_log5(f, 5);
+        PQCLEAN_FALCON1024_AARCH64_FFT_log5(f, 5);
         break;
 
     case 6:
-        PQCLEAN_FALCON512_AARCH64_FFT_logn1(f, logn);
-        PQCLEAN_FALCON512_AARCH64_FFT_log5(f, logn);
+        PQCLEAN_FALCON1024_AARCH64_FFT_logn1(f, logn);
+        PQCLEAN_FALCON1024_AARCH64_FFT_log5(f, logn);
         break;
 
     case 7:
     case 9:
-        PQCLEAN_FALCON512_AARCH64_FFT_logn2(f, logn, level);
-        PQCLEAN_FALCON512_AARCH64_FFT_log5(f, logn);
+        PQCLEAN_FALCON1024_AARCH64_FFT_logn2(f, logn, level);
+        PQCLEAN_FALCON1024_AARCH64_FFT_log5(f, logn);
         break;
 
     case 8:
     case 10:
-        PQCLEAN_FALCON512_AARCH64_FFT_logn1(f, logn);
-        PQCLEAN_FALCON512_AARCH64_FFT_logn2(f, logn, level - 1);
-        PQCLEAN_FALCON512_AARCH64_FFT_log5(f, logn);
+        PQCLEAN_FALCON1024_AARCH64_FFT_logn1(f, logn);
+        PQCLEAN_FALCON1024_AARCH64_FFT_logn2(f, logn, level - 1);
+        PQCLEAN_FALCON1024_AARCH64_FFT_log5(f, logn);
         break;
 
     default:
@@ -995,42 +995,42 @@ void PQCLEAN_FALCON512_AARCH64_FFT(fpr *f, const unsigned logn) {
  * Support logn from [1, 10]
  * Can be easily extended to logn > 10
  */
-void PQCLEAN_FALCON512_AARCH64_iFFT(fpr *f, const unsigned logn) {
+void PQCLEAN_FALCON1024_AARCH64_iFFT(fpr *f, const unsigned logn) {
     const unsigned level = (logn - 5) & 1;
 
     switch (logn) {
     case 2:
-        PQCLEAN_FALCON512_AARCH64_iFFT_log2(f);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_log2(f);
         break;
 
     case 3:
-        PQCLEAN_FALCON512_AARCH64_iFFT_log3(f);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_log3(f);
         break;
 
     case 4:
-        PQCLEAN_FALCON512_AARCH64_iFFT_log4(f);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_log4(f);
         break;
 
     case 5:
-        PQCLEAN_FALCON512_AARCH64_iFFT_log5(f, 5, 1);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_log5(f, 5, 1);
         break;
 
     case 6:
-        PQCLEAN_FALCON512_AARCH64_iFFT_log5(f, logn, 0);
-        PQCLEAN_FALCON512_AARCH64_iFFT_logn1(f, logn, 1);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_log5(f, logn, 0);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_logn1(f, logn, 1);
         break;
 
     case 7:
     case 9:
-        PQCLEAN_FALCON512_AARCH64_iFFT_log5(f, logn, 0);
-        PQCLEAN_FALCON512_AARCH64_iFFT_logn2(f, logn, level, 1);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_log5(f, logn, 0);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_logn2(f, logn, level, 1);
         break;
 
     case 8:
     case 10:
-        PQCLEAN_FALCON512_AARCH64_iFFT_log5(f, logn, 0);
-        PQCLEAN_FALCON512_AARCH64_iFFT_logn2(f, logn, level, 0);
-        PQCLEAN_FALCON512_AARCH64_iFFT_logn1(f, logn, 1);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_log5(f, logn, 0);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_logn2(f, logn, level, 0);
+        PQCLEAN_FALCON1024_AARCH64_iFFT_logn1(f, logn, 1);
         break;
 
     default:

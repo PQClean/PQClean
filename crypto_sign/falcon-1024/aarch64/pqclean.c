@@ -41,10 +41,10 @@
 
 /* see api.h */
 int
-PQCLEAN_FALCON512_AARCH64_crypto_sign_keypair(
+PQCLEAN_FALCON1024_AARCH64_crypto_sign_keypair(
     uint8_t *pk, uint8_t *sk) {
     union {
-        uint8_t b[FALCON_KEYGEN_TEMP_9];
+        uint8_t b[28 * FALCON_N];
         uint64_t dummy_u64;
         fpr dummy_fpr;
     } tmp;
@@ -61,7 +61,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_keypair(
     inner_shake256_init(&rng);
     inner_shake256_inject(&rng, seed, sizeof seed);
     inner_shake256_flip(&rng);
-    PQCLEAN_FALCON512_AARCH64_keygen(&rng, f, g, F, NULL, h, FALCON_LOGN, tmp.b);
+    PQCLEAN_FALCON1024_AARCH64_keygen(&rng, f, g, F, NULL, h, FALCON_LOGN, tmp.b);
     inner_shake256_ctx_release(&rng);
 
     /*
@@ -69,28 +69,28 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_keypair(
      */
     sk[0] = 0x50 + FALCON_LOGN;
     u = 1;
-    v = PQCLEAN_FALCON512_AARCH64_trim_i8_encode(
-            sk + u, PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES - u,
-            f, PQCLEAN_FALCON512_AARCH64_max_fg_bits[FALCON_LOGN]);
+    v = PQCLEAN_FALCON1024_AARCH64_trim_i8_encode(
+            sk + u, PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES - u,
+            f, PQCLEAN_FALCON1024_AARCH64_max_fg_bits[FALCON_LOGN]);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512_AARCH64_trim_i8_encode(
-            sk + u, PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES - u,
-            g, PQCLEAN_FALCON512_AARCH64_max_fg_bits[FALCON_LOGN]);
+    v = PQCLEAN_FALCON1024_AARCH64_trim_i8_encode(
+            sk + u, PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES - u,
+            g, PQCLEAN_FALCON1024_AARCH64_max_fg_bits[FALCON_LOGN]);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512_AARCH64_trim_i8_encode(
-            sk + u, PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES - u,
-            F, PQCLEAN_FALCON512_AARCH64_max_FG_bits[FALCON_LOGN]);
+    v = PQCLEAN_FALCON1024_AARCH64_trim_i8_encode(
+            sk + u, PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES - u,
+            F, PQCLEAN_FALCON1024_AARCH64_max_FG_bits[FALCON_LOGN]);
     if (v == 0) {
         return -1;
     }
     u += v;
-    if (u != PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES) {
+    if (u != PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES) {
         return -1;
     }
 
@@ -98,10 +98,10 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_keypair(
      * Encode public key.
      */
     pk[0] = 0x00 + FALCON_LOGN;
-    v = PQCLEAN_FALCON512_AARCH64_modq_encode(
-            pk + 1, PQCLEAN_FALCON512_AARCH64_CRYPTO_PUBLICKEYBYTES - 1,
+    v = PQCLEAN_FALCON1024_AARCH64_modq_encode(
+            pk + 1, PQCLEAN_FALCON1024_AARCH64_CRYPTO_PUBLICKEYBYTES - 1,
             h, FALCON_LOGN);
-    if (v != PQCLEAN_FALCON512_AARCH64_CRYPTO_PUBLICKEYBYTES - 1) {
+    if (v != PQCLEAN_FALCON1024_AARCH64_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }
 
@@ -146,31 +146,31 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
         return -1;
     }
     u = 1;
-    v = PQCLEAN_FALCON512_AARCH64_trim_i8_decode(
-            f, PQCLEAN_FALCON512_AARCH64_max_fg_bits[FALCON_LOGN],
-            sk + u, PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES - u);
+    v = PQCLEAN_FALCON1024_AARCH64_trim_i8_decode(
+            f, PQCLEAN_FALCON1024_AARCH64_max_fg_bits[FALCON_LOGN],
+            sk + u, PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES - u);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512_AARCH64_trim_i8_decode(
-            g, PQCLEAN_FALCON512_AARCH64_max_fg_bits[FALCON_LOGN],
-            sk + u, PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES - u);
+    v = PQCLEAN_FALCON1024_AARCH64_trim_i8_decode(
+            g, PQCLEAN_FALCON1024_AARCH64_max_fg_bits[FALCON_LOGN],
+            sk + u, PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES - u);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512_AARCH64_trim_i8_decode(
-            F, PQCLEAN_FALCON512_AARCH64_max_FG_bits[FALCON_LOGN],
-            sk + u, PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES - u);
+    v = PQCLEAN_FALCON1024_AARCH64_trim_i8_decode(
+            F, PQCLEAN_FALCON1024_AARCH64_max_FG_bits[FALCON_LOGN],
+            sk + u, PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES - u);
     if (v == 0) {
         return -1;
     }
     u += v;
-    if (u != PQCLEAN_FALCON512_AARCH64_CRYPTO_SECRETKEYBYTES) {
+    if (u != PQCLEAN_FALCON1024_AARCH64_CRYPTO_SECRETKEYBYTES) {
         return -1;
     }
-    if (!PQCLEAN_FALCON512_AARCH64_complete_private(G, f, g, F, tmp.b)) {
+    if (!PQCLEAN_FALCON1024_AARCH64_complete_private(G, f, g, F, tmp.b)) {
         return -1;
     }
 
@@ -186,7 +186,7 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
     inner_shake256_inject(&sc, nonce, NONCELEN);
     inner_shake256_inject(&sc, m, mlen);
     inner_shake256_flip(&sc);
-    PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(&sc, r.hm, FALCON_LOGN, tmp.b);
+    PQCLEAN_FALCON1024_AARCH64_hash_to_point_ct(&sc, r.hm, FALCON_LOGN, tmp.b);
     inner_shake256_ctx_release(&sc);
 
     /*
@@ -203,8 +203,8 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
      * value is found that fits in the provided buffer.
      */
     for (;;) {
-        PQCLEAN_FALCON512_AARCH64_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, tmp.b);
-        v = PQCLEAN_FALCON512_AARCH64_comp_encode(sigbuf, *sigbuflen, r.sig);
+        PQCLEAN_FALCON1024_AARCH64_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, tmp.b);
+        v = PQCLEAN_FALCON1024_AARCH64_comp_encode(sigbuf, *sigbuflen, r.sig);
         if (v != 0) {
             inner_shake256_ctx_release(&sc);
             *sigbuflen = v;
@@ -238,12 +238,11 @@ do_verify(
     if (pk[0] != 0x00 + FALCON_LOGN) {
         return -1;
     }
-    if (PQCLEAN_FALCON512_AARCH64_modq_decode( (uint16_t *) h,
-            pk + 1, PQCLEAN_FALCON512_AARCH64_CRYPTO_PUBLICKEYBYTES - 1, FALCON_LOGN)
-            != PQCLEAN_FALCON512_AARCH64_CRYPTO_PUBLICKEYBYTES - 1) {
+    if (PQCLEAN_FALCON1024_AARCH64_modq_decode( (uint16_t *) h,
+            pk + 1, PQCLEAN_FALCON1024_AARCH64_CRYPTO_PUBLICKEYBYTES - 1, FALCON_LOGN)
+            != PQCLEAN_FALCON1024_AARCH64_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }
-    // We move the conversion to NTT domain of `h` inside verify_raw()
 
     /*
      * Decode signature.
@@ -251,7 +250,7 @@ do_verify(
     if (sigbuflen == 0) {
         return -1;
     }
-    if (PQCLEAN_FALCON512_AARCH64_comp_decode(sig, sigbuf, sigbuflen) != sigbuflen) {
+    if (PQCLEAN_FALCON1024_AARCH64_comp_decode(sig, sigbuf, sigbuflen) != sigbuflen) {
         return -1;
     }
 
@@ -262,13 +261,13 @@ do_verify(
     inner_shake256_inject(&sc, nonce, NONCELEN);
     inner_shake256_inject(&sc, m, mlen);
     inner_shake256_flip(&sc);
-    PQCLEAN_FALCON512_AARCH64_hash_to_point_ct(&sc, (uint16_t *) hm, FALCON_LOGN, tmp.b);
+    PQCLEAN_FALCON1024_AARCH64_hash_to_point_ct(&sc, (uint16_t *) hm, FALCON_LOGN, tmp.b);
     inner_shake256_ctx_release(&sc);
 
     /*
      * Verify signature.
      */
-    if (!PQCLEAN_FALCON512_AARCH64_verify_raw(hm, sig, h, (int16_t *) tmp.b)) {
+    if (!PQCLEAN_FALCON1024_AARCH64_verify_raw(hm, sig, h, (int16_t *) tmp.b)) {
         return -1;
     }
     return 0;
@@ -276,11 +275,11 @@ do_verify(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512_AARCH64_crypto_sign_signature(
+PQCLEAN_FALCON1024_AARCH64_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
     /*
-     * The PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES constant is used for
+     * The PQCLEAN_FALCON1024_AARCH64_CRYPTO_BYTES constant is used for
      * the signed message object (as produced by crypto_sign())
      * and includes a two-byte length value, so we take care here
      * to only generate signatures that are two bytes shorter than
@@ -292,7 +291,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_signature(
      */
     size_t vlen;
 
-    vlen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
+    vlen = PQCLEAN_FALCON1024_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
     if (do_sign(sig + 1, sig + 1 + NONCELEN, &vlen, m, mlen, sk) < 0) {
         return -1;
     }
@@ -303,7 +302,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_signature(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512_AARCH64_crypto_sign_verify(
+PQCLEAN_FALCON1024_AARCH64_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
     const uint8_t *m, size_t mlen, const uint8_t *pk) {
     if (siglen < 1 + NONCELEN) {
@@ -318,7 +317,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_verify(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512_AARCH64_crypto_sign(
+PQCLEAN_FALCON1024_AARCH64_crypto_sign(
     uint8_t *sm, size_t *smlen,
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
     uint8_t *pm, *sigbuf;
@@ -331,7 +330,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
+    sigbuflen = PQCLEAN_FALCON1024_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
     if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }
@@ -345,7 +344,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512_AARCH64_crypto_sign_open(
+PQCLEAN_FALCON1024_AARCH64_crypto_sign_open(
     uint8_t *m, size_t *mlen,
     const uint8_t *sm, size_t smlen, const uint8_t *pk) {
     const uint8_t *sigbuf;

@@ -2,16 +2,15 @@
 #define NTT_CONSTS
 
 #include <stdint.h>
-#include "config.h"
 
-extern const int16_t qmvq[8];
+extern const int16_t PQCLEAN_FALCON512_AARCH64_qmvq[8];
 
 /*
  * Table for NTT, binary case:
  * where g = 7 (it is a 2048-th primitive root of 1 modulo q)
  */
-extern const int16_t ntt_br[];
-extern const int16_t ntt_qinv_br[];
+extern const int16_t PQCLEAN_FALCON512_AARCH64_ntt_br[];
+extern const int16_t PQCLEAN_FALCON512_AARCH64_ntt_qinv_br[];
 
 
 /*
@@ -19,7 +18,7 @@ extern const int16_t ntt_qinv_br[];
  * Since g = 7, 1/g = 8778 mod 12289.
  */
 
-extern const int16_t invntt_br[];
-extern const int16_t invntt_qinv_br[];
+extern const int16_t PQCLEAN_FALCON512_AARCH64_invntt_br[];
+extern const int16_t PQCLEAN_FALCON512_AARCH64_invntt_qinv_br[];
 
 #endif

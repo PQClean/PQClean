@@ -25,7 +25,7 @@
 #include "poly.h"
 #include "ntt_consts.h"
 
-void PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(int16_t out[FALCON_N], const int8_t in[FALCON_N]) {
+void PQCLEAN_FALCON1024_AARCH64_poly_int8_to_int16(int16_t out[FALCON_N], const int8_t in[FALCON_N]) {
     // Total SIMD registers: 24 = 16 + 8
     int16x8x4_t a, b, e, f; // 16
     int8x16x4_t c, d;       // 8
@@ -67,7 +67,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_int8_to_int16(int16_t out[FALCON_N], const i
  * See assembly https://godbolt.org/z/od3Ex7Mbx
  */
 
-void PQCLEAN_FALCON512_AARCH64_poly_div_12289(int16_t f[FALCON_N], const int16_t g[FALCON_N]) {
+void PQCLEAN_FALCON1024_AARCH64_poly_div_12289(int16_t f[FALCON_N], const int16_t g[FALCON_N]) {
     // Total SIMD registers: 24 = 4 + 19 + 1
     int16x8x4_t src, dst, t, k; // 4
     int16x8x4_t y0, y1, y2, y3, y4, y5,
@@ -75,7 +75,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_div_12289(int16_t f[FALCON_N], const int16_t
                 y13, y14, y15, y16, y17, y18; // 19
     int16x8_t neon_qmvm;              // 1
 
-    neon_qmvm = vld1q_s16(PQCLEAN_FALCON512_AARCH64_qmvq);
+    neon_qmvm = vld1q_s16(PQCLEAN_FALCON1024_AARCH64_qmvq);
 
     for (int i = 0; i < FALCON_N; i += 32) {
         // Find y0 = g^12287
@@ -114,11 +114,11 @@ void PQCLEAN_FALCON512_AARCH64_poly_div_12289(int16_t f[FALCON_N], const int16_t
 /*
  * f = g - s
  */
-void PQCLEAN_FALCON512_AARCH64_poly_sub_barrett(int16_t f[FALCON_N], const int16_t g[FALCON_N], const int16_t s[FALCON_N]) {
+void PQCLEAN_FALCON1024_AARCH64_poly_sub_barrett(int16_t f[FALCON_N], const int16_t g[FALCON_N], const int16_t s[FALCON_N]) {
     // Total SIMD registers: 29 = 28 + 1
     int16x8x4_t a, b, c, d, e, h, t; // 28
     int16x8_t neon_qmvm;             // 1
-    neon_qmvm = vld1q_s16(PQCLEAN_FALCON512_AARCH64_qmvq);
+    neon_qmvm = vld1q_s16(PQCLEAN_FALCON1024_AARCH64_qmvq);
 
     for (int i = 0; i < FALCON_N; i += 64) {
         vload_s16_x4(a, &g[i]);
@@ -151,7 +151,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_sub_barrett(int16_t f[FALCON_N], const int16
  * 1 if 0 in f[]
  * otherwise, 0
  */
-uint16_t PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(int16_t f[FALCON_N]) {
+uint16_t PQCLEAN_FALCON1024_AARCH64_poly_compare_with_zero(int16_t f[FALCON_N]) {
     // Total SIMD registers: 22 = 12 + 8 + 2
     int16x8x4_t a, b;      // 8
     uint16x8x4_t c, d, e1; // 12
@@ -197,7 +197,7 @@ uint16_t PQCLEAN_FALCON512_AARCH64_poly_compare_with_zero(int16_t f[FALCON_N]) {
 /*
  * Branchless conditional addtion with FALCON_Q if coeffcient is < 0
  */
-void PQCLEAN_FALCON512_AARCH64_poly_convert_to_unsigned(int16_t f[FALCON_N]) {
+void PQCLEAN_FALCON1024_AARCH64_poly_convert_to_unsigned(int16_t f[FALCON_N]) {
     // Total SIMD registers: 25 = 8 + 16 + 1
     uint16x8x4_t b0, b1;        // 8
     int16x8x4_t a0, a1, c0, c1; // 16
@@ -238,7 +238,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_convert_to_unsigned(int16_t f[FALCON_N]) {
     }
 }
 
-int PQCLEAN_FALCON512_AARCH64_poly_int16_to_int8(int8_t G[FALCON_N], const int16_t t[FALCON_N]) {
+int PQCLEAN_FALCON1024_AARCH64_poly_int16_to_int8(int8_t G[FALCON_N], const int16_t t[FALCON_N]) {
     // Total SIMD registers: 32
     int16x8x4_t a, f;              // 8
     uint16x8x4_t c0, c1, d0, d1;   // 16
@@ -317,7 +317,7 @@ int PQCLEAN_FALCON512_AARCH64_poly_int16_to_int8(int8_t G[FALCON_N], const int16
  * Return 1 if True
  * Otherwise 0
  */
-int PQCLEAN_FALCON512_AARCH64_poly_check_bound_int8(const int8_t t[FALCON_N],
+int PQCLEAN_FALCON1024_AARCH64_poly_check_bound_int8(const int8_t t[FALCON_N],
         const int8_t low, const int8_t high) {
     // Total SIMD registers: 15
     int8x16x4_t a;                 // 4
@@ -368,7 +368,7 @@ int PQCLEAN_FALCON512_AARCH64_poly_check_bound_int8(const int8_t t[FALCON_N],
  * Otherwise 0
  * Work for FALCON_N >= 32, or FALCON_LOGN >= 5
  */
-int PQCLEAN_FALCON512_AARCH64_poly_check_bound_int16(const int16_t t[FALCON_N],
+int PQCLEAN_FALCON1024_AARCH64_poly_check_bound_int16(const int16_t t[FALCON_N],
         const int16_t low, const int16_t high) {
     // Total SIMD registers = 15
     int16x8x4_t a;                 // 4

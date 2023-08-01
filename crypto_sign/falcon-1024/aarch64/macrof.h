@@ -123,4 +123,3 @@
 #define vfmla_lane(d, c, a, b, i) d = vfmaq_laneq_f64(c, a, b, i);
 // d = c - a * b[i]
 #define vfmls_lane(d, c, a, b, i) d = vfmsq_laneq_f64(c, a, b, i);
-

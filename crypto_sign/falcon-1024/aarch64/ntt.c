@@ -24,72 +24,149 @@
 #include "ntt_consts.h"
 #include "poly.h"
 
-#include <arm_neon.h>
-
 
 /*
  * Assume Input in the range [-Q/2, Q/2]
  * Total Barrett point for N = 512, 1024: 2048, 4096
  */
-void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) {
+void PQCLEAN_FALCON1024_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) {
     // Total SIMD registers 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
     int16x8x4_t zl, zh, t, t2;  // 12
     int16x8x2_t zlh, zhh;       // 4
     int16x8_t neon_qmvq;        // 1
-    const int16_t *ptr_ntt_br = PQCLEAN_FALCON512_AARCH64_ntt_br;
-    const int16_t *ptr_ntt_qinv_br = PQCLEAN_FALCON512_AARCH64_ntt_qinv_br;
+    const int16_t *ptr_ntt_br = PQCLEAN_FALCON1024_AARCH64_ntt_br;
+    const int16_t *ptr_ntt_qinv_br = PQCLEAN_FALCON1024_AARCH64_ntt_qinv_br;
 
-    neon_qmvq = vld1q_s16(PQCLEAN_FALCON512_AARCH64_qmvq);
+    neon_qmvq = vld1q_s16(PQCLEAN_FALCON1024_AARCH64_qmvq);
     zl.val[0] = vld1q_s16(ptr_ntt_br);
     zh.val[0] = vld1q_s16(ptr_ntt_qinv_br);
     ptr_ntt_br += 8;
     ptr_ntt_qinv_br += 8;
 
-    // Layer 8, 7
-    for (unsigned j = 0; j < 128; j += 32) {
-        vload_s16_x4(v0, &a[j]);
-        vload_s16_x4(v1, &a[j + 128]);
-        vload_s16_x4(v2, &a[j + 256]);
-        vload_s16_x4(v3, &a[j + 384]);
+    // Layer 9, 8, 7
+    int16x8x2_t u0, u1, u2, u3, u4, u5, u6, u7;
 
-        // v0: .5
-        // v1: .5
-        // v2: .5
-        // v3: .5
+    for (unsigned j = 0; j < 128; j += 16) {
+        vload_s16_x2(u0, &a[j]);
+        vload_s16_x2(u1, &a[j + 128]);
+        vload_s16_x2(u2, &a[j + 256]);
+        vload_s16_x2(u3, &a[j + 384]);
+
+        vload_s16_x2(u4, &a[j + 512]);
+        vload_s16_x2(u5, &a[j + 640]);
+        vload_s16_x2(u6, &a[j + 768]);
+        vload_s16_x2(u7, &a[j + 896]);
+
+        // u0, 4: .5
+        // u1, 5: .5
+        // u2, 6: .5
+        // u3, 7: .5
+
+        // Layer 9
+        // u0 - u4, u1 - u5
+        // u2 - u6, u3 - u7
+        ctbf_bri_top(u4.val[0], zl.val[0], zh.val[0], 1, neon_qmvq, t.val[0]);
+        ctbf_bri_top(u4.val[1], zl.val[0], zh.val[0], 1, neon_qmvq, t.val[1]);
+        ctbf_bri_top(u5.val[0], zl.val[0], zh.val[0], 1, neon_qmvq, t.val[2]);
+        ctbf_bri_top(u5.val[1], zl.val[0], zh.val[0], 1, neon_qmvq, t.val[3]);
+
+        ctbf_bri_top(u6.val[0], zl.val[0], zh.val[0], 1, neon_qmvq, t2.val[0]);
+        ctbf_bri_top(u6.val[1], zl.val[0], zh.val[0], 1, neon_qmvq, t2.val[1]);
+        ctbf_bri_top(u7.val[0], zl.val[0], zh.val[0], 1, neon_qmvq, t2.val[2]);
+        ctbf_bri_top(u7.val[1], zl.val[0], zh.val[0], 1, neon_qmvq, t2.val[3]);
+
+        ctbf_bot(u0.val[0], u4.val[0], t.val[0]);
+        ctbf_bot(u0.val[1], u4.val[1], t.val[1]);
+        ctbf_bot(u1.val[0], u5.val[0], t.val[2]);
+        ctbf_bot(u1.val[1], u5.val[1], t.val[3]);
+
+        ctbf_bot(u2.val[0], u6.val[0], t2.val[0]);
+        ctbf_bot(u2.val[1], u6.val[1], t2.val[1]);
+        ctbf_bot(u3.val[0], u7.val[0], t2.val[2]);
+        ctbf_bot(u3.val[1], u7.val[1], t2.val[3]);
+
+        // u0, 4: 1.2
+        // u1, 5: 1.2
+        // u2, 6: 1.2
+        // u3, 7: 1.2
 
         // Layer 8
-        // v0 - v2, v1 - v3
-        ctbf_bri_top_x4(v2, zl.val[0], zh.val[0], 1, 1, 1, 1, neon_qmvq, t);
-        ctbf_bri_top_x4(v3, zl.val[0], zh.val[0], 1, 1, 1, 1, neon_qmvq, t2);
+        // u0 - u2, u1 - u3
+        // u4 - u6, u5 - u7
+        ctbf_bri_top(u2.val[0], zl.val[0], zh.val[0], 2, neon_qmvq, t.val[0]);
+        ctbf_bri_top(u2.val[1], zl.val[0], zh.val[0], 2, neon_qmvq, t.val[1]);
+        ctbf_bri_top(u3.val[0], zl.val[0], zh.val[0], 2, neon_qmvq, t.val[2]);
+        ctbf_bri_top(u3.val[1], zl.val[0], zh.val[0], 2, neon_qmvq, t.val[3]);
 
-        ctbf_bot_x4(v0, v2, t);
-        ctbf_bot_x4(v1, v3, t2);
+        ctbf_bri_top(u6.val[0], zl.val[0], zh.val[0], 3, neon_qmvq, t2.val[0]);
+        ctbf_bri_top(u6.val[1], zl.val[0], zh.val[0], 3, neon_qmvq, t2.val[1]);
+        ctbf_bri_top(u7.val[0], zl.val[0], zh.val[0], 3, neon_qmvq, t2.val[2]);
+        ctbf_bri_top(u7.val[1], zl.val[0], zh.val[0], 3, neon_qmvq, t2.val[3]);
 
-        // v0: 1.2
-        // v1: 1.2
-        // v2: 1.2
-        // v3: 1.2
+        ctbf_bot(u0.val[0], u2.val[0], t.val[0]);
+        ctbf_bot(u0.val[1], u2.val[1], t.val[1]);
+        ctbf_bot(u1.val[0], u3.val[0], t.val[2]);
+        ctbf_bot(u1.val[1], u3.val[1], t.val[3]);
 
-        // Layer 7
-        // v0 - v1, v2 - v3
-        ctbf_bri_top_x4(v1, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t);
-        ctbf_bri_top_x4(v3, zl.val[0], zh.val[0], 3, 3, 3, 3, neon_qmvq, t2);
-
-        ctbf_bot_x4(v0, v1, t);
-        ctbf_bot_x4(v2, v3, t2);
+        ctbf_bot(u4.val[0], u6.val[0], t2.val[0]);
+        ctbf_bot(u4.val[1], u6.val[1], t2.val[1]);
+        ctbf_bot(u5.val[0], u7.val[0], t2.val[2]);
+        ctbf_bot(u5.val[1], u7.val[1], t2.val[3]);
 
         // 2.14 -> 0.5
-        barrett_x4(v0, neon_qmvq, t);
-        barrett_x4(v1, neon_qmvq, t);
-        barrett_x4(v2, neon_qmvq, t2);
-        barrett_x4(v3, neon_qmvq, t2);
+        barrett_x2(u0, 0, 1, 0, 1, neon_qmvq, t);
+        barrett_x2(u1, 0, 1, 2, 3, neon_qmvq, t);
+        barrett_x2(u2, 0, 1, 0, 1, neon_qmvq, t);
+        barrett_x2(u3, 0, 1, 2, 3, neon_qmvq, t);
 
-        // Store at 0.5Q
-        vstore_s16_x4(&a[j], v0);
-        vstore_s16_x4(&a[j + 128], v1);
-        vstore_s16_x4(&a[j + 256], v2);
-        vstore_s16_x4(&a[j + 384], v3);
+        barrett_x2(u4, 0, 1, 0, 1, neon_qmvq, t2);
+        barrett_x2(u5, 0, 1, 2, 3, neon_qmvq, t2);
+        barrett_x2(u6, 0, 1, 0, 1, neon_qmvq, t2);
+        barrett_x2(u7, 0, 1, 2, 3, neon_qmvq, t2);
+        // u0, 4: .5
+        // u1, 5: .5
+        // u2, 6: .5
+        // u3, 7: .5
+
+        // Layer 7
+        // u0 - u1, u2 - u3
+        // u4 - u5, u6 - u7
+        ctbf_bri_top(u1.val[0], zl.val[0], zh.val[0], 4, neon_qmvq, t.val[0]);
+        ctbf_bri_top(u1.val[1], zl.val[0], zh.val[0], 4, neon_qmvq, t.val[1]);
+        ctbf_bri_top(u3.val[0], zl.val[0], zh.val[0], 5, neon_qmvq, t.val[2]);
+        ctbf_bri_top(u3.val[1], zl.val[0], zh.val[0], 5, neon_qmvq, t.val[3]);
+
+        ctbf_bri_top(u5.val[0], zl.val[0], zh.val[0], 6, neon_qmvq, t2.val[0]);
+        ctbf_bri_top(u5.val[1], zl.val[0], zh.val[0], 6, neon_qmvq, t2.val[1]);
+        ctbf_bri_top(u7.val[0], zl.val[0], zh.val[0], 7, neon_qmvq, t2.val[2]);
+        ctbf_bri_top(u7.val[1], zl.val[0], zh.val[0], 7, neon_qmvq, t2.val[3]);
+
+        ctbf_bot(u0.val[0], u1.val[0], t.val[0]);
+        ctbf_bot(u0.val[1], u1.val[1], t.val[1]);
+        ctbf_bot(u2.val[0], u3.val[0], t.val[2]);
+        ctbf_bot(u2.val[1], u3.val[1], t.val[3]);
+
+        ctbf_bot(u4.val[0], u5.val[0], t2.val[0]);
+        ctbf_bot(u4.val[1], u5.val[1], t2.val[1]);
+        ctbf_bot(u6.val[0], u7.val[0], t2.val[2]);
+        ctbf_bot(u6.val[1], u7.val[1], t2.val[3]);
+
+        // u0, 4: 1.2
+        // u1, 5: 1.2
+        // u2, 6: 1.2
+        // u3, 7: 1.2
+
+        // Store at 1.2Q
+        vstore_s16_x2(&a[j], u0);
+        vstore_s16_x2(&a[j + 128], u1);
+        vstore_s16_x2(&a[j + 256], u2);
+        vstore_s16_x2(&a[j + 384], u3);
+
+        vstore_s16_x2(&a[j + 512], u4);
+        vstore_s16_x2(&a[j + 640], u5);
+        vstore_s16_x2(&a[j + 768], u6);
+        vstore_s16_x2(&a[j + 896], u7);
     }
 
     // Layer 6, 5, 4, 3, 2, 1, 0
@@ -112,7 +189,11 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
         ctbf_bot_x4(v0, v2, t);
         ctbf_bot_x4(v1, v3, t2);
 
-        // 1.3
+        // 2.3 -> 0.5
+        barrett_x4(v0, neon_qmvq, t);
+        barrett_x4(v1, neon_qmvq, t);
+        barrett_x4(v2, neon_qmvq, t);
+        barrett_x4(v3, neon_qmvq, t);
 
         // Layer 5
         // v0 - v1, v2 - v3
@@ -122,11 +203,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
         ctbf_bot_x4(v0, v1, t);
         ctbf_bot_x4(v2, v3, t2);
 
-        // 2.3 -> 0.5
-        barrett_x4(v0, neon_qmvq, t);
-        barrett_x4(v1, neon_qmvq, t);
-        barrett_x4(v2, neon_qmvq, t2);
-        barrett_x4(v3, neon_qmvq, t2);
+        // 1.3
 
         // Layer 4
         // v0(0, 1 - 2, 3)
@@ -153,7 +230,11 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
         ctbf_bot(v3.val[0], v3.val[2], t2.val[2]);
         ctbf_bot(v3.val[1], v3.val[3], t2.val[3]);
 
-        // 1.3
+        // 2.3 -> 0.5
+        barrett_x4(v0, neon_qmvq, t);
+        barrett_x4(v1, neon_qmvq, t);
+        barrett_x4(v2, neon_qmvq, t2);
+        barrett_x4(v3, neon_qmvq, t2);
 
         // Layer 3
         // v0(0, 2 - 1, 3)
@@ -180,11 +261,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
         ctbf_bot(v3.val[0], v3.val[1], t2.val[2]);
         ctbf_bot(v3.val[2], v3.val[3], t2.val[3]);
 
-        // 2.3 -> 0.5
-        barrett_x4(v0, neon_qmvq, t);
-        barrett_x4(v1, neon_qmvq, t);
-        barrett_x4(v2, neon_qmvq, t2);
-        barrett_x4(v3, neon_qmvq, t2);
+        // 1.3
 
         // Layer 2
         // Input:
@@ -235,7 +312,11 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
         ctbf_bot(v2.val[2], v2.val[3], t.val[2]);
         ctbf_bot(v3.val[2], v3.val[3], t.val[3]);
 
-        // 1.3
+        // 2.3 -> 0.5
+        barrett_x4(v0, neon_qmvq, t);
+        barrett_x4(v1, neon_qmvq, t);
+        barrett_x4(v2, neon_qmvq, t2);
+        barrett_x4(v3, neon_qmvq, t2);
 
         // Layer 1: v0.val[0] x v0.val[2] | v0.val[1] x v0.val[3]
         // v0.val[0]: 0,  1,  2,  3  | 16, 17, 18, 19
@@ -277,11 +358,7 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
         ctbf_bot(v3.val[0], v3.val[2], t.val[2]);
         ctbf_bot(v3.val[1], v3.val[3], t.val[3]);
 
-        // 2.3 -> 0.5
-        barrett_x4(v0, neon_qmvq, t);
-        barrett_x4(v1, neon_qmvq, t);
-        barrett_x4(v2, neon_qmvq, t2);
-        barrett_x4(v3, neon_qmvq, t2);
+        // 1.3
 
         // Layer 0
         // v(0, 2 - 1, 3)
@@ -315,7 +392,8 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
         ctbf_bot(v2.val[2], v2.val[3], t.val[2]);
         ctbf_bot(v3.val[2], v3.val[3], t.val[3]);
 
-        // 1.3
+        // 2.3
+
         if (mont == NTT_MONT) {
             // Convert to Montgomery domain by multiply with FALCON_MONT
             barmuli_mont_x8(v0, v1, neon_qmvq, t, t2);
@@ -336,16 +414,16 @@ void PQCLEAN_FALCON512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) 
  * Assume input in range [-Q, Q]
  * Total Barrett point N = 512, 1024: 1792, 3840
  */
-void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t ninv) {
+void PQCLEAN_FALCON1024_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t ninv) {
     // Total SIMD registers: 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
     int16x8x4_t zl, zh, t, t2;  // 12
     int16x8x2_t zlh, zhh;       // 4
     int16x8_t neon_qmvq;        // 1
-    const int16_t *ptr_invntt_br = PQCLEAN_FALCON512_AARCH64_invntt_br;
-    const int16_t *ptr_invntt_qinv_br = PQCLEAN_FALCON512_AARCH64_invntt_qinv_br;
+    const int16_t *ptr_invntt_br = PQCLEAN_FALCON1024_AARCH64_invntt_br;
+    const int16_t *ptr_invntt_qinv_br = PQCLEAN_FALCON1024_AARCH64_invntt_qinv_br;
 
-    neon_qmvq = vld1q_s16(PQCLEAN_FALCON512_AARCH64_qmvq);
+    neon_qmvq = vld1q_s16(PQCLEAN_FALCON1024_AARCH64_qmvq);
     unsigned j;
 
     // Layer 0, 1, 2, 3, 4, 5, 6
@@ -666,148 +744,176 @@ void PQCLEAN_FALCON512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t 
         vstore_s16_x4(&a[j + 96], v3);
     }
 
+    ptr_invntt_br += 8 * ninv;
+    ptr_invntt_qinv_br += 8 * ninv;
     zl.val[0] = vld1q_s16(ptr_invntt_br);
     zh.val[0] = vld1q_s16(ptr_invntt_qinv_br);
 
-    // Layer 7, 8
-    for (j = 0; j < 64; j += 32) {
-        vload_s16_x4(v0, &a[j]);
-        vload_s16_x4(v1, &a[j + 128]);
-        vload_s16_x4(v2, &a[j + 256]);
-        vload_s16_x4(v3, &a[j + 384]);
+    // Layer 7, 8, 9
+    int16x8x2_t u0, u1, u2, u3, u4, u5, u6, u7;
+
+    for (j = 0; j < 128; j += 16) {
+        vload_s16_x2(u0, &a[j]);
+        vload_s16_x2(u1, &a[j + 128]);
+        vload_s16_x2(u2, &a[j + 256]);
+        vload_s16_x2(u3, &a[j + 384]);
+
+        vload_s16_x2(u4, &a[j + 512]);
+        vload_s16_x2(u5, &a[j + 640]);
+        vload_s16_x2(u6, &a[j + 768]);
+        vload_s16_x2(u7, &a[j + 896]);
 
         // 2
-        barrett_x4(v0, neon_qmvq, t);
-        barrett_x4(v1, neon_qmvq, t);
-        barrett_x4(v2, neon_qmvq, t2);
-        barrett_x4(v3, neon_qmvq, t2);
+        barrett_x2(u0, 0, 1, 0, 1, neon_qmvq, t);
+        barrett_x2(u1, 0, 1, 2, 3, neon_qmvq, t);
+        barrett_x2(u2, 0, 1, 0, 1, neon_qmvq, t);
+        barrett_x2(u3, 0, 1, 2, 3, neon_qmvq, t);
 
-        // v0: .5
-        // v1: .5
-        // v2: .5
-        // v3: .5
+        barrett_x2(u4, 0, 1, 0, 1, neon_qmvq, t2);
+        barrett_x2(u5, 0, 1, 2, 3, neon_qmvq, t2);
+        barrett_x2(u6, 0, 1, 0, 1, neon_qmvq, t2);
+        barrett_x2(u7, 0, 1, 2, 3, neon_qmvq, t2);
 
-        // Layer 7
-        // v0 - v1, v2 - v3
-        gsbf_top_x4(v0, v1, t);
-        gsbf_top_x4(v2, v3, t2);
-
-        gsbf_bri_bot_x4(v1, zl.val[0], zh.val[0], 0, 0, 0, 0, neon_qmvq, t);
-        gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 1, 1, 1, 1, neon_qmvq, t2);
-
-        // v0: 1
-        // v1: .87
-        // v2: 1
-        // v3: .87
-
-        // Layer 8
-        // v0 - v2, v1 - v3
-        gsbf_top_x4(v0, v2, t);
-        gsbf_top_x4(v1, v3, t2);
-
-        // v0: 2
-        // v1: 1.75
-        // v2: 1.25
-        // v3: 1.15
-        if (ninv == INVNTT_NINV) {
-            gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t);
-            gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t2);
-            barmul_invntt_x4(v0, zl.val[0], zh.val[0], 3, neon_qmvq, t);
-            barmul_invntt_x4(v1, zl.val[0], zh.val[0], 3, neon_qmvq, t2);
-        } else {
-            gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t);
-            gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t2);
-        }
-
-        // v0: 1.25
-        // v1: 1.15
-        // v2: 1.25
-        // v3: 1.15
-        barrett_x4(v0, neon_qmvq, t);
-        barrett_x4(v1, neon_qmvq, t);
-
-        // v0: 0.5
-        // v1: 0.5
-        // v2: 0.97
-        // v3: 0.93
-
-        vstore_s16_x4(&a[j], v0);
-        vstore_s16_x4(&a[j + 128], v1);
-        vstore_s16_x4(&a[j + 256], v2);
-        vstore_s16_x4(&a[j + 384], v3);
-    }
-    for (; j < 128; j += 32) {
-        vload_s16_x4(v0, &a[j]);
-        vload_s16_x4(v1, &a[j + 128]);
-        vload_s16_x4(v2, &a[j + 256]);
-        vload_s16_x4(v3, &a[j + 384]);
-
-        // v0: 1.3
-        // v1: 1.3
-        // v2: 1.3
-        // v3: 1.3
+        // u0, 4: 0.5
+        // u1, 5: 0.5
+        // u2, 6: 0.5
+        // u3, 7: 0.5
 
         // Layer 7
-        // v0 - v1, v2 - v3
-        gsbf_top_x4(v0, v1, t);
-        gsbf_top_x4(v2, v3, t2);
+        // u0 - u1, u2 - u3
+        // u4 - u5, u6 - u7
+        gsbf_top(u0.val[0], u1.val[0], t.val[0]);
+        gsbf_top(u0.val[1], u1.val[1], t.val[1]);
+        gsbf_top(u2.val[0], u3.val[0], t.val[2]);
+        gsbf_top(u2.val[1], u3.val[1], t.val[3]);
 
-        gsbf_bri_bot_x4(v1, zl.val[0], zh.val[0], 0, 0, 0, 0, neon_qmvq, t);
-        gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 1, 1, 1, 1, neon_qmvq, t2);
+        gsbf_top(u4.val[0], u5.val[0], t2.val[0]);
+        gsbf_top(u4.val[1], u5.val[1], t2.val[1]);
+        gsbf_top(u6.val[0], u7.val[0], t2.val[2]);
+        gsbf_top(u6.val[1], u7.val[1], t2.val[3]);
 
-        // v0: 2.6
-        // v1: 1.5
-        // v2: 2.6
-        // v3: 1.5
+        gsbf_bri_bot(u1.val[0], zl.val[0], zh.val[0], 0, neon_qmvq, t.val[0]);
+        gsbf_bri_bot(u1.val[1], zl.val[0], zh.val[0], 0, neon_qmvq, t.val[1]);
+        gsbf_bri_bot(u3.val[0], zl.val[0], zh.val[0], 1, neon_qmvq, t.val[2]);
+        gsbf_bri_bot(u3.val[1], zl.val[0], zh.val[0], 1, neon_qmvq, t.val[3]);
 
-        barrett_x4(v0, neon_qmvq, t);
-        barrett_x4(v1, neon_qmvq, t);
-        barrett_x4(v2, neon_qmvq, t2);
-        barrett_x4(v3, neon_qmvq, t2);
+        gsbf_bri_bot(u5.val[0], zl.val[0], zh.val[0], 2, neon_qmvq, t2.val[0]);
+        gsbf_bri_bot(u5.val[1], zl.val[0], zh.val[0], 2, neon_qmvq, t2.val[1]);
+        gsbf_bri_bot(u7.val[0], zl.val[0], zh.val[0], 3, neon_qmvq, t2.val[2]);
+        gsbf_bri_bot(u7.val[1], zl.val[0], zh.val[0], 3, neon_qmvq, t2.val[3]);
 
-        // v0: 0.5
-        // v1: 0.5
-        // v2: 0.5
-        // v3: 0.5
+        // u0, 4: 1
+        // u1, 5: .87
+        // u2, 6: 1
+        // u3, 7: .87
 
         // Layer 8
-        // v0 - v2, v1 - v3
-        gsbf_top_x4(v0, v2, t);
-        gsbf_top_x4(v1, v3, t2);
+        // u0 - u2, u1 - u3
+        // u4 - u6, u5 - u7
+        gsbf_top(u0.val[0], u2.val[0], t.val[0]);
+        gsbf_top(u0.val[1], u2.val[1], t.val[1]);
+        gsbf_top(u1.val[0], u3.val[0], t.val[2]);
+        gsbf_top(u1.val[1], u3.val[1], t.val[3]);
 
-        // v0: 1
-        // v1: 1
-        // v2: .87
-        // v3: .87
+        gsbf_top(u4.val[0], u6.val[0], t2.val[0]);
+        gsbf_top(u4.val[1], u6.val[1], t2.val[1]);
+        gsbf_top(u5.val[0], u7.val[0], t2.val[2]);
+        gsbf_top(u5.val[1], u7.val[1], t2.val[3]);
+
+        gsbf_bri_bot(u2.val[0], zl.val[0], zh.val[0], 4, neon_qmvq, t.val[0]);
+        gsbf_bri_bot(u2.val[1], zl.val[0], zh.val[0], 4, neon_qmvq, t.val[1]);
+        gsbf_bri_bot(u3.val[0], zl.val[0], zh.val[0], 4, neon_qmvq, t.val[2]);
+        gsbf_bri_bot(u3.val[1], zl.val[0], zh.val[0], 4, neon_qmvq, t.val[3]);
+
+        gsbf_bri_bot(u6.val[0], zl.val[0], zh.val[0], 5, neon_qmvq, t2.val[0]);
+        gsbf_bri_bot(u6.val[1], zl.val[0], zh.val[0], 5, neon_qmvq, t2.val[1]);
+        gsbf_bri_bot(u7.val[0], zl.val[0], zh.val[0], 5, neon_qmvq, t2.val[2]);
+        gsbf_bri_bot(u7.val[1], zl.val[0], zh.val[0], 5, neon_qmvq, t2.val[3]);
+
+        // u0, 4: 2
+        // u2, 6: 1.25
+        // u1, 5: 1.75
+        // u3, 7: 1.15
+
+        barrett_x2(u0, 0, 1, 0, 1, neon_qmvq, t);
+        barrett_x2(u4, 0, 1, 2, 3, neon_qmvq, t);
+        barrett_x2(u1, 0, 1, 0, 1, neon_qmvq, t2);
+        barrett_x2(u5, 0, 1, 2, 3, neon_qmvq, t2);
+
+        // u0, 4: 0.5
+        // u2, 6: 1.25
+        // u1, 5: 0.5
+        // u3, 7: 1.15
+
+        // Layer 9
+        // u0 - u4, u1 - u5
+        // u2 - u6, u3 - u7
+        gsbf_top(u0.val[0], u4.val[0], t.val[0]);
+        gsbf_top(u0.val[1], u4.val[1], t.val[1]);
+        gsbf_top(u1.val[0], u5.val[0], t.val[2]);
+        gsbf_top(u1.val[1], u5.val[1], t.val[3]);
+
+        gsbf_top(u2.val[0], u6.val[0], t2.val[0]);
+        gsbf_top(u2.val[1], u6.val[1], t2.val[1]);
+        gsbf_top(u3.val[0], u7.val[0], t2.val[2]);
+        gsbf_top(u3.val[1], u7.val[1], t2.val[3]);
+
+        gsbf_bri_bot(u4.val[0], zl.val[0], zh.val[0], 6, neon_qmvq, t.val[0]);
+        gsbf_bri_bot(u4.val[1], zl.val[0], zh.val[0], 6, neon_qmvq, t.val[1]);
+        gsbf_bri_bot(u5.val[0], zl.val[0], zh.val[0], 6, neon_qmvq, t.val[2]);
+        gsbf_bri_bot(u5.val[1], zl.val[0], zh.val[0], 6, neon_qmvq, t.val[3]);
+
+        gsbf_bri_bot(u6.val[0], zl.val[0], zh.val[0], 6, neon_qmvq, t2.val[0]);
+        gsbf_bri_bot(u6.val[1], zl.val[0], zh.val[0], 6, neon_qmvq, t2.val[1]);
+        gsbf_bri_bot(u7.val[0], zl.val[0], zh.val[0], 6, neon_qmvq, t2.val[2]);
+        gsbf_bri_bot(u7.val[1], zl.val[0], zh.val[0], 6, neon_qmvq, t2.val[3]);
+
+        // u0, 4: 1, .87
+        // u2, 6: 2.5, 1.5
+        // u1, 5: 1, .87
+        // u3, 7: 2.3, 1.4
+
         if (ninv == INVNTT_NINV) {
-            gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t);
-            gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 2, 2, 2, 2, neon_qmvq, t2);
-            barmul_invntt_x4(v0, zl.val[0], zh.val[0], 3, neon_qmvq, t);
-            barmul_invntt_x4(v1, zl.val[0], zh.val[0], 3, neon_qmvq, t2);
-        } else {
-            gsbf_bri_bot_x4(v2, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t);
-            gsbf_bri_bot_x4(v3, zl.val[0], zh.val[0], 4, 4, 4, 4, neon_qmvq, t2);
+            barmul_invntt_x2(u0, zl.val[0], zh.val[0], 7, neon_qmvq, t);
+            barmul_invntt_x2(u1, zl.val[0], zh.val[0], 7, neon_qmvq, t);
+            barmul_invntt_x2(u2, zl.val[0], zh.val[0], 7, neon_qmvq, t2);
+            barmul_invntt_x2(u3, zl.val[0], zh.val[0], 7, neon_qmvq, t2);
         }
 
-        // v0: .87
-        // v1: .87
-        // v2: .83
-        // v3: .83
+        // u0, 4: .87, .87
+        // u2, 6: 1.5, 1.5
+        // u1, 5: .87, .87
+        // u3, 7: 1.4, 1.4
 
-        vstore_s16_x4(&a[j], v0);
-        vstore_s16_x4(&a[j + 128], v1);
-        vstore_s16_x4(&a[j + 256], v2);
-        vstore_s16_x4(&a[j + 384], v3);
+        barrett_x2(u2, 0, 1, 0, 1, neon_qmvq, t);
+        barrett_x2(u6, 0, 1, 2, 3, neon_qmvq, t);
+        barrett_x2(u3, 0, 1, 0, 1, neon_qmvq, t2);
+        barrett_x2(u7, 0, 1, 2, 3, neon_qmvq, t2);
+
+        // u0, 4: .87, .87
+        // u2, 6: .5, .5
+        // u1, 5: .87, .87
+        // u3, 7: .5, .5
+
+        vstore_s16_x2(&a[j], u0);
+        vstore_s16_x2(&a[j + 128], u1);
+        vstore_s16_x2(&a[j + 256], u2);
+        vstore_s16_x2(&a[j + 384], u3);
+
+        vstore_s16_x2(&a[j + 512], u4);
+        vstore_s16_x2(&a[j + 640], u5);
+        vstore_s16_x2(&a[j + 768], u6);
+        vstore_s16_x2(&a[j + 896], u7);
     }
 }
 
-void PQCLEAN_FALCON512_AARCH64_poly_montmul_ntt(int16_t f[FALCON_N], const int16_t g[FALCON_N]) {
+void PQCLEAN_FALCON1024_AARCH64_poly_montmul_ntt(int16_t f[FALCON_N], const int16_t g[FALCON_N]) {
     // Total SIMD registers: 29 = 28 + 1
     int16x8x4_t a, b, c, d, e1, e2, t, k; // 28
     int16x8_t neon_qmvm;                  // 1
-    neon_qmvm = vld1q_s16(PQCLEAN_FALCON512_AARCH64_qmvq);
+    neon_qmvm = vld1q_s16(PQCLEAN_FALCON1024_AARCH64_qmvq);
 
-    for (int i = 0; i < FALCON_N; i += 64) {
+    for (unsigned i = 0; i < FALCON_N; i += 64) {
         vload_s16_x4(a, &f[i]);
         vload_s16_x4(b, &g[i]);
         vload_s16_x4(c, &f[i + 32]);
