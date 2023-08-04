@@ -327,7 +327,6 @@
  * Montgomery multiplication via *Doubling*
  * Input: a, b, bNinv, Q
  * Output: c = ab * R^-1
- * TODO: update this
  */
 #define montmul(c, a, b, QMVM, t)       \
     c = vqdmulhq_s16(a, b);             \
