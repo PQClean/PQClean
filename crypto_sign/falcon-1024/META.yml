@@ -29,3 +29,12 @@ implementations:
       - architecture: x86_64
         required_flags:
           - avx2
+  - name: aarch64
+    version: https://github.com/cothan/Falcon-Arm/commit/9aaea0318bb2aa409239246ff847856fa9886879
+    supported_platforms:
+      - architecture: arm_8
+        operating_systems:
+            - Linux
+            - Darwin
+        required_flags:
+            - asimd
