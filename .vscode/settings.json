@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "inner.h": "c",
+        "api.h": "c",
+        "stdio.h": "c"
+    },
+    "C_Cpp.codeAnalysis.clangTidy.checks.disabled": [
+        "google-readability-function-size"
+    ]
+}
