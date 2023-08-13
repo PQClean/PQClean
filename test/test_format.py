@@ -12,6 +12,8 @@ import pqclean
 @helpers.filtered_test
 def test_format(implementation: pqclean.Implementation):
     helpers.ensure_available('astyle')
+    result = helpers.run_subprocess(['astyle', '--version'])
+    print(result)
     cfiles = implementation.cfiles()
     hfiles = implementation.hfiles()
     result = helpers.run_subprocess(
