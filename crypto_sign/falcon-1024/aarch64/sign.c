@@ -775,7 +775,6 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      */
     PQCLEAN_FALCON1024_AARCH64_poly_fpr_of_s16(t0, hm, FALCON_N);
 
-
     /*
      * Apply the lattice basis to obtain the real target
      * vector (after normalization with regards to modulus).
@@ -839,7 +838,6 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      * Get the lattice point corresponding to that tiny vector.
      */
 
-
     PQCLEAN_FALCON1024_AARCH64_poly_mul_fft(tx, t0, b00, FALCON_LOGN);
     PQCLEAN_FALCON1024_AARCH64_poly_mul_fft(ty, t0, b01, FALCON_LOGN);
     PQCLEAN_FALCON1024_AARCH64_poly_mul_add_fft(t0, tx, t1, b10, FALCON_LOGN);
@@ -847,7 +845,6 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
 
     PQCLEAN_FALCON1024_AARCH64_iFFT(t0, FALCON_LOGN);
     PQCLEAN_FALCON1024_AARCH64_iFFT(t1, FALCON_LOGN);
-
 
     /*
      * With "normal" degrees (e.g. 512 or 1024), it is very
@@ -868,7 +865,6 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     }
     return 0;
 }
-
 
 /* see inner.h */
 void

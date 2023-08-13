@@ -29,7 +29,6 @@
  * @author   Thomas Pornin <thomas.pornin@nccgroup.com>
  */
 
-
 /* ====================================================================== */
 
 #include <arm_neon.h>
@@ -244,4 +243,3 @@ extern const fpr fpr_tab_log9[];
 extern const fpr *fpr_table[];
 
 /* ====================================================================== */
-

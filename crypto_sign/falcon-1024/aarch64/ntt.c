@@ -24,7 +24,6 @@
 #include "ntt_consts.h"
 #include "poly.h"
 
-
 /*
  * Assume Input in the range [-Q/2, Q/2]
  * Total Barrett point for N = 512, 1024: 2048, 4096

@@ -74,13 +74,9 @@
  *    function does nothing, so it can be called systematically.
  */
 
-
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-
-
-
 
 /*
  * Some computations with floating-point elements, in particular
@@ -103,9 +99,6 @@ set_fpu_cw(unsigned x) {
     return x;
 }
 
-
-
-
 /* ==================================================================== */
 /*
  * SHAKE256 implementation (shake.c).
@@ -113,7 +106,6 @@ set_fpu_cw(unsigned x) {
  * API is defined to be easily replaced with the fips202.h API defined
  * as part of PQClean.
  */
-
 
 #include "fips202.h"
 
@@ -123,7 +115,6 @@ set_fpu_cw(unsigned x) {
 #define inner_shake256_flip(sc)               shake256_inc_finalize(sc)
 #define inner_shake256_extract(sc, out, len)  shake256_inc_squeeze(out, len, sc)
 #define inner_shake256_ctx_release(sc)        shake256_inc_ctx_release(sc)
-
 
 /* ==================================================================== */
 /*

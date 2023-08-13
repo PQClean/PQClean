@@ -110,7 +110,6 @@ void PQCLEAN_FALCON1024_AARCH64_poly_div_12289(int16_t f[FALCON_N], const int16_
     }
 }
 
-
 /*
  * f = g - s
  */
@@ -396,7 +395,6 @@ int PQCLEAN_FALCON1024_AARCH64_poly_int16_to_int8(int8_t G[FALCON_N], const int1
     }
     return 0;
 }
-
 
 /*
  * Check if (t < low || t > high)
