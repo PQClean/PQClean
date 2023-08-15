@@ -42,8 +42,6 @@ int PQCLEAN_FALCON1024_AARCH64_get_seed(void *seed, size_t len) {
     return 1;
 }
 
-
-
 /* see inner.h */
 void
 PQCLEAN_FALCON1024_AARCH64_prng_init(prng *p, inner_shake256_context *src) {
@@ -168,7 +166,6 @@ PQCLEAN_FALCON1024_AARCH64_prng_refill(prng *p) {
         }
     }
     *(uint64_t *)(p->state.d + 48) = cc;
-
 
     p->ptr = 0;
 }

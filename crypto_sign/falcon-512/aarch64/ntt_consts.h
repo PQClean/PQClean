@@ -12,7 +12,6 @@ extern const int16_t PQCLEAN_FALCON512_AARCH64_qmvq[8];
 extern const int16_t PQCLEAN_FALCON512_AARCH64_ntt_br[];
 extern const int16_t PQCLEAN_FALCON512_AARCH64_ntt_qinv_br[];
 
-
 /*
  * Table for inverse NTT
  * Since g = 7, 1/g = 8778 mod 12289.

@@ -110,7 +110,6 @@ void PQCLEAN_FALCON1024_AARCH64_poly_div_12289(int16_t f[FALCON_N], const int16_
     }
 }
 
-
 /*
  * f = g - s
  */
@@ -196,14 +195,16 @@ uint16_t PQCLEAN_FALCON1024_AARCH64_poly_compare_with_zero(int16_t f[FALCON_N]) 
 
 /*
  * Branchless conditional addtion with FALCON_Q if coeffcient is < 0
+ * If coefficient is larger than Q, it is subtracted with Q
  */
 void PQCLEAN_FALCON1024_AARCH64_poly_convert_to_unsigned(int16_t f[FALCON_N]) {
-    // Total SIMD registers: 25 = 8 + 16 + 1
+    // Total SIMD registers: 26 = 8 + 16 + 2
     uint16x8x4_t b0, b1;        // 8
     int16x8x4_t a0, a1, c0, c1; // 16
-    uint16x8_t neon_q;          // 1
+    uint16x8_t neon_q, neon_2q; // 2
 
     neon_q = vdupq_n_u16(FALCON_Q);
+    neon_2q = vdupq_n_u16(FALCON_Q << 1);
 
     for (int i = 0; i < FALCON_N; i += 64) {
         vload_s16_x4(a0, &f[i]);
@@ -215,44 +216,128 @@ void PQCLEAN_FALCON1024_AARCH64_poly_convert_to_unsigned(int16_t f[FALCON_N]) {
 
         vload_s16_x4(a1, &f[i + 32]);
 
+        // Conditional addition with 2*FALCON_Q
         b1.val[0] = vcltzq_s16(a1.val[0]);
         b1.val[1] = vcltzq_s16(a1.val[1]);
         b1.val[2] = vcltzq_s16(a1.val[2]);
         b1.val[3] = vcltzq_s16(a1.val[3]);
 
-        c0.val[0] = (int16x8_t)vandq_u16(b0.val[0], neon_q);
-        c0.val[1] = (int16x8_t)vandq_u16(b0.val[1], neon_q);
-        c0.val[2] = (int16x8_t)vandq_u16(b0.val[2], neon_q);
-        c0.val[3] = (int16x8_t)vandq_u16(b0.val[3], neon_q);
+        c0.val[0] = vandq_s16(b0.val[0], neon_2q);
+        c0.val[1] = vandq_s16(b0.val[1], neon_2q);
+        c0.val[2] = vandq_s16(b0.val[2], neon_2q);
+        c0.val[3] = vandq_s16(b0.val[3], neon_2q);
 
-        c1.val[0] = (int16x8_t)vandq_u16(b1.val[0], neon_q);
-        c1.val[1] = (int16x8_t)vandq_u16(b1.val[1], neon_q);
-        c1.val[2] = (int16x8_t)vandq_u16(b1.val[2], neon_q);
-        c1.val[3] = (int16x8_t)vandq_u16(b1.val[3], neon_q);
+        c1.val[0] = vandq_s16(b1.val[0], neon_2q);
+        c1.val[1] = vandq_s16(b1.val[1], neon_2q);
+        c1.val[2] = vandq_s16(b1.val[2], neon_2q);
+        c1.val[3] = vandq_s16(b1.val[3], neon_2q);
 
-        vadd_x4(c0, a0, c0);
-        vadd_x4(c1, a1, c1);
+        vadd_x4(a0, a0, c0);
+        vadd_x4(a1, a1, c1);
 
-        vstore_s16_x4(&f[i], c0);
-        vstore_s16_x4(&f[i + 32], c1);
+        // a > Q ? 1 : 0
+        b0.val[0] = vcgtq_s16(a0.val[0], neon_q);
+        b0.val[1] = vcgtq_s16(a0.val[1], neon_q);
+        b0.val[2] = vcgtq_s16(a0.val[2], neon_q);
+        b0.val[3] = vcgtq_s16(a0.val[3], neon_q);
+
+        b1.val[0] = vcgtq_s16(a1.val[0], neon_q);
+        b1.val[1] = vcgtq_s16(a1.val[1], neon_q);
+        b1.val[2] = vcgtq_s16(a1.val[2], neon_q);
+        b1.val[3] = vcgtq_s16(a1.val[3], neon_q);
+
+        // Conditional subtraction with FALCON_Q
+
+        c0.val[0] = vandq_s16(b0.val[0], neon_q);
+        c0.val[1] = vandq_s16(b0.val[1], neon_q);
+        c0.val[2] = vandq_s16(b0.val[2], neon_q);
+        c0.val[3] = vandq_s16(b0.val[3], neon_q);
+
+        c1.val[0] = vandq_s16(b1.val[0], neon_q);
+        c1.val[1] = vandq_s16(b1.val[1], neon_q);
+        c1.val[2] = vandq_s16(b1.val[2], neon_q);
+        c1.val[3] = vandq_s16(b1.val[3], neon_q);
+
+        vsub_x4(a0, a0, c0);
+        vsub_x4(a1, a1, c1);
+
+        vstore_s16_x4(&f[i], a0);
+        vstore_s16_x4(&f[i + 32], a1);
     }
 }
 
+/*
+ * Perform conditional subtraction with Q and compare with min, max = -127, 127
+ */
 int PQCLEAN_FALCON1024_AARCH64_poly_int16_to_int8(int8_t G[FALCON_N], const int16_t t[FALCON_N]) {
     // Total SIMD registers: 32
-    int16x8x4_t a, f;              // 8
-    uint16x8x4_t c0, c1, d0, d1;   // 16
-    uint16x8x2_t e;                // 2
-    int8x16x4_t g;                 // 4
-    int16x8_t neon_127, neon__127; // 2
+    int16x8x4_t a, f;                                           // 8
+    uint16x8x4_t c0, c1, d0, d1;                                // 16
+    uint16x8x2_t e;                                             // 2
+    int8x16x4_t g;                                              // 4
+    int16x8_t neon_127, neon__127, neon_q_2, neon__q_2, neon_q; // 5
     neon_127 = vdupq_n_s16(127);
     neon__127 = vdupq_n_s16(-127);
+    neon_q = vdupq_n_s16(FALCON_Q);
+    neon_q_2 = vdupq_n_s16(FALCON_Q >> 1);
+    neon__q_2 = vdupq_n_s16(-(FALCON_Q >> 1));
 
     e.val[1] = vdupq_n_u16(0);
 
     for (int i = 0; i < FALCON_N; i += 64) {
         vload_s16_x4(a, &t[i]);
         vload_s16_x4(f, &t[i + 32]);
+
+        // Conditional subtraction with FALCON_Q
+        // a >= Q/2 ? 1 : 0
+        c0.val[0] = vcgeq_s16(a.val[0], neon_q_2);
+        c0.val[1] = vcgeq_s16(a.val[1], neon_q_2);
+        c0.val[2] = vcgeq_s16(a.val[2], neon_q_2);
+        c0.val[3] = vcgeq_s16(a.val[3], neon_q_2);
+
+        c1.val[0] = vcgeq_s16(f.val[0], neon_q_2);
+        c1.val[1] = vcgeq_s16(f.val[1], neon_q_2);
+        c1.val[2] = vcgeq_s16(f.val[2], neon_q_2);
+        c1.val[3] = vcgeq_s16(f.val[3], neon_q_2);
+
+        // Perform subtraction with Q
+        c0.val[0] = vandq_s16(c0.val[0], neon_q);
+        c0.val[1] = vandq_s16(c0.val[1], neon_q);
+        c0.val[2] = vandq_s16(c0.val[2], neon_q);
+        c0.val[3] = vandq_s16(c0.val[3], neon_q);
+
+        c1.val[0] = vandq_s16(c1.val[0], neon_q);
+        c1.val[1] = vandq_s16(c1.val[1], neon_q);
+        c1.val[2] = vandq_s16(c1.val[2], neon_q);
+        c1.val[3] = vandq_s16(c1.val[3], neon_q);
+
+        vsub_x4(a, a, c0);
+        vsub_x4(f, f, c1);
+
+        // -Q/2 > a ? 1: 0
+        d0.val[0] = vcgtq_s16(neon__q_2, a.val[0]);
+        d0.val[1] = vcgtq_s16(neon__q_2, a.val[1]);
+        d0.val[2] = vcgtq_s16(neon__q_2, a.val[2]);
+        d0.val[3] = vcgtq_s16(neon__q_2, a.val[3]);
+
+        d1.val[0] = vcgtq_s16(neon__q_2, f.val[0]);
+        d1.val[1] = vcgtq_s16(neon__q_2, f.val[1]);
+        d1.val[2] = vcgtq_s16(neon__q_2, f.val[2]);
+        d1.val[3] = vcgtq_s16(neon__q_2, f.val[3]);
+
+        // Perform addition with Q
+        d0.val[0] = vandq_s16(d0.val[0], neon_q);
+        d0.val[1] = vandq_s16(d0.val[1], neon_q);
+        d0.val[2] = vandq_s16(d0.val[2], neon_q);
+        d0.val[3] = vandq_s16(d0.val[3], neon_q);
+
+        d1.val[0] = vandq_s16(d1.val[0], neon_q);
+        d1.val[1] = vandq_s16(d1.val[1], neon_q);
+        d1.val[2] = vandq_s16(d1.val[2], neon_q);
+        d1.val[3] = vandq_s16(d1.val[3], neon_q);
+
+        vadd_x4(a, a, d0);
+        vadd_x4(f, f, d1);
 
         g.val[0] = vmovn_high_s16(vmovn_s16(a.val[0]), a.val[1]);
         g.val[1] = vmovn_high_s16(vmovn_s16(a.val[2]), a.val[3]);
@@ -310,7 +395,6 @@ int PQCLEAN_FALCON1024_AARCH64_poly_int16_to_int8(int8_t G[FALCON_N], const int1
     }
     return 0;
 }
-
 
 /*
  * Check if (t < low || t > high)

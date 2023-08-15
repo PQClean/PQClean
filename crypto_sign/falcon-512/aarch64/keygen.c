@@ -2172,7 +2172,6 @@ poly_sub_scaled_ntt(uint32_t *restrict F, size_t Flen, size_t Fstride,
 
 /* ==================================================================== */
 
-
 #define RNG_CONTEXT   inner_shake256_context
 
 /*
@@ -2199,7 +2198,6 @@ get_rng_u64(inner_shake256_context *rng) {
            | ((uint64_t)tmp[6] << 48)
            | ((uint64_t)tmp[7] << 56);
 }
-
 
 /*
  * Table below incarnates a discrete Gaussian distribution:
@@ -2450,8 +2448,6 @@ align_u32(void *base, void *data) {
     }
     return (uint32_t *)(cb + k);
 }
-
-
 
 /*
  * Input: f,g of degree N = 2^logn; 'depth' is used only to get their

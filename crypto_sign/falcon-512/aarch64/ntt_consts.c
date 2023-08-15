@@ -9,7 +9,6 @@ const int16_t PQCLEAN_FALCON512_AARCH64_qmvq[8] = {FALCON_Q, FALCON_QINV,
                                                    FALCON_MONT_BR, FALCON_NINV_MONT_BR
                                                   };
 
-
 const int16_t PQCLEAN_FALCON512_AARCH64_ntt_br[] = {
     PADDING,    -1479,    -5146,     4043,  PADDING,  PADDING,  PADDING,  PADDING,
     -1305,     3542,    -3504,    -4821,     2639,    -2625,     -949,     2319,

@@ -19,7 +19,6 @@
  * @author   Duc Tri Nguyen <dnguye69@gmu.edu>, <cothannguyen@gmail.com>
  */
 
-
 #include "inner.h"
 #include "macrofx4.h"
 #include "util.h"
