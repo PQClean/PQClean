@@ -1,12 +1,11 @@
+#ifndef PARAMS_H
+#define PARAMS_H
 
 /*
  * This file is licensed
  * under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html) or
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
-
-#ifndef PARAMS_H
-#define PARAMS_H
 
 #define KYBER_NAMESPACE(s) PQCLEAN_KYBER768_AARCH64_##s
 

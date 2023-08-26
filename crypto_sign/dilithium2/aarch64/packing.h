@@ -1,3 +1,5 @@
+#ifndef PACKING_H
+#define PACKING_H
 
 /*
  * This file is dual licensed
@@ -5,8 +7,6 @@
  * or public domain at https://github.com/pq-crystals/dilithium
  */
 
-#ifndef PACKING_H
-#define PACKING_H
 #include "params.h"
 #include "polyvec.h"
 #include <stdint.h>

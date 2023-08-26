@@ -1,3 +1,5 @@
+#ifndef SYMMETRIC_H
+#define SYMMETRIC_H
 
 /*
  * This file is licensed
@@ -5,9 +7,6 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
-
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
 
 #include "params.h"
 #include <stddef.h>

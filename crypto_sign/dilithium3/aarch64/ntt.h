@@ -1,3 +1,5 @@
+#ifndef NTT_H
+#define NTT_H
 
 /*
  * This file was originally licensed
@@ -30,8 +32,6 @@
  * SOFTWARE.
  */
 
-#ifndef NTT_H
-#define NTT_H
 #include "NTT_params.h"
 #include "params.h"
 #include <stdint.h>

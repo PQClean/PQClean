@@ -1,3 +1,5 @@
+#ifndef POLYVEC_H
+#define POLYVEC_H
 
 /*
  * This file was originally licensed
@@ -31,9 +33,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-#ifndef POLYVEC_H
-#define POLYVEC_H
 
 #include "params.h"
 #include "poly.h"

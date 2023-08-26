@@ -1,3 +1,5 @@
+#ifndef POLYVEC_H
+#define POLYVEC_H
 
 /*
  * This file is dual licensed
@@ -5,8 +7,6 @@
  * or public domain at https://github.com/pq-crystals/dilithium
  */
 
-#ifndef POLYVEC_H
-#define POLYVEC_H
 #include "params.h"
 #include "poly.h"
 #include <stdint.h>
