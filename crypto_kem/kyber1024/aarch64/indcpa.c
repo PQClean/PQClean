@@ -224,7 +224,9 @@ void indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
     gen_a(a, publicseed);
 
     neon_poly_getnoise_eta1_2x(&(skpv[0][0]), &(skpv[1][0]), noiseseed, 0, 1);
-    neon_poly_getnoise_eta1_2x(&(e[0][0]), &(e[1][0]), noiseseed, 2, 3);
+    neon_poly_getnoise_eta1_2x(&(skpv[2][0]), &(skpv[3][0]), noiseseed, 2, 3);
+    neon_poly_getnoise_eta1_2x(&(e[0][0]), &(e[1][0]), noiseseed, 4, 5);
+    neon_poly_getnoise_eta1_2x(&(e[2][0]), &(e[3][0]), noiseseed, 6, 7);
 
     neon_polyvec_ntt(skpv);
     neon_polyvec_ntt(e);
@@ -280,10 +282,11 @@ void indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
     poly_frommsg(k, m);
     gen_at(at, seed);
 
-  // ETA1 != ETA2 (3 != 2)
-  neon_poly_getnoise_eta1_2x(&(sp[0][0]), &(sp[1][0]), coins, 0, 1);
-  neon_poly_getnoise_eta2_2x(&(ep[0][0]), &(ep[1][0]), coins, 2, 3);
-  neon_poly_getnoise_eta2(&(epp[0]), coins, 4);
+    neon_poly_getnoise_eta1_2x(&(sp[0][0]), &(sp[1][0]), coins, 0, 1);
+    neon_poly_getnoise_eta1_2x(&(sp[2][0]), &(sp[3][0]), coins, 2, 3);
+    neon_poly_getnoise_eta1_2x(&(ep[0][0]), &(ep[1][0]), coins, 4, 5);
+    neon_poly_getnoise_eta1_2x(&(ep[2][0]), &(ep[3][0]), coins, 6, 7);
+    neon_poly_getnoise_eta2(&(epp[0]), coins, 8);
 
     neon_polyvec_ntt(sp);
 
