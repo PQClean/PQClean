@@ -1,6 +1,6 @@
 consistency_checks:
 - source:
-    scheme: sphincs-shake-256s-robust
+    scheme: sphincs-shake-256s-simple
     implementation: clean
   files:
   - address.h
