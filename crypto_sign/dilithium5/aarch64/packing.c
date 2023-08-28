@@ -10,7 +10,6 @@
 #include "poly.h"
 #include "polyvec.h"
 
-
 /*************************************************
 * Name:        pack_pk
 *

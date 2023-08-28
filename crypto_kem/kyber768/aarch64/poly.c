@@ -172,7 +172,6 @@ void poly_frommsg(int16_t r[KYBER_N], const uint8_t msg[KYBER_INDCPA_MSGBYTES]) 
     unsigned int i, j;
     int16_t mask;
 
-
     for (i = 0; i < KYBER_N / 8; i++) {
         for (j = 0; j < 8; j++) {
             mask = -(int16_t)((msg[i] >> j) & 1);
@@ -203,4 +202,3 @@ void poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const int16_t a[KYBER_N]) {
         }
     }
 }
-

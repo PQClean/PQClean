@@ -63,5 +63,4 @@ void neon_polyvec_invntt_to_mont(int16_t r[KYBER_K][KYBER_N]);
 #define neon_polyvec_add_reduce KYBER_NAMESPACE(polyvec_add_reduce)
 void neon_polyvec_add_reduce(int16_t c[KYBER_K][KYBER_N], int16_t a[KYBER_K][KYBER_N]);
 
-
 #endif

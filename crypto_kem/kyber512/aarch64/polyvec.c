@@ -10,7 +10,6 @@
 #include "poly.h"
 #include "polyvec.h"
 
-
 /*************************************************
 * Name:        polyvec_compress
 *
@@ -103,4 +102,3 @@ void polyvec_frombytes(int16_t r[KYBER_K][KYBER_N], const uint8_t a[KYBER_POLYVE
         poly_frombytes(r[i], a + i * KYBER_POLYBYTES);
     }
 }
-

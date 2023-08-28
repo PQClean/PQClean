@@ -441,7 +441,6 @@ void poly_uniformx2(poly *a0, poly *a1,
         ctr1 += rej_uniform(a1->coeffs + ctr1, N - ctr1, buf1, buflen);
     }
 
-
 }
 
 /*************************************************
@@ -471,7 +470,6 @@ static unsigned int rej_eta(int32_t *a,
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
 
-
         if (t0 < 15) {
             t0 = t0 - (205 * t0 >> 10) * 5;
             a[ctr++] = 2 - t0;
@@ -480,8 +478,6 @@ static unsigned int rej_eta(int32_t *a,
             t1 = t1 - (205 * t1 >> 10) * 5;
             a[ctr++] = 2 - t1;
         }
-
-
 
     }
 
@@ -647,7 +643,6 @@ void polyeta_pack(uint8_t *r, const poly *a) {
     uint8_t t[8];
     DBENCH_START();
 
-
     for (i = 0; i < N / 8; ++i) {
         t[0] = ETA - a->coeffs[8 * i + 0];
         t[1] = ETA - a->coeffs[8 * i + 1];
@@ -663,7 +658,6 @@ void polyeta_pack(uint8_t *r, const poly *a) {
         r[3 * i + 2]  = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
     }
 
-
     DBENCH_STOP(*tpack);
 }
 
@@ -678,7 +672,6 @@ void polyeta_pack(uint8_t *r, const poly *a) {
 void polyeta_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
-
 
     for (i = 0; i < N / 8; ++i) {
         r->coeffs[8 * i + 0] =  (a[3 * i + 0] >> 0) & 7;
@@ -699,7 +692,6 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
         r->coeffs[8 * i + 6] = ETA - r->coeffs[8 * i + 6];
         r->coeffs[8 * i + 7] = ETA - r->coeffs[8 * i + 7];
     }
-
 
     DBENCH_STOP(*tpack);
 }
@@ -873,7 +865,6 @@ void polyz_pack(uint8_t *r, const poly *a) {
     uint32_t t[4];
     DBENCH_START();
 
-
     for (i = 0; i < N / 4; ++i) {
         t[0] = GAMMA1 - a->coeffs[4 * i + 0];
         t[1] = GAMMA1 - a->coeffs[4 * i + 1];
@@ -894,7 +885,6 @@ void polyz_pack(uint8_t *r, const poly *a) {
         r[9 * i + 8]  = t[3] >> 10;
     }
 
-
     DBENCH_STOP(*tpack);
 }
 
@@ -910,7 +900,6 @@ void polyz_pack(uint8_t *r, const poly *a) {
 void polyz_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
-
 
     for (i = 0; i < N / 4; ++i) {
         r->coeffs[4 * i + 0]  = a[9 * i + 0];
@@ -939,7 +928,6 @@ void polyz_unpack(poly *r, const uint8_t *a) {
         r->coeffs[4 * i + 3] = GAMMA1 - r->coeffs[4 * i + 3];
     }
 
-
     DBENCH_STOP(*tpack);
 }
 
@@ -957,7 +945,6 @@ void polyw1_pack(uint8_t *r, const poly *a) {
     unsigned int i;
     DBENCH_START();
 
-
     for (i = 0; i < N / 4; ++i) {
         r[3 * i + 0]  = a->coeffs[4 * i + 0];
         r[3 * i + 0] |= a->coeffs[4 * i + 1] << 6;
@@ -966,7 +953,6 @@ void polyw1_pack(uint8_t *r, const poly *a) {
         r[3 * i + 2]  = a->coeffs[4 * i + 2] >> 4;
         r[3 * i + 2] |= a->coeffs[4 * i + 3] << 2;
     }
-
 
     DBENCH_STOP(*tpack);
 }

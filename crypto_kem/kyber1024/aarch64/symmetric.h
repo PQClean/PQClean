@@ -12,12 +12,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #include "fips202.h"
 
 typedef shake128ctx xof_state;
-
-
 
 #define kyber_shake128_absorb KYBER_NAMESPACE(kyber_shake128_absorb)
 void kyber_shake128_absorb(shake128ctx *s,
@@ -64,6 +61,5 @@ void neon_kyber_shake256_prf(uint8_t *out1, uint8_t *out2,
 
 #define neon_xof_squeezeblocks(OUT0, OUT1, OUTBLOCKS, STATE) \
     shake128x2_squeezeblocks(OUT0, OUT1, OUTBLOCKS, STATE)
-
 
 #endif /* SYMMETRIC_H */

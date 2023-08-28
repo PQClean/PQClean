@@ -142,7 +142,6 @@ static void unpack_ciphertext(int16_t b[KYBER_K][KYBER_N], int16_t *v, const uin
     poly_decompress(v, c + KYBER_POLYVECCOMPRESSEDBYTES);
 }
 
-
 #define gen_a(A,B)  gen_matrix(A,B,0)
 #define gen_at(A,B) gen_matrix(A,B,1)
 
@@ -280,18 +279,18 @@ void indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
     poly_frommsg(k, m);
     gen_at(at, seed);
 
-  // ETA1 != ETA2 (3 != 2)
-  neon_poly_getnoise_eta1_2x(&(sp[0][0]), &(sp[1][0]), coins, 0, 1);
-  neon_poly_getnoise_eta2_2x(&(ep[0][0]), &(ep[1][0]), coins, 2, 3);
-  neon_poly_getnoise_eta2(&(epp[0]), coins, 4);
+    // ETA1 != ETA2 (3 != 2)
+    neon_poly_getnoise_eta1_2x(&(sp[0][0]), &(sp[1][0]), coins, 0, 1);
+    neon_poly_getnoise_eta2_2x(&(ep[0][0]), &(ep[1][0]), coins, 2, 3);
+    neon_poly_getnoise_eta2(&(epp[0]), coins, 4);
 
     neon_polyvec_ntt(sp);
 
-    for(i = 0; i < KYBER_K; i++){
+    for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AARCH64__asm_point_mul_extended(&(sp_asymmetric[i][0]), &(sp[i][0]), pre_asymmetric_table_Q1_extended, asymmetric_const);
     }
 
-    for(i = 0; i < KYBER_K; i++){
+    for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_KYBER512_AARCH64__asm_asymmetric_mul(&(at[i][0][0]), &(sp[0][0]), &(sp_asymmetric[0][0]), asymmetric_const, b[i]);
     }
 
@@ -329,7 +328,6 @@ void indcpa_dec(uint8_t m[KYBER_INDCPA_MSGBYTES],
     int16_t skpv[KYBER_K][KYBER_N];
     int16_t v[KYBER_N];
     int16_t mp[KYBER_N];
-
 
     unpack_ciphertext(b, v, c);
     unpack_sk(skpv, sk);

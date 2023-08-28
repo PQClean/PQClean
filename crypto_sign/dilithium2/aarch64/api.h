@@ -33,5 +33,4 @@ int PQCLEAN_DILITHIUM2_AARCH64_crypto_sign_open(
     uint8_t *m, size_t *mlen,
     const uint8_t *sm, size_t smlen, const uint8_t *pk);
 
-
 #endif
