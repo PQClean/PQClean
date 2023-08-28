@@ -220,7 +220,7 @@ void PQCLEAN_KYBER512_AVX2_gen_matrix(polyvec *a, const uint8_t seed[32], int tr
 }
 
 /*************************************************
-* Name:        PQCLEAN_KYBER512_AVX2_indcpa_keypair
+* Name:        PQCLEAN_KYBER512_AVX2_indcpa_keypair_derand
 *
 * Description: Generates public and private key for the CPA-secure
 *              public-key encryption scheme underlying Kyber
@@ -228,18 +228,20 @@ void PQCLEAN_KYBER512_AVX2_gen_matrix(polyvec *a, const uint8_t seed[32], int tr
 * Arguments:   - uint8_t *pk: pointer to output public key
 *                             (of length KYBER_INDCPA_PUBLICKEYBYTES bytes)
 *              - uint8_t *sk: pointer to output private key
-                              (of length KYBER_INDCPA_SECRETKEYBYTES bytes)
+*                             (of length KYBER_INDCPA_SECRETKEYBYTES bytes)
+*              - const uint8_t *coins: pointer to input randomness
+*                             (of length KYBER_SYMBYTES bytes)
 **************************************************/
-void PQCLEAN_KYBER512_AVX2_indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
-        uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES]) {
+void PQCLEAN_KYBER512_AVX2_indcpa_keypair_derand(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
+        uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES],
+        const uint8_t coins[KYBER_SYMBYTES]) {
     unsigned int i;
     uint8_t buf[2 * KYBER_SYMBYTES];
     const uint8_t *publicseed = buf;
     const uint8_t *noiseseed = buf + KYBER_SYMBYTES;
     polyvec a[KYBER_K], e, pkpv, skpv;
 
-    randombytes(buf, KYBER_SYMBYTES);
-    hash_g(buf, buf, KYBER_SYMBYTES);
+    hash_g(buf, coins, KYBER_SYMBYTES);
 
     gen_a(a, publicseed);
 
