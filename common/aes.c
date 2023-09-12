@@ -54,7 +54,7 @@ static inline uint32_t br_swap32(uint32_t x) {
 }
 
 
-static inline void br_enc32le(unsigned char *dst, uint32_t x) {
+static inline void br_enc32le(unsigned char dst[4], uint32_t x) {
     dst[0] = (unsigned char)x;
     dst[1] = (unsigned char)(x >> 8);
     dst[2] = (unsigned char)(x >> 16);
@@ -64,13 +64,13 @@ static inline void br_enc32le(unsigned char *dst, uint32_t x) {
 
 static void br_range_enc32le(unsigned char *dst, const uint32_t *v, size_t num) {
     while (num-- > 0) {
-        br_enc32le(dst, *v ++);
+        br_enc32le(dst, *v++);
         dst += 4;
     }
 }
 
 
-static void br_aes_ct64_bitslice_Sbox(uint64_t *q) {
+static void br_aes_ct64_bitslice_Sbox(uint64_t q[8]) {
     /*
      * This S-box implementation is a straightforward translation of
      * the circuit described by Boyar and Peralta in "A new
@@ -244,7 +244,7 @@ static void br_aes_ct64_bitslice_Sbox(uint64_t *q) {
     q[0] = s7;
 }
 
-static void br_aes_ct64_ortho(uint64_t *q) {
+static void br_aes_ct64_ortho(uint64_t q[8]) {
 #define SWAPN(cl, ch, s, x, y)   do { \
         uint64_t a, b; \
         a = (x); \
@@ -274,7 +274,7 @@ static void br_aes_ct64_ortho(uint64_t *q) {
 }
 
 
-static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t *w) {
+static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t w[4]) {
     uint64_t x0, x1, x2, x3;
 
     x0 = w[0];
@@ -302,7 +302,7 @@ static void br_aes_ct64_interleave_in(uint64_t *q0, uint64_t *q1, const uint32_t
 }
 
 
-static void br_aes_ct64_interleave_out(uint32_t *w, uint64_t q0, uint64_t q1) {
+static void br_aes_ct64_interleave_out(uint32_t w[4], uint64_t q0, uint64_t q1) {
     uint64_t x0, x1, x2, x3;
 
     x0 = q0 & (uint64_t)0x00FF00FF00FF00FF;
@@ -410,7 +410,7 @@ static void br_aes_ct64_skey_expand(uint64_t *skey, const uint64_t *comp_skey, u
 }
 
 
-static inline void add_round_key(uint64_t *q, const uint64_t *sk) {
+static inline void add_round_key(uint64_t q[8], const uint64_t sk[8]) {
     q[0] ^= sk[0];
     q[1] ^= sk[1];
     q[2] ^= sk[2];
@@ -421,7 +421,7 @@ static inline void add_round_key(uint64_t *q, const uint64_t *sk) {
     q[7] ^= sk[7];
 }
 
-static inline void shift_rows(uint64_t *q) {
+static inline void shift_rows(uint64_t q[8]) {
     int i;
 
     for (i = 0; i < 8; i ++) {
@@ -442,7 +442,7 @@ static inline uint64_t rotr32(uint64_t x) {
     return (x << 32) | (x >> 32);
 }
 
-static inline void mix_columns(uint64_t *q) {
+static inline void mix_columns(uint64_t q[8]) {
     uint64_t q0, q1, q2, q3, q4, q5, q6, q7;
     uint64_t r0, r1, r2, r3, r4, r5, r6, r7;
 
@@ -482,7 +482,7 @@ static void inc4_be(uint32_t *x) {
 
 static void aes_ecb4x(unsigned char out[64], const uint32_t ivw[16], const uint64_t *sk_exp, unsigned int nrounds) {
     uint32_t w[16];
-    uint64_t q[8];
+    uint64_t q[8] = {0};
     unsigned int i;
 
     memcpy(w, ivw, sizeof(w));
