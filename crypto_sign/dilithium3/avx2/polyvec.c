@@ -85,7 +85,6 @@ void PQCLEAN_DILITHIUM3_AVX2_polyvec_matrix_expand_row5(polyvecl *rowa, polyvecl
     PQCLEAN_DILITHIUM3_AVX2_poly_nttunpack(&rowa->vec[4]);
 }
 
-
 void PQCLEAN_DILITHIUM3_AVX2_polyvec_matrix_pointwise_montgomery(polyveck *t, const polyvecl mat[K], const polyvecl *v) {
     unsigned int i;
 

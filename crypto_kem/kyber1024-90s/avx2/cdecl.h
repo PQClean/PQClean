@@ -1,8 +1,6 @@
 #ifndef PQCLEAN_KYBER102490S_AVX2_CDECL_H
 #define PQCLEAN_KYBER102490S_AVX2_CDECL_H
 
-
-
 #define _16XQ            0
 #define _16XQINV        16
 #define _16XV           32

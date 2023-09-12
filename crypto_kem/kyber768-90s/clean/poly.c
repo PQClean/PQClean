@@ -178,7 +178,6 @@ void PQCLEAN_KYBER76890S_CLEAN_poly_getnoise_eta2(poly *r, const uint8_t seed[KY
     PQCLEAN_KYBER76890S_CLEAN_poly_cbd_eta2(r, buf);
 }
 
-
 /*************************************************
 * Name:        PQCLEAN_KYBER76890S_CLEAN_poly_ntt
 *

@@ -292,7 +292,6 @@ unsigned int PQCLEAN_DILITHIUM2AES_AVX2_rej_uniform_avx(int32_t *restrict r, con
 
     }
 
-
     return ctr;
 }
 

@@ -14,7 +14,6 @@
 #include "randombytes.h"
 #include "kem.h"
 
-
 /*************************************************
 * Name:        crypto_kem_keypair
 *

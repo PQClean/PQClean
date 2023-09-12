@@ -390,7 +390,6 @@ void PQCLEAN_DILITHIUM2AES_AVX2_poly_uniform(poly *a, const uint8_t seed[SEEDBYT
     stream128_release(&state);
 }
 
-
 /*************************************************
 * Name:        rej_eta
 *
@@ -464,7 +463,6 @@ void PQCLEAN_DILITHIUM2AES_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[CRH
     stream256_release(&state);
 }
 
-
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM2AES_AVX2_poly_uniform_gamma1
 *
@@ -490,7 +488,6 @@ void PQCLEAN_DILITHIUM2AES_AVX2_poly_uniform_gamma1(poly *a, const uint8_t seed[
     PQCLEAN_DILITHIUM2AES_AVX2_poly_uniform_gamma1_preinit(a, &state);
     stream256_release(&state);
 }
-
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM2AES_AVX2_challenge
@@ -829,7 +826,6 @@ void PQCLEAN_DILITHIUM2AES_AVX2_polyz_unpack(poly *restrict r, const uint8_t *a)
 
     DBENCH_STOP(*tpack);
 }
-
 
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM2AES_AVX2_polyw1_pack

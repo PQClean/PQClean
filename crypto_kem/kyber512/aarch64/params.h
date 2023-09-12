@@ -8,7 +8,6 @@
 #ifndef PARAMS_H
 #define PARAMS_H
 
-
 //#define KYBER_90S /* Uncomment this if you want the 90S variant */
 
 #define KYBER_NAMESPACE(s) PQCLEAN_KYBER512_AARCH64_##s

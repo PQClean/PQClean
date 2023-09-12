@@ -31,8 +31,7 @@
 #define vsublh8(c, a, b) c = (int16x8_t)vsubl_high_u8(a, b);
 
 static
-void neon_cbd2(int16_t *r, const uint8_t buf[2 * KYBER_N / 4])
-{
+void neon_cbd2(int16_t *r, const uint8_t buf[2 * KYBER_N / 4]) {
     uint8x16x2_t t, d;      // 4
     uint8x16x2_t a, b;      // 4
     int16x8x4_t res1, res2; // 4

@@ -12,8 +12,6 @@
  * @brief Implementation of hqc.h
  */
 
-
-
 /**
  * @brief Keygen of the HQC_PKE IND_CPA scheme
  *
@@ -56,8 +54,6 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_keygen(unsigned char *pk, unsigned char *s
     PQCLEAN_HQCRMRS128_CLEAN_hqc_secret_key_to_string(sk, sk_seed, pk);
 
 }
-
-
 
 /**
  * @brief Encryption of the HQC_PKE IND_CPA scheme
@@ -108,8 +104,6 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t 
 
 }
 
-
-
 /**
  * @brief Decryption of the HQC_PKE IND_CPA scheme
  *
@@ -136,7 +130,6 @@ void PQCLEAN_HQCRMRS128_CLEAN_hqc_pke_decrypt(uint8_t *m, const uint64_t *u, con
     PQCLEAN_HQCRMRS128_CLEAN_vect_resize(tmp1, PARAM_N, v, PARAM_N1N2);
     PQCLEAN_HQCRMRS128_CLEAN_vect_mul(tmp2, y, u, PARAM_OMEGA, &perm_seedexpander);
     PQCLEAN_HQCRMRS128_CLEAN_vect_add(tmp2, tmp1, tmp2, VEC_N_SIZE_64);
-
 
     // Compute m by decoding v - u.y
     PQCLEAN_HQCRMRS128_CLEAN_store8_arr((uint8_t *)tmp1, VEC_N_SIZE_BYTES, tmp2, VEC_N_SIZE_64);

@@ -14,7 +14,6 @@ extern "C" {
 #include <unistd.h>
 #endif /* _WIN32 */
 
-
 /*
  * Write `n` bytes of high quality random bytes to `buf`
  */

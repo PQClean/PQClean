@@ -5,8 +5,6 @@
 #include "params.h"
 #include <stdint.h>
 
-
-
 typedef aes256ctr_ctx stream128_state;
 typedef aes256ctr_ctx stream256_state;
 
@@ -19,6 +17,5 @@ typedef aes256ctr_ctx stream256_state;
 #define stream256_init(STATE, SEED, NONCE) PQCLEAN_DILITHIUM5AES_AVX2_aes256ctr_init(STATE, SEED, NONCE)
 #define stream256_squeezeblocks(OUT, OUTBLOCKS, STATE) PQCLEAN_DILITHIUM5AES_AVX2_aes256ctr_squeezeblocks(OUT, OUTBLOCKS, STATE)
 #define stream256_release(STATE)
-
 
 #endif

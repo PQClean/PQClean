@@ -8,8 +8,6 @@
  * \brief AVX2 implementation of multiplication of two polynomials
  */
 
-
-
 //Parameters for Toom-Cook and UB_Karatsuba
 #define T_TM3R_3W (PARAM_N_MULT / 3)
 #define T_TM3R (PARAM_N_MULT + 384)
@@ -32,7 +30,6 @@ static inline void karat_mult_16(__m256i *C, const __m256i *A, const __m256i *B)
 static inline void karat_mult5(__m256i *C, const __m256i *A, const __m256i *B);
 static inline void divide_by_x_plus_one_256(__m256i *in, __m256i *out, int32_t size);
 static void toom_3_mult(uint64_t *Out, const aligned_vec_t *A, const aligned_vec_t *B);
-
 
 /**
  * @brief Compute o(x) = a(x) mod \f$ X^n - 1\f$
@@ -70,8 +67,6 @@ static inline void reduce(uint64_t *o, const __m256i *a256) {
 
     o[PARAM_N >> 6] &= RED_MASK;
 }
-
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x)
@@ -128,8 +123,6 @@ static inline void karat_mult_1(__m128i *C, const __m128i *A, const __m128i *B) 
     C[3] = D2[1];
 }
 
-
-
 /**
  * @brief Compute C(x) = A(x)*B(x)
  *
@@ -158,7 +151,6 @@ static inline void karat_mult_2(__m256i *C, const __m256i *A, const __m256i *B) 
     C[2] = middle ^ D1[1] ^ D2[1];
     C[3] = D2[1];
 }
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x)
@@ -196,8 +188,6 @@ static inline void karat_mult_4(__m256i *C, const __m256i *A, const __m256i *B) 
     C[6] = D2[2];
     C[7] = D2[3];
 }
-
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x)
@@ -238,8 +228,6 @@ static inline void karat_mult_8(__m256i *C, const __m256i *A, const __m256i *B) 
     }
 }
 
-
-
 /**
  * @brief Compute C(x) = A(x)*B(x)
  *
@@ -279,7 +267,6 @@ inline static void karat_mult_16(__m256i *C, const __m256i *A, const __m256i *B)
     }
 }
 
-
 /**
  * @brief Compute C(x) = A(x)*B(x)
  *
@@ -290,7 +277,7 @@ inline static void karat_mult_16(__m256i *C, const __m256i *A, const __m256i *B)
  * @param[in] B Pointer to the polynomial B(x)
  */
 static inline void karat_mult5(__m256i *C, const __m256i *A, const __m256i *B) {
-    const __m256i *a0, *b0, *a1, *b1, *a2, *b2, * a3, * b3, *a4, *b4;
+    const __m256i *a0, *b0, *a1, *b1, *a2, *b2, *a3, *b3, *a4, *b4;
 
     __m256i aa01[T_5W_256], bb01[T_5W_256], aa02[T_5W_256], bb02[T_5W_256], aa03[T_5W_256], bb03[T_5W_256], aa04[T_5W_256], bb04[T_5W_256],
             aa12[T_5W_256], bb12[T_5W_256], aa13[T_5W_256], bb13[T_5W_256], aa14[T_5W_256], bb14[T_5W_256],
@@ -386,8 +373,6 @@ static inline void karat_mult5(__m256i *C, const __m256i *A, const __m256i *B) {
     }
 }
 
-
-
 /**
  * @brief Compute B(x) = A(x)/(x+1)
  *
@@ -402,8 +387,6 @@ inline static void divide_by_x_plus_one_256(__m256i *in, __m256i *out, int32_t s
         out[i] = out[i - 1] ^ in[i];
     }
 }
-
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x) using TOOM3Mult with recursive call
@@ -583,8 +566,6 @@ static void toom_3_mult(uint64_t *Out, const aligned_vec_t *A, const aligned_vec
         Out[i] = ro64[i];
     }
 }
-
-
 
 /**
  * @brief Multiply two polynomials modulo \f$ X^n - 1\f$.

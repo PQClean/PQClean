@@ -82,7 +82,6 @@ void PQCLEAN_DILITHIUM3_AVX2_decompose_avx(__m256i *a1, __m256i *a0, const __m25
     }
 }
 
-
 /*************************************************
 * Name:        make_hint
 *

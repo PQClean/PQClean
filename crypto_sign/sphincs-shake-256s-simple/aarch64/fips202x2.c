@@ -66,7 +66,6 @@ static void keccak_absorb2x(uint64_t *s,
     }
 }
 
-
 static void keccak_squeezeblocks2x(unsigned char *h0,
                                    unsigned char *h1,
                                    unsigned long long int nblocks,
@@ -85,8 +84,6 @@ static void keccak_squeezeblocks2x(unsigned char *h0,
         nblocks--;
     }
 }
-
-
 
 void shake128x2(unsigned char *out0,
                 unsigned char *out1,
@@ -116,7 +113,6 @@ void shake128x2(unsigned char *out0,
         }
     }
 }
-
 
 void shake256x2(unsigned char *out0,
                 unsigned char *out1,

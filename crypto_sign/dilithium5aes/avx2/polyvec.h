@@ -55,7 +55,6 @@ void PQCLEAN_DILITHIUM5AES_AVX2_polyveck_pack_w1(uint8_t r[K * POLYW1_PACKEDBYTE
 
 void PQCLEAN_DILITHIUM5AES_AVX2_polyvec_matrix_expand(polyvecl mat[K], const uint8_t rho[SEEDBYTES]);
 
-
 void PQCLEAN_DILITHIUM5AES_AVX2_polyvec_matrix_pointwise_montgomery(polyveck *t, const polyvecl mat[K], const polyvecl *v);
 
 #endif

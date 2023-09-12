@@ -36,7 +36,6 @@ void PQCLEAN_DILITHIUM5AES_AVX2_polyvec_matrix_expand(polyvecl mat[K], const uin
     }
 }
 
-
 void PQCLEAN_DILITHIUM5AES_AVX2_polyvec_matrix_pointwise_montgomery(polyveck *t, const polyvecl mat[K], const polyvecl *v) {
     unsigned int i;
 

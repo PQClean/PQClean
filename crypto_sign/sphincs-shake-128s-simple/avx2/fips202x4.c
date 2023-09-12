@@ -46,7 +46,6 @@ static void keccak_absorb4x(__m256i *s,
 
     unsigned long long *ss = (unsigned long long *)s;
 
-
     while (mlen >= r) {
         for (i = 0; i < r / 8; ++i) {
             ss[4 * i + 0] ^= load64(m0 + 8 * i);
@@ -94,7 +93,6 @@ static void keccak_absorb4x(__m256i *s,
     }
 }
 
-
 static void keccak_squeezeblocks4x(unsigned char *h0,
                                    unsigned char *h1,
                                    unsigned char *h2,
@@ -121,8 +119,6 @@ static void keccak_squeezeblocks4x(unsigned char *h0,
         nblocks--;
     }
 }
-
-
 
 void shake128x4(unsigned char *out0,
                 unsigned char *out1,
@@ -165,7 +161,6 @@ void shake128x4(unsigned char *out0,
         }
     }
 }
-
 
 void shake256x4(unsigned char *out0,
                 unsigned char *out1,

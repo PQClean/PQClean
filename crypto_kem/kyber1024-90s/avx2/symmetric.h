@@ -6,8 +6,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
-
 typedef aes256ctr_ctx xof_state;
 
 #define XOF_BLOCKBYTES AES256CTR_BLOCKBYTES
@@ -19,6 +17,5 @@ typedef aes256ctr_ctx xof_state;
 #define xof_ctx_release(STATE)
 #define prf(OUT, OUTBYTES, KEY, NONCE) PQCLEAN_KYBER102490S_AVX2_aes256ctr_prf(OUT, OUTBYTES, KEY, NONCE)
 #define kdf(OUT, IN, INBYTES) sha256(OUT, IN, INBYTES)
-
 
 #endif /* SYMMETRIC_H */

@@ -296,7 +296,6 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_pointwise_poly_montgomery(polyveck *r, co
     }
 }
 
-
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_CLEAN_polyveck_chknorm
 *

@@ -7,7 +7,6 @@
  * separated 64-bit nonce and internal 64-bit counter, starting from zero
  * Public Domain */
 
-
 static inline void aesni_encrypt4(uint8_t out[64], __m128i *n, const __m128i rkeys[16]) {
     __m128i f, f0, f1, f2, f3;
     const __m128i idx = _mm_set_epi8(8, 9, 10, 11, 12, 13, 14, 15, 7, 6, 5, 4, 3, 2, 1, 0);

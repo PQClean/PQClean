@@ -35,7 +35,6 @@
 
 // root of unity: 1753
 
-
 // Q1
 #define Q1 8380417
 // omegaQ1 = 1753 mod Q1
@@ -76,8 +75,3 @@
 #define RmodQ1_doubleprime 1
 
 #endif
-
-
-
-
-
