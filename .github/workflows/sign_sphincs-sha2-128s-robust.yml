@@ -81,7 +81,7 @@ jobs:
           key: v1-python-pip
       - name: Install python dependencies
         run: |
-          python3 -m pip install -U -r requirements.txt
+          python3 -m pip install -U --break-system-packages -r requirements.txt
       - name: Run tests
         run: |
           cd test
@@ -128,7 +128,7 @@ jobs:
           export CCACHE_DIR=/ccache && \
           export CCACHE_SLOPPINESS=include_file_mtime && \
           export CC=\"ccache $CC\" && \
-          pip3 install -U -r requirements.txt && \
+          pip3 install -U --break-system-packages -r requirements.txt && \
           cd test && \
           python3 -m pytest --verbose --numprocesses=auto"
   test-windows:
@@ -161,7 +161,7 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install python requirements
-        run: python -m pip install -U -r requirements.txt
+        run: python -m pip install -U --break-system-packages -r requirements.txt
       - name: Run tests
         run: |
           cd test
@@ -198,7 +198,7 @@ jobs:
         with:
           python-version: "3.x"
       - name: Install Python dependencies
-        run: python -m pip install -U -r requirements.txt
+        run: python -m pip install -U --break-system-packages -r requirements.txt
       - name: Run tests
         run: |
           cd test
