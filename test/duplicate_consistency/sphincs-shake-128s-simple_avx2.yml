@@ -1,6 +1,6 @@
 consistency_checks:
 - source:
-    scheme: sphincs-sha2-128s-robust
+    scheme: sphincs-sha2-128s-simple
     implementation: clean
   files:
   - address.h
@@ -45,7 +45,7 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-128s-simple
+    scheme: sphincs-sha2-128s-simple
     implementation: aesni
   files:
   - thashx4.h
@@ -73,7 +73,7 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-128s-simple
+    scheme: sphincs-sha2-128s-simple
     implementation: aesni
   files:
   - thashx4.h
@@ -101,7 +101,7 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-128s-simple
+    scheme: sphincs-sha2-128s-simple
     implementation: aesni
   files:
   - thashx4.h
@@ -129,7 +129,7 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-128s-simple
+    scheme: sphincs-sha2-128s-simple
     implementation: aesni
   files:
   - thashx4.h
@@ -157,7 +157,7 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-128s-simple
+    scheme: sphincs-sha2-128s-simple
     implementation: aesni
   files:
   - thashx4.h
