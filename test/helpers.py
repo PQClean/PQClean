@@ -281,5 +281,15 @@ def get_cpu_info():
     while the_info is None or 'flags' not in the_info:
         import cpuinfo
         the_info = cpuinfo.get_cpu_info()
+        if 'Apple M' in the_info.get('brand_raw', ''):
+            the_info['flags'] = [
+                'sha3',
+                'sha256',
+                'sha1',
+                'aes',
+                'crc32',
+                'neon',
+                'asimd',
+            ]
 
     return the_info
