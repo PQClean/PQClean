@@ -15,12 +15,24 @@ def test_preprocessor(implementation: pqclean.Implementation):
     hfiles = implementation.hfiles()
     errors = []
     for file in hfiles + cfiles:
+        code_has_begun = False
+        in_comment = True
         with open(file) as f:
             for i, line in enumerate(f):
                 line = line.strip()
-                if file in hfiles and i == 0 and line.startswith('#ifndef'):
+                if file in hfiles and not code_has_begun and line.startswith('#ifndef'):
                     continue
-                if (line.startswith('#if') and ("crypto_sign/falcon-512/avx2/sign.c" not in file) and 
+                if line == "":
+                    continue
+                if line.startswith("/*") and not code_has_begun:
+                    in_comment = True
+                    continue
+                if in_comment and "*/" in line:
+                    in_comment = False
+                    continue
+                if not code_has_begun and not in_comment and not line.startswith("#ifndef"):
+                    code_has_begun = True
+                if (line.startswith('#if') and ("crypto_sign/falcon-512/avx2/sign.c" not in file) and
                     ("crypto_sign/falcon-1024/avx2/sign.c" not in file) and
                     ("crypto_sign\\falcon-512\\avx2\\sign.c" not in file) and
                     ("crypto_sign\\falcon-1024\\avx2\\sign.c" not in file)):
