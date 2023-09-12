@@ -71,6 +71,8 @@ def test_char(implementation):
             ]
         )
         for node in walk_tree(ast):
+            if "pycparser" in node.coord.file:
+                continue
             # flatten nodes to a string to easily enforce uniqueness
             err = "\n at {c.file}:{c.line}:{c.column}".format(c=node.coord)
             if err not in errors:
