@@ -90,10 +90,11 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0,
     Helper function to run a shell command and report success/failure
     depending on the exit status of the shell command.
     """
+    env_ = os.environ.copy()
+    env_["LANG"] = "C"
     if env is not None:
-        env_ = os.environ.copy()
         env_.update(env)
-        env = env_
+    env = env_
 
     # Note we need to capture stdout/stderr from the subprocess,
     # then print it, which the unittest will then capture and
