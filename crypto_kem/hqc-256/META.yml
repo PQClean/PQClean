@@ -1,0 +1,25 @@
+name: HQC-256
+type: kem
+claimed-nist-level: 5
+claimed-security: IND-CCA2
+length-ciphertext: 14469
+length-public-key: 7245
+length-secret-key: 7285
+length-shared-secret: 64
+nistkat-sha256: 4a5bc02661794464576dc2742636bd6123a3c0fde9dd0b52d9703866beae2f32
+principal-submitters:
+  - Carlos Aguilar Melchor
+  - Nicolas Aragon
+  - Slim Bettaieb
+  - Olivier Blazy
+  - Jurjen Bos
+  - Jean-Christophe Deneuville
+  - Philippe Gaborit
+  - Edoardo Persichetti
+  - Jean-Marc Robert
+  - Pascal Véron
+  - Gilles Zémor
+  - Loïc Bidoux
+implementations:
+    - name: clean
+      version: hqc-submission_2020-10-01 via https://github.com/jschanck/package-pqclean/tree/29f79e72/hqc
