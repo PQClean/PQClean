@@ -5,7 +5,7 @@
 #include <string.h>
 /**
  * @file fft.c
- * Implementation of the additive FFT and its transpose.
+ * @brief Implementation of the additive FFT and its transpose.
  * This implementation is based on the paper from Gao and Mateer: <br>
  * Shuhong Gao and Todd Mateer, Additive Fast Fourier Transforms over Finite Fields,
  * IEEE Transactions on Information Theory 56 (2010), 6265--6272.
@@ -14,11 +14,7 @@
  * https://binary.cr.yp.to/mcbits-20130616.pdf
  */
 
-static void compute_fft_betas(uint16_t *betas);
-static void compute_subset_sums(uint16_t *subset_sums, const uint16_t *set, uint16_t set_size);
-static void radix(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f);
 static void radix_big(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f);
-static void fft_rec(uint16_t *w, uint16_t *f, size_t f_coeffs, uint8_t m, uint32_t m_f, const uint16_t *betas);
 
 /**
  * @brief Computes the basis of betas (omitting 1) used in the additive FFT and its transpose
@@ -117,8 +113,8 @@ static void radix(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f) {
 }
 
 static void radix_big(uint16_t *f0, uint16_t *f1, const uint16_t *f, uint32_t m_f) {
-    uint16_t Q[2 * (1 << (PARAM_FFT - 2))] = {0};
-    uint16_t R[2 * (1 << (PARAM_FFT - 2))] = {0};
+    uint16_t Q[2 * (1 << (PARAM_FFT - 2)) + 1] = {0};
+    uint16_t R[2 * (1 << (PARAM_FFT - 2)) + 1] = {0};
 
     uint16_t Q0[1 << (PARAM_FFT - 2)] = {0};
     uint16_t Q1[1 << (PARAM_FFT - 2)] = {0};

@@ -6,8 +6,8 @@ consistency_checks:
       - code.h
       - domains.h
       - fft.h
-      - gf2x.h
       - gf.h
+      - gf2x.h
       - hqc.h
       - parsing.h
       - reed_muller.h
@@ -16,8 +16,8 @@ consistency_checks:
       - vector.h
       - code.c
       - fft.c
-      - gf2x.c
       - gf.c
+      - gf2x.c
       - hqc.c
       - parsing.c
       - reed_muller.c
@@ -31,8 +31,8 @@ consistency_checks:
       - code.h
       - domains.h
       - fft.h
-      - gf2x.h
       - gf.h
+      - gf2x.h
       - hqc.h
       - parsing.h
       - reed_muller.h
@@ -41,8 +41,8 @@ consistency_checks:
       - vector.h
       - code.c
       - fft.c
-      - gf2x.c
       - gf.c
+      - gf2x.c
       - hqc.c
       - kem.c
       - parsing.c

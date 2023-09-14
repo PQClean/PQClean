@@ -1,32 +1,160 @@
 #include "gf2x.h"
-#include "nistseedexpander.h"
 #include "parameters.h"
-#include "parsing.h"
-#include "randombytes.h"
+#include <stddef.h>
 #include <stdint.h>
 /**
- * \file gf2x.c
- * \brief Implementation of multiplication of two polynomials
+ * @file gf2x.c
+ * @brief Implementation of multiplication of two polynomials
  */
-
-static inline void swap(uint16_t *tab, uint16_t elt1, uint16_t elt2);
-static void reduce(uint64_t *o, const uint64_t *a);
-static void fast_convolution_mult(uint8_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx);
 
 /**
- * @brief swap two elements in a table
+ * @brief Caryless multiplication of two words of 64 bits
  *
- * This function exchanges tab[elt1] with tab[elt2]
+ * Implemntation of the algorithm mul1 in https://hal.inria.fr/inria-00188261v4/document.
+ * With w = 64 and s = 4
  *
- * @param[in] tab Pointer to the table
- * @param[in] elt1 Index of the first element
- * @param[in] elt2 Index of the second element
+ * @param[out] c The result c = a * b
+ * @param[in] a The first value a
+ * @param[in] b The second value b
  */
-static inline void swap(uint16_t *tab, uint16_t elt1, uint16_t elt2) {
-    uint16_t tmp = tab[elt1];
+static void base_mul(uint64_t *c, uint64_t a, uint64_t b) {
+    uint64_t h = 0;
+    uint64_t l = 0;
+    uint64_t g;
+    uint64_t u[16] = {0};
+    uint64_t mask_tab[4] = {0};
+    uint64_t tmp1, tmp2;
 
-    tab[elt1] = tab[elt2];
-    tab[elt2] = tmp;
+    // Step 1
+    u[0] = 0;
+    u[1] = b & (((uint64_t)1 << (64 - 4)) - 1);
+    u[2] = u[1] << 1;
+    u[3] = u[2] ^ u[1];
+    u[4] = u[2] << 1;
+    u[5] = u[4] ^ u[1];
+    u[6] = u[3] << 1;
+    u[7] = u[6] ^ u[1];
+    u[8] = u[4] << 1;
+    u[9] = u[8] ^ u[1];
+    u[10] = u[5] << 1;
+    u[11] = u[10] ^ u[1];
+    u[12] = u[6] << 1;
+    u[13] = u[12] ^ u[1];
+    u[14] = u[7] << 1;
+    u[15] = u[14] ^ u[1];
+
+    g = 0;
+    tmp1 = a & 0x0f;
+
+    for (size_t i = 0; i < 16; ++i) {
+        tmp2 = tmp1 - i;
+        g ^= (u[i] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
+    }
+
+    l = g;
+    h = 0;
+
+    // Step 2
+    for (size_t i = 4; i < 64; i += 4) {
+        g = 0;
+        tmp1 = (a >> i) & 0x0f;
+        for (size_t j = 0; j < 16; ++j) {
+            tmp2 = tmp1 - j;
+            g ^= (u[j] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
+        }
+
+        l ^= g << i;
+        h ^= g >> (64 - i);
+    }
+
+    // Step 3
+    mask_tab [0] = - ((b >> 60) & 1);
+    mask_tab [1] = - ((b >> 61) & 1);
+    mask_tab [2] = - ((b >> 62) & 1);
+    mask_tab [3] = - ((b >> 63) & 1);
+
+    l ^= ((a << 60) & mask_tab[0]);
+    h ^= ((a >> 4) & mask_tab[0]);
+
+    l ^= ((a << 61) & mask_tab[1]);
+    h ^= ((a >> 3) & mask_tab[1]);
+
+    l ^= ((a << 62) & mask_tab[2]);
+    h ^= ((a >> 2) & mask_tab[2]);
+
+    l ^= ((a << 63) & mask_tab[3]);
+    h ^= ((a >> 1) & mask_tab[3]);
+
+    c[0] = l;
+    c[1] = h;
+}
+
+static void karatsuba_add1(uint64_t *alh, uint64_t *blh, const uint64_t *a, const uint64_t *b, size_t size_l, size_t size_h) {
+    for (size_t i = 0; i < size_h; ++i) {
+        alh[i] = a[i] ^ a[i + size_l];
+        blh[i] = b[i] ^ b[i + size_l];
+    }
+
+    if (size_h < size_l) {
+        alh[size_h] = a[size_h];
+        blh[size_h] = b[size_h];
+    }
+}
+
+static void karatsuba_add2(uint64_t *o, uint64_t *tmp1, const uint64_t *tmp2, size_t size_l, size_t size_h) {
+    for (size_t i = 0; i < (2 * size_l); ++i) {
+        tmp1[i] = tmp1[i] ^ o[i];
+    }
+
+    for (size_t i = 0; i < ( 2 * size_h); ++i) {
+        tmp1[i] = tmp1[i] ^ tmp2[i];
+    }
+
+    for (size_t i = 0; i <  (2 * size_l); ++i) {
+        o[i + size_l] = o[i + size_l] ^ tmp1[i];
+    }
+}
+
+/**
+ * Karatsuba multiplication of a and b, Implementation inspired from the NTL library.
+ *
+ * @param[out] o Polynomial
+ * @param[in] a Polynomial
+ * @param[in] b Polynomial
+ * @param[in] size Length of polynomial
+ * @param[in] stack Length of polynomial
+ */
+static void karatsuba(uint64_t *o, const uint64_t *a, const uint64_t *b, size_t size, uint64_t *stack) {
+    size_t size_l, size_h;
+    const uint64_t *ah, *bh;
+
+    if (size == 1) {
+        base_mul(o, a[0], b[0]);
+        return;
+    }
+
+    size_h = size / 2;
+    size_l = (size + 1) / 2;
+
+    uint64_t *alh = stack;
+    uint64_t *blh = alh + size_l;
+    uint64_t *tmp1 = blh + size_l;
+    uint64_t *tmp2 = o + 2 * size_l;
+
+    stack += 4 * size_l;
+
+    ah = a + size_l;
+    bh = b + size_l;
+
+    karatsuba(o, a, b, size_l, stack);
+
+    karatsuba(tmp2, ah, bh, size_h, stack);
+
+    karatsuba_add1(alh, blh, a, b, size_l, size_h);
+
+    karatsuba(tmp1, alh, blh, size_l, stack);
+
+    karatsuba_add2(o, tmp1, tmp2, size_l, size_h);
 }
 
 /**
@@ -38,13 +166,12 @@ static inline void swap(uint16_t *tab, uint16_t elt1, uint16_t elt2) {
  * @param[out] o Pointer to the result
  */
 static void reduce(uint64_t *o, const uint64_t *a) {
-    size_t i;
     uint64_t r;
     uint64_t carry;
 
-    for (i = 0; i < VEC_N_SIZE_64; i++) {
-        r = a[i + VEC_N_SIZE_64 - 1] >> (PARAM_N & 63);
-        carry = (uint64_t) (a[i + VEC_N_SIZE_64] << (64 - (PARAM_N & 63)));
+    for (size_t i = 0; i < VEC_N_SIZE_64; ++i) {
+        r = a[i + VEC_N_SIZE_64 - 1] >> (PARAM_N & 0x3F);
+        carry = a[i + VEC_N_SIZE_64] << (64 - (PARAM_N & 0x3F));
         o[i] = a[i] ^ r ^ carry;
     }
 
@@ -52,96 +179,19 @@ static void reduce(uint64_t *o, const uint64_t *a) {
 }
 
 /**
- * @brief computes product of the polynomial a1(x) with the sparse polynomial a2
- *
- *  o(x) = a1(x)a2(x)
- *
- * @param[out] o Pointer to the result
- * @param[in] a1 Pointer to the sparse polynomial a2 (list of degrees of the monomials which appear in a2)
- * @param[in] a2 Pointer to the polynomial a1(x)
- * @param[in] weight Hamming wifht of the sparse polynomial a2
- * @param[in] ctx Pointer to a seed expander used to randomize the multiplication process
- */
-static void fast_convolution_mult(uint8_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx) {
-//static uint32_t fast_convolution_mult(const uint64_t *A, const uint32_t *vB, uint64_t *C, const uint16_t w, AES_XOF_struct *ctx)
-    uint64_t carry;
-    uint32_t dec, s;
-    uint64_t table[16 * (VEC_N_SIZE_64 + 1)];
-    uint16_t permuted_table[16];
-    uint16_t permutation_table[16];
-    uint16_t permuted_sparse_vect[PARAM_OMEGA_E];
-    uint16_t permutation_sparse_vect[PARAM_OMEGA_E];
-    uint64_t tmp;
-    uint64_t *pt;
-    uint8_t *res;
-    size_t i, j;
-
-    for (i = 0; i < 16; i++) {
-        permuted_table[i] = (uint16_t) i;
-    }
-
-    seedexpander(ctx, (uint8_t *) permutation_table, 16 * sizeof(uint16_t));
-
-    for (i = 0; i < 15; i++) {
-        swap(permuted_table + i, 0, permutation_table[i] % (16 - i));
-    }
-
-    pt = table + (permuted_table[0] * (VEC_N_SIZE_64 + 1));
-    for (j = 0; j < VEC_N_SIZE_64; j++) {
-        pt[j] = a2[j];
-    }
-    pt[VEC_N_SIZE_64] = 0x0;
-
-    for (i = 1; i < 16; i++) {
-        carry = 0;
-        pt = table + (permuted_table[i] * (VEC_N_SIZE_64 + 1));
-        for (j = 0; j < VEC_N_SIZE_64; j++) {
-            pt[j] = (a2[j] << i) ^ carry;
-            carry = (a2[j] >> ((64 - i)));
-        }
-        pt[VEC_N_SIZE_64] = carry;
-    }
-
-    for (i = 0; i < weight; i++) {
-        permuted_sparse_vect[i] = (uint16_t) i;
-    }
-
-    seedexpander(ctx, (uint8_t *) permutation_sparse_vect, weight * sizeof(uint16_t));
-
-    for (i = 0; i + 1 < weight; i++) {
-        swap(permuted_sparse_vect + i, 0, (uint16_t) (permutation_sparse_vect[i] % (weight - i)));
-    }
-
-    for (i = 0; i < weight; i++) {
-        dec = a1[permuted_sparse_vect[i]] & 0xf;
-        s = a1[permuted_sparse_vect[i]] >> 4;
-        res = o + 2 * s;
-        pt = table + (permuted_table[dec] * (VEC_N_SIZE_64 + 1));
-
-        for (j = 0; j < VEC_N_SIZE_64 + 1; j++) {
-            tmp = PQCLEAN_HQC192_CLEAN_load8(res);
-            PQCLEAN_HQC192_CLEAN_store8(res, tmp ^ pt[j]);
-            res += 8;
-        }
-    }
-}
-
-/**
  * @brief Multiply two polynomials modulo \f$ X^n - 1\f$.
  *
- * This functions multiplies a sparse polynomial <b>a1</b> (of Hamming weight equal to <b>weight</b>)
- * and a dense polynomial <b>a2</b>. The multiplication is done modulo \f$ X^n - 1\f$.
+ * This functions multiplies polynomials <b>v1</b> and <b>v2</b>.
+ * The multiplication is done modulo \f$ X^n - 1\f$.
  *
- * @param[out] o Pointer to the result
- * @param[in] a1 Pointer to the sparse polynomial
- * @param[in] a2 Pointer to the dense polynomial
- * @param[in] weight Integer that is the weigt of the sparse polynomial
- * @param[in] ctx Pointer to the randomness context
+ * @param[out] o Product of <b>v1</b> and <b>v2</b>
+ * @param[in] v1 Pointer to the first polynomial
+ * @param[in] v2 Pointer to the second polynomial
  */
-void PQCLEAN_HQC192_CLEAN_vect_mul(uint64_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx) {
-    uint64_t tmp[2 * VEC_N_SIZE_64 + 1] = {0};
+void PQCLEAN_HQC192_CLEAN_vect_mul(uint64_t *o, const uint64_t *v1, const uint64_t *v2) {
+    uint64_t stack[VEC_N_SIZE_64 << 3] = {0};
+    uint64_t o_karat[VEC_N_SIZE_64 << 1] = {0};
 
-    fast_convolution_mult((uint8_t *) tmp, a1, a2, weight, ctx);
-    PQCLEAN_HQC192_CLEAN_load8_arr(tmp, 2 * VEC_N_SIZE_64 + 1, (uint8_t *) tmp, sizeof(tmp));
-    reduce(o, tmp);
+    karatsuba(o_karat, v1, v2, VEC_N_SIZE_64, stack);
+    reduce(o, o_karat);
 }

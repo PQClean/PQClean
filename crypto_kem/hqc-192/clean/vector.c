@@ -1,4 +1,3 @@
-#include "nistseedexpander.h"
 #include "parameters.h"
 #include "parsing.h"
 #include "randombytes.h"
@@ -10,81 +9,104 @@
  * @brief Implementation of vectors sampling and some utilities for the HQC scheme
  */
 
+static uint32_t m_val[114] = { 119800, 119803, 119807, 119810, 119813, 119817, 119820, 119823, 119827, 119830, 119833, 119837, 119840, 119843, 119847, 119850, 119853, 119857, 119860, 119864, 119867, 119870, 119874, 119877, 119880, 119884, 119887, 119890, 119894, 119897, 119900, 119904, 119907, 119910, 119914, 119917, 119920, 119924, 119927, 119930, 119934, 119937, 119941, 119944, 119947, 119951, 119954, 119957, 119961, 119964, 119967, 119971, 119974, 119977, 119981, 119984, 119987, 119991, 119994, 119997, 120001, 120004, 120008, 120011, 120014, 120018, 120021, 120024, 120028, 120031, 120034, 120038, 120041, 120044, 120048, 120051, 120054, 120058, 120061, 120065, 120068, 120071, 120075, 120078, 120081, 120085, 120088, 120091, 120095, 120098, 120101, 120105, 120108, 120112, 120115, 120118, 120122, 120125, 120128, 120132, 120135, 120138, 120142, 120145, 120149, 120152, 120155, 120159, 120162, 120165, 120169, 120172, 120175, 120179 };
+
 /**
- * @brief Generates a vector of a given Hamming weight
+ * @brief Constant-time comparison of two integers v1 and v2
  *
- * This function generates uniformly at random a binary vector of a Hamming weight equal to the parameter <b>weight</b>. The vector
- * is stored by position.
- * To generate the vector we have to sample uniformly at random values in the interval [0, PARAM_N -1]. Suppose the PARAM_N is equal to \f$ 70853 \f$, to select a position \f$ r\f$ the function works as follow:
- *  1. It makes a call to the seedexpander function to obtain a random number \f$ x\f$ in \f$ [0, 2^{24}[ \f$.
- *  2. Let \f$ t = \lfloor {2^{24} \over 70853} \rfloor \times  70853\f$
- *  3. If \f$ x \geq t\f$, go to 1
- *  4. It return \f$ r = x \mod 70853\f$
+ * Returns 1 if v1 is equal to v2 and 0 otherwise
+ * https://gist.github.com/sneves/10845247
  *
- * The parameter \f$ t \f$ is precomputed and it's denoted by UTILS_REJECTION_THRESHOLD (see the file parameters.h).
- *
- * @param[in] v Pointer to an array
- * @param[in] weight Integer that is the Hamming weight
- * @param[in] ctx Pointer to the context of the seed expander
+ * @param[in] v1
+ * @param[in] v2
  */
-void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight_by_coordinates(AES_XOF_struct *ctx, uint32_t *v, uint16_t weight) {
-    size_t random_bytes_size = 3 * weight;
-    uint8_t rand_bytes[3 * PARAM_OMEGA_R] = {0}; // weight is expected to be <= PARAM_OMEGA_R
-    uint8_t inc;
-    size_t i, j;
+static inline uint32_t compare_u32(uint32_t v1, uint32_t v2) {
+    return 1 ^ ((uint32_t)((v1 - v2) | (v2 - v1)) >> 31);
+}
 
-    i = 0;
-    j = random_bytes_size;
-    while (i < weight) {
-        do {
-            if (j == random_bytes_size) {
-                seedexpander(ctx, rand_bytes, random_bytes_size);
-                j = 0;
-            }
+static uint64_t single_bit_mask(uint32_t pos) {
+    uint64_t ret = 0;
+    uint64_t mask = 1;
+    uint64_t tmp;
 
-            v[i]  = ((uint32_t) rand_bytes[j++]) << 16;
-            v[i] |= ((uint32_t) rand_bytes[j++]) << 8;
-            v[i] |= rand_bytes[j++];
-
-        } while (v[i] >= UTILS_REJECTION_THRESHOLD);
-
-        v[i] = v[i] % PARAM_N;
-
-        inc = 1;
-        for (size_t k = 0; k < i; k++) {
-            if (v[k] == v[i]) {
-                inc = 0;
-            }
-        }
-        i += inc;
+    for (size_t i = 0; i < 64; ++i) {
+        tmp = pos - i;
+        tmp = -(1 - ((uint64_t)(tmp | -tmp) >> 63));
+        ret |= mask & tmp;
+        mask <<= 1;
     }
+
+    return ret;
+}
+
+static inline uint32_t cond_sub(uint32_t r, uint32_t n) {
+    uint32_t mask;
+    r -= n;
+    mask = -(r >> 31);
+    return r + (n & mask);
+}
+
+static inline uint32_t reduce(uint32_t a, size_t i) {
+    uint32_t q, n, r;
+    q = ((uint64_t) a * m_val[i]) >> 32;
+    n = PARAM_N - i;
+    r = a - q * n;
+    return cond_sub(r, n);
 }
 
 /**
  * @brief Generates a vector of a given Hamming weight
  *
- * This function generates uniformly at random a binary vector of a Hamming weight equal to the parameter <b>weight</b>.
- * To generate the vector we have to sample uniformly at random values in the interval [0, PARAM_N -1]. Suppose the PARAM_N is equal to \f$ 70853 \f$, to select a position \f$ r\f$ the function works as follow:
- *  1. It makes a call to the seedexpander function to obtain a random number \f$ x\f$ in \f$ [0, 2^{24}[ \f$.
- *  2. Let \f$ t = \lfloor {2^{24} \over 70853} \rfloor \times  70853\f$
- *  3. If \f$ x \geq t\f$, go to 1
- *  4. It return \f$ r = x \mod 70853\f$
+ * Implementation of Algorithm 5 in https://eprint.iacr.org/2021/1631.pdf
  *
- * The parameter \f$ t \f$ is precomputed and it's denoted by UTILS_REJECTION_THRESHOLD (see the file parameters.h).
- *
+ * @param[in] ctx Pointer to the context of the seed expander
  * @param[in] v Pointer to an array
  * @param[in] weight Integer that is the Hamming weight
- * @param[in] ctx Pointer to the context of the seed expander
  */
-void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight(AES_XOF_struct *ctx, uint64_t *v, uint16_t weight) {
-    uint32_t tmp[PARAM_OMEGA_R] = {0};
+void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight(seedexpander_state *ctx, uint64_t *v, uint16_t weight) {
+    uint8_t rand_bytes[4 * PARAM_OMEGA_R] = {0}; // to be interpreted as PARAM_OMEGA_R 32-bit unsigned ints
+    uint32_t support[PARAM_OMEGA_R] = {0};
+    uint32_t index_tab [PARAM_OMEGA_R] = {0};
+    uint64_t bit_tab [PARAM_OMEGA_R] = {0};
+    uint32_t pos, found, mask32, tmp;
+    uint64_t mask64, val;
 
-    PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight_by_coordinates(ctx, tmp, weight);
+    PQCLEAN_HQC192_CLEAN_seedexpander(ctx, rand_bytes, 4 * weight);
 
     for (size_t i = 0; i < weight; ++i) {
-        int32_t index = tmp[i] / 64;
-        int32_t pos = tmp[i] % 64;
-        v[index] |= ((uint64_t) 1) << pos;
+        support[i] = rand_bytes[4 * i];
+        support[i] |= rand_bytes[4 * i + 1] << 8;
+        support[i] |= (uint32_t)rand_bytes[4 * i + 2] << 16;
+        support[i] |= (uint32_t)rand_bytes[4 * i + 3] << 24;
+        support[i] = i + reduce(support[i], i); // use constant-tme reduction
+    }
+
+    for (size_t i = (weight - 1); i-- > 0;) {
+        found = 0;
+
+        for (size_t j = i + 1; j < weight; ++j) {
+            found |= compare_u32(support[j], support[i]);
+        }
+
+        mask32 = -found;
+        support[i] = (mask32 & i) ^ (~mask32 & support[i]);
+    }
+
+    for (size_t i = 0; i < weight; ++i) {
+        index_tab[i] = support[i] >> 6;
+        pos = support[i] & 0x3f;
+        bit_tab[i] = single_bit_mask(pos); // avoid secret shift
+    }
+
+    for (size_t i = 0; i < VEC_N_SIZE_64; ++i) {
+        val = 0;
+        for (size_t j = 0; j < weight; ++j) {
+            tmp = i - index_tab[j];
+            tmp = 1 ^ ((uint32_t)(tmp | -tmp) >> 31);
+            mask64 = -(uint64_t)tmp;
+            val |= (bit_tab[j] & mask64);
+        }
+        v[i] |= val;
     }
 }
 
@@ -92,15 +114,15 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight(AES_XOF_struct *ctx, uint
  * @brief Generates a random vector of dimension <b>PARAM_N</b>
  *
  * This function generates a random binary vector of dimension <b>PARAM_N</b>. It generates a random
- * array of bytes using the seedexpander function, and drop the extra bits using a mask.
+ * array of bytes using the PQCLEAN_HQC192_CLEAN_seedexpander function, and drop the extra bits using a mask.
  *
  * @param[in] v Pointer to an array
  * @param[in] ctx Pointer to the context of the seed expander
  */
-void PQCLEAN_HQC192_CLEAN_vect_set_random(AES_XOF_struct *ctx, uint64_t *v) {
+void PQCLEAN_HQC192_CLEAN_vect_set_random(seedexpander_state *ctx, uint64_t *v) {
     uint8_t rand_bytes[VEC_N_SIZE_BYTES] = {0};
 
-    seedexpander(ctx, rand_bytes, VEC_N_SIZE_BYTES);
+    PQCLEAN_HQC192_CLEAN_seedexpander(ctx, rand_bytes, VEC_N_SIZE_BYTES);
 
     PQCLEAN_HQC192_CLEAN_load8_arr(v, VEC_N_SIZE_64, rand_bytes, VEC_N_SIZE_BYTES);
     v[VEC_N_SIZE_64 - 1] &= RED_MASK;
@@ -114,8 +136,8 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random(AES_XOF_struct *ctx, uint64_t *v) {
  * @param[in] v2 Pointer to an array that is the second vector
  * @param[in] size Integer that is the size of the vectors
  */
-void PQCLEAN_HQC192_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64_t *v2, uint32_t size) {
-    for (uint32_t i = 0; i < size; ++i) {
+void PQCLEAN_HQC192_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64_t *v2, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
         o[i] = v1[i] ^ v2[i];
     }
 }
@@ -126,15 +148,16 @@ void PQCLEAN_HQC192_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const uint64
  * @param[in] v1 Pointer to an array that is first vector
  * @param[in] v2 Pointer to an array that is second vector
  * @param[in] size Integer that is the size of the vectors
- * @returns 0 if the vectors are equals and a negative/psotive value otherwise
+ * @returns 0 if the vectors are equal and 1 otherwise
  */
-uint8_t PQCLEAN_HQC192_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *v2, uint32_t size) {
-    uint64_t r = 0;
+uint8_t PQCLEAN_HQC192_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *v2, size_t size) {
+    uint16_t r = 0x0100;
+
     for (size_t i = 0; i < size; i++) {
         r |= v1[i] ^ v2[i];
     }
-    r = (~r + 1) >> 63;
-    return (uint8_t) r;
+
+    return (r - 1) >> 8;
 }
 
 /**
@@ -146,17 +169,17 @@ uint8_t PQCLEAN_HQC192_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *v2, 
  * @param[in] size_v Integer that is the size of the input vector in bits
  */
 void PQCLEAN_HQC192_CLEAN_vect_resize(uint64_t *o, uint32_t size_o, const uint64_t *v, uint32_t size_v) {
+    uint64_t mask = 0x7FFFFFFFFFFFFFFF;
+    size_t val = 0;
     if (size_o < size_v) {
-        uint64_t mask = 0x7FFFFFFFFFFFFFFF;
-        int8_t val = 0;
 
         if (size_o % 64) {
             val = 64 - (size_o % 64);
         }
 
-        memcpy(o, v, 8 * VEC_N1N2_SIZE_64);
+        memcpy(o, v, VEC_N1N2_SIZE_BYTES);
 
-        for (int8_t i = 0; i < val; ++i) {
+        for (size_t i = 0; i < val; ++i) {
             o[VEC_N1N2_SIZE_64 - 1] &= (mask >> i);
         }
     } else {

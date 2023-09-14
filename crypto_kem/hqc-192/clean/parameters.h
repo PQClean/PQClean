@@ -17,18 +17,15 @@
   #define PARAM_OMEGA                           Define the parameter omega of the scheme
   #define PARAM_OMEGA_E                         Define the parameter omega_e of the scheme
   #define PARAM_OMEGA_R                         Define the parameter omega_r of the scheme
-  #define PARAM_SECURITY                        Define the security level corresponding to the chosen parameters
-  #define PARAM_DFR_EXP                         Define the decryption failure rate corresponding to the chosen parameters
 
   #define SECRET_KEY_BYTES                      Define the size of the secret key in bytes
   #define PUBLIC_KEY_BYTES                      Define the size of the public key in bytes
   #define SHARED_SECRET_BYTES                   Define the size of the shared secret in bytes
   #define CIPHERTEXT_BYTES                      Define the size of the ciphertext in bytes
 
-  #define UTILS_REJECTION_THRESHOLD             Define the rejection threshold used to generate given weight vectors (see vector_set_random_fixed_weight function)
   #define VEC_N_SIZE_BYTES                      Define the size of the array used to store a PARAM_N sized vector in bytes
   #define VEC_K_SIZE_BYTES                      Define the size of the array used to store a PARAM_K sized vector in bytes
-  #define VEC_N1Y_SIZE_BYTES                    Define the size of the array used to store a PARAM_N1 sized vector in bytes
+  #define VEC_N1_SIZE_BYTES                     Define the size of the array used to store a PARAM_N1 sized vector in bytes
   #define VEC_N1N2_SIZE_BYTES                   Define the size of the array used to store a PARAM_N1N2 sized vector in bytes
 
   #define VEC_N_SIZE_64                         Define the size of the array used to store a PARAM_N sized vector in 64 bits
@@ -39,6 +36,8 @@
   #define PARAM_DELTA                           Define the parameter delta of the scheme (correcting capacity of the Reed-Solomon code)
   #define PARAM_M                               Define a positive integer
   #define PARAM_GF_POLY                         Generator polynomial of galois field GF(2^PARAM_M), represented in hexadecimial form
+  #define PARAM_GF_POLY_WT                      Hamming weight of PARAM_GF_POLY
+  #define PARAM_GF_POLY_M2                      Distance between the primitive polynomial first two set bits
   #define PARAM_GF_MUL_ORDER                    Define the size of the multiplicative group of GF(2^PARAM_M),  i.e 2^PARAM_M -1
   #define PARAM_K                               Define the size of the information bits of the Reed-Solomon code
   #define PARAM_G                               Define the size of the generator polynomial of Reed-Solomon code
@@ -47,10 +46,10 @@
                                                 The smallest power of 2 greater than 24+1 is 32=2^5
   #define RS_POLY_COEFS                         Coefficients of the generator polynomial of the Reed-Solomon code
 
-  #define RED_MASK                              A mask fot the higher bits of a vector
-  #define SHA512_BYTES                          Define the size of SHA512 output in bytes
+  #define RED_MASK                              A mask for the higher bits of a vector
+  #define SHAKE256_512_BYTES                    Define the size of SHAKE-256 output in bytes
   #define SEED_BYTES                            Define the size of the seed in bytes
-  #define SEEDEXPANDER_MAX_LENGTH               Define the seed expander max length
+  #define SALT_SIZE_BYTES                       Define the size of a salt in bytes
 */
 
 #define PARAM_N                                                             35851
@@ -60,15 +59,12 @@
 #define PARAM_OMEGA                             100
 #define PARAM_OMEGA_E                           114
 #define PARAM_OMEGA_R                           114
-#define PARAM_SECURITY                          192
-#define PARAM_DFR_EXP                           192
 
 #define SECRET_KEY_BYTES                        PQCLEAN_HQC192_CLEAN_CRYPTO_SECRETKEYBYTES
 #define PUBLIC_KEY_BYTES                        PQCLEAN_HQC192_CLEAN_CRYPTO_PUBLICKEYBYTES
 #define SHARED_SECRET_BYTES                     PQCLEAN_HQC192_CLEAN_CRYPTO_BYTES
 #define CIPHERTEXT_BYTES                        PQCLEAN_HQC192_CLEAN_CRYPTO_CIPHERTEXTBYTES
 
-#define UTILS_REJECTION_THRESHOLD             16742417
 #define VEC_N_SIZE_BYTES                        CEIL_DIVIDE(PARAM_N, 8)
 #define VEC_K_SIZE_BYTES                        PARAM_K
 #define VEC_N1_SIZE_BYTES                       PARAM_N1
@@ -82,6 +78,8 @@
 #define PARAM_DELTA                             16
 #define PARAM_M                                 8
 #define PARAM_GF_POLY                           0x11D
+#define PARAM_GF_POLY_WT                      5
+#define PARAM_GF_POLY_M2                        4
 #define PARAM_GF_MUL_ORDER                      255
 #define PARAM_K                                 24
 #define PARAM_G                                 33
@@ -89,8 +87,8 @@
 #define RS_POLY_COEFS 45,216,239,24,253,104,27,40,107,50,163,210,227,134,224,158,119,13,158,1,238,164,82,43,15,232,246,142,50,189,29,232,1
 
 #define RED_MASK                                0x7ff
-#define SHA512_BYTES                            64
+#define SHAKE256_512_BYTES                    64
 #define SEED_BYTES                              40
-#define SEEDEXPANDER_MAX_LENGTH                 4294967295
+#define SALT_SIZE_BYTES                       16
 
 #endif
