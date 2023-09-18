@@ -32,7 +32,14 @@ def test_preprocessor(implementation: pqclean.Implementation):
                     continue
                 if not code_has_begun and not in_comment and not line.startswith("#ifndef"):
                     code_has_begun = True
-                if (line.startswith('#if') and ("crypto_sign/falcon-512/avx2/sign.c" not in file) and
+                if (line.startswith('#if') and 
+                    ("crypto_kem/kyber512/aarch64/fips202x2.c" not in file) and
+                    ("crypto_kem/kyber768/aarch64/fips202x2.c" not in file) and
+                    ("crypto_kem/kyber1024/aarch64/fips202x2.c" not in file) and
+                    ("crypto_kem/dilithium2/aarch64/fips202x2.c" not in file) and
+                    ("crypto_kem/dilithium3/aarch64/fips202x2.c" not in file) and
+                    ("crypto_kem/dilithium5/aarch64/fips202x2.c" not in file) and
+                    ("crypto_sign/falcon-512/avx2/sign.c" not in file) and 
                     ("crypto_sign/falcon-1024/avx2/sign.c" not in file) and
                     ("crypto_sign\\falcon-512\\avx2\\sign.c" not in file) and
                     ("crypto_sign\\falcon-1024\\avx2\\sign.c" not in file)):
