@@ -33,6 +33,7 @@ def test_nistkat(implementation, impl_path, test_dir, init, destr):
                  IMPLEMENTATION=implementation.name,
                  SCHEME_DIR=impl_path,
                  DEST_DIR=dest_path,
+                 KAT_RNG=implementation.scheme.metadata()['nistkat-rng'],
                  working_dir=os.path.join(test_dir, 'test'))
     out = helpers.run_subprocess(
         [os.path.join(dest_path, 'nistkat_{}_{}{}'.format(

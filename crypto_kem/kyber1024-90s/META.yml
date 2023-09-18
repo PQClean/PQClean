@@ -7,6 +7,7 @@ length-ciphertext: 1568
 length-secret-key: 3168
 length-shared-secret: 32
 nistkat-sha256: a1b564348a126a118fbc49a6aeaebcb74896753fd99f30eeb0f75f0b2d25115f
+nistkat-rng: nist
 principal-submitters:
   - Peter Schwabe
 auxiliary-submitters:

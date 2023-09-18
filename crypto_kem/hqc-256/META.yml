@@ -7,6 +7,7 @@ length-public-key: 7245
 length-secret-key: 7317
 length-shared-secret: 64
 nistkat-sha256: e89c520e1ac615ecf6923f211569177c536a89bf94bebf85bb263528282092c4
+nistkat-rng: hqc
 principal-submitters:
   - Carlos Aguilar Melchor
   - Nicolas Aragon

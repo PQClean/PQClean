@@ -7,6 +7,7 @@ length-secret-key: 13932
 length-ciphertext: 208
 length-shared-secret: 32
 nistkat-sha256: 1fa84d1abd8ef104cdcf75277ca4399475945e97087dde3183a09415e1d61987
+nistkat-rng: nist
 principal-submitters:
   - Daniel J. Bernstein
   - Tung Chou
