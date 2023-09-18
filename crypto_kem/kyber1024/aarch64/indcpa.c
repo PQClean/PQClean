@@ -35,6 +35,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 #include "params.h"
 #include "rejsample.h"
 #include "indcpa.h"
@@ -60,11 +61,8 @@
 static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
                     int16_t pk[KYBER_K][KYBER_N],
                     const uint8_t seed[KYBER_SYMBYTES]) {
-    size_t i;
     polyvec_tobytes(r, pk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
-        r[i + KYBER_POLYVECBYTES] = seed[i];
-    }
+    memcpy(r + KYBER_POLYVECBYTES, seed, KYBER_SYMBYTES);
 }
 
 /*************************************************
@@ -80,11 +78,8 @@ static void pack_pk(uint8_t r[KYBER_INDCPA_PUBLICKEYBYTES],
 static void unpack_pk(int16_t pk[KYBER_K][KYBER_N],
                       uint8_t seed[KYBER_SYMBYTES],
                       const uint8_t packedpk[KYBER_INDCPA_PUBLICKEYBYTES]) {
-    size_t i;
     polyvec_frombytes(pk, packedpk);
-    for (i = 0; i < KYBER_SYMBYTES; i++) {
-        seed[i] = packedpk[i + KYBER_POLYVECBYTES];
-    }
+    memcpy(seed, packedpk + KYBER_POLYVECBYTES, KYBER_SYMBYTES);
 }
 
 /*************************************************
@@ -167,35 +162,36 @@ void gen_matrix(int16_t a[KYBER_K][KYBER_K][KYBER_N], const uint8_t seed[KYBER_S
     neon_xof_state state;
 
     for (unsigned int i = 0; i < KYBER_K; i++) {
-        if (transposed) {
-            neon_xof_absorb(&state, seed, i, i, 0, 1);
-        } else {
-            neon_xof_absorb(&state, seed, 0, 1, i, i);
-        }
-
-        neon_xof_squeezeblocks(buf0, buf1, GEN_MATRIX_NBLOCKS, &state);
-
-        buflen = GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES;
-
-        ctr0 = neon_rej_uniform(&(a[i][0][0]), buf0);
-        ctr1 = neon_rej_uniform(&(a[i][1][0]), buf1);
-        while (ctr0 < KYBER_N || ctr1 < KYBER_N) {
-            off = buflen % 3;
-            for (k = 0; k < off; k++) {
-                buf0[k] = buf0[buflen - off + k];
-                buf1[k] = buf1[buflen - off + k];
+        for (unsigned int j = 0; j < KYBER_K; j += 2) {
+            if (transposed) {
+                neon_xof_absorb(&state, seed, i, i, j, j + 1);
+            } else {
+                neon_xof_absorb(&state, seed, j, j + 1, i, i);
             }
-            neon_xof_squeezeblocks(buf0 + off, buf1 + off, 1, &state);
 
-            buflen = off + XOF_BLOCKBYTES;
-            ctr0 += rej_uniform(&(a[i][0][0]) + ctr0, KYBER_N - ctr0, buf0, buflen);
-            ctr1 += rej_uniform(&(a[i][1][0]) + ctr1, KYBER_N - ctr1, buf1, buflen);
+            neon_xof_squeezeblocks(buf0, buf1, GEN_MATRIX_NBLOCKS, &state);
+            buflen = GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES;
+            ctr0 = neon_rej_uniform(&(a[i][j][0]), buf0);
+            ctr1 = neon_rej_uniform(&(a[i][j + 1][0]), buf1);
+
+            while (ctr0 < KYBER_N || ctr1 < KYBER_N) {
+                off = buflen % 3;
+                for (k = 0; k < off; k++) {
+                    buf0[k] = buf0[buflen - off + k];
+                    buf1[k] = buf1[buflen - off + k];
+                }
+                neon_xof_squeezeblocks(buf0 + off, buf1 + off, 1, &state);
+
+                buflen = off + XOF_BLOCKBYTES;
+                ctr0 += rej_uniform(&(a[i][j][0]) + ctr0, KYBER_N - ctr0, buf0, buflen);
+                ctr1 += rej_uniform(&(a[i][j + 1][0]) + ctr1, KYBER_N - ctr1, buf1, buflen);
+            }
         }
     }
 }
 
 /*************************************************
-* Name:        indcpa_keypair
+* Name:        indcpa_keypair_derand
 *
 * Description: Generates public and private key for the CPA-secure
 *              public-key encryption scheme underlying Kyber
@@ -205,8 +201,9 @@ void gen_matrix(int16_t a[KYBER_K][KYBER_K][KYBER_N], const uint8_t seed[KYBER_S
 *              - uint8_t *sk: pointer to output private key
                               (of length KYBER_INDCPA_SECRETKEYBYTES bytes)
 **************************************************/
-void indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
-                    uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES]) {
+void indcpa_keypair_derand(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
+                           uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES],
+                           const uint8_t coins[KYBER_SYMBYTES]) {
     unsigned int i;
     uint8_t buf[2 * KYBER_SYMBYTES];
     const uint8_t *publicseed = buf;
@@ -217,13 +214,14 @@ void indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
     int16_t skpv[KYBER_K][KYBER_N];
     int16_t skpv_asymmetric[KYBER_K][KYBER_N >> 1];
 
-    randombytes(buf, KYBER_SYMBYTES);
-    hash_g(buf, buf, KYBER_SYMBYTES);
+    hash_g(buf, coins, KYBER_SYMBYTES);
 
     gen_a(a, publicseed);
 
     neon_poly_getnoise_eta1_2x(&(skpv[0][0]), &(skpv[1][0]), noiseseed, 0, 1);
-    neon_poly_getnoise_eta1_2x(&(e[0][0]), &(e[1][0]), noiseseed, 2, 3);
+    neon_poly_getnoise_eta1_2x(&(skpv[2][0]), &(skpv[3][0]), noiseseed, 2, 3);
+    neon_poly_getnoise_eta1_2x(&(e[0][0]), &(e[1][0]), noiseseed, 4, 5);
+    neon_poly_getnoise_eta1_2x(&(e[2][0]), &(e[3][0]), noiseseed, 6, 7);
 
     neon_polyvec_ntt(skpv);
     neon_polyvec_ntt(e);
@@ -279,10 +277,11 @@ void indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
     poly_frommsg(k, m);
     gen_at(at, seed);
 
-    // ETA1 != ETA2 (3 != 2)
     neon_poly_getnoise_eta1_2x(&(sp[0][0]), &(sp[1][0]), coins, 0, 1);
-    neon_poly_getnoise_eta2_2x(&(ep[0][0]), &(ep[1][0]), coins, 2, 3);
-    neon_poly_getnoise_eta2(&(epp[0]), coins, 4);
+    neon_poly_getnoise_eta1_2x(&(sp[2][0]), &(sp[3][0]), coins, 2, 3);
+    neon_poly_getnoise_eta1_2x(&(ep[0][0]), &(ep[1][0]), coins, 4, 5);
+    neon_poly_getnoise_eta1_2x(&(ep[2][0]), &(ep[3][0]), coins, 6, 7);
+    neon_poly_getnoise_eta2(&(epp[0]), coins, 8);
 
     neon_polyvec_ntt(sp);
 

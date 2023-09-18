@@ -1,3 +1,5 @@
+#ifndef SYMMETRIC_H
+#define SYMMETRIC_H
 
 /*
  * This file is licensed
@@ -5,9 +7,6 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
-
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
 
 #include "params.h"
 #include <stddef.h>
@@ -25,6 +24,8 @@ void kyber_shake128_absorb(shake128ctx *s,
 
 #define kyber_shake256_prf KYBER_NAMESPACE(kyber_shake256_prf)
 void kyber_shake256_prf(uint8_t *out, size_t outlen, const uint8_t key[KYBER_SYMBYTES], uint8_t nonce);
+#define kyber_shake256_rkprf KYBER_NAMESPACE(kyber_shake256_rkprf)
+void kyber_shake256_rkprf(uint8_t out[KYBER_SSBYTES], const uint8_t key[KYBER_SYMBYTES], const uint8_t input[KYBER_CIPHERTEXTBYTES]);
 
 #define XOF_BLOCKBYTES SHAKE128_RATE
 
@@ -33,7 +34,7 @@ void kyber_shake256_prf(uint8_t *out, size_t outlen, const uint8_t key[KYBER_SYM
 #define xof_absorb(STATE, SEED, X, Y) kyber_shake128_absorb(STATE, SEED, X, Y)
 #define xof_squeezeblocks(OUT, OUTBLOCKS, STATE) shake128_squeezeblocks(OUT, OUTBLOCKS, STATE)
 #define prf(OUT, OUTBYTES, KEY, NONCE) kyber_shake256_prf(OUT, OUTBYTES, KEY, NONCE)
-#define kdf(OUT, IN, INBYTES) shake256(OUT, KYBER_SSBYTES, IN, INBYTES)
+#define rkprf(OUT, KEY, INPUT) kyber_shake256_rkprf(OUT, KEY, INPUT)
 
 // NEON Definition
 #include "fips202x2.h"

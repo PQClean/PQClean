@@ -36,7 +36,7 @@ implementations:
               - bmi2
               - popcnt
     - name: aarch64
-      version: https://github.com/neon-ntt/neon-ntt/tree/c6ffbcd1e5590e4dddbc604fc80d2ad756485b4d
+      version: https://github.com/neon-ntt/neon-ntt/tree/66f41efa12a14121ae9929a7edb8aed71783f48d
       supported_platforms:
         - architecture: arm_8
           operating_systems:
