@@ -31,7 +31,7 @@ static uint64_t single_bit_mask(uint32_t pos) {
 
     for (size_t i = 0; i < 64; ++i) {
         tmp = pos - i;
-        tmp = -(1 - ((uint64_t)(tmp | -tmp) >> 63));
+        tmp = 0 - (1 - ((uint64_t)(tmp | (0 - tmp)) >> 63));
         ret |= mask & tmp;
         mask <<= 1;
     }
@@ -42,14 +42,14 @@ static uint64_t single_bit_mask(uint32_t pos) {
 static inline uint32_t cond_sub(uint32_t r, uint32_t n) {
     uint32_t mask;
     r -= n;
-    mask = -(r >> 31);
+    mask = 0 - (r >> 31);
     return r + (n & mask);
 }
 
 static inline uint32_t reduce(uint32_t a, size_t i) {
     uint32_t q, n, r;
     q = ((uint64_t) a * m_val[i]) >> 32;
-    n = PARAM_N - i;
+    n = (uint32_t)(PARAM_N - i);
     r = a - q * n;
     return cond_sub(r, n);
 }
@@ -78,7 +78,7 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight(seedexpander_state *ctx, 
         support[i] |= rand_bytes[4 * i + 1] << 8;
         support[i] |= (uint32_t)rand_bytes[4 * i + 2] << 16;
         support[i] |= (uint32_t)rand_bytes[4 * i + 3] << 24;
-        support[i] = i + reduce(support[i], i); // use constant-tme reduction
+        support[i] = (uint32_t)(i + reduce(support[i], i)); // use constant-tme reduction
     }
 
     for (size_t i = (weight - 1); i-- > 0;) {
@@ -88,7 +88,7 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight(seedexpander_state *ctx, 
             found |= compare_u32(support[j], support[i]);
         }
 
-        mask32 = -found;
+        mask32 = 0 - found;
         support[i] = (mask32 & i) ^ (~mask32 & support[i]);
     }
 
@@ -101,9 +101,9 @@ void PQCLEAN_HQC192_CLEAN_vect_set_random_fixed_weight(seedexpander_state *ctx, 
     for (size_t i = 0; i < VEC_N_SIZE_64; ++i) {
         val = 0;
         for (size_t j = 0; j < weight; ++j) {
-            tmp = i - index_tab[j];
-            tmp = 1 ^ ((uint32_t)(tmp | -tmp) >> 31);
-            mask64 = -(uint64_t)tmp;
+            tmp = (uint32_t)(i - index_tab[j]);
+            tmp = 1 ^ ((uint32_t)(tmp | (0 - tmp)) >> 31);
+            mask64 = 0 - (uint64_t)tmp;
             val |= (bit_tab[j] & mask64);
         }
         v[i] |= val;

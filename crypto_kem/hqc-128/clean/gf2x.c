@@ -48,7 +48,7 @@ static void base_mul(uint64_t *c, uint64_t a, uint64_t b) {
 
     for (size_t i = 0; i < 16; ++i) {
         tmp2 = tmp1 - i;
-        g ^= (u[i] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
+        g ^= (u[i] & (uint64_t)(0 - (1 - ((uint64_t)(tmp2 | (0 - tmp2)) >> 63))));
     }
 
     l = g;
@@ -60,7 +60,7 @@ static void base_mul(uint64_t *c, uint64_t a, uint64_t b) {
         tmp1 = (a >> i) & 0x0f;
         for (size_t j = 0; j < 16; ++j) {
             tmp2 = tmp1 - j;
-            g ^= (u[j] & (uint64_t)(-(1 - ((uint64_t)(tmp2 | -tmp2) >> 63))));
+            g ^= (u[j] & (uint64_t)(0 - (1 - ((uint64_t)(tmp2 | (0 - tmp2)) >> 63))));
         }
 
         l ^= g << i;
@@ -68,10 +68,10 @@ static void base_mul(uint64_t *c, uint64_t a, uint64_t b) {
     }
 
     // Step 3
-    mask_tab [0] = - ((b >> 60) & 1);
-    mask_tab [1] = - ((b >> 61) & 1);
-    mask_tab [2] = - ((b >> 62) & 1);
-    mask_tab [3] = - ((b >> 63) & 1);
+    mask_tab [0] = 0 - ((b >> 60) & 1);
+    mask_tab [1] = 0 - ((b >> 61) & 1);
+    mask_tab [2] = 0 - ((b >> 62) & 1);
+    mask_tab [3] = 0 - ((b >> 63) & 1);
 
     l ^= ((a << 60) & mask_tab[0]);
     h ^= ((a >> 4) & mask_tab[0]);

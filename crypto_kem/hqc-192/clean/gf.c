@@ -54,7 +54,7 @@ static uint16_t gf_reduce(uint64_t x, size_t deg_x) {
         }
     }
 
-    return x;
+    return (uint16_t)x;
 }
 
 /**
@@ -68,7 +68,7 @@ static uint16_t gf_reduce(uint64_t x, size_t deg_x) {
  * @param[in] b The second polynomial
  */
 static void gf_carryless_mul(uint8_t c[2], uint8_t a, uint8_t b) {
-    uint16_t       h = 0, l = 0, g = 0, u[4];
+    uint16_t h = 0, l = 0, g = 0, u[4];
     uint32_t tmp1, tmp2;
     uint16_t mask;
     u[0] = 0;
@@ -78,8 +78,8 @@ static void gf_carryless_mul(uint8_t c[2], uint8_t a, uint8_t b) {
     tmp1 = a & 3;
 
     for (size_t i = 0; i < 4; i++) {
-        tmp2 = tmp1 - i;
-        g ^= (u[i] & (uint32_t)(-(1 - ((uint32_t)(tmp2 | -tmp2) >> 31))));
+        tmp2 = (uint32_t)(tmp1 - i);
+        g ^= (u[i] & (uint32_t)(0 - (1 - ((uint32_t)(tmp2 | (0 - tmp2)) >> 31))));
     }
 
     l = g;
@@ -89,8 +89,8 @@ static void gf_carryless_mul(uint8_t c[2], uint8_t a, uint8_t b) {
         g = 0;
         tmp1 = (a >> i) & 3;
         for (size_t j = 0; j < 4; ++j) {
-            tmp2 = tmp1 - j;
-            g ^= (u[j] & (uint32_t)(-(1 - ((uint32_t)(tmp2 | -tmp2) >> 31))));
+            tmp2 = (uint32_t)(tmp1 - j);
+            g ^= (u[j] & (uint32_t)(0 - (1 - ((uint32_t)(tmp2 | (0 - tmp2)) >> 31))));
         }
 
         l ^= g << i;
@@ -101,8 +101,8 @@ static void gf_carryless_mul(uint8_t c[2], uint8_t a, uint8_t b) {
     l ^= ((a << 7) & mask);
     h ^= ((a >> 1) & mask);
 
-    c[0] = l;
-    c[1] = h;
+    c[0] = (uint8_t)l;
+    c[1] = (uint8_t)h;
 }
 
 /**
