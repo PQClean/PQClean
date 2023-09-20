@@ -46,15 +46,9 @@ consistency_checks:
   - wotsx4.h
 - source:
     scheme: sphincs-sha2-128f-simple
-    implementation: aesni
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-192s-simple
     implementation: avx2
@@ -74,15 +68,9 @@ consistency_checks:
   - wotsx4.h
 - source:
     scheme: sphincs-sha2-128f-simple
-    implementation: aesni
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-192f-simple
     implementation: avx2
@@ -102,15 +90,9 @@ consistency_checks:
   - wotsx4.h
 - source:
     scheme: sphincs-sha2-128f-simple
-    implementation: aesni
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-256s-simple
     implementation: avx2
@@ -130,15 +112,9 @@ consistency_checks:
   - wotsx4.h
 - source:
     scheme: sphincs-sha2-128f-simple
-    implementation: aesni
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-256f-simple
     implementation: avx2
@@ -158,12 +134,6 @@ consistency_checks:
   - wotsx4.h
 - source:
     scheme: sphincs-sha2-128f-simple
-    implementation: aesni
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
