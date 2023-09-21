@@ -9,8 +9,6 @@
  * @brief Implementation of concatenated code
  */
 
-
-
 /**
  *
  * @brief Encoding the message m to a code word em using the concatenated code
@@ -29,8 +27,6 @@ void PQCLEAN_HQCRMRS256_AVX2_code_encode(uint8_t *em, const uint8_t *m) {
 
 }
 
-
-
 /**
  * @brief Decoding the code word em to a message m using the concatenated code
  *
@@ -42,6 +38,5 @@ void PQCLEAN_HQCRMRS256_AVX2_code_decode(uint8_t *m, const uint8_t *em) {
 
     PQCLEAN_HQCRMRS256_AVX2_reed_muller_decode(tmp, em);
     PQCLEAN_HQCRMRS256_AVX2_reed_solomon_decode(m, tmp);
-
 
 }

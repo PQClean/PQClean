@@ -17,14 +17,12 @@
 #define DILITHIUM_NAMESPACETOP CRYPTO_NAMESPACETOP
 #define DILITHIUM_NAMESPACE(s) CRYPTO_NAMESPACE(s)
 
-
 #define SEEDBYTES 32
 #define CRHBYTES 64
 #define N 256
 #define DILITHIUM_Q 8380417
 #define D 13
 #define ROOT_OF_UNITY 1753
-
 
 #define K 6
 #define L 5
@@ -36,11 +34,9 @@
 #define OMEGA 55
 #define CRYPTO_ALGNAME "Dilithium3"
 
-
 #define POLYT1_PACKEDBYTES  320
 #define POLYT0_PACKEDBYTES  416
 #define POLYVECH_PACKEDBYTES (OMEGA + K)
-
 
 #if GAMMA1 == (1 << 17)
 #define POLYZ_PACKEDBYTES   576

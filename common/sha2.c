@@ -608,7 +608,7 @@ void sha256_inc_blocks(sha256ctx *state, const uint8_t *in, size_t inblocks) {
 }
 
 void sha224_inc_blocks(sha224ctx *state, const uint8_t *in, size_t inblocks) {
-    sha256_inc_blocks((sha256ctx*) state, in, inblocks);
+    sha256_inc_blocks((sha256ctx *) state, in, inblocks);
 }
 
 void sha512_inc_blocks(sha512ctx *state, const uint8_t *in, size_t inblocks) {
@@ -621,7 +621,7 @@ void sha512_inc_blocks(sha512ctx *state, const uint8_t *in, size_t inblocks) {
 }
 
 void sha384_inc_blocks(sha384ctx *state, const uint8_t *in, size_t inblocks) {
-    sha512_inc_blocks((sha512ctx*) state, in, inblocks);
+    sha512_inc_blocks((sha512ctx *) state, in, inblocks);
 }
 
 void sha256_inc_finalize(uint8_t *out, sha256ctx *state, const uint8_t *in, size_t inlen) {
@@ -674,7 +674,7 @@ void sha256_inc_finalize(uint8_t *out, sha256ctx *state, const uint8_t *in, size
 
 void sha224_inc_finalize(uint8_t *out, sha224ctx *state, const uint8_t *in, size_t inlen) {
     uint8_t tmp[32];
-    sha256_inc_finalize(tmp, (sha256ctx*)state, in, inlen);
+    sha256_inc_finalize(tmp, (sha256ctx *)state, in, inlen);
 
     for (size_t i = 0; i < 28; ++i) {
         out[i] = tmp[i];
@@ -733,7 +733,7 @@ void sha512_inc_finalize(uint8_t *out, sha512ctx *state, const uint8_t *in, size
 
 void sha384_inc_finalize(uint8_t *out, sha384ctx *state, const uint8_t *in, size_t inlen) {
     uint8_t tmp[64];
-    sha512_inc_finalize(tmp, (sha512ctx*)state, in, inlen);
+    sha512_inc_finalize(tmp, (sha512ctx *)state, in, inlen);
 
     for (size_t i = 0; i < 48; ++i) {
         out[i] = tmp[i];

@@ -38,7 +38,6 @@
 #include "NTT_params.h"
 #include "ntt.h"
 
-
 /*************************************************
 * Name:        ntt
 *

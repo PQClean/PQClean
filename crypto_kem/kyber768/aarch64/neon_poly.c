@@ -39,7 +39,6 @@
 #include "cbd.h"
 #include "symmetric.h"
 
-
 /*************************************************
 * Name:        neon_poly_getnoise_eta1_2x
 *
@@ -118,7 +117,6 @@ void neon_poly_ntt(int16_t r[KYBER_N]) {
 void neon_poly_invntt_tomont(int16_t r[KYBER_N]) {
     invntt(r);
 }
-
 
 /*************************************************
 * Name:        neon_poly_add_reduce

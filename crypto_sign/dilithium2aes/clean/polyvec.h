@@ -24,10 +24,7 @@ void PQCLEAN_DILITHIUM2AES_CLEAN_polyvecl_pointwise_acc_montgomery(poly *w,
         const polyvecl *u,
         const polyvecl *v);
 
-
 int PQCLEAN_DILITHIUM2AES_CLEAN_polyvecl_chknorm(const polyvecl *v, int32_t B);
-
-
 
 /* Vectors of polynomials of length K */
 typedef struct {

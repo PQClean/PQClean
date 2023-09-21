@@ -970,7 +970,6 @@ void PQCLEAN_DILITHIUM2_AVX2_polyz_unpack(poly *restrict r, const uint8_t *a) {
     DBENCH_STOP(*tpack);
 }
 
-
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM2_AVX2_polyw1_pack
 *

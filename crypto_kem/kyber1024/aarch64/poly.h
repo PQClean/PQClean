@@ -28,7 +28,6 @@ void poly_decompress(int16_t r[KYBER_N], const uint8_t a[KYBER_POLYCOMPRESSEDBYT
 #define poly_tobytes KYBER_NAMESPACE(poly_tobytes)
 void poly_tobytes(uint8_t r[KYBER_POLYBYTES], const int16_t a[KYBER_N]);
 
-
 #define poly_frommsg KYBER_NAMESPACE(poly_frommsg)
 void poly_frommsg(int16_t r[KYBER_N], const uint8_t msg[KYBER_INDCPA_MSGBYTES]);
 #define poly_tomsg KYBER_NAMESPACE(poly_tomsg)

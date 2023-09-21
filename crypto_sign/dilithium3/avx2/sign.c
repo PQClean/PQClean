@@ -88,7 +88,6 @@ int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
     /* Transform s1 */
     PQCLEAN_DILITHIUM3_AVX2_polyvecl_ntt(&s1);
 
-
     for (i = 0; i < K; i++) {
         /* Expand matrix row */
         polyvec_matrix_expand_row(&row, rowbuf, rho, i);
@@ -164,7 +163,6 @@ int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_signature(uint8_t *sig, size_t *siglen, 
     PQCLEAN_DILITHIUM3_AVX2_polyvecl_ntt(&s1);
     PQCLEAN_DILITHIUM3_AVX2_polyveck_ntt(&s2);
     PQCLEAN_DILITHIUM3_AVX2_polyveck_ntt(&t0);
-
 
 rej:
     /* Sample intermediate vector y */
@@ -321,7 +319,6 @@ int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen
         PQCLEAN_DILITHIUM3_AVX2_polyz_unpack(&z.vec[i], sig + SEEDBYTES + i * POLYZ_PACKEDBYTES);
         PQCLEAN_DILITHIUM3_AVX2_poly_ntt(&z.vec[i]);
     }
-
 
     for (i = 0; i < K; i++) {
         /* Expand matrix row */

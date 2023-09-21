@@ -20,8 +20,6 @@ void PQCLEAN_KYBER102490S_AVX2_poly_getnoise_eta1(poly *r, const uint8_t seed[KY
 
 void PQCLEAN_KYBER102490S_AVX2_poly_getnoise_eta2(poly *r, const uint8_t seed[KYBER_SYMBYTES], uint8_t nonce);
 
-
-
 void PQCLEAN_KYBER102490S_AVX2_poly_ntt(poly *r);
 void PQCLEAN_KYBER102490S_AVX2_poly_invntt_tomont(poly *r);
 void PQCLEAN_KYBER102490S_AVX2_poly_nttunpack(poly *r);

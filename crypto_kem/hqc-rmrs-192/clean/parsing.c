@@ -10,7 +10,6 @@
  * @brief Functions to parse secret key, public key and ciphertext of the HQC scheme
  */
 
-
 void PQCLEAN_HQCRMRS192_CLEAN_store8(unsigned char *out, uint64_t in) {
     out[0] = (in >> 0x00) & 0xFF;
     out[1] = (in >> 0x08) & 0xFF;
@@ -21,7 +20,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_store8(unsigned char *out, uint64_t in) {
     out[6] = (in >> 0x30) & 0xFF;
     out[7] = (in >> 0x38) & 0xFF;
 }
-
 
 uint64_t PQCLEAN_HQCRMRS192_CLEAN_load8(const unsigned char *in) {
     uint64_t ret = in[7];
@@ -68,7 +66,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_store8_arr(uint8_t *out8, size_t outlen, const uin
         }
     }
 }
-
 
 /**
  * @brief Parse a secret key into a string
@@ -124,8 +121,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_hqc_public_key_to_string(uint8_t *pk, const uint8_
     PQCLEAN_HQCRMRS192_CLEAN_store8_arr(pk + SEED_BYTES, VEC_N_SIZE_BYTES, s, VEC_N_SIZE_64);
 }
 
-
-
 /**
  * @brief Parse a public key from a string
  *
@@ -147,7 +142,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_hqc_public_key_from_string(uint64_t *h, uint64_t *
     PQCLEAN_HQCRMRS192_CLEAN_vect_set_random(&pk_seedexpander, h);
 }
 
-
 /**
  * @brief Parse a ciphertext into a string
  *
@@ -165,7 +159,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_hqc_ciphertext_to_string(uint8_t *ct, const uint64
     ct += VEC_N1N2_SIZE_BYTES;
     memcpy(ct, d, SHA512_BYTES);
 }
-
 
 /**
  * @brief Parse a ciphertext from a string

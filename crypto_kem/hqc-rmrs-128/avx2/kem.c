@@ -14,8 +14,6 @@
  * @brief Implementation of api.h
  */
 
-
-
 /**
  * @brief Keygen of the HQC_KEM IND_CAA2 scheme
  *
@@ -33,8 +31,6 @@ int PQCLEAN_HQCRMRS128_AVX2_crypto_kem_keypair(unsigned char *pk, unsigned char 
     PQCLEAN_HQCRMRS128_AVX2_hqc_pke_keygen(pk, sk);
     return 0;
 }
-
-
 
 /**
  * @brief Encapsulation of the HQC_KEM IND_CAA2 scheme
@@ -74,11 +70,8 @@ int PQCLEAN_HQCRMRS128_AVX2_crypto_kem_enc(unsigned char *ct, unsigned char *ss,
     // Computing ciphertext
     PQCLEAN_HQCRMRS128_AVX2_hqc_ciphertext_to_string(ct, u, v, d);
 
-
     return 0;
 }
-
-
 
 /**
  * @brief Decapsulation of the HQC_KEM IND_CAA2 scheme
@@ -134,7 +127,6 @@ int PQCLEAN_HQCRMRS128_AVX2_crypto_kem_dec(unsigned char *ss, const unsigned cha
     for (size_t i = 0; i < SHARED_SECRET_BYTES; i++) {
         ss[i] &= ~result;
     }
-
 
     return -(result & 1);
 }

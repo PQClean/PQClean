@@ -25,7 +25,6 @@
  * SOFTWARE.
  */
 
-
 static inline uint32_t br_dec32le(const uint8_t *src) {
     return (uint32_t)src[0]
            | ((uint32_t)src[1] << 8)

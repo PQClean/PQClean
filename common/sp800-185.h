@@ -22,6 +22,6 @@ void cshake256_inc_squeeze(uint8_t *output, size_t outlen, shake256incctx *state
 void cshake256_inc_ctx_release(shake256incctx *state);
 void cshake256_inc_ctx_clone(shake256incctx *dest, const shake256incctx *src);
 
-void cshake256(uint8_t *output, size_t outlen, const uint8_t *name, size_t namelen, const uint8_t* cstm, size_t cstmlen, const uint8_t *input, size_t inlen);
+void cshake256(uint8_t *output, size_t outlen, const uint8_t *name, size_t namelen, const uint8_t *cstm, size_t cstmlen, const uint8_t *input, size_t inlen);
 
 #endif

@@ -5,7 +5,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #define AES256CTR_BLOCKBYTES 64
 
 typedef struct {

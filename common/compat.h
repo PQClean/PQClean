@@ -7,15 +7,12 @@
  * This file is allowed to use #ifdefs and toggle things by compiler versions.
  */
 
-
 // From https://github.com/gcc-mirror/gcc/blob/af73a8b2027d9ab64944d7dbbb48e207d7790ce6/gcc/config/i386/avxintrin.h#L62-L71
 /* Unaligned versions of the vector types */
 #define UNALIGNED_VECTOR_POLYFILL_GCC \
     typedef float __m256_u __attribute__ ((__vector_size__ (32), __may_alias__, __aligned__ (1))); \
     typedef double __m256d_u __attribute__ ((__vector_size__ (32), __may_alias__, __aligned__ (1))); \
     typedef long long __m256i_u __attribute__ ((__vector_size__ (32), __may_alias__, __aligned__ (1)));
-
-
 
 #if defined(__GNUC__) && !defined(__clang__)
 #include <features.h>
@@ -41,7 +38,6 @@ UNALIGNED_VECTOR_POLYFILL_GCC
 #else
 #error UNSUPPORTED COMPILER!?!?
 #endif // compiler selector
-
 
 /************************
  * Portable VLA support *

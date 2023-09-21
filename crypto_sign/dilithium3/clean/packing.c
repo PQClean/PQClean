@@ -3,7 +3,6 @@
 #include "poly.h"
 #include "polyvec.h"
 
-
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_CLEAN_pack_pk
 *

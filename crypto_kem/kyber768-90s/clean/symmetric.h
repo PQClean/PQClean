@@ -6,9 +6,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
-
-
 typedef aes256xof_ctx xof_state;
 
 void PQCLEAN_KYBER76890S_CLEAN_kyber_aes256xof_absorb(aes256xof_ctx *state, const uint8_t seed[32], uint8_t x, uint8_t y);
@@ -24,6 +21,5 @@ void PQCLEAN_KYBER76890S_CLEAN_kyber_aes256ctr_prf(uint8_t *out, size_t outlen, 
 #define xof_ctx_release(STATE) PQCLEAN_KYBER76890S_CLEAN_aes256xof_ctx_release(STATE)
 #define prf(OUT, OUTBYTES, KEY, NONCE) PQCLEAN_KYBER76890S_CLEAN_aes256ctr_prf(OUT, OUTBYTES, KEY, NONCE)
 #define kdf(OUT, IN, INBYTES) sha256(OUT, IN, INBYTES)
-
 
 #endif /* SYMMETRIC_H */

@@ -364,7 +364,6 @@ void polyveck_pointwise_poly_montgomery(polyveck *r, const poly *a, const polyve
     }
 }
 
-
 /*************************************************
 * Name:        polyveck_chknorm
 *

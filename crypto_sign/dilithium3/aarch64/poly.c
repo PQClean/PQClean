@@ -441,7 +441,6 @@ void poly_uniformx2(poly *a0, poly *a1,
         ctr1 += rej_uniform(a1->coeffs + ctr1, N - ctr1, buf1, buflen);
     }
 
-
 }
 
 /*************************************************
@@ -471,15 +470,12 @@ static unsigned int rej_eta(int32_t *a,
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
 
-
         if (t0 < 9) {
             a[ctr++] = 4 - t0;
         }
         if (t1 < 9 && ctr < len) {
             a[ctr++] = 4 - t1;
         }
-
-
 
     }
 
@@ -645,13 +641,11 @@ void polyeta_pack(uint8_t *r, const poly *a) {
     uint8_t t[8];
     DBENCH_START();
 
-
     for (i = 0; i < N / 2; ++i) {
         t[0] = ETA - a->coeffs[2 * i + 0];
         t[1] = ETA - a->coeffs[2 * i + 1];
         r[i] = t[0] | (t[1] << 4);
     }
-
 
     DBENCH_STOP(*tpack);
 }
@@ -668,14 +662,12 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
 
-
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
         r->coeffs[2 * i + 1] = a[i] >> 4;
         r->coeffs[2 * i + 0] = ETA - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = ETA - r->coeffs[2 * i + 1];
     }
-
 
     DBENCH_STOP(*tpack);
 }

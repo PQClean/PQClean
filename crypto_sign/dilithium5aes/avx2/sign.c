@@ -11,7 +11,6 @@
 #include <stdint.h>
 #include <string.h>
 
-
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM5AES_AVX2_crypto_sign_keypair
 *

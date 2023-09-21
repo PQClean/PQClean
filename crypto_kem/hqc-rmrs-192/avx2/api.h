@@ -21,5 +21,4 @@ int PQCLEAN_HQCRMRS192_AVX2_crypto_kem_enc(unsigned char *ct, unsigned char *ss,
 
 int PQCLEAN_HQCRMRS192_AVX2_crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk);
 
-
 #endif

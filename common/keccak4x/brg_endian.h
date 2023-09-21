@@ -39,7 +39,7 @@
 #elif defined( __FreeBSD__ ) || defined( __OpenBSD__ ) || defined( __NetBSD__ )
 #  include <sys/endian.h>
 #elif defined( BSD ) && ( BSD >= 199103 ) || defined( __APPLE__ ) || \
-      defined( __CYGWIN32__ ) || defined( __DJGPP__ ) || defined( __osf__ )
+defined( __CYGWIN32__ ) || defined( __DJGPP__ ) || defined( __osf__ )
 #  include <machine/endian.h>
 #elif defined( __linux__ ) || defined( __GNUC__ ) || defined( __GNU_LIBRARY__ )
 #  if !defined( __MINGW32__ ) && !defined( _AIX )
@@ -108,19 +108,19 @@
 #if !defined(PLATFORM_BYTE_ORDER)
 
 #if   defined( __alpha__ ) || defined( __alpha ) || defined( i386 )       || \
-      defined( __i386__ )  || defined( _M_I86 )  || defined( _M_IX86 )    || \
-      defined( __OS2__ )   || defined( sun386 )  || defined( __TURBOC__ ) || \
-      defined( vax )       || defined( vms )     || defined( VMS )        || \
-      defined( __VMS )     || defined( _M_X64 )
+defined( __i386__ )  || defined( _M_I86 )  || defined( _M_IX86 )    || \
+defined( __OS2__ )   || defined( sun386 )  || defined( __TURBOC__ ) || \
+defined( vax )       || defined( vms )     || defined( VMS )        || \
+defined( __VMS )     || defined( _M_X64 )
 #  define PLATFORM_BYTE_ORDER IS_LITTLE_ENDIAN
 
 #elif defined( AMIGA )   || defined( applec )    || defined( __AS400__ )  || \
-      defined( _CRAY )   || defined( __hppa )    || defined( __hp9000 )   || \
-      defined( ibm370 )  || defined( mc68000 )   || defined( m68k )       || \
-      defined( __MRC__ ) || defined( __MVS__ )   || defined( __MWERKS__ ) || \
-      defined( sparc )   || defined( __sparc)    || defined( SYMANTEC_C ) || \
-      defined( __VOS__ ) || defined( __TIGCC__ ) || defined( __TANDEM )   || \
-      defined( THINK_C ) || defined( __VMCMS__ ) || defined( _AIX )
+defined( _CRAY )   || defined( __hppa )    || defined( __hp9000 )   || \
+defined( ibm370 )  || defined( mc68000 )   || defined( m68k )       || \
+defined( __MRC__ ) || defined( __MVS__ )   || defined( __MWERKS__ ) || \
+defined( sparc )   || defined( __sparc)    || defined( SYMANTEC_C ) || \
+defined( __VOS__ ) || defined( __TIGCC__ ) || defined( __TANDEM )   || \
+defined( THINK_C ) || defined( __VMCMS__ ) || defined( _AIX )
 #  define PLATFORM_BYTE_ORDER IS_BIG_ENDIAN
 
 #elif defined(__arm__)

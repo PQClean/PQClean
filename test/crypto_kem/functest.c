@@ -32,7 +32,7 @@ static int check_canary(const uint8_t *d) {
     return 0;
 }
 
-inline static void* malloc_s(size_t size) {
+inline static void *malloc_s(size_t size) {
     void *ptr = malloc(size);
     if (ptr == NULL) {
         perror("Malloc failed!");
@@ -93,11 +93,11 @@ static int test_keys(void) {
      * data alignment. For example this would catch if an implementation
      * directly uses these pointers to load into vector registers using movdqa.
      */
-    uint8_t *key_a = (uint8_t *) ((uintptr_t) key_a_aligned|(uintptr_t) 1);
-    uint8_t *key_b = (uint8_t *) ((uintptr_t) key_b_aligned|(uintptr_t) 1);
-    uint8_t *pk    = (uint8_t *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
-    uint8_t *sendb = (uint8_t *) ((uintptr_t) sendb_aligned|(uintptr_t) 1);
-    uint8_t *sk_a  = (uint8_t *) ((uintptr_t) sk_a_aligned|(uintptr_t) 1);
+    uint8_t *key_a = (uint8_t *) ((uintptr_t) key_a_aligned | (uintptr_t) 1);
+    uint8_t *key_b = (uint8_t *) ((uintptr_t) key_b_aligned | (uintptr_t) 1);
+    uint8_t *pk    = (uint8_t *) ((uintptr_t) pk_aligned | (uintptr_t) 1);
+    uint8_t *sendb = (uint8_t *) ((uintptr_t) sendb_aligned | (uintptr_t) 1);
+    uint8_t *sk_a  = (uint8_t *) ((uintptr_t) sk_a_aligned | (uintptr_t) 1);
 
     /*
      * Write 8 byte canary before and after the actual memory regions.
@@ -136,10 +136,10 @@ static int test_keys(void) {
 
         // Validate that the implementation did not touch the canary
         if (check_canary(key_a) || check_canary(key_a + CRYPTO_BYTES + 8) ||
-            check_canary(key_b) || check_canary(key_b + CRYPTO_BYTES + 8 ) ||
-            check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8 ) ||
-            check_canary(sendb) || check_canary(sendb + CRYPTO_CIPHERTEXTBYTES + 8 ) ||
-            check_canary(sk_a) || check_canary(sk_a + CRYPTO_SECRETKEYBYTES + 8 )) {
+                check_canary(key_b) || check_canary(key_b + CRYPTO_BYTES + 8 ) ||
+                check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8 ) ||
+                check_canary(sendb) || check_canary(sendb + CRYPTO_CIPHERTEXTBYTES + 8 ) ||
+                check_canary(sk_a) || check_canary(sk_a + CRYPTO_SECRETKEYBYTES + 8 )) {
             printf("ERROR canary overwritten\n");
             res = 1;
             goto end;

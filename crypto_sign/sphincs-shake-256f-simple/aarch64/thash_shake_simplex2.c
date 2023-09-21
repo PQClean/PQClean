@@ -11,7 +11,6 @@
 #include "f1600x2.h"
 #include "fips202x2.h"
 
-
 void thash(unsigned char *out,
            const unsigned char *in,
            unsigned int inblocks,

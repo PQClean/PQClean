@@ -9,7 +9,6 @@
  * \brief Implementation of multiplication of two polynomials
  */
 
-
 static inline void swap(uint16_t *tab, uint16_t elt1, uint16_t elt2);
 static void reduce(uint64_t *o, const uint64_t *a);
 static void fast_convolution_mult(uint8_t *o, const uint32_t *a1, const uint64_t *a2, uint16_t weight, AES_XOF_struct *ctx);
@@ -29,8 +28,6 @@ static inline void swap(uint16_t *tab, uint16_t elt1, uint16_t elt2) {
     tab[elt1] = tab[elt2];
     tab[elt2] = tmp;
 }
-
-
 
 /**
  * @brief Compute o(x) = a(x) mod \f$ X^n - 1\f$
@@ -53,8 +50,6 @@ static void reduce(uint64_t *o, const uint64_t *a) {
 
     o[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
-
-
 
 /**
  * @brief computes product of the polynomial a1(x) with the sparse polynomial a2
@@ -130,8 +125,6 @@ static void fast_convolution_mult(uint8_t *o, const uint32_t *a1, const uint64_t
         }
     }
 }
-
-
 
 /**
  * @brief Multiply two polynomials modulo \f$ X^n - 1\f$.

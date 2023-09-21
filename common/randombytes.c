@@ -72,7 +72,6 @@ THE SOFTWARE.
 
 #endif /* defined(__linux__) */
 
-
 #if defined(__unix__) || (defined(__APPLE__) && defined(__MACH__))
 /* Dragonfly, FreeBSD, NetBSD, OpenBSD (has arc4random) */
 # include <sys/param.h>
@@ -87,7 +86,6 @@ THE SOFTWARE.
 # include <errno.h>
 # include <stdbool.h>
 #endif /* defined(__EMSCRIPTEN__) */
-
 
 #if defined(_WIN32)
 static int randombytes_win32_randombytes(void *buf, const size_t n) {
@@ -153,7 +151,6 @@ static int randombytes_linux_randombytes_getrandom(void *buf, size_t n) {
     return 0;
 }
 #endif // defined(__linux__) && (defined(USE_GLIBC) || defined(SYS_getrandom))
-
 
 #if defined(__linux__) && !defined(SYS_getrandom)
 static int randombytes_linux_read_entropy_ioctl(int device, int *entropy) {
@@ -259,7 +256,6 @@ static int randombytes_linux_wait_for_entropy(int device) {
     return retcode;
 }
 
-
 static int randombytes_linux_randombytes_urandom(void *buf, size_t n) {
     int fd;
     size_t offset = 0, count;
@@ -292,14 +288,12 @@ static int randombytes_linux_randombytes_urandom(void *buf, size_t n) {
 }
 #endif /* defined(__linux__) && !defined(SYS_getrandom) */
 
-
 #if defined(BSD)
 static int randombytes_bsd_randombytes(void *buf, size_t n) {
     arc4random_buf(buf, n);
     return 0;
 }
 #endif /* defined(BSD) */
-
 
 #if defined(__EMSCRIPTEN__)
 static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
@@ -330,7 +324,6 @@ static int randombytes_js_randombytes_nodejs(void *buf, size_t n) {
     assert(false); // Unreachable
 }
 #endif /* defined(__EMSCRIPTEN__) */
-
 
 int randombytes(uint8_t *output, size_t n) {
     void *buf = (void *)output;

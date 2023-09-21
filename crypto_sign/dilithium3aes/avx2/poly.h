@@ -33,7 +33,6 @@ void PQCLEAN_DILITHIUM3AES_AVX2_poly_uniform_gamma1_preinit(poly *a, stream256_s
 void PQCLEAN_DILITHIUM3AES_AVX2_poly_uniform_gamma1(poly *a, const uint8_t seed[CRHBYTES], uint16_t nonce);
 void PQCLEAN_DILITHIUM3AES_AVX2_poly_challenge(poly *c, const uint8_t seed[SEEDBYTES]);
 
-
 void PQCLEAN_DILITHIUM3AES_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const poly *a);
 void PQCLEAN_DILITHIUM3AES_AVX2_polyeta_unpack(poly *r, const uint8_t a[POLYETA_PACKEDBYTES]);
 

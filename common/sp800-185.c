@@ -13,14 +13,14 @@ static size_t left_encode(uint8_t *encbuf, size_t value) {
         n = 1;
     }
     for (i = 1; i <= n; i++) {
-        encbuf[i] = (uint8_t)(value >> (8 * (n-i)));
+        encbuf[i] = (uint8_t)(value >> (8 * (n - i)));
     }
     encbuf[0] = (uint8_t)n;
     return n + 1;
 }
 
 void cshake128_inc_init(shake128incctx *state, const uint8_t *name, size_t namelen, const uint8_t *cstm, size_t cstmlen) {
-    uint8_t encbuf[sizeof(size_t)+1];
+    uint8_t encbuf[sizeof(size_t) +1];
 
     shake128_inc_init(state);
 
@@ -62,7 +62,7 @@ void cshake128_inc_ctx_clone(shake128incctx *dest, const shake128incctx *src) {
 }
 
 void cshake256_inc_init(shake256incctx *state, const uint8_t *name, size_t namelen, const uint8_t *cstm, size_t cstmlen) {
-    uint8_t encbuf[sizeof(size_t)+1];
+    uint8_t encbuf[sizeof(size_t) +1];
 
     shake256_inc_init(state);
 

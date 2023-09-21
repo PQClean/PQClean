@@ -9,8 +9,6 @@
  * \brief AVX2 implementation of multiplication of two polynomials
  */
 
-
-
 #define VEC_N_SPLIT_3x3 CEIL_DIVIDE(CEIL_DIVIDE(PARAM_N, 9), 256)
 #define VEC_N_SPLIT_3 (3*VEC_N_SPLIT_3x3)
 
@@ -21,7 +19,6 @@ static inline void karat_mult_4(__m256i *C, const __m256i *A, const __m256i *B);
 static inline void karat_mult_8(__m256i *C, const __m256i *A, const __m256i *B);
 static inline void karat_three_way_mult(__m256i *C, const __m256i *A, const __m256i *B);
 static inline void karat_mult9(__m256i *C, const aligned_vec_t *A, const aligned_vec_t *B);
-
 
 /**
  * @brief Compute o(x) = a(x) mod \f$ X^n - 1\f$
@@ -59,8 +56,6 @@ static inline void reduce(uint64_t *o, const __m256i *a256) {
 
     o[PARAM_N >> 6] &= RED_MASK;
 }
-
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x)
@@ -117,8 +112,6 @@ static inline void karat_mult_1(__m128i *C, const __m128i *A, const __m128i *B) 
     C[3] = D2[1];
 }
 
-
-
 /**
  * @brief Compute C(x) = A(x)*B(x)
  *
@@ -148,8 +141,6 @@ static inline void karat_mult_2(__m256i *C, const __m256i *A, const __m256i *B) 
     C[2] = middle ^ D1[1] ^ D2[1];
     C[3] = D2[1];
 }
-
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x)
@@ -187,8 +178,6 @@ static inline void karat_mult_4(__m256i *C, const __m256i *A, const __m256i *B) 
     C[6] = D2[2];
     C[7] = D2[3];
 }
-
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x)
@@ -228,8 +217,6 @@ static inline void karat_mult_8(__m256i *C, const __m256i *A, const __m256i *B) 
         C[is3] = D2[is];
     }
 }
-
-
 
 /**
  * @brief Compute C(x) = A(x)*B(x)
@@ -292,8 +279,6 @@ static inline void karat_three_way_mult(__m256i *C, const __m256i *A, const __m2
     }
 }
 
-
-
 /**
  * @brief Compute C(x) = A(x)*B(x)
  *
@@ -349,8 +334,6 @@ static inline void karat_mult9(__m256i *C, const aligned_vec_t *A, const aligned
         C[j + (VEC_N_SPLIT_3 << 2)] = D2[j];
     }
 }
-
-
 
 /**
  * @brief Multiply two polynomials modulo \f$ X^n - 1\f$.

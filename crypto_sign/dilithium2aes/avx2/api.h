@@ -9,7 +9,6 @@
 #define PQCLEAN_DILITHIUM2AES_AVX2_CRYPTO_BYTES 2420
 #define PQCLEAN_DILITHIUM2AES_AVX2_CRYPTO_ALGNAME "Dilithium2-AES"
 
-
 int PQCLEAN_DILITHIUM2AES_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk);
 
 int PQCLEAN_DILITHIUM2AES_AVX2_crypto_sign_signature(

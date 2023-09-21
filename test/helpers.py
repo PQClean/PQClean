@@ -10,6 +10,8 @@ import sys
 import unittest
 from functools import lru_cache
 
+import pytest
+
 import pqclean
 
 
@@ -88,10 +90,11 @@ def run_subprocess(command, working_dir='.', env=None, expected_returncode=0,
     Helper function to run a shell command and report success/failure
     depending on the exit status of the shell command.
     """
+    env_ = os.environ.copy()
+    env_["LANG"] = "C"
     if env is not None:
-        env_ = os.environ.copy()
         env_.update(env)
-        env = env_
+    env = env_
 
     # Note we need to capture stdout/stderr from the subprocess,
     # then print it, which the unittest will then capture and
@@ -148,7 +151,8 @@ def skip_windows(message="This test is not supported on Windows"):
     def wrapper(f):
         @functools.wraps(f)
         def skip_windows(*args, **kwargs):
-            raise unittest.SkipTest(message)
+            import pytest
+            pytest.skip(message, allow_module_level=True)
         if os.name == 'nt':
             return skip_windows
         else:
@@ -173,11 +177,12 @@ def ensure_available(executable):
     # Installing clang-tidy on LLVM will be too much of a mess.
     if ((executable == 'clang-tidy' and sys.platform == 'darwin')
             or 'CI' not in os.environ):
-        raise unittest.SkipTest(
+        pytest.skip(
                 "{} is not available on PATH. Install it to run this test.{}"
                 .format(executable, "" if not os.name == 'nt'
-                        else "On Windows, make sure to add it to PATH")
-                )
+                        else "On Windows, make sure to add it to PATH"),
+                allow_module_level=True,
+        )
     raise AssertionError("{} not available on CI".format(executable))
 
 
