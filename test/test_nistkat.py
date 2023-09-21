@@ -27,13 +27,16 @@ import pqclean
 def test_nistkat(implementation, impl_path, test_dir, init, destr):
     init()
     dest_path = os.path.join(test_dir, 'bin')
+    kat_rng = 'nist'
+    if 'nistkat-rng' in implementation.scheme.metadata():
+        kat_rng = implementation.scheme.metadata()['nistkat-rng']
     helpers.make('nistkat',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
                  SCHEME_DIR=impl_path,
                  DEST_DIR=dest_path,
-                 KAT_RNG=implementation.scheme.metadata()['nistkat-rng'],
+                 KAT_RNG=kat_rng,
                  working_dir=os.path.join(test_dir, 'test'))
     out = helpers.run_subprocess(
         [os.path.join(dest_path, 'nistkat_{}_{}{}'.format(

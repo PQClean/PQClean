@@ -6,7 +6,6 @@ length-secret-key: 128
 length-signature: 29792
 testvectors-sha256: 945a6d782c97e61d74552694a0f9e3bfc8ae0b7c03b86293da21a384acdbbd46
 nistkat-sha256: 05d15a74253962d35912bab3a9ee3230c2e721c798f4e757ecffa529071b0748
-nistkat-rng: nist
 principal-submitters:
   - Andreas Hülsing
 auxiliary-submitters:
