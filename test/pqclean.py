@@ -26,7 +26,7 @@ class Scheme:
         for scheme in Scheme.all_schemes():
             if scheme.name == scheme_name:
                 return scheme
-        raise KeyError()
+        raise KeyError(f"No scheme for {scheme_name}")
 
     @staticmethod
     @lru_cache(maxsize=1)
@@ -118,7 +118,7 @@ class Implementation:
         for implementation in scheme.implementations:
             if implementation.name == implementation_name:
                 return implementation
-        raise KeyError()
+        raise KeyError(f"No implementation for {scheme_name} - {implementation_name}")
 
     @staticmethod
     @lru_cache(maxsize=None)
