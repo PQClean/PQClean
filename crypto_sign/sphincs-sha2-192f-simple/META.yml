@@ -28,9 +28,9 @@ auxiliary-submitters:
   - Bas Westerbaan
 implementations:
   - name: clean
-    version: https://github.com/sphincs/sphincsplus/commit/ed15dd78658f63288c7492c00260d86154b84637
+    version: https://github.com/sphincs/sphincsplus/commit/f38d4fdaff9c5889a086955a027f6bd71d8a4a96
   - name: avx2
-    version: https://github.com/sphincs/sphincsplus/commit/ed15dd78658f63288c7492c00260d86154b84637
+    version: https://github.com/sphincs/sphincsplus/commit/f38d4fdaff9c5889a086955a027f6bd71d8a4a96
     supported_platforms:
       - architecture: x86_64
         required_flags: ['avx2']
