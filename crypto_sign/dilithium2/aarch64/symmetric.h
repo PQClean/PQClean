@@ -1,3 +1,5 @@
+#ifndef SYMMETRIC_H
+#define SYMMETRIC_H
 
 /*
  * This file was originally licensed
@@ -30,8 +32,6 @@
  * SOFTWARE.
  */
 
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
 #include "fips202.h"
 #include "fips202x2.h"
 #include "params.h"
