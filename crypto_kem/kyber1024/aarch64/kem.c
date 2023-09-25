@@ -41,7 +41,6 @@ int crypto_kem_keypair_derand(uint8_t *pk,
     return 0;
 }
 
->>>>>>> 2b8c0bb9 (Kyber: Fix aarch64 and update to NIST draft)
 /*************************************************
 * Name:        crypto_kem_keypair
 *
