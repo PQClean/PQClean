@@ -31,7 +31,7 @@ implementations:
               - popcnt
 
     - name: aarch64
-      version: https://github.com/neon-ntt/neon-ntt/tree/c5ee5bc4209acfc2ec37bc982e9ec6e3ed354cb6
+      version: https://github.com/neon-ntt/neon-ntt/tree/f88c7dd2bf03fb0dbdcccbf2fe437f7bb0a77441
       supported_platforms:
         - architecture: arm_8
           operating_systems:
