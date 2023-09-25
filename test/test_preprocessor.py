@@ -39,6 +39,12 @@ def test_preprocessor(implementation: pqclean.Implementation):
                     ("crypto_sign/dilithium2/aarch64/fips202x2.c" not in file) and
                     ("crypto_sign/dilithium3/aarch64/fips202x2.c" not in file) and
                     ("crypto_sign/dilithium5/aarch64/fips202x2.c" not in file) and
+                    ("crypto_kem\\kyber512\\aarch64\\fips202x2.c" not in file) and
+                    ("crypto_kem\\kyber768\\aarch64\\fips202x2.c" not in file) and
+                    ("crypto_kem\\kyber1024\\aarch64\\fips202x2.c" not in file) and
+                    ("crypto_sign\\dilithium2\\aarch64\\fips202x2.c" not in file) and
+                    ("crypto_sign\\dilithium3\\aarch64\\fips202x2.c" not in file) and
+                    ("crypto_sign\\dilithium5\\aarch64\\fips202x2.c" not in file) and
                     ("crypto_sign/falcon-512/avx2/sign.c" not in file) and 
                     ("crypto_sign/falcon-1024/avx2/sign.c" not in file) and
                     ("crypto_sign\\falcon-512\\avx2\\sign.c" not in file) and
