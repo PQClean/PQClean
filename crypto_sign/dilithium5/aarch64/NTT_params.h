@@ -1,3 +1,5 @@
+#ifndef NTT_PARAMS_H
+#define NTT_PARAMS_H
 
 /*
  * CC0 1.0 Universal or the following MIT License
@@ -24,9 +26,6 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-
-#ifndef NTT_PARAMS_H
-#define NTT_PARAMS_H
 
 #define ARRAY_N 256
 

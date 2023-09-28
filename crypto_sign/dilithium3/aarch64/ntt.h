@@ -1,3 +1,5 @@
+#ifndef NTT_H
+#define NTT_H
 
 /*
  * This file was originally licensed
@@ -30,26 +32,24 @@
  * SOFTWARE.
  */
 
-#ifndef NTT_H
-#define NTT_H
 #include "NTT_params.h"
 #include "params.h"
 #include <stdint.h>
 
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_ntt_SIMD_top(int *des, const int *table, const int *_constants);
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_ntt_SIMD_bot(int *des, const int *table, const int *_constants);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_ntt_SIMD_top(int *des, const int *table, const int *_constants);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_ntt_SIMD_bot(int *des, const int *table, const int *_constants);
 
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_intt_SIMD_top(int *des, const int *table, const int *_constants);
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_intt_SIMD_bot(int *des, const int *table, const int *_constants);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_intt_SIMD_top(int *des, const int *table, const int *_constants);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_intt_SIMD_bot(int *des, const int *table, const int *_constants);
 
 #define NTT(in) { \
-        PQCLEAN_DILITHIUM3_AARCH64__asm_ntt_SIMD_top(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
-        PQCLEAN_DILITHIUM3_AARCH64__asm_ntt_SIMD_bot(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
+        PQCLEAN_DILITHIUM3_AARCH64_asm_ntt_SIMD_top(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
+        PQCLEAN_DILITHIUM3_AARCH64_asm_ntt_SIMD_bot(in, streamlined_CT_negacyclic_table_Q1_extended, constants); \
     }
 
 #define iNTT(in) { \
-        PQCLEAN_DILITHIUM3_AARCH64__asm_intt_SIMD_bot(in, streamlined_inv_CT_table_Q1_extended, constants); \
-        PQCLEAN_DILITHIUM3_AARCH64__asm_intt_SIMD_top(in, streamlined_inv_CT_table_Q1_extended, constants); \
+        PQCLEAN_DILITHIUM3_AARCH64_asm_intt_SIMD_bot(in, streamlined_inv_CT_table_Q1_extended, constants); \
+        PQCLEAN_DILITHIUM3_AARCH64_asm_intt_SIMD_top(in, streamlined_inv_CT_table_Q1_extended, constants); \
     }
 
 #define ntt DILITHIUM_NAMESPACE(ntt)

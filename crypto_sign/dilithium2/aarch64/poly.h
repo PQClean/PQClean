@@ -1,3 +1,5 @@
+#ifndef POLY_H
+#define POLY_H
 
 /*
  * This file is dual licensed
@@ -5,8 +7,6 @@
  * or public domain at https://github.com/pq-crystals/dilithium
  */
 
-#ifndef POLY_H
-#define POLY_H
 #include "params.h"
 #include <stdint.h>
 
