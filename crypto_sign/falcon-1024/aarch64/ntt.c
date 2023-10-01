@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 /*
  * High-speed vectorize NTT for N = 512, 1024
  *

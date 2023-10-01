@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0
 #include "ntt_consts.h"
 #include "params.h"
 
