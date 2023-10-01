@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0 AND MIT
 /*
  * PRNG and interface to the system RNG.
  *

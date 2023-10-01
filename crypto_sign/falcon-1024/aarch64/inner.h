@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0 AND MIT
 #ifndef FALCON_INNER_H__
 #define FALCON_INNER_H__
 

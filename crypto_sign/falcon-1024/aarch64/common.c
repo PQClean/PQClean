@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0 AND MIT
 /*
  * Support functions for signatures (hash-to-point, norm).
  *

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: Apache-2.0 AND MIT
 #ifndef PQCLEAN_FALCON1024_AARCH64_API_H
 #define PQCLEAN_FALCON1024_AARCH64_API_H
 
