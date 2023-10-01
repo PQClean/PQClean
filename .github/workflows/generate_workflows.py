@@ -56,7 +56,7 @@ if __name__ == "__main__":
     root = Path("../..")
 
     paths = root.glob("crypto_*/*")
-    for path in paths:
+    for path in sorted(paths):
         result = render_workflow(path)
 
     sys.exit(result)

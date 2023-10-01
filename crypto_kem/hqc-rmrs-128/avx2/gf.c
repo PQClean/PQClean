@@ -6,10 +6,7 @@
  * Galois field implementation with multiplication using the pclmulqdq instruction
  */
 
-
 static uint16_t gf_reduce(uint64_t x, size_t deg_x);
-
-
 
 /**
  * Reduces polynomial x modulo primitive polynomial GF_POLY.
@@ -46,8 +43,6 @@ static uint16_t gf_reduce(uint64_t x, size_t deg_x) {
     return x;
 }
 
-
-
 /**
  * Multiplies two elements of GF(2^GF_M).
  * @returns the product a*b
@@ -62,8 +57,6 @@ uint16_t PQCLEAN_HQCRMRS128_AVX2_gf_mul(uint16_t a, uint16_t b) {
 
     return gf_reduce(ab, 2 * (PARAM_M - 1));
 }
-
-
 
 /**
  *  Compute 16 products in GF(2^GF_M).
@@ -113,8 +106,6 @@ __m256i PQCLEAN_HQCRMRS128_AVX2_gf_mul_vect(__m256i a, __m256i b) {
     return ret;
 }
 
-
-
 /**
  * Squares an element of GF(2^GF_M).
  * @returns a^2
@@ -130,8 +121,6 @@ uint16_t PQCLEAN_HQCRMRS128_AVX2_gf_square(uint16_t a) {
 
     return gf_reduce(s, 2 * (PARAM_M - 1));
 }
-
-
 
 /**
  * Computes the inverse of an element of GF(2^8),
@@ -156,8 +145,6 @@ uint16_t PQCLEAN_HQCRMRS128_AVX2_gf_inverse(uint16_t a) {
     inv = PQCLEAN_HQCRMRS128_AVX2_gf_square(inv); /* a^254 */
     return inv;
 }
-
-
 
 /**
  * Returns i modulo 2^GF_M-1.

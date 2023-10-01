@@ -1,6 +1,6 @@
 consistency_checks:
 - source:
-    scheme: sphincs-sha2-192s-robust
+    scheme: sphincs-sha2-192s-simple
     implementation: clean
   files:
   - address.h
@@ -45,16 +45,10 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-192s-simple
-    implementation: aesni
+    scheme: sphincs-sha2-192s-simple
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-128f-simple
     implementation: avx2
@@ -73,16 +67,10 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-192s-simple
-    implementation: aesni
+    scheme: sphincs-sha2-192s-simple
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-192f-simple
     implementation: avx2
@@ -101,16 +89,10 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-192s-simple
-    implementation: aesni
+    scheme: sphincs-sha2-192s-simple
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-256s-simple
     implementation: avx2
@@ -129,16 +111,10 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-192s-simple
-    implementation: aesni
+    scheme: sphincs-sha2-192s-simple
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h
 - source:
     scheme: sphincs-shake-256f-simple
     implementation: avx2
@@ -157,13 +133,7 @@ consistency_checks:
   - utilsx4.h
   - wotsx4.h
 - source:
-    scheme: sphincs-haraka-192s-simple
-    implementation: aesni
+    scheme: sphincs-sha2-192s-simple
+    implementation: avx2
   files:
-  - thashx4.h
-  - merkle.c
-  - hashx4.h
-  - utilsx4.c
-  - utilsx4.h
   - wots.h
-  - wotsx4.h

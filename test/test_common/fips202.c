@@ -137,24 +137,24 @@ static int test_shake128_incremental(void) {
 
     shake128_inc_ctx_clone(&state_both, &state_absorb);
 
-    shake128_squeezeblocks(output, 3, (shake128ctx*)&state_absorb);
+    shake128_squeezeblocks(output, 3, (shake128ctx *)&state_absorb);
 
-    if (memcmp(check, output, 3*SHAKE128_RATE)) {
+    if (memcmp(check, output, 3 * SHAKE128_RATE)) {
         printf("ERROR shake128 incremental absorb did not match shake128.\n");
         printf("  Expected: ");
-        for (i = 0; i < 3*SHAKE128_RATE; i++) {
+        for (i = 0; i < 3 * SHAKE128_RATE; i++) {
             printf("%02X", check[i]);
         }
         printf("\n");
         printf("  Received: ");
-        for (i = 0; i < 3*SHAKE128_RATE; i++) {
+        for (i = 0; i < 3 * SHAKE128_RATE; i++) {
             printf("%02X", output[i]);
         }
         printf("\n");
         returncode = 1;
     }
 
-    shake128_absorb((shake128ctx*)&state_squeeze, input, 512);
+    shake128_absorb((shake128ctx *)&state_squeeze, input, 512);
     state_squeeze.ctx = realloc(state_squeeze.ctx, PQC_SHAKEINCCTX_BYTES);
     if (state_squeeze.ctx == NULL) {
         exit(111);
@@ -225,7 +225,6 @@ static int test_shake128_incremental(void) {
         printf("\n");
         returncode = 1;
     }
-
 
     shake128_inc_ctx_release(&state_absorb);
     shake128_inc_ctx_release(&state_squeeze);

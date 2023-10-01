@@ -1,3 +1,5 @@
+#ifndef NTT_PARAMS_H
+#define NTT_PARAMS_H
 
 /*
  * CC0 1.0 Universal or the following MIT License
@@ -25,16 +27,12 @@
  * SOFTWARE.
  */
 
-#ifndef NTT_PARAMS_H
-#define NTT_PARAMS_H
-
 #define ARRAY_N 256
 
 #define NTT_N 256
 #define LOGNTT_N 8
 
 // root of unity: 1753
-
 
 // Q1
 #define Q1 8380417
@@ -76,8 +74,3 @@
 #define RmodQ1_doubleprime 1
 
 #endif
-
-
-
-
-

@@ -29,27 +29,6 @@ consistency_checks:
       - rejsample.c
       - symmetric-shake.c
     - source:
-        scheme: dilithium2aes
-        implementation: clean
-      files:
-      - packing.h
-      - sign.h
-      - packing.c
-    - source:
-        scheme: dilithium2aes
-        implementation: avx2
-      files:
-      - align.h
-      - cdecl.h
-      - consts.h
-      - ntt.h
-      - packing.h
-      - rejsample.h
-      - rounding.h
-      - sign.h
-      - consts.c
-      - packing.c
-    - source:
         scheme: dilithium3
         implementation: clean
       files:
@@ -78,27 +57,6 @@ consistency_checks:
       - rounding.c
       - symmetric-shake.c
     - source:
-        scheme: dilithium3aes
-        implementation: clean
-      files:
-      - packing.h
-      - sign.h
-      - packing.c
-    - source:
-        scheme: dilithium3aes
-        implementation: avx2
-      files:
-      - align.h
-      - cdecl.h
-      - consts.h
-      - ntt.h
-      - packing.h
-      - rounding.h
-      - sign.h
-      - consts.c
-      - packing.c
-      - rounding.c
-    - source:
         scheme: dilithium5
         implementation: clean
       files:
@@ -108,25 +66,3 @@ consistency_checks:
       - sign.h
       - packing.c
       - symmetric-shake.c
-    - source:
-        scheme: dilithium5aes
-        implementation: clean
-      files:
-      - packing.h
-      - sign.h
-      - packing.c
-    - source:
-        scheme: dilithium5aes
-        implementation: avx2
-      files:
-      - align.h
-      - cdecl.h
-      - consts.h
-      - ntt.h
-      - packing.h
-      - rejsample.h
-      - rounding.h
-      - sign.h
-      - consts.c
-      - packing.c
-      - rounding.c

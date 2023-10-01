@@ -1,3 +1,5 @@
+#ifndef ROUNDING_H
+#define ROUNDING_H
 
 /*
  * This file is dual licensed
@@ -5,8 +7,6 @@
  * or public domain at https://github.com/pq-crystals/dilithium
  */
 
-#ifndef ROUNDING_H
-#define ROUNDING_H
 #include "params.h"
 #include <stdint.h>
 

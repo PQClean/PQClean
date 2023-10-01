@@ -1,3 +1,5 @@
+#ifndef SIGN_H
+#define SIGN_H
 
 /*
  * This file is dual licensed
@@ -5,15 +7,11 @@
  * or public domain at https://github.com/pq-crystals/dilithium
  */
 
-#ifndef SIGN_H
-#define SIGN_H
 #include "params.h"
 #include "poly.h"
 #include "polyvec.h"
 #include <stddef.h>
 #include <stdint.h>
-
-
 
 #define challenge DILITHIUM_NAMESPACE(challenge)
 void challenge(poly *c, const uint8_t seed[SEEDBYTES]);

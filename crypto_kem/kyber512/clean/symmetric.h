@@ -5,8 +5,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
-
 typedef shake128ctx xof_state;
 
 void PQCLEAN_KYBER512_CLEAN_kyber_shake128_absorb(xof_state *s,
@@ -25,6 +23,5 @@ void PQCLEAN_KYBER512_CLEAN_kyber_shake256_prf(uint8_t *out, size_t outlen, cons
 #define xof_ctx_release(STATE) shake128_ctx_release(STATE)
 #define prf(OUT, OUTBYTES, KEY, NONCE) PQCLEAN_KYBER512_CLEAN_kyber_shake256_prf(OUT, OUTBYTES, KEY, NONCE)
 #define kdf(OUT, IN, INBYTES) shake256(OUT, KYBER_SSBYTES, IN, INBYTES)
-
 
 #endif /* SYMMETRIC_H */

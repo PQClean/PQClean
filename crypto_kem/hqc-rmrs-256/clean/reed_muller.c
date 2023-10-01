@@ -7,21 +7,16 @@
  * Constant time implementation of Reed-Muller code RM(1,7)
  */
 
-
-
 // number of repeated code words
 #define MULTIPLICITY                   CEIL_DIVIDE(PARAM_N2, 128)
 
 // copy bit 0 into all bits of a 32 bit value
 #define BIT0MASK(x) (-((x) & 1))
 
-
 static void encode(uint8_t *word, uint8_t message);
 static void hadamard(uint16_t src[128], uint16_t dst[128]);
 static void expand_and_sum(uint16_t dest[128], const uint8_t src[16 * MULTIPLICITY]);
 static uint8_t find_peaks(const uint16_t transform[128]);
-
-
 
 /**
  * @brief Encode a single byte into a single codeword using RM(1,7)
@@ -74,8 +69,6 @@ static void encode(uint8_t *word, uint8_t message) {
     word[8 + 3] = (e >> 0x18) & 0xff;
 }
 
-
-
 /**
  * @brief Hadamard transform
  *
@@ -126,8 +119,6 @@ static void hadamard(uint16_t src[128], uint16_t dst[128]) {
     }
 }
 
-
-
 /**
  * @brief Add multiple codewords into expanded codeword
  *
@@ -159,8 +150,6 @@ static void expand_and_sum(uint16_t dest[128], const uint8_t src[16 * MULTIPLICI
     }
 }
 
-
-
 /**
  * @brief Finding the location of the highest value
  *
@@ -187,9 +176,6 @@ static uint8_t find_peaks(const uint16_t transform[128]) {
     return (uint8_t) pos;
 }
 
-
-
-
 /**
  * @brief Encodes the received word
  *
@@ -209,8 +195,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_reed_muller_encode(uint8_t *cdw, const uint8_t *ms
         }
     }
 }
-
-
 
 /**
  * @brief Decodes the received word

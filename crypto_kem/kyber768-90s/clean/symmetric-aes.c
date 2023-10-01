@@ -4,7 +4,6 @@
 #include <stdint.h>
 #include <string.h>
 
-
 static inline void br_enc32be(unsigned char *dst, uint32_t x) {
     dst[3] = (unsigned char)x;
     dst[2] = (unsigned char)(x >> 8);

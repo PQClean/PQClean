@@ -6,7 +6,6 @@
  * Galois field implementation with multiplication using lookup tables
  */
 
-
 /**
  * @brief Multiplies nonzero element a by element b
  * @returns the product a*b
@@ -20,8 +19,6 @@ uint16_t PQCLEAN_HQCRMRS128_CLEAN_gf_mul(uint16_t a, uint16_t b) {
     return mask & gf_exp[PQCLEAN_HQCRMRS128_CLEAN_gf_mod(gf_log[a] + gf_log[b])];
 }
 
-
-
 /**
  * @brief Squares an element of GF(2^PARAM_M)
  * @returns a^2
@@ -32,8 +29,6 @@ uint16_t PQCLEAN_HQCRMRS128_CLEAN_gf_square(uint16_t a) {
     return mask & gf_exp[PQCLEAN_HQCRMRS128_CLEAN_gf_mod(2 * gf_log[a])];
 }
 
-
-
 /**
  * @brief Computes the inverse of an element of GF(2^PARAM_M)
  * @returns the inverse of a
@@ -43,8 +38,6 @@ uint16_t PQCLEAN_HQCRMRS128_CLEAN_gf_inverse(uint16_t a) {
     int16_t mask = (uint16_t) (-((int32_t) a) >> 31); // a != 0
     return mask & gf_exp[PARAM_GF_MUL_ORDER - gf_log[a]];
 }
-
-
 
 /**
  * @brief Returns i modulo 2^PARAM_M-1

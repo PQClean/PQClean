@@ -10,43 +10,42 @@
 #define SHA3_384_RATE 104
 #define SHA3_512_RATE 72
 
-
 #define PQC_SHAKEINCCTX_BYTES (sizeof(uint64_t)*26)
 #define PQC_SHAKECTX_BYTES (sizeof(uint64_t)*25)
 
 // Context for incremental API
 typedef struct {
-    uint64_t* ctx;
+    uint64_t *ctx;
 } shake128incctx;
 
 // Context for non-incremental API
 typedef struct {
-    uint64_t* ctx;
+    uint64_t *ctx;
 } shake128ctx;
 
 // Context for incremental API
 typedef struct {
-    uint64_t* ctx;
+    uint64_t *ctx;
 } shake256incctx;
 
 // Context for non-incremental API
 typedef struct {
-    uint64_t* ctx;
+    uint64_t *ctx;
 } shake256ctx;
 
 // Context for incremental API
 typedef struct {
-    uint64_t* ctx;
+    uint64_t *ctx;
 } sha3_256incctx;
 
 // Context for incremental API
 typedef struct {
-    uint64_t* ctx;
+    uint64_t *ctx;
 } sha3_384incctx;
 
 // Context for incremental API
 typedef struct {
-    uint64_t* ctx;
+    uint64_t *ctx;
 } sha3_512incctx;
 
 /* Initialize the state and absorb the provided input.
@@ -80,7 +79,7 @@ void shake128_inc_finalize(shake128incctx *state);
  */
 void shake128_inc_squeeze(uint8_t *output, size_t outlen, shake128incctx *state);
 /* Copy the context of the SHAKE128 XOF */
-void shake128_inc_ctx_clone(shake128incctx* dest, const shake128incctx *src);
+void shake128_inc_ctx_clone(shake128incctx *dest, const shake128incctx *src);
 /* Free the context of the SHAKE128 XOF */
 void shake128_inc_ctx_release(shake128incctx *state);
 
@@ -111,7 +110,7 @@ void shake256_inc_finalize(shake256incctx *state);
  */
 void shake256_inc_squeeze(uint8_t *output, size_t outlen, shake256incctx *state);
 /* Copy the state */
-void shake256_inc_ctx_clone(shake256incctx* dest, const shake256incctx *src);
+void shake256_inc_ctx_clone(shake256incctx *dest, const shake256incctx *src);
 /* Free the state */
 void shake256_inc_ctx_release(shake256incctx *state);
 

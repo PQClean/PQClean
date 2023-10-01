@@ -13,11 +13,11 @@
 * Description: Implementation of ExpandA. Generates matrix A with uniformly
 *              random coefficients a_{i,j} by performing rejection
 *              sampling on the output stream of SHAKE128(rho|j|i)
-*              or AES256CTR(rho,j|i).
 *
 * Arguments:   - polyvecl mat[K]: output matrix
 *              - const uint8_t rho[]: byte array containing seed rho
 **************************************************/
+
 void PQCLEAN_DILITHIUM3_AVX2_polyvec_matrix_expand(polyvecl mat[K], const uint8_t rho[SEEDBYTES]) {
     polyvecl tmp;
     PQCLEAN_DILITHIUM3_AVX2_polyvec_matrix_expand_row0(&mat[0], &mat[1], rho);
@@ -84,7 +84,6 @@ void PQCLEAN_DILITHIUM3_AVX2_polyvec_matrix_expand_row5(polyvecl *rowa, polyvecl
     PQCLEAN_DILITHIUM3_AVX2_poly_nttunpack(&rowa->vec[3]);
     PQCLEAN_DILITHIUM3_AVX2_poly_nttunpack(&rowa->vec[4]);
 }
-
 
 void PQCLEAN_DILITHIUM3_AVX2_polyvec_matrix_pointwise_montgomery(polyveck *t, const polyvecl mat[K], const polyvecl *v) {
     unsigned int i;

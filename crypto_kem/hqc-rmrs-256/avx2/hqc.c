@@ -14,8 +14,6 @@
  * @brief Implementation of hqc.h
  */
 
-
-
 /**
  * @brief Keygen of the HQC_PKE IND_CPA scheme
  *
@@ -65,8 +63,6 @@ void PQCLEAN_HQCRMRS256_AVX2_hqc_pke_keygen(unsigned char *pk, unsigned char *sk
 
 }
 
-
-
 /**
  * @brief Encryption of the HQC_PKE IND_CPA scheme
  *
@@ -108,8 +104,6 @@ void PQCLEAN_HQCRMRS256_AVX2_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t *
     PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(&seedexpander, r2, PARAM_OMEGA_R);
     PQCLEAN_HQCRMRS256_AVX2_vect_set_random_fixed_weight(&seedexpander, e, PARAM_OMEGA_E);
 
-
-
     // Compute u = r1 + r2.h
     PQCLEAN_HQCRMRS256_AVX2_vect_mul(tmp1, &vr2, &vh);
     PQCLEAN_HQCRMRS256_AVX2_vect_add(u, r1, tmp1, VEC_N_256_SIZE_64);
@@ -126,8 +120,6 @@ void PQCLEAN_HQCRMRS256_AVX2_hqc_pke_encrypt(uint64_t *u, uint64_t *v, uint8_t *
     PQCLEAN_HQCRMRS256_AVX2_vect_resize(v, PARAM_N1N2, tmp2, PARAM_N);
 
 }
-
-
 
 /**
  * @brief Decryption of the HQC_PKE IND_CPA scheme
@@ -160,7 +152,6 @@ void PQCLEAN_HQCRMRS256_AVX2_hqc_pke_decrypt(uint8_t *m, const uint64_t *u, cons
     }
     PQCLEAN_HQCRMRS256_AVX2_vect_mul(tmp3, &vy, &vtmp2);
     PQCLEAN_HQCRMRS256_AVX2_vect_add(tmp2, tmp1, tmp3, VEC_N_256_SIZE_64);
-
 
     // Compute m by decoding v - u.y
     PQCLEAN_HQCRMRS256_AVX2_store8_arr((uint8_t *)tmp1, VEC_N_SIZE_BYTES, tmp2, VEC_N_256_SIZE_64);

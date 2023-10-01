@@ -47,7 +47,6 @@ static const int32_t l_montgomery_const[4] = {
 * Description: Implementation of ExpandA. Generates matrix A with uniformly
 *              random coefficients a_{i,j} by performing rejection
 *              sampling on the output stream of SHAKE128(rho|j|i)
-*              or AES256CTR(rho,j|i).
 *
 * Arguments:   - polyvecl mat[K]: output matrix
 *              - const uint8_t rho[]: byte array containing seed rho
@@ -178,11 +177,11 @@ void polyvecl_pointwise_poly_montgomery(polyvecl *r, const poly *a, const polyve
 *              - const polyvecl *u: pointer to first input vector
 *              - const polyvecl *v: pointer to second input vector
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_polyvecl_pointwise_acc_montgomery(int32_t *, const int32_t *, const int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_polyvecl_pointwise_acc_montgomery(int32_t *, const int32_t *, const int32_t *, const int32_t *);
 void polyvecl_pointwise_acc_montgomery(poly *w,
                                        const polyvecl *u,
                                        const polyvecl *v) {
-    PQCLEAN_DILITHIUM3_AARCH64__asm_polyvecl_pointwise_acc_montgomery(w->coeffs, u->vec[0].coeffs, v->vec[0].coeffs, l_montgomery_const);
+    PQCLEAN_DILITHIUM3_AARCH64_asm_polyvecl_pointwise_acc_montgomery(w->coeffs, u->vec[0].coeffs, v->vec[0].coeffs, l_montgomery_const);
 }
 
 /*************************************************
@@ -363,7 +362,6 @@ void polyveck_pointwise_poly_montgomery(polyveck *r, const poly *a, const polyve
         poly_pointwise_montgomery(&r->vec[i], a, &v->vec[i]);
     }
 }
-
 
 /*************************************************
 * Name:        polyveck_chknorm

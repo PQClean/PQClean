@@ -1,3 +1,5 @@
+#ifndef PQCLEAN_DILITHIUM2_AARCH64_API_H
+#define PQCLEAN_DILITHIUM2_AARCH64_API_H
 
 /*
  * This file is dual licensed
@@ -5,15 +7,11 @@
  * or public domain at https://github.com/pq-crystals/dilithium
  */
 
-#ifndef PQCLEAN_DILITHIUM2_AARCH64_API_H
-#define PQCLEAN_DILITHIUM2_AARCH64_API_H
-
-
 #include <stddef.h>
 #include <stdint.h>
 
 #define PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_PUBLICKEYBYTES 1312
-#define PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_SECRETKEYBYTES 2528
+#define PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_SECRETKEYBYTES 2560
 #define PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES 2420
 #define PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_ALGNAME "Dilithium2"
 
@@ -34,6 +32,5 @@ int PQCLEAN_DILITHIUM2_AARCH64_crypto_sign(
 int PQCLEAN_DILITHIUM2_AARCH64_crypto_sign_open(
     uint8_t *m, size_t *mlen,
     const uint8_t *sm, size_t smlen, const uint8_t *pk);
-
 
 #endif

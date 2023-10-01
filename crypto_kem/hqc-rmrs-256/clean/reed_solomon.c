@@ -11,7 +11,6 @@
  * Constant time implementation of Reed-Solomon codes
  */
 
-
 static void compute_syndromes(uint16_t *syndromes, uint8_t *cdw);
 static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes);
 static void compute_roots(uint8_t *error, uint16_t *sigma);
@@ -59,8 +58,6 @@ void PQCLEAN_HQCRMRS256_CLEAN_reed_solomon_encode(uint8_t *cdw, const uint8_t *m
     memcpy(cdw + PARAM_N1 - PARAM_K, msg, PARAM_K);
 }
 
-
-
 /**
  * @brief Computes 2 * PARAM_DELTA syndromes
  *
@@ -75,8 +72,6 @@ void compute_syndromes(uint16_t *syndromes, uint8_t *cdw) {
         syndromes[i] ^= cdw[0];
     }
 }
-
-
 
 /**
  * @brief Computes the error locator polynomial (ELP) sigma
@@ -157,8 +152,6 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     return deg_sigma;
 }
 
-
-
 /**
  * @brief Computes the error polynomial error from the error locator polynomial sigma
  *
@@ -174,8 +167,6 @@ static void compute_roots(uint8_t *error, uint16_t *sigma) {
     PQCLEAN_HQCRMRS256_CLEAN_fft(w, sigma, PARAM_DELTA + 1);
     PQCLEAN_HQCRMRS256_CLEAN_fft_retrieve_error_poly(error, w);
 }
-
-
 
 /**
  * @brief Computes the polynomial z(x)
@@ -209,8 +200,6 @@ static void compute_z_poly(uint16_t *z, const uint16_t *sigma, uint16_t degree, 
         }
     }
 }
-
-
 
 /**
  * @brief Computes the error values
@@ -282,8 +271,6 @@ static void compute_error_values(uint16_t *error_values, const uint16_t *z, cons
     }
 }
 
-
-
 /**
  * @brief Correct the errors
  *
@@ -296,8 +283,6 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values) {
         cdw[i] ^= error_values[i];
     }
 }
-
-
 
 /**
  * @brief Decodes the received word

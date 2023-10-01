@@ -79,7 +79,6 @@ void PQCLEAN_KYBER51290S_AVX2_poly_decompress(poly *restrict r, const uint8_t a[
     }
 }
 
-
 /*************************************************
 * Name:        PQCLEAN_KYBER51290S_AVX2_poly_tobytes
 *
@@ -232,7 +231,6 @@ void PQCLEAN_KYBER51290S_AVX2_poly_getnoise_eta2(poly *r, const uint8_t seed[KYB
     prf(buf.coeffs, KYBER_ETA2 * KYBER_N / 4, seed, nonce);
     PQCLEAN_KYBER51290S_AVX2_poly_cbd_eta2(r, buf.vec);
 }
-
 
 /*************************************************
 * Name:        PQCLEAN_KYBER51290S_AVX2_poly_ntt

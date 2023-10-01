@@ -136,7 +136,6 @@ void sha384_inc_ctx_release(sha384ctx *state);
  */
 void sha384(uint8_t *out, const uint8_t *in, size_t inlen);
 
-
 /* ====== SHA512 API ==== */
 
 /**

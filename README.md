@@ -43,16 +43,17 @@ Please cite this work when referring to PQClean:
                Douglas Stebila and
                Thom Wiggers},
   title     = {Improving Software Quality in Cryptography Standardization Projects},
-  booktitle = {{IEEE} European Symposium on Security and Privacy, EuroS{\&amp;}P
-               2022 - Workshops, Genoa, Italy, June 6-10, 2022},
+  booktitle = {{IEEE} European Symposium on Security and Privacy, EuroS{\&}P 2022 - Workshops, Genoa, Italy, June 6-10, 2022},
   pages     = {19--30},
   publisher = {IEEE Computer Society},
-  address = {Los Alamitos, CA, USA},
+  address   = {Los Alamitos, CA, USA},
   year      = {2022},
   url       = {https://eprint.iacr.org/2022/337},
   doi       = {10.1109/EuroSPW55150.2022.00010},
 }
 ```
+
+**Please note** that many of the implementations included in PQClean originate from original research projects themselves, and their authors will appreciate getting cited as well.
 
 ## Requirements on C implementations that are automatically checked
 

@@ -35,7 +35,7 @@ static int check_canary(const uint8_t *d) {
 }
 
 /** Safe malloc */
-inline static void* malloc_s(size_t size) {
+inline static void *malloc_s(size_t size) {
     void *ptr = malloc(size);
     if (ptr == NULL) {
         perror("Malloc failed!");
@@ -77,7 +77,6 @@ inline static void* malloc_s(size_t size) {
 #error "namespace not properly defined for header guard"
 #endif
 
-
 static int test_sign(void) {
     /*
      * This is most likely going to be aligned by the compiler.
@@ -95,10 +94,10 @@ static int test_sign(void) {
      * data alignment. For example this would catch if an implementation
      * directly uses these pointers to load into vector registers using movdqa.
      */
-    uint8_t *pk = (uint8_t *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
-    uint8_t *sk = (uint8_t *) ((uintptr_t) sk_aligned|(uintptr_t) 1);
-    uint8_t *sm = (uint8_t *) ((uintptr_t) sm_aligned|(uintptr_t) 1);
-    uint8_t *m  = (uint8_t *) ((uintptr_t) m_aligned|(uintptr_t) 1);
+    uint8_t *pk = (uint8_t *) ((uintptr_t) pk_aligned | (uintptr_t) 1);
+    uint8_t *sk = (uint8_t *) ((uintptr_t) sk_aligned | (uintptr_t) 1);
+    uint8_t *sm = (uint8_t *) ((uintptr_t) sm_aligned | (uintptr_t) 1);
+    uint8_t *m  = (uint8_t *) ((uintptr_t) m_aligned | (uintptr_t) 1);
 
     size_t mlen;
     size_t smlen;
@@ -130,7 +129,7 @@ static int test_sign(void) {
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
         if ((returncode =
-                 crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) != 0) {
+                    crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) != 0) {
             fprintf(stderr, "ERROR Signature did not verify correctly!\n");
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0 on failure");
@@ -140,9 +139,9 @@ static int test_sign(void) {
         }
         // Validate that the implementation did not touch the canary
         if (check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8) ||
-            check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||
-            check_canary(sm) || check_canary(sm + MLEN + CRYPTO_BYTES + 8) ||
-            check_canary(m) || check_canary(m + MLEN + 8)) {
+                check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||
+                check_canary(sm) || check_canary(sm + MLEN + CRYPTO_BYTES + 8) ||
+                check_canary(m) || check_canary(m + MLEN + 8)) {
             fprintf(stderr, "ERROR canary overwritten\n");
             res = 1;
             goto end;
@@ -174,10 +173,10 @@ static int test_sign_detached(void) {
      * data alignment. For example this would catch if an implementation
      * directly uses these pointers to load into vector registers using movdqa.
      */
-    uint8_t *pk = (uint8_t *) ((uintptr_t) pk_aligned|(uintptr_t) 1);
-    uint8_t *sk = (uint8_t *) ((uintptr_t) sk_aligned|(uintptr_t) 1);
-    uint8_t *sig = (uint8_t *) ((uintptr_t) sig_aligned|(uintptr_t) 1);
-    uint8_t *m  = (uint8_t *) ((uintptr_t) m_aligned|(uintptr_t) 1);
+    uint8_t *pk = (uint8_t *) ((uintptr_t) pk_aligned | (uintptr_t) 1);
+    uint8_t *sk = (uint8_t *) ((uintptr_t) sk_aligned | (uintptr_t) 1);
+    uint8_t *sig = (uint8_t *) ((uintptr_t) sig_aligned | (uintptr_t) 1);
+    uint8_t *m  = (uint8_t *) ((uintptr_t) m_aligned | (uintptr_t) 1);
 
     size_t siglen;
     int returncode;
@@ -206,7 +205,7 @@ static int test_sign_detached(void) {
         RETURNS_ZERO(crypto_sign_signature(sig + 8, &siglen, m + 8, MLEN, sk + 8));
 
         if ((returncode =
-                crypto_sign_verify(sig + 8, siglen, m + 8, MLEN, pk + 8)) != 0) {
+                    crypto_sign_verify(sig + 8, siglen, m + 8, MLEN, pk + 8)) != 0) {
             fprintf(stderr, "ERROR Signature did not verify correctly!\n");
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0 on failure");
@@ -216,9 +215,9 @@ static int test_sign_detached(void) {
         }
         // Validate that the implementation did not touch the canary
         if (check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8) ||
-            check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||
-            check_canary(sig) || check_canary(sig + CRYPTO_BYTES + 8) ||
-            check_canary(m) || check_canary(m + MLEN + 8)) {
+                check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||
+                check_canary(sig) || check_canary(sig + CRYPTO_BYTES + 8) ||
+                check_canary(m) || check_canary(m + MLEN + 8)) {
             fprintf(stderr, "ERROR canary overwritten\n");
             res = 1;
             goto end;

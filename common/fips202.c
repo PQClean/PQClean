@@ -586,7 +586,6 @@ void shake256_inc_ctx_release(shake256incctx *state) {
     free(state->ctx);
 }
 
-
 /*************************************************
  * Name:        shake128_absorb
  *

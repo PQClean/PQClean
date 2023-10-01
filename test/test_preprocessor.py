@@ -1,6 +1,7 @@
 import pytest
 
 import helpers
+from pathlib import Path
 import pqclean
 
 
@@ -15,15 +16,30 @@ def test_preprocessor(implementation: pqclean.Implementation):
     hfiles = implementation.hfiles()
     errors = []
     for file in hfiles + cfiles:
+        code_has_begun = False
+        in_comment = True
         with open(file) as f:
             for i, line in enumerate(f):
                 line = line.strip()
-                if file in hfiles and i == 0 and line.startswith('#ifndef'):
+                if file in hfiles and not code_has_begun and line.startswith('#ifndef'):
                     continue
-                if (line.startswith('#if') and ("crypto_sign/falcon-512/avx2/sign.c" not in file) and 
-                    ("crypto_sign/falcon-1024/avx2/sign.c" not in file) and
-                    ("crypto_sign\\falcon-512\\avx2\\sign.c" not in file) and
-                    ("crypto_sign\\falcon-1024\\avx2\\sign.c" not in file)):
+                if line == "":
+                    continue
+                if line.startswith("/*") and not code_has_begun:
+                    in_comment = True
+                    continue
+                if in_comment and "*/" in line:
+                    in_comment = False
+                    continue
+                if not code_has_begun and not in_comment and not line.startswith("#ifndef"):
+                    code_has_begun = True
+                if (line.startswith('#if') and 
+                    not Path(file).match("crypto_sign/dilithium[235]/aarch64/fips202x2.c") and
+                    not Path(file).match("crypto_kem/kyber512/aarch64/fips202x2.c") and
+                    not Path(file).match("crypto_kem/kyber768/aarch64/fips202x2.c") and
+                    not Path(file).match("crypto_kem/kyber1024/aarch64/fips202x2.c") and
+                    not Path(file).match("crypto_sign/falcon-512/aarch64/fips202x2.c") and
+                    not Path(file).match("crypto_sign/falcon-1024/aarch64/fips202x2.c")):
                     errors.append("\n at {}:{}".format(file, i+1))
     if errors:
         raise AssertionError(

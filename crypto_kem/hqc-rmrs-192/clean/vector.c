@@ -10,7 +10,6 @@
  * @brief Implementation of vectors sampling and some utilities for the HQC scheme
  */
 
-
 /**
  * @brief Generates a vector of a given Hamming weight
  *
@@ -61,8 +60,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_vect_set_random_fixed_weight_by_coordinates(AES_XO
     }
 }
 
-
-
 /**
  * @brief Generates a vector of a given Hamming weight
  *
@@ -91,8 +88,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_vect_set_random_fixed_weight(AES_XOF_struct *ctx, 
     }
 }
 
-
-
 /**
  * @brief Generates a random vector of dimension <b>PARAM_N</b>
  *
@@ -111,8 +106,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_vect_set_random(AES_XOF_struct *ctx, uint64_t *v) 
     v[VEC_N_SIZE_64 - 1] &= RED_MASK;
 }
 
-
-
 /**
  * @brief Adds two vectors
  *
@@ -126,8 +119,6 @@ void PQCLEAN_HQCRMRS192_CLEAN_vect_add(uint64_t *o, const uint64_t *v1, const ui
         o[i] = v1[i] ^ v2[i];
     }
 }
-
-
 
 /**
  * @brief Compares two vectors
@@ -145,8 +136,6 @@ uint8_t PQCLEAN_HQCRMRS192_CLEAN_vect_compare(const uint8_t *v1, const uint8_t *
     r = (~r + 1) >> 63;
     return (uint8_t) r;
 }
-
-
 
 /**
  * @brief Resize a vector so that it contains <b>size_o</b> bits

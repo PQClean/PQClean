@@ -5,12 +5,10 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
-
 #ifndef PQCLEAN_KYBER1024_AARCH64_API_H
 #define PQCLEAN_KYBER1024_AARCH64_API_H
 
 #include <stdint.h>
-
 
 #define PQCLEAN_KYBER1024_AARCH64_CRYPTO_SECRETKEYBYTES  3168
 #define PQCLEAN_KYBER1024_AARCH64_CRYPTO_PUBLICKEYBYTES  1568

@@ -54,8 +54,7 @@ void ntt(int16_t r[256]) {
 * Arguments:   - int16_t r[256] in {-(q-1)/2,...,(q-1)/2}
 *              pointer to input/output vector of elements of Zq
 **************************************************/
-void invntt(int16_t r[256])
-{
-  iNTT(r);
+void invntt(int16_t r[256]) {
+    iNTT(r);
 
 }

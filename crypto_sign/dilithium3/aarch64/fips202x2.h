@@ -1,3 +1,5 @@
+#ifndef FIPS202X2_H
+#define FIPS202X2_H
 
 /*
  * This file is licensed
@@ -5,9 +7,6 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
-
-#ifndef FIPS202X2_H
-#define FIPS202X2_H
 
 #include "params.h"
 #include <arm_neon.h>
@@ -20,11 +19,9 @@ typedef uint64x2_t v128;
 #define SHA3_256_RATE 136
 #define SHA3_512_RATE 72
 
-
 typedef struct {
     v128 s[25];
 } keccakx2_state;
-
 
 #define shake128x2_absorb DILITHIUM_NAMESPACE(shake128x2_absorb)
 void shake128x2_absorb(keccakx2_state *state,

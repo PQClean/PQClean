@@ -1,3 +1,5 @@
+#ifndef SYMMETRIC_H
+#define SYMMETRIC_H
 
 /*
  * This file was originally licensed
@@ -30,13 +32,10 @@
  * SOFTWARE.
  */
 
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
 #include "fips202.h"
 #include "fips202x2.h"
 #include "params.h"
 #include <stdint.h>
-
 
 typedef shake128incctx stream128_state;
 typedef shake256incctx stream256_state;
@@ -60,7 +59,6 @@ void dilithium_shake256x2_stream_init(keccakx2_state *state,
                                       const uint8_t seed[CRHBYTES],
                                       uint16_t nonce1, uint16_t nonce2);
 
-
 #define STREAM128_BLOCKBYTES SHAKE128_RATE
 #define STREAM256_BLOCKBYTES SHAKE256_RATE
 
@@ -74,6 +72,5 @@ void dilithium_shake256x2_stream_init(keccakx2_state *state,
 #define stream256_squeezeblocks(OUT, OUTBLOCKS, STATE) \
     shake256_inc_squeeze(OUT, (OUTBLOCKS)*(SHAKE256_RATE), STATE)
 #define stream256_release(STATE) shake256_inc_ctx_release(STATE)
-
 
 #endif

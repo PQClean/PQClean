@@ -1,3 +1,5 @@
+#ifndef POLYVEC_H
+#define POLYVEC_H
 
 /*
  * This file is dual licensed
@@ -5,8 +7,6 @@
  * or public domain at https://github.com/pq-crystals/dilithium
  */
 
-#ifndef POLYVEC_H
-#define POLYVEC_H
 #include "params.h"
 #include "poly.h"
 #include <stdint.h>
@@ -42,11 +42,8 @@ void polyvecl_pointwise_acc_montgomery(poly *w,
                                        const polyvecl *u,
                                        const polyvecl *v);
 
-
 #define polyvecl_chknorm DILITHIUM_NAMESPACE(polyvecl_chknorm)
 int polyvecl_chknorm(const polyvecl *v, int32_t B);
-
-
 
 /* Vectors of polynomials of length K */
 typedef struct {

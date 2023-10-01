@@ -113,7 +113,7 @@ void treehashx2(unsigned char *root, unsigned char *auth_path,
             for (j = 0; j < 2; j++) {
                 set_tree_height(tree_addrx2 + j * 8, h + 1);
                 set_tree_index(tree_addrx2 + j * 8,
-                               (2 / 2) * (internal_idx & ~1) + j - left_adj + internal_idx_offset );
+                               (2 / 2) * (internal_idx & ~1U) + j - left_adj + internal_idx_offset );
             }
             unsigned char *left = &stackx2[h * 2 * SPX_N];
             thashx2( &current[0 * SPX_N],
