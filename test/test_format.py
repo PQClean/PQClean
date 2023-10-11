@@ -17,8 +17,11 @@ def version_check():
     result = helpers.run_subprocess(['astyle', '--version'])
     return "Artistic Style Version 3.4" in result
 
-if not version_check() and "CI" not in os.environ:
-    pytest.skip("Incompatible AStyle version (need 3.4.x)", allow_module_level=True)
+if not version_check():
+    if "CI" not in os.environ:
+        pytest.skip("Incompatible AStyle version (need 3.4.x)", allow_module_level=True)
+    else:
+        pytest.fail("AStyle 3.4.x needs to be available on CI")
 
 @pytest.mark.parametrize(
     'implementation',
