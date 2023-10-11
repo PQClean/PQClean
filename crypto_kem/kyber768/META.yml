@@ -6,7 +6,7 @@ length-public-key: 1184
 length-ciphertext: 1088
 length-secret-key: 2400
 length-shared-secret: 32
-nistkat-sha256: 89e82a5bf2d4ddb2c6444e10409e6d9ca65dafbca67d1a0db2c9b54920a29172
+nistkat-sha256: c7e76b4b30c786b5b70c152a446e7832c1cb42b3816ec048dbeaf7041211b310
 principal-submitters:
   - Peter Schwabe
 auxiliary-submitters:
@@ -19,11 +19,12 @@ auxiliary-submitters:
   - John M. Schanck
   - Gregor Seiler
   - Damien Stehlé
+  - Jintai Ding
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/kyber/commit/faf5c3fe33e0b61c7c8a7888dd862bf5def17ad2 via https://github.com/jschanck/package-pqclean/tree/08ef5e0d/kyber
+      version: https://github.com/pq-crystals/kyber/commit/4ecce06d584a4e7cecc42f141aadae39b8431b06 via https://github.com/mkannwischer/package-pqclean/tree/146bcfac/kyber
     - name: avx2
-      version: https://github.com/pq-crystals/kyber/commit/faf5c3fe33e0b61c7c8a7888dd862bf5def17ad2 via https://github.com/jschanck/package-pqclean/tree/08ef5e0d/kyber
+      version: https://github.com/pq-crystals/kyber/commit/4ecce06d584a4e7cecc42f141aadae39b8431b06 via https://github.com/mkannwischer/package-pqclean/tree/146bcfac/kyber
       supported_platforms:
         - architecture: x86_64
           operating_systems:
@@ -35,7 +36,7 @@ implementations:
               - bmi2
               - popcnt
     - name: aarch64
-      version: https://github.com/neon-ntt/neon-ntt/tree/c6ffbcd1e5590e4dddbc604fc80d2ad756485b4d
+      version: https://github.com/neon-ntt/neon-ntt/tree/70cdc9601b8fce9b6c0cef4faf168b6c4c4ddc4c
       supported_platforms:
         - architecture: arm_8
           operating_systems:

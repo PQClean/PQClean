@@ -1,3 +1,5 @@
+#ifndef REJSAMPLE_H
+#define REJSAMPLE_H
 
 /*
  * This file is licensed
@@ -5,9 +7,6 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
-
-#ifndef REJSAMPLE_H
-#define REJSAMPLE_H
 
 #include "params.h"
 #include <stdint.h>

@@ -1,3 +1,5 @@
+#ifndef INDCPA_H
+#define INDCPA_H
 
 /*
  * This file is licensed
@@ -5,18 +7,16 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
-#ifndef INDCPA_H
-#define INDCPA_H
-
 #include "params.h"
 #include "polyvec.h"
 #include <stdint.h>
 
 #define gen_matrix KYBER_NAMESPACE(gen_matrix)
 void gen_matrix(int16_t a[KYBER_K][KYBER_K][KYBER_N], const uint8_t seed[KYBER_SYMBYTES], int transposed);
-#define indcpa_keypair KYBER_NAMESPACE(indcpa_keypair)
-void indcpa_keypair(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
-                    uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES]);
+#define indcpa_keypair_derand KYBER_NAMESPACE(indcpa_keypair_derand)
+void indcpa_keypair_derand(uint8_t pk[KYBER_INDCPA_PUBLICKEYBYTES],
+                           uint8_t sk[KYBER_INDCPA_SECRETKEYBYTES],
+                           const uint8_t coins[KYBER_SYMBYTES]);
 
 #define indcpa_enc KYBER_NAMESPACE(indcpa_enc)
 void indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],

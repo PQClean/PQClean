@@ -1,3 +1,5 @@
+#ifndef NTT_H
+#define NTT_H
 
 /*
  * CC0 1.0 Universal or the following MIT License
@@ -25,8 +27,6 @@
  * SOFTWARE.
  */
 
-#ifndef NTT_H
-#define NTT_H
 #include "params.h"
 #include <stdint.h>
 
