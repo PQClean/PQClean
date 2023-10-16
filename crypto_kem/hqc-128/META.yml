@@ -1,0 +1,28 @@
+name: HQC-128
+type: kem
+claimed-nist-level: 1
+claimed-security: IND-CCA2
+length-ciphertext: 4433
+length-public-key: 2249
+length-secret-key: 2305
+length-shared-secret: 64
+nistkat-sha256: 74290ad7a789c01aa92cd7f72f1b5ba5fa30a58294cdf2df52b9c76c3aafba3b
+nistkat-rng: hqc
+principal-submitters:
+  - Carlos Aguilar Melchor
+  - Nicolas Aragon
+  - Slim Bettaieb
+  - Loïc Bidoux
+  - Olivier Blazy
+  - Jurjen Bos
+  - Jean-Christophe Deneuville
+  - Arnaud Dion
+  - Philippe Gaborit
+  - Jérôme Lacan
+  - Edoardo Persichetti
+  - Jean-Marc Robert
+  - Pascal Véron
+  - Gilles Zémor
+implementations:
+    - name: clean
+      version: hqc-submission_2023-04-30 via https://github.com/SWilson4/package-pqclean/tree/8db1b24b/hqc

@@ -8,6 +8,7 @@ SCHEME=kyber768
 SCHEME_UPPERCASE=KYBER768
 IMPLEMENTATION=clean
 IMPLEMENTATION_UPPERCASE=CLEAN
+KAT_RNG=nist
 
 SCHEME_DIR=..\crypto_$(TYPE)\$(SCHEME)\$(IMPLEMENTATION)
 
@@ -58,14 +59,14 @@ $(DEST_DIR)\printparams_$(SCHEME)_$(IMPLEMENTATION).exe: crypto_$(TYPE)\printpar
     $(CC) /c crypto_$(TYPE)\printparams.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
     LINK.EXE /OUT:$@ printparams.obj
 
-$(DEST_DIR)\nistkat_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(TEST_COMMON_DIR)\nistkatrng.obj
+$(DEST_DIR)\nistkat_$(SCHEME)_$(IMPLEMENTATION).exe: build-scheme $(COMMON_OBJECTS) $(TEST_COMMON_DIR)\$(KAT_RNG)katrng.obj
     -MKDIR $(DEST_DIR)
-    -DEL nistkat.obj
-    $(CC) /c crypto_$(TYPE)\nistkat.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
-    LINK.EXE /STACK:8192000 /OUT:$@ nistkat.obj $(COMMON_OBJECTS_NOPATH) nistkatrng.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib
+    -DEL $(KAT_RNG)kat.obj
+    $(CC) /c crypto_$(TYPE)\$(KAT_RNG)kat.c $(CFLAGS) /I $(SCHEME_DIR) /DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE)
+    LINK.EXE /STACK:8192000 /OUT:$@ $(KAT_RNG)kat.obj $(COMMON_OBJECTS_NOPATH) $(KAT_RNG)katrng.obj $(SCHEME_DIR)\lib$(SCHEME)_$(IMPLEMENTATION).lib
 
 clean:
-    -DEL functest.obj testvectors.obj printparams.obj nistkat.obj
+    -DEL functest.obj testvectors.obj printparams.obj $(KAT_RNG)kat.obj
     -DEL $(COMMON_OBJECTS_NOPATH) randombytes.obj notrandombytes.obj
     -DEL $(DEST_DIR)\functest_$(SCHEME)_$(IMPLEMENTATION).exe
     -DEL $(DEST_DIR)\testvectors_$(SCHEME)_$(IMPLEMENTATION).exe
