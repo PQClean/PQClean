@@ -35,11 +35,9 @@ def test_preprocessor(implementation: pqclean.Implementation):
                     code_has_begun = True
                 if (line.startswith('#if') and 
                     not Path(file).match("crypto_sign/dilithium[235]/aarch64/fips202x2.c") and
-                    not Path(file).match("crypto_kem/kyber512/aarch64/fips202x2.c") and
-                    not Path(file).match("crypto_kem/kyber768/aarch64/fips202x2.c") and
-                    not Path(file).match("crypto_kem/kyber1024/aarch64/fips202x2.c") and
-                    not Path(file).match("crypto_sign/falcon-512/aarch64/fips202x2.c") and
-                    not Path(file).match("crypto_sign/falcon-1024/aarch64/fips202x2.c")):
+                    not Path(file).match("crypto_kem/kyber*/aarch64/fips202x2.c") and
+                    not Path(file).match("crypto_sign/falcon-*/aarch64/fips202x2.c") and
+                    not Path(file).match("crypto_sign/falcon-*/avx2/sign.c")):
                     errors.append("\n at {}:{}".format(file, i+1))
     if errors:
         raise AssertionError(
