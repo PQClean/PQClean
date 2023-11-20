@@ -1,5 +1,5 @@
-#ifndef POLY_H
-#define POLY_H
+#ifndef PQCLEAN_KYBER512_AARCH64_POLY_H
+#define PQCLEAN_KYBER512_AARCH64_POLY_H
 
 /*
  * This file is licensed

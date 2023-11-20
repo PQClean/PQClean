@@ -1,5 +1,5 @@
-#ifndef REJSAMPLE_H
-#define REJSAMPLE_H
+#ifndef PQCLEAN_KYBER512_AARCH64_REJSAMPLE_H
+#define PQCLEAN_KYBER512_AARCH64_REJSAMPLE_H
 
 /*
  * This file is licensed

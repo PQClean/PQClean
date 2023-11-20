@@ -1,5 +1,5 @@
-#ifndef KEM_H
-#define KEM_H
+#ifndef PQCLEAN_KYBER512_AARCH64_KEM_H
+#define PQCLEAN_KYBER512_AARCH64_KEM_H
 
 /*
  * This file is licensed

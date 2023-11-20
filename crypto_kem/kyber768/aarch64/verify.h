@@ -1,5 +1,5 @@
-#ifndef VERIFY_H
-#define VERIFY_H
+#ifndef PQCLEAN_KYBER768_AARCH64_VERIFY_H
+#define PQCLEAN_KYBER768_AARCH64_VERIFY_H
 
 /*
  * This file is licensed

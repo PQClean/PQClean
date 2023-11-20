@@ -1,5 +1,5 @@
-#ifndef REDUCE_H
-#define REDUCE_H
+#ifndef PQCLEAN_KYBER1024_AARCH64_REDUCE_H
+#define PQCLEAN_KYBER1024_AARCH64_REDUCE_H
 
 /*
  * This file is licensed

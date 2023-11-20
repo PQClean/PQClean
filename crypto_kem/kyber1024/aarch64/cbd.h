@@ -1,5 +1,5 @@
-#ifndef CBD_H
-#define CBD_H
+#ifndef PQCLEAN_KYBER1024_AARCH64_CBD_H
+#define PQCLEAN_KYBER1024_AARCH64_CBD_H
 
 /*
  * This file is licensed

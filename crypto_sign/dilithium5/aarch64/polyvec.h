@@ -1,5 +1,5 @@
-#ifndef POLYVEC_H
-#define POLYVEC_H
+#ifndef PQCLEAN_DILITHIUM5_AARCH64_POLYVEC_H
+#define PQCLEAN_DILITHIUM5_AARCH64_POLYVEC_H
 
 /*
  * This file is dual licensed

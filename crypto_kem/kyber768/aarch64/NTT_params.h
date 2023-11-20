@@ -1,5 +1,5 @@
-#ifndef NTT_PARAMS_H
-#define NTT_PARAMS_H
+#ifndef PQCLEAN_KYBER768_AARCH64_NTT_PARAMS_H
+#define PQCLEAN_KYBER768_AARCH64_NTT_PARAMS_H
 
 /*
  * We offer
@@ -42,27 +42,27 @@
 #define invomegaQ1 1175
 // R = 2^15 below
 // RmodQ1 = 2^15 mod^{+-} Q1
-#define RmodQ1 -522
+#define RmodQ1 (-522)
 // Q1prime = Q1^{-1} mod^{+-} 2^15
-#define Q1prime -3327
+#define Q1prime (-3327)
 // invNQ1 = NTT_N^{-1} mod Q1
 #define invNQ1 3303
 // R2modQ1 = 2^16 mod^{+-} Q1
-#define R2modQ1 -1044
+#define R2modQ1 (-1044)
 // Q1prime2 = -Q1^{-1} mod^{+-} 2^16
 #define Q1prime2 3327
 
 // R3modQ1 = -2^32 mod^{+-} Q1
-#define R3modQ1 -1353
+#define R3modQ1 (-1353)
 // R3modQ1_prime = (R3modQ1 + Q1) (Q1^{-1} mod^{+-} 2^16) mod^{+-} 2^16
-#define R3modQ1_prime -20552
+#define R3modQ1_prime (-20552)
 // R3modQ1_prime_half = ( (R3modQ1 + Q1) / 2) (Q1^{-1} mod^{+-} 2^16) mod^{+-} 2^16
-#define R3modQ1_prime_half -10276
+#define R3modQ1_prime_half (-10276)
 // R3modQ1_doubleprime (R3modQ1_prime Q1 - (R3modQ1 + Q1)) / 2^16
-#define R3modQ1_doubleprime -1044
+#define R3modQ1_doubleprime (-1044)
 
 // invNQ1_R3modQ1 = -NTT_N^{-1} 2^32 mod^{+-} Q1
-#define invNQ1_R3modQ1 -1441
+#define invNQ1_R3modQ1 (-1441)
 // invNQ1_R3modQ1_prime = (invNQ1_R3modQ1 + Q1) (Q1^{-1} mod^{+-} 2^16) mod^{+-} 2^16
 #define invNQ1_R3modQ1_prime 10080
 // invNQ1_R3modQ1_prime_half = ( (invNQ1_R3modQ1 + Q1) / 2) (Q1^{-1} mod^{+-} 2^16) mod^{+-} 2^16
