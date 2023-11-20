@@ -1,5 +1,5 @@
-#ifndef API_H
-#define API_H
+#ifndef PQCLEAN_DILITHIUM5_AARCH64_API_H
+#define PQCLEAN_DILITHIUM5_AARCH64_API_H
 
 /*
  * This file is dual licensed
