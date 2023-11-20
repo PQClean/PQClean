@@ -4,12 +4,14 @@
  * under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html) or
  * public domain at https://github.com/pq-crystals/dilithium/tree/master/ref
  *
- * We choose
- * CC0 1.0 Universal or the following MIT License
+ * We offer
+ * CC0 1.0 Universal or the following MIT License for this file.
+ * You may freely choose one of them that applies.
  *
  * MIT License
  *
  * Copyright (c) 2023: Hanno Becker, Vincent Hwang, Matthias J. Kannwischer, Bo-Yin Yang, and Shang-Yi Yang
+ * Copyright (c) 2023: Vincent Hwang
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,12 +41,7 @@
 
 #include "fips202x2.h"
 
-#include "NTT_params.h"
 #include "ntt.h"
-
-static const int32_t montgomery_const[4] = {
-    DILITHIUM_Q, DILITHIUM_QINV
-};
 
 #define DBENCH_START()
 #define DBENCH_STOP(t)
@@ -57,11 +54,11 @@ static const int32_t montgomery_const[4] = {
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_reduce(int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_reduce(int32_t *, const int32_t *);
 void poly_reduce(poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_reduce(a->coeffs, montgomery_const);
+    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_reduce(a->coeffs, constants);
 
     DBENCH_STOP(*tred);
 }
@@ -74,11 +71,11 @@ void poly_reduce(poly *a) {
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_caddq(int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_caddq(int32_t *, const int32_t *);
 void poly_caddq(poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_caddq(a->coeffs, montgomery_const);
+    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_caddq(a->coeffs, constants);
 
     DBENCH_STOP(*tred);
 }
@@ -91,11 +88,11 @@ void poly_caddq(poly *a) {
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_freeze(int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_freeze(int32_t *, const int32_t *);
 void poly_freeze(poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_freeze(a->coeffs, montgomery_const);
+    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_freeze(a->coeffs, constants);
 
     DBENCH_STOP(*tred);
 }
@@ -205,11 +202,11 @@ void poly_invntt_tomont(poly *a) {
 *              - const poly *a: pointer to first input polynomial
 *              - const poly *b: pointer to second input polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_pointwise_montgomery(int32_t *des, const int32_t *src1, const int32_t *src2, const int32_t *table);
+extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_pointwise_montgomery(int32_t *des, const int32_t *src1, const int32_t *src2, const int32_t *table);
 void poly_pointwise_montgomery(poly *c, const poly *a, const poly *b) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_pointwise_montgomery(c->coeffs, a->coeffs, b->coeffs, montgomery_const);
+    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_pointwise_montgomery(c->coeffs, a->coeffs, b->coeffs, constants);
 
     DBENCH_STOP(*tmul);
 }
@@ -226,11 +223,11 @@ void poly_pointwise_montgomery(poly *c, const poly *a, const poly *b) {
 *              - poly *a0: pointer to output polynomial with coefficients c0
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_power2round(int32_t *, int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_power2round(int32_t *, int32_t *, const int32_t *);
 void poly_power2round(poly *a1, poly *a0, const poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_power2round(a1->coeffs, a0->coeffs, a->coeffs);
+    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_power2round(a1->coeffs, a0->coeffs, a->coeffs);
 
     DBENCH_STOP(*tround);
 }
@@ -470,12 +467,31 @@ static unsigned int rej_eta(int32_t *a,
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
 
+        #if ETA == 2
+
+        if (t0 < 15) {
+            t0 = t0 - (205 * t0 >> 10) * 5;
+            a[ctr++] = 2 - t0;
+        }
+        if (t1 < 15 && ctr < len) {
+            t1 = t1 - (205 * t1 >> 10) * 5;
+            a[ctr++] = 2 - t1;
+        }
+
+        #elif ETA == 4
+
         if (t0 < 9) {
             a[ctr++] = 4 - t0;
         }
         if (t1 < 9 && ctr < len) {
             a[ctr++] = 4 - t1;
         }
+
+        #else
+
+#error "No parameter specified!"
+
+        #endif
 
     }
 
@@ -494,7 +510,11 @@ static unsigned int rej_eta(int32_t *a,
 *              - const uint8_t seed[]: byte array with seed of length CRHBYTES
 *              - uint16_t nonce: 2-byte nonce
 **************************************************/
+#if ETA == 2
+#define POLY_UNIFORM_ETA_NBLOCKS ((136 + STREAM256_BLOCKBYTES - 1)/STREAM256_BLOCKBYTES)
+#elif ETA == 4
 #define POLY_UNIFORM_ETA_NBLOCKS ((227 + STREAM256_BLOCKBYTES - 1)/STREAM256_BLOCKBYTES)
+#endif
 void poly_uniform_eta(poly *a,
                       const uint8_t seed[CRHBYTES],
                       uint16_t nonce) {
@@ -641,11 +661,36 @@ void polyeta_pack(uint8_t *r, const poly *a) {
     uint8_t t[8];
     DBENCH_START();
 
+    #if ETA == 2
+
+    for (i = 0; i < N / 8; ++i) {
+        t[0] = ETA - a->coeffs[8 * i + 0];
+        t[1] = ETA - a->coeffs[8 * i + 1];
+        t[2] = ETA - a->coeffs[8 * i + 2];
+        t[3] = ETA - a->coeffs[8 * i + 3];
+        t[4] = ETA - a->coeffs[8 * i + 4];
+        t[5] = ETA - a->coeffs[8 * i + 5];
+        t[6] = ETA - a->coeffs[8 * i + 6];
+        t[7] = ETA - a->coeffs[8 * i + 7];
+
+        r[3 * i + 0]  = (t[0] >> 0) | (t[1] << 3) | (t[2] << 6);
+        r[3 * i + 1]  = (t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7);
+        r[3 * i + 2]  = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
+    }
+
+    #elif ETA == 4
+
     for (i = 0; i < N / 2; ++i) {
         t[0] = ETA - a->coeffs[2 * i + 0];
         t[1] = ETA - a->coeffs[2 * i + 1];
         r[i] = t[0] | (t[1] << 4);
     }
+
+    #else
+
+#error "No parameter specified!"
+
+    #endif
 
     DBENCH_STOP(*tpack);
 }
@@ -662,12 +707,42 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
 
+    #if ETA == 2
+
+    for (i = 0; i < N / 8; ++i) {
+        r->coeffs[8 * i + 0] =  (a[3 * i + 0] >> 0) & 7;
+        r->coeffs[8 * i + 1] =  (a[3 * i + 0] >> 3) & 7;
+        r->coeffs[8 * i + 2] = ((a[3 * i + 0] >> 6) | (a[3 * i + 1] << 2)) & 7;
+        r->coeffs[8 * i + 3] =  (a[3 * i + 1] >> 1) & 7;
+        r->coeffs[8 * i + 4] =  (a[3 * i + 1] >> 4) & 7;
+        r->coeffs[8 * i + 5] = ((a[3 * i + 1] >> 7) | (a[3 * i + 2] << 1)) & 7;
+        r->coeffs[8 * i + 6] =  (a[3 * i + 2] >> 2) & 7;
+        r->coeffs[8 * i + 7] =  (a[3 * i + 2] >> 5) & 7;
+
+        r->coeffs[8 * i + 0] = ETA - r->coeffs[8 * i + 0];
+        r->coeffs[8 * i + 1] = ETA - r->coeffs[8 * i + 1];
+        r->coeffs[8 * i + 2] = ETA - r->coeffs[8 * i + 2];
+        r->coeffs[8 * i + 3] = ETA - r->coeffs[8 * i + 3];
+        r->coeffs[8 * i + 4] = ETA - r->coeffs[8 * i + 4];
+        r->coeffs[8 * i + 5] = ETA - r->coeffs[8 * i + 5];
+        r->coeffs[8 * i + 6] = ETA - r->coeffs[8 * i + 6];
+        r->coeffs[8 * i + 7] = ETA - r->coeffs[8 * i + 7];
+    }
+
+    #elif ETA == 4
+
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
         r->coeffs[2 * i + 1] = a[i] >> 4;
         r->coeffs[2 * i + 0] = ETA - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = ETA - r->coeffs[2 * i + 1];
     }
+
+    #else
+
+#error "No parameter specified!"
+
+    #endif
 
     DBENCH_STOP(*tpack);
 }
@@ -706,11 +781,11 @@ void polyt1_pack(uint8_t *r, const poly *a) {
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64_asm_10_to_32(int32_t *, const uint8_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64__asm_10_to_32(int32_t *, const uint8_t *);
 void polyt1_unpack(poly *r, const uint8_t *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64_asm_10_to_32(r->coeffs, a);
+    PQCLEAN_DILITHIUM3_AARCH64__asm_10_to_32(r->coeffs, a);
 
     DBENCH_STOP(*tpack);
 }
@@ -841,6 +916,30 @@ void polyz_pack(uint8_t *r, const poly *a) {
     uint32_t t[4];
     DBENCH_START();
 
+    #if GAMMA1 == (1 << 17)
+
+    for (i = 0; i < N / 4; ++i) {
+        t[0] = GAMMA1 - a->coeffs[4 * i + 0];
+        t[1] = GAMMA1 - a->coeffs[4 * i + 1];
+        t[2] = GAMMA1 - a->coeffs[4 * i + 2];
+        t[3] = GAMMA1 - a->coeffs[4 * i + 3];
+
+        r[9 * i + 0]  = t[0];
+        r[9 * i + 1]  = t[0] >> 8;
+        r[9 * i + 2]  = t[0] >> 16;
+        r[9 * i + 2] |= t[1] << 2;
+        r[9 * i + 3]  = t[1] >> 6;
+        r[9 * i + 4]  = t[1] >> 14;
+        r[9 * i + 4] |= t[2] << 4;
+        r[9 * i + 5]  = t[2] >> 4;
+        r[9 * i + 6]  = t[2] >> 12;
+        r[9 * i + 6] |= t[3] << 6;
+        r[9 * i + 7]  = t[3] >> 2;
+        r[9 * i + 8]  = t[3] >> 10;
+    }
+
+    #elif GAMMA1 == (1 << 19)
+
     for (i = 0; i < N / 2; ++i) {
         t[0] = GAMMA1 - a->coeffs[2 * i + 0];
         t[1] = GAMMA1 - a->coeffs[2 * i + 1];
@@ -852,6 +951,12 @@ void polyz_pack(uint8_t *r, const poly *a) {
         r[5 * i + 3]  = t[1] >> 4;
         r[5 * i + 4]  = t[1] >> 12;
     }
+
+    #else
+
+#error "No parameter specified!"
+
+    #endif
 
     DBENCH_STOP(*tpack);
 }
@@ -869,6 +974,37 @@ void polyz_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
 
+    #if GAMMA1 == (1 << 17)
+
+    for (i = 0; i < N / 4; ++i) {
+        r->coeffs[4 * i + 0]  = a[9 * i + 0];
+        r->coeffs[4 * i + 0] |= (uint32_t)a[9 * i + 1] << 8;
+        r->coeffs[4 * i + 0] |= (uint32_t)a[9 * i + 2] << 16;
+        r->coeffs[4 * i + 0] &= 0x3FFFF;
+
+        r->coeffs[4 * i + 1]  = a[9 * i + 2] >> 2;
+        r->coeffs[4 * i + 1] |= (uint32_t)a[9 * i + 3] << 6;
+        r->coeffs[4 * i + 1] |= (uint32_t)a[9 * i + 4] << 14;
+        r->coeffs[4 * i + 1] &= 0x3FFFF;
+
+        r->coeffs[4 * i + 2]  = a[9 * i + 4] >> 4;
+        r->coeffs[4 * i + 2] |= (uint32_t)a[9 * i + 5] << 4;
+        r->coeffs[4 * i + 2] |= (uint32_t)a[9 * i + 6] << 12;
+        r->coeffs[4 * i + 2] &= 0x3FFFF;
+
+        r->coeffs[4 * i + 3]  = a[9 * i + 6] >> 6;
+        r->coeffs[4 * i + 3] |= (uint32_t)a[9 * i + 7] << 2;
+        r->coeffs[4 * i + 3] |= (uint32_t)a[9 * i + 8] << 10;
+        r->coeffs[4 * i + 3] &= 0x3FFFF;
+
+        r->coeffs[4 * i + 0] = GAMMA1 - r->coeffs[4 * i + 0];
+        r->coeffs[4 * i + 1] = GAMMA1 - r->coeffs[4 * i + 1];
+        r->coeffs[4 * i + 2] = GAMMA1 - r->coeffs[4 * i + 2];
+        r->coeffs[4 * i + 3] = GAMMA1 - r->coeffs[4 * i + 3];
+    }
+
+    #elif GAMMA1 == (1 << 19)
+
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0]  = a[5 * i + 0];
         r->coeffs[2 * i + 0] |= (uint32_t)a[5 * i + 1] << 8;
@@ -883,6 +1019,12 @@ void polyz_unpack(poly *r, const uint8_t *a) {
         r->coeffs[2 * i + 0] = GAMMA1 - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = GAMMA1 - r->coeffs[2 * i + 1];
     }
+
+    #else
+
+#error "No parameter specified!"
+
+    #endif
 
     DBENCH_STOP(*tpack);
 }
@@ -901,9 +1043,28 @@ void polyw1_pack(uint8_t *r, const poly *a) {
     unsigned int i;
     DBENCH_START();
 
+    #if GAMMA2 == (DILITHIUM_Q-1)/88
+
+    for (i = 0; i < N / 4; ++i) {
+        r[3 * i + 0]  = a->coeffs[4 * i + 0];
+        r[3 * i + 0] |= a->coeffs[4 * i + 1] << 6;
+        r[3 * i + 1]  = a->coeffs[4 * i + 1] >> 2;
+        r[3 * i + 1] |= a->coeffs[4 * i + 2] << 4;
+        r[3 * i + 2]  = a->coeffs[4 * i + 2] >> 4;
+        r[3 * i + 2] |= a->coeffs[4 * i + 3] << 2;
+    }
+
+    #elif GAMMA2 == (DILITHIUM_Q-1)/32
+
     for (i = 0; i < N / 2; ++i) {
         r[i] = a->coeffs[2 * i + 0] | (a->coeffs[2 * i + 1] << 4);
     }
+
+    #else
+
+#error "No parameter specified!"
+
+    #endif
 
     DBENCH_STOP(*tpack);
 }

@@ -13,6 +13,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+
 #define challenge DILITHIUM_NAMESPACE(challenge)
 void challenge(poly *c, const uint8_t seed[SEEDBYTES]);
 
@@ -24,7 +25,7 @@ int crypto_sign_signature(uint8_t *sig, size_t *siglen,
                           const uint8_t *m, size_t mlen,
                           const uint8_t *sk);
 
-#define crypto_sign DILITHIUM_NAMESPACETOP
+#define crypto_sign DILITHIUM_NAMESPACE(crypto_sign)
 int crypto_sign(uint8_t *sm, size_t *smlen,
                 const uint8_t *m, size_t mlen,
                 const uint8_t *sk);
