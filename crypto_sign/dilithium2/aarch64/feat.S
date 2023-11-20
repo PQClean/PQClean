@@ -123,7 +123,9 @@ SOFTWARE.
 .endm
 
 .align 4
+.global f1600x2
 .global _f1600x2
+f1600x2:
 _f1600x2:
     stp d8,  d9,  [sp,#-16]!
     stp d10, d11, [sp,#-16]!
