@@ -278,15 +278,11 @@ void indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
     poly_frommsg(k, m);
     gen_at(at, seed);
 
-    #if KYBER_ETA1 == KYBER_ETA2
     neon_poly_getnoise_eta1_2x(&(sp[0][0]), &(sp[1][0]), coins, 0, 1);
     neon_poly_getnoise_eta1_2x(&(sp[2][0]), &(sp[3][0]), coins, 2, 3);
     neon_poly_getnoise_eta1_2x(&(ep[0][0]), &(ep[1][0]), coins, 4, 5);
     neon_poly_getnoise_eta1_2x(&(ep[2][0]), &(ep[3][0]), coins, 6, 7);
     neon_poly_getnoise_eta2(&(epp[0]), coins, 8);
-    #else
-#error "We need eta1 == eta2 here"
-    #endif
 
     neon_polyvec_ntt(sp);
 
