@@ -1,5 +1,5 @@
-#ifndef PARAMS_H
-#define PARAMS_H
+#ifndef PQCLEAN_KYBER512_AARCH64_PARAMS_H
+#define PQCLEAN_KYBER512_AARCH64_PARAMS_H
 
 /*
  * This file is licensed

@@ -1,5 +1,5 @@
-#ifndef NTT_H
-#define NTT_H
+#ifndef PQCLEAN_KYBER1024_AARCH64_NTT_H
+#define PQCLEAN_KYBER1024_AARCH64_NTT_H
 
 /*
  * We offer

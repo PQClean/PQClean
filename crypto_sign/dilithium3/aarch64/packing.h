@@ -1,5 +1,5 @@
-#ifndef PACKING_H
-#define PACKING_H
+#ifndef PQCLEAN_DILITHIUM3_AARCH64_PACKING_H
+#define PQCLEAN_DILITHIUM3_AARCH64_PACKING_H
 
 /*
  * This file is dual licensed

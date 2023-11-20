@@ -1,5 +1,5 @@
-#ifndef API_H
-#define API_H
+#ifndef PQCLEAN_KYBER512_AARCH64_API_H
+#define PQCLEAN_KYBER512_AARCH64_API_H
 
 /*
  * This file is licensed

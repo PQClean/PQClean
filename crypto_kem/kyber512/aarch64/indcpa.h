@@ -1,5 +1,5 @@
-#ifndef INDCPA_H
-#define INDCPA_H
+#ifndef PQCLEAN_KYBER512_AARCH64_INDCPA_H
+#define PQCLEAN_KYBER512_AARCH64_INDCPA_H
 
 /*
  * This file is licensed

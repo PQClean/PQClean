@@ -1,5 +1,5 @@
-#ifndef NTT_PARAMS_H
-#define NTT_PARAMS_H
+#ifndef PQCLEAN_DILITHIUM5_AARCH64_NTT_PARAMS_H
+#define PQCLEAN_DILITHIUM5_AARCH64_NTT_PARAMS_H
 
 /*
  * We offer
@@ -44,14 +44,14 @@
 #define invomegaQ1 731434
 // R = 2^32 below
 // RmodQ1 = 2^32 mod^{+-} Q1
-#define RmodQ1 -4186625
+#define RmodQ1 (-4186625)
 // Q1prime = Q1^{-1} mod^{+-} 2^32
 #define Q1prime 58728449
 // invNQ1 = NTT_N^{-1} mod Q1
 #define invNQ1 8347681
 
 // invNQ1R2modQ1 = -NTT_N^{-1} 2^32 2^32 mod^{+-} Q1 below
-#define invNQ1R2modQ1 -41978
+#define invNQ1R2modQ1 (-41978)
 // invNQ1R2modQ1_prime = invNQ1R2modQ1 (Q1^{-1} mod^{+-} 2^32) mod^{+-} 2^32
 #define invNQ1R2modQ1_prime 8395782
 // invNQ1R2modQ1_prime_half = (invNQ1R2modQ1 / 2) (Q1^{-1} mod^{+-} 2^32) mod^{+-} 2^32
@@ -62,11 +62,11 @@
 // invNQ1_final_R2modQ1 = -invNQ1R2modQ1 invomegaQ1^{128} mod q
 #define invNQ1_final_R2modQ1 4404704
 // invNQ1_final_R2modQ1_prime = invNQ1_final_R2modQ1 (Q1^{-1} mod^{+-} 2^32) mod^{+-} 2^32
-#define invNQ1_final_R2modQ1_prime -151046688
+#define invNQ1_final_R2modQ1_prime (-151046688)
 // invNQ1_final_R2modQ1_prime_half = (invNQ1_final_R2modQ1 / 2) (Q1^{-1} mod^{+-} 2^32) mod^{+-} 2^32
-#define invNQ1_final_R2modQ1_prime_half -75523344
+#define invNQ1_final_R2modQ1_prime_half (-75523344)
 // invNQ1_final_R2modQ1_doubleprime = (invNQ1_final_R2modQ1_prime Q1 - invNQ1_final_R2modQ1) / 2^32
-#define invNQ1_final_R2modQ1_doubleprime -294725
+#define invNQ1_final_R2modQ1_doubleprime (-294725)
 
 // RmodQ1_prime = -(RmodQ1 + Q1) Q1prime mod^{+-} 2^32
 #define RmodQ1_prime 512

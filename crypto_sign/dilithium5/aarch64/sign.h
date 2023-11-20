@@ -1,5 +1,5 @@
-#ifndef SIGN_H
-#define SIGN_H
+#ifndef PQCLEAN_DILITHIUM5_AARCH64_SIGN_H
+#define PQCLEAN_DILITHIUM5_AARCH64_SIGN_H
 
 /*
  * This file is dual licensed

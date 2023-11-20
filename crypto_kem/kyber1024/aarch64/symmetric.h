@@ -1,5 +1,5 @@
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
+#ifndef PQCLEAN_KYBER1024_AARCH64_SYMMETRIC_H
+#define PQCLEAN_KYBER1024_AARCH64_SYMMETRIC_H
 
 /*
  * This file is licensed

@@ -1,5 +1,5 @@
-#ifndef REDUCE_H
-#define REDUCE_H
+#ifndef PQCLEAN_DILITHIUM2_AARCH64_REDUCE_H
+#define PQCLEAN_DILITHIUM2_AARCH64_REDUCE_H
 
 /*
  * This file is dual licensed

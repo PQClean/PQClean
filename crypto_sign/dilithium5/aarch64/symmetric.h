@@ -1,5 +1,5 @@
-#ifndef SYMMETRIC_H
-#define SYMMETRIC_H
+#ifndef PQCLEAN_DILITHIUM5_AARCH64_SYMMETRIC_H
+#define PQCLEAN_DILITHIUM5_AARCH64_SYMMETRIC_H
 
 /*
  * This file was originally licensed
