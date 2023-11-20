@@ -7,9 +7,9 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
+#include <stdint.h>
 #include "params.h"
 #include "poly.h"
-#include <stdint.h>
 
 #define poly_cbd_eta1 KYBER_NAMESPACE(poly_cbd_eta1)
 void poly_cbd_eta1(int16_t *r, const uint8_t buf[KYBER_ETA1 * KYBER_N / 4]);

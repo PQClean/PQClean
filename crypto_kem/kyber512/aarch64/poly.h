@@ -8,8 +8,8 @@
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
 
-#include "params.h"
 #include <stdint.h>
+#include "params.h"
 
 /*
  * Elements of R_q = Z_q[X]/(X^n + 1). Represents polynomial
@@ -30,7 +30,7 @@ void poly_tobytes(uint8_t r[KYBER_POLYBYTES], const int16_t a[KYBER_N]);
 #define poly_frommsg KYBER_NAMESPACE(poly_frommsg)
 void poly_frommsg(int16_t r[KYBER_N], const uint8_t msg[KYBER_INDCPA_MSGBYTES]);
 #define poly_tomsg KYBER_NAMESPACE(poly_tomsg)
-void poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const int16_t a[KYBER_N]);
+void poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const int16_t r[KYBER_N]);
 
 // NEON
 

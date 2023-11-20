@@ -9,6 +9,7 @@
 
 #define KYBER_NAMESPACE(s) PQCLEAN_KYBER768_AARCH64_##s
 
+/* Don't change parameters below this line */
 #define KYBER_N 256
 #define KYBER_Q 3329
 

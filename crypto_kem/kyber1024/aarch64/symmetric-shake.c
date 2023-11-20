@@ -55,6 +55,8 @@ void kyber_shake256_prf(uint8_t *out, size_t outlen, const uint8_t key[KYBER_SYM
     shake256(out, outlen, extkey, sizeof(extkey));
 }
 
+
+
 /*************************************************
 * Name:        PQCLEAN_KYBER1024_AVX2_kyber_shake256_prf
 *
