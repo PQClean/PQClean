@@ -5,8 +5,9 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  *
- * We choose
+ * We offer
  * CC0 1.0 Universal or the following MIT License for this file.
+ * You may freely choose one of them that applies.
  *
  * MIT License
  *
@@ -36,6 +37,11 @@
 #include <stddef.h>
 #include "fips202x2.h"
 
+#ifdef PROFILE_HASHING
+#include "hal.h"
+extern unsigned long long hash_cycles;
+#endif
+
 #define NROUNDS 24
 
 // Define NEON operation
@@ -47,20 +53,20 @@
 #define vxor(c, a, b) c = veorq_u64(a, b);
 // Rotate by n bit ((a << offset) ^ (a >> (64-offset)))
 #define vROL(out, a, offset)    \
-    (out) = vshlq_n_u64(a, offset); \
-    (out) = vsriq_n_u64(out, a, 64 - (offset));
+    out = vshlq_n_u64(a, offset); \
+    out = vsriq_n_u64(out, a, 64 - offset);
 // Xor chain: out = a ^ b ^ c ^ d ^ e
 #define vXOR4(out, a, b, c, d, e) \
-    (out) = veorq_u64(a, b);          \
-    (out) = veorq_u64(out, c);        \
-    (out) = veorq_u64(out, d);        \
-    (out) = veorq_u64(out, e);
+    out = veorq_u64(a, b);          \
+    out = veorq_u64(out, c);        \
+    out = veorq_u64(out, d);        \
+    out = veorq_u64(out, e);
 // Not And c = ~a & b
 // #define vbic(c, a, b) c = vbicq_u64(b, a);
 // Xor Not And: out = a ^ ( (~b) & c)
 #define vXNA(out, a, b, c) \
-    (out) = vbicq_u64(c, b);   \
-    (out) = veorq_u64(out, a);
+    out = vbicq_u64(c, b);   \
+    out = veorq_u64(out, a);
 // Rotate by 1 bit, then XOR: a ^ ROL(b): SHA1 instruction, not support
 #define vrxor(c, a, b) c = vrax1q_u64(a, b);
 // End Define
@@ -100,11 +106,11 @@ static const uint64_t neon_KeccakF_RoundConstants[NROUNDS] = {
 *
 * Arguments:   - uint64_t *state: pointer to input/output Keccak state
 **************************************************/
-extern void PQCLEAN_KYBER512_AARCH64_f1600x2(v128 *, const uint64_t *);
+extern void f1600x2(v128 *, const uint64_t *);
 static inline
 void KeccakF1600_StatePermutex2(v128 state[25]) {
     #if (__APPLE__ && __ARM_FEATURE_CRYPTO) || (__ARM_FEATURE_SHA3) /* although not sure what is being implemented, we find something fast */
-    PQCLEAN_KYBER512_AARCH64_f1600x2(state, neon_KeccakF_RoundConstants);
+    f1600x2(state, neon_KeccakF_RoundConstants);
     #else
     v128 Aba, Abe, Abi, Abo, Abu;
     v128 Aga, Age, Agi, Ago, Agu;
@@ -551,7 +557,14 @@ void shake128x2_absorb(keccakx2_state *state,
                        const uint8_t *in0,
                        const uint8_t *in1,
                        size_t inlen) {
+    #ifdef PROFILE_HASHING
+    uint64_t t0 = hal_get_time();
+    #endif
     keccakx2_absorb(state->s, SHAKE128_RATE, in0, in1, inlen, 0x1F);
+    #ifdef PROFILE_HASHING
+    uint64_t t1 = hal_get_time();
+    hash_cycles += (t1 - t0);
+    #endif
 }
 
 /*************************************************
@@ -570,7 +583,14 @@ void shake128x2_squeezeblocks(uint8_t *out0,
                               uint8_t *out1,
                               size_t nblocks,
                               keccakx2_state *state) {
+    #ifdef PROFILE_HASHING
+    uint64_t t0 = hal_get_time();
+    #endif
     keccakx2_squeezeblocks(out0, out1, nblocks, SHAKE128_RATE, state->s);
+    #ifdef PROFILE_HASHING
+    uint64_t t1 = hal_get_time();
+    hash_cycles += (t1 - t0);
+    #endif
 }
 
 /*************************************************
@@ -587,7 +607,14 @@ void shake256x2_absorb(keccakx2_state *state,
                        const uint8_t *in0,
                        const uint8_t *in1,
                        size_t inlen) {
+    #ifdef PROFILE_HASHING
+    uint64_t t0 = hal_get_time();
+    #endif
     keccakx2_absorb(state->s, SHAKE256_RATE, in0, in1, inlen, 0x1F);
+    #ifdef PROFILE_HASHING
+    uint64_t t1 = hal_get_time();
+    hash_cycles += (t1 - t0);
+    #endif
 }
 
 /*************************************************
@@ -606,7 +633,14 @@ void shake256x2_squeezeblocks(uint8_t *out0,
                               uint8_t *out1,
                               size_t nblocks,
                               keccakx2_state *state) {
+    #ifdef PROFILE_HASHING
+    uint64_t t0 = hal_get_time();
+    #endif
     keccakx2_squeezeblocks(out0, out1, nblocks, SHAKE256_RATE, state->s);
+    #ifdef PROFILE_HASHING
+    uint64_t t1 = hal_get_time();
+    hash_cycles += (t1 - t0);
+    #endif
 }
 
 /*************************************************
@@ -625,6 +659,9 @@ void shake128x2(uint8_t *out0,
                 const uint8_t *in0,
                 const uint8_t *in1,
                 size_t inlen) {
+    #ifdef PROFILE_HASHING
+    uint64_t t0 = hal_get_time();
+    #endif
     unsigned int i;
     size_t nblocks = outlen / SHAKE128_RATE;
     uint8_t t[2][SHAKE128_RATE];
@@ -644,6 +681,10 @@ void shake128x2(uint8_t *out0,
             out1[i] = t[1][i];
         }
     }
+    #ifdef PROFILE_HASHING
+    uint64_t t1 = hal_get_time();
+    hash_cycles += (t1 - t0);
+    #endif
 }
 
 /*************************************************
@@ -662,6 +703,9 @@ void shake256x2(uint8_t *out0,
                 const uint8_t *in0,
                 const uint8_t *in1,
                 size_t inlen) {
+    #ifdef PROFILE_HASHING
+    uint64_t t0 = hal_get_time();
+    #endif
     unsigned int i;
     size_t nblocks = outlen / SHAKE256_RATE;
     uint8_t t[2][SHAKE256_RATE];
@@ -681,4 +725,8 @@ void shake256x2(uint8_t *out0,
             out1[i] = t[1][i];
         }
     }
+    #ifdef PROFILE_HASHING
+    uint64_t t1 = hal_get_time();
+    hash_cycles += (t1 - t0);
+    #endif
 }

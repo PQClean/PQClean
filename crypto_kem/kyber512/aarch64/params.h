@@ -7,11 +7,9 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
-//#define KYBER_90S /* Uncomment this if you want the 90S variant */
-
 #define KYBER_NAMESPACE(s) PQCLEAN_KYBER512_AARCH64_##s
-#define KYBER_K 2
 
+/* Don't change parameters below this line */
 #define KYBER_N 256
 #define KYBER_Q 3329
 
@@ -21,6 +19,7 @@
 #define KYBER_POLYBYTES     384
 #define KYBER_POLYVECBYTES  (KYBER_K * KYBER_POLYBYTES)
 
+#define KYBER_K 2
 #define KYBER_ETA1 3
 #define KYBER_POLYCOMPRESSEDBYTES    128
 #define KYBER_POLYVECCOMPRESSEDBYTES (KYBER_K * 320)

@@ -8,8 +8,8 @@
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
 
-#include "params.h"
 #include <stdint.h>
+#include "params.h"
 
 #define neon_rej_uniform KYBER_NAMESPACE(_neon_rej_uniform)
 unsigned int neon_rej_uniform(int16_t *r,

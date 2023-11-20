@@ -7,9 +7,9 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
-#include "params.h"
 #include <stddef.h>
 #include <stdint.h>
+#include "params.h"
 
 #define verify KYBER_NAMESPACE(verify)
 int verify(const uint8_t *a, const uint8_t *b, size_t len);
