@@ -1,5 +1,5 @@
-#ifndef PARAMS_H
-#define PARAMS_H
+#ifndef PQCLEAN_DILITHIUM2_AARCH64_PARAMS_H
+#define PQCLEAN_DILITHIUM2_AARCH64_PARAMS_H
 
 /*
  * This file is dual licensed
@@ -8,8 +8,8 @@
  */
 
 #define DILITHIUM_MODE 2
-//#define DILITHIUM_MODE 3
-//#define DILITHIUM_MODE 5
+// #define DILITHIUM_MODE 3
+// #define DILITHIUM_MODE 5
 
 #define CRYPTO_NAMESPACE(s) PQCLEAN_DILITHIUM2_AARCH64_##s
 #define CRYPTO_NAMESPACETOP crypto_sign
@@ -25,7 +25,6 @@
 #define D 13
 #define ROOT_OF_UNITY 1753
 
-#if DILITHIUM_MODE == 2
 
 #define K 4
 #define L 4
@@ -37,35 +36,6 @@
 #define OMEGA 80
 #define CRYPTO_ALGNAME "Dilithium2"
 #define CTILDEBYTES 32
-#elif DILITHIUM_MODE == 3
-
-#define K 6
-#define L 5
-#define ETA 4
-#define TAU 49
-#define BETA 196
-#define GAMMA1 (1 << 19)
-#define GAMMA2 ((DILITHIUM_Q-1)/32)
-#define OMEGA 55
-#define CRYPTO_ALGNAME "Dilithium3"
-#define CTILDEBYTES 48
-#elif DILITHIUM_MODE == 5
-
-#define K 8
-#define L 7
-#define ETA 2
-#define TAU 60
-#define BETA 120
-#define GAMMA1 (1 << 19)
-#define GAMMA2 ((DILITHIUM_Q-1)/32)
-#define OMEGA 75
-#define CRYPTO_ALGNAME "Dilithium5"
-#define CTILDEBYTES 64
-#else
-
-#error "No parameter specified!"
-
-#endif
 
 
 
@@ -73,17 +43,11 @@
 #define POLYT0_PACKEDBYTES  416
 #define POLYVECH_PACKEDBYTES (OMEGA + K)
 
-#if GAMMA1 == (1 << 17)
+// GAMMA1 == (1 << 17)
 #define POLYZ_PACKEDBYTES   576
-#elif GAMMA1 == (1 << 19)
-#define POLYZ_PACKEDBYTES   640
-#endif
 
-#if GAMMA2 == (DILITHIUM_Q-1)/88
+// GAMMA2 == (DILITHIUM_Q-1)/88
 #define POLYW1_PACKEDBYTES  192
-#elif GAMMA2 == (DILITHIUM_Q-1)/32
-#define POLYW1_PACKEDBYTES  128
-#endif
 
 #define POLYETA_PACKEDBYTES  96
 
