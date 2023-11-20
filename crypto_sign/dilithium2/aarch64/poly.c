@@ -868,7 +868,6 @@ void polyz_pack(uint8_t *r, const poly *a) {
     uint32_t t[4];
     DBENCH_START();
 
-    #if GAMMA1 == (1 << 17)
 
     for (i = 0; i < N / 4; ++i) {
         t[0] = GAMMA1 - a->coeffs[4 * i + 0];
@@ -890,25 +889,6 @@ void polyz_pack(uint8_t *r, const poly *a) {
         r[9 * i + 8]  = t[3] >> 10;
     }
 
-    #elif GAMMA1 == (1 << 19)
-
-    for (i = 0; i < N / 2; ++i) {
-        t[0] = GAMMA1 - a->coeffs[2 * i + 0];
-        t[1] = GAMMA1 - a->coeffs[2 * i + 1];
-
-        r[5 * i + 0]  = t[0];
-        r[5 * i + 1]  = t[0] >> 8;
-        r[5 * i + 2]  = t[0] >> 16;
-        r[5 * i + 2] |= t[1] << 4;
-        r[5 * i + 3]  = t[1] >> 4;
-        r[5 * i + 4]  = t[1] >> 12;
-    }
-
-    #else
-
-#error "No parameter specified!"
-
-    #endif
 
     DBENCH_STOP(*tpack);
 }
@@ -926,7 +906,6 @@ void polyz_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
 
-    #if GAMMA1 == (1 << 17)
 
     for (i = 0; i < N / 4; ++i) {
         r->coeffs[4 * i + 0]  = a[9 * i + 0];
@@ -955,28 +934,6 @@ void polyz_unpack(poly *r, const uint8_t *a) {
         r->coeffs[4 * i + 3] = GAMMA1 - r->coeffs[4 * i + 3];
     }
 
-    #elif GAMMA1 == (1 << 19)
-
-    for (i = 0; i < N / 2; ++i) {
-        r->coeffs[2 * i + 0]  = a[5 * i + 0];
-        r->coeffs[2 * i + 0] |= (uint32_t)a[5 * i + 1] << 8;
-        r->coeffs[2 * i + 0] |= (uint32_t)a[5 * i + 2] << 16;
-        r->coeffs[2 * i + 0] &= 0xFFFFF;
-
-        r->coeffs[2 * i + 1]  = a[5 * i + 2] >> 4;
-        r->coeffs[2 * i + 1] |= (uint32_t)a[5 * i + 3] << 4;
-        r->coeffs[2 * i + 1] |= (uint32_t)a[5 * i + 4] << 12;
-        r->coeffs[2 * i + 0] &= 0xFFFFF;
-
-        r->coeffs[2 * i + 0] = GAMMA1 - r->coeffs[2 * i + 0];
-        r->coeffs[2 * i + 1] = GAMMA1 - r->coeffs[2 * i + 1];
-    }
-
-    #else
-
-#error "No parameter specified!"
-
-    #endif
 
     DBENCH_STOP(*tpack);
 }
@@ -995,7 +952,6 @@ void polyw1_pack(uint8_t *r, const poly *a) {
     unsigned int i;
     DBENCH_START();
 
-    #if GAMMA2 == (DILITHIUM_Q-1)/88
 
     for (i = 0; i < N / 4; ++i) {
         r[3 * i + 0]  = a->coeffs[4 * i + 0];
@@ -1006,17 +962,6 @@ void polyw1_pack(uint8_t *r, const poly *a) {
         r[3 * i + 2] |= a->coeffs[4 * i + 3] << 2;
     }
 
-    #elif GAMMA2 == (DILITHIUM_Q-1)/32
-
-    for (i = 0; i < N / 2; ++i) {
-        r[i] = a->coeffs[2 * i + 0] | (a->coeffs[2 * i + 1] << 4);
-    }
-
-    #else
-
-#error "No parameter specified!"
-
-    #endif
 
     DBENCH_STOP(*tpack);
 }
