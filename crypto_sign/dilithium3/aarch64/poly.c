@@ -467,18 +467,6 @@ static unsigned int rej_eta(int32_t *a,
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
 
-        #if ETA == 2
-
-        if (t0 < 15) {
-            t0 = t0 - (205 * t0 >> 10) * 5;
-            a[ctr++] = 2 - t0;
-        }
-        if (t1 < 15 && ctr < len) {
-            t1 = t1 - (205 * t1 >> 10) * 5;
-            a[ctr++] = 2 - t1;
-        }
-
-        #elif ETA == 4
 
         if (t0 < 9) {
             a[ctr++] = 4 - t0;
@@ -487,11 +475,6 @@ static unsigned int rej_eta(int32_t *a,
             a[ctr++] = 4 - t1;
         }
 
-        #else
-
-#error "No parameter specified!"
-
-        #endif
 
     }
 
@@ -510,11 +493,7 @@ static unsigned int rej_eta(int32_t *a,
 *              - const uint8_t seed[]: byte array with seed of length CRHBYTES
 *              - uint16_t nonce: 2-byte nonce
 **************************************************/
-#if ETA == 2
-#define POLY_UNIFORM_ETA_NBLOCKS ((136 + STREAM256_BLOCKBYTES - 1)/STREAM256_BLOCKBYTES)
-#elif ETA == 4
 #define POLY_UNIFORM_ETA_NBLOCKS ((227 + STREAM256_BLOCKBYTES - 1)/STREAM256_BLOCKBYTES)
-#endif
 void poly_uniform_eta(poly *a,
                       const uint8_t seed[CRHBYTES],
                       uint16_t nonce) {
@@ -661,24 +640,6 @@ void polyeta_pack(uint8_t *r, const poly *a) {
     uint8_t t[8];
     DBENCH_START();
 
-    #if ETA == 2
-
-    for (i = 0; i < N / 8; ++i) {
-        t[0] = ETA - a->coeffs[8 * i + 0];
-        t[1] = ETA - a->coeffs[8 * i + 1];
-        t[2] = ETA - a->coeffs[8 * i + 2];
-        t[3] = ETA - a->coeffs[8 * i + 3];
-        t[4] = ETA - a->coeffs[8 * i + 4];
-        t[5] = ETA - a->coeffs[8 * i + 5];
-        t[6] = ETA - a->coeffs[8 * i + 6];
-        t[7] = ETA - a->coeffs[8 * i + 7];
-
-        r[3 * i + 0]  = (t[0] >> 0) | (t[1] << 3) | (t[2] << 6);
-        r[3 * i + 1]  = (t[2] >> 2) | (t[3] << 1) | (t[4] << 4) | (t[5] << 7);
-        r[3 * i + 2]  = (t[5] >> 1) | (t[6] << 2) | (t[7] << 5);
-    }
-
-    #elif ETA == 4
 
     for (i = 0; i < N / 2; ++i) {
         t[0] = ETA - a->coeffs[2 * i + 0];
@@ -686,11 +647,6 @@ void polyeta_pack(uint8_t *r, const poly *a) {
         r[i] = t[0] | (t[1] << 4);
     }
 
-    #else
-
-#error "No parameter specified!"
-
-    #endif
 
     DBENCH_STOP(*tpack);
 }
@@ -707,29 +663,6 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
 
-    #if ETA == 2
-
-    for (i = 0; i < N / 8; ++i) {
-        r->coeffs[8 * i + 0] =  (a[3 * i + 0] >> 0) & 7;
-        r->coeffs[8 * i + 1] =  (a[3 * i + 0] >> 3) & 7;
-        r->coeffs[8 * i + 2] = ((a[3 * i + 0] >> 6) | (a[3 * i + 1] << 2)) & 7;
-        r->coeffs[8 * i + 3] =  (a[3 * i + 1] >> 1) & 7;
-        r->coeffs[8 * i + 4] =  (a[3 * i + 1] >> 4) & 7;
-        r->coeffs[8 * i + 5] = ((a[3 * i + 1] >> 7) | (a[3 * i + 2] << 1)) & 7;
-        r->coeffs[8 * i + 6] =  (a[3 * i + 2] >> 2) & 7;
-        r->coeffs[8 * i + 7] =  (a[3 * i + 2] >> 5) & 7;
-
-        r->coeffs[8 * i + 0] = ETA - r->coeffs[8 * i + 0];
-        r->coeffs[8 * i + 1] = ETA - r->coeffs[8 * i + 1];
-        r->coeffs[8 * i + 2] = ETA - r->coeffs[8 * i + 2];
-        r->coeffs[8 * i + 3] = ETA - r->coeffs[8 * i + 3];
-        r->coeffs[8 * i + 4] = ETA - r->coeffs[8 * i + 4];
-        r->coeffs[8 * i + 5] = ETA - r->coeffs[8 * i + 5];
-        r->coeffs[8 * i + 6] = ETA - r->coeffs[8 * i + 6];
-        r->coeffs[8 * i + 7] = ETA - r->coeffs[8 * i + 7];
-    }
-
-    #elif ETA == 4
 
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
@@ -738,11 +671,6 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
         r->coeffs[2 * i + 1] = ETA - r->coeffs[2 * i + 1];
     }
 
-    #else
-
-#error "No parameter specified!"
-
-    #endif
 
     DBENCH_STOP(*tpack);
 }
