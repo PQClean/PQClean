@@ -180,9 +180,5 @@ void poly_cbd_eta1(int16_t *r, const uint8_t buf[KYBER_ETA1 * KYBER_N / 4]) {
 }
 
 void poly_cbd_eta2(int16_t *r, const uint8_t buf[KYBER_ETA2 * KYBER_N / 4]) {
-    #if KYBER_ETA2 == 2
     neon_cbd2(r, buf);
-    #else
-#error "This implementation requires eta2 = 2"
-    #endif
 }
