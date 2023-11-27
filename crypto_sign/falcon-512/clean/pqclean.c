@@ -27,8 +27,9 @@
  *
  *   signature:
  *      header byte: 0011nnnn
- *      nonce     40 bytes
- *      value     (12 bits by element)
+ *      nonce (r)  40 bytes
+ *      value (s)  compressed format
+ *      padding    to 666 bytes
  *
  *   message + signature:
  *      signature length   (2 bytes, big-endian)
@@ -111,7 +112,7 @@ PQCLEAN_FALCON512_CLEAN_crypto_sign_keypair(
 /*
  * Compute the signature. nonce[] receives the nonce and must have length
  * NONCELEN bytes. sigbuf[] receives the signature value (without nonce
- * or header byte), with *sigbuflen providing the maximum value length and
+ * or header byte), with sigbuflen providing the maximum value length and
  * receiving the actual value length.
  *
  * If a signature could be computed but not encoded because it would
@@ -123,7 +124,7 @@ PQCLEAN_FALCON512_CLEAN_crypto_sign_keypair(
  * Return value: 0 on success, -1 on error.
  */
 static int
-do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
+do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t sigbuflen,
         const uint8_t *m, size_t mlen, const uint8_t *sk) {
     union {
         uint8_t b[72 * 512];
@@ -203,10 +204,10 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
      */
     for (;;) {
         PQCLEAN_FALCON512_CLEAN_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, 9, tmp.b);
-        v = PQCLEAN_FALCON512_CLEAN_comp_encode(sigbuf, *sigbuflen, r.sig, 9);
+        v = PQCLEAN_FALCON512_CLEAN_comp_encode(sigbuf, sigbuflen, r.sig, 9);
         if (v != 0) {
+            memset(sigbuf + v, 0, sigbuflen - v);
             inner_shake256_ctx_release(&sc);
-            *sigbuflen = v;
             return 0;
         }
     }
@@ -229,6 +230,7 @@ do_verify(
     uint16_t h[512], hm[512];
     int16_t sig[512];
     inner_shake256_context sc;
+    size_t v;
 
     /*
      * Decode public key.
@@ -249,8 +251,17 @@ do_verify(
     if (sigbuflen == 0) {
         return -1;
     }
-    if (PQCLEAN_FALCON512_CLEAN_comp_decode(sig, 9, sigbuf, sigbuflen) != sigbuflen) {
-        return -1;
+    v = PQCLEAN_FALCON512_CLEAN_comp_decode(sig, 9, sigbuf, sigbuflen);
+    if (v != sigbuflen) {
+        if (sigbuflen == PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES - NONCELEN - 1) {
+            while (v < sigbuflen) {
+                if (sigbuf[v++] != 0) {
+                    return -1;
+                }
+            }
+        } else {
+            return -1;
+        }
     }
 
     /*
@@ -277,25 +288,14 @@ int
 PQCLEAN_FALCON512_CLEAN_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
-    /*
-     * The PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES constant is used for
-     * the signed message object (as produced by crypto_sign())
-     * and includes a two-byte length value, so we take care here
-     * to only generate signatures that are two bytes shorter than
-     * the maximum. This is done to ensure that crypto_sign()
-     * and crypto_sign_signature() produce the exact same signature
-     * value, if used on the same message, with the same private key,
-     * and using the same output from randombytes() (this is for
-     * reproducibility of tests).
-     */
     size_t vlen;
 
-    vlen = PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES - NONCELEN - 3;
-    if (do_sign(sig + 1, sig + 1 + NONCELEN, &vlen, m, mlen, sk) < 0) {
+    vlen = PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES - NONCELEN - 1;
+    if (do_sign(sig + 1, sig + 1 + NONCELEN, vlen, m, mlen, sk) < 0) {
         return -1;
     }
     sig[0] = 0x30 + 9;
-    *siglen = 1 + NONCELEN + vlen;
+    *siglen = PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES;
     return 0;
 }
 
@@ -304,7 +304,7 @@ int
 PQCLEAN_FALCON512_CLEAN_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
     const uint8_t *m, size_t mlen, const uint8_t *pk) {
-    if (siglen < 1 + NONCELEN) {
+    if (siglen != PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES) { // TODO make permissive
         return -1;
     }
     if (sig[0] != 0x30 + 9) {
@@ -329,15 +329,15 @@ PQCLEAN_FALCON512_CLEAN_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES - NONCELEN - 3;
-    if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
+    sigbuflen = PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES - NONCELEN - 1; // TODO: figure out proper constant length
+    if (do_sign(sm + 2, sigbuf, sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }
     pm[mlen] = 0x20 + 9;
     sigbuflen ++;
     sm[0] = (uint8_t)(sigbuflen >> 8);
     sm[1] = (uint8_t)sigbuflen;
-    *smlen = mlen + 2 + NONCELEN + sigbuflen;
+    *smlen = 2 + NONCELEN + mlen + sigbuflen;
     return 0;
 }
 
