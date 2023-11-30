@@ -27,15 +27,16 @@
  *
  *   signature:
  *      header byte: 0011nnnn
- *      nonce     40 bytes
- *      value     (12 bits by element)
+ *      nonce (r)  40 bytes
+ *      value (s)  padded format
+ *      padding    to 666 bytes
  *
  *   message + signature:
  *      signature length   (2 bytes, big-endian)
  *      nonce              40 bytes
  *      message
  *      header byte:       0010nnnn
- *      value              (12 bits by element)
+ *      value              compressed format
  *      (signature length is 1+len(value), not counting the nonce)
  */
 
@@ -230,6 +231,7 @@ do_verify(
     int16_t hm[FALCON_N];
     int16_t sig[FALCON_N];
     inner_shake256_context sc;
+    size_t v;
 
     /*
      * Decode public key.
@@ -250,8 +252,20 @@ do_verify(
     if (sigbuflen == 0) {
         return -1;
     }
-    if (PQCLEAN_FALCON512_AARCH64_comp_decode(sig, sigbuf, sigbuflen) != sigbuflen) {
+    v = PQCLEAN_FALCON512_AARCH64_comp_decode(sig, sigbuf, sigbuflen);
+    if (v == 0) {
         return -1;
+    }
+    if (v != sigbuflen) {
+        if (sigbuflen == PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 1) {
+            while (v < sigbuflen) {
+                if (sigbuf[v++] != 0) {
+                    return -1;
+                }
+            }
+        } else {
+            return -1;
+        }
     }
 
     /*
@@ -278,25 +292,15 @@ int
 PQCLEAN_FALCON512_AARCH64_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
-    /*
-     * The PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES constant is used for
-     * the signed message object (as produced by crypto_sign())
-     * and includes a two-byte length value, so we take care here
-     * to only generate signatures that are two bytes shorter than
-     * the maximum. This is done to ensure that crypto_sign()
-     * and crypto_sign_signature() produce the exact same signature
-     * value, if used on the same message, with the same private key,
-     * and using the same output from randombytes() (this is for
-     * reproducibility of tests).
-     */
     size_t vlen;
 
-    vlen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
+    vlen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 1;
     if (do_sign(sig + 1, sig + 1 + NONCELEN, &vlen, m, mlen, sk) < 0) {
         return -1;
     }
     sig[0] = 0x30 + FALCON_LOGN;
-    *siglen = 1 + NONCELEN + vlen;
+    memset(sig + 1 + NONCELEN + vlen, 0, PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - vlen - NONCELEN - 1);
+    *siglen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES;
     return 0;
 }
 
@@ -305,7 +309,7 @@ int
 PQCLEAN_FALCON512_AARCH64_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
     const uint8_t *m, size_t mlen, const uint8_t *pk) {
-    if (siglen < 1 + NONCELEN) {
+    if (siglen != PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES) { // TODO make permissive
         return -1;
     }
     if (sig[0] != 0x30 + FALCON_LOGN) {
@@ -330,7 +334,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
+    sigbuflen = PQCLEAN_FALCON512_AARCH64_MAX_CRYPTO_BYTES - NONCELEN - 1; // TODO: figure out proper constant length
     if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }
