@@ -1,3 +1,0 @@
-[submodule "test/pycparser"]
-	path = test/pycparser
-	url = https://github.com/eliben/pycparser.git
