@@ -319,7 +319,6 @@ PQCLEAN_FALCON512_CLEAN_crypto_sign(
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
     uint8_t *pm, *sigbuf;
     size_t sigbuflen;
-    // BUFFER OVERFLOW ALERT
 
     /*
      * Move the message to its final location; this is a memmove() so
@@ -328,7 +327,7 @@ PQCLEAN_FALCON512_CLEAN_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES - NONCELEN - 1;
+    sigbuflen = PQCLEAN_FALCON512_CLEAN_CRYPTO_BYTES - NONCELEN - 3; // TODO documentation
     if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }
