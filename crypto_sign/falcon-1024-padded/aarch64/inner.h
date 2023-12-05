@@ -729,8 +729,8 @@ int32_t PQCLEAN_FALCON1024PADDED_AARCH64_poly_small_sqnorm(const int8_t *f); // 
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON1024PADDED_AARCH64_keygen(inner_shake256_context *rng,
-                                       int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
-                                       unsigned logn, uint8_t *tmp);
+        int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
+        unsigned logn, uint8_t *tmp);
 
 /* ==================================================================== */
 /*

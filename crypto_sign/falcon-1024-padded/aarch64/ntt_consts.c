@@ -4,10 +4,10 @@
 #define PADDING 0
 
 const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_qmvq[8] = {FALCON_Q, FALCON_QINV,
-                                                    FALCON_MONT, FALCON_NINV_MONT,
-                                                    FALCON_V, 0,
-                                                    FALCON_MONT_BR, FALCON_NINV_MONT_BR
-                                                   };
+                                                          FALCON_MONT, FALCON_NINV_MONT,
+                                                          FALCON_V, 0,
+                                                          FALCON_MONT_BR, FALCON_NINV_MONT_BR
+                                                         };
 
 const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_ntt_br[] = {
     PADDING,    -1479,    -5146,     4043,    -1305,      722,     5736,    -4134,
