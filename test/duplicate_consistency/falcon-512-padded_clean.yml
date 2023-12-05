@@ -9,6 +9,11 @@ consistency_checks:
       - pqclean.c
       - vrfy.c
   - source:
+      scheme: falcon-512-padded
+      implementation: aarch64
+    files:
+      - api.h
+  - source:
       scheme: falcon-1024-padded
       implementation: clean
     files:

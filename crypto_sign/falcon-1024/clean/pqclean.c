@@ -203,9 +203,8 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
         inner_shake256_ctx_release(&sc);
         *sigbuflen = v;
         return 0;
-    } else {
-        return -1;
     }
+    return -1;
 }
 
 /*
@@ -328,7 +327,7 @@ PQCLEAN_FALCON1024_CLEAN_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON1024_CLEAN_CRYPTO_BYTES - NONCELEN - 1;
+    sigbuflen = PQCLEAN_FALCON1024_CLEAN_CRYPTO_BYTES - NONCELEN - 3;
     if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }

@@ -28,8 +28,7 @@
  *   signature:
  *      header byte: 0011nnnn
  *      nonce (r)  40 bytes
- *      value (s)  padded format
- *      padding    to 666 bytes
+ *      value (s)  compressed format
  *
  *   message + signature:
  *      signature length   (2 bytes, big-endian)
@@ -116,10 +115,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_keypair(
  * receiving the actual value length.
  *
  * If a signature could be computed but not encoded because it would
- * exceed the output buffer size, then a new signature is computed. If
- * the provided buffer size is too low, this could loop indefinitely, so
- * the caller must provide a size that can accommodate signatures with a
- * large enough probability.
+ * exceed the output buffer size, then an error is returned.
  *
  * Return value: 0 on success, -1 on error.
  */
@@ -199,18 +195,16 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
     inner_shake256_flip(&sc);
 
     /*
-     * Compute and return the signature. This loops until a signature
-     * value is found that fits in the provided buffer.
+     * Compute and return the signature.
      */
-    for (;;) {
-        PQCLEAN_FALCON512_AARCH64_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, tmp.b);
-        v = PQCLEAN_FALCON512_AARCH64_comp_encode(sigbuf, *sigbuflen, r.sig);
-        if (v != 0) {
-            inner_shake256_ctx_release(&sc);
-            *sigbuflen = v;
-            return 0;
-        }
+    PQCLEAN_FALCON512_AARCH64_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, FALCON_LOGN, tmp.b);
+    v = PQCLEAN_FALCON512_AARCH64_comp_encode(sigbuf, *sigbuflen, r.sig, FALCON_LOGN);
+    if (v != 0) {
+        inner_shake256_ctx_release(&sc);
+        *sigbuflen = v;
+        return 0;
     }
+    return -1;
 }
 
 /*
@@ -252,6 +246,7 @@ do_verify(
     if (sigbuflen == 0) {
         return -1;
     }
+    // TODO: test interoperability of "padded" and normal variants
     v = PQCLEAN_FALCON512_AARCH64_comp_decode(sig, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;
@@ -299,8 +294,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign_signature(
         return -1;
     }
     sig[0] = 0x30 + FALCON_LOGN;
-    memset(sig + 1 + NONCELEN + vlen, 0, PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - vlen - NONCELEN - 1);
-    *siglen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES;
+    *siglen = 1 + NONCELEN + vlen;
     return 0;
 }
 
@@ -309,7 +303,7 @@ int
 PQCLEAN_FALCON512_AARCH64_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
     const uint8_t *m, size_t mlen, const uint8_t *pk) {
-    if (siglen != PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES) { // TODO make permissive
+    if (siglen < 1 + NONCELEN) {
         return -1;
     }
     if (sig[0] != 0x30 + FALCON_LOGN) {
@@ -334,7 +328,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON512_AARCH64_MAX_CRYPTO_BYTES - NONCELEN - 1; // TODO: figure out proper constant length
+    sigbuflen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 3; // TODO documentation
     if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }
