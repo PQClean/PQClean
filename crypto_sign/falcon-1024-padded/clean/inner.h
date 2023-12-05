@@ -256,7 +256,7 @@ void PQCLEAN_FALCON1024PADDED_CLEAN_to_ntt_monty(uint16_t *h, unsigned logn);
  * tmp[] must have 16-bit alignment.
  */
 int PQCLEAN_FALCON1024PADDED_CLEAN_verify_raw(const uint16_t *c0, const int16_t *s2,
-                                        const uint16_t *h, unsigned logn, uint8_t *tmp);
+        const uint16_t *h, unsigned logn, uint8_t *tmp);
 
 /*
  * Compute the public key h[], given the private key elements f[] and
@@ -724,8 +724,8 @@ void PQCLEAN_FALCON1024PADDED_CLEAN_poly_merge_fft(fpr *f,
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON1024PADDED_CLEAN_keygen(inner_shake256_context *rng,
-                                     int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
-                                     unsigned logn, uint8_t *tmp);
+        int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
+        unsigned logn, uint8_t *tmp);
 
 /* ==================================================================== */
 /*
@@ -762,8 +762,8 @@ void PQCLEAN_FALCON1024PADDED_CLEAN_expand_privkey(fpr *expanded_key,
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON1024PADDED_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rng,
-                                        const fpr *expanded_key,
-                                        const uint16_t *hm, unsigned logn, uint8_t *tmp);
+        const fpr *expanded_key,
+        const uint16_t *hm, unsigned logn, uint8_t *tmp);
 
 /*
  * Compute a signature over the provided hashed message (hm); the
@@ -783,9 +783,9 @@ void PQCLEAN_FALCON1024PADDED_CLEAN_sign_tree(int16_t *sig, inner_shake256_conte
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON1024PADDED_CLEAN_sign_dyn(int16_t *sig, inner_shake256_context *rng,
-                                       const int8_t *f, const int8_t *g,
-                                       const int8_t *F, const int8_t *G,
-                                       const uint16_t *hm, unsigned logn, uint8_t *tmp);
+        const int8_t *f, const int8_t *g,
+        const int8_t *F, const int8_t *G,
+        const uint16_t *hm, unsigned logn, uint8_t *tmp);
 
 /*
  * Internal sampler engine. Exported for tests.

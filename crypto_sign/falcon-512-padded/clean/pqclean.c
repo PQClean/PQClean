@@ -234,7 +234,7 @@ do_verify(
         return -1;
     }
     if (PQCLEAN_FALCON512PADDED_CLEAN_modq_decode(h, 9,
-                                            pk + 1, PQCLEAN_FALCON512PADDED_CLEAN_CRYPTO_PUBLICKEYBYTES - 1)
+            pk + 1, PQCLEAN_FALCON512PADDED_CLEAN_CRYPTO_PUBLICKEYBYTES - 1)
             != PQCLEAN_FALCON512PADDED_CLEAN_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }

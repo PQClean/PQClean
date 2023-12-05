@@ -225,9 +225,9 @@ skoff_tree(unsigned logn) {
 /* see inner.h */
 void
 PQCLEAN_FALCON512PADDED_AVX2_expand_privkey(fpr *expanded_key,
-                                      const int8_t *f, const int8_t *g,
-                                      const int8_t *F, const int8_t *G,
-                                      unsigned logn, uint8_t *tmp) {
+        const int8_t *f, const int8_t *g,
+        const int8_t *F, const int8_t *G,
+        unsigned logn, uint8_t *tmp) {
     size_t n;
     fpr *rf, *rg, *rF, *rG;
     fpr *b00, *b01, *b10, *b11;
@@ -1236,8 +1236,8 @@ PQCLEAN_FALCON512PADDED_AVX2_sampler(void *ctx, fpr mu, fpr isigma) {
 /* see inner.h */
 void
 PQCLEAN_FALCON512PADDED_AVX2_sign_tree(int16_t *sig, inner_shake256_context *rng,
-                                 const fpr *expanded_key,
-                                 const uint16_t *hm, unsigned logn, uint8_t *tmp) {
+                                       const fpr *expanded_key,
+                                       const uint16_t *hm, unsigned logn, uint8_t *tmp) {
     fpr *ftmp;
 
     ftmp = (fpr *)tmp;
@@ -1278,9 +1278,9 @@ PQCLEAN_FALCON512PADDED_AVX2_sign_tree(int16_t *sig, inner_shake256_context *rng
 /* see inner.h */
 void
 PQCLEAN_FALCON512PADDED_AVX2_sign_dyn(int16_t *sig, inner_shake256_context *rng,
-                                const int8_t *f, const int8_t *g,
-                                const int8_t *F, const int8_t *G,
-                                const uint16_t *hm, unsigned logn, uint8_t *tmp) {
+                                      const int8_t *f, const int8_t *g,
+                                      const int8_t *F, const int8_t *G,
+                                      const uint16_t *hm, unsigned logn, uint8_t *tmp) {
     fpr *ftmp;
 
     ftmp = (fpr *)tmp;

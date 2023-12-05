@@ -25,7 +25,7 @@
 
 /* see inner.h */
 void PQCLEAN_FALCON512PADDED_AARCH64_poly_add(fpr *c, const fpr *restrict a,
-                                        const fpr *restrict b, unsigned logn) {
+        const fpr *restrict b, unsigned logn) {
     float64x2x4_t neon_a, neon_b, neon_c;
     float64x2x2_t neon_a2, neon_b2, neon_c2;
     const unsigned falcon_n = 1 << logn;
@@ -69,7 +69,7 @@ void PQCLEAN_FALCON512PADDED_AARCH64_poly_add(fpr *c, const fpr *restrict a,
  * c = a - b
  */
 void PQCLEAN_FALCON512PADDED_AARCH64_poly_sub(fpr *c, const fpr *restrict a,
-                                        const fpr *restrict b, unsigned logn) {
+        const fpr *restrict b, unsigned logn) {
     float64x2x4_t neon_a, neon_b, neon_c;
     float64x2x2_t neon_a2, neon_b2, neon_c2;
     const unsigned falcon_n = 1 << logn;
@@ -111,7 +111,7 @@ void PQCLEAN_FALCON512PADDED_AARCH64_poly_sub(fpr *c, const fpr *restrict a,
  * c = -a
  */
 void PQCLEAN_FALCON512PADDED_AARCH64_poly_neg(fpr *c, const fpr *restrict a,
-                                        unsigned logn) {
+        unsigned logn) {
     float64x2x4_t neon_a, neon_c;
     float64x2x2_t neon_a2, neon_c2;
     const unsigned falcon_n = 1 << logn;

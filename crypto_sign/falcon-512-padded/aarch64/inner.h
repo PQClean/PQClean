@@ -729,8 +729,8 @@ int32_t PQCLEAN_FALCON512PADDED_AARCH64_poly_small_sqnorm(const int8_t *f); // c
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON512PADDED_AARCH64_keygen(inner_shake256_context *rng,
-                                      int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
-                                      unsigned logn, uint8_t *tmp);
+        int8_t *f, int8_t *g, int8_t *F, int8_t *G, uint16_t *h,
+        unsigned logn, uint8_t *tmp);
 
 /* ==================================================================== */
 /*
@@ -788,9 +788,9 @@ void PQCLEAN_FALCON512PADDED_AARCH64_sign_tree(int16_t *sig, inner_shake256_cont
  * This function uses floating-point rounding (see set_fpu_cw()).
  */
 void PQCLEAN_FALCON512PADDED_AARCH64_sign_dyn(int16_t *sig, inner_shake256_context *rng,
-                                        const int8_t *restrict f, const int8_t *restrict g,
-                                        const int8_t *restrict F, const int8_t *restrict G,
-                                        const uint16_t *hm, uint8_t *tmp);
+        const int8_t *restrict f, const int8_t *restrict g,
+        const int8_t *restrict F, const int8_t *restrict G,
+        const uint16_t *hm, uint8_t *tmp);
 
 /*
  * Internal sampler engine. Exported for tests.

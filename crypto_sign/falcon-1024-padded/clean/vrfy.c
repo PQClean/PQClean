@@ -630,7 +630,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_to_ntt_monty(uint16_t *h, unsigned logn) {
 /* see inner.h */
 int
 PQCLEAN_FALCON1024PADDED_CLEAN_verify_raw(const uint16_t *c0, const int16_t *s2,
-                                    const uint16_t *h, unsigned logn, uint8_t *tmp) {
+        const uint16_t *h, unsigned logn, uint8_t *tmp) {
     size_t u, n;
     uint16_t *tt;
 
@@ -677,7 +677,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_verify_raw(const uint16_t *c0, const int16_t *s2,
 /* see inner.h */
 int
 PQCLEAN_FALCON1024PADDED_CLEAN_compute_public(uint16_t *h,
-                                        const int8_t *f, const int8_t *g, unsigned logn, uint8_t *tmp) {
+        const int8_t *f, const int8_t *g, unsigned logn, uint8_t *tmp) {
     size_t u, n;
     uint16_t *tt;
 
@@ -772,8 +772,8 @@ PQCLEAN_FALCON1024PADDED_CLEAN_is_invertible(
 /* see inner.h */
 int
 PQCLEAN_FALCON1024PADDED_CLEAN_verify_recover(uint16_t *h,
-                                        const uint16_t *c0, const int16_t *s1, const int16_t *s2,
-                                        unsigned logn, uint8_t *tmp) {
+        const uint16_t *c0, const int16_t *s1, const int16_t *s2,
+        unsigned logn, uint8_t *tmp) {
     size_t u, n;
     uint16_t *tt;
     uint32_t r;

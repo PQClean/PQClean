@@ -234,7 +234,7 @@ do_verify(
         return -1;
     }
     if (PQCLEAN_FALCON1024PADDED_AVX2_modq_decode(h, 10,
-                                            pk + 1, PQCLEAN_FALCON1024PADDED_AVX2_CRYPTO_PUBLICKEYBYTES - 1)
+            pk + 1, PQCLEAN_FALCON1024PADDED_AVX2_CRYPTO_PUBLICKEYBYTES - 1)
             != PQCLEAN_FALCON1024PADDED_AVX2_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }
