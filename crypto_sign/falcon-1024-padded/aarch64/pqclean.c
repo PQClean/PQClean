@@ -29,10 +29,10 @@
  *      header byte: 0011nnnn
  *      nonce (r)  40 bytes
  *      value (s)  compressed format
- *      padding    to 1280 bytes
+ *      padding    to PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_BYTES bytes
  *
  *   message + signature:
- *      signature  1280 bytes
+ *      signature  PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_BYTES bytes
  *      message
  */
 
@@ -239,6 +239,7 @@ do_verify(
             != PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }
+    // We move the conversion to NTT domain of `h` inside verify_raw()
 
     /*
      * Decode signature.
@@ -247,7 +248,7 @@ do_verify(
         return -1;
     }
     // TODO: test interoperability of "padded" and normal variants
-    v = PQCLEAN_FALCON1024PADDED_AVX2_comp_decode(sig, FALCON_LOGN, sigbuf, sigbuflen);
+    v = PQCLEAN_FALCON1024PADDED_AARCH64_comp_decode(sig, FALCON_LOGN, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;
     }
@@ -350,7 +351,7 @@ PQCLEAN_FALCON1024PADDED_AARCH64_crypto_sign_open(
     }
     sigbuflen = PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_BYTES - NONCELEN - 1;
     pmlen = smlen - PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_BYTES;
-    if (sm[0] != 0x30 + 10) {
+    if (sm[0] != 0x30 + FALCON_LOGN) {
         return -1;
     }
     sigbuf = sm + 1 + NONCELEN;

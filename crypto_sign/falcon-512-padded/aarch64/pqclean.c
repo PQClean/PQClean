@@ -29,10 +29,10 @@
  *      header byte: 0011nnnn
  *      nonce (r)  40 bytes
  *      value (s)  compressed format
- *      padding    to 666 bytes
+ *      padding    to PQCLEAN_FALCON512PADDED_AARCH64_CRYPTO_BYTES bytes
  *
  *   message + signature:
- *      signature  666 bytes
+ *      signature  PQCLEAN_FALCON512PADDED_AARCH64_CRYPTO_BYTES bytes
  *      message
  */
 
@@ -41,7 +41,7 @@ int
 PQCLEAN_FALCON512PADDED_AARCH64_crypto_sign_keypair(
     uint8_t *pk, uint8_t *sk) {
     union {
-        uint8_t b[FALCON_KEYGEN_TEMP_9];
+        uint8_t b[28 * FALCON_N];
         uint64_t dummy_u64;
         fpr dummy_fpr;
     } tmp;
@@ -248,7 +248,7 @@ do_verify(
         return -1;
     }
     // TODO: test interoperability of "padded" and normal variants
-    v = PQCLEAN_FALCON512PADDED_AARCH64_comp_decode(sig, 9, sigbuf, sigbuflen);
+    v = PQCLEAN_FALCON512PADDED_AARCH64_comp_decode(sig, FALCON_LOGN, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;
     }
@@ -326,9 +326,9 @@ PQCLEAN_FALCON512PADDED_AARCH64_crypto_sign(
      * Move the message to its final location; this is a memmove() so
      * it handles overlaps properly.
      */
-    memmove(sm + PQCLEAN_FALCON512PADDED_CLEAN_CRYPTO_BYTES, m, mlen);
+    memmove(sm + PQCLEAN_FALCON512PADDED_AARCH64_CRYPTO_BYTES, m, mlen);
     sigbuf = sm + 1 + NONCELEN;
-    sigbuflen = PQCLEAN_FALCON512PADDED_CLEAN_CRYPTO_BYTES - NONCELEN - 1;
+    sigbuflen = PQCLEAN_FALCON512PADDED_AARCH64_CRYPTO_BYTES - NONCELEN - 1;
     if (do_sign(sm + 1, sigbuf, sigbuflen, m, mlen, sk) < 0) {
         return -1;
     }
