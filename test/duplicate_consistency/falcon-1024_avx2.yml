@@ -29,3 +29,8 @@ consistency_checks:
       - common.c
       - pqclean.c
       - vrfy.c
+  - source:
+      scheme: falcon-1024
+      implementation: aarch64
+    files:
+      - api.h

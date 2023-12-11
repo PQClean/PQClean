@@ -25,6 +25,12 @@ consistency_checks:
       - common.c
       - fft.c
       - fpr.c
+      - keygen.c
       - rng.c
       - sign.c
       - vrfy.c
+  - source:
+      scheme: falcon-512
+      implementation: aarch64
+    files:
+      - api.h
