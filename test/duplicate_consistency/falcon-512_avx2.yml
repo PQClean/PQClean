@@ -43,7 +43,7 @@ consistency_checks:
       - vrfy.c
   - source:
       scheme: falcon-512-padded
-      implementation: avx
+      implementation: avx2
     files:
       - fpr.h
       - inner.h
