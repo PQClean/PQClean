@@ -44,7 +44,7 @@ int
 PQCLEAN_FALCON512_AARCH64_crypto_sign_keypair(
     uint8_t *pk, uint8_t *sk) {
     union {
-        uint8_t b[FALCON_KEYGEN_TEMP_9];
+        uint8_t b[28 * FALCON_N];
         uint64_t dummy_u64;
         fpr dummy_fpr;
     } tmp;

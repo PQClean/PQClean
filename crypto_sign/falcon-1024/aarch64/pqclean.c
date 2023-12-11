@@ -238,6 +238,7 @@ do_verify(
             != PQCLEAN_FALCON1024_AARCH64_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }
+    // We move the conversion to NTT domain of `h` inside verify_raw()
 
     /*
      * Decode signature.
@@ -327,7 +328,7 @@ PQCLEAN_FALCON1024_AARCH64_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON1024_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
+    sigbuflen = PQCLEAN_FALCON1024_AARCH64_CRYPTO_BYTES - NONCELEN - 3; // TODO documentation
     if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }
