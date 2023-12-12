@@ -19,6 +19,8 @@
 ![Test dilithium5](https://github.com/PQClean/PQClean/workflows/Test%20dilithium5/badge.svg?branch=master)
 ![Test falcon-1024](https://github.com/PQClean/PQClean/workflows/Test%20falcon-1024/badge.svg?branch=master)
 ![Test falcon-512](https://github.com/PQClean/PQClean/workflows/Test%20falcon-512/badge.svg?branch=master)
+![Test falcon-1024-padded](https://github.com/PQClean/PQClean/workflows/Test%20falcon-1024-padded/badge.svg?branch=master)
+![Test falcon-512-padded](https://github.com/PQClean/PQClean/workflows/Test%20falcon-512-padded/badge.svg?branch=master)
 ![Test sphincs-sha2-128f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha2-128f-simple/badge.svg?branch=master)
 ![Test sphincs-sha2-128s-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha2-128s-simple/badge.svg?branch=master)
 ![Test sphincs-sha2-192f-simple](https://github.com/PQClean/PQClean/workflows/Test%20sphincs-sha2-192f-simple/badge.svg?branch=master)
