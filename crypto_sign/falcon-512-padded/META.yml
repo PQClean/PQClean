@@ -5,7 +5,7 @@ claimed-nist-level: 1
 length-public-key: 897
 length-secret-key: 1281
 length-signature: 666
-nistkat-sha256: da27fe8a462de7307ddf1f9b00072a457d9c5b14e838c148fbe2662094b9a2ca
+nistkat-sha256: 91842d41138e7cfaf6e2e8f12a03c3b3411302255121e4d07d02f91a003c0395
 testvectors-sha256: a380380196d874a5ecd3616e17a807dd58674b7f5456e21140564d503a8610e1
 principal-submitters:
   - Thomas Prest
