@@ -251,7 +251,7 @@ do_verify(
         return -1;
     }
     if (v != sigbuflen) {
-        if (sigbuflen == PQCLEAN_FALCON1024_AVX2_CRYPTO_BYTES - NONCELEN - 1) {
+        if (sigbuflen == PQCLEAN_FALCON1024PADDED_AVX2_CRYPTO_BYTES - NONCELEN - 1) {
             while (v < sigbuflen) {
                 if (sigbuf[v++] != 0) {
                     return -1;
