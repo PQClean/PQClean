@@ -1,9 +1,9 @@
-//* Based on the public domain implementation in
-//* crypto_hash/keccakc512/simple/ from http://bench.cr.yp.to/supercop.html
-//* by Ronny Van Keer
-//* and the public domain "TweetFips202" implementation
-//* from https://twitter.com/tweetfips202
-//* by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe
+/* Based on the public domain implementation in
+* crypto_hash/keccakc512/simple/ from http://bench.cr.yp.to/supercop.html
+* by Ronny Van Keer
+* and the public domain "TweetFips202" implementation
+* from https://twitter.com/tweetfips202
+* by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
 /***********************************************************************************************************************
 *
 *                                          IAV GmbH

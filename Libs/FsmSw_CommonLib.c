@@ -82,9 +82,9 @@ static uint32 iav_commonlib_rand(void)
 *
 * Description: This function copies n values from dest to src
 *
-* Arguments:   - void *dest:      pointer to output array destination
-*              - const void *src: pointer to input array source
-*              - const uint32 n:  number of  values
+* Arguments:   -       void   *dest: pointer to output array destination
+*              - const void   *src:  pointer to input array source
+*              - const uint32  n:    number of  values
 *
 ***********************************************************************************************************************/
 void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
@@ -104,9 +104,9 @@ void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
 *
 * Description: This function sets n values from dest to value
 *
-* Arguments:   - void *dest:        pointer to output array destination
-*              - const uint8 value: set dest array to this value
-*              - const uint32 n:    number of  values
+* Arguments:   -       void   *dest:  pointer to output array destination
+*              - const uint8   value: set dest array to this value
+*              - const uint32  n:     number of values
 *
 ***********************************************************************************************************************/
 void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
@@ -125,9 +125,9 @@ void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
 *
 * Description: This function compares dest to src
 *
-* Arguments:   - const void *dest:pointer to input array destination
-*              - const void *src: pointer to input array source
-*              - const uint32 n:  number of  values
+* Arguments:   - const void   *dest: pointer to input array destination
+*              - const void   *src:  pointer to input array source
+*              - const uint32  n:    number of  values
 *
 * Returns 0 success, otherwise 1
 ***********************************************************************************************************************/
@@ -135,7 +135,7 @@ uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
 {
     uint32 i;
     uint8 *destPtr = (uint8*)dest;
-    uint8 *srcPtr  = (uint8*)src;
+    const uint8* srcPtr  = (const uint8*)src;
 
     for (i=0; i<n; i++)
     {
@@ -153,27 +153,27 @@ uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
 *
 * Description: This function moves n values from dest to src
 *
-* Arguments:   - void *dest:      pointer to output array destination
-*              - const void *src: pointer to input array source
-*              - const uint32 n:  number of  values
+* Arguments:   -       void   *dest: pointer to output array destination
+*              - const void   *src:  pointer to input array source
+*              - const uint32  n:    number of  values
 *
 ***********************************************************************************************************************/
 void FsmSw_CommonLib_memmove(void *dest, const void * src,  const uint32 n)
 {
     sint32 i;
     uint8 *destPtr = (uint8*)dest;
-    uint8 *srcPtr  = (uint8*)src;
+    const uint8* srcPtr  = (const uint8*)src;
 
     if (destPtr > srcPtr)
     {    /* copy from right to left */
-        for (i=n-1; i>=0; i--)
+        for (i = (sint32)((sint32)n - (sint32)1u); i>=0; i--)
         {
             destPtr[i] = srcPtr[i];
         }
     }
     else
     {   /* copy from left to right */
-        for (i=0; i<n; i++)
+        for (i=0; i<(sint32)n; i++)
         {
             destPtr[i] = srcPtr[i];
         }
@@ -186,8 +186,8 @@ void FsmSw_CommonLib_memmove(void *dest, const void * src,  const uint32 n)
 *
 * Description: This function generates n random values
 *
-* Arguments:   - uint8 *output:  pointer to output array with random values
-*              - const uint32 n: number of random values
+* Arguments:   -       uint8  *output: pointer to output array with random values
+*              - const uint32  n:      number of random values
 *
 * Returns 0 (success)
 ***********************************************************************************************************************/
