@@ -9,10 +9,10 @@ The required random numbers are calculated using a software solution, which is o
 The base of PQCleanAutomotive is the PQClean repository with the latest commit [#504](https://github.com/PQClean/PQClean/commit/fb003a2a625c49f3090eec546b2383dcfa2c75d8). It includes the following post-quantum cryptographic algorithms:
 
 * CRYSTALS-KYBER
-
-The following post-quantum cryptographic algorithms are in work:
-
 * CRYSTALS-DILITHIUM
+
+The folloing post-quantum cryptographic algorithms are in work:
+
 * FALCON
 * SPHINCS+
 
@@ -25,6 +25,7 @@ The library requires an H-file containing all data types of the respective hardw
 PQCleanAutomotive includes some third party libraries or modules that are licensed differently. In particular:
 
 * CRYSTALS-KYBER: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
+* CRYSTALS-DILITHIUM: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
 * Fips202: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
 * CommonLib: Apache License, Version 2.0
 
