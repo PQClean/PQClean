@@ -9,6 +9,7 @@
  */
 
 #include <stddef.h>
+#include <stdint.h>
 #include <arm_neon.h>
 
 typedef uint64x2_t v128;
