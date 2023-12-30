@@ -33,9 +33,8 @@
  * SOFTWARE.
  */
 
-#include <arm_neon.h>
 #include "fips202x2.h"
-
+#include <arm_neon.h>
 
 #define NROUNDS 24
 
