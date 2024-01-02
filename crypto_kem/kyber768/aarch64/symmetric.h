@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include "params.h"
 
-#include "fips202.h"
+#include "keccak2x/fips202.h"
 
 typedef shake128ctx xof_state;
 
