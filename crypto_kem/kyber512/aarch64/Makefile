@@ -6,6 +6,10 @@ OBJECTS=cbd.o indcpa.o kem.o neon_poly.o neon_polyvec.o neon_symmetric-shake.o n
 
 CFLAGS=-O3 -Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
+KECCAK2XDIR=../../../common/keccak2x
+KECCAK2XOBJ=fips202x2.o
+KECCAK2X=$(KECCAK2XDIR)/$(KECCAK2XOBJ)
+
 all: $(LIB)
 
 %.o: %.c $(HEADERS)
@@ -14,8 +18,12 @@ all: $(LIB)
 %.o: %.S $(HEADERS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-$(LIB): $(OBJECTS)
-	$(AR) -r $@ $(OBJECTS)
+$(LIB): $(OBJECTS) $(KECCAK2X)
+	$(AR) -r $@ $(OBJECTS) $(KECCAK2X)
+
+$(KECCAK2X):
+	$(MAKE) -C $(KECCAK2XDIR) CFLAGS="$(CFLAGS)" $(KECCAK2XOBJ)
+
 
 clean:
 	$(RM) $(OBJECTS)
