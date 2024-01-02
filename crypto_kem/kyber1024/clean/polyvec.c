@@ -14,6 +14,7 @@
 **************************************************/
 void PQCLEAN_KYBER1024_CLEAN_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const polyvec *a) {
     unsigned int i, j, k;
+    uint64_t d0;
 
     uint16_t t[8];
     for (i = 0; i < KYBER_K; i++) {
@@ -21,7 +22,13 @@ void PQCLEAN_KYBER1024_CLEAN_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDB
             for (k = 0; k < 8; k++) {
                 t[k]  = a->vec[i].coeffs[8 * j + k];
                 t[k] += ((int16_t)t[k] >> 15) & KYBER_Q;
-                t[k]  = ((((uint32_t)t[k] << 11) + KYBER_Q / 2) / KYBER_Q) & 0x7ff;
+                //t[k]  = ((((uint32_t)t[k] << 11) + KYBER_Q / 2) / KYBER_Q) & 0x7ff;
+                d0 = t[k];
+                d0 <<= 11;
+                d0 += 1664;
+                d0 *= 645084;
+                d0 >>= 31;
+                t[k] = d0 & 0x7ff;
             }
 
             r[ 0] = (uint8_t)(t[0] >>  0);
