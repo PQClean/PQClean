@@ -36,7 +36,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "params.h"
-#include "fips202x2.h"
+#include "keccak2x/fips202x2.h"
 #include "symmetric.h"
 
 /*************************************************
