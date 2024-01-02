@@ -12,7 +12,7 @@
 #include <stdint.h>
 #include "params.h"
 
-#include "keccak2x/fips202.h"
+#include "fips202.h"
 
 typedef shake128ctx xof_state;
 
@@ -37,7 +37,7 @@ void kyber_shake256_rkprf(uint8_t out[KYBER_SSBYTES], const uint8_t key[KYBER_SY
 #define rkprf(OUT, KEY, INPUT) kyber_shake256_rkprf(OUT, KEY, INPUT)
 
 // NEON Definition
-#include "fips202x2.h"
+#include "keccak2x/fips202x2.h"
 
 typedef keccakx2_state neon_xof_state;
 
