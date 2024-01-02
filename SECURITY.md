@@ -20,12 +20,16 @@ Use at your own risk.
 ### Historic issues
 * LEDAcryptKEM `leaktime` implementations are known to not be constant-time and expected to have timing side channel vulnerabilities.
   * LEDA support has since been dropped from PQClean as it got eliminated from the NIST PQC standardization project in round 3.
-* Rainbow level I has been shown to be insecure by Ward Beullens. 
+* Rainbow level I has been shown to be insecure by Ward Beullens.
   * Rainbow was eliminated from the NIST PQC standardization project and removed from PQClean in round 4.
 
 <!-- new date line
 ### 2019-XX-XX
 -->
+
+### 2024-01-02
+* Kyber used division operations that might leak side-channel information.
+  [PR #534](https://github.com/PQClean/PQClean/pull/534) addressed this.
 
 ### 2020-12-11
 * The fix of the timing leak in the CCA transform of FrodoKEM in [PR #303](https://github.com/PQClean/PQClean/pull/303) was ineffective. The FrodoKEM team released another [fix](https://github.com/microsoft/PQCrypto-LWEKE/commit/669522db63850fa64d1a24a47e138e80a59349db) which was ported to PQClean in [PR #367](https://github.com/PQClean/PQClean/pull/367).
