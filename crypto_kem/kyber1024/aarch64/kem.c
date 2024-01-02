@@ -17,7 +17,6 @@
 #include "symmetric.h"
 #include "randombytes.h"
 
-
 /*************************************************
 * Name:        crypto_kem_keypair_derand
 *
@@ -64,8 +63,6 @@ int crypto_kem_keypair(uint8_t *pk,
     crypto_kem_keypair_derand(pk, sk, coins);
     return 0;
 }
-
-
 
 /*************************************************
 * Name:        crypto_kem_enc_derand

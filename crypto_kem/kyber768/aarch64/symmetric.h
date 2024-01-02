@@ -27,7 +27,6 @@ void kyber_shake256_prf(uint8_t *out, size_t outlen, const uint8_t key[KYBER_SYM
 #define kyber_shake256_rkprf KYBER_NAMESPACE(kyber_shake256_rkprf)
 void kyber_shake256_rkprf(uint8_t out[KYBER_SSBYTES], const uint8_t key[KYBER_SYMBYTES], const uint8_t input[KYBER_CIPHERTEXTBYTES]);
 
-
 #define XOF_BLOCKBYTES SHAKE128_RATE
 
 #define hash_h(OUT, IN, INBYTES) sha3_256(OUT, IN, INBYTES)
@@ -36,7 +35,6 @@ void kyber_shake256_rkprf(uint8_t out[KYBER_SSBYTES], const uint8_t key[KYBER_SY
 #define xof_squeezeblocks(OUT, OUTBLOCKS, STATE) shake128_squeezeblocks(OUT, OUTBLOCKS, STATE)
 #define prf(OUT, OUTBYTES, KEY, NONCE) kyber_shake256_prf(OUT, OUTBYTES, KEY, NONCE)
 #define rkprf(OUT, KEY, INPUT) kyber_shake256_rkprf(OUT, KEY, INPUT)
-
 
 // NEON Definition
 #include "fips202x2.h"
@@ -67,5 +65,3 @@ void neon_kyber_shake256_prf(uint8_t *out1, uint8_t *out2,
     shake128x2_squeezeblocks(OUT0, OUT1, OUTBLOCKS, STATE)
 
 #endif /* SYMMETRIC_H */
-
-

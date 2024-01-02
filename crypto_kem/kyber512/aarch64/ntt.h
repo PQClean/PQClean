@@ -61,7 +61,6 @@ const int16_t pre_asymmetric_table_Q1_extended[ARRAY_N];
 extern
 const int16_t streamlined_inv_GS_negacyclic_table_Q1_jump_extended[((NTT_N - 1) + (1 << 0) + (1 << 4) + NTT_N) << 1];
 
-
 #define NTT(in) do { \
         PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_top(in, streamlined_CT_negacyclic_table_Q1_jump_extended, constants); \
         PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_bot(in, streamlined_CT_negacyclic_table_Q1_jump_extended, constants); \
@@ -76,6 +75,5 @@ const int16_t streamlined_inv_GS_negacyclic_table_Q1_jump_extended[((NTT_N - 1) 
 void ntt(int16_t r[256]);
 #define invntt KYBER_NAMESPACE(invntt)
 void invntt(int16_t r[256]);
-
 
 #endif

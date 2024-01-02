@@ -37,7 +37,6 @@
 #include <stddef.h>
 #include "fips202x2.h"
 
-
 #define NROUNDS 24
 
 // Define NEON operation
