@@ -58,6 +58,6 @@ int randombytes(uint8_t *buf, size_t n) {
  * @brief Release the PRNG context
  * @param[in] state Internal state of the PRNG
  */
-void hqc_kat_release() {
+void hqc_kat_release(void) {
     shake256_inc_ctx_release(&shake_prng_state);
 }
