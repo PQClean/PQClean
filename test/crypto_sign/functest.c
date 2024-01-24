@@ -79,6 +79,15 @@ inline static void *malloc_s(size_t size) {
 
 static int test_sign(void) {
     /*
+     * In order to properly test variable-length signatures, we need to check
+     * that the implementation does not modify the provided buffer beyond the
+     * reported signature length. We do this by filling the buffer with random
+     * bytes before the call to sign and checking afterward that the tail has
+     * not been modified.
+    */
+    uint8_t sm_random_cmp[MLEN + CRYPTO_BYTES];
+
+    /*
      * This is most likely going to be aligned by the compiler.
      * 16 extra bytes for canary
      * 1 extra byte for unalignment
@@ -124,7 +133,14 @@ static int test_sign(void) {
         RETURNS_ZERO(crypto_sign_keypair(pk + 8, sk + 8));
 
         randombytes(m + 8, MLEN);
+        // Fill the sm buffer with random bytes
+        randombytes(sm_random_cmp, MLEN + CRYPTO_BYTES);
+        memcpy(sm + 8, sm_random_cmp, MLEN + CRYPTO_BYTES);
+
         RETURNS_ZERO(crypto_sign(sm + 8, &smlen, m + 8, MLEN, sk + 8));
+
+        // check that the tail has not been modified
+        RETURNS_ZERO(memcmp(sm + 8 + smlen, sm_random_cmp + smlen, MLEN + CRYPTO_BYTES - smlen));
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
@@ -157,6 +173,15 @@ end:
 }
 
 static int test_sign_detached(void) {
+    /*
+     * In order to properly test variable-length signatures, we need to check
+     * that the implementation does not modify the provided buffer beyond the
+     * reported signature length. We do this by filling the buffer with random
+     * bytes before the call to sign and checking afterward that the tail has
+     * not been modified.
+    */
+    uint8_t sig_random_cmp[CRYPTO_BYTES];
+
     /*
      * This is most likely going to be aligned by the compiler.
      * 16 extra bytes for canary
@@ -202,7 +227,15 @@ static int test_sign_detached(void) {
         RETURNS_ZERO(crypto_sign_keypair(pk + 8, sk + 8));
 
         randombytes(m + 8, MLEN);
+
+        // Fill the sig buffer with random bytes
+        randombytes(sig_random_cmp, CRYPTO_BYTES);
+        memcpy(sig + 8, sig_random_cmp, CRYPTO_BYTES);
+
         RETURNS_ZERO(crypto_sign_signature(sig + 8, &siglen, m + 8, MLEN, sk + 8));
+
+        // check that the tail has not been modified
+        RETURNS_ZERO(memcmp(sig + 8 + siglen, sig_random_cmp + siglen, CRYPTO_BYTES - siglen));
 
         if ((returncode =
                     crypto_sign_verify(sig + 8, siglen, m + 8, MLEN, pk + 8)) != 0) {
