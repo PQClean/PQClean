@@ -27,9 +27,10 @@ Use at your own risk.
 ### 2019-XX-XX
 -->
 
-### 2024-01-02
+### 2024-01-25
 * Kyber used division operations that might leak side-channel information.
-  [PR #534](https://github.com/PQClean/PQClean/pull/534) addressed this.
+  [PR #534](https://github.com/PQClean/PQClean/pull/534) addressed this for the `clean` and `avx2` implementations.
+  Note that the `aarch64` implementation is waiting for [PR#527](https://github.com/PQClean/PQClean/pull/527) to get fixed.
 
 ### 2020-12-11
 * The fix of the timing leak in the CCA transform of FrodoKEM in [PR #303](https://github.com/PQClean/PQClean/pull/303) was ineffective. The FrodoKEM team released another [fix](https://github.com/microsoft/PQCrypto-LWEKE/commit/669522db63850fa64d1a24a47e138e80a59349db) which was ported to PQClean in [PR #367](https://github.com/PQClean/PQClean/pull/367).
