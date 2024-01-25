@@ -1,8 +1,10 @@
-#ifndef NTT_PARAMS_H
-#define NTT_PARAMS_H
+#ifndef PQCLEAN_DILITHIUM2_AARCH64_NTT_PARAMS_H
+#define PQCLEAN_DILITHIUM2_AARCH64_NTT_PARAMS_H
 
 /*
- * CC0 1.0 Universal or the following MIT License
+ * We offer
+ * CC0 1.0 Universal or the following MIT License for this file.
+ * You may freely choose one of them that applies.
  *
  * MIT License
  *

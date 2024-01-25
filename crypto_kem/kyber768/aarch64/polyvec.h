@@ -1,5 +1,5 @@
-#ifndef POLYVEC_H
-#define POLYVEC_H
+#ifndef PQCLEAN_KYBER768_AARCH64_POLYVEC_H
+#define PQCLEAN_KYBER768_AARCH64_POLYVEC_H
 
 /*
  * This file was originally licensed
@@ -7,8 +7,9 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  *
- * We choose
+ * We offer
  * CC0 1.0 Universal or the following MIT License for this file.
+ * You may freely choose one of them that applies.
  *
  * MIT License
  *
@@ -34,21 +35,21 @@
  * SOFTWARE.
  */
 
+#include <stdint.h>
 #include "params.h"
 #include "poly.h"
-#include <stdint.h>
 
 typedef struct {
     poly vec[KYBER_K];
 } polyvec;
 
 #define polyvec_compress KYBER_NAMESPACE(polyvec_compress)
-void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], int16_t a[KYBER_K][KYBER_N]);
+void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const int16_t a[KYBER_K][KYBER_N]);
 #define polyvec_decompress KYBER_NAMESPACE(polyvec_decompress)
 void polyvec_decompress(int16_t r[KYBER_K][KYBER_N], const uint8_t a[KYBER_POLYVECCOMPRESSEDBYTES]);
 
 #define polyvec_tobytes KYBER_NAMESPACE(polyvec_tobytes)
-void polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], int16_t a[KYBER_K][KYBER_N]);
+void polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], const int16_t a[KYBER_K][KYBER_N]);
 #define polyvec_frombytes KYBER_NAMESPACE(polyvec_frombytes)
 void polyvec_frombytes(int16_t r[KYBER_K][KYBER_N], const uint8_t a[KYBER_POLYVECBYTES]);
 
@@ -61,6 +62,6 @@ void neon_polyvec_ntt(int16_t r[KYBER_K][KYBER_N]);
 void neon_polyvec_invntt_to_mont(int16_t r[KYBER_K][KYBER_N]);
 
 #define neon_polyvec_add_reduce KYBER_NAMESPACE(polyvec_add_reduce)
-void neon_polyvec_add_reduce(int16_t c[KYBER_K][KYBER_N], int16_t a[KYBER_K][KYBER_N]);
+void neon_polyvec_add_reduce(int16_t c[KYBER_K][KYBER_N], const int16_t a[KYBER_K][KYBER_N]);
 
 #endif

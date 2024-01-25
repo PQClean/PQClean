@@ -19,7 +19,7 @@
 *                            (needs space for KYBER_POLYVECCOMPRESSEDBYTES)
 *              - const polyvec *a: pointer to input vector of polynomials
 **************************************************/
-void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], int16_t a[KYBER_K][KYBER_N]) {
+void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const int16_t a[KYBER_K][KYBER_N]) {
     unsigned int i, j, k;
 
     uint16_t t[8];
@@ -89,7 +89,7 @@ void polyvec_decompress(int16_t r[KYBER_K][KYBER_N], const uint8_t a[KYBER_POLYV
 *                            (needs space for KYBER_POLYVECBYTES)
 *              - const polyvec *a: pointer to input vector of polynomials
 **************************************************/
-void polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], int16_t a[KYBER_K][KYBER_N]) {
+void polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], const int16_t a[KYBER_K][KYBER_N]) {
     unsigned int i;
     for (i = 0; i < KYBER_K; i++) {
         poly_tobytes(r + i * KYBER_POLYBYTES, a[i]);
@@ -112,4 +112,3 @@ void polyvec_frombytes(int16_t r[KYBER_K][KYBER_N], const uint8_t a[KYBER_POLYVE
         poly_frombytes(r[i], a + i * KYBER_POLYBYTES);
     }
 }
-

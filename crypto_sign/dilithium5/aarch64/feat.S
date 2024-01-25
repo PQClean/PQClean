@@ -123,10 +123,10 @@ SOFTWARE.
 .endm
 
 .align 4
-.global PQCLEAN_DILITHIUM5_AARCH64_f1600x2
-.global _PQCLEAN_DILITHIUM5_AARCH64_f1600x2
-PQCLEAN_DILITHIUM5_AARCH64_f1600x2:
-_PQCLEAN_DILITHIUM5_AARCH64_f1600x2:
+.global f1600x2
+.global _f1600x2
+f1600x2:
+_f1600x2:
     stp d8,  d9,  [sp,#-16]!
     stp d10, d11, [sp,#-16]!
     stp d12, d13, [sp,#-16]!

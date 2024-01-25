@@ -1,5 +1,5 @@
-#ifndef POLY_H
-#define POLY_H
+#ifndef PQCLEAN_DILITHIUM5_AARCH64_POLY_H
+#define PQCLEAN_DILITHIUM5_AARCH64_POLY_H
 
 /*
  * This file is dual licensed

@@ -1,5 +1,5 @@
-#ifndef REDUCE_H
-#define REDUCE_H
+#ifndef PQCLEAN_KYBER768_AARCH64_REDUCE_H
+#define PQCLEAN_KYBER768_AARCH64_REDUCE_H
 
 /*
  * This file is licensed
@@ -7,8 +7,8 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
-#include "params.h"
 #include <stdint.h>
+#include "params.h"
 
 #define MONT (-1044) // 2^16 mod q
 #define QINV (-3327) // q^-1 mod 2^16

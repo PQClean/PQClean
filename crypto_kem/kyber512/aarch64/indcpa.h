@@ -1,5 +1,5 @@
-#ifndef INDCPA_H
-#define INDCPA_H
+#ifndef PQCLEAN_KYBER512_AARCH64_INDCPA_H
+#define PQCLEAN_KYBER512_AARCH64_INDCPA_H
 
 /*
  * This file is licensed
@@ -7,9 +7,9 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
+#include <stdint.h>
 #include "params.h"
 #include "polyvec.h"
-#include <stdint.h>
 
 #define gen_matrix KYBER_NAMESPACE(gen_matrix)
 void gen_matrix(int16_t a[KYBER_K][KYBER_K][KYBER_N], const uint8_t seed[KYBER_SYMBYTES], int transposed);
