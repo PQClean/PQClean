@@ -7,8 +7,8 @@ OBJECTS=cbd.o indcpa.o kem.o neon_poly.o neon_polyvec.o neon_symmetric-shake.o n
 CFLAGS=-O3 -Wall -Wextra -Wpedantic -Werror -Wmissing-prototypes -Wredundant-decls -std=c99 -I../../../common $(EXTRAFLAGS)
 
 KECCAK2XDIR=../../../common/keccak2x
-KECCAK2XOBJ=fips202x2.o
-KECCAK2X=$(KECCAK2XDIR)/$(KECCAK2XOBJ)
+KECCAK2XOBJ=fips202x2.o feat.o
+KECCAK2X=$(addprefix $(KECCAK2XDIR)/,$(KECCAK2XOBJ))
 
 all: $(LIB)
 
