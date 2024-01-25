@@ -25,7 +25,6 @@
 #define D 13
 #define ROOT_OF_UNITY 1753
 
-
 #define K 8
 #define L 7
 #define ETA 2
@@ -36,8 +35,6 @@
 #define OMEGA 75
 #define CRYPTO_ALGNAME "Dilithium5"
 #define CTILDEBYTES 64
-
-
 
 #define POLYT1_PACKEDBYTES  320
 #define POLYT0_PACKEDBYTES  416

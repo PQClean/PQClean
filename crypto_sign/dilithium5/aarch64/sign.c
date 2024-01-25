@@ -140,8 +140,7 @@ int crypto_sign_signature(uint8_t *sig,
     shake256_inc_squeeze(mu, CRHBYTES, &state);
     shake256_inc_ctx_release(&state);
 
-
-    for(n = 0; n < RNDBYTES; n++) {
+    for (n = 0; n < RNDBYTES; n++) {
         rnd[n] = 0;
     }
     shake256(rhoprime, CRHBYTES, key, SEEDBYTES + RNDBYTES + CRHBYTES);

@@ -24,7 +24,6 @@ $(LIB): $(OBJECTS) $(KECCAK2X)
 $(KECCAK2X):
 	$(MAKE) -C $(KECCAK2XDIR) CFLAGS="$(CFLAGS)" $(KECCAK2XOBJ)
 
-
 clean:
 	$(RM) $(OBJECTS)
 	$(RM) $(LIB)
