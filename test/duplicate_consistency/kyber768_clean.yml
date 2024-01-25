@@ -25,6 +25,7 @@ consistency_checks:
       files:
       - indcpa.h
       - verify.h
+      - kem.c
       - symmetric-shake.c
     - source:
         scheme: kyber768
@@ -34,6 +35,7 @@ consistency_checks:
       - indcpa.h
       - kem.h
       - verify.h
+      - kem.c
       - symmetric-shake.c
     - source:
         scheme: kyber1024
@@ -60,4 +62,5 @@ consistency_checks:
       files:
       - indcpa.h
       - verify.h
+      - kem.c
       - symmetric-shake.c
