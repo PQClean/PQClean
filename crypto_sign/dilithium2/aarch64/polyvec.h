@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_DILITHIUM2_AARCH64_POLYVEC_H
-#define PQCLEAN_DILITHIUM2_AARCH64_POLYVEC_H
+#ifndef POLYVEC_H
+#define POLYVEC_H
 
 /*
  * This file is dual licensed
@@ -42,11 +42,8 @@ void polyvecl_pointwise_acc_montgomery(poly *w,
                                        const polyvecl *u,
                                        const polyvecl *v);
 
-
 #define polyvecl_chknorm DILITHIUM_NAMESPACE(polyvecl_chknorm)
 int polyvecl_chknorm(const polyvecl *v, int32_t B);
-
-
 
 /* Vectors of polynomials of length K */
 typedef struct {

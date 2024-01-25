@@ -5,9 +5,8 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  *
- * We offer
+ * We choose
  * CC0 1.0 Universal or the following MIT License for this file.
- * You may freely choose one of them that applies.
  *
  * MIT License
  *
@@ -84,7 +83,7 @@ void neon_polyvec_invntt_to_mont(int16_t r[KYBER_K][KYBER_N]) {
 *            - const polyvec *a: pointer to first input vector of polynomials
 *            - const polyvec *b: pointer to second input vector of polynomials
 **************************************************/
-void neon_polyvec_add_reduce(int16_t c[KYBER_K][KYBER_N], const int16_t a[KYBER_K][KYBER_N]) {
+void neon_polyvec_add_reduce(int16_t c[KYBER_K][KYBER_N], int16_t a[KYBER_K][KYBER_N]) {
     unsigned int i;
     for (i = 0; i < KYBER_K; i++) {
         // c = c + a;
@@ -92,3 +91,4 @@ void neon_polyvec_add_reduce(int16_t c[KYBER_K][KYBER_N], const int16_t a[KYBER_
         neon_poly_add_reduce(c[i], a[i]);
     }
 }
+

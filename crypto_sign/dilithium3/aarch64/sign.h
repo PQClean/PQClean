@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_DILITHIUM3_AARCH64_SIGN_H
-#define PQCLEAN_DILITHIUM3_AARCH64_SIGN_H
+#ifndef SIGN_H
+#define SIGN_H
 
 /*
  * This file is dual licensed
@@ -13,7 +13,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #define challenge DILITHIUM_NAMESPACE(challenge)
 void challenge(poly *c, const uint8_t seed[SEEDBYTES]);
 
@@ -25,7 +24,7 @@ int crypto_sign_signature(uint8_t *sig, size_t *siglen,
                           const uint8_t *m, size_t mlen,
                           const uint8_t *sk);
 
-#define crypto_sign DILITHIUM_NAMESPACE(crypto_sign)
+#define crypto_sign DILITHIUM_NAMESPACETOP
 int crypto_sign(uint8_t *sm, size_t *smlen,
                 const uint8_t *m, size_t mlen,
                 const uint8_t *sk);

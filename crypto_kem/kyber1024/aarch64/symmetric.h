@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_KYBER1024_AARCH64_SYMMETRIC_H
-#define PQCLEAN_KYBER1024_AARCH64_SYMMETRIC_H
+#ifndef SYMMETRIC_H
+#define SYMMETRIC_H
 
 /*
  * This file is licensed
@@ -8,9 +8,9 @@
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
 
+#include "params.h"
 #include <stddef.h>
 #include <stdint.h>
-#include "params.h"
 
 #include "fips202.h"
 
@@ -37,7 +37,7 @@ void kyber_shake256_rkprf(uint8_t out[KYBER_SSBYTES], const uint8_t key[KYBER_SY
 #define rkprf(OUT, KEY, INPUT) kyber_shake256_rkprf(OUT, KEY, INPUT)
 
 // NEON Definition
-#include "keccak2x/fips202x2.h"
+#include "fips202x2.h"
 
 typedef keccakx2_state neon_xof_state;
 

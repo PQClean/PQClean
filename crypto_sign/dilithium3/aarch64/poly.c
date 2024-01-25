@@ -4,14 +4,12 @@
  * under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html) or
  * public domain at https://github.com/pq-crystals/dilithium/tree/master/ref
  *
- * We offer
- * CC0 1.0 Universal or the following MIT License for this file.
- * You may freely choose one of them that applies.
+ * We choose
+ * CC0 1.0 Universal or the following MIT License
  *
  * MIT License
  *
  * Copyright (c) 2023: Hanno Becker, Vincent Hwang, Matthias J. Kannwischer, Bo-Yin Yang, and Shang-Yi Yang
- * Copyright (c) 2023: Vincent Hwang
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +39,12 @@
 
 #include "fips202x2.h"
 
+#include "NTT_params.h"
 #include "ntt.h"
+
+static const int32_t montgomery_const[4] = {
+    DILITHIUM_Q, DILITHIUM_QINV
+};
 
 #define DBENCH_START()
 #define DBENCH_STOP(t)
@@ -54,11 +57,11 @@
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_reduce(int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_reduce(int32_t *, const int32_t *);
 void poly_reduce(poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_reduce(a->coeffs, constants);
+    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_reduce(a->coeffs, montgomery_const);
 
     DBENCH_STOP(*tred);
 }
@@ -71,11 +74,11 @@ void poly_reduce(poly *a) {
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_caddq(int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_caddq(int32_t *, const int32_t *);
 void poly_caddq(poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_caddq(a->coeffs, constants);
+    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_caddq(a->coeffs, montgomery_const);
 
     DBENCH_STOP(*tred);
 }
@@ -88,11 +91,11 @@ void poly_caddq(poly *a) {
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_freeze(int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_freeze(int32_t *, const int32_t *);
 void poly_freeze(poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_freeze(a->coeffs, constants);
+    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_freeze(a->coeffs, montgomery_const);
 
     DBENCH_STOP(*tred);
 }
@@ -202,11 +205,11 @@ void poly_invntt_tomont(poly *a) {
 *              - const poly *a: pointer to first input polynomial
 *              - const poly *b: pointer to second input polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_pointwise_montgomery(int32_t *des, const int32_t *src1, const int32_t *src2, const int32_t *table);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_pointwise_montgomery(int32_t *des, const int32_t *src1, const int32_t *src2, const int32_t *table);
 void poly_pointwise_montgomery(poly *c, const poly *a, const poly *b) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_pointwise_montgomery(c->coeffs, a->coeffs, b->coeffs, constants);
+    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_pointwise_montgomery(c->coeffs, a->coeffs, b->coeffs, montgomery_const);
 
     DBENCH_STOP(*tmul);
 }
@@ -223,11 +226,11 @@ void poly_pointwise_montgomery(poly *c, const poly *a, const poly *b) {
 *              - poly *a0: pointer to output polynomial with coefficients c0
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_poly_power2round(int32_t *, int32_t *, const int32_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_poly_power2round(int32_t *, int32_t *, const int32_t *);
 void poly_power2round(poly *a1, poly *a0, const poly *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64__asm_poly_power2round(a1->coeffs, a0->coeffs, a->coeffs);
+    PQCLEAN_DILITHIUM3_AARCH64_asm_poly_power2round(a1->coeffs, a0->coeffs, a->coeffs);
 
     DBENCH_STOP(*tround);
 }
@@ -467,14 +470,12 @@ static unsigned int rej_eta(int32_t *a,
         t0 = buf[pos] & 0x0F;
         t1 = buf[pos++] >> 4;
 
-
         if (t0 < 9) {
             a[ctr++] = 4 - t0;
         }
         if (t1 < 9 && ctr < len) {
             a[ctr++] = 4 - t1;
         }
-
 
     }
 
@@ -640,13 +641,11 @@ void polyeta_pack(uint8_t *r, const poly *a) {
     uint8_t t[8];
     DBENCH_START();
 
-
     for (i = 0; i < N / 2; ++i) {
         t[0] = ETA - a->coeffs[2 * i + 0];
         t[1] = ETA - a->coeffs[2 * i + 1];
         r[i] = t[0] | (t[1] << 4);
     }
-
 
     DBENCH_STOP(*tpack);
 }
@@ -663,14 +662,12 @@ void polyeta_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
 
-
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0] = a[i] & 0x0F;
         r->coeffs[2 * i + 1] = a[i] >> 4;
         r->coeffs[2 * i + 0] = ETA - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = ETA - r->coeffs[2 * i + 1];
     }
-
 
     DBENCH_STOP(*tpack);
 }
@@ -709,11 +706,11 @@ void polyt1_pack(uint8_t *r, const poly *a) {
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-extern void PQCLEAN_DILITHIUM3_AARCH64__asm_10_to_32(int32_t *, const uint8_t *);
+extern void PQCLEAN_DILITHIUM3_AARCH64_asm_10_to_32(int32_t *, const uint8_t *);
 void polyt1_unpack(poly *r, const uint8_t *a) {
     DBENCH_START();
 
-    PQCLEAN_DILITHIUM3_AARCH64__asm_10_to_32(r->coeffs, a);
+    PQCLEAN_DILITHIUM3_AARCH64_asm_10_to_32(r->coeffs, a);
 
     DBENCH_STOP(*tpack);
 }
@@ -844,7 +841,6 @@ void polyz_pack(uint8_t *r, const poly *a) {
     uint32_t t[4];
     DBENCH_START();
 
-
     for (i = 0; i < N / 2; ++i) {
         t[0] = GAMMA1 - a->coeffs[2 * i + 0];
         t[1] = GAMMA1 - a->coeffs[2 * i + 1];
@@ -856,7 +852,6 @@ void polyz_pack(uint8_t *r, const poly *a) {
         r[5 * i + 3]  = t[1] >> 4;
         r[5 * i + 4]  = t[1] >> 12;
     }
-
 
     DBENCH_STOP(*tpack);
 }
@@ -874,7 +869,6 @@ void polyz_unpack(poly *r, const uint8_t *a) {
     unsigned int i;
     DBENCH_START();
 
-
     for (i = 0; i < N / 2; ++i) {
         r->coeffs[2 * i + 0]  = a[5 * i + 0];
         r->coeffs[2 * i + 0] |= (uint32_t)a[5 * i + 1] << 8;
@@ -889,7 +883,6 @@ void polyz_unpack(poly *r, const uint8_t *a) {
         r->coeffs[2 * i + 0] = GAMMA1 - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = GAMMA1 - r->coeffs[2 * i + 1];
     }
-
 
     DBENCH_STOP(*tpack);
 }
@@ -908,11 +901,9 @@ void polyw1_pack(uint8_t *r, const poly *a) {
     unsigned int i;
     DBENCH_START();
 
-
     for (i = 0; i < N / 2; ++i) {
         r[i] = a->coeffs[2 * i + 0] | (a->coeffs[2 * i + 1] << 4);
     }
-
 
     DBENCH_STOP(*tpack);
 }

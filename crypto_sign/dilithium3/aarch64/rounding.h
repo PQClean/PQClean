@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_DILITHIUM3_AARCH64_ROUNDING_H
-#define PQCLEAN_DILITHIUM3_AARCH64_ROUNDING_H
+#ifndef ROUNDING_H
+#define ROUNDING_H
 
 /*
  * This file is dual licensed
