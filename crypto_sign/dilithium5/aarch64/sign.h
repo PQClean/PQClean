@@ -13,7 +13,6 @@
 #include <stddef.h>
 #include <stdint.h>
 
-
 #define challenge DILITHIUM_NAMESPACE(challenge)
 void challenge(poly *c, const uint8_t seed[SEEDBYTES]);
 

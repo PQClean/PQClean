@@ -51,7 +51,6 @@ int32_t decompose(int32_t *a0, int32_t a) {
     a1  = (a1 * 1025 + (1 << 21)) >> 22;
     a1 &= 15;
 
-
     *a0  = a - a1 * 2 * GAMMA2;
     *a0 -= (((DILITHIUM_Q - 1) / 2 - *a0) >> 31) & DILITHIUM_Q;
     return a1;
@@ -94,12 +93,10 @@ int32_t use_hint(int32_t a, unsigned int hint) {
         return a1;
     }
 
-
     if (a0 > 0) {
         return (a1 + 1) & 15;
     } else {
         return (a1 - 1) & 15;
     }
-
 
 }

@@ -34,7 +34,7 @@
  */
 
 #include "fips202.h"
-#include "fips202x2.h"
+#include "keccak2x/fips202x2.h"
 #include "params.h"
 #include <stdint.h>
 
@@ -59,7 +59,6 @@ void dilithium_shake128x2_stream_init(keccakx2_state *state,
 void dilithium_shake256x2_stream_init(keccakx2_state *state,
                                       const uint8_t seed[CRHBYTES],
                                       uint16_t nonce1, uint16_t nonce2);
-
 
 #define STREAM128_BLOCKBYTES SHAKE128_RATE
 #define STREAM256_BLOCKBYTES SHAKE256_RATE
