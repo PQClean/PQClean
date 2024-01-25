@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_KYBER1024_AARCH64_REJSAMPLE_H
-#define PQCLEAN_KYBER1024_AARCH64_REJSAMPLE_H
+#ifndef REJSAMPLE_H
+#define REJSAMPLE_H
 
 /*
  * This file is licensed
@@ -8,8 +8,8 @@
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  */
 
-#include <stdint.h>
 #include "params.h"
+#include <stdint.h>
 
 #define neon_rej_uniform KYBER_NAMESPACE(_neon_rej_uniform)
 unsigned int neon_rej_uniform(int16_t *r,

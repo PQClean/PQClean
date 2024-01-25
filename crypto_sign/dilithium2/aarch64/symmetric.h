@@ -1,14 +1,13 @@
-#ifndef PQCLEAN_DILITHIUM2_AARCH64_SYMMETRIC_H
-#define PQCLEAN_DILITHIUM2_AARCH64_SYMMETRIC_H
+#ifndef SYMMETRIC_H
+#define SYMMETRIC_H
 
 /*
  * This file was originally licensed
  * under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.html) or
  * public domain at https://github.com/pq-crystals/dilithium/tree/master/ref
  *
- * We offer
- * CC0 1.0 Universal or the following MIT License for this file.
- * You may freely choose one of them that applies.
+ * We choose
+ * CC0 1.0 Universal or the following MIT License
  *
  * MIT License
  *
@@ -59,7 +58,6 @@ void dilithium_shake128x2_stream_init(keccakx2_state *state,
 void dilithium_shake256x2_stream_init(keccakx2_state *state,
                                       const uint8_t seed[CRHBYTES],
                                       uint16_t nonce1, uint16_t nonce2);
-
 
 #define STREAM128_BLOCKBYTES SHAKE128_RATE
 #define STREAM256_BLOCKBYTES SHAKE256_RATE

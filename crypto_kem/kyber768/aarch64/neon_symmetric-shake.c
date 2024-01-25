@@ -5,9 +5,8 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  *
- * We offer
+ * We choose
  * CC0 1.0 Universal or the following MIT License for this file.
- * You may freely choose one of them that applies.
  *
  * MIT License
  *
@@ -36,7 +35,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "params.h"
-#include "keccak2x/fips202x2.h"
+#include "fips202x2.h"
 #include "symmetric.h"
 
 /*************************************************
@@ -89,8 +88,8 @@ void neon_kyber_shake256_prf(uint8_t *out1, uint8_t *out2,
                              const uint8_t key[KYBER_SYMBYTES],
                              uint8_t nonce1, uint8_t nonce2) {
     unsigned int i;
-    uint8_t extkey1[KYBER_SYMBYTES + 1];
-    uint8_t extkey2[KYBER_SYMBYTES + 1];
+    uint8_t extkey1[KYBER_SYMBYTES + 1 + 15];
+    uint8_t extkey2[KYBER_SYMBYTES + 1 + 15];
 
     for (i = 0; i < KYBER_SYMBYTES; i++) {
         extkey1[i] = key[i];
@@ -100,5 +99,5 @@ void neon_kyber_shake256_prf(uint8_t *out1, uint8_t *out2,
     extkey1[i] = nonce1;
     extkey2[i] = nonce2;
 
-    shake256x2(out1, out2, outlen, extkey1, extkey2, sizeof(extkey1));
+    shake256x2(out1, out2, outlen, extkey1, extkey2, KYBER_SYMBYTES + 1);
 }

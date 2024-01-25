@@ -5,9 +5,8 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  *
- * We offer
+ * We choose
  * CC0 1.0 Universal or the following MIT License for this file.
- * You may freely choose one of them that applies.
  *
  * MIT License
  *

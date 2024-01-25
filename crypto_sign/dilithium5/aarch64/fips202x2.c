@@ -5,9 +5,8 @@
  * at https://github.com/GMUCERG/PQC_NEON/blob/main/neon/kyber or
  * public domain at https://github.com/cothan/kyber/blob/master/neon
  *
- * We offer
+ * We choose
  * CC0 1.0 Universal or the following MIT License for this file.
- * You may freely choose one of them that applies.
  *
  * MIT License
  *
@@ -37,7 +36,6 @@
 #include <stddef.h>
 #include "fips202x2.h"
 
-
 #define NROUNDS 24
 
 // Define NEON operation
@@ -49,20 +47,20 @@
 #define vxor(c, a, b) c = veorq_u64(a, b);
 // Rotate by n bit ((a << offset) ^ (a >> (64-offset)))
 #define vROL(out, a, offset)    \
-    out = vshlq_n_u64(a, offset); \
-    out = vsriq_n_u64(out, a, 64 - offset);
+    (out) = vshlq_n_u64(a, offset); \
+    (out) = vsriq_n_u64(out, a, 64 - (offset));
 // Xor chain: out = a ^ b ^ c ^ d ^ e
 #define vXOR4(out, a, b, c, d, e) \
-    out = veorq_u64(a, b);          \
-    out = veorq_u64(out, c);        \
-    out = veorq_u64(out, d);        \
-    out = veorq_u64(out, e);
+    (out) = veorq_u64(a, b);          \
+    (out) = veorq_u64(out, c);        \
+    (out) = veorq_u64(out, d);        \
+    (out) = veorq_u64(out, e);
 // Not And c = ~a & b
 // #define vbic(c, a, b) c = vbicq_u64(b, a);
 // Xor Not And: out = a ^ ( (~b) & c)
 #define vXNA(out, a, b, c) \
-    out = vbicq_u64(c, b);   \
-    out = veorq_u64(out, a);
+    (out) = vbicq_u64(c, b);   \
+    (out) = veorq_u64(out, a);
 // Rotate by 1 bit, then XOR: a ^ ROL(b): SHA1 instruction, not support
 #define vrxor(c, a, b) c = vrax1q_u64(a, b);
 // End Define
@@ -102,11 +100,11 @@ static const uint64_t neon_KeccakF_RoundConstants[NROUNDS] = {
 *
 * Arguments:   - uint64_t *state: pointer to input/output Keccak state
 **************************************************/
-extern void f1600x2(v128 *, const uint64_t *);
+extern void PQCLEAN_DILITHIUM5_AARCH64_f1600x2(v128 *, const uint64_t *);
 static inline
 void KeccakF1600_StatePermutex2(v128 state[25]) {
     #if (__APPLE__ && __ARM_FEATURE_CRYPTO) || (__ARM_FEATURE_SHA3) /* although not sure what is being implemented, we find something fast */
-    f1600x2(state, neon_KeccakF_RoundConstants);
+    PQCLEAN_DILITHIUM5_AARCH64_f1600x2(state, neon_KeccakF_RoundConstants);
     #else
     v128 Aba, Abe, Abi, Abo, Abu;
     v128 Aga, Age, Agi, Ago, Agu;

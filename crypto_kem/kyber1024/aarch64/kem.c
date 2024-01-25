@@ -8,14 +8,12 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
-
-#include "api.h"
 #include "params.h"
-#include "kem.h"
 #include "indcpa.h"
 #include "verify.h"
 #include "symmetric.h"
 #include "randombytes.h"
+#include "kem.h"
 
 /*************************************************
 * Name:        crypto_kem_keypair_derand

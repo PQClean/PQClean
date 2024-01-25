@@ -19,7 +19,7 @@
 *              - const uint8_t rho[]: byte array containing rho
 *              - const polyveck *t1: pointer to vector t1
 **************************************************/
-void pack_pk(uint8_t pk[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_PUBLICKEYBYTES],
+void pack_pk(uint8_t pk[CRYPTO_PUBLICKEYBYTES],
              const uint8_t rho[SEEDBYTES],
              const polyveck *t1) {
     unsigned int i;
@@ -45,7 +45,7 @@ void pack_pk(uint8_t pk[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_PUBLICKEYBYTES],
 **************************************************/
 void unpack_pk(uint8_t rho[SEEDBYTES],
                polyveck *t1,
-               const uint8_t pk[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_PUBLICKEYBYTES]) {
+               const uint8_t pk[CRYPTO_PUBLICKEYBYTES]) {
     unsigned int i;
 
     for (i = 0; i < SEEDBYTES; ++i) {
@@ -71,7 +71,7 @@ void unpack_pk(uint8_t rho[SEEDBYTES],
 *              - const polyvecl *s1: pointer to vector s1
 *              - const polyveck *s2: pointer to vector s2
 **************************************************/
-void pack_sk(uint8_t sk[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_SECRETKEYBYTES],
+void pack_sk(uint8_t sk[CRYPTO_SECRETKEYBYTES],
              const uint8_t rho[SEEDBYTES],
              const uint8_t tr[TRBYTES],
              const uint8_t key[SEEDBYTES],
@@ -129,7 +129,7 @@ void unpack_sk(uint8_t rho[SEEDBYTES],
                polyveck *t0,
                polyvecl *s1,
                polyveck *s2,
-               const uint8_t sk[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_SECRETKEYBYTES]) {
+               const uint8_t sk[CRYPTO_SECRETKEYBYTES]) {
     unsigned int i;
 
     for (i = 0; i < SEEDBYTES; ++i) {
@@ -172,7 +172,7 @@ void unpack_sk(uint8_t rho[SEEDBYTES],
 *              - const polyvecl *z: pointer to vector z
 *              - const polyveck *h: pointer to hint vector h
 **************************************************/
-void pack_sig(uint8_t sig[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES],
+void pack_sig(uint8_t sig[CRYPTO_BYTES],
               const uint8_t c[CTILDEBYTES],
               const polyvecl *z,
               const polyveck *h) {
@@ -221,7 +221,7 @@ void pack_sig(uint8_t sig[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES],
 int unpack_sig(uint8_t c[CTILDEBYTES],
                polyvecl *z,
                polyveck *h,
-               const uint8_t sig[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES]) {
+               const uint8_t sig[CRYPTO_BYTES]) {
     unsigned int i, j, k;
 
     for (i = 0; i < CTILDEBYTES; ++i) {

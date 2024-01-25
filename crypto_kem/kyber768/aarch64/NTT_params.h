@@ -1,10 +1,8 @@
-#ifndef PQCLEAN_KYBER768_AARCH64_NTT_PARAMS_H
-#define PQCLEAN_KYBER768_AARCH64_NTT_PARAMS_H
+#ifndef NTT_PARAMS_H
+#define NTT_PARAMS_H
 
 /*
- * We offer
- * CC0 1.0 Universal or the following MIT License for this file.
- * You may freely choose one of them that applies.
+ * CC0 1.0 Universal or the following MIT License
  *
  * MIT License
  *
