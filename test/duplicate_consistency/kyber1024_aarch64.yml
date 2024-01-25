@@ -7,8 +7,6 @@ consistency_checks:
       - __asm_NTT.S
       - __asm_poly.S
       - cbd.h
-      - fips202x2.c
-      - fips202x2.h
       - indcpa.h
       - kem.c
       - macros.inc
@@ -39,8 +37,6 @@ consistency_checks:
       - __asm_poly.S
       - cbd.c
       - cbd.h
-      - fips202x2.c
-      - fips202x2.h
       - indcpa.h
       - kem.c
       - macros.inc

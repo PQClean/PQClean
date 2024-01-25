@@ -6,8 +6,6 @@ consistency_checks:
       - __asm_iNTT.S
       - __asm_NTT.S
       - __asm_poly.S
-      - fips202x2.c
-      - fips202x2.h
       - macros_common.inc
       - macros.inc
       - NTT_params.h
@@ -32,8 +30,6 @@ consistency_checks:
       - __asm_iNTT.S
       - __asm_NTT.S
       - __asm_poly.S
-      - fips202x2.c
-      - fips202x2.h
       - macros_common.inc
       - macros.inc
       - NTT_params.h
