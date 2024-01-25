@@ -16,7 +16,8 @@ helpers.ensure_available('astyle')
 def version_check():
     result = helpers.run_subprocess(['astyle', '--version'])
     if ("Artistic Style Version 3.4.8" in result or
-        "Artistic Style Version 3.4.9" in result):
+        "Artistic Style Version 3.4.9" in result or
+        "Artistic Style Version 3.4.10" in result):
         return False
     return "Artistic Style Version 3.4" in result
 
