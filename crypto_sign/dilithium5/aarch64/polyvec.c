@@ -32,13 +32,12 @@
  * SOFTWARE.
  */
 
-#include <stdint.h>
-
 #include "params.h"
 #include "poly.h"
 #include "polyvec.h"
 #include "ntt.h"
 #include "reduce.h"
+#include <stdint.h>
 
 /*************************************************
 * Name:        expand_mat

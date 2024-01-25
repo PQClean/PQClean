@@ -34,9 +34,9 @@
  * SOFTWARE.
  */
 
-#include <stdint.h>
 #include "params.h"
 #include "NTT_params.h"
+#include <stdint.h>
 
 extern void PQCLEAN_DILITHIUM2_AARCH64__asm_ntt_SIMD_top(int32_t *des, const int32_t *table, const int32_t *_constants);
 extern void PQCLEAN_DILITHIUM2_AARCH64__asm_ntt_SIMD_bot(int32_t *des, const int32_t *table, const int32_t *_constants);

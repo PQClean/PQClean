@@ -41,8 +41,6 @@
 #include "ntt.h"
 #include <stdint.h>
 
-
-
 #define DBENCH_START()
 #define DBENCH_STOP(t)
 

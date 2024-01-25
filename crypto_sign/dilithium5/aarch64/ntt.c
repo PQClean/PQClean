@@ -33,11 +33,10 @@
  */
 
 #include "params.h"
-#include <stdint.h>
-#include <stdio.h>
-
 #include "NTT_params.h"
 #include "ntt.h"
+#include <stdint.h>
+#include <stdio.h>
 
 const __attribute__ ((aligned (16)))int32_t constants[16] = {
     Q1, -Q1prime, RmodQ1_prime_half, RmodQ1_doubleprime,
