@@ -5,7 +5,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef PQCLEAN_USE_VALGRIND
 #include <valgrind/memcheck.h>
+#endif
 
 #ifndef NTESTS
 #define NTESTS 5
@@ -138,17 +140,21 @@ static int test_sign(void) {
         randombytes(sm_random_cmp, MLEN + CRYPTO_BYTES);
         memcpy(sm + 8, sm_random_cmp, MLEN + CRYPTO_BYTES);
 
+#ifdef PQCLEAN_USE_VALGRIND
         /*
          * With this buffer marked as undefined, valgrind will detect
          * cases where the signing code depends on the value of the tail
          * of the buffer.
          */
         VALGRIND_MAKE_MEM_UNDEFINED(sm + 8, MLEN + CRYPTO_BYTES);
+#endif
 
         RETURNS_ZERO(crypto_sign(sm + 8, &smlen, m + 8, MLEN, sk + 8));
 
+#ifdef PQCLEAN_USE_VALGRIND
         // We have to mark the tail as defined before doing the memcmp.
         VALGRIND_MAKE_MEM_DEFINED(sm + 8 + smlen, MLEN + CRYPTO_BYTES - smlen);
+#endif
 
         // check that the tail has not been modified
         RETURNS_ZERO(memcmp(sm + 8 + smlen, sm_random_cmp + smlen, MLEN + CRYPTO_BYTES - smlen));
@@ -243,17 +249,21 @@ static int test_sign_detached(void) {
         randombytes(sig_random_cmp, CRYPTO_BYTES);
         memcpy(sig + 8, sig_random_cmp, CRYPTO_BYTES);
 
+#ifdef PQCLEAN_USE_VALGRIND
         /*
          * With this buffer marked as undefined, valgrind will detect
          * cases where the signing code depends on the value of the tail
          * of the buffer.
          */
         VALGRIND_MAKE_MEM_UNDEFINED(sig + 8, CRYPTO_BYTES);
+#endif
 
         RETURNS_ZERO(crypto_sign_signature(sig + 8, &siglen, m + 8, MLEN, sk + 8));
 
+#ifdef PQCLEAN_USE_VALGRIND
         // We have to mark the tail as defined before doing the memcmp.
         VALGRIND_MAKE_MEM_DEFINED(sig + 8 + siglen, CRYPTO_BYTES - siglen);
+#endif
 
         // check that the tail has not been modified
         RETURNS_ZERO(memcmp(sig + 8 + siglen, sig_random_cmp + siglen, CRYPTO_BYTES - siglen));
