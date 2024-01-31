@@ -31,7 +31,7 @@ PQCleanAutomotive includes some third party libraries or modules that are licens
 * Fips202: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
 * CommonLib: Apache License, Version 2.0
 
-Copyright [2023] [IAV GmbH]
+Copyright [2024] [IAV GmbH]
 
 Licensed under the Apache License, Version 2.0 (the "License");\
 you may not use this file except in compliance with the License.\
