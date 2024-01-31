@@ -1,9 +1,3 @@
-/* Based on the public domain implementation in
-* crypto_hash/keccakc512/simple/ from http://bench.cr.yp.to/supercop.html
-* by Ronny Van Keer
-* and the public domain "TweetFips202" implementation
-* from https://twitter.com/tweetfips202
-* by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
 /***********************************************************************************************************************
 *
 *                                          IAV GmbH
@@ -20,7 +14,9 @@
  *  $Rev$
  *
  **********************************************************************************************************************/
-
+/* Based on the public domain implementation in crypto_hash/keccakc512/simple/ from http://bench.cr.yp.to/supercop.html
+* by Ronny Van Keer and the public domain "TweetFips202" implementation from https://twitter.com/tweetfips202
+* by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
@@ -74,7 +70,6 @@ static void   keccak_inc_squeeze(uint8 *h, uint32 outlen, uint64 *s_inc, uint32 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
-
 /***********************************************************************************************************************
 * Name:        load64
 *
@@ -83,6 +78,7 @@ static void   keccak_inc_squeeze(uint8 *h, uint32 outlen, uint64 *s_inc, uint32 
 * Arguments:   - const uint8 *x: pointer to input byte array
 *
 * Returns the loaded 64-bit unsigned integer
+*
 ***********************************************************************************************************************/
 static uint64 load64(const uint8 *x)
 {
@@ -103,6 +99,7 @@ static uint64 load64(const uint8 *x)
 *
 * Arguments:   - uint8 *x: pointer to the output byte array
 *              - uint64 u: input 64-bit unsigned integer
+*
 ***********************************************************************************************************************/
 static void store64(uint8 *x, uint64 u)
 {
@@ -118,6 +115,7 @@ static void store64(uint8 *x, uint64 u)
 * Description: The Keccak F1600 Permutation
 *
 * Arguments:   - uint64 *state: pointer to input/output Keccak state
+*
 ***********************************************************************************************************************/
 static void KeccakF1600_StatePermute(uint64 *state)
 {
@@ -136,7 +134,7 @@ static void KeccakF1600_StatePermute(uint64 *state)
     uint64 Ema, Eme, Emi, Emo, Emu;
     uint64 Esa, Ese, Esi, Eso, Esu;
 
-    // copyFromState(A, state)
+    /* copyFromState(A, state) */
     Aba = state[0];
     Abe = state[1];
     Abi = state[2];
@@ -163,15 +161,16 @@ static void KeccakF1600_StatePermute(uint64 *state)
     Aso = state[23];
     Asu = state[24];
 
-    for (round = 0; round < NROUNDS; round = round + 2u) {
-        //    prepareTheta
+    for (round = 0; round < NROUNDS; round = round + 2u)
+    {
+        /* prepareTheta */
         BCa = Aba ^ Aga ^ Aka ^ Ama ^ Asa;
         BCe = Abe ^ Age ^ Ake ^ Ame ^ Ase;
         BCi = Abi ^ Agi ^ Aki ^ Ami ^ Asi;
         BCo = Abo ^ Ago ^ Ako ^ Amo ^ Aso;
         BCu = Abu ^ Agu ^ Aku ^ Amu ^ Asu;
 
-        // thetaRhoPiChiIotaPrepareTheta(round  , A, E)
+        /* thetaRhoPiChiIotaPrepareTheta(round  , A, E) */
         Da = BCu ^ ROL(BCe, 1);
         De = BCa ^ ROL(BCi, 1);
         Di = BCe ^ ROL(BCo, 1);
@@ -259,14 +258,14 @@ static void KeccakF1600_StatePermute(uint64 *state)
         Eso = BCo ^ ((~BCu) & BCa);
         Esu = BCu ^ ((~BCa) & BCe);
 
-        //    prepareTheta
+        /* prepareTheta */
         BCa = Eba ^ Ega ^ Eka ^ Ema ^ Esa;
         BCe = Ebe ^ Ege ^ Eke ^ Eme ^ Ese;
         BCi = Ebi ^ Egi ^ Eki ^ Emi ^ Esi;
         BCo = Ebo ^ Ego ^ Eko ^ Emo ^ Eso;
         BCu = Ebu ^ Egu ^ Eku ^ Emu ^ Esu;
 
-        // thetaRhoPiChiIotaPrepareTheta(round+1, E, A)
+        /* thetaRhoPiChiIotaPrepareTheta(round+1, E, A) */
         Da = BCu ^ ROL(BCe, 1);
         De = BCa ^ ROL(BCi, 1);
         Di = BCe ^ ROL(BCo, 1);
@@ -355,7 +354,7 @@ static void KeccakF1600_StatePermute(uint64 *state)
         Asu = BCu ^ ((~BCa) & BCe);
     }
 
-    // copyToState(state, A)
+    /* copyToState(state, A) */
     state[0] = Aba;
     state[1] = Abe;
     state[2] = Abi;
@@ -386,14 +385,14 @@ static void KeccakF1600_StatePermute(uint64 *state)
 /***********************************************************************************************************************
 * Name:        keccak_absorb
 *
-* Description: Absorb step of Keccak;
-*              non-incremental, starts by zeroeing the state.
+* Description: Absorb step of Keccak; Non-incremental, starts by zeroeing the state.
 *
 * Arguments:   -       uint64 *s:    pointer to (uninitialized) output Keccak state
 *              -       uint32  r:    rate in bytes (e.g., 168 for SHAKE128)
 *              - const uint8  *m:    pointer to input to be absorbed into s
 *              -       uint32  mlen: length of input in bytes
 *              -       uint8   p:    domain-separation byte for different Keccak-derived functions
+*
 ***********************************************************************************************************************/
 static void keccak_absorb(uint64 *s, uint32 r, const uint8 *m, uint32 mlen, uint8 p)
 {
@@ -440,14 +439,14 @@ static void keccak_absorb(uint64 *s, uint32 r, const uint8 *m, uint32 mlen, uint
 /***********************************************************************************************************************
 * Name:        keccak_squeezeblocks
 *
-* Description: Squeeze step of Keccak. Squeezes full blocks of r bytes each.
-*              Modifies the state. Can be called multiple times to keep
-*              squeezing, i.e., is incremental.
+* Description: Squeeze step of Keccak. Squeezes full blocks of r bytes each. Modifies the state. Can be called multiple
+*              times to keep squeezing, i.e., is incremental.
 *
 * Arguments:   - uint8  *h:       pointer to output blocks
 *              - uint32  nblocks: number of blocks to be squeezed (written to h)
 *              - uint64 *s:       pointer to input/output Keccak state
 *              - uint32  r:       rate in bytes (e.g., 168 for SHAKE128)
+*
 ***********************************************************************************************************************/
 static void keccak_squeezeblocks(uint8 *h, uint32 nblocks, uint64 *s, uint32 r)
 {
@@ -470,10 +469,10 @@ static void keccak_squeezeblocks(uint8 *h, uint32 nblocks, uint64 *s, uint32 r)
 *
 * Description: Initializes the incremental Keccak state to zero.
 *
-* Arguments:   - uint64 *s_inc: pointer to input/output incremental state
-*                               First 25 values represent Keccak state.
-*                               26th value represents either the number of absorbed bytes
-*                               that have not been permuted, or not-yet-squeezed bytes.
+* Arguments:   - uint64 *s_inc: pointer to input/output incremental state. First 25 values represent Keccak state.
+*                               26th value represents either the number of absorbed bytes that have not been permuted,
+*                               or not-yet-squeezed bytes.
+*
 ***********************************************************************************************************************/
 static void keccak_inc_init(uint64 *s_inc)
 {
@@ -493,13 +492,13 @@ static void keccak_inc_init(uint64 *s_inc)
 * Description: Incremental keccak absorb
 *              Preceded by keccak_inc_init, succeeded by keccak_inc_finalize
 *
-* Arguments:   -       uint64 *s_inc: pointer to input/output incremental state
-*                                     First 25 values represent Keccak state.
-*                                     26th value represents either the number of absorbed bytes
-*                                     that have not been permuted, or not-yet-squeezed bytes.
+* Arguments:   -       uint64 *s_inc: pointer to input/output incremental state. First 25 values represent Keccak state.
+*                                     26th value represents either the number of absorbed bytes that have not been
+*                                     permuted, or not-yet-squeezed bytes.
 *              -       uint32  r:     rate in bytes (e.g., 168 for SHAKE128)
 *              - const uint8  *m:     pointer to input to be absorbed into s
 *              -       uint32  mlen:  length of input in bytes
+*
 ***********************************************************************************************************************/
 static void keccak_inc_absorb(uint64 *s_inc, uint32 r, const uint8 *m, uint32 mlen)
 {
@@ -510,8 +509,7 @@ static void keccak_inc_absorb(uint64 *s_inc, uint32 r, const uint8 *m, uint32 ml
     {
         for (i = 0; i < r - (uint32)s_inc[25]; i++)
         {
-            /* Take the i'th byte from message
-               xor with the s_inc[25] + i'th byte of the state; little-endian */
+            /* Take the i'th byte from message xor with the s_inc[25] + i'th byte of the state; little-endian */
             s_inc[(s_inc[25] + i) >> 3] ^= (uint64)m[i] << (8u * ((s_inc[25] + i) & 0x07u));
         }
 
@@ -535,10 +533,9 @@ static void keccak_inc_absorb(uint64 *s_inc, uint32 r, const uint8 *m, uint32 ml
 *
 * Description: Finalizes Keccak absorb phase, prepares for squeezing
 *
-* Arguments:   - uint64 *s_inc: pointer to input/output incremental state
-*                               First 25 values represent Keccak state.
-*                               26th value represents either the number of absorbed bytes
-*                               that have not been permuted, or not-yet-squeezed bytes.
+* Arguments:   - uint64 *s_inc: pointer to input/output incremental state. First 25 values represent Keccak state.
+*                               26th value represents either the number of absorbed bytes that have not been permuted,
+*                               or not-yet-squeezed bytes.
 *              - uint32  r:     rate in bytes (e.g., 168 for SHAKE128)
 *              - uint8   p:     domain-separation byte for different Keccak-derived functions
 ***********************************************************************************************************************/
@@ -558,20 +555,21 @@ static void keccak_inc_finalize(uint64 *s_inc, uint32 r, uint8 p)
 *
 * Arguments:   - uint8  *h:      pointer to output bytes
 *              - uint32  outlen: number of bytes to be squeezed
-*              - uint64 *s_inc:  pointer to input/output incremental state
-*                                First 25 values represent Keccak state.
-*                                26th value represents either the number of absorbed bytes
-*                                that have not been permuted, or not-yet-squeezed bytes.
+*              - uint64 *s_inc:  pointer to input/output incremental state. First 25 values represent Keccak state.
+*                                26th value represents either the number of absorbed bytes that have not been permuted,
+*                                or not-yet-squeezed bytes.
 *              - uint32  r:      rate in bytes (e.g., 168 for SHAKE128)
+*
 ***********************************************************************************************************************/
 static void keccak_inc_squeeze(uint8 *h, uint32 outlen, uint64 *s_inc, uint32 r)
 {
     uint32 i;
 
     /* First consume any bytes we still have sitting around */
-    for (i = 0; i < outlen && i < s_inc[25]; i++) {
-        /* There are s_inc[25] bytes left, so r - s_inc[25] is the first
-           available byte. We consume from there, i.e., up to r. */
+    for (i = 0; i < outlen && i < s_inc[25]; i++)
+    {
+        /* There are s_inc[25] bytes left, so r - s_inc[25] is the first available byte. We consume from there, i.e.,
+         * up to r. */
         h[i] = (uint8)(s_inc[(r - s_inc[25] + i) >> 3] >> (8u * ((r - s_inc[25] + i) & 0x07u)));
     }
 
@@ -598,52 +596,140 @@ static void keccak_inc_squeeze(uint8 *h, uint32 outlen, uint64 *s_inc, uint32 r)
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
-
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake128_inc_init
+*
+* Description: t.b.d
+*
+* Arguments:   - shake128incctx *state: t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_inc_init(shake128incctx *state)
 {
     keccak_inc_init(state->ctx);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake128_inc_absorb
+*
+* Description: t.b.d
+*
+* Arguments:   -       shake128incctx *state: t.b.d
+*              - const uint8          *input: t.b.d
+*              -       uint32          inlen: t.b.d
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_inc_absorb(shake128incctx *state, const uint8 *input, uint32 inlen)
 {
     keccak_inc_absorb(state->ctx, SHAKE128_RATE, input, inlen);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake128_inc_finalize
+*
+* Description: t.b.d
+*
+* Arguments:   - shake128incctx *state: t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_inc_finalize(shake128incctx *state)
 {
     keccak_inc_finalize(state->ctx, SHAKE128_RATE, 0x1F);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake128_inc_squeeze
+*
+* Description: t.b.d
+*
+* Arguments:   - uint8          *output: t.b.d
+*              - uint32          outlen: t.b.d
+*              - shake128incctx *state:  t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_inc_squeeze(uint8 *output, uint32 outlen, shake128incctx *state)
 {
     keccak_inc_squeeze(output, outlen, state->ctx, SHAKE128_RATE);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake128_inc_ctx_clone
+*
+* Description: t.b.d
+*
+* Arguments:   -       shake128incctx *dest: t.b.d
+*              - const shake128incctx *src:  t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_inc_ctx_clone(shake128incctx *dest, const shake128incctx *src)
 {
     FsmSw_CommonLib_memcpy(dest->ctx, src->ctx, PQC_SHAKEINCCTX_BYTES);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake256_inc_init
+*
+* Description: t.b.d
+*
+* Arguments:   - shake256incctx *state: t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_inc_init(shake256incctx *state)
 {
     keccak_inc_init(state->ctx);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake256_inc_absorb
+*
+* Description: t.b.d
+*
+* Arguments:   - shake256incctx *state: t.b.d
+*              - const uint8    *input: t.b.d
+*              -       uint32    inlen: t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_inc_absorb(shake256incctx *state, const uint8 *input, uint32 inlen)
 {
     keccak_inc_absorb(state->ctx, SHAKE256_RATE, input, inlen);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake128_absorb
+*
+* Description: t.b.d
+*
+* Arguments:   - shake256incctx *state: t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_inc_finalize(shake256incctx *state)
 {
     keccak_inc_finalize(state->ctx, SHAKE256_RATE, 0x1F);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake256_inc_squeeze
+*
+* Description: t.b.d
+*
+* Arguments:   - uint8          *output: t.b.d
+*              - uint32          outlen: t.b.d
+*              - shake256incctx *state:  t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_inc_squeeze(uint8 *output, uint32 outlen, shake256incctx *state)
 {
     keccak_inc_squeeze(output, outlen, state->ctx, SHAKE256_RATE);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake256_inc_ctx_clone
+*
+* Description: t.b.d.
+*
+* Arguments:   -       shake256incctx *dest: t.b.d
+*              - const shake256incctx *src:  t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_inc_ctx_clone(shake256incctx *dest, const shake256incctx *src)
 {
     FsmSw_CommonLib_memcpy(dest->ctx, src->ctx, PQC_SHAKEINCCTX_BYTES);
@@ -652,12 +738,12 @@ void FsmSw_Fips202_shake256_inc_ctx_clone(shake256incctx *dest, const shake256in
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_shake128_absorb
 *
-* Description: Absorb step of the SHAKE128 XOF.
-*              non-incremental, starts by zeroeing the state.
+* Description: Absorb step of the SHAKE128 XOF. Non-incremental, starts by zeroeing the state.
 *
-* Arguments:   -       uint64 *s:     pointer to (uninitialized) output Keccak state
-*              - const uint8  *input: pointer to input to be absorbed into s
-*              -       uint32  inlen: length of input in bytes
+* Arguments:   -       shake128ctx *state: pointer to (uninitialized) output Keccak state
+*              - const uint8       *input: pointer to input to be absorbed into s
+*              -       uint32       inlen: length of input in bytes
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_absorb(shake128ctx *state, const uint8 *input, uint32 inlen)
 {
@@ -667,34 +753,42 @@ void FsmSw_Fips202_shake128_absorb(shake128ctx *state, const uint8 *input, uint3
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_shake128_squeezeblocks
 *
-* Description: Squeeze step of SHAKE128 XOF. Squeezes full blocks of
-*              SHAKE128_RATE bytes each. Modifies the state. Can be called
-*              multiple times to keep squeezing, i.e., is incremental.
+* Description: Squeeze step of SHAKE128 XOF. Squeezes full blocks of SHAKE128_RATE bytes each. Modifies the state.
+*              Can be called multiple times to keep squeezing, i.e., is incremental.
 *
 * Arguments:   - uint8       *output:  pointer to output blocks
 *              - uint32       nblocks: number of blocks to be squeezed (written to output)
 *              - shake128ctx *state:   pointer to input/output Keccak state
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_squeezeblocks(uint8 *output, uint32 nblocks, shake128ctx *state)
 {
     keccak_squeezeblocks(output, nblocks, state->ctx, SHAKE128_RATE);
 }
 
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake128_ctx_clone
+*
+* Description: t.b.d
+*
+* Arguments:   -       shake128ctx *dest: t.b.d
+*              - const shake128ctx *src:  t.b.d
+*
+***********************************************************************************************************************/
 void FsmSw_Fips202_shake128_ctx_clone(shake128ctx *dest, const shake128ctx *src)
 {
     FsmSw_CommonLib_memcpy(dest->ctx, src->ctx, PQC_SHAKECTX_BYTES);
 }
 
-
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_shake256_absorb
 *
-* Description: Absorb step of the SHAKE256 XOF.
-*              non-incremental, starts by zeroeing the state.
+* Description: Absorb step of the SHAKE256 XOF. Non-incremental, starts by zeroeing the state.
 *
 * Arguments:   -       shake256ctx *state: pointer to (uninitialized) output Keccak state
 *              - const uint8       *input: pointer to input to be absorbed into s
 *              -       uint32       inlen: length of input in bytes
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_absorb(shake256ctx *state, const uint8 *input, uint32 inlen)
 {
@@ -704,13 +798,13 @@ void FsmSw_Fips202_shake256_absorb(shake256ctx *state, const uint8 *input, uint3
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_shake256_squeezeblocks
 *
-* Description: Squeeze step of SHAKE256 XOF. Squeezes full blocks of
-*              SHAKE256_RATE bytes each. Modifies the state. Can be called
-*              multiple times to keep squeezing, i.e., is incremental.
+* Description: Squeeze step of SHAKE256 XOF. Squeezes full blocks of SHAKE256_RATE bytes each. Modifies the state.
+*              Can be called multiple times to keep squeezing, i.e., is incremental.
 *
 * Arguments:   - uint8       *output:  pointer to output blocks
 *              - uint32       nblocks: number of blocks to be squeezed (written to output)
 *              - shake256ctx *state:   pointer to input/output Keccak state
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_squeezeblocks(uint8 *output, uint32 nblocks, shake256ctx *state)
 {
@@ -720,10 +814,11 @@ void FsmSw_Fips202_shake256_squeezeblocks(uint8 *output, uint32 nblocks, shake25
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_shake256_ctx_clone
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d.
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   -       shake256ctx *dest: t.b.d
+*              - const shake256ctx *src:  t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_shake256_ctx_clone(shake256ctx *dest, const shake256ctx *src)
 {
@@ -739,6 +834,7 @@ void FsmSw_Fips202_shake256_ctx_clone(shake256ctx *dest, const shake256ctx *src)
 *              -       uint32  outlen: requested output length in bytes
 *              - const uint8  *input:  pointer to input
 *              -       uint32  inlen:  length of input in bytes
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_shake128(uint8 *output, uint32 outlen, const uint8 *input, uint32 inlen)
 {
@@ -771,6 +867,7 @@ void FsmSw_Fips202_shake128(uint8 *output, uint32 outlen, const uint8 *input, ui
 *              -       uint32  outlen: requested output length in bytes
 *              - const uint8  *input:  pointer to input
 *              -       uint32  inlen:  length of input in bytes
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_shake256(uint8 *output, uint32 outlen, const uint8 *input, uint32 inlen)
 {
@@ -798,9 +895,9 @@ void FsmSw_Fips202_shake256(uint8 *output, uint32 outlen, const uint8 *input, ui
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_256_inc_init
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       sha3_256incctx *state:  pointer to ????? TODO: Create description
+* Arguments:   - sha3_256incctx *state: t.b.d
 *
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_256_inc_init(sha3_256incctx *state)
@@ -811,10 +908,11 @@ void FsmSw_Fips202_sha3_256_inc_init(sha3_256incctx *state)
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_256_inc_ctx_clone
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       sha3_256incctx *dest:  pointer to ????? TODO: Create description
-*              - const sha3_256incctx *src:   pointer to ????? TODO: Create description
+* Arguments:   -       sha3_256incctx *dest: t.b.d
+*              - const sha3_256incctx *src:  t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_256_inc_ctx_clone(sha3_256incctx *dest, const sha3_256incctx *src)
 {
@@ -824,10 +922,12 @@ void FsmSw_Fips202_sha3_256_inc_ctx_clone(sha3_256incctx *dest, const sha3_256in
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_256_inc_absorb
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   -       sha3_256incctx *state: t.b.d
+*              - const uint8          *input: pointer to input
+*              -       uint32          inlen: length of input in bytes
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_256_inc_absorb(sha3_256incctx *state, const uint8 *input, uint32 inlen)
 {
@@ -837,10 +937,11 @@ void FsmSw_Fips202_sha3_256_inc_absorb(sha3_256incctx *state, const uint8 *input
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_256_inc_finalize
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   - uint8          *output: t.b.d
+*              - sha3_256incctx *state:  t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_256_inc_finalize(uint8 *output, sha3_256incctx *state)
 {
@@ -861,9 +962,10 @@ void FsmSw_Fips202_sha3_256_inc_finalize(uint8 *output, sha3_256incctx *state)
 *
 * Description: SHA3-256 with non-incremental API
 *
-* Arguments:   - uint8 *output:      pointer to output
-*              - const uint8 *input: pointer to input
-*              - uint32 inlen:       length of input in bytes
+* Arguments:   -       uint8 *output: pointer to output
+*              - const uint8 *input:  pointer to input
+*              -       uint32 inlen:  length of input in bytes
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_256(uint8 *output, const uint8 *input, uint32 inlen)
 {
@@ -885,10 +987,10 @@ void FsmSw_Fips202_sha3_256(uint8 *output, const uint8 *input, uint32 inlen)
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_384_inc_init
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   - sha3_384incctx *state: t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_384_inc_init(sha3_384incctx *state)
 {
@@ -898,10 +1000,11 @@ void FsmSw_Fips202_sha3_384_inc_init(sha3_384incctx *state)
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_384_inc_ctx_clone
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   -       sha3_384incctx *dest: t.b.d
+*              - const sha3_384incctx *src:  t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_384_inc_ctx_clone(sha3_384incctx *dest, const sha3_384incctx *src)
 {
@@ -911,10 +1014,12 @@ void FsmSw_Fips202_sha3_384_inc_ctx_clone(sha3_384incctx *dest, const sha3_384in
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_384_inc_absorb
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   -       sha3_384incctx *state: t.b.d
+*              - const uint8          *input: pointer to input
+*              -       uint32          inlen: length of input in bytes
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_384_inc_absorb(sha3_384incctx *state, const uint8 *input, uint32 inlen)
 {
@@ -924,10 +1029,11 @@ void FsmSw_Fips202_sha3_384_inc_absorb(sha3_384incctx *state, const uint8 *input
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_384_inc_finalize
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   - uint8          *output: t.b.d
+*              - sha3_384incctx *state:  t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_384_inc_finalize(uint8 *output, sha3_384incctx *state)
 {
@@ -947,9 +1053,10 @@ void FsmSw_Fips202_sha3_384_inc_finalize(uint8 *output, sha3_384incctx *state)
  *
  * Description: SHA3-256 with non-incremental API
  *
- * Arguments:   - uint8 *output:      pointer to output
- *              - const uint8 *input: pointer to input
- *              - uint32 inlen:   length of input in bytes
+ * Arguments:   -       uint8 *output: pointer to output
+ *              - const uint8 *input:  pointer to input
+ *              -       uint32 inlen:  length of input in bytes
+ *
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_384(uint8 *output, const uint8 *input, uint32 inlen)
 {
@@ -971,10 +1078,10 @@ void FsmSw_Fips202_sha3_384(uint8 *output, const uint8 *input, uint32 inlen)
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_512_inc_init
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   - sha3_512incctx *state: t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_512_inc_init(sha3_512incctx *state)
 {
@@ -984,10 +1091,11 @@ void FsmSw_Fips202_sha3_512_inc_init(sha3_512incctx *state)
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_512_inc_ctx_clone
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   -       sha3_512incctx *dest: t.b.d
+*              - const sha3_512incctx *src:  t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_512_inc_ctx_clone(sha3_512incctx *dest, const sha3_512incctx *src)
 {
@@ -997,10 +1105,12 @@ void FsmSw_Fips202_sha3_512_inc_ctx_clone(sha3_512incctx *dest, const sha3_512in
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_512_inc_absorb
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   -        sha3_512incctx *dest:  t.b.d
+ *              - const uint8          *input: pointer to input
+ *              -       uint32          inlen: length of input in bytes
+ *
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_512_inc_absorb(sha3_512incctx *state, const uint8 *input, uint32 inlen)
 {
@@ -1010,10 +1120,11 @@ void FsmSw_Fips202_sha3_512_inc_absorb(sha3_512incctx *state, const uint8 *input
 /***********************************************************************************************************************
 * Name:        FsmSw_Fips202_sha3_512_inc_finalize
 *
-* Description: ????? TODO: Create description
+* Description: t.b.d
 *
-* Arguments:   -       shake256ctx *dest:  pointer to ????? TODO: Create description
-*              - const shake256ctx *src:   pointer to ????? TODO: Create description
+* Arguments:   - uint8          *output: t.b.d
+*              - sha3_512incctx *state:  t.b.d
+*
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_512_inc_finalize(uint8 *output, sha3_512incctx *state)
 {
@@ -1033,9 +1144,10 @@ void FsmSw_Fips202_sha3_512_inc_finalize(uint8 *output, sha3_512incctx *state)
  *
  * Description: SHA3-512 with non-incremental API
  *
- * Arguments:   - uint8 *output:      pointer to output
- *              - const uint8 *input: pointer to input
- *              - uint32 inlen:   length of input in bytes
+ * Arguments:   -       uint8 *output: pointer to output
+ *              - const uint8 *input:  pointer to input
+ *              -       uint32 inlen:  length of input in bytes
+ *
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_512(uint8 *output, const uint8 *input, uint32 inlen)
 {

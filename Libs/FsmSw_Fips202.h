@@ -31,44 +31,51 @@
 #define SHA3_384_RATE 104u
 #define SHA3_512_RATE 72u
 
-#define PQC_SHAKEINCCTX_LEN  26u
-#define PQC_SHAKECTX_LEN   25u
-#define PQC_SHAKEINCCTX_BYTES (sizeof(uint64)*26u)
-#define PQC_SHAKECTX_BYTES (sizeof(uint64)*25u)
+#define PQC_SHAKEINCCTX_LEN                    26u
+#define PQC_SHAKECTX_LEN                       25u
+#define PQC_SHAKEINCCTX_BYTES (sizeof(uint64)* 26u)
+#define PQC_SHAKECTX_BYTES    (sizeof(uint64)* 25u)
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
-// Context for incremental API
-typedef struct {
+/* Context for incremental API */
+typedef struct
+{
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } shake128incctx;
 
-// Context for non-incremental API
-typedef struct {
+/* Context for non-incremental API */
+typedef struct
+{
     uint64 ctx[PQC_SHAKECTX_LEN];
 } shake128ctx;
 
-// Context for incremental API
-typedef struct {
+/* Context for incremental API */
+typedef struct
+{
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } shake256incctx;
 
-// Context for non-incremental API
-typedef struct {
+/* Context for non-incremental API */
+typedef struct
+{
     uint64 ctx[PQC_SHAKECTX_LEN];
 } shake256ctx;
 
-// Context for incremental API
-typedef struct {
+/* Context for incremental API */
+typedef struct
+{
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } sha3_256incctx;
 
-typedef struct {
+typedef struct
+{
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } sha3_384incctx;
 
-typedef struct {
+typedef struct
+{
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } sha3_512incctx;
 
@@ -83,12 +90,6 @@ typedef struct {
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-
-/* Initialize the state and absorb the provided input.
- *
- * This function does not support being called multiple times
- * with the same state.
- */
 void FsmSw_Fips202_shake128_absorb(shake128ctx *state, const uint8 *input, uint32 inlen);
 void FsmSw_Fips202_shake128_squeezeblocks(uint8 *output, uint32 nblocks, shake128ctx *state);
 void FsmSw_Fips202_shake128_ctx_clone(shake128ctx *dest, const shake128ctx *src);
