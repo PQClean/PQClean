@@ -381,15 +381,17 @@ sint8 FsmSw_Dilithium3_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm,
             retVal = 0;
         }
 
-        if((sint8)0u != retVal)
+    }
+
+    if((sint8)0u != retVal)
+    {
+        /* Signature verification failed */
+        *mlen = (uint32)-1;
+        for (i = 0; i < smlen; ++i)
         {
-            /* Signature verification failed */
-            *mlen = (uint32)-1;
-            for (i = 0; i < smlen; ++i)
-            {
-                m[i] = 0;
-            }
+            m[i] = 0;
         }
     }
+
     return retVal;
 }

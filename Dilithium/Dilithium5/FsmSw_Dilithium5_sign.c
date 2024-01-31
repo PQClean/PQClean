@@ -391,5 +391,6 @@ sint8 FsmSw_Dilithium5_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm,
             m[i] = 0;
         }
     }
+
     return retVal;
 }
