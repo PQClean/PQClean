@@ -10,16 +10,18 @@ The base of PQCleanAutomotive is the PQClean repository with the latest commit [
 
 * CRYSTALS-KYBER
 * CRYSTALS-DILITHIUM
+* SPHINCS+
 
 The folloing post-quantum cryptographic algorithms are in work:
 
 * FALCON
-* SPHINCS+
 
 ## Implementation
-For the integration of PQCleanAutomotive, the file Crypto.c in the IAV quantumSAR repository contains an example of the use of the CRYSTALS-KYBER algorithm. Platform_Types.h
+For the integration of PQCleanAutomotive, the file Crypto.c in the IAV quantumSAR repository contains an example of the use of the CRYSTALS-KYBER, CRYSTALS-DILITHIUM and SPHINCS+ algorithm.
 
 The library requires an H-file containing all data types of the respective hardware platform (Platform_Types.h). The implementation from Infineon for the AURIX microcontroller family can be used as an example here: https://github.com/Infineon/AURIX_code_examples/blob/master/code_examples/Blinky_LED_1_KIT_TC397_TFT/Libraries/iLLD/TC39B/Tricore/Cpu/Std/Platform_Types.h
+
+In the SPHINCS+ algorithm, dynamic arrays had to be replaced by static arrays in various functions for the microcontroller implementation.
 
 ## License
 PQCleanAutomotive includes some third party libraries or modules that are licensed differently. In particular:
