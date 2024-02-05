@@ -48,6 +48,10 @@ def test_symbol_namespaces(implementation, impl_path, test_dir, init, destr):
                     symbol.startswith('_KeccakF1600times4') or  # MacOS
                     symbol.startswith('KeccakP1600times4') or
                     symbol.startswith('_KeccakP1600times4') or  # MacOS
+                    # shake2x
+                    symbol.lstrip('_').startswith('f1600x2') or
+                    symbol.lstrip('_').startswith('shake128x2') or
+                    symbol.lstrip('_').startswith('shake256x2') or
                     # weird things on i386
                     symbol.startswith('__x86.get_pc_thunk.')):
                 non_namespaced.append(symbol)
