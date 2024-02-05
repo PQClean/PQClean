@@ -64,9 +64,11 @@ def test_duplicate_consistency(implementation, source, files):
         this_path = os.path.join(implementation.path(), file)
         target_src = file_get_contents(target_path)\
                         .replace(source.namespace_prefix(), '')\
+                        .replace(source.padded_namespace_prefix(), 'PADDED')\
                         .replace(' ', '')
         this_src = file_get_contents(this_path)\
                         .replace(implementation.namespace_prefix(), '')\
+                        .replace(implementation.padded_namespace_prefix(), 'PADDED')\
                         .replace(' ', '')
 
         if not this_src == target_src:
@@ -77,6 +79,8 @@ def test_duplicate_consistency(implementation, source, files):
                 tofile=target_path)
             messages.append("{} differed:\n{}".format(file, ''.join(diff)))
     if messages:
+        messages.append("prefix: {}".format(source.namespace_prefix()))
+        messages.append("prefix: {}".format(implementation.namespace_prefix()))
         raise AssertionError("Files differed:\n{}".format('\n'.join(messages)))
 
 
