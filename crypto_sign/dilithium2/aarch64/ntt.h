@@ -38,6 +38,10 @@
 #include "NTT_params.h"
 #include <stdint.h>
 
+#define constants DILITHIUM_NAMESPACE(constants)
+#define streamlined_CT_negacyclic_table_Q1_jump_extended DILITHIUM_NAMESPACE(streamlined_CT_negacyclic_table_Q1_jump_extended)
+#define streamlined_GS_itable_Q1_jump_extended DILITHIUM_NAMESPACE(streamlined_GS_itable_Q1_jump_extended)
+
 extern void PQCLEAN_DILITHIUM2_AARCH64__asm_ntt_SIMD_top(int32_t *des, const int32_t *table, const int32_t *_constants);
 extern void PQCLEAN_DILITHIUM2_AARCH64__asm_ntt_SIMD_bot(int32_t *des, const int32_t *table, const int32_t *_constants);
 

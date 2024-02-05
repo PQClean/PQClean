@@ -35,7 +35,11 @@
 
 #include "NTT_params.h"
 
-extern const int16_t zetas[128];
+#define asymmetric_const KYBER_NAMESPACE(asymmetric_const)
+#define constants KYBER_NAMESPACE(constants)
+#define streamlined_CT_negacyclic_table_Q1_jump_extended KYBER_NAMESPACE(streamlined_CT_negacyclic_table_Q1_jump_extended)
+#define pre_asymmetric_table_Q1_extended KYBER_NAMESPACE(pre_asymmetric_table_Q1_extended)
+#define streamlined_inv_GS_negacyclic_table_Q1_jump_extended KYBER_NAMESPACE(streamlined_inv_GS_negacyclic_table_Q1_jump_extended)
 
 extern void PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_top(int16_t *, const int16_t *, const int16_t *);
 extern void PQCLEAN_KYBER1024_AARCH64__asm_ntt_SIMD_bot(int16_t *, const int16_t *, const int16_t *);
