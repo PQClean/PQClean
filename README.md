@@ -177,6 +177,7 @@ Their integration strategies may serve as examples for your own projects.
 - **[QuantCrypt](https://github.com/aabmets/quantcrypt)**: Cross-platform Python library for Post-Quantum Cryptography using precompiled PQClean binaries
 - **[pqcrypto crate](https://github.com/rustpq/pqcrypto)**: Rust integration that automatically generates wrappers from PQClean source code.
 - **[mupq](https://github.com/mupq/)**: Runs the implementations from PQClean as reference implementations to compare with microcontroller-optimized code.
+- **[node-pqclean](https://github.com/tniessen/node-pqclean)**: JavaScript interface for PQClean that natively supports Node.js, as well as Deno and web platforms through WebAssembly.
 - **[Open Quantum Safe](https://github.com/open-quantum-safe/)**: The Open Quantum Safe project integrates implementations from PQClean into their [liboqs](https://github.com/open-quantum-safe/liboqs/) C library, which then exposes them via [C++](https://github.com/open-quantum-safe/liboqs-cpp), [C# / .NET](https://github.com/open-quantum-safe/liboqs-dotnet), and [Python](https://github.com/open-quantum-safe/liboqs-python) wrappers, as well as to forks of [OpenSSL](https://github.com/open-quantum-safe/openssl) and [OpenSSH](https://github.com/open-quantum-safe/openssh-portable).
 
 ## License
