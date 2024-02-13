@@ -9,6 +9,19 @@
 #include <valgrind/memcheck.h>
 #endif
 
+#ifdef PQCLEAN_FALCON_TEST_INTEROP
+// workaround to include the proper header in both
+// pytest and manual testing
+
+// https://stackoverflow.com/a/40063340
+#define STR(x) #x
+#define STRINGIFY(x) STR(x)
+#define EXPAND(x) x
+#define CONCAT(x, y) STRINGIFY(EXPAND(x)EXPAND(y))
+
+#include CONCAT(PQCLEAN_INTEROP_INCLUDE,/api.h)
+#endif
+
 #ifndef NTESTS
 #define NTESTS 5
 #endif
@@ -62,6 +75,14 @@ inline static void *malloc_s(size_t size) {
 #define crypto_sign_open NAMESPACE(crypto_sign_open)
 #define crypto_sign_signature NAMESPACE(crypto_sign_signature)
 #define crypto_sign_verify NAMESPACE(crypto_sign_verify)
+
+#ifdef PQCLEAN_FALCON_TEST_INTEROP
+// workaround since crypto_sign_verify is already tokenized
+#define INTEROP_PASTER(x, y, z) x##_##y##_##z
+#define INTEROP_EVALUATOR(x, y, z) INTEROP_PASTER(x, y, z)
+#define INTEROP_NAMESPACE(y, z) INTEROP_EVALUATOR(PQCLEAN_INTEROP_NAMESPACE, y, z)
+#define crypto_sign_verify_interop INTEROP_NAMESPACE(crypto, sign_verify)
+#endif
 
 #define RETURNS_ZERO(f)                           \
     if ((f) != 0) {                               \
@@ -277,6 +298,20 @@ static int test_sign_detached(void) {
             res = 1;
             goto end;
         }
+
+#ifdef PQCLEAN_FALCON_TEST_INTEROP
+        // test verification with the "-padded" or non "-padded" code as appropriate
+        if ((returncode =
+                    crypto_sign_verify_interop(sig + 8, siglen, m + 8, MLEN, pk + 8)) != 0) {
+            fprintf(stderr, "ERROR Signature did not verify correctly on interop check!\n");
+            if (returncode > 0) {
+                fprintf(stderr, "ERROR return code should be < 0 on failure");
+            }
+            res = 1;
+            goto end;
+        }
+#endif
+
         // Validate that the implementation did not touch the canary
         if (check_canary(pk) || check_canary(pk + CRYPTO_PUBLICKEYBYTES + 8) ||
                 check_canary(sk) || check_canary(sk + CRYPTO_SECRETKEYBYTES + 8) ||

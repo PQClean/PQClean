@@ -83,6 +83,15 @@ def isolate_test_files(impl_path, test_prefix,
 
     return (test_dir, new_impl_dir, initializer, destructor)
 
+def add_interop_files(interop_path, dest_dir):
+    """
+    Intended to be called after isolate_test_files. Additionally copies
+    source files of another scheme to facilitate interop testing.
+    """
+    new_interop_dir = os.path.join(dest_dir, 'interop')
+    shutil.copytree(interop_path, new_interop_dir)
+    return new_interop_dir
+
 
 def run_subprocess(command, working_dir='.', env=None, expected_returncode=0,
                    print_output=True):
