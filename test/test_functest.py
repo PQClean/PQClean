@@ -24,13 +24,31 @@ def test_functest(implementation, impl_path, test_dir,
                   init, destr):
     init()
     dest_dir = os.path.join(test_dir, 'bin')
-    helpers.make('functest',
-                 TYPE=implementation.scheme.type,
-                 SCHEME=implementation.scheme.name,
-                 IMPLEMENTATION=implementation.name,
-                 SCHEME_DIR=impl_path,
-                 DEST_DIR=dest_dir,
-                 working_dir=os.path.join(test_dir, 'test'))
+    # handle Falcon PADDED and COMPACT interop testing
+    if implementation.scheme.name.startswith("falcon-"):
+        if implementation.scheme.name.endswith("-padded"):
+            # strip off "-padded" suffix to get interop scheme name
+            interop_src = pqclean.Implementation.by_name(implementation.scheme.name[:-len("-padded")], implementation.name).path()
+        else:
+            # add "-padded" suffix to get interop scheme name
+            interop_src = pqclean.Implementation.by_name(implementation.scheme.name + "-padded", implementation.name).path()
+        interop_dir = helpers.add_interop_files(interop_src, os.path.join(impl_path, '..'))
+        helpers.make('functest',
+                TYPE=implementation.scheme.type,
+                SCHEME=implementation.scheme.name,
+                IMPLEMENTATION=implementation.name,
+                INTEROP_DIR=interop_dir,
+                SCHEME_DIR=impl_path,
+                DEST_DIR=dest_dir,
+                working_dir=os.path.join(test_dir, 'test'))
+    else:
+        helpers.make('functest',
+                TYPE=implementation.scheme.type,
+                SCHEME=implementation.scheme.name,
+                IMPLEMENTATION=implementation.name,
+                SCHEME_DIR=impl_path,
+                DEST_DIR=dest_dir,
+                working_dir=os.path.join(test_dir, 'test'))
     helpers.run_subprocess(
         [os.path.join(dest_dir, 'functest_{}_{}{}'.format(
             implementation.scheme.name,

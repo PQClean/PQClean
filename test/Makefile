@@ -19,6 +19,26 @@ DEST_DIR=../bin
 SCHEME_LIBRARY=$(SCHEME_DIR)/lib$(SCHEME)_$(IMPLEMENTATION).a
 SCHEME_FILES=$(wildcard $(SCHEME_DIR)/*.[chsS])
 
+ifeq ($(SCHEME), falcon-512)
+	INTEROP=$(SCHEME)-padded
+else ifeq ($(SCHEME), falcon-1024)
+	INTEROP=$(SCHEME)-padded
+else ifeq ($(SCHEME), falcon-512-padded)
+	INTEROP=falcon-512
+else ifeq ($(SCHEME), falcon-1024-padded)
+	INTEROP=falcon-1024
+endif
+
+ifdef INTEROP
+	INTEROP_UPPERCASE=$(shell echo $(INTEROP) | tr a-z A-Z | sed 's/-//g')
+	INTEROP_DIR=../crypto_$(TYPE)/$(INTEROP)/$(IMPLEMENTATION)
+	INTEROP_LIBRARY=$(INTEROP_DIR)/lib$(INTEROP)_$(IMPLEMENTATION).a
+	EXTRAFLAGS=-DPQCLEAN_FALCON_TEST_INTEROP \
+			   -DPQCLEAN_INTEROP_NAMESPACE=PQCLEAN_$(INTEROP_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) \
+			   -DPQCLEAN_INTEROP_INCLUDE=$(INTEROP_DIR)
+	EXTRALINKERFLAGS=-L$(INTEROP_DIR) -l$(INTEROP)_$(IMPLEMENTATION)
+endif
+
 # This -Wall was supported by the European Commission through the ERC Starting Grant 805031 (EPOQUE)
 CFLAGS=-O3 -Wall -Wextra -Wpedantic -Wvla -Werror -std=c99 \
 	   -Wundef -Wshadow -Wcast-align -Wpointer-arith -Wmissing-prototypes\
@@ -41,6 +61,18 @@ $(SCHEME_LIBRARY): $(SCHEME_FILES)
 .PHONY: clean-scheme
 clean-scheme:
 	cd $(SCHEME_DIR) && $(MAKE) clean
+
+ifdef INTEROP
+.PHONY: build-interop
+build-interop: $(INTEROP_LIBRARY)
+
+$(INTEROP_LIBRARY): $(INTEROP_FILES)
+	cd $(INTEROP_DIR) && $(MAKE)
+
+.PHONY: clean-interop
+clean-interop:
+	cd $(INTEROP_DIR) && $(MAKE) clean
+endif
 
 .PHONY: functest
 functest: $(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION)
@@ -71,9 +103,9 @@ $(DEST_DIR)/test_common_nistseedexpander: test_common/sp800-185.c $(COMMON_FILES
 	mkdir -p $(DEST_DIR)
 	$(CC) $(CFLAGS) $< $(COMMON_FILES) -o $@
 
-$(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): $(SCHEME_LIBRARY) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
+$(DEST_DIR)/functest_$(SCHEME)_$(IMPLEMENTATION): $(SCHEME_LIBRARY) $(INTEROP_LIBRARY) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
-	$(CC) $(CFLAGS) -DNTESTS=$(NTESTS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION)
+	$(CC) $(CFLAGS) -DNTESTS=$(NTESTS) -DPQCLEAN_NAMESPACE=PQCLEAN_$(SCHEME_UPPERCASE)_$(IMPLEMENTATION_UPPERCASE) -I$(SCHEME_DIR) crypto_$(TYPE)/functest.c $(COMMON_FILES) $(COMMON_DIR)/randombytes.c -o $@ -L$(SCHEME_DIR) -l$(SCHEME)_$(IMPLEMENTATION) $(EXTRALINKERFLAGS)
 
 $(DEST_DIR)/testvectors_$(SCHEME)_$(IMPLEMENTATION): $(SCHEME_LIBRARY) crypto_$(TYPE)/testvectors.c $(COMMON_FILES) $(TEST_COMMON_DIR)/notrandombytes.c $(COMMON_HEADERS)
 	mkdir -p $(DEST_DIR)
