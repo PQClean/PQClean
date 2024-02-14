@@ -87,7 +87,33 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
 
     init()
 
-    helpers.make('clean-scheme', 'functest',
+    # handle Falcon PADDED and COMPACT interop testing
+    if implementation.scheme.name.startswith("falcon-"):
+        if implementation.scheme.name.endswith("-padded"):
+            # strip off "-padded" suffix to get interop scheme name
+            interop_src = pqclean.Implementation.by_name(implementation.scheme.name[:-len("-padded")], implementation.name).path()
+        else:
+            # add "-padded" suffix to get interop scheme name
+            interop_src = pqclean.Implementation.by_name(implementation.scheme.name + "-padded", implementation.name).path()
+        interop_dir = helpers.add_interop_files(interop_src, os.path.join(impl_path, '..'))
+
+        helpers.make('clean-scheme', 'clean-interop', 'functest',
+                 TYPE=implementation.scheme.type,
+                 SCHEME=implementation.scheme.name,
+                 IMPLEMENTATION=implementation.name,
+                 EXTRAFLAGS=(
+                     '-g -fsanitize=address,undefined '
+                     '-fno-sanitize-recover=undefined '
+                     # TODO(JMS) Remove explicit -latomic if/when gcc fixes:
+                     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81358
+                     '-Wno-unused-command-line-argument -latomic'),
+                 SCHEME_DIR=impl_path,
+                 INTEROP_DIR=interop_dir,
+                 DEST_DIR=dest_dir,
+                 working_dir=os.path.join(test_dir, 'test'),
+                 env=env)
+    else:
+        helpers.make('clean-scheme', 'functest',
                  TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
                  IMPLEMENTATION=implementation.name,
