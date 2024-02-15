@@ -302,7 +302,7 @@ static int test_sign_detached(void) {
 #ifdef PQCLEAN_FALCON_TEST_INTEROP
         // test verification with the "-padded" or non "-padded" code as appropriate
         if ((returncode =
-                    crypto_sign_verify_interop(sig + 8, siglen, m + 8, MLEN, pk + 8)) == 0) {
+                    crypto_sign_verify_interop(sig + 8, siglen, m + 8, MLEN, pk + 8)) != 0) {
             fprintf(stderr, "ERROR Signature did not verify correctly on interop check!\n");
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0 on failure");
