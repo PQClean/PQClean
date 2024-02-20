@@ -40,6 +40,9 @@ def version_check():
 if not version_check() and "CI" not in os.environ:
     pytest.skip("Incompatible AStyle version (need 3.4.x) (not 3.4.{8-10})", allow_module_level=True)
 
+if "CI" in os.environ and platform.system() in { 'Windows', 'Darwin' }:
+    pytest.skip("Skipping AStyle on Windows and MacOS in CI", allow_module_level=True)
+
 @pytest.mark.parametrize(
     'implementation',
     pqclean.Scheme.all_implementations(),
