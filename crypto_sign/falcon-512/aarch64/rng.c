@@ -156,13 +156,13 @@ PQCLEAN_FALCON512_AARCH64_prng_refill(prng *p) {
          */
         for (v = 0; v < 16; v ++) {
             p->buf.d[(u << 2) + (v << 5) + 0] =
-                (uint8_t)state[v];
+                      (uint8_t)state[v];
             p->buf.d[(u << 2) + (v << 5) + 1] =
-                (uint8_t)(state[v] >> 8);
+                      (uint8_t)(state[v] >> 8);
             p->buf.d[(u << 2) + (v << 5) + 2] =
-                (uint8_t)(state[v] >> 16);
+                      (uint8_t)(state[v] >> 16);
             p->buf.d[(u << 2) + (v << 5) + 3] =
-                (uint8_t)(state[v] >> 24);
+                      (uint8_t)(state[v] >> 24);
         }
     }
     *(uint64_t *)(p->state.d + 48) = cc;
