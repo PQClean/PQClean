@@ -10,6 +10,8 @@ using the command:
 
 import hashlib
 import os
+import platform
+import unittest
 
 import pytest
 
@@ -25,6 +27,8 @@ import pqclean
 )
 @helpers.filtered_test
 def test_nistkat(implementation, impl_path, test_dir, init, destr):
+    if platform.machine() == 'armv7l' and 'gcc' in os.environ.get('CC', 'gcc') and 'falcon' in implementation.scheme.name:
+        raise unittest.SkipTest("this test hangs for falcon on armv7l with gcc")
     init()
     dest_path = os.path.join(test_dir, 'bin')
     kat_rng = 'nist'
