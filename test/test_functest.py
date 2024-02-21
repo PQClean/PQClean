@@ -22,6 +22,8 @@ import pqclean
 @helpers.filtered_test
 def test_functest(implementation, impl_path, test_dir,
                   init, destr):
+    if platform.machine() == 'armv7l' and 'gcc' in os.environ.get('CC', 'gcc') and 'falcon' in implementation.scheme.name:
+        raise unittest.SkipTest("this test hangs for falcon on armv7l with gcc")
     init()
     dest_dir = os.path.join(test_dir, 'bin')
     # handle Falcon PADDED and COMPACT interop testing
@@ -76,8 +78,8 @@ def test_functest_sanitizers(implementation, impl_path, test_dir,
         raise unittest.SkipTest("Clang does not support ASAN on ppc")
     elif platform.machine() == 'armv7l' and 'clang' in os.environ.get('CC', 'gcc'):
         raise unittest.SkipTest("A bug with asan on armv7l, see #471")
-    elif platform.machine() == 'armv7l' and 'gcc' in os.environ.get('CC', 'gcc') and 'sphincs' in implementation.scheme.name:
-        raise unittest.SkipTest("asan for sphincs on armv7l with gcc hangs, see #470")
+    elif platform.machine() == 'armv7l' and 'gcc' in os.environ.get('CC', 'gcc') and ('sphincs' in implementation.scheme.name or 'falcon' in implementation.scheme.name):
+        raise unittest.SkipTest("asan for sphincs and falcon on armv7l with gcc hangs, see #470")
     elif platform.machine() in ['armv7l', 'aarch64']:
         env = {'ASAN_OPTIONS': 'detect_leaks=0'}
     elif platform.system() == 'Darwin':

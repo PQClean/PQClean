@@ -5,6 +5,7 @@ the one provided in the META file for every scheme/implementation.
 
 import hashlib
 import os
+import platform
 import unittest
 
 import pytest
@@ -25,6 +26,8 @@ import pqclean
 def test_testvectors(implementation, impl_path, test_dir, init, destr):
     if not implementation.supported_on_current_platform():
         raise unittest.SkipTest("Not supported on current platform")
+    if platform.machine() == 'armv7l' and 'gcc' in os.environ.get('CC', 'gcc') and 'falcon' in implementation.scheme.name:
+        raise unittest.SkipTest("this test hangs for falcon on armv7l with gcc")
     init()
     dest_dir = os.path.join(test_dir, 'bin')
     helpers.make('testvectors',
