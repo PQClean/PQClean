@@ -246,7 +246,7 @@ do_verify(
     if (sigbuflen == 0) {
         return -1;
     }
-    // TODO: test interoperability of "padded" and normal variants
+
     v = PQCLEAN_FALCON512_AARCH64_comp_decode(sig, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;
@@ -328,7 +328,7 @@ PQCLEAN_FALCON512_AARCH64_crypto_sign(
     memmove(sm + 2 + NONCELEN, m, mlen);
     pm = sm + 2 + NONCELEN;
     sigbuf = pm + 1 + mlen;
-    sigbuflen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 3; // TODO documentation
+    sigbuflen = PQCLEAN_FALCON512_AARCH64_CRYPTO_BYTES - NONCELEN - 3;
     if (do_sign(sm + 2, sigbuf, &sigbuflen, pm, mlen, sk) < 0) {
         return -1;
     }

@@ -247,7 +247,7 @@ do_verify(
     if (sigbuflen == 0) {
         return -1;
     }
-    // TODO: test interoperability of "padded" and normal variants
+
     v = PQCLEAN_FALCON1024PADDED_AARCH64_comp_decode(sig, FALCON_LOGN, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;

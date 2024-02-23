@@ -246,7 +246,7 @@ do_verify(
     if (sigbuflen == 0) {
         return -1;
     }
-    // TODO: test interoperability of "padded" and normal variants
+
     v = PQCLEAN_FALCON512PADDED_AVX2_comp_decode(sig, 9, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;
