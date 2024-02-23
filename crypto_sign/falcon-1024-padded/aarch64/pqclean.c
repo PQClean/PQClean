@@ -248,7 +248,7 @@ do_verify(
         return -1;
     }
 
-    v = PQCLEAN_FALCON1024PADDED_AARCH64_comp_decode(sig, FALCON_LOGN, sigbuf, sigbuflen);
+    v = PQCLEAN_FALCON1024PADDED_AARCH64_comp_decode(sig, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;
     }

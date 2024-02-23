@@ -197,8 +197,8 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t *sigbuflen,
     /*
      * Compute and return the signature.
      */
-    PQCLEAN_FALCON512_AARCH64_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, FALCON_LOGN, tmp.b);
-    v = PQCLEAN_FALCON512_AARCH64_comp_encode(sigbuf, *sigbuflen, r.sig, FALCON_LOGN);
+    PQCLEAN_FALCON512_AARCH64_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, tmp.b);
+    v = PQCLEAN_FALCON512_AARCH64_comp_encode(sigbuf, *sigbuflen, r.sig);
     if (v != 0) {
         inner_shake256_ctx_release(&sc);
         *sigbuflen = v;
