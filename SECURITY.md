@@ -2,8 +2,10 @@
 
 ## Project Scope
 
-PQClean offers reference implementations of cryptographic algorithms, primarily for academic and experimental purposes. 
+PQClean offers reference and contributed implementations of cryptographic algorithms, primarily for academic and experimental purposes. 
 It is important to understand that these implementations have not been subjected to rigorous security audits or formal security validations. 
+PQClean does not modify or alter the algorithms provided by their upstream sources. 
+See the [NIST PQC Forum](https://csrc.nist.gov/Projects/Post-Quantum-Cryptography/Email-List) for discussion about the cryptographic schemes included in PQClean. 
 
 ## Security Considerations
 
@@ -13,13 +15,17 @@ security-sensitive environments. Any use in a production environment should be p
 
 ## Vulnerability Reporting
 
-We endeavor to document known security vulnerabilities as they are brought to our attention. Resolved issues will be clearly marked with the date of resolution. 
+We endeavor to document known security vulnerabilities as they are brought to our attention. 
 However, due to limited resources available to us, our capacity for rapid and comprehensive vulnerability management is limited and delivered at best effort. 
+To report a vulnerability for a PQ algorithm, please open a [new issue](https://github.com/PQClean/PQClean/issues/new) and clearly document the specifics of the vulnerability. 
+Resolved issues will be marked with the date of their resolution and will contain links to commits or merged PR-s which applied the relevant fixes. 
 Reported vulnerabilities in the **Historic Issues** section have become irrelevant for PQClean due to the algorithms being removed from the library. 
+
 
 <!-- new date line
 ### 2019-XX-XX
 -->
+
 
 ## Resolved Issues
 
@@ -37,7 +43,9 @@ Reported vulnerabilities in the **Historic Issues** section have become irreleva
   This lead to an insufficient security level of the results of this hash function.  
   The function was not used in any implementations, though. See [PR #232](https://github.com/PQClean/PQClean/pull/232).
 
+
 ## Historic Issues
+
 * The fix of the timing leak in the CCA transform of FrodoKEM in [PR #303](https://github.com/PQClean/PQClean/pull/303) was ineffective.  
   The FrodoKEM team released another [fix](https://github.com/microsoft/PQCrypto-LWEKE/commit/669522db63850fa64d1a24a47e138e80a59349db)
   which was ported to PQClean in [PR #367](https://github.com/PQClean/PQClean/pull/367).  
