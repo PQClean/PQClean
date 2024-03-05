@@ -210,7 +210,7 @@ FPR(int s, int e, uint64_t m) {
     return x;
 }
 
-#define fpr_scaled   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_scaled
+#define fpr_scaled   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_scaled
 fpr fpr_scaled(int64_t i, int sc);
 
 static inline fpr
@@ -384,7 +384,7 @@ fpr_trunc(fpr x) {
     return *(int64_t *)&xu;
 }
 
-#define fpr_add   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_add
+#define fpr_add   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_add
 fpr fpr_add(fpr x, fpr y);
 
 static inline fpr
@@ -424,7 +424,7 @@ fpr_double(fpr x) {
     return x;
 }
 
-#define fpr_mul   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_mul
+#define fpr_mul   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_mul
 fpr fpr_mul(fpr x, fpr y);
 
 static inline fpr
@@ -432,7 +432,7 @@ fpr_sqr(fpr x) {
     return fpr_mul(x, x);
 }
 
-#define fpr_div   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_div
+#define fpr_div   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_div
 fpr fpr_div(fpr x, fpr y);
 
 static inline fpr
@@ -440,7 +440,7 @@ fpr_inv(fpr x) {
     return fpr_div(4607182418800017408u, x);
 }
 
-#define fpr_sqrt   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_sqrt
+#define fpr_sqrt   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_sqrt
 fpr fpr_sqrt(fpr x);
 
 static inline int
@@ -479,13 +479,13 @@ fpr_lt(fpr x, fpr y) {
  * Compute exp(x) for x such that |x| <= ln 2. We want a precision of 50
  * bits or so.
  */
-#define fpr_expm_p63   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_expm_p63
+#define fpr_expm_p63   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_expm_p63
 uint64_t fpr_expm_p63(fpr x, fpr ccs);
 
-#define fpr_gm_tab   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_gm_tab
+#define fpr_gm_tab   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_gm_tab
 extern const fpr fpr_gm_tab[];
 
-#define fpr_p2_tab   PQCLEAN_FALCON1024PADDED_CLEAN_fpr_p2_tab
+#define fpr_p2_tab   PQCLEAN_FALCONPADDED1024_CLEAN_fpr_p2_tab
 extern const fpr fpr_p2_tab[];
 
 /* ====================================================================== */

@@ -168,7 +168,7 @@
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_FFT(fpr *f, unsigned logn) {
+PQCLEAN_FALCONPADDED512_CLEAN_FFT(fpr *f, unsigned logn) {
     /*
      * FFT algorithm in bit-reversal order uses the following
      * iterative algorithm:
@@ -248,7 +248,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_FFT(fpr *f, unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_iFFT(fpr *f, unsigned logn) {
+PQCLEAN_FALCONPADDED512_CLEAN_iFFT(fpr *f, unsigned logn) {
     /*
      * Inverse FFT algorithm in bit-reversal order uses the following
      * iterative algorithm:
@@ -344,7 +344,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_iFFT(fpr *f, unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_add(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_add(
     fpr *a, const fpr *b, unsigned logn) {
     size_t n, u;
 
@@ -356,7 +356,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_add(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_sub(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_sub(
     fpr *a, const fpr *b, unsigned logn) {
     size_t n, u;
 
@@ -368,7 +368,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_sub(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(fpr *a, unsigned logn) {
+PQCLEAN_FALCONPADDED512_CLEAN_poly_neg(fpr *a, unsigned logn) {
     size_t n, u;
 
     n = (size_t)1 << logn;
@@ -379,7 +379,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(fpr *a, unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_adj_fft(fpr *a, unsigned logn) {
+PQCLEAN_FALCONPADDED512_CLEAN_poly_adj_fft(fpr *a, unsigned logn) {
     size_t n, u;
 
     n = (size_t)1 << logn;
@@ -390,7 +390,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_adj_fft(fpr *a, unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(
     fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
@@ -409,7 +409,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_muladj_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_muladj_fft(
     fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
@@ -428,7 +428,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_muladj_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(fpr *a, unsigned logn) {
+PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(fpr *a, unsigned logn) {
     /*
      * Since each coefficient is multiplied with its own conjugate,
      * the result contains only real values.
@@ -449,7 +449,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(fpr *a, unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_mulconst(fpr *a, fpr x, unsigned logn) {
+PQCLEAN_FALCONPADDED512_CLEAN_poly_mulconst(fpr *a, fpr x, unsigned logn) {
     size_t n, u;
 
     n = (size_t)1 << logn;
@@ -460,7 +460,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_mulconst(fpr *a, fpr x, unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_div_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_div_fft(
     fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
@@ -479,7 +479,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_div_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_invnorm2_fft(fpr *d,
+PQCLEAN_FALCONPADDED512_CLEAN_poly_invnorm2_fft(fpr *d,
         const fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
@@ -501,7 +501,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_invnorm2_fft(fpr *d,
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_add_muladj_fft(fpr *d,
+PQCLEAN_FALCONPADDED512_CLEAN_poly_add_muladj_fft(fpr *d,
         const fpr *F, const fpr *G,
         const fpr *f, const fpr *g, unsigned logn) {
     size_t n, hn, u;
@@ -531,7 +531,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_add_muladj_fft(fpr *d,
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_autoadj_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_autoadj_fft(
     fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
@@ -545,7 +545,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_autoadj_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_div_autoadj_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_div_autoadj_fft(
     fpr *a, const fpr *b, unsigned logn) {
     size_t n, hn, u;
 
@@ -562,7 +562,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_div_autoadj_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_LDL_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_LDL_fft(
     const fpr *g00,
     fpr *g01, fpr *g11, unsigned logn) {
     size_t n, hn, u;
@@ -589,7 +589,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_LDL_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_LDLmv_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_LDLmv_fft(
     fpr *d11, fpr *l10,
     const fpr *g00, const fpr *g01,
     const fpr *g11, unsigned logn) {
@@ -617,7 +617,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_LDLmv_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(
     fpr *f0, fpr *f1,
     const fpr *f, unsigned logn) {
     /*
@@ -665,7 +665,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_poly_merge_fft(
+PQCLEAN_FALCONPADDED512_CLEAN_poly_merge_fft(
     fpr *f,
     const fpr *f0, const fpr *f1, unsigned logn) {
     size_t n, hn, qn, u;

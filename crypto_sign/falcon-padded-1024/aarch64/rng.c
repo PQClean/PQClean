@@ -33,7 +33,7 @@
 #include <stdio.h>
 #include "inner.h"
 
-int PQCLEAN_FALCON1024PADDED_AARCH64_get_seed(void *seed, size_t len) {
+int PQCLEAN_FALCONPADDED1024_AARCH64_get_seed(void *seed, size_t len) {
     unsigned char tmp[48];
     for (size_t i = 0; i < len; i++) {
         tmp[i] = (unsigned char) i;
@@ -44,7 +44,7 @@ int PQCLEAN_FALCON1024PADDED_AARCH64_get_seed(void *seed, size_t len) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024PADDED_AARCH64_prng_init(prng *p, inner_shake256_context *src) {
+PQCLEAN_FALCONPADDED1024_AARCH64_prng_init(prng *p, inner_shake256_context *src) {
     /*
      * To ensure reproducibility for a given seed, we
      * must enforce little-endian interpretation of
@@ -67,7 +67,7 @@ PQCLEAN_FALCON1024PADDED_AARCH64_prng_init(prng *p, inner_shake256_context *src)
     tl = *(uint32_t *)(p->state.d + 48);
     th = *(uint32_t *)(p->state.d + 52);
     *(uint64_t *)(p->state.d + 48) = tl + (th << 32);
-    PQCLEAN_FALCON1024PADDED_AARCH64_prng_refill(p);
+    PQCLEAN_FALCONPADDED1024_AARCH64_prng_refill(p);
 }
 
 /*
@@ -85,7 +85,7 @@ PQCLEAN_FALCON1024PADDED_AARCH64_prng_init(prng *p, inner_shake256_context *src)
  * The block counter is XORed into the first 8 bytes of the IV.
  */
 void
-PQCLEAN_FALCON1024PADDED_AARCH64_prng_refill(prng *p) {
+PQCLEAN_FALCONPADDED1024_AARCH64_prng_refill(prng *p) {
 
     static const uint32_t CW[] = {
         0x61707865, 0x3320646e, 0x79622d32, 0x6b206574
@@ -172,7 +172,7 @@ PQCLEAN_FALCON1024PADDED_AARCH64_prng_refill(prng *p) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024PADDED_AARCH64_prng_get_bytes(prng *p, void *dst, size_t len) {
+PQCLEAN_FALCONPADDED1024_AARCH64_prng_get_bytes(prng *p, void *dst, size_t len) {
     uint8_t *buf;
 
     buf = dst;
@@ -188,7 +188,7 @@ PQCLEAN_FALCON1024PADDED_AARCH64_prng_get_bytes(prng *p, void *dst, size_t len) 
         len -= clen;
         p->ptr += clen;
         if (p->ptr == sizeof p->buf.d) {
-            PQCLEAN_FALCON1024PADDED_AARCH64_prng_refill(p);
+            PQCLEAN_FALCONPADDED1024_AARCH64_prng_refill(p);
         }
     }
 }

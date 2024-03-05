@@ -33,7 +33,7 @@
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024PADDED_CLEAN_hash_to_point_vartime(
+PQCLEAN_FALCONPADDED1024_CLEAN_hash_to_point_vartime(
     inner_shake256_context *sc,
     uint16_t *x, unsigned logn) {
     /*
@@ -67,7 +67,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_hash_to_point_vartime(
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024PADDED_CLEAN_hash_to_point_ct(
+PQCLEAN_FALCONPADDED1024_CLEAN_hash_to_point_ct(
     inner_shake256_context *sc,
     uint16_t *x, unsigned logn, uint8_t *tmp) {
     /*
@@ -252,7 +252,7 @@ static const uint32_t l2bound[] = {
 
 /* see inner.h */
 int
-PQCLEAN_FALCON1024PADDED_CLEAN_is_short(
+PQCLEAN_FALCONPADDED1024_CLEAN_is_short(
     const int16_t *s1, const int16_t *s2, unsigned logn) {
     /*
      * We use the l2-norm. Code below uses only 32-bit operations to
@@ -282,7 +282,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_is_short(
 
 /* see inner.h */
 int
-PQCLEAN_FALCON1024PADDED_CLEAN_is_short_half(
+PQCLEAN_FALCONPADDED1024_CLEAN_is_short_half(
     uint32_t sqn, const int16_t *s2, unsigned logn) {
     size_t n, u;
     uint32_t ng;

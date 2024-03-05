@@ -30,16 +30,16 @@
  * Assume Input in the range [-Q/2, Q/2]
  * Total Barrett point for N = 512, 1024: 2048, 4096
  */
-void PQCLEAN_FALCON512PADDED_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) {
+void PQCLEAN_FALCONPADDED512_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t mont) {
     // Total SIMD registers 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
     int16x8x4_t zl, zh, t, t2;  // 12
     int16x8x2_t zlh, zhh;       // 4
     int16x8_t neon_qmvq;        // 1
-    const int16_t *ptr_ntt_br = PQCLEAN_FALCON512PADDED_AARCH64_ntt_br;
-    const int16_t *ptr_ntt_qinv_br = PQCLEAN_FALCON512PADDED_AARCH64_ntt_qinv_br;
+    const int16_t *ptr_ntt_br = PQCLEAN_FALCONPADDED512_AARCH64_ntt_br;
+    const int16_t *ptr_ntt_qinv_br = PQCLEAN_FALCONPADDED512_AARCH64_ntt_qinv_br;
 
-    neon_qmvq = vld1q_s16(PQCLEAN_FALCON512PADDED_AARCH64_qmvq);
+    neon_qmvq = vld1q_s16(PQCLEAN_FALCONPADDED512_AARCH64_qmvq);
     zl.val[0] = vld1q_s16(ptr_ntt_br);
     zh.val[0] = vld1q_s16(ptr_ntt_qinv_br);
     ptr_ntt_br += 8;
@@ -335,16 +335,16 @@ void PQCLEAN_FALCON512PADDED_AARCH64_poly_ntt(int16_t a[FALCON_N], ntt_domain_t 
  * Assume input in range [-Q, Q]
  * Total Barrett point N = 512, 1024: 1792, 3840
  */
-void PQCLEAN_FALCON512PADDED_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t ninv) {
+void PQCLEAN_FALCONPADDED512_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_domain_t ninv) {
     // Total SIMD registers: 29 = 16 + 12 + 1
     int16x8x4_t v0, v1, v2, v3; // 16
     int16x8x4_t zl, zh, t, t2;  // 12
     int16x8x2_t zlh, zhh;       // 4
     int16x8_t neon_qmvq;        // 1
-    const int16_t *ptr_invntt_br = PQCLEAN_FALCON512PADDED_AARCH64_invntt_br;
-    const int16_t *ptr_invntt_qinv_br = PQCLEAN_FALCON512PADDED_AARCH64_invntt_qinv_br;
+    const int16_t *ptr_invntt_br = PQCLEAN_FALCONPADDED512_AARCH64_invntt_br;
+    const int16_t *ptr_invntt_qinv_br = PQCLEAN_FALCONPADDED512_AARCH64_invntt_qinv_br;
 
-    neon_qmvq = vld1q_s16(PQCLEAN_FALCON512PADDED_AARCH64_qmvq);
+    neon_qmvq = vld1q_s16(PQCLEAN_FALCONPADDED512_AARCH64_qmvq);
     unsigned j;
 
     // Layer 0, 1, 2, 3, 4, 5, 6
@@ -800,11 +800,11 @@ void PQCLEAN_FALCON512PADDED_AARCH64_poly_invntt(int16_t a[FALCON_N], invntt_dom
     }
 }
 
-void PQCLEAN_FALCON512PADDED_AARCH64_poly_montmul_ntt(int16_t f[FALCON_N], const int16_t g[FALCON_N]) {
+void PQCLEAN_FALCONPADDED512_AARCH64_poly_montmul_ntt(int16_t f[FALCON_N], const int16_t g[FALCON_N]) {
     // Total SIMD registers: 29 = 28 + 1
     int16x8x4_t a, b, c, d, e1, e2, t, k; // 28
     int16x8_t neon_qmvm;                  // 1
-    neon_qmvm = vld1q_s16(PQCLEAN_FALCON512PADDED_AARCH64_qmvq);
+    neon_qmvm = vld1q_s16(PQCLEAN_FALCONPADDED512_AARCH64_qmvq);
 
     for (int i = 0; i < FALCON_N; i += 64) {
         vload_s16_x4(a, &f[i]);

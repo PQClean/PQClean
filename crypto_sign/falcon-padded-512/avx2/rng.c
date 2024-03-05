@@ -35,9 +35,9 @@
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_AVX2_prng_init(prng *p, inner_shake256_context *src) {
+PQCLEAN_FALCONPADDED512_AVX2_prng_init(prng *p, inner_shake256_context *src) {
     inner_shake256_extract(src, p->state.d, 56);
-    PQCLEAN_FALCON512PADDED_AVX2_prng_refill(p);
+    PQCLEAN_FALCONPADDED512_AVX2_prng_refill(p);
 }
 
 /*
@@ -55,7 +55,7 @@ PQCLEAN_FALCON512PADDED_AVX2_prng_init(prng *p, inner_shake256_context *src) {
  * The block counter is XORed into the first 8 bytes of the IV.
  */
 void
-PQCLEAN_FALCON512PADDED_AVX2_prng_refill(prng *p) {
+PQCLEAN_FALCONPADDED512_AVX2_prng_refill(prng *p) {
 
     static const uint32_t CW[] = {
         0x61707865, 0x3320646e, 0x79622d32, 0x6b206574
@@ -157,7 +157,7 @@ PQCLEAN_FALCON512PADDED_AVX2_prng_refill(prng *p) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_AVX2_prng_get_bytes(prng *p, void *dst, size_t len) {
+PQCLEAN_FALCONPADDED512_AVX2_prng_get_bytes(prng *p, void *dst, size_t len) {
     uint8_t *buf;
 
     buf = dst;
@@ -173,7 +173,7 @@ PQCLEAN_FALCON512PADDED_AVX2_prng_get_bytes(prng *p, void *dst, size_t len) {
         len -= clen;
         p->ptr += clen;
         if (p->ptr == sizeof p->buf.d) {
-            PQCLEAN_FALCON512PADDED_AVX2_prng_refill(p);
+            PQCLEAN_FALCONPADDED512_AVX2_prng_refill(p);
         }
     }
 }

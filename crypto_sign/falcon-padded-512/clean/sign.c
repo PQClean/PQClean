@@ -87,7 +87,7 @@ ffLDL_fft_inner(fpr *tree,
      * and the diagonal of D. Since d00 = g0, we just write d11
      * into tmp.
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_LDLmv_fft(tmp, tree, g0, g1, g0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_LDLmv_fft(tmp, tree, g0, g1, g0, logn);
 
     /*
      * Split d00 (currently in g0) and d11 (currently in tmp). We
@@ -95,8 +95,8 @@ ffLDL_fft_inner(fpr *tree,
      *   d00 splits into g1, g1+hn
      *   d11 splits into g0, g0+hn
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(g1, g1 + hn, g0, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(g0, g0 + hn, tmp, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(g1, g1 + hn, g0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(g0, g0 + hn, tmp, logn);
 
     /*
      * Each split result is the first row of a new auto-adjoint
@@ -137,10 +137,10 @@ ffLDL_fft(fpr *tree, const fpr *g00,
     tmp += n << 1;
 
     memcpy(d00, g00, n * sizeof * g00);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_LDLmv_fft(d11, tree, g00, g01, g11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_LDLmv_fft(d11, tree, g00, g01, g11, logn);
 
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(tmp, tmp + hn, d00, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(d00, d00 + hn, d11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(tmp, tmp + hn, d00, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(d00, d00 + hn, d11, logn);
     memcpy(d11, tmp, n * sizeof * tmp);
     ffLDL_fft_inner(tree + n,
                     d11, d11 + hn, logn - 1, tmp);
@@ -224,7 +224,7 @@ skoff_tree(unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_expand_privkey(fpr *expanded_key,
+PQCLEAN_FALCONPADDED512_CLEAN_expand_privkey(fpr *expanded_key,
         const int8_t *f, const int8_t *g,
         const int8_t *F, const int8_t *G,
         unsigned logn, uint8_t *tmp) {
@@ -258,12 +258,12 @@ PQCLEAN_FALCON512PADDED_CLEAN_expand_privkey(fpr *expanded_key,
     /*
      * Compute the FFT for the key elements, and negate f and F.
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(rf, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(rg, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(rF, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(rG, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(rf, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(rF, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(rf, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(rg, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(rF, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(rG, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_neg(rf, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_neg(rF, logn);
 
     /*
      * The Gram matrix is G = B·B*. Formulas are:
@@ -281,22 +281,22 @@ PQCLEAN_FALCON512PADDED_CLEAN_expand_privkey(fpr *expanded_key,
     gxx = g11 + n;
 
     memcpy(g00, b00, n * sizeof * b00);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(g00, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(g00, logn);
     memcpy(gxx, b01, n * sizeof * b01);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(gxx, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(g00, gxx, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(gxx, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(g00, gxx, logn);
 
     memcpy(g01, b00, n * sizeof * b00);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_muladj_fft(g01, b10, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_muladj_fft(g01, b10, logn);
     memcpy(gxx, b01, n * sizeof * b01);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_muladj_fft(gxx, b11, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(g01, gxx, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_muladj_fft(gxx, b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(g01, gxx, logn);
 
     memcpy(g11, b10, n * sizeof * b10);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(g11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(g11, logn);
     memcpy(gxx, b11, n * sizeof * b11);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(gxx, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(g11, gxx, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(gxx, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(g11, gxx, logn);
 
     /*
      * Compute the Falcon tree.
@@ -347,15 +347,15 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
      * Decompose G into LDL. We only need d00 (identical to g00),
      * d11, and l10; we do that in place.
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_LDL_fft(g00, g01, g11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_LDL_fft(g00, g01, g11, logn);
 
     /*
      * Split d00 and d11 and expand them into half-size quasi-cyclic
      * Gram matrices. We also save l10 in tmp[].
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(tmp, tmp + hn, g00, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(tmp, tmp + hn, g00, logn);
     memcpy(g00, tmp, n * sizeof * tmp);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(tmp, tmp + hn, g11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(tmp, tmp + hn, g11, logn);
     memcpy(g11, tmp, n * sizeof * tmp);
     memcpy(tmp, g01, n * sizeof * g01);
     memcpy(g01, g00, hn * sizeof * g00);
@@ -375,10 +375,10 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
      * back into tmp + 2*n.
      */
     z1 = tmp + n;
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(z1, z1 + hn, t1, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(z1, z1 + hn, t1, logn);
     ffSampling_fft_dyntree(samp, samp_ctx, z1, z1 + hn,
                            g11, g11 + hn, g01 + hn, orig_logn, logn - 1, z1 + n);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_merge_fft(tmp + (n << 1), z1, z1 + hn, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_merge_fft(tmp + (n << 1), z1, z1 + hn, logn);
 
     /*
      * Compute tb0 = t0 + (t1 - z1) * l10.
@@ -388,20 +388,20 @@ ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx,
      * In the end, z1 is written over t1, and tb0 is in t0.
      */
     memcpy(z1, t1, n * sizeof * t1);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_sub(z1, tmp + (n << 1), logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_sub(z1, tmp + (n << 1), logn);
     memcpy(t1, tmp + (n << 1), n * sizeof * tmp);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(tmp, z1, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(t0, tmp, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(tmp, z1, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(t0, tmp, logn);
 
     /*
      * Second recursive invocation, on the split tb0 (currently in t0)
      * and the left sub-tree.
      */
     z0 = tmp;
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(z0, z0 + hn, t0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(z0, z0 + hn, t0, logn);
     ffSampling_fft_dyntree(samp, samp_ctx, z0, z0 + hn,
                            g00, g00 + hn, g01, orig_logn, logn - 1, z0 + n);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_merge_fft(t0, z0, z0 + hn, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_merge_fft(t0, z0, z0 + hn, logn);
 }
 
 /*
@@ -607,26 +607,26 @@ ffSampling_fft(samplerZ samp, void *samp_ctx,
      * the recursive invocation, with output in tmp. We finally
      * merge back into z1.
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(z1, z1 + hn, t1, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(z1, z1 + hn, t1, logn);
     ffSampling_fft(samp, samp_ctx, tmp, tmp + hn,
                    tree1, z1, z1 + hn, logn - 1, tmp + n);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_merge_fft(z1, tmp, tmp + hn, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_merge_fft(z1, tmp, tmp + hn, logn);
 
     /*
      * Compute tb0 = t0 + (t1 - z1) * L. Value tb0 ends up in tmp[].
      */
     memcpy(tmp, t1, n * sizeof * t1);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_sub(tmp, z1, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(tmp, tree, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(tmp, t0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_sub(tmp, z1, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(tmp, tree, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(tmp, t0, logn);
 
     /*
      * Second recursive invocation.
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_split_fft(z0, z0 + hn, tmp, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_split_fft(z0, z0 + hn, tmp, logn);
     ffSampling_fft(samp, samp_ctx, tmp, tmp + hn,
                    tree0, z0, z0 + hn, logn - 1, tmp + n);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_merge_fft(z0, tmp, tmp + hn, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_merge_fft(z0, tmp, tmp + hn, logn);
 }
 
 /*
@@ -674,13 +674,13 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
      * Apply the lattice basis to obtain the real target
      * vector (after normalization with regards to modulus).
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(t0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(t0, logn);
     ni = fpr_inverse_of_q;
     memcpy(t1, t0, n * sizeof * t0);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(t1, b01, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulconst(t1, fpr_neg(ni), logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(t0, b11, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulconst(t0, ni, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(t1, b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulconst(t1, fpr_neg(ni), logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(t0, b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulconst(t0, ni, logn);
 
     tx = t1 + n;
     ty = tx + n;
@@ -695,18 +695,18 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
      */
     memcpy(t0, tx, n * sizeof * tx);
     memcpy(t1, ty, n * sizeof * ty);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(tx, b00, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(ty, b10, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(tx, ty, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(tx, b00, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(ty, b10, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(tx, ty, logn);
     memcpy(ty, t0, n * sizeof * t0);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(ty, b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(ty, b01, logn);
 
     memcpy(t0, tx, n * sizeof * tx);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(t1, b11, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(t1, ty, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(t1, b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(t1, ty, logn);
 
-    PQCLEAN_FALCON512PADDED_CLEAN_iFFT(t0, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_iFFT(t1, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_iFFT(t0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_iFFT(t1, logn);
 
     /*
      * Compute the signature.
@@ -737,7 +737,7 @@ do_sign_tree(samplerZ samp, void *samp_ctx, int16_t *s2,
     for (u = 0; u < n; u ++) {
         s2tmp[u] = (int16_t) - fpr_rint(t1[u]);
     }
-    if (PQCLEAN_FALCON512PADDED_CLEAN_is_short_half(sqn, s2tmp, logn)) {
+    if (PQCLEAN_FALCONPADDED512_CLEAN_is_short_half(sqn, s2tmp, logn)) {
         memcpy(s2, s2tmp, n * sizeof * s2);
         memcpy(tmp, s1tmp, n * sizeof * s1tmp);
         return 1;
@@ -779,12 +779,12 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     smallints_to_fpr(b00, g, logn);
     smallints_to_fpr(b11, F, logn);
     smallints_to_fpr(b10, G, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b01, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b00, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b11, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b10, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(b01, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b00, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b10, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_neg(b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_neg(b11, logn);
 
     /*
      * Compute the Gram matrix G = B·B*. Formulas are:
@@ -804,20 +804,20 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     t1 = t0 + n;
 
     memcpy(t0, b01, n * sizeof * b01);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(t0, logn);    // t0 <- b01*adj(b01)
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(t0, logn);    // t0 <- b01*adj(b01)
 
     memcpy(t1, b00, n * sizeof * b00);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_muladj_fft(t1, b10, logn);   // t1 <- b00*adj(b10)
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(b00, logn);   // b00 <- b00*adj(b00)
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(b00, t0, logn);      // b00 <- g00
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_muladj_fft(t1, b10, logn);   // t1 <- b00*adj(b10)
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(b00, logn);   // b00 <- b00*adj(b00)
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(b00, t0, logn);      // b00 <- g00
     memcpy(t0, b01, n * sizeof * b01);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_muladj_fft(b01, b11, logn);  // b01 <- b01*adj(b11)
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(b01, t1, logn);      // b01 <- g01
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_muladj_fft(b01, b11, logn);  // b01 <- b01*adj(b11)
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(b01, t1, logn);      // b01 <- g01
 
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(b10, logn);   // b10 <- b10*adj(b10)
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(b10, logn);   // b10 <- b10*adj(b10)
     memcpy(t1, b11, n * sizeof * b11);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulselfadj_fft(t1, logn);    // t1 <- b11*adj(b11)
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(b10, t1, logn);      // b10 <- g11
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulselfadj_fft(t1, logn);    // t1 <- b11*adj(b11)
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(b10, t1, logn);      // b10 <- g11
 
     /*
      * We rename variables to make things clearer. The three elements
@@ -850,13 +850,13 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      * Apply the lattice basis to obtain the real target
      * vector (after normalization with regards to modulus).
      */
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(t0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(t0, logn);
     ni = fpr_inverse_of_q;
     memcpy(t1, t0, n * sizeof * t0);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(t1, b01, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulconst(t1, fpr_neg(ni), logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(t0, b11, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mulconst(t0, ni, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(t1, b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulconst(t1, fpr_neg(ni), logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(t0, b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mulconst(t0, ni, logn);
 
     /*
      * b01 and b11 can be discarded, so we move back (t0,t1).
@@ -891,12 +891,12 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     smallints_to_fpr(b00, g, logn);
     smallints_to_fpr(b11, F, logn);
     smallints_to_fpr(b10, G, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b01, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b00, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b11, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_FFT(b10, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(b01, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_neg(b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b00, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_FFT(b10, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_neg(b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_neg(b11, logn);
     tx = t1 + n;
     ty = tx + n;
 
@@ -905,17 +905,17 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
      */
     memcpy(tx, t0, n * sizeof * t0);
     memcpy(ty, t1, n * sizeof * t1);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(tx, b00, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(ty, b10, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(tx, ty, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(tx, b00, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(ty, b10, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(tx, ty, logn);
     memcpy(ty, t0, n * sizeof * t0);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(ty, b01, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(ty, b01, logn);
 
     memcpy(t0, tx, n * sizeof * tx);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_mul_fft(t1, b11, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_poly_add(t1, ty, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_iFFT(t0, logn);
-    PQCLEAN_FALCON512PADDED_CLEAN_iFFT(t1, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_mul_fft(t1, b11, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_poly_add(t1, ty, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_iFFT(t0, logn);
+    PQCLEAN_FALCONPADDED512_CLEAN_iFFT(t1, logn);
 
     s1tmp = (int16_t *)tx;
     sqn = 0;
@@ -943,7 +943,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
     for (u = 0; u < n; u ++) {
         s2tmp[u] = (int16_t) - fpr_rint(t1[u]);
     }
-    if (PQCLEAN_FALCON512PADDED_CLEAN_is_short_half(sqn, s2tmp, logn)) {
+    if (PQCLEAN_FALCONPADDED512_CLEAN_is_short_half(sqn, s2tmp, logn)) {
         memcpy(s2, s2tmp, n * sizeof * s2);
         memcpy(tmp, s1tmp, n * sizeof * s1tmp);
         return 1;
@@ -956,7 +956,7 @@ do_sign_dyn(samplerZ samp, void *samp_ctx, int16_t *s2,
  * on zero and standard deviation 1.8205, with a precision of 72 bits.
  */
 int
-PQCLEAN_FALCON512PADDED_CLEAN_gaussian0_sampler(prng *p) {
+PQCLEAN_FALCONPADDED512_CLEAN_gaussian0_sampler(prng *p) {
 
     static const uint32_t dist[] = {
         10745844u,  3068844u,  3741698u,
@@ -1079,7 +1079,7 @@ BerExp(prng *p, fpr x, fpr ccs) {
  * 0.5 and 1); in Falcon, sigma should always be between 1.2 and 1.9.
  */
 int
-PQCLEAN_FALCON512PADDED_CLEAN_sampler(void *ctx, fpr mu, fpr isigma) {
+PQCLEAN_FALCONPADDED512_CLEAN_sampler(void *ctx, fpr mu, fpr isigma) {
     sampler_context *spc;
     int s;
     fpr r, dss, ccs;
@@ -1121,7 +1121,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_sampler(void *ctx, fpr mu, fpr isigma) {
          *  - b = 0: z <= 0 and sampled against a Gaussian
          *    centered on 0.
          */
-        z0 = PQCLEAN_FALCON512PADDED_CLEAN_gaussian0_sampler(&spc->p);
+        z0 = PQCLEAN_FALCONPADDED512_CLEAN_gaussian0_sampler(&spc->p);
         b = (int)prng_get_u8(&spc->p) & 1;
         z = b + ((b << 1) - 1) * z0;
 
@@ -1164,7 +1164,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_sampler(void *ctx, fpr mu, fpr isigma) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rng,
+PQCLEAN_FALCONPADDED512_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rng,
                                         const fpr *expanded_key,
                                         const uint16_t *hm, unsigned logn, uint8_t *tmp) {
     fpr *ftmp;
@@ -1190,8 +1190,8 @@ PQCLEAN_FALCON512PADDED_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rn
          * SHAKE context ('rng').
          */
         spc.sigma_min = fpr_sigma_min[logn];
-        PQCLEAN_FALCON512PADDED_CLEAN_prng_init(&spc.p, rng);
-        samp = PQCLEAN_FALCON512PADDED_CLEAN_sampler;
+        PQCLEAN_FALCONPADDED512_CLEAN_prng_init(&spc.p, rng);
+        samp = PQCLEAN_FALCONPADDED512_CLEAN_sampler;
         samp_ctx = &spc;
 
         /*
@@ -1206,7 +1206,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_sign_tree(int16_t *sig, inner_shake256_context *rn
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_CLEAN_sign_dyn(int16_t *sig, inner_shake256_context *rng,
+PQCLEAN_FALCONPADDED512_CLEAN_sign_dyn(int16_t *sig, inner_shake256_context *rng,
                                        const int8_t *f, const int8_t *g,
                                        const int8_t *F, const int8_t *G,
                                        const uint16_t *hm, unsigned logn, uint8_t *tmp) {
@@ -1233,8 +1233,8 @@ PQCLEAN_FALCON512PADDED_CLEAN_sign_dyn(int16_t *sig, inner_shake256_context *rng
          * SHAKE context ('rng').
          */
         spc.sigma_min = fpr_sigma_min[logn];
-        PQCLEAN_FALCON512PADDED_CLEAN_prng_init(&spc.p, rng);
-        samp = PQCLEAN_FALCON512PADDED_CLEAN_sampler;
+        PQCLEAN_FALCONPADDED512_CLEAN_prng_init(&spc.p, rng);
+        samp = PQCLEAN_FALCONPADDED512_CLEAN_sampler;
         samp_ctx = &spc;
 
         /*

@@ -37,7 +37,7 @@
  * on zero and standard deviation 1.8205, with a precision of 72 bits.
  */
 int
-PQCLEAN_FALCON512PADDED_AARCH64_gaussian0_sampler(prng *p) {
+PQCLEAN_FALCONPADDED512_AARCH64_gaussian0_sampler(prng *p) {
 
     static const uint32_t dist[] = {
         10745844u,  3068844u,  3741698u,
@@ -208,7 +208,7 @@ BerExp(prng *p, fpr x, fpr ccs) {
  * 0.5 and 1); in Falcon, sigma should always be between 1.2 and 1.9.
  */
 int
-PQCLEAN_FALCON512PADDED_AARCH64_sampler(void *ctx, fpr mu, fpr isigma) {
+PQCLEAN_FALCONPADDED512_AARCH64_sampler(void *ctx, fpr mu, fpr isigma) {
     sampler_context *spc;
     int s;
     fpr r, dss, ccs;
@@ -250,7 +250,7 @@ PQCLEAN_FALCON512PADDED_AARCH64_sampler(void *ctx, fpr mu, fpr isigma) {
          *  - b = 0: z <= 0 and sampled against a Gaussian
          *    centered on 0.
          */
-        z0 = PQCLEAN_FALCON512PADDED_AARCH64_gaussian0_sampler(&spc->p);
+        z0 = PQCLEAN_FALCONPADDED512_AARCH64_gaussian0_sampler(&spc->p);
         b = (int)prng_get_u8(&spc->p) & 1;
         z = b + ((b << 1) - 1) * z0;
 

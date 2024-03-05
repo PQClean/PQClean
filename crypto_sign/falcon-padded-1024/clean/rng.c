@@ -35,7 +35,7 @@
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024PADDED_CLEAN_prng_init(prng *p, inner_shake256_context *src) {
+PQCLEAN_FALCONPADDED1024_CLEAN_prng_init(prng *p, inner_shake256_context *src) {
     /*
      * To ensure reproducibility for a given seed, we
      * must enforce little-endian interpretation of
@@ -61,7 +61,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_prng_init(prng *p, inner_shake256_context *src) {
     tl = d32[48 / sizeof(uint32_t)];
     th = d32[52 / sizeof(uint32_t)];
     d64[48 / sizeof(uint64_t)] = tl + (th << 32);
-    PQCLEAN_FALCON1024PADDED_CLEAN_prng_refill(p);
+    PQCLEAN_FALCONPADDED1024_CLEAN_prng_refill(p);
 }
 
 /*
@@ -79,7 +79,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_prng_init(prng *p, inner_shake256_context *src) {
  * The block counter is XORed into the first 8 bytes of the IV.
  */
 void
-PQCLEAN_FALCON1024PADDED_CLEAN_prng_refill(prng *p) {
+PQCLEAN_FALCONPADDED1024_CLEAN_prng_refill(prng *p) {
 
     static const uint32_t CW[] = {
         0x61707865, 0x3320646e, 0x79622d32, 0x6b206574
@@ -166,7 +166,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_prng_refill(prng *p) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON1024PADDED_CLEAN_prng_get_bytes(prng *p, void *dst, size_t len) {
+PQCLEAN_FALCONPADDED1024_CLEAN_prng_get_bytes(prng *p, void *dst, size_t len) {
     uint8_t *buf;
 
     buf = dst;
@@ -182,7 +182,7 @@ PQCLEAN_FALCON1024PADDED_CLEAN_prng_get_bytes(prng *p, void *dst, size_t len) {
         len -= clen;
         p->ptr += clen;
         if (p->ptr == sizeof p->buf.d) {
-            PQCLEAN_FALCON1024PADDED_CLEAN_prng_refill(p);
+            PQCLEAN_FALCONPADDED1024_CLEAN_prng_refill(p);
         }
     }
 }

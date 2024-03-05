@@ -10,7 +10,7 @@
 
 #define PQCLEAN_FALCON1024_AVX2_CRYPTO_ALGNAME          "Falcon-1024"
 
-#define PQCLEAN_FALCON1024PADDED_AVX2_CRYPTO_BYTES      1280 // used in signature verification
+#define PQCLEAN_FALCONPADDED1024_AVX2_CRYPTO_BYTES      1280 // used in signature verification
 
 /*
  * Generate a new key pair. Public key goes into pk[], private key in sk[].

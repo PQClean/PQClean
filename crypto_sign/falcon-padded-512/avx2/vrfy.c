@@ -622,14 +622,14 @@ mq_poly_sub(uint16_t *f, const uint16_t *g, unsigned logn) {
 
 /* see inner.h */
 void
-PQCLEAN_FALCON512PADDED_AVX2_to_ntt_monty(uint16_t *h, unsigned logn) {
+PQCLEAN_FALCONPADDED512_AVX2_to_ntt_monty(uint16_t *h, unsigned logn) {
     mq_NTT(h, logn);
     mq_poly_tomonty(h, logn);
 }
 
 /* see inner.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_verify_raw(const uint16_t *c0, const int16_t *s2,
+PQCLEAN_FALCONPADDED512_AVX2_verify_raw(const uint16_t *c0, const int16_t *s2,
                                         const uint16_t *h, unsigned logn, uint8_t *tmp) {
     size_t u, n;
     uint16_t *tt;
@@ -671,12 +671,12 @@ PQCLEAN_FALCON512PADDED_AVX2_verify_raw(const uint16_t *c0, const int16_t *s2,
      * Signature is valid if and only if the aggregate (-s1,s2) vector
      * is short enough.
      */
-    return PQCLEAN_FALCON512PADDED_AVX2_is_short((int16_t *)tt, s2, logn);
+    return PQCLEAN_FALCONPADDED512_AVX2_is_short((int16_t *)tt, s2, logn);
 }
 
 /* see inner.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_compute_public(uint16_t *h,
+PQCLEAN_FALCONPADDED512_AVX2_compute_public(uint16_t *h,
         const int8_t *f, const int8_t *g, unsigned logn, uint8_t *tmp) {
     size_t u, n;
     uint16_t *tt;
@@ -701,7 +701,7 @@ PQCLEAN_FALCON512PADDED_AVX2_compute_public(uint16_t *h,
 
 /* see inner.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_complete_private(int8_t *G,
+PQCLEAN_FALCONPADDED512_AVX2_complete_private(int8_t *G,
         const int8_t *f, const int8_t *g, const int8_t *F,
         unsigned logn, uint8_t *tmp) {
     size_t u, n;
@@ -746,7 +746,7 @@ PQCLEAN_FALCON512PADDED_AVX2_complete_private(int8_t *G,
 
 /* see inner.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_is_invertible(
+PQCLEAN_FALCONPADDED512_AVX2_is_invertible(
     const int16_t *s2, unsigned logn, uint8_t *tmp) {
     size_t u, n;
     uint16_t *tt;
@@ -771,7 +771,7 @@ PQCLEAN_FALCON512PADDED_AVX2_is_invertible(
 
 /* see inner.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_verify_recover(uint16_t *h,
+PQCLEAN_FALCONPADDED512_AVX2_verify_recover(uint16_t *h,
         const uint16_t *c0, const int16_t *s1, const int16_t *s2,
         unsigned logn, uint8_t *tmp) {
     size_t u, n;
@@ -820,13 +820,13 @@ PQCLEAN_FALCON512PADDED_AVX2_verify_recover(uint16_t *h,
      * check that the rebuilt public key matches the expected
      * value (e.g. through a hash).
      */
-    r = ~r & (uint32_t) - PQCLEAN_FALCON512PADDED_AVX2_is_short(s1, s2, logn);
+    r = ~r & (uint32_t) - PQCLEAN_FALCONPADDED512_AVX2_is_short(s1, s2, logn);
     return (int)(r >> 31);
 }
 
 /* see inner.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_count_nttzero(const int16_t *sig, unsigned logn, uint8_t *tmp) {
+PQCLEAN_FALCONPADDED512_AVX2_count_nttzero(const int16_t *sig, unsigned logn, uint8_t *tmp) {
     uint16_t *s2;
     size_t u, n;
     uint32_t r;

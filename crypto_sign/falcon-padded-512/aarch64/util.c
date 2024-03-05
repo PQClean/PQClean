@@ -27,7 +27,7 @@
  * Convert an integer polynomial (with small values) into the
  * representation with complex numbers.
  */
-void PQCLEAN_FALCON512PADDED_AARCH64_smallints_to_fpr(fpr *r, const int8_t *t, const unsigned logn) {
+void PQCLEAN_FALCONPADDED512_AARCH64_smallints_to_fpr(fpr *r, const int8_t *t, const unsigned logn) {
     float64x2x4_t neon_flo64, neon_fhi64;
     int64x2x4_t neon_lo64, neon_hi64;
     int32x4_t neon_lo32[2], neon_hi32[2];

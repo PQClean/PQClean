@@ -38,7 +38,7 @@
 
 /* see api.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_keypair(
+PQCLEAN_FALCONPADDED512_AVX2_crypto_sign_keypair(
     uint8_t *pk, uint8_t *sk) {
     union {
         uint8_t b[FALCON_KEYGEN_TEMP_9];
@@ -58,7 +58,7 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_keypair(
     inner_shake256_init(&rng);
     inner_shake256_inject(&rng, seed, sizeof seed);
     inner_shake256_flip(&rng);
-    PQCLEAN_FALCON512PADDED_AVX2_keygen(&rng, f, g, F, NULL, h, 9, tmp.b);
+    PQCLEAN_FALCONPADDED512_AVX2_keygen(&rng, f, g, F, NULL, h, 9, tmp.b);
     inner_shake256_ctx_release(&rng);
 
     /*
@@ -66,28 +66,28 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_keypair(
      */
     sk[0] = 0x50 + 9;
     u = 1;
-    v = PQCLEAN_FALCON512PADDED_AVX2_trim_i8_encode(
-            sk + u, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES - u,
-            f, 9, PQCLEAN_FALCON512PADDED_AVX2_max_fg_bits[9]);
+    v = PQCLEAN_FALCONPADDED512_AVX2_trim_i8_encode(
+            sk + u, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES - u,
+            f, 9, PQCLEAN_FALCONPADDED512_AVX2_max_fg_bits[9]);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512PADDED_AVX2_trim_i8_encode(
-            sk + u, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES - u,
-            g, 9, PQCLEAN_FALCON512PADDED_AVX2_max_fg_bits[9]);
+    v = PQCLEAN_FALCONPADDED512_AVX2_trim_i8_encode(
+            sk + u, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES - u,
+            g, 9, PQCLEAN_FALCONPADDED512_AVX2_max_fg_bits[9]);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512PADDED_AVX2_trim_i8_encode(
-            sk + u, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES - u,
-            F, 9, PQCLEAN_FALCON512PADDED_AVX2_max_FG_bits[9]);
+    v = PQCLEAN_FALCONPADDED512_AVX2_trim_i8_encode(
+            sk + u, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES - u,
+            F, 9, PQCLEAN_FALCONPADDED512_AVX2_max_FG_bits[9]);
     if (v == 0) {
         return -1;
     }
     u += v;
-    if (u != PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES) {
+    if (u != PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES) {
         return -1;
     }
 
@@ -95,10 +95,10 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_keypair(
      * Encode public key.
      */
     pk[0] = 0x00 + 9;
-    v = PQCLEAN_FALCON512PADDED_AVX2_modq_encode(
-            pk + 1, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_PUBLICKEYBYTES - 1,
+    v = PQCLEAN_FALCONPADDED512_AVX2_modq_encode(
+            pk + 1, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_PUBLICKEYBYTES - 1,
             h, 9);
-    if (v != PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_PUBLICKEYBYTES - 1) {
+    if (v != PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }
 
@@ -142,31 +142,31 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t sigbuflen,
         return -1;
     }
     u = 1;
-    v = PQCLEAN_FALCON512PADDED_AVX2_trim_i8_decode(
-            f, 9, PQCLEAN_FALCON512PADDED_AVX2_max_fg_bits[9],
-            sk + u, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES - u);
+    v = PQCLEAN_FALCONPADDED512_AVX2_trim_i8_decode(
+            f, 9, PQCLEAN_FALCONPADDED512_AVX2_max_fg_bits[9],
+            sk + u, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES - u);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512PADDED_AVX2_trim_i8_decode(
-            g, 9, PQCLEAN_FALCON512PADDED_AVX2_max_fg_bits[9],
-            sk + u, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES - u);
+    v = PQCLEAN_FALCONPADDED512_AVX2_trim_i8_decode(
+            g, 9, PQCLEAN_FALCONPADDED512_AVX2_max_fg_bits[9],
+            sk + u, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES - u);
     if (v == 0) {
         return -1;
     }
     u += v;
-    v = PQCLEAN_FALCON512PADDED_AVX2_trim_i8_decode(
-            F, 9, PQCLEAN_FALCON512PADDED_AVX2_max_FG_bits[9],
-            sk + u, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES - u);
+    v = PQCLEAN_FALCONPADDED512_AVX2_trim_i8_decode(
+            F, 9, PQCLEAN_FALCONPADDED512_AVX2_max_FG_bits[9],
+            sk + u, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES - u);
     if (v == 0) {
         return -1;
     }
     u += v;
-    if (u != PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_SECRETKEYBYTES) {
+    if (u != PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_SECRETKEYBYTES) {
         return -1;
     }
-    if (!PQCLEAN_FALCON512PADDED_AVX2_complete_private(G, f, g, F, 9, tmp.b)) {
+    if (!PQCLEAN_FALCONPADDED512_AVX2_complete_private(G, f, g, F, 9, tmp.b)) {
         return -1;
     }
 
@@ -182,7 +182,7 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t sigbuflen,
     inner_shake256_inject(&sc, nonce, NONCELEN);
     inner_shake256_inject(&sc, m, mlen);
     inner_shake256_flip(&sc);
-    PQCLEAN_FALCON512PADDED_AVX2_hash_to_point_ct(&sc, r.hm, 9, tmp.b);
+    PQCLEAN_FALCONPADDED512_AVX2_hash_to_point_ct(&sc, r.hm, 9, tmp.b);
     inner_shake256_ctx_release(&sc);
 
     /*
@@ -198,8 +198,8 @@ do_sign(uint8_t *nonce, uint8_t *sigbuf, size_t sigbuflen,
      * value is found that fits in the provided buffer.
      */
     for (;;) {
-        PQCLEAN_FALCON512PADDED_AVX2_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, 9, tmp.b);
-        v = PQCLEAN_FALCON512PADDED_AVX2_comp_encode(sigbuf, sigbuflen, r.sig, 9);
+        PQCLEAN_FALCONPADDED512_AVX2_sign_dyn(r.sig, &sc, f, g, F, G, r.hm, 9, tmp.b);
+        v = PQCLEAN_FALCONPADDED512_AVX2_comp_encode(sigbuf, sigbuflen, r.sig, 9);
         if (v != 0) {
             inner_shake256_ctx_release(&sc);
             memset(sigbuf + v, 0, sigbuflen - v);
@@ -233,12 +233,12 @@ do_verify(
     if (pk[0] != 0x00 + 9) {
         return -1;
     }
-    if (PQCLEAN_FALCON512PADDED_AVX2_modq_decode(h, 9,
-            pk + 1, PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_PUBLICKEYBYTES - 1)
-            != PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_PUBLICKEYBYTES - 1) {
+    if (PQCLEAN_FALCONPADDED512_AVX2_modq_decode(h, 9,
+            pk + 1, PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_PUBLICKEYBYTES - 1)
+            != PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_PUBLICKEYBYTES - 1) {
         return -1;
     }
-    PQCLEAN_FALCON512PADDED_AVX2_to_ntt_monty(h, 9);
+    PQCLEAN_FALCONPADDED512_AVX2_to_ntt_monty(h, 9);
 
     /*
      * Decode signature.
@@ -247,12 +247,12 @@ do_verify(
         return -1;
     }
 
-    v = PQCLEAN_FALCON512PADDED_AVX2_comp_decode(sig, 9, sigbuf, sigbuflen);
+    v = PQCLEAN_FALCONPADDED512_AVX2_comp_decode(sig, 9, sigbuf, sigbuflen);
     if (v == 0) {
         return -1;
     }
     if (v != sigbuflen) {
-        if (sigbuflen == PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES - NONCELEN - 1) {
+        if (sigbuflen == PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES - NONCELEN - 1) {
             while (v < sigbuflen) {
                 if (sigbuf[v++] != 0) {
                     return -1;
@@ -270,13 +270,13 @@ do_verify(
     inner_shake256_inject(&sc, nonce, NONCELEN);
     inner_shake256_inject(&sc, m, mlen);
     inner_shake256_flip(&sc);
-    PQCLEAN_FALCON512PADDED_AVX2_hash_to_point_ct(&sc, hm, 9, tmp.b);
+    PQCLEAN_FALCONPADDED512_AVX2_hash_to_point_ct(&sc, hm, 9, tmp.b);
     inner_shake256_ctx_release(&sc);
 
     /*
      * Verify signature.
      */
-    if (!PQCLEAN_FALCON512PADDED_AVX2_verify_raw(hm, sig, h, 9, tmp.b)) {
+    if (!PQCLEAN_FALCONPADDED512_AVX2_verify_raw(hm, sig, h, 9, tmp.b)) {
         return -1;
     }
     return 0;
@@ -284,12 +284,12 @@ do_verify(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_signature(
+PQCLEAN_FALCONPADDED512_AVX2_crypto_sign_signature(
     uint8_t *sig, size_t *siglen,
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
     size_t vlen;
 
-    vlen = PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES - NONCELEN - 1;
+    vlen = PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES - NONCELEN - 1;
     if (do_sign(sig + 1, sig + 1 + NONCELEN, vlen, m, mlen, sk) < 0) {
         return -1;
     }
@@ -300,7 +300,7 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_signature(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_verify(
+PQCLEAN_FALCONPADDED512_AVX2_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
     const uint8_t *m, size_t mlen, const uint8_t *pk) {
     if (siglen < 1 + NONCELEN) {
@@ -315,7 +315,7 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_verify(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_crypto_sign(
+PQCLEAN_FALCONPADDED512_AVX2_crypto_sign(
     uint8_t *sm, size_t *smlen,
     const uint8_t *m, size_t mlen, const uint8_t *sk) {
     uint8_t *sigbuf;
@@ -325,9 +325,9 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign(
      * Move the message to its final location; this is a memmove() so
      * it handles overlaps properly.
      */
-    memmove(sm + PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES, m, mlen);
+    memmove(sm + PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES, m, mlen);
     sigbuf = sm + 1 + NONCELEN;
-    sigbuflen = PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES - NONCELEN - 1;
+    sigbuflen = PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES - NONCELEN - 1;
     if (do_sign(sm + 1, sigbuf, sigbuflen, m, mlen, sk) < 0) {
         return -1;
     }
@@ -339,17 +339,17 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign(
 
 /* see api.h */
 int
-PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_open(
+PQCLEAN_FALCONPADDED512_AVX2_crypto_sign_open(
     uint8_t *m, size_t *mlen,
     const uint8_t *sm, size_t smlen, const uint8_t *pk) {
     const uint8_t *sigbuf;
     size_t pmlen, sigbuflen;
 
-    if (smlen < PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES) {
+    if (smlen < PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES) {
         return -1;
     }
-    sigbuflen = PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES - NONCELEN - 1;
-    pmlen = smlen - PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES;
+    sigbuflen = PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES - NONCELEN - 1;
+    pmlen = smlen - PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES;
     if (sm[0] != 0x30 + 9) {
         return -1;
     }
@@ -361,7 +361,7 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_open(
      * follows the signature value.
      */
     if (do_verify(sm + 1, sigbuf, sigbuflen,
-                  sm + PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES, pmlen, pk) < 0) {
+                  sm + PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES, pmlen, pk) < 0) {
         return -1;
     }
 
@@ -370,7 +370,7 @@ PQCLEAN_FALCON512PADDED_AVX2_crypto_sign_open(
      * to its final destination. The memmove() properly handles
      * overlaps.
      */
-    memmove(m, sm + PQCLEAN_FALCON512PADDED_AVX2_CRYPTO_BYTES, pmlen);
+    memmove(m, sm + PQCLEAN_FALCONPADDED512_AVX2_CRYPTO_BYTES, pmlen);
     *mlen = pmlen;
     return 0;
 }

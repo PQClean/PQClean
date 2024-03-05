@@ -34,7 +34,7 @@
 #include "macrous.h"
 
 /* see inner.h */
-void PQCLEAN_FALCON512PADDED_AARCH64_hash_to_point_vartime(
+void PQCLEAN_FALCONPADDED512_AARCH64_hash_to_point_vartime(
     inner_shake256_context *sc,
     uint16_t *x, unsigned logn) {
     /*
@@ -67,7 +67,7 @@ void PQCLEAN_FALCON512PADDED_AARCH64_hash_to_point_vartime(
 }
 
 /* see inner.h */
-void PQCLEAN_FALCON512PADDED_AARCH64_hash_to_point_ct(
+void PQCLEAN_FALCONPADDED512_AARCH64_hash_to_point_ct(
     inner_shake256_context *sc,
     uint16_t *x, unsigned logn, uint8_t *tmp) {
     /*
@@ -255,7 +255,7 @@ static const uint32_t l2bound[] = {
  * thus, we enable 2 parallel dependency rather than 1 for better scheduling.
  * Each for loop is tuned for cache locality.
  */
-int PQCLEAN_FALCON512PADDED_AARCH64_is_short(const int16_t *s1, const int16_t *s2) {
+int PQCLEAN_FALCONPADDED512_AARCH64_is_short(const int16_t *s1, const int16_t *s2) {
     // Total SIMD register 18 = 16 + 2
     int16x8x4_t neon_s1, neon_s2, neon_s3, neon_s4; // 16
     int32x4_t neon_s, neon_sh;                      // 2
@@ -374,7 +374,7 @@ int PQCLEAN_FALCON512PADDED_AARCH64_is_short(const int16_t *s1, const int16_t *s
     return s <= l2bound[FALCON_LOGN];
 }
 
-int PQCLEAN_FALCON512PADDED_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
+int PQCLEAN_FALCONPADDED512_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
         const int16_t *hm, const fpr *t0,
         const fpr *t1) {
     // Total SIMD registers: 26 = 16 + 8 + 2
@@ -493,7 +493,7 @@ int PQCLEAN_FALCON512PADDED_AARCH64_is_short_tmp(int16_t *s1tmp, int16_t *s2tmp,
     return s <= l2bound[FALCON_LOGN];
 }
 
-int32_t PQCLEAN_FALCON512PADDED_AARCH64_poly_small_sqnorm(const int8_t *f) {
+int32_t PQCLEAN_FALCONPADDED512_AARCH64_poly_small_sqnorm(const int8_t *f) {
     int8x16x4_t a;
     int16x8x4_t b, c;
     int32x4_t norm, norm_sh;

@@ -219,18 +219,18 @@ fpr_expm_p63(fpr x, fpr ccs) {
     return (uint64_t) ret;
 }
 
-#define fpr_p2_tab   PQCLEAN_FALCON512PADDED_AARCH64_fpr_p2_tab
+#define fpr_p2_tab   PQCLEAN_FALCONPADDED512_AARCH64_fpr_p2_tab
 extern const fpr fpr_p2_tab[];
 
-#define fpr_tab_log2   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log2
-#define fpr_tab_log3   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log3
-#define fpr_tab_log4   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log4
-#define fpr_tab_log5   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log5
-#define fpr_tab_log6   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log6
-#define fpr_tab_log7   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log7
-#define fpr_tab_log8   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log8
-#define fpr_tab_log9   PQCLEAN_FALCON512PADDED_AARCH64_fpr_tab_log9
-#define fpr_table      PQCLEAN_FALCON512PADDED_AARCH64_fpr_table
+#define fpr_tab_log2   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log2
+#define fpr_tab_log3   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log3
+#define fpr_tab_log4   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log4
+#define fpr_tab_log5   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log5
+#define fpr_tab_log6   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log6
+#define fpr_tab_log7   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log7
+#define fpr_tab_log8   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log8
+#define fpr_tab_log9   PQCLEAN_FALCONPADDED512_AARCH64_fpr_tab_log9
+#define fpr_table      PQCLEAN_FALCONPADDED512_AARCH64_fpr_table
 
 extern const fpr fpr_tab_log2[];
 extern const fpr fpr_tab_log3[];

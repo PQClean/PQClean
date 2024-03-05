@@ -3,13 +3,13 @@
 
 #define PADDING 0
 
-const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_qmvq[8] = {FALCON_Q, FALCON_QINV,
+const int16_t PQCLEAN_FALCONPADDED1024_AARCH64_qmvq[8] = {FALCON_Q, FALCON_QINV,
                                                           FALCON_MONT, FALCON_NINV_MONT,
                                                           FALCON_V, 0,
                                                           FALCON_MONT_BR, FALCON_NINV_MONT_BR
                                                          };
 
-const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_ntt_br[] = {
+const int16_t PQCLEAN_FALCONPADDED1024_AARCH64_ntt_br[] = {
     PADDING,    -1479,    -5146,     4043,    -1305,      722,     5736,    -4134,
     3542,    -4821,     2639,     2319,    -1170,     -955,     -790,     1260,
     4388,     4632,    -5755,     2426,      334,     1428,     1696,  PADDING,
@@ -189,7 +189,7 @@ const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_ntt_br[] = {
     1255,     5784,    -3338,    -2674,    -3408,     1165,    -1178,     3511,
 }; // 1024->1416
 
-const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_ntt_qinv_br[] = {
+const int16_t PQCLEAN_FALCONPADDED1024_AARCH64_ntt_qinv_br[] = {
     PADDING,    -3943,   -13721,    10780,    -3479,     1925,    15294,   -11023,
     9444,   -12854,     7036,     6183,    -3119,    -2546,    -2106,     3359,
     11700,    12350,   -15345,     6468,      890,     3807,     4522,  PADDING,
@@ -369,7 +369,7 @@ const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_ntt_qinv_br[] = {
     3346,    15422,    -8900,    -7130,    -9087,     3106,    -3141,     9361,
 }; // 1416
 
-const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_invntt_br[] = {
+const int16_t PQCLEAN_FALCONPADDED1024_AARCH64_invntt_br[] = {
     -3511,     1178,    -1165,     3408,     2674,     3338,    -5784,    -1255,
     -193,     6092,      923,     4167,      392,      425,    -1620,     -377,
     -5163,    -5002,     2151,     4119,     -338,     2455,     3654,    -1744,
@@ -550,7 +550,7 @@ const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_invntt_br[] = {
     4134,    -5736,     -722,     1305,    -4043,     5146,     6830,    12277, // ninv=1
 }; // 1424
 
-const int16_t PQCLEAN_FALCON1024PADDED_AARCH64_invntt_qinv_br[] = {
+const int16_t PQCLEAN_FALCONPADDED1024_AARCH64_invntt_qinv_br[] = {
     -9361,     3141,    -3106,     9087,     7130,     8900,   -15422,    -3346,
     -514,    16244,     2461,    11111,     1045,     1133,    -4319,    -1005,
     -13766,   -13337,     5735,    10983,     -901,     6546,     9743,    -4650,

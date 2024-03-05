@@ -33,7 +33,7 @@
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_modq_encode(
+PQCLEAN_FALCONPADDED512_CLEAN_modq_encode(
     void *out, size_t max_out_len,
     const uint16_t *x, unsigned logn) {
     size_t n, out_len, u;
@@ -73,7 +73,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_modq_encode(
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_modq_decode(
+PQCLEAN_FALCONPADDED512_CLEAN_modq_decode(
     uint16_t *x, unsigned logn,
     const void *in, size_t max_in_len) {
     size_t n, in_len, u;
@@ -112,7 +112,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_modq_decode(
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_trim_i16_encode(
+PQCLEAN_FALCONPADDED512_CLEAN_trim_i16_encode(
     void *out, size_t max_out_len,
     const int16_t *x, unsigned logn, unsigned bits) {
     size_t n, u, out_len;
@@ -156,7 +156,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_trim_i16_encode(
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_trim_i16_decode(
+PQCLEAN_FALCONPADDED512_CLEAN_trim_i16_decode(
     int16_t *x, unsigned logn, unsigned bits,
     const void *in, size_t max_in_len) {
     size_t n, in_len;
@@ -206,7 +206,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_trim_i16_decode(
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_trim_i8_encode(
+PQCLEAN_FALCONPADDED512_CLEAN_trim_i8_encode(
     void *out, size_t max_out_len,
     const int8_t *x, unsigned logn, unsigned bits) {
     size_t n, u, out_len;
@@ -250,7 +250,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_trim_i8_encode(
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_trim_i8_decode(
+PQCLEAN_FALCONPADDED512_CLEAN_trim_i8_decode(
     int8_t *x, unsigned logn, unsigned bits,
     const void *in, size_t max_in_len) {
     size_t n, in_len;
@@ -299,7 +299,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_trim_i8_decode(
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_comp_encode(
+PQCLEAN_FALCONPADDED512_CLEAN_comp_encode(
     void *out, size_t max_out_len,
     const int16_t *x, unsigned logn) {
     uint8_t *buf;
@@ -395,7 +395,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_comp_encode(
 
 /* see inner.h */
 size_t
-PQCLEAN_FALCON512PADDED_CLEAN_comp_decode(
+PQCLEAN_FALCONPADDED512_CLEAN_comp_decode(
     int16_t *x, unsigned logn,
     const void *in, size_t max_in_len) {
     const uint8_t *buf;
@@ -499,7 +499,7 @@ PQCLEAN_FALCON512PADDED_CLEAN_comp_decode(
  * of max_fg_bits[] and max_FG_bits[] shall be greater than 8.
  */
 
-const uint8_t PQCLEAN_FALCON512PADDED_CLEAN_max_fg_bits[] = {
+const uint8_t PQCLEAN_FALCONPADDED512_CLEAN_max_fg_bits[] = {
     0, /* unused */
     8,
     8,
@@ -513,7 +513,7 @@ const uint8_t PQCLEAN_FALCON512PADDED_CLEAN_max_fg_bits[] = {
     5
 };
 
-const uint8_t PQCLEAN_FALCON512PADDED_CLEAN_max_FG_bits[] = {
+const uint8_t PQCLEAN_FALCONPADDED512_CLEAN_max_FG_bits[] = {
     0, /* unused */
     8,
     8,
@@ -555,7 +555,7 @@ const uint8_t PQCLEAN_FALCON512PADDED_CLEAN_max_FG_bits[] = {
  * in -2047..2047, i.e. 12 bits.
  */
 
-const uint8_t PQCLEAN_FALCON512PADDED_CLEAN_max_sig_bits[] = {
+const uint8_t PQCLEAN_FALCONPADDED512_CLEAN_max_sig_bits[] = {
     0, /* unused */
     10,
     11,

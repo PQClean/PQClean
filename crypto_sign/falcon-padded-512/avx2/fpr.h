@@ -353,10 +353,10 @@ fpr_expm_p63(fpr x, fpr ccs) {
 
 }
 
-#define fpr_gm_tab   PQCLEAN_FALCON512PADDED_AVX2_fpr_gm_tab
+#define fpr_gm_tab   PQCLEAN_FALCONPADDED512_AVX2_fpr_gm_tab
 extern const fpr fpr_gm_tab[];
 
-#define fpr_p2_tab   PQCLEAN_FALCON512PADDED_AVX2_fpr_p2_tab
+#define fpr_p2_tab   PQCLEAN_FALCONPADDED512_AVX2_fpr_p2_tab
 extern const fpr fpr_p2_tab[];
 
 /* ====================================================================== */
