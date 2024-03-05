@@ -42,12 +42,12 @@ def test_valgrind(implementation: pqclean.Implementation, impl_path, test_dir,
 
     # handle Falcon PADDED and COMPACT interop testing
     if implementation.scheme.name.startswith("falcon-"):
-        if implementation.scheme.name.endswith("-padded"):
-            # strip off "-padded" suffix to get interop scheme name
-            interop_src = pqclean.Implementation.by_name(implementation.scheme.name[:-len("-padded")], implementation.name).path()
+        if implementation.scheme.name.startswith("falcon-padded-"):
+            # delete "-padded" to get interop scheme name
+            interop_src = pqclean.Implementation.by_name(implementation.scheme.name.replace('-padded', '', 1), implementation.name).path()
         else:
-            # add "-padded" suffix to get interop scheme name
-            interop_src = pqclean.Implementation.by_name(implementation.scheme.name + "-padded", implementation.name).path()
+            # add "-padded" to get interop scheme name
+            interop_src = pqclean.Implementation.by_name(implementation.scheme.name.replace('falcon-', 'falcon-padded-', 1), implementation.name).path()
         interop_dir = helpers.add_interop_files(interop_src, os.path.join(impl_path, '..'))
         helpers.make(TYPE=implementation.scheme.type,
                  SCHEME=implementation.scheme.name,
