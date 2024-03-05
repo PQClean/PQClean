@@ -1,6 +1,6 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIB=libfalcon-512-padded_aarch64.a
+LIB=libfalcon-padded-512_aarch64.a
 
 SOURCES = codec.c keygen.c poly_float.c common.c fft_tree.c pqclean.c poly_int.c sign.c fpr.c ntt.c rng.c util.c fft.c ntt_consts.c sampler.c vrfy.c
 OBJECTS = codec.o keygen.o poly_float.o common.o fft_tree.o pqclean.o poly_int.o sign.o fpr.o ntt.o rng.o util.o fft.o ntt_consts.o sampler.o vrfy.o

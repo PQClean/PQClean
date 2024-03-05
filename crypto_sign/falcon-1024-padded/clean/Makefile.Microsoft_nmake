@@ -1,7 +1,7 @@
 # This Makefile can be used with Microsoft Visual Studio's nmake using the command:
 #    nmake /f Makefile.Microsoft_nmake
 
-LIBRARY=libfalcon-1024-padded_clean.lib
+LIBRARY=libfalcon-padded-1024_clean.lib
 OBJECTS=codec.obj common.obj fft.obj fpr.obj keygen.obj pqclean.obj rng.obj sign.obj vrfy.obj
 
 # Warning C4146 is raised when a unary minus operator is applied to an

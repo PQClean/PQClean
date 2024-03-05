@@ -1,6 +1,6 @@
 # This Makefile can be used with GNU Make or BSD Make
 
-LIB=libfalcon-512-padded_clean.a
+LIB=libfalcon-padded-512_clean.a
 
 SOURCES = codec.c common.c fft.c fpr.c keygen.c pqclean.c rng.c sign.c vrfy.c
 OBJECTS = codec.o common.o fft.o fpr.o keygen.o pqclean.o rng.o sign.o vrfy.o

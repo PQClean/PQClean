@@ -23,9 +23,9 @@ ifeq ($(SCHEME), falcon-512)
 	INTEROP=$(SCHEME)-padded
 else ifeq ($(SCHEME), falcon-1024)
 	INTEROP=$(SCHEME)-padded
-else ifeq ($(SCHEME), falcon-512-padded)
+else ifeq ($(SCHEME), falcon-padded-512)
 	INTEROP=falcon-512
-else ifeq ($(SCHEME), falcon-1024-padded)
+else ifeq ($(SCHEME), falcon-padded-1024)
 	INTEROP=falcon-1024
 endif
 
