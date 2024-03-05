@@ -1,5 +1,5 @@
 ---
-name: Falcon-1024 (PADDED)
+name: Falcon-padded-1024
 type: signature
 claimed-nist-level: 5
 length-public-key: 1793

@@ -1,5 +1,5 @@
 ---
-name: Falcon-512 (PADDED)
+name: Falcon-padded-512
 type: signature
 claimed-nist-level: 1
 length-public-key: 897

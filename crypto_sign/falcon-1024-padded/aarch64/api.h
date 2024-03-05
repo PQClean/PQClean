@@ -8,7 +8,7 @@
 #define PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_PUBLICKEYBYTES   1793
 #define PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_BYTES            1280
 
-#define PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_ALGNAME          "Falcon-1024 (PADDED)"
+#define PQCLEAN_FALCON1024PADDED_AARCH64_CRYPTO_ALGNAME          "Falcon-padded-1024"
 
 /*
  * Generate a new key pair. Public key goes into pk[], private key in sk[].
