@@ -1,0 +1,78 @@
+consistency_checks:
+  - source:
+      scheme: falcon-512
+      implementation: clean
+    files:
+      - codec.c
+      - common.c
+      - vrfy.c
+  - source:
+      scheme: falcon-512
+      implementation: avx2
+    files:
+      - fpr.h
+      - inner.h
+      - codec.c
+      - common.c
+      - fft.c
+      - fpr.c
+      - keygen.c
+      - rng.c
+      - sign.c
+      - vrfy.c
+  - source:
+      scheme: falcon-1024
+      implementation: clean
+    files:
+      - codec.c
+      - common.c
+      - vrfy.c
+  - source:
+      scheme: falcon-1024
+      implementation: avx2
+    files:
+      - fpr.h
+      - inner.h
+      - codec.c
+      - common.c
+      - fft.c
+      - fpr.c
+      - keygen.c
+      - rng.c
+      - sign.c
+      - vrfy.c
+  - source:
+      scheme: falcon-padded-512
+      implementation: clean
+    files:
+      - api.h
+      - codec.c
+      - common.c
+      - pqclean.c
+      - vrfy.c
+  - source:
+      scheme: falcon-padded-512
+      implementation: aarch64
+    files:
+      - api.h
+  - source:
+      scheme: falcon-padded-1024
+      implementation: clean
+    files:
+      - codec.c
+      - common.c
+      - vrfy.c
+  - source:
+      scheme: falcon-padded-1024
+      implementation: avx2
+    files:
+      - fpr.h
+      - inner.h
+      - codec.c
+      - common.c
+      - fft.c
+      - fpr.c
+      - keygen.c
+      - rng.c
+      - sign.c
+      - vrfy.c

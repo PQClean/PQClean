@@ -35,14 +35,14 @@ consistency_checks:
     files:
       - api.h
   - source:
-      scheme: falcon-512-padded
+      scheme: falcon-padded-512
       implementation: clean
     files:
       - codec.c
       - common.c
       - vrfy.c
   - source:
-      scheme: falcon-512-padded
+      scheme: falcon-padded-512
       implementation: avx2
     files:
       - fpr.h
@@ -56,14 +56,14 @@ consistency_checks:
       - sign.c
       - vrfy.c
   - source:
-      scheme: falcon-1024-padded
+      scheme: falcon-padded-1024
       implementation: clean
     files:
       - codec.c
       - common.c
       - vrfy.c
   - source:
-      scheme: falcon-1024-padded
+      scheme: falcon-padded-1024
       implementation: avx2
     files:
       - fpr.h

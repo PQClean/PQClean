@@ -22,7 +22,11 @@ class Scheme:
 
     # only useful for Falcon
     def padded_namespace_prefix(self):
-        return 'PQCLEAN_{}PADDED_'.format(self.name.upper()).replace('-', '')
+        if self.name.startswith('falcon-'):
+            return 'PQCLEAN_{}PADDED{}_'.format(*self.name.upper().split('-'))
+        else: # return a dummy value
+            return self.namespace_prefix()
+            
 
     @staticmethod
     @lru_cache(maxsize=None)

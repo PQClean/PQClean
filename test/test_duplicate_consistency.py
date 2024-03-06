@@ -65,11 +65,11 @@ def test_duplicate_consistency(implementation, source, files):
         target_src = file_get_contents(target_path)\
                         .replace(source.namespace_prefix(), '')\
                         .replace(source.padded_namespace_prefix(), 'PADDED')\
-                        .replace(' ', '')
+                        .replace(' ', '') # the padded replace must come after the namespace replace
         this_src = file_get_contents(this_path)\
                         .replace(implementation.namespace_prefix(), '')\
                         .replace(implementation.padded_namespace_prefix(), 'PADDED')\
-                        .replace(' ', '')
+                        .replace(' ', '') # the padded replace must come after the namespace replace
 
         if not this_src == target_src:
             diff = difflib.unified_diff(

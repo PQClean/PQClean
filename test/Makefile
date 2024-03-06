@@ -20,12 +20,12 @@ SCHEME_LIBRARY=$(SCHEME_DIR)/lib$(SCHEME)_$(IMPLEMENTATION).a
 SCHEME_FILES=$(wildcard $(SCHEME_DIR)/*.[chsS])
 
 ifeq ($(SCHEME), falcon-512)
-	INTEROP=$(SCHEME)-padded
+	INTEROP=falcon-padded-512
 else ifeq ($(SCHEME), falcon-1024)
-	INTEROP=$(SCHEME)-padded
-else ifeq ($(SCHEME), falcon-512-padded)
+	INTEROP=falcon-padded-1024
+else ifeq ($(SCHEME), falcon-padded-512)
 	INTEROP=falcon-512
-else ifeq ($(SCHEME), falcon-1024-padded)
+else ifeq ($(SCHEME), falcon-padded-1024)
 	INTEROP=falcon-1024
 endif
 

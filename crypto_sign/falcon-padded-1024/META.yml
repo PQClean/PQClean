@@ -1,0 +1,40 @@
+---
+name: Falcon-padded-1024
+type: signature
+claimed-nist-level: 5
+length-public-key: 1793
+length-secret-key: 2305
+length-signature: 1280
+nistkat-sha256: ddcc5683293388249e6fe85e992ea19d0986d34e060a44f82bc3db524a8c8390
+testvectors-sha256: 8a2326508a7c01a64229ba4c2a828990161fcf3f595ffacdcf7d621f020bd8b1
+principal-submitters:
+  - Thomas Prest
+auxiliary-submitters:
+  - Pierre-Alain Fouque
+  - Jeffrey Hoffstein
+  - Paul Kirchner
+  - Vadim Lyubashevsky
+  - Thomas Pornin
+  - Thomas Prest
+  - Thomas Ricosset
+  - Gregor Seiler
+  - William Whyte
+  - Zhenfei Zhang
+implementations:
+  - name: clean
+    version: 20211101 with PQClean patches
+  - name: avx2
+    version: 20211101 with PQClean patches
+    supported_platforms:
+      - architecture: x86_64
+        required_flags:
+          - avx2
+  - name: aarch64
+    version: https://github.com/cothan/Falcon-Arm/commit/9aaea0318bb2aa409239246ff847856fa9886879
+    supported_platforms:
+      - architecture: arm_8
+        operating_systems:
+            - Linux
+            - Darwin
+        required_flags:
+            - asimd
