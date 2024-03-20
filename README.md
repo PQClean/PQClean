@@ -11,13 +11,10 @@ The base of PQCleanAutomotive is the PQClean repository with the latest commit [
 * CRYSTALS-KYBER
 * CRYSTALS-DILITHIUM
 * SPHINCS+
-
-The folloing post-quantum cryptographic algorithms are in work:
-
 * FALCON
 
 ## Implementation
-For the integration of PQCleanAutomotive, the file Crypto.c in the IAV quantumSAR repository contains an example of the use of the CRYSTALS-KYBER, CRYSTALS-DILITHIUM and SPHINCS+ algorithm.
+For the integration of PQCleanAutomotive, the file Crypto.c in the IAV quantumSAR repository contains an example of the use of the CRYSTALS-KYBER, CRYSTALS-DILITHIUM, SPHINCS+ and FALCON algorithm.
 
 The library requires an H-file containing all data types of the respective hardware platform (Platform_Types.h). The implementation from Infineon for the AURIX microcontroller family can be used as an example here: https://github.com/Infineon/AURIX_code_examples/blob/master/code_examples/Blinky_LED_1_KIT_TC397_TFT/Libraries/iLLD/TC39B/Tricore/Cpu/Std/Platform_Types.h
 
@@ -47,7 +44,7 @@ See the License for the specific language governing permissions and\
 limitations under the License.
 
 ## MISRA
-PQCleanAutomotive and the post-quantum cryptographic algorithms are checked with the 2012 version of [MISRA](https://misra.org.uk/app/uploads/2021/06/MISRA-C-2012-Permits-First-Edition.pdf).
+PQCleanAutomotive and the post-quantum cryptographic algorithms are checked with the 2012 version of [MISRA](https://misra.org.uk/app/uploads/2021/06/MISRA-C-2012-Permits-First-Edition.pdf). Not all MISRA findings could be resolved. An explanation has been written in the relevant places.
 
 ## Patent
 The Encryption PQC algorithm CRYSTALS-KYBER is one of the candidate algorithms for public-key post-quantum standards. There are two patent portfolios listed in a patent license agreement published by NIST.  
