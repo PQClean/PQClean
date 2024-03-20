@@ -26,6 +26,7 @@ PQCleanAutomotive includes some third party libraries or modules that are licens
 * CRYSTALS-KYBER: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
 * CRYSTALS-DILITHIUM: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
 * SPHINCS+: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
+* FALCON: MIT License
 * Fips202: Public Domain (https://creativecommons.org/share-your-work/public-domain/cc0/)
 * CommonLib: Apache License, Version 2.0
 
