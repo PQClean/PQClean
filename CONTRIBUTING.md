@@ -78,11 +78,13 @@ See the section [API](#API) below.
 ### Generating implementations
 
 It may sometimes be helpful to generate the implementations from a shared code base.
-You can find an example of how this can be done for [SPHINCS+][sphincsclean], [Dilithium][Dilithiumclean] or [Kyber][kyberclean]
+You can find an example of how this can be done for [SPHINCS+][sphincsclean], [Classic McEliece][classicmceliece] or [Kyber][kyberclean]
 
 [sphincsclean]: https://github.com/thomwiggers/sphincsplus/tree/pqcleanup
-[dilithiumclean]: https://github.com/thomwiggers/dilithium/tree/pqclean
+[classicmceliece]: https://github.com/thomwiggers/mceliece-clean/tree/pqclean
 [kyberclean]: https://github.com/thomwiggers/kyber-clean/
+
+(Please note, these are provided for example only, and might be out-of-date.)
 
 ### Testing your implementations locally using the PQClean test environment
 
