@@ -128,7 +128,7 @@ jobs:
           export CCACHE_DIR=/ccache && \
           export CCACHE_SLOPPINESS=include_file_mtime && \
           export CC=\"ccache $CC\" && \
-          pip3 install -U --break-system-packages -r requirements.txt && \
+          pip3 install -U --break-system-packages --ignore-installed -r requirements.txt && \
           cd test && \
           python3 -m pytest --verbose --numprocesses=auto"
   test-windows:
