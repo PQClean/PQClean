@@ -20,7 +20,7 @@
 *              serialized vector of polynomials pk and the
 *              public seed used to generate the matrix A.
 *              The polynomial coefficients in pk are assumed to
-*              lie in the invertal [0,q], i.e. pk must be reduced
+*              lie in the interval [0,q], i.e. pk must be reduced
 *              by PQCLEAN_KYBER768_AVX2_polyvec_reduce().
 *
 * Arguments:   uint8_t *r: pointer to the output serialized public key
@@ -56,7 +56,7 @@ static void unpack_pk(polyvec *pk,
 *
 * Description: Serialize the secret key.
 *              The polynomial coefficients in sk are assumed to
-*              lie in the invertal [0,q], i.e. sk must be reduced
+*              lie in the interval [0,q], i.e. sk must be reduced
 *              by PQCLEAN_KYBER768_AVX2_polyvec_reduce().
 *
 * Arguments:   - uint8_t *r: pointer to output serialized secret key
@@ -85,7 +85,7 @@ static void unpack_sk(polyvec *sk, const uint8_t packedsk[KYBER_INDCPA_SECRETKEY
 *              compressed and serialized vector of polynomials b
 *              and the compressed and serialized polynomial v.
 *              The polynomial coefficients in b and v are assumed to
-*              lie in the invertal [0,q], i.e. b and v must be reduced
+*              lie in the interval [0,q], i.e. b and v must be reduced
 *              by PQCLEAN_KYBER768_AVX2_polyvec_reduce() and PQCLEAN_KYBER768_AVX2_poly_reduce(), respectively.
 *
 * Arguments:   uint8_t *r: pointer to the output serialized ciphertext
