@@ -15,7 +15,7 @@
 *
 * Description: Compression and subsequent serialization of a polynomial.
 *              The coefficients of the input polynomial are assumed to
-*              lie in the invertal [0,q], i.e. the polynomial must be reduced
+*              lie in the interval [0,q], i.e. the polynomial must be reduced
 *              by PQCLEAN_KYBER1024_AVX2_poly_reduce().
 *
 * Arguments:   - uint8_t *r: pointer to output byte array
@@ -89,7 +89,7 @@ void PQCLEAN_KYBER1024_AVX2_poly_decompress(poly *restrict r, const uint8_t a[16
 *
 * Description: Serialization of a polynomial in NTT representation.
 *              The coefficients of the input polynomial are assumed to
-*              lie in the invertal [0,q], i.e. the polynomial must be reduced
+*              lie in the interval [0,q], i.e. the polynomial must be reduced
 *              by PQCLEAN_KYBER1024_AVX2_poly_reduce(). The coefficients are orderd as output by
 *              PQCLEAN_KYBER1024_AVX2_poly_ntt(); the serialized output coefficients are in bitreversed
 *              order.
@@ -170,7 +170,7 @@ void PQCLEAN_KYBER1024_AVX2_poly_frommsg(poly *restrict r, const uint8_t msg[KYB
 *
 * Description: Convert polynomial to 32-byte message.
 *              The coefficients of the input polynomial are assumed to
-*              lie in the invertal [0,q], i.e. the polynomial must be reduced
+*              lie in the interval [0,q], i.e. the polynomial must be reduced
 *              by PQCLEAN_KYBER1024_AVX2_poly_reduce().
 *
 * Arguments:   - uint8_t *msg: pointer to output message
