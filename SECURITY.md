@@ -29,6 +29,10 @@ Reported vulnerabilities in the **Historic Issues** section have become irreleva
 
 ## Resolved Issues
 
+### 2024-06-11
+* Kyber used a conditional move that resulted in branch instructions leaking side-channel information for certain compilers.
+  [PR #558](https://github.com/PQClean/PQClean/pull/558) addressed this for the `clean` and `avx2` implementations.
+
 ### 2024-01-25
 * Kyber used division operations that might leak side-channel information.  
   [PR #534](https://github.com/PQClean/PQClean/pull/534) addressed this for the `clean` and `avx2` implementations.  
