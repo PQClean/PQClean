@@ -40,6 +40,7 @@ static uint32_t load24_littleendian(const uint8_t x[3]) {
     return r;
 }
 
+
 /*************************************************
 * Name:        cbd2
 *

@@ -4,6 +4,7 @@
 #include "poly.h"
 #include "reduce.h"
 #include "symmetric.h"
+#include "verify.h"
 #include <stdint.h>
 
 /*************************************************
@@ -128,12 +129,11 @@ void PQCLEAN_KYBER1024_CLEAN_poly_frombytes(poly *r, const uint8_t a[KYBER_POLYB
 **************************************************/
 void PQCLEAN_KYBER1024_CLEAN_poly_frommsg(poly *r, const uint8_t msg[KYBER_INDCPA_MSGBYTES]) {
     size_t i, j;
-    int16_t mask;
 
     for (i = 0; i < KYBER_N / 8; i++) {
         for (j = 0; j < 8; j++) {
-            mask = -(int16_t)((msg[i] >> j) & 1);
-            r->coeffs[8 * i + j] = mask & ((KYBER_Q + 1) / 2);
+            r->coeffs[8 * i + j] = 0;
+            PQCLEAN_KYBER1024_CLEAN_cmov_int16(r->coeffs + 8 * i + j, ((KYBER_Q + 1) / 2), (msg[i] >> j) & 1);
         }
     }
 }
@@ -201,6 +201,7 @@ void PQCLEAN_KYBER1024_CLEAN_poly_getnoise_eta2(poly *r, const uint8_t seed[KYBE
     prf(buf, sizeof(buf), seed, nonce);
     PQCLEAN_KYBER1024_CLEAN_poly_cbd_eta2(r, buf);
 }
+
 
 /*************************************************
 * Name:        PQCLEAN_KYBER1024_CLEAN_poly_ntt

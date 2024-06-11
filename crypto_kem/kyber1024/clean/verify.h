@@ -8,4 +8,6 @@ int PQCLEAN_KYBER1024_CLEAN_verify(const uint8_t *a, const uint8_t *b, size_t le
 
 void PQCLEAN_KYBER1024_CLEAN_cmov(uint8_t *r, const uint8_t *x, size_t len, uint8_t b);
 
+void PQCLEAN_KYBER1024_CLEAN_cmov_int16(int16_t *r, int16_t v, uint16_t b);
+
 #endif
