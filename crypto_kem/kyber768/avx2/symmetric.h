@@ -6,6 +6,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+
 typedef shake128ctx xof_state;
 
 void PQCLEAN_KYBER768_AVX2_kyber_shake128_absorb(xof_state *s,

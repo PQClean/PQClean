@@ -68,6 +68,7 @@ static void poly_decompress10(poly *restrict r, const uint8_t a[320 + 12]) {
     }
 }
 
+
 /*************************************************
 * Name:        PQCLEAN_KYBER512_AVX2_polyvec_compress
 *

@@ -45,3 +45,20 @@ void PQCLEAN_KYBER512_CLEAN_cmov(uint8_t *r, const uint8_t *x, size_t len, uint8
         r[i] ^= b & (r[i] ^ x[i]);
     }
 }
+
+
+/*************************************************
+* Name:        PQCLEAN_KYBER512_CLEAN_cmov_int16
+*
+* Description: Copy input v to *r if b is 1, don't modify *r if b is 0.
+*              Requires b to be in {0,1};
+*              Runs in constant time.
+*
+* Arguments:   int16_t *r:       pointer to output int16_t
+*              int16_t v:        input int16_t
+*              uint8_t b:        Condition bit; has to be in {0,1}
+**************************************************/
+void PQCLEAN_KYBER512_CLEAN_cmov_int16(int16_t *r, int16_t v, uint16_t b) {
+    b = -b;
+    *r ^= b & ((*r) ^ v);
+}

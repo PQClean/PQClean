@@ -79,6 +79,7 @@ void PQCLEAN_KYBER512_AVX2_poly_decompress(poly *restrict r, const uint8_t a[128
     }
 }
 
+
 /*************************************************
 * Name:        PQCLEAN_KYBER512_AVX2_poly_tobytes
 *

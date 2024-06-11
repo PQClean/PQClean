@@ -235,6 +235,7 @@ void PQCLEAN_KYBER1024_CLEAN_indcpa_keypair_derand(uint8_t pk[KYBER_INDCPA_PUBLI
     pack_pk(pk, &pkpv, publicseed);
 }
 
+
 /*************************************************
 * Name:        PQCLEAN_KYBER1024_CLEAN_indcpa_enc
 *

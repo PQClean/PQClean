@@ -30,6 +30,8 @@ void PQCLEAN_KYBER768_AVX2_poly_getnoise_eta1_4x(poly *r0,
         uint8_t nonce2,
         uint8_t nonce3);
 
+
+
 void PQCLEAN_KYBER768_AVX2_poly_ntt(poly *r);
 void PQCLEAN_KYBER768_AVX2_poly_invntt_tomont(poly *r);
 void PQCLEAN_KYBER768_AVX2_poly_nttunpack(poly *r);

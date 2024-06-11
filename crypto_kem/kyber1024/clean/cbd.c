@@ -33,6 +33,7 @@ static uint32_t load32_littleendian(const uint8_t x[4]) {
 * Returns 32-bit unsigned integer loaded from x (most significant byte is zero)
 **************************************************/
 
+
 /*************************************************
 * Name:        cbd2
 *
