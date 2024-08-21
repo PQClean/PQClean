@@ -6,7 +6,7 @@ length-public-key: 800
 length-ciphertext: 768
 length-secret-key: 1632
 length-shared-secret: 32
-nistkat-sha256: 76aae1fa3f8367522700b22da635a5bc4ced4298edb0eb9947aa3ba60d62676f
+nistkat-sha256: c70041a761e01cd6426fa60e9fd6a4412c2be817386c8d0f3334898082512782
 principal-submitters:
   - Peter Schwabe
 auxiliary-submitters:
@@ -22,9 +22,9 @@ auxiliary-submitters:
   - Jintai Ding
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/kyber/commit/d1321ce5ac0b53f583eb47a040dc3625ee8e7e37 via https://github.com/mkannwischer/package-pqclean/tree/e1742f1/kyber
+      version: https://github.com/pq-crystals/kyber/commit/3c874cddd5fdaf4a7bd13f7e2e4d98a2a1eb8dc4 via https://github.com/mkannwischer/package-pqclean/tree/19aace0/kyber
     - name: avx2
-      version: https://github.com/pq-crystals/kyber/commit/d1321ce5ac0b53f583eb47a040dc3625ee8e7e37 via https://github.com/mkannwischer/package-pqclean/tree/e1742f1/kyber
+      version: https://github.com/pq-crystals/kyber/commit/3c874cddd5fdaf4a7bd13f7e2e4d98a2a1eb8dc4 via https://github.com/mkannwischer/package-pqclean/tree/19aace0/kyber
       supported_platforms:
         - architecture: x86_64
           operating_systems:
