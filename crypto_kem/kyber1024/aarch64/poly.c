@@ -39,6 +39,7 @@
 #include "reduce.h"
 #include "cbd.h"
 #include "symmetric.h"
+#include "verify.h"
 
 /*************************************************
 * Name:        poly_compress
@@ -51,23 +52,29 @@
 **************************************************/
 void poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], const int16_t a[KYBER_N]) {
     unsigned int i, j;
-    int16_t u;
+    int32_t u;
+    uint32_t d0;
     uint8_t t[8];
+
 
     for (i = 0; i < KYBER_N / 8; i++) {
         for (j = 0; j < 8; j++) {
             // map to positive standard representatives
             u  = a[8 * i + j];
             u += (u >> 15) & KYBER_Q;
-            t[j] = ((((uint32_t)u << 5) + KYBER_Q / 2) / KYBER_Q) & 31;
+            /*    t[j] = ((((uint16_t)u << 4) + KYBER_Q/2)/KYBER_Q) & 15; */
+            d0 = u << 4;
+            d0 += 1665;
+            d0 *= 80635;
+            d0 >>= 28;
+            t[j] = d0 & 0xf;
         }
 
-        r[0] = (t[0] >> 0) | (t[1] << 5);
-        r[1] = (t[1] >> 3) | (t[2] << 2) | (t[3] << 7);
-        r[2] = (t[3] >> 1) | (t[4] << 4);
-        r[3] = (t[4] >> 4) | (t[5] << 1) | (t[6] << 6);
-        r[4] = (t[6] >> 2) | (t[7] << 3);
-        r += 5;
+        r[0] = t[0] | (t[1] << 4);
+        r[1] = t[2] | (t[3] << 4);
+        r[2] = t[4] | (t[5] << 4);
+        r[3] = t[6] | (t[7] << 4);
+        r += 4;
     }
 }
 
@@ -182,14 +189,13 @@ void poly_frombytes(int16_t r[KYBER_N], const uint8_t a[KYBER_POLYBYTES]) {
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *msg: pointer to input message
 **************************************************/
-void poly_frommsg(int16_t r[KYBER_N], const uint8_t msg[KYBER_INDCPA_MSGBYTES]) {
-    unsigned int i, j;
-    int16_t mask;
+void poly_frommsg(int16_t r[KYBER_N], const uint8_t msg[KYBER_INDCPA_MSGBYTES])  {
+    size_t i, j;
 
     for (i = 0; i < KYBER_N / 8; i++) {
         for (j = 0; j < 8; j++) {
-            mask = -(int16_t)((msg[i] >> j) & 1);
-            r[8 * i + j] = mask & ((KYBER_Q + 1) / 2);
+            r[8 * i + j] = 0;
+            cmov_int16(r + 8 * i + j, ((KYBER_Q + 1) / 2), (msg[i] >> j) & 1);
         }
     }
 }
@@ -204,14 +210,19 @@ void poly_frommsg(int16_t r[KYBER_N], const uint8_t msg[KYBER_INDCPA_MSGBYTES]) 
 **************************************************/
 void poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const int16_t a[KYBER_N]) {
     unsigned int i, j;
-    uint16_t t;
+    uint32_t t;
 
     for (i = 0; i < KYBER_N / 8; i++) {
         msg[i] = 0;
         for (j = 0; j < 8; j++) {
             t  = a[8 * i + j];
-            t += ((int16_t)t >> 15) & KYBER_Q;
-            t  = (((t << 1) + KYBER_Q / 2) / KYBER_Q) & 1;
+            // t += ((int16_t)t >> 15) & KYBER_Q;
+            // t  = (((t << 1) + KYBER_Q/2)/KYBER_Q) & 1;
+            t <<= 1;
+            t += 1665;
+            t *= 80635;
+            t >>= 28;
+            t &= 1;
             msg[i] |= t << j;
         }
     }
