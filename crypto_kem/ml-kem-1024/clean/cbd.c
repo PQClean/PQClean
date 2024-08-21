@@ -74,10 +74,10 @@ static void cbd2(poly *r, const uint8_t buf[2 * KYBER_N / 4]) {
 *              - const uint8_t *buf: pointer to input byte array
 **************************************************/
 
-void PQCLEAN_MLKEM1024_CLEAN_poly_cbd_eta1(poly *r, const uint8_t buf[KYBER_ETA1 *KYBER_N / 4]) {
+void PQCLEAN_MLKEM1024_CLEAN_poly_cbd_eta1(poly *r, const uint8_t buf[KYBER_ETA1 * KYBER_N / 4]) {
     cbd2(r, buf);
 }
 
-void PQCLEAN_MLKEM1024_CLEAN_poly_cbd_eta2(poly *r, const uint8_t buf[KYBER_ETA2 *KYBER_N / 4]) {
+void PQCLEAN_MLKEM1024_CLEAN_poly_cbd_eta2(poly *r, const uint8_t buf[KYBER_ETA2 * KYBER_N / 4]) {
     cbd2(r, buf);
 }

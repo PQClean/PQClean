@@ -124,7 +124,7 @@ void PQCLEAN_MLKEM1024_AVX2_polyvec_decompress(polyvec *r, const uint8_t a[KYBER
 void PQCLEAN_MLKEM1024_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], const polyvec *a) {
     size_t i;
     for (i = 0; i < KYBER_K; i++) {
-        PQCLEAN_MLKEM1024_AVX2_poly_tobytes(r + i *KYBER_POLYBYTES, &a->vec[i]);
+        PQCLEAN_MLKEM1024_AVX2_poly_tobytes(r + i * KYBER_POLYBYTES, &a->vec[i]);
     }
 }
 
@@ -141,7 +141,7 @@ void PQCLEAN_MLKEM1024_AVX2_polyvec_tobytes(uint8_t r[KYBER_POLYVECBYTES], const
 void PQCLEAN_MLKEM1024_AVX2_polyvec_frombytes(polyvec *r, const uint8_t a[KYBER_POLYVECBYTES]) {
     size_t i;
     for (i = 0; i < KYBER_K; i++) {
-        PQCLEAN_MLKEM1024_AVX2_poly_frombytes(&r->vec[i], a + i *KYBER_POLYBYTES);
+        PQCLEAN_MLKEM1024_AVX2_poly_frombytes(&r->vec[i], a + i * KYBER_POLYBYTES);
     }
 }
 

@@ -215,8 +215,8 @@ void PQCLEAN_MLKEM1024_AVX2_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], const
 *              - uint8_t nonce: one-byte input nonce
 **************************************************/
 void PQCLEAN_MLKEM1024_AVX2_poly_getnoise_eta1(poly *r, const uint8_t seed[KYBER_SYMBYTES], uint8_t nonce) {
-    ALIGNED_UINT8(KYBER_ETA1 *KYBER_N / 4 + 32) buf; // +32 bytes as required by PQCLEAN_MLKEM1024_AVX2_poly_cbd_eta1
-    prf(buf.coeffs, KYBER_ETA1 *KYBER_N / 4, seed, nonce);
+    ALIGNED_UINT8(KYBER_ETA1 * KYBER_N / 4 + 32) buf; // +32 bytes as required by PQCLEAN_MLKEM1024_AVX2_poly_cbd_eta1
+    prf(buf.coeffs, KYBER_ETA1 * KYBER_N / 4, seed, nonce);
     PQCLEAN_MLKEM1024_AVX2_poly_cbd_eta1(r, buf.vec);
 }
 
@@ -233,8 +233,8 @@ void PQCLEAN_MLKEM1024_AVX2_poly_getnoise_eta1(poly *r, const uint8_t seed[KYBER
 *              - uint8_t nonce: one-byte input nonce
 **************************************************/
 void PQCLEAN_MLKEM1024_AVX2_poly_getnoise_eta2(poly *r, const uint8_t seed[KYBER_SYMBYTES], uint8_t nonce) {
-    ALIGNED_UINT8(KYBER_ETA2 *KYBER_N / 4) buf;
-    prf(buf.coeffs, KYBER_ETA2 *KYBER_N / 4, seed, nonce);
+    ALIGNED_UINT8(KYBER_ETA2 * KYBER_N / 4) buf;
+    prf(buf.coeffs, KYBER_ETA2 * KYBER_N / 4, seed, nonce);
     PQCLEAN_MLKEM1024_AVX2_poly_cbd_eta2(r, buf.vec);
 }
 
@@ -248,7 +248,7 @@ void PQCLEAN_MLKEM1024_AVX2_poly_getnoise_eta1_4x(poly *r0,
         uint8_t nonce1,
         uint8_t nonce2,
         uint8_t nonce3) {
-    ALIGNED_UINT8(NOISE_NBLOCKS *SHAKE256_RATE) buf[4];
+    ALIGNED_UINT8(NOISE_NBLOCKS * SHAKE256_RATE) buf[4];
     __m256i f;
     keccakx4_state state;
 

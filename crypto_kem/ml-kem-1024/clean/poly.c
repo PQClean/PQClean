@@ -179,7 +179,7 @@ void PQCLEAN_MLKEM1024_CLEAN_poly_tomsg(uint8_t msg[KYBER_INDCPA_MSGBYTES], cons
 *              - uint8_t nonce: one-byte input nonce
 **************************************************/
 void PQCLEAN_MLKEM1024_CLEAN_poly_getnoise_eta1(poly *r, const uint8_t seed[KYBER_SYMBYTES], uint8_t nonce) {
-    uint8_t buf[KYBER_ETA1 *KYBER_N / 4];
+    uint8_t buf[KYBER_ETA1 * KYBER_N / 4];
     prf(buf, sizeof(buf), seed, nonce);
     PQCLEAN_MLKEM1024_CLEAN_poly_cbd_eta1(r, buf);
 }
@@ -197,7 +197,7 @@ void PQCLEAN_MLKEM1024_CLEAN_poly_getnoise_eta1(poly *r, const uint8_t seed[KYBE
 *              - uint8_t nonce: one-byte input nonce
 **************************************************/
 void PQCLEAN_MLKEM1024_CLEAN_poly_getnoise_eta2(poly *r, const uint8_t seed[KYBER_SYMBYTES], uint8_t nonce) {
-    uint8_t buf[KYBER_ETA2 *KYBER_N / 4];
+    uint8_t buf[KYBER_ETA2 * KYBER_N / 4];
     prf(buf, sizeof(buf), seed, nonce);
     PQCLEAN_MLKEM1024_CLEAN_poly_cbd_eta2(r, buf);
 }

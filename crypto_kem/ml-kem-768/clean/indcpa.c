@@ -157,7 +157,7 @@ static unsigned int rej_uniform(int16_t *r,
 void PQCLEAN_MLKEM768_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMBYTES], int transposed) {
     unsigned int ctr, i, j;
     unsigned int buflen;
-    uint8_t buf[GEN_MATRIX_NBLOCKS *XOF_BLOCKBYTES];
+    uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];
     xof_state state;
 
     for (i = 0; i < KYBER_K; i++) {
@@ -169,7 +169,7 @@ void PQCLEAN_MLKEM768_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMB
             }
 
             xof_squeezeblocks(buf, GEN_MATRIX_NBLOCKS, &state);
-            buflen = GEN_MATRIX_NBLOCKS *XOF_BLOCKBYTES;
+            buflen = GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES;
             ctr = rej_uniform(a[i].vec[j].coeffs, KYBER_N, buf, buflen);
 
             while (ctr < KYBER_N) {
