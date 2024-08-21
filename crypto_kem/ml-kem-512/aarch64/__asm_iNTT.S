@@ -31,10 +31,10 @@
 #include "macros.inc"
 
 .align 2
-.global PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot
-.global _PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot
-PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot:
-_PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot:
+.global PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_bot
+.global _PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_bot
+PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_bot:
+_PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_bot:
 
     push_all
     Q         .req w20
@@ -173,10 +173,10 @@ _PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot:
     ret
 
 .align 2
-.global PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top
-.global _PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top
-PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top:
-_PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top:
+.global PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_top
+.global _PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_top
+PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_top:
+_PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_top:
 
     push_all
     Q         .req w20

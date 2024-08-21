@@ -33,10 +33,10 @@
 #include "params.h"
 
 .align 2
-.global PQCLEAN_KYBER1024_AARCH64__asm_point_mul_extended
-.global _PQCLEAN_KYBER1024_AARCH64__asm_point_mul_extended
-PQCLEAN_KYBER1024_AARCH64__asm_point_mul_extended:
-_PQCLEAN_KYBER1024_AARCH64__asm_point_mul_extended:
+.global PQCLEAN_MLKEM1024_AARCH64__asm_point_mul_extended
+.global _PQCLEAN_MLKEM1024_AARCH64__asm_point_mul_extended
+PQCLEAN_MLKEM1024_AARCH64__asm_point_mul_extended:
+_PQCLEAN_MLKEM1024_AARCH64__asm_point_mul_extended:
 
     push_all
     Q         .req w20
@@ -248,10 +248,10 @@ _PQCLEAN_KYBER1024_AARCH64__asm_point_mul_extended:
 
 
 .align 2
-.global PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul
-.global _PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul
-PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul:
-_PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul:
+.global PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul
+.global _PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul
+PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul:
+_PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul:
 
     push_all
     des       .req x11
@@ -597,10 +597,10 @@ _PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul:
 
 
 .align 2
-.global PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul_montgomery
-.global _PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul_montgomery
-PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul_montgomery:
-_PQCLEAN_KYBER1024_AARCH64__asm_asymmetric_mul_montgomery:
+.global PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul_montgomery
+.global _PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul_montgomery
+PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul_montgomery:
+_PQCLEAN_MLKEM1024_AARCH64__asm_asymmetric_mul_montgomery:
 
     push_all
     des       .req x11

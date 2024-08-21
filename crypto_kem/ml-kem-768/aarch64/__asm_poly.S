@@ -31,10 +31,10 @@
 #include "macros.inc"
 
 .align 2
-.global PQCLEAN_KYBER768_AARCH64__asm_add_reduce
-.global _PQCLEAN_KYBER768_AARCH64__asm_add_reduce
-PQCLEAN_KYBER768_AARCH64__asm_add_reduce:
-_PQCLEAN_KYBER768_AARCH64__asm_add_reduce:
+.global PQCLEAN_MLKEM768_AARCH64__asm_add_reduce
+.global _PQCLEAN_MLKEM768_AARCH64__asm_add_reduce
+PQCLEAN_MLKEM768_AARCH64__asm_add_reduce:
+_PQCLEAN_MLKEM768_AARCH64__asm_add_reduce:
 
     mov w4, #3329
     mov w5, #25519
@@ -92,10 +92,10 @@ _PQCLEAN_KYBER768_AARCH64__asm_add_reduce:
     ret
 
 .align 2
-.global PQCLEAN_KYBER768_AARCH64__asm_sub_reduce
-.global _PQCLEAN_KYBER768_AARCH64__asm_sub_reduce
-PQCLEAN_KYBER768_AARCH64__asm_sub_reduce:
-_PQCLEAN_KYBER768_AARCH64__asm_sub_reduce:
+.global PQCLEAN_MLKEM768_AARCH64__asm_sub_reduce
+.global _PQCLEAN_MLKEM768_AARCH64__asm_sub_reduce
+PQCLEAN_MLKEM768_AARCH64__asm_sub_reduce:
+_PQCLEAN_MLKEM768_AARCH64__asm_sub_reduce:
 
     mov w4, #3329
     mov w5, #25519
@@ -153,10 +153,10 @@ _PQCLEAN_KYBER768_AARCH64__asm_sub_reduce:
     ret
 
 .align 2
-.global PQCLEAN_KYBER768_AARCH64__asm_add_add_reduce
-.global _PQCLEAN_KYBER768_AARCH64__asm_add_add_reduce
-PQCLEAN_KYBER768_AARCH64__asm_add_add_reduce:
-_PQCLEAN_KYBER768_AARCH64__asm_add_add_reduce:
+.global PQCLEAN_MLKEM768_AARCH64__asm_add_add_reduce
+.global _PQCLEAN_MLKEM768_AARCH64__asm_add_add_reduce
+PQCLEAN_MLKEM768_AARCH64__asm_add_add_reduce:
+_PQCLEAN_MLKEM768_AARCH64__asm_add_add_reduce:
 
     mov w4, #3329
     mov w5, #25519

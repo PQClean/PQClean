@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_KYBER512_AARCH64_NTT_H
-#define PQCLEAN_KYBER512_AARCH64_NTT_H
+#ifndef PQCLEAN_MLKEM512_AARCH64_NTT_H
+#define PQCLEAN_MLKEM512_AARCH64_NTT_H
 
 /*
  * We offer
@@ -41,15 +41,15 @@
 #define pre_asymmetric_table_Q1_extended KYBER_NAMESPACE(pre_asymmetric_table_Q1_extended)
 #define streamlined_inv_GS_negacyclic_table_Q1_jump_extended KYBER_NAMESPACE(streamlined_inv_GS_negacyclic_table_Q1_jump_extended)
 
-extern void PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_top(int16_t *, const int16_t *, const int16_t *);
-extern void PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_bot(int16_t *, const int16_t *, const int16_t *);
+extern void PQCLEAN_MLKEM512_AARCH64__asm_ntt_SIMD_top(int16_t *, const int16_t *, const int16_t *);
+extern void PQCLEAN_MLKEM512_AARCH64__asm_ntt_SIMD_bot(int16_t *, const int16_t *, const int16_t *);
 
-extern void PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot(int16_t *, const int16_t *, const int16_t *);
-extern void PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top(int16_t *, const int16_t *, const int16_t *);
+extern void PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_bot(int16_t *, const int16_t *, const int16_t *);
+extern void PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_top(int16_t *, const int16_t *, const int16_t *);
 
-extern void PQCLEAN_KYBER512_AARCH64__asm_point_mul_extended(int16_t *, const int16_t *, const int16_t *, const int16_t *);
-extern void PQCLEAN_KYBER512_AARCH64__asm_asymmetric_mul(const int16_t *, const int16_t *, const int16_t *, const int16_t *, int16_t *);
-extern void PQCLEAN_KYBER512_AARCH64__asm_asymmetric_mul_montgomery(const int16_t *, const int16_t *, const int16_t *, const int16_t *, int16_t *);
+extern void PQCLEAN_MLKEM512_AARCH64__asm_point_mul_extended(int16_t *, const int16_t *, const int16_t *, const int16_t *);
+extern void PQCLEAN_MLKEM512_AARCH64__asm_asymmetric_mul(const int16_t *, const int16_t *, const int16_t *, const int16_t *, int16_t *);
+extern void PQCLEAN_MLKEM512_AARCH64__asm_asymmetric_mul_montgomery(const int16_t *, const int16_t *, const int16_t *, const int16_t *, int16_t *);
 
 extern
 const int16_t asymmetric_const[8];
@@ -66,13 +66,13 @@ extern
 const int16_t streamlined_inv_GS_negacyclic_table_Q1_jump_extended[((NTT_N - 1) + (1 << 0) + (1 << 4) + NTT_N) << 1];
 
 #define NTT(in) do { \
-        PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_top(in, streamlined_CT_negacyclic_table_Q1_jump_extended, constants); \
-        PQCLEAN_KYBER512_AARCH64__asm_ntt_SIMD_bot(in, streamlined_CT_negacyclic_table_Q1_jump_extended, constants); \
+        PQCLEAN_MLKEM512_AARCH64__asm_ntt_SIMD_top(in, streamlined_CT_negacyclic_table_Q1_jump_extended, constants); \
+        PQCLEAN_MLKEM512_AARCH64__asm_ntt_SIMD_bot(in, streamlined_CT_negacyclic_table_Q1_jump_extended, constants); \
     } while(0)
 
 #define iNTT(in) do { \
-        PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_bot(in, streamlined_inv_GS_negacyclic_table_Q1_jump_extended, constants); \
-        PQCLEAN_KYBER512_AARCH64__asm_intt_SIMD_top(in, streamlined_inv_GS_negacyclic_table_Q1_jump_extended, constants); \
+        PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_bot(in, streamlined_inv_GS_negacyclic_table_Q1_jump_extended, constants); \
+        PQCLEAN_MLKEM512_AARCH64__asm_intt_SIMD_top(in, streamlined_inv_GS_negacyclic_table_Q1_jump_extended, constants); \
     } while(0)
 
 #define ntt KYBER_NAMESPACE(ntt)

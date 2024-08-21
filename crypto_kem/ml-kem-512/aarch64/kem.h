@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_KYBER512_AARCH64_KEM_H
-#define PQCLEAN_KYBER512_AARCH64_KEM_H
+#ifndef PQCLEAN_MLKEM512_AARCH64_KEM_H
+#define PQCLEAN_MLKEM512_AARCH64_KEM_H
 
 /*
  * This file is licensed
@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include "params.h"
 
-#define CRYPTO_ALGNAME "Kyber512"
+#define CRYPTO_ALGNAME "ML-KEM-512"
 
 #define crypto_kem_keypair_derand KYBER_NAMESPACE(keypair_derand)
 int crypto_kem_keypair_derand(uint8_t *pk, uint8_t *sk, const uint8_t *coins);
