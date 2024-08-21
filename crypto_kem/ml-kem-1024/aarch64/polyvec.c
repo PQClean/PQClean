@@ -27,7 +27,7 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const int16_t b[K
     for (i = 0; i < KYBER_K; i++) {
         for (j = 0; j < KYBER_N / 8; j++) {
             for (k = 0; k < 8; k++) {
-                t[k]  = a[i][8 * j + k];
+                t[k]  = b[i][8 * j + k];
                 t[k] += ((int16_t)t[k] >> 15) & KYBER_Q;
                 /*      t[k]  = ((((uint32_t)t[k] << 11) + KYBER_Q/2)/KYBER_Q) & 0x7ff; */
                 d0 = t[k];
