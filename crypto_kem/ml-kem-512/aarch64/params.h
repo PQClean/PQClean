@@ -1,5 +1,5 @@
-#ifndef PQCLEAN_KYBER512_AARCH64_PARAMS_H
-#define PQCLEAN_KYBER512_AARCH64_PARAMS_H
+#ifndef PQCLEAN_MLKEM512_AARCH64_PARAMS_H
+#define PQCLEAN_MLKEM512_AARCH64_PARAMS_H
 
 /*
  * This file is licensed
@@ -7,7 +7,7 @@
  * public domain at https://github.com/pq-crystals/kyber/tree/master/ref
  */
 
-#define KYBER_NAMESPACE(s) PQCLEAN_KYBER512_AARCH64_##s
+#define KYBER_NAMESPACE(s) PQCLEAN_MLKEM512_AARCH64_##s
 
 /* Don't change parameters below this line */
 #define KYBER_N 256

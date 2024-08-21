@@ -56,7 +56,7 @@ void kyber_shake256_prf(uint8_t *out, size_t outlen, const uint8_t key[KYBER_SYM
 }
 
 /*************************************************
-* Name:        PQCLEAN_KYBER1024_AVX2_kyber_shake256_prf
+* Name:        PQCLEAN_MLKEM1024_AVX2_kyber_shake256_prf
 *
 * Description: Usage of SHAKE256 as a PRF, concatenates secret and public input
 *              and then generates outlen bytes of SHAKE256 output
