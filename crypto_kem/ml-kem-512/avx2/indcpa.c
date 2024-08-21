@@ -166,7 +166,7 @@ static unsigned int rej_uniform(int16_t *r,
 **************************************************/
 void PQCLEAN_MLKEM512_AVX2_gen_matrix(polyvec *a, const uint8_t seed[32], int transposed) {
     unsigned int ctr0, ctr1, ctr2, ctr3;
-    ALIGNED_UINT8(REJ_UNIFORM_AVX_NBLOCKS *SHAKE128_RATE) buf[4];
+    ALIGNED_UINT8(REJ_UNIFORM_AVX_NBLOCKS * SHAKE128_RATE) buf[4];
     __m256i f;
     keccakx4_state state;
 

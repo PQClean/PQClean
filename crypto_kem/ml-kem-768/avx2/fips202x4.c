@@ -145,11 +145,11 @@ void PQCLEAN_MLKEM768_AVX2_shake128x4(uint8_t *out0,
     PQCLEAN_MLKEM768_AVX2_shake128x4_absorb_once(&state, in0, in1, in2, in3, inlen);
     PQCLEAN_MLKEM768_AVX2_shake128x4_squeezeblocks(out0, out1, out2, out3, nblocks, &state);
 
-    out0 += nblocks *SHAKE128_RATE;
-    out1 += nblocks *SHAKE128_RATE;
-    out2 += nblocks *SHAKE128_RATE;
-    out3 += nblocks *SHAKE128_RATE;
-    outlen -= nblocks *SHAKE128_RATE;
+    out0 += nblocks * SHAKE128_RATE;
+    out1 += nblocks * SHAKE128_RATE;
+    out2 += nblocks * SHAKE128_RATE;
+    out3 += nblocks * SHAKE128_RATE;
+    outlen -= nblocks * SHAKE128_RATE;
 
     if (outlen) {
         PQCLEAN_MLKEM768_AVX2_shake128x4_squeezeblocks(t[0], t[1], t[2], t[3], 1, &state);
@@ -180,11 +180,11 @@ void PQCLEAN_MLKEM768_AVX2_shake256x4(uint8_t *out0,
     PQCLEAN_MLKEM768_AVX2_shake256x4_absorb_once(&state, in0, in1, in2, in3, inlen);
     PQCLEAN_MLKEM768_AVX2_shake256x4_squeezeblocks(out0, out1, out2, out3, nblocks, &state);
 
-    out0 += nblocks *SHAKE256_RATE;
-    out1 += nblocks *SHAKE256_RATE;
-    out2 += nblocks *SHAKE256_RATE;
-    out3 += nblocks *SHAKE256_RATE;
-    outlen -= nblocks *SHAKE256_RATE;
+    out0 += nblocks * SHAKE256_RATE;
+    out1 += nblocks * SHAKE256_RATE;
+    out2 += nblocks * SHAKE256_RATE;
+    out3 += nblocks * SHAKE256_RATE;
+    outlen -= nblocks * SHAKE256_RATE;
 
     if (outlen) {
         PQCLEAN_MLKEM768_AVX2_shake256x4_squeezeblocks(t[0], t[1], t[2], t[3], 1, &state);

@@ -66,7 +66,7 @@ const int16_t PQCLEAN_MLKEM1024_CLEAN_zetas[128] = {
 * Returns 16-bit integer congruent to a*b*R^{-1} mod q
 **************************************************/
 static int16_t fqmul(int16_t a, int16_t b) {
-    return PQCLEAN_MLKEM1024_CLEAN_montgomery_reduce((int32_t)a *b);
+    return PQCLEAN_MLKEM1024_CLEAN_montgomery_reduce((int32_t)a * b);
 }
 
 /*************************************************
