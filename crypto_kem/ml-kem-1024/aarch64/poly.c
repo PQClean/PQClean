@@ -56,25 +56,25 @@ void poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], const int16_t a[KYBER_N
     uint32_t d0;
     uint8_t t[8];
 
-
     for (i = 0; i < KYBER_N / 8; i++) {
         for (j = 0; j < 8; j++) {
             // map to positive standard representatives
             u  = a[8 * i + j];
             u += (u >> 15) & KYBER_Q;
-            /*    t[j] = ((((uint16_t)u << 4) + KYBER_Q/2)/KYBER_Q) & 15; */
-            d0 = u << 4;
-            d0 += 1665;
-            d0 *= 80635;
-            d0 >>= 28;
-            t[j] = d0 & 0xf;
+            /*    t[j] = ((((uint32_t)u << 5) + KYBER_Q/2)/KYBER_Q) & 31; */
+            d0 = u << 5;
+            d0 += 1664;
+            d0 *= 40318;
+            d0 >>= 27;
+            t[j] = d0 & 0x1f;
         }
 
-        r[0] = t[0] | (t[1] << 4);
-        r[1] = t[2] | (t[3] << 4);
-        r[2] = t[4] | (t[5] << 4);
-        r[3] = t[6] | (t[7] << 4);
-        r += 4;
+        r[0] = (t[0] >> 0) | (t[1] << 5);
+        r[1] = (t[1] >> 3) | (t[2] << 2) | (t[3] << 7);
+        r[2] = (t[3] >> 1) | (t[4] << 4);
+        r[3] = (t[4] >> 4) | (t[5] << 1) | (t[6] << 6);
+        r[4] = (t[6] >> 2) | (t[7] << 3);
+        r += 5;
     }
 }
 

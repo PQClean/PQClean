@@ -23,27 +23,34 @@ void polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDBYTES], const int16_t b[K
     unsigned int i, j, k;
     uint64_t d0;
 
-    uint16_t t[4];
+    uint16_t t[8];
     for (i = 0; i < KYBER_K; i++) {
-        for (j = 0; j < KYBER_N / 4; j++) {
-            for (k = 0; k < 4; k++) {
-                t[k]  = b[i][4 * j + k];
+        for (j = 0; j < KYBER_N / 8; j++) {
+            for (k = 0; k < 8; k++) {
+                t[k]  = a[i][8 * j + k];
                 t[k] += ((int16_t)t[k] >> 15) & KYBER_Q;
-                /*      t[k]  = ((((uint32_t)t[k] << 10) + KYBER_Q/2)/ KYBER_Q) & 0x3ff; */
+                /*      t[k]  = ((((uint32_t)t[k] << 11) + KYBER_Q/2)/KYBER_Q) & 0x7ff; */
                 d0 = t[k];
-                d0 <<= 10;
-                d0 += 1665;
-                d0 *= 1290167;
-                d0 >>= 32;
-                t[k] = d0 & 0x3ff;
+                d0 <<= 11;
+                d0 += 1664;
+                d0 *= 645084;
+                d0 >>= 31;
+                t[k] = d0 & 0x7ff;
+
             }
 
-            r[0] = (uint8_t)(t[0] >> 0);
-            r[1] = (uint8_t)((t[0] >> 8) | (t[1] << 2));
-            r[2] = (uint8_t)((t[1] >> 6) | (t[2] << 4));
-            r[3] = (uint8_t)((t[2] >> 4) | (t[3] << 6));
-            r[4] = (uint8_t)(t[3] >> 2);
-            r += 5;
+            r[ 0] = (uint8_t)(t[0] >>  0);
+            r[ 1] = (uint8_t)((t[0] >>  8) | (t[1] << 3));
+            r[ 2] = (uint8_t)((t[1] >>  5) | (t[2] << 6));
+            r[ 3] = (uint8_t)(t[2] >>  2);
+            r[ 4] = (uint8_t)((t[2] >> 10) | (t[3] << 1));
+            r[ 5] = (uint8_t)((t[3] >>  7) | (t[4] << 4));
+            r[ 6] = (uint8_t)((t[4] >>  4) | (t[5] << 7));
+            r[ 7] = (uint8_t)(t[5] >>  1);
+            r[ 8] = (uint8_t)((t[5] >>  9) | (t[6] << 2));
+            r[ 9] = (uint8_t)((t[6] >>  6) | (t[7] << 5));
+            r[10] = (uint8_t)(t[7] >>  3);
+            r += 11;
         }
     }
 }
