@@ -75,7 +75,7 @@ int PQCLEAN_KYBER512_AVX2_crypto_kem_enc_derand(uint8_t *ct,
         uint8_t *ss,
         const uint8_t *pk,
         const uint8_t *coins) {
-    uint8_t buf[2 * KYBER_SYMBYTES];
+    uint8_t buf[2 * KYBER_SYMBYTES + 1];
     /* Will contain key, coins */
     uint8_t kr[2 * KYBER_SYMBYTES];
 
@@ -83,6 +83,8 @@ int PQCLEAN_KYBER512_AVX2_crypto_kem_enc_derand(uint8_t *ct,
 
     /* Multitarget countermeasure for coins + contributory KEM */
     hash_h(buf + KYBER_SYMBYTES, pk, KYBER_PUBLICKEYBYTES);
+    /* Add byte separating Kyber parameter sets */
+    buf[2 * KYBER_SYMBYTES] = KYBER_K;
     hash_g(kr, buf, 2 * KYBER_SYMBYTES);
 
     /* coins are in kr+KYBER_SYMBYTES */
