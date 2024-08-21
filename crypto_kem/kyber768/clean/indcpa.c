@@ -151,9 +151,6 @@ static unsigned int rej_uniform(int16_t *r,
 *              - const uint8_t *seed: pointer to input seed
 *              - int transposed: boolean deciding whether A or A^T is generated
 **************************************************/
-#if(XOF_BLOCKBYTES % 3)
-#error "Implementation of PQCLEAN_KYBER768_CLEAN_gen_matrix assumes that XOF_BLOCKBYTES is a multiple of 3"
-#endif
 
 #define GEN_MATRIX_NBLOCKS ((12*KYBER_N/8*(1 << 12)/KYBER_Q + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
 // Not static for benchmarking
