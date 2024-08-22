@@ -52,7 +52,7 @@
 **************************************************/
 void poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], const int16_t a[KYBER_N]) {
     unsigned int i, j;
-    int32_t u;
+    int16_t u;
     uint32_t d0;
     uint8_t t[8];
 
