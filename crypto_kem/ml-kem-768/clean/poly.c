@@ -18,7 +18,7 @@
 **************************************************/
 void PQCLEAN_MLKEM768_CLEAN_poly_compress(uint8_t r[KYBER_POLYCOMPRESSEDBYTES], const poly *a) {
     unsigned int i, j;
-    int32_t u;
+    int16_t u;
     uint32_t d0;
     uint8_t t[8];
 

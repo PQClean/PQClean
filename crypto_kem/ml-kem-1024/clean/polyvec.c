@@ -29,7 +29,6 @@ void PQCLEAN_MLKEM1024_CLEAN_polyvec_compress(uint8_t r[KYBER_POLYVECCOMPRESSEDB
                 d0 *= 645084;
                 d0 >>= 31;
                 t[k] = d0 & 0x7ff;
-
             }
 
             r[ 0] = (uint8_t)(t[0] >>  0);
