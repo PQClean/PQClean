@@ -40,13 +40,6 @@ int PQCLEAN_MLKEM768_CLEAN_verify(const uint8_t *a, const uint8_t *b, size_t len
 void PQCLEAN_MLKEM768_CLEAN_cmov(uint8_t *r, const uint8_t *x, size_t len, uint8_t b) {
     size_t i;
 
-    // Prevent the compiler from
-    //    1) inferring that b is 0/1-valued, and
-    //    2) handling the two cases with a branch.
-    // This is not necessary when verify.c and kem.c are separate translation
-    // units, but we expect that downstream consumers will copy this code and/or
-    // change how it is built.
-    __asm__("" : "+r"(b) : /* no inputs */);
 
     b = -b;
     for (i = 0; i < len; i++) {
