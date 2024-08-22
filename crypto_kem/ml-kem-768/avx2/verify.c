@@ -56,13 +56,6 @@ void PQCLEAN_MLKEM768_AVX2_cmov(uint8_t *restrict r, const uint8_t *x, size_t le
     size_t i;
     __m256i xvec, rvec, bvec;
 
-    // Prevent the compiler from
-    //    1) inferring that b is 0/1-valued, and
-    //    2) handling the two cases with a branch.
-    // This is not necessary when verify.c and kem.c are separate translation
-    // units, but we expect that downstream consumers will copy this code and/or
-    // change how it is built.
-    __asm__("" : "+r"(b) : /* no inputs */);
 
     bvec = _mm256_set1_epi64x(-(uint64_t)b);
     for (i = 0; i < len / 32; i++) {
