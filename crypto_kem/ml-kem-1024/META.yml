@@ -22,9 +22,9 @@ auxiliary-submitters:
   - Jintai Ding
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/kyber/tree/10b478fc3cc4ff6215eb0b6a11bd758bf0929cbd via https://github.com/mkannwischer/package-pqclean/tree/52a6dc6/kyber
+      version: https://github.com/pq-crystals/kyber/tree/10b478fc3cc4ff6215eb0b6a11bd758bf0929cbd via https://github.com/mkannwischer/package-pqclean/tree/85197ff/kyber
     - name: avx2
-      version: https://github.com/pq-crystals/kyber/tree/10b478fc3cc4ff6215eb0b6a11bd758bf0929cbd via https://github.com/mkannwischer/package-pqclean/tree/52a6dc6/kyber
+      version: https://github.com/pq-crystals/kyber/tree/10b478fc3cc4ff6215eb0b6a11bd758bf0929cbd via https://github.com/mkannwischer/package-pqclean/tree/85197ff/kyber
       supported_platforms:
         - architecture: x86_64
           operating_systems:

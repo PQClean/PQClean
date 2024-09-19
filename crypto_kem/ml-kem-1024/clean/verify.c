@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "verify.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -40,6 +41,7 @@ int PQCLEAN_MLKEM1024_CLEAN_verify(const uint8_t *a, const uint8_t *b, size_t le
 void PQCLEAN_MLKEM1024_CLEAN_cmov(uint8_t *r, const uint8_t *x, size_t len, uint8_t b) {
     size_t i;
 
+    PQCLEAN_PREVENT_BRANCH_HACK(b);
 
     b = -b;
     for (i = 0; i < len; i++) {
