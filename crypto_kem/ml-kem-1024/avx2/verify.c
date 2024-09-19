@@ -1,3 +1,4 @@
+#include "compat.h"
 #include "verify.h"
 #include <immintrin.h>
 #include <stdint.h>
@@ -56,6 +57,7 @@ void PQCLEAN_MLKEM1024_AVX2_cmov(uint8_t *restrict r, const uint8_t *x, size_t l
     size_t i;
     __m256i xvec, rvec, bvec;
 
+    PQCLEAN_PREVENT_BRANCH_HACK(b);
 
     bvec = _mm256_set1_epi64x(-(uint64_t)b);
     for (i = 0; i < len / 32; i++) {
