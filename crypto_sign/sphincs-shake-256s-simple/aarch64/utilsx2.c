@@ -88,7 +88,7 @@ void treehashx2(unsigned char *root, unsigned char *auth_path,
              * Check if one of the nodes we have is a part of the
              * authentication path; if it is, write it out
              */
-            if ((((internal_idx << 1) ^ internal_leaf) & ~0x1) == 0) {
+            if ((((internal_idx << 1) ^ internal_leaf) & 0xFFFFFFFE) == 0) {
                 memcpy( &auth_path[ h * SPX_N ],
                         &current[(((internal_leaf & 1) ^ 1) + prev_left_adj) * SPX_N],
                         SPX_N );
@@ -108,7 +108,7 @@ void treehashx2(unsigned char *root, unsigned char *auth_path,
             /* Now combine the left and right logical nodes together */
 
             /* Set the address of the node we're creating. */
-            int j;
+            unsigned int j;
             internal_idx_offset >>= 1;
             for (j = 0; j < 2; j++) {
                 set_tree_height(tree_addrx2 + j * 8, h + 1);
