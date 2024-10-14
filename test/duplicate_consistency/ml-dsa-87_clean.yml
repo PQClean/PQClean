@@ -1,0 +1,64 @@
+consistency_checks:
+    - source:
+        scheme: ml-dsa-44
+        implementation: clean
+      files:
+      - ntt.h
+      - packing.h
+      - poly.h
+      - polyvec.h
+      - reduce.h
+      - rounding.h
+      - sign.h
+      - symmetric.h
+      - ntt.c
+      - packing.c
+      - polyvec.c
+      - reduce.c
+      - sign.c
+      - symmetric-shake.c
+    - source:
+        scheme: ml-dsa-44
+        implementation: avx2
+      files:
+      - packing.h
+      - sign.h
+      - packing.c
+      - symmetric-shake.c
+    - source:
+        scheme: ml-dsa-65
+        implementation: clean
+      files:
+      - ntt.h
+      - packing.h
+      - poly.h
+      - polyvec.h
+      - reduce.h
+      - rounding.h
+      - sign.h
+      - symmetric.h
+      - ntt.c
+      - packing.c
+      - polyvec.c
+      - reduce.c
+      - rounding.c
+      - sign.c
+      - symmetric-shake.c
+    - source:
+        scheme: ml-dsa-65
+        implementation: avx2
+      files:
+      - packing.h
+      - sign.h
+      - packing.c
+      - symmetric-shake.c
+    - source:
+        scheme: ml-dsa-87
+        implementation: avx2
+      files:
+      - api.h
+      - packing.h
+      - params.h
+      - sign.h
+      - packing.c
+      - symmetric-shake.c

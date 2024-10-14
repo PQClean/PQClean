@@ -1,0 +1,23 @@
+# This Makefile can be used with Microsoft Visual Studio's nmake using the command:
+#    nmake /f Makefile.Microsoft_nmake
+
+LIBRARY=libml-dsa-44_clean.lib
+OBJECTS=ntt.obj packing.obj poly.obj polyvec.obj reduce.obj rounding.obj sign.obj symmetric-shake.obj 
+
+# Warning C4146 is raised when a unary minus operator is applied to an
+# unsigned type; this has nonetheless been standard and portable for as
+# long as there has been a C standard, and we need it for constant-time
+# computations. Thus, we disable that spurious warning.
+CFLAGS=/nologo /O2 /I ..\..\..\common /W4 /WX /wd4146
+
+all: $(LIBRARY)
+
+# Make sure objects are recompiled if headers change.
+$(OBJECTS): *.h
+
+$(LIBRARY): $(OBJECTS)
+    LIB.EXE /NOLOGO /WX /OUT:$@ $**
+
+clean:
+    -DEL $(OBJECTS)
+    -DEL $(LIBRARY)
