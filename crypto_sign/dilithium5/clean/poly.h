@@ -33,7 +33,7 @@ void PQCLEAN_DILITHIUM5_CLEAN_poly_uniform_eta(poly *a,
 void PQCLEAN_DILITHIUM5_CLEAN_poly_uniform_gamma1(poly *a,
         const uint8_t seed[CRHBYTES],
         uint16_t nonce);
-void PQCLEAN_DILITHIUM5_CLEAN_poly_challenge(poly *c, const uint8_t seed[SEEDBYTES]);
+void PQCLEAN_DILITHIUM5_CLEAN_poly_challenge(poly *c, const uint8_t seed[CTILDEBYTES]);
 
 void PQCLEAN_DILITHIUM5_CLEAN_polyeta_pack(uint8_t *r, const poly *a);
 void PQCLEAN_DILITHIUM5_CLEAN_polyeta_unpack(poly *r, const uint8_t *a);

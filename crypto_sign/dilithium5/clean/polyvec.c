@@ -173,7 +173,7 @@ void PQCLEAN_DILITHIUM5_CLEAN_polyveck_uniform_eta(polyveck *v, const uint8_t se
 * Name:        PQCLEAN_DILITHIUM5_CLEAN_polyveck_reduce
 *
 * Description: Reduce coefficients of polynomials in vector of length K
-*              to representatives in [-6283009,6283007].
+*              to representatives in [-6283008,6283008].
 *
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
@@ -295,6 +295,7 @@ void PQCLEAN_DILITHIUM5_CLEAN_polyveck_pointwise_poly_montgomery(polyveck *r, co
     }
 }
 
+
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM5_CLEAN_polyveck_chknorm
 *
@@ -397,11 +398,11 @@ unsigned int PQCLEAN_DILITHIUM5_CLEAN_polyveck_make_hint(polyveck *h,
 *              - const polyveck *u: pointer to input vector
 *              - const polyveck *h: pointer to input hint vector
 **************************************************/
-void PQCLEAN_DILITHIUM5_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h) {
+void PQCLEAN_DILITHIUM5_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUM5_CLEAN_poly_use_hint(&w->vec[i], &u->vec[i], &h->vec[i]);
+        PQCLEAN_DILITHIUM5_CLEAN_poly_use_hint(&w->vec[i], &v->vec[i], &h->vec[i]);
     }
 }
 

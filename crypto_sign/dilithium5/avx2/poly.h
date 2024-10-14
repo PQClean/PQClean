@@ -31,7 +31,7 @@ void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_eta_preinit(poly *a, stream256_state *
 void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[CRHBYTES], uint16_t nonce);
 void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_gamma1_preinit(poly *a, stream256_state *state);
 void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_gamma1(poly *a, const uint8_t seed[CRHBYTES], uint16_t nonce);
-void PQCLEAN_DILITHIUM5_AVX2_poly_challenge(poly *c, const uint8_t seed[SEEDBYTES]);
+void PQCLEAN_DILITHIUM5_AVX2_poly_challenge(poly *c, const uint8_t seed[CTILDEBYTES]);
 
 void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_4x(poly *a0,
         poly *a1,

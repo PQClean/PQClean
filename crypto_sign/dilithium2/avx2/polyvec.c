@@ -61,6 +61,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyvec_matrix_expand_row3(polyvecl *rowa, polyvecl
     PQCLEAN_DILITHIUM2_AVX2_poly_nttunpack(&rowa->vec[3]);
 }
 
+
 void PQCLEAN_DILITHIUM2_AVX2_polyvec_matrix_pointwise_montgomery(polyveck *t, const polyvecl mat[K], const polyvecl *v) {
     unsigned int i;
 
@@ -202,7 +203,7 @@ void PQCLEAN_DILITHIUM2_AVX2_polyveck_uniform_eta(polyveck *v, const uint8_t see
 * Name:        PQCLEAN_DILITHIUM2_AVX2_polyveck_reduce
 *
 * Description: Reduce coefficients of polynomials in vector of length K
-*              to representatives in [-6283009,6283007].
+*              to representatives in [-6283009,6283008].
 *
 * Arguments:   - polyveck *v: pointer to input/output vector
 **************************************************/
@@ -424,11 +425,11 @@ unsigned int PQCLEAN_DILITHIUM2_AVX2_polyveck_make_hint(uint8_t *hint, const pol
 *              - const polyveck *u: pointer to input vector
 *              - const polyveck *h: pointer to input hint vector
 **************************************************/
-void PQCLEAN_DILITHIUM2_AVX2_polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h) {
+void PQCLEAN_DILITHIUM2_AVX2_polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h) {
     unsigned int i;
 
     for (i = 0; i < K; ++i) {
-        PQCLEAN_DILITHIUM2_AVX2_poly_use_hint(&w->vec[i], &u->vec[i], &h->vec[i]);
+        PQCLEAN_DILITHIUM2_AVX2_poly_use_hint(&w->vec[i], &v->vec[i], &h->vec[i]);
     }
 }
 
