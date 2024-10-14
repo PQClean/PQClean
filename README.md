@@ -149,6 +149,31 @@ int PQCLEAN_SCHEME_IMPL_crypto_sign_verify(
     const uint8_t *pk);
 ```
 
+As NIST has changed the signature APIs for the final [FIPS204](https://csrc.nist.gov/pubs/fips/204/final) and [FIPS205](https://csrc.nist.gov/pubs/fips/205/final), we additionally support the new APIs.
+Implementations may use the new APIs by defining `#define PQCLEAN_USE_SIGN_CTX` in `api.h`.
+The updated APIs are:
+```c
+int PQCLEAN_SCHEME_IMPL_crypto_sign_signature(uint8_t *sig, size_t *siglen,
+        const uint8_t *m, size_t mlen,
+        const uint8_t *ctx, size_t ctxlen,
+        const uint8_t *sk);
+
+int PQCLEAN_SCHEME_IMPL_crypto_sign(uint8_t *sm, size_t *smlen,
+        const uint8_t *m, size_t mlen,
+        const uint8_t *ctx, size_t ctxlen,
+        const uint8_t *sk);
+
+int PQCLEAN_SCHEME_IMPL_crypto_sign_verify(const uint8_t *sig, size_t siglen,
+        const uint8_t *m, size_t mlen,
+        const uint8_t *ctx, size_t ctxlen,
+        const uint8_t *pk);
+
+int PQCLEAN_SCHEME_IMPL_crypto_sign_open(uint8_t *m, size_t *mlen,
+        const uint8_t *sm, size_t smlen,
+        const uint8_t *ctx, size_t ctxlen,
+        const uint8_t *pk);
+```
+
 ## Building PQClean
 
 As noted above, PQClean is **not** meant to be built as a single library: it is a collection of source code that can be easily integrated into other libraries.  The PQClean repository includes various test programs which do build various files, but you should not use the resulting binaries.

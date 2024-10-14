@@ -28,6 +28,10 @@
 
 #define MLEN 1024
 
+#ifdef PQCLEAN_USE_SIGN_CTX
+#define PQCLEAN_CTXLEN 14
+#endif
+
 const uint8_t canary[8] = {
     0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF
 };
@@ -153,6 +157,14 @@ static int test_sign(void) {
     write_canary(m);
     write_canary(m + MLEN + 8);
 
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    uint8_t *ctx_aligned = malloc_s(PQCLEAN_CTXLEN + 16 + 1);
+    uint8_t *ctx  = (uint8_t *) ((uintptr_t) ctx_aligned | (uintptr_t) 1);
+    memset(ctx, 0, PQCLEAN_CTXLEN);
+    write_canary(ctx);
+    write_canary(ctx + PQCLEAN_CTXLEN + 8);
+    #endif
+
     for (i = 0; i < NTESTS; i++) {
         RETURNS_ZERO(crypto_sign_keypair(pk + 8, sk + 8));
 
@@ -170,7 +182,12 @@ static int test_sign(void) {
         VALGRIND_MAKE_MEM_UNDEFINED(sm + 8, MLEN + CRYPTO_BYTES);
 #endif
 
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        RETURNS_ZERO(crypto_sign(sm + 8, &smlen, m + 8, MLEN, ctx + 8, PQCLEAN_CTXLEN,  sk + 8));
+        #else
         RETURNS_ZERO(crypto_sign(sm + 8, &smlen, m + 8, MLEN, sk + 8));
+        #endif
+        
 
 #ifdef PQCLEAN_USE_VALGRIND
         // We have to mark the tail as defined before doing the memcmp.
@@ -182,8 +199,12 @@ static int test_sign(void) {
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
-        if ((returncode =
-                    crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8)) != 0) {
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        returncode = crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, ctx + 8, PQCLEAN_CTXLEN, pk + 8);
+        #else
+        returncode = crypto_sign_open(sm + 8, &mlen, sm + 8, smlen, pk + 8);
+        #endif
+        if (returncode != 0) {
             fprintf(stderr, "ERROR Signature did not verify correctly!\n");
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0 on failure");
@@ -200,12 +221,23 @@ static int test_sign(void) {
             res = 1;
             goto end;
         }
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        if (check_canary(ctx) || check_canary(ctx + PQCLEAN_CTXLEN + 8)) {
+            fprintf(stderr, "ERROR canary overwritten\n");
+            res = 1;
+            goto end;
+        }
+        #endif
+
     }
 end:
     free(pk_aligned);
     free(sk_aligned);
     free(sm_aligned);
     free(m_aligned);
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    free(ctx_aligned);
+    #endif
 
     return res;
 }
@@ -261,6 +293,14 @@ static int test_sign_detached(void) {
     write_canary(m);
     write_canary(m + MLEN + 8);
 
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    uint8_t *ctx_aligned = malloc_s(PQCLEAN_CTXLEN + 16 + 1);
+    uint8_t *ctx  = (uint8_t *) ((uintptr_t) ctx_aligned | (uintptr_t) 1);
+    memset(ctx, 0, PQCLEAN_CTXLEN);
+    write_canary(ctx);
+    write_canary(ctx + PQCLEAN_CTXLEN + 8);
+    #endif
+
     for (i = 0; i < NTESTS; i++) {
         RETURNS_ZERO(crypto_sign_keypair(pk + 8, sk + 8));
 
@@ -279,7 +319,11 @@ static int test_sign_detached(void) {
         VALGRIND_MAKE_MEM_UNDEFINED(sig + 8, CRYPTO_BYTES);
 #endif
 
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        RETURNS_ZERO(crypto_sign_signature(sig + 8, &siglen, m + 8, MLEN, ctx + 8, PQCLEAN_CTXLEN, sk + 8));
+        #else
         RETURNS_ZERO(crypto_sign_signature(sig + 8, &siglen, m + 8, MLEN, sk + 8));
+        #endif
 
 #ifdef PQCLEAN_USE_VALGRIND
         // We have to mark the tail as defined before doing the memcmp.
@@ -289,8 +333,13 @@ static int test_sign_detached(void) {
         // check that the tail has not been modified
         RETURNS_ZERO(memcmp(sig + 8 + siglen, sig_random_cmp + siglen, CRYPTO_BYTES - siglen));
 
-        if ((returncode =
-                    crypto_sign_verify(sig + 8, siglen, m + 8, MLEN, pk + 8)) != 0) {
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        returncode = crypto_sign_verify(sig + 8, siglen, m + 8, MLEN, ctx + 8, PQCLEAN_CTXLEN, pk + 8);
+        #else
+        returncode = crypto_sign_verify(sig + 8, siglen, m + 8, MLEN, pk + 8);
+        #endif
+
+        if (returncode != 0) {
             fprintf(stderr, "ERROR Signature did not verify correctly!\n");
             if (returncode > 0) {
                 fprintf(stderr, "ERROR return code should be < 0 on failure");
@@ -321,6 +370,15 @@ static int test_sign_detached(void) {
             res = 1;
             goto end;
         }
+
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        if (check_canary(ctx) || check_canary(ctx + PQCLEAN_CTXLEN + 8)) {
+            fprintf(stderr, "ERROR canary overwritten\n");
+            res = 1;
+            goto end;
+        }
+        #endif
+
     }
 
 end:
@@ -328,6 +386,10 @@ end:
     free(sk_aligned);
     free(sig_aligned);
     free(m_aligned);
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    free(ctx_aligned);
+    #endif
+
 
     return res;
 }
@@ -338,6 +400,11 @@ static int test_wrong_pk(void) {
     uint8_t *sk = malloc_s(CRYPTO_SECRETKEYBYTES);
     uint8_t *sm = malloc_s(MLEN + CRYPTO_BYTES);
     uint8_t *m = malloc_s(MLEN);
+
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    uint8_t *ctx  = malloc_s(PQCLEAN_CTXLEN);
+    memset(ctx, 0, PQCLEAN_CTXLEN);
+    #endif
 
     size_t mlen;
     size_t smlen;
@@ -352,11 +419,20 @@ static int test_wrong_pk(void) {
         RETURNS_ZERO(crypto_sign_keypair(pk, sk));
 
         randombytes(m, MLEN);
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        RETURNS_ZERO(crypto_sign(sm, &smlen, m, MLEN, ctx, PQCLEAN_CTXLEN, sk));
+        #else
         RETURNS_ZERO(crypto_sign(sm, &smlen, m, MLEN, sk));
+        #endif
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        returncode = crypto_sign_open(sm, &mlen, sm, smlen, ctx, PQCLEAN_CTXLEN, pk2);
+        #else
         returncode = crypto_sign_open(sm, &mlen, sm, smlen, pk2);
+        #endif
+
         if (!returncode) {
             fprintf(stderr, "ERROR Signature did verify correctly under wrong public key!\n");
             if (returncode > 0) {
@@ -372,6 +448,9 @@ end:
     free(sk);
     free(sm);
     free(m);
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    free(ctx);
+    #endif
     return res;
 }
 

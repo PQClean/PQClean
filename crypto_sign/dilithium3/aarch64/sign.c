@@ -114,7 +114,11 @@ int crypto_sign_signature(uint8_t *sig,
                           size_t *siglen,
                           const uint8_t *m,
                           size_t mlen,
+                          const uint8_t *ctx,
+                          size_t ctxlen,
                           const uint8_t *sk) {
+    (void) ctx;
+    (void) ctxlen;
     unsigned int n;
     uint8_t seedbuf[2 * SEEDBYTES + TRBYTES + RNDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime, *rnd;
@@ -235,13 +239,15 @@ int crypto_sign(uint8_t *sm,
                 size_t *smlen,
                 const uint8_t *m,
                 size_t mlen,
+                const uint8_t *ctx,
+                size_t ctxlen,
                 const uint8_t *sk) {
     size_t i;
 
     for (i = 0; i < mlen; ++i) {
         sm[PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES + mlen - 1 - i] = m[mlen - 1 - i];
     }
-    crypto_sign_signature(sm, smlen, sm + PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES, mlen, sk);
+    crypto_sign_signature(sm, smlen, sm + PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES, mlen, ctx, ctxlen, sk);
     *smlen += mlen;
     return 0;
 }
@@ -263,7 +269,11 @@ int crypto_sign_verify(const uint8_t *sig,
                        size_t siglen,
                        const uint8_t *m,
                        size_t mlen,
+                       const uint8_t *ctx,
+                       size_t ctxlen,
                        const uint8_t *pk) {
+    (void) ctx;
+    (void) ctxlen;
     unsigned int i;
     uint8_t buf[K * POLYW1_PACKEDBYTES];
     uint8_t rho[SEEDBYTES];
@@ -351,6 +361,8 @@ int crypto_sign_open(uint8_t *m,
                      size_t *mlen,
                      const uint8_t *sm,
                      size_t smlen,
+                     const uint8_t *ctx,
+                     size_t ctxlen, 
                      const uint8_t *pk) {
     size_t i;
 
@@ -359,7 +371,7 @@ int crypto_sign_open(uint8_t *m,
     }
 
     *mlen = smlen - PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES;
-    if (crypto_sign_verify(sm, PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES, sm + PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES, *mlen, pk)) {
+    if (crypto_sign_verify(sm, PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES, sm + PQCLEAN_DILITHIUM3_AARCH64_CRYPTO_BYTES, *mlen, ctx, ctxlen, pk)) {
         goto badsig;
     } else {
         /* All good, copy msg, return 0 */

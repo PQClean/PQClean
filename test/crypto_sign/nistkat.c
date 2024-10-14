@@ -74,7 +74,11 @@ int main(void) {
     fprintBstr(fh, "pk = ", public_key, CRYPTO_PUBLICKEYBYTES);
     fprintBstr(fh, "sk = ", secret_key, CRYPTO_SECRETKEYBYTES);
 
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    rc = crypto_sign(sm, &smlen, m, mlen, NULL, 0, secret_key);
+    #else
     rc = crypto_sign(sm, &smlen, m, mlen, secret_key);
+    #endif
     if (rc != 0) {
         fprintf(stderr, "[kat_kem] %s ERROR: crypto_sign failed!\n", CRYPTO_ALGNAME);
         return -2;
@@ -82,7 +86,11 @@ int main(void) {
     fprintf(fh, "smlen = %zu\n", smlen);
     fprintBstr(fh, "sm = ", sm, smlen);
 
+    #ifdef PQCLEAN_USE_SIGN_CTX
+    rc = crypto_sign_open(sm, &mlen1, sm, smlen, NULL, 0, public_key);
+    #else
     rc = crypto_sign_open(sm, &mlen1, sm, smlen, public_key);
+    #endif
     if (rc != 0) {
         fprintf(stderr, "[kat_kem] %s ERROR: crypto_sign_open failed!\n", CRYPTO_ALGNAME);
         return -3;

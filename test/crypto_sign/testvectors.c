@@ -55,16 +55,26 @@ int main(void) {
         printbytes(pk, CRYPTO_PUBLICKEYBYTES);
         printbytes(sk, CRYPTO_SECRETKEYBYTES);
 
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        crypto_sign(sm, &smlen, mi, i, NULL, 0, sk);
+        crypto_sign_signature(sig, &siglen, mi, i, NULL, 0, sk);
+        #else
         crypto_sign(sm, &smlen, mi, i, sk);
         crypto_sign_signature(sig, &siglen, mi, i, sk);
+        #endif
 
         printbytes(sm, smlen);
         printbytes(sig, siglen);
 
         // By relying on m == sm we prevent having to allocate CRYPTO_BYTES
         // twice
+        #ifdef PQCLEAN_USE_SIGN_CTX
+        r = crypto_sign_open(sm, &mlen, sm, smlen, NULL, 0, pk);
+        r |= crypto_sign_verify(sig, siglen, mi, i, NULL, 0, pk);
+        #else
         r = crypto_sign_open(sm, &mlen, sm, smlen, pk);
         r |= crypto_sign_verify(sig, siglen, mi, i, pk);
+        #endif
 
         if (r) {
             printf("ERROR: signature verification failed\n");
