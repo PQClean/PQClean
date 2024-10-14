@@ -160,7 +160,7 @@ static int test_sign(void) {
     #ifdef PQCLEAN_USE_SIGN_CTX
     uint8_t *ctx_aligned = malloc_s(PQCLEAN_CTXLEN + 16 + 1);
     uint8_t *ctx  = (uint8_t *) ((uintptr_t) ctx_aligned | (uintptr_t) 1);
-    memset(ctx, 0, PQCLEAN_CTXLEN);
+    memset(ctx + 8, 0, PQCLEAN_CTXLEN);
     write_canary(ctx);
     write_canary(ctx + PQCLEAN_CTXLEN + 8);
     #endif
@@ -296,7 +296,7 @@ static int test_sign_detached(void) {
     #ifdef PQCLEAN_USE_SIGN_CTX
     uint8_t *ctx_aligned = malloc_s(PQCLEAN_CTXLEN + 16 + 1);
     uint8_t *ctx  = (uint8_t *) ((uintptr_t) ctx_aligned | (uintptr_t) 1);
-    memset(ctx, 0, PQCLEAN_CTXLEN);
+    memset(ctx + 8, 0, PQCLEAN_CTXLEN);
     write_canary(ctx);
     write_canary(ctx + PQCLEAN_CTXLEN + 8);
     #endif
