@@ -63,7 +63,10 @@ int crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 
     /* Get randomness for rho, rhoprime and key */
     randombytes(seedbuf, SEEDBYTES);
-    shake256(seedbuf, 2 * SEEDBYTES + CRHBYTES, seedbuf, SEEDBYTES);
+    seedbuf[SEEDBYTES + 0] = K;
+    seedbuf[SEEDBYTES + 1] = L;
+    shake256(seedbuf, 2 * SEEDBYTES + CRHBYTES, seedbuf, SEEDBYTES + 2);
+
     rho = seedbuf;
     rhoprime = rho + SEEDBYTES;
     key = rhoprime + CRHBYTES;
@@ -91,7 +94,7 @@ int crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
     pack_pk(pk, rho, &t1);
 
     /* Compute H(rho, t1) and write secret key */
-    shake256(tr, TRBYTES, pk, PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_PUBLICKEYBYTES);
+    shake256(tr, TRBYTES, pk, DILITHIUM_CRYPTO_PUBLICKEYBYTES);
     pack_sk(sk, rho, tr, key, &t0, &s1, &s2);
 
     return 0;
@@ -106,14 +109,18 @@ int crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 *              - size_t *siglen: pointer to output length of signature
 *              - uint8_t *m:     pointer to message to be signed
 *              - size_t mlen:    length of message
+*              - uint8_t *ctx:   pointer to context string
+*              - size_t ctxlen:  length of context string
 *              - uint8_t *sk:    pointer to bit-packed secret key
 *
-* Returns 0 (success)
+* Returns 0 (success) or -1 (context string too long)
 **************************************************/
-int crypto_sign_signature(uint8_t *sig,
+int crypto_sign_signature_ctx(uint8_t *sig,
                           size_t *siglen,
                           const uint8_t *m,
                           size_t mlen,
+                          const uint8_t *ctx,
+                          size_t ctxlen,
                           const uint8_t *sk) {
     unsigned int n;
     uint8_t seedbuf[2 * SEEDBYTES + TRBYTES + RNDBYTES + 2 * CRHBYTES];
@@ -123,6 +130,10 @@ int crypto_sign_signature(uint8_t *sig,
     polyveck t0, s2, w1, w0, h;
     poly cp;
     shake256incctx state;
+ 
+    if (ctxlen > 255) {
+        return -1;
+    }
 
     rho = seedbuf;
     tr = rho + SEEDBYTES;
@@ -132,17 +143,19 @@ int crypto_sign_signature(uint8_t *sig,
     rhoprime = mu + CRHBYTES;
     unpack_sk(rho, tr, key, &t0, &s1, &s2, sk);
 
-    /* Compute mu = CRH(tr, msg) */
+    /* Compute mu = CRH(tr, 0, ctxlen, ctx, msg) */
+    mu[0] = 0;
+    mu[1] = ctxlen;
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, tr, TRBYTES);
+    shake256_inc_absorb(&state, mu, 2);
+    shake256_inc_absorb(&state, ctx, ctxlen);
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
     shake256_inc_ctx_release(&state);
 
-    for (n = 0; n < RNDBYTES; n++) {
-        rnd[n] = 0;
-    }
+    randombytes(rnd, RNDBYTES);
     shake256(rhoprime, CRHBYTES, key, SEEDBYTES + RNDBYTES + CRHBYTES);
 
     /* Expand matrix and transform vectors */
@@ -211,7 +224,7 @@ rej:
 
     /* Write signature */
     pack_sig(sig, sig, &z, &h);
-    *siglen = PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES;
+    *siglen = DILITHIUM_CRYPTO_BYTES;
     return 0;
 }
 
@@ -227,23 +240,28 @@ rej:
 *                               message
 *              - const uint8_t *m: pointer to message to be signed
 *              - size_t mlen: length of message
+*              - uint8_t *ctx:   pointer to context string
+*              - size_t ctxlen:  length of context string
 *              - const uint8_t *sk: pointer to bit-packed secret key
 *
-* Returns 0 (success)
+* Returns 0 (success) or -1 (context string too long)
 **************************************************/
-int crypto_sign(uint8_t *sm,
+int crypto_sign_ctx(uint8_t *sm,
                 size_t *smlen,
                 const uint8_t *m,
                 size_t mlen,
+                const uint8_t *ctx,
+                size_t ctxlen,
                 const uint8_t *sk) {
+    int ret;
     size_t i;
 
     for (i = 0; i < mlen; ++i) {
-        sm[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES + mlen - 1 - i] = m[mlen - 1 - i];
+        sm[DILITHIUM_CRYPTO_BYTES + mlen - 1 - i] = m[mlen - 1 - i];
     }
-    crypto_sign_signature(sm, smlen, sm + PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES, mlen, sk);
+    ret = crypto_sign_signature_ctx(sm, smlen, sm + DILITHIUM_CRYPTO_BYTES, mlen, ctx, ctxlen, sk);
     *smlen += mlen;
-    return 0;
+    return ret;
 }
 
 /*************************************************
@@ -259,10 +277,12 @@ int crypto_sign(uint8_t *sm,
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
-int crypto_sign_verify(const uint8_t *sig,
+int crypto_sign_verify_ctx(const uint8_t *sig,
                        size_t siglen,
                        const uint8_t *m,
                        size_t mlen,
+                       const uint8_t *ctx,
+                       size_t ctxlen,
                        const uint8_t *pk) {
     unsigned int i;
     uint8_t buf[K * POLYW1_PACKEDBYTES];
@@ -275,7 +295,7 @@ int crypto_sign_verify(const uint8_t *sig,
     polyveck t1, w1, h;
     shake256incctx state;
 
-    if (siglen != PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES) {
+    if (ctxlen > 255 || siglen != DILITHIUM_CRYPTO_BYTES) {
         return -1;
     }
 
@@ -288,9 +308,13 @@ int crypto_sign_verify(const uint8_t *sig,
     }
 
     /* Compute CRH(H(rho, t1), msg) */
-    shake256(mu, CRHBYTES, pk, PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_PUBLICKEYBYTES);
+    shake256(mu, TRBYTES, pk, DILITHIUM_CRYPTO_PUBLICKEYBYTES);
     shake256_inc_init(&state);
-    shake256_inc_absorb(&state, mu, CRHBYTES);
+    shake256_inc_absorb(&state, mu, TRBYTES);
+    mu[0] = 0;
+    mu[1] = ctxlen;
+    shake256_inc_absorb(&state, mu, 2);
+    shake256_inc_absorb(&state, ctx, ctxlen);
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
@@ -347,31 +371,33 @@ int crypto_sign_verify(const uint8_t *sig,
 *
 * Returns 0 if signed message could be verified correctly and -1 otherwise
 **************************************************/
-int crypto_sign_open(uint8_t *m,
+int crypto_sign_open_ctx(uint8_t *m,
                      size_t *mlen,
                      const uint8_t *sm,
                      size_t smlen,
+                     const uint8_t *ctx,
+                     size_t ctxlen,
                      const uint8_t *pk) {
     size_t i;
 
-    if (smlen < PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES) {
+    if (smlen < DILITHIUM_CRYPTO_BYTES) {
         goto badsig;
     }
 
-    *mlen = smlen - PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES;
-    if (crypto_sign_verify(sm, PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES, sm + PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES, *mlen, pk)) {
+    *mlen = smlen - DILITHIUM_CRYPTO_BYTES;
+    if (crypto_sign_verify_ctx(sm, DILITHIUM_CRYPTO_BYTES, sm + DILITHIUM_CRYPTO_BYTES, *mlen, ctx, ctxlen, pk)) {
         goto badsig;
     } else {
         /* All good, copy msg, return 0 */
         for (i = 0; i < *mlen; ++i) {
-            m[i] = sm[PQCLEAN_DILITHIUM2_AARCH64_CRYPTO_BYTES + i];
+            m[i] = sm[DILITHIUM_CRYPTO_BYTES + i];
         }
         return 0;
     }
 
 badsig:
     /* Signature verification failed */
-    *mlen = (size_t) -1;
+    *mlen = 0;
     for (i = 0; i < smlen; ++i) {
         m[i] = 0;
     }
