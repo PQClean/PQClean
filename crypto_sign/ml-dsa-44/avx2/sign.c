@@ -373,10 +373,11 @@ int PQCLEAN_MLDSA44_AVX2_crypto_sign_verify_ctx(const uint8_t *sig, size_t sigle
     }
 
     /* Extra indices are zero for strong unforgeability */
-    for (j = pos; j < OMEGA; ++j)
+    for (j = pos; j < OMEGA; ++j) {
         if (hint[j]) {
             return -1;
         }
+    }
 
     /* Call random oracle and verify challenge */
     shake256_inc_init(&state);
