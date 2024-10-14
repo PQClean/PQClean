@@ -1,0 +1,40 @@
+name: ML-DSA-44
+type: signature
+claimed-nist-level: 2
+length-public-key: 1312
+length-secret-key: 2560
+length-signature: 2420
+nistkat-sha256: 9a196e7fb32fbc93757dc2d8dc1924460eab66303c0c08aeb8b798fb8d8f8cf3
+testvectors-sha256: 9d4ae4ea0c1b56f96650838c7425cc2167a0754643b79a93bee28cb039ac2fc2
+principal-submitters:
+  - Vadim Lyubashevsky
+auxiliary-submitters:
+  - Léo Ducas
+  - Eike Kiltz
+  - Tancrède Lepoint
+  - Peter Schwabe
+  - Gregor Seiler
+  - Damien Stehlé
+implementations:
+    - name: clean
+      version: https://github.com/pq-crystals/dilithium/commit/cbcd8753a43402885c90343cd6335fb54712cda1 via https://github.com/mkannwischer/package-pqclean/tree/ec0f4cd6feabd293310060f0fe16855957345d9c/dilithium
+    - name: avx2
+      version: https://github.com/pq-crystals/dilithium/commit/cbcd8753a43402885c90343cd6335fb54712cda1 via https://github.com/mkannwischer/package-pqclean/tree/ec0f4cd6feabd293310060f0fe16855957345d9c/dilithium
+      supported_platforms:
+        - architecture: x86_64
+          operating_systems:
+              - Linux
+              - Darwin
+          required_flags:
+              - aes
+              - avx2
+              - popcnt
+    - name: aarch64
+      version: https://github.com/neon-ntt/neon-ntt/tree/f88c7dd2bf03fb0dbdcccbf2fe437f7bb0a77441
+      supported_platforms:
+        - architecture: arm_8
+          operating_systems:
+              - Linux
+              - Darwin
+          required_flags:
+              - asimd

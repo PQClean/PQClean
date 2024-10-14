@@ -1,0 +1,206 @@
+on:
+  push:
+    branches:
+      - 'master'
+    paths:
+      # build if tests change
+      - 'test/**'
+      # do not build if other schemes duplicate_consistency files change
+      - '!test/duplicate_consistency/*.yml'
+      - 'test/duplicate_consistency/ml-dsa-65*.yml'
+      # build if common files change
+      - 'common/**'
+      # build if scheme changed
+      - 'crypto_sign/ml-dsa-65/**'
+      # build if workflow file changed
+      - '.github/workflows/sign_ml-dsa-65.yml'
+      # Build if any files in the root change, except .md files
+      - '*'
+      - '!*.md'
+  pull_request:
+    paths:
+      # build if tests change
+      - 'test/**'
+      # do not build if other schemes duplicate_consistency files change
+      - '!test/duplicate_consistency/*.yml'
+      - 'test/duplicate_consistency/ml-dsa-65*.yml'
+      # build if common files change
+      - 'common/**'
+      # build if scheme changed
+      - 'crypto_sign/ml-dsa-65/**'
+      # build if workflow file changed
+      - '.github/workflows/sign_ml-dsa-65.yml'
+      # Build if any files in the root change, except .md files
+      - '*'
+      - '!*.md'
+  schedule:
+    - cron: '5 4 * * *'
+
+name: Test ml-dsa-65
+
+concurrency:
+  group: ci-ml-dsa-65-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-native:
+    runs-on: ubuntu-latest
+    container:
+      image: pqclean/ci-container:${{ matrix.arch }}
+      env:
+        PQCLEAN_ONLY_SCHEMES: ml-dsa-65
+        CC: ccache ${{ matrix.cc }}
+        CCACHE_NOSTATS: 1
+        CCACHE_DIR: /ccache
+        CCACHE_SLOPPINESS: include_file_mtime
+    strategy:
+      matrix:
+        arch:
+          - amd64
+          - i386
+        cc:
+          - gcc
+          - clang
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Cache ccache
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-ccache
+        with:
+          path: /ccache
+          key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
+      - name: Cache pip
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-python-pip
+        with:
+          path: ~/.cache/pip
+          key: v1-python-pip
+      - name: Install python dependencies
+        run: |
+          python3 -m pip install -U --break-system-packages -r requirements.txt
+      - name: Run tests
+        run: |
+          cd test
+          python3 -m pytest --verbose --numprocesses=auto
+  test-emulated:
+    needs:
+      - test-native
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch:
+          - armhf
+          - unstable-ppc
+        cc:
+          - gcc
+          - clang
+    env:
+      CC: ${{ matrix.cc }}
+    steps:
+      - name: Register qemu-user-static
+        run: |
+          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Cache ccache
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-ccache
+        with:
+          path: ~/ccache
+          key: v1-${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.cc }}-${{ env.GITHUB_WORKFLOW }}-${{ matrix.arch }}
+      - name: Cache pip
+        uses: actions/cache@v3
+        env:
+          cache-name: cache-python-pip
+        with:
+          path: ~/.cache/pip
+          key: v1-python-pip
+      - name: Run tests in container
+        run: |
+          docker run --rm -e CI -e CC -e PQCLEAN_ONLY_SCHEMES=ml-dsa-65 -v $PWD:$PWD -w $PWD -v ~/ccache:/ccache pqclean/ci-container:${{ matrix.arch }} /bin/bash -c "\
+          export CCACHE_NOSTATS=1 && \
+          export CCACHE_DIR=/ccache && \
+          export CCACHE_SLOPPINESS=include_file_mtime && \
+          export CC=\"ccache $CC\" && \
+          pip3 install -U --break-system-packages --ignore-installed -r requirements.txt && \
+          cd test && \
+          python3 -m pytest --verbose --numprocesses=auto"
+  test-windows:
+    needs:
+      - test-native
+    strategy:
+      matrix:
+        arch:
+          - x64
+          - x86
+    env:
+      PQCLEAN_ONLY_SCHEMES: ml-dsa-65
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: ${{ matrix.arch }}
+      - name: Setup astyle
+        run: |
+          # Setup strong crypto
+          Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Wow6432Node\\Microsoft\\.NetFramework\\v4.0.30319" -Name 'SchUseStrongCrypto' -Value '1' -Type DWord
+          Set-ItemProperty -Path "HKLM:\\SOFTWARE\\Microsoft\\.NetFramework\\v4.0.30319" -Name "SchUseStrongCrypto" -Value '1' -Type DWord
+          Invoke-WebRequest -OutFile "test\\astyle.exe" "https://rded.nl/pqclean/AStyle.exe"
+        shell: powershell
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install python requirements
+        run: python -m pip install -U --break-system-packages -r requirements.txt
+      - name: Run tests
+        run: |
+          cd test
+          python -m pytest --verbose --numprocesses=auto
+        shell: cmd
+  test-macos:
+    needs:
+      - test-native
+    env:
+      PQCLEAN_ONLY_SCHEMES: ml-dsa-65
+      CCACHE_NOSTATS: 1
+      CCACHE_SLOPPINESS: include_file_mtime
+    strategy:
+      matrix:
+        compiler:
+          - clang  # XCode (Apple LLVM/Clang)
+          - gcc11   # GNU (Homebrew)
+    runs-on: macos-latest
+    steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Install astyle
+        run: |
+          brew install astyle
+      - name: Set up GCC11 compiler
+        run: 'export PATH="/usr/local/bin:$PATH" && export CC=gcc-11'
+        if: matrix.compiler == 'gcc11'
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
+      - name: Install Python dependencies
+        run: python -m pip install -U --break-system-packages -r requirements.txt
+      - name: Run tests
+        run: |
+          cd test
+          python -m pytest --verbose --numprocesses=auto
+
