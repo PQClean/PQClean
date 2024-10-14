@@ -362,7 +362,7 @@ int crypto_sign_open(uint8_t *m,
                      const uint8_t *sm,
                      size_t smlen,
                      const uint8_t *ctx,
-                     size_t ctxlen, 
+                     size_t ctxlen,
                      const uint8_t *pk) {
     size_t i;
 

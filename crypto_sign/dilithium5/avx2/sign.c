@@ -409,7 +409,7 @@ int PQCLEAN_DILITHIUM5_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen
 *
 * Returns 0 if signed message could be verified correctly and -1 otherwise
 **************************************************/
-int PQCLEAN_DILITHIUM5_AVX2_crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *ctx, size_t ctxlen,const uint8_t *pk) {
+int PQCLEAN_DILITHIUM5_AVX2_crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *ctx, size_t ctxlen, const uint8_t *pk) {
     size_t i;
 
     if (smlen < PQCLEAN_DILITHIUM5_AVX2_CRYPTO_BYTES) {

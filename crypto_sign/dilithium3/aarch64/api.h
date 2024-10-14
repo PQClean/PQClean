@@ -25,7 +25,7 @@ int PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_signature(
 
 int PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_verify(
     const uint8_t *sig, size_t siglen,
-    const uint8_t *m, size_t mlen, 
+    const uint8_t *m, size_t mlen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t *pk);
 
@@ -37,7 +37,7 @@ int PQCLEAN_DILITHIUM3_AARCH64_crypto_sign(
 
 int PQCLEAN_DILITHIUM3_AARCH64_crypto_sign_open(
     uint8_t *m, size_t *mlen,
-    const uint8_t *sm, size_t smlen, 
+    const uint8_t *sm, size_t smlen,
     const uint8_t *ctx, size_t ctxlen,
     const uint8_t *pk);
 

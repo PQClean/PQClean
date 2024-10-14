@@ -125,7 +125,7 @@ int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen,const uint8_t *ctx, size_t ctxlen, const uint8_t *sk) {
+int PQCLEAN_DILITHIUM3_AVX2_crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *ctx, size_t ctxlen, const uint8_t *sk) {
     (void) ctx;
     (void) ctxlen;
     unsigned int i, n, pos;
