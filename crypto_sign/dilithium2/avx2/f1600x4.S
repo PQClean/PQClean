@@ -907,3 +907,5 @@ addq		$32, %rsi
 subq		$1, %rax
 jnz		looptop
 ret
+
+.section .note.GNU-stack,"",@progbits

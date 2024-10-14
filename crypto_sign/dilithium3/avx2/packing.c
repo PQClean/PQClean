@@ -3,6 +3,7 @@
 #include "poly.h"
 #include "polyvec.h"
 
+
 /*************************************************
 * Name:        PQCLEAN_DILITHIUM3_AVX2_pack_pk
 *
@@ -161,7 +162,7 @@ void PQCLEAN_DILITHIUM3_AVX2_unpack_sk(uint8_t rho[SEEDBYTES],
 * Description: Bit-pack signature sig = (c, z, h).
 *
 * Arguments:   - uint8_t sig[]: output byte array
-*              - const uint8_t *c: pointer to PQCLEAN_DILITHIUM3_AVX2_challenge hash length SEEDBYTES
+*              - const uint8_t *c: pointer to challenge hash length SEEDBYTES
 *              - const polyvecl *z: pointer to vector z
 *              - const polyveck *h: pointer to hint vector h
 **************************************************/
@@ -203,7 +204,7 @@ void PQCLEAN_DILITHIUM3_AVX2_pack_sig(uint8_t sig[PQCLEAN_DILITHIUM3_AVX2_CRYPTO
 *
 * Description: Unpack signature sig = (c, z, h).
 *
-* Arguments:   - uint8_t *c: pointer to output PQCLEAN_DILITHIUM3_AVX2_challenge hash
+* Arguments:   - uint8_t *c: pointer to output challenge hash
 *              - polyvecl *z: pointer to output vector z
 *              - polyveck *h: pointer to output hint vector h
 *              - const uint8_t sig[]: byte array containing

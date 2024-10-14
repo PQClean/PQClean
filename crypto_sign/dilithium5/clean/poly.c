@@ -13,7 +13,7 @@
 * Name:        PQCLEAN_DILITHIUM5_CLEAN_poly_reduce
 *
 * Description: Inplace reduction of all coefficients of polynomial to
-*              representative in [-6283009,6283007].
+*              representative in [-6283008,6283008].
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
 **************************************************/
@@ -337,7 +337,7 @@ static unsigned int rej_uniform(int32_t *a,
 *
 * Description: Sample polynomial with uniformly random coefficients
 *              in [0,Q-1] by performing rejection sampling on the
-*              output stream of SHAKE256(seed|nonce)
+*              output stream of SHAKE128(seed|nonce)
 *
 * Arguments:   - poly *a: pointer to output polynomial
 *              - const uint8_t seed[]: byte array with seed of length SEEDBYTES
@@ -468,23 +468,23 @@ void PQCLEAN_DILITHIUM5_CLEAN_poly_uniform_gamma1(poly *a,
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM5_CLEAN_challenge
+* Name:        challenge
 *
 * Description: Implementation of H. Samples polynomial with TAU nonzero
 *              coefficients in {-1,1} using the output stream of
 *              SHAKE256(seed).
 *
 * Arguments:   - poly *c: pointer to output polynomial
-*              - const uint8_t mu[]: byte array containing seed of length SEEDBYTES
+*              - const uint8_t mu[]: byte array containing seed of length CTILDEBYTES
 **************************************************/
-void PQCLEAN_DILITHIUM5_CLEAN_poly_challenge(poly *c, const uint8_t seed[SEEDBYTES]) {
+void PQCLEAN_DILITHIUM5_CLEAN_poly_challenge(poly *c, const uint8_t seed[CTILDEBYTES]) {
     unsigned int i, b, pos;
     uint64_t signs;
     uint8_t buf[SHAKE256_RATE];
     shake256incctx state;
 
     shake256_inc_init(&state);
-    shake256_inc_absorb(&state, seed, SEEDBYTES);
+    shake256_inc_absorb(&state, seed, CTILDEBYTES);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(buf, sizeof buf, &state);
 
@@ -759,7 +759,7 @@ void PQCLEAN_DILITHIUM5_CLEAN_polyz_pack(uint8_t *r, const poly *a) {
         t[0] = GAMMA1 - a->coeffs[2 * i + 0];
         t[1] = GAMMA1 - a->coeffs[2 * i + 1];
 
-        r[5 * i + 0]  = (uint8_t) t[0];
+        r[5 * i + 0]  = (uint8_t) (t[0]);
         r[5 * i + 1]  = (uint8_t) (t[0] >> 8);
         r[5 * i + 2]  = (uint8_t) (t[0] >> 16);
         r[5 * i + 2] |= (uint8_t) (t[1] << 4);
@@ -792,7 +792,7 @@ void PQCLEAN_DILITHIUM5_CLEAN_polyz_unpack(poly *r, const uint8_t *a) {
         r->coeffs[2 * i + 1]  = a[5 * i + 2] >> 4;
         r->coeffs[2 * i + 1] |= (uint32_t)a[5 * i + 3] << 4;
         r->coeffs[2 * i + 1] |= (uint32_t)a[5 * i + 4] << 12;
-        r->coeffs[2 * i + 0] &= 0xFFFFF;
+        /* r->coeffs[2*i+1] &= 0xFFFFF; */ /* No effect, since we're anyway at 20 bits */
 
         r->coeffs[2 * i + 0] = GAMMA1 - r->coeffs[2 * i + 0];
         r->coeffs[2 * i + 1] = GAMMA1 - r->coeffs[2 * i + 1];

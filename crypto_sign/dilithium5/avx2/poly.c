@@ -23,7 +23,7 @@
 * Name:        PQCLEAN_DILITHIUM5_AVX2_poly_reduce
 *
 * Description: Inplace reduction of all coefficients of polynomial to
-*              representative in [-6283009,6283007]. Assumes input
+*              representative in [-6283009,6283008]. Assumes input
 *              coefficients to be at most 2^31 - 2^22 - 1 in absolute value.
 *
 * Arguments:   - poly *a: pointer to input/output polynomial
@@ -388,7 +388,6 @@ void PQCLEAN_DILITHIUM5_AVX2_poly_uniform(poly *a, const uint8_t seed[SEEDBYTES]
     stream128_state state;
     stream128_init(&state, seed, nonce);
     PQCLEAN_DILITHIUM5_AVX2_poly_uniform_preinit(a, &state);
-    stream128_release(&state);
 }
 
 void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_4x(poly *a0,
@@ -507,7 +506,6 @@ void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_eta(poly *a, const uint8_t seed[CRHBYT
     stream256_state state;
     stream256_init(&state, seed, nonce);
     PQCLEAN_DILITHIUM5_AVX2_poly_uniform_eta_preinit(a, &state);
-    stream256_release(&state);
 }
 
 void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_eta_4x(poly *a0,
@@ -632,25 +630,25 @@ void PQCLEAN_DILITHIUM5_AVX2_poly_uniform_gamma1_4x(poly *a0,
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM5_AVX2_challenge
+* Name:        challenge
 *
 * Description: Implementation of H. Samples polynomial with TAU nonzero
 *              coefficients in {-1,1} using the output stream of
 *              SHAKE256(seed).
 *
 * Arguments:   - poly *c: pointer to output polynomial
-*              - const uint8_t mu[]: byte array containing seed of length SEEDBYTES
+*              - const uint8_t mu[]: byte array containing seed of length CTILDEBYTES
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_poly_challenge(poly *restrict c, const uint8_t seed[SEEDBYTES]) {
+void PQCLEAN_DILITHIUM5_AVX2_poly_challenge(poly * restrict c, const uint8_t seed[CTILDEBYTES]) {
     unsigned int i, b, pos;
     uint64_t signs;
     ALIGNED_UINT8(SHAKE256_RATE) buf;
     shake256incctx state;
 
     shake256_inc_init(&state);
-    shake256_inc_absorb(&state, seed, SEEDBYTES);
+    shake256_inc_absorb(&state, seed, CTILDEBYTES);
     shake256_inc_finalize(&state);
-    shake256_inc_squeeze(buf.coeffs, SHAKE256_RATE, &state);
+    shake256_inc_squeeze(buf.coeffs, sizeof buf, &state);
 
     memcpy(&signs, buf.coeffs, 8);
     pos = 8;
@@ -659,7 +657,7 @@ void PQCLEAN_DILITHIUM5_AVX2_poly_challenge(poly *restrict c, const uint8_t seed
     for (i = N - TAU; i < N; ++i) {
         do {
             if (pos >= SHAKE256_RATE) {
-                shake256_inc_squeeze(buf.coeffs, SHAKE256_RATE, &state);
+                shake256_inc_squeeze(buf.coeffs, sizeof buf, &state);
                 pos = 0;
             }
 
@@ -682,7 +680,7 @@ void PQCLEAN_DILITHIUM5_AVX2_poly_challenge(poly *restrict c, const uint8_t seed
 *                            POLYETA_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const poly *restrict a) {
+void PQCLEAN_DILITHIUM5_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const poly * restrict a) {
     unsigned int i;
     uint8_t t[8];
     DBENCH_START();
@@ -713,7 +711,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const 
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyeta_unpack(poly *restrict r, const uint8_t a[POLYETA_PACKEDBYTES]) {
+void PQCLEAN_DILITHIUM5_AVX2_polyeta_unpack(poly * restrict r, const uint8_t a[POLYETA_PACKEDBYTES]) {
     unsigned int i;
     DBENCH_START();
 
@@ -750,7 +748,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyeta_unpack(poly *restrict r, const uint8_t a[PO
 *                            POLYT1_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyt1_pack(uint8_t r[POLYT1_PACKEDBYTES], const poly *restrict a) {
+void PQCLEAN_DILITHIUM5_AVX2_polyt1_pack(uint8_t r[POLYT1_PACKEDBYTES], const poly * restrict a) {
     unsigned int i;
     DBENCH_START();
 
@@ -774,7 +772,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyt1_pack(uint8_t r[POLYT1_PACKEDBYTES], const po
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyt1_unpack(poly *restrict r, const uint8_t a[POLYT1_PACKEDBYTES]) {
+void PQCLEAN_DILITHIUM5_AVX2_polyt1_unpack(poly * restrict r, const uint8_t a[POLYT1_PACKEDBYTES]) {
     unsigned int i;
     DBENCH_START();
 
@@ -797,7 +795,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyt1_unpack(poly *restrict r, const uint8_t a[POL
 *                            POLYT0_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const poly *restrict a) {
+void PQCLEAN_DILITHIUM5_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const poly * restrict a) {
     unsigned int i;
     uint32_t t[8];
     DBENCH_START();
@@ -845,7 +843,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const po
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyt0_unpack(poly *restrict r, const uint8_t a[POLYT0_PACKEDBYTES]) {
+void PQCLEAN_DILITHIUM5_AVX2_polyt0_unpack(poly * restrict r, const uint8_t a[POLYT0_PACKEDBYTES]) {
     unsigned int i;
     DBENCH_START();
 
@@ -909,7 +907,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyt0_unpack(poly *restrict r, const uint8_t a[POL
 *                            POLYZ_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly *restrict a) {
+void PQCLEAN_DILITHIUM5_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly * restrict a) {
     unsigned int i;
     uint32_t t[4];
     DBENCH_START();
@@ -938,7 +936,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyz_unpack(poly *restrict r, const uint8_t *a) {
+void PQCLEAN_DILITHIUM5_AVX2_polyz_unpack(poly * restrict r, const uint8_t *a) {
     unsigned int i;
     __m256i f;
     const __m256i shufbidx = _mm256_set_epi8(-1, 11, 10, 9, -1, 9, 8, 7, -1, 6, 5, 4, -1, 4, 3, 2,
@@ -971,7 +969,7 @@ void PQCLEAN_DILITHIUM5_AVX2_polyz_unpack(poly *restrict r, const uint8_t *a) {
 *                            POLYW1_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_DILITHIUM5_AVX2_polyw1_pack(uint8_t *r, const poly *restrict a) {
+void PQCLEAN_DILITHIUM5_AVX2_polyw1_pack(uint8_t *r, const poly * restrict a) {
     unsigned int i;
     __m256i f0, f1, f2, f3, f4, f5, f6, f7;
     const __m256i shift = _mm256_set1_epi16((16 << 8) + 1);

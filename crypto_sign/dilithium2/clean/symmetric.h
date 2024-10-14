@@ -4,6 +4,7 @@
 #include "params.h"
 #include <stdint.h>
 
+
 typedef shake128incctx stream128_state;
 typedef shake256incctx stream256_state;
 

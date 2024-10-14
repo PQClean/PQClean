@@ -203,3 +203,5 @@ cmp		$16,%eax
 jb _looptop2
 
 ret
+
+.section .note.GNU-stack,"",@progbits

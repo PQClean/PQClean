@@ -54,7 +54,9 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 
     /* Get randomness for rho, rhoprime and key */
     randombytes(seedbuf, SEEDBYTES);
-    shake256(seedbuf, 2 * SEEDBYTES + CRHBYTES, seedbuf, SEEDBYTES);
+    seedbuf[SEEDBYTES + 0] = K;
+    seedbuf[SEEDBYTES + 1] = L;
+    shake256(seedbuf, 2 * SEEDBYTES + CRHBYTES, seedbuf, SEEDBYTES + 2);
     rho = seedbuf;
     rhoprime = rho + SEEDBYTES;
     key = rhoprime + CRHBYTES;
@@ -104,7 +106,7 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature
+* Name:        crypto_sign_signature
 *
 * Description: Computes signature.
 *
@@ -112,11 +114,14 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 *              - size_t *siglen: pointer to output length of signature
 *              - uint8_t *m: pointer to message to be signed
 *              - size_t mlen: length of message
+*              - uint8_t *ctx: pointer to context string
+*              - size_t ctxlen: length of context string
 *              - uint8_t *sk: pointer to bit-packed secret key
 *
-* Returns 0 (success)
+* Returns 0 (success) or -1 (context string too long)
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
+int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature_ctx(uint8_t *sig, size_t *siglen, const uint8_t *m, size_t mlen,
+        const uint8_t *ctx, size_t ctxlen, const uint8_t *sk) {
     unsigned int i, n, pos;
     uint8_t seedbuf[2 * SEEDBYTES + TRBYTES + RNDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *rnd, *mu, *rhoprime;
@@ -132,6 +137,10 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(uint8_t *sig, size_t *siglen, 
     } tmpv;
     shake256incctx state;
 
+    if (ctxlen > 255) {
+        return -1;
+    }
+
     rho = seedbuf;
     tr = rho + SEEDBYTES;
     key = tr + TRBYTES;
@@ -140,15 +149,19 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(uint8_t *sig, size_t *siglen, 
     rhoprime = mu + CRHBYTES;
     PQCLEAN_DILITHIUM2_AVX2_unpack_sk(rho, tr, key, &t0, &s1, &s2, sk);
 
-    /* Compute CRH(tr, msg) */
+    /* Compute CRH(tr, 0, ctxlen, ctx, msg) */
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, tr, TRBYTES);
+    mu[0] = 0;
+    mu[1] = ctxlen;
+    shake256_inc_absorb(&state, mu, 2);
+    shake256_inc_absorb(&state, ctx, ctxlen);
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
     shake256_inc_ctx_release(&state);
 
-    memset(rnd, 0, RNDBYTES);
+    randombytes(rnd, RNDBYTES);
     shake256(rhoprime, CRHBYTES, key, SEEDBYTES + RNDBYTES + CRHBYTES);
 
     /* Expand matrix and transform vectors */
@@ -238,7 +251,7 @@ rej:
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM2_AVX2_crypto_sign
+* Name:        crypto_sign
 *
 * Description: Compute signed message.
 *
@@ -249,23 +262,27 @@ rej:
 *                               message
 *              - const uint8_t *m: pointer to message to be signed
 *              - size_t mlen: length of message
+*              - const uint8_t *ctx: pointer to context string
+*              - size_t ctxlen: length of context string
 *              - const uint8_t *sk: pointer to bit-packed secret key
 *
 * Returns 0 (success)
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *sk) {
+int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_ctx(uint8_t *sm, size_t *smlen, const uint8_t *m, size_t mlen, const uint8_t *ctx, size_t ctxlen,
+        const uint8_t *sk) {
     size_t i;
+    int ret;
 
     for (i = 0; i < mlen; ++i) {
         sm[PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES + mlen - 1 - i] = m[mlen - 1 - i];
     }
-    PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature(sm, smlen, sm + PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES, mlen, sk);
+    ret = PQCLEAN_DILITHIUM2_AVX2_crypto_sign_signature_ctx(sm, smlen, sm + PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES, mlen, ctx, ctxlen, sk);
     *smlen += mlen;
-    return 0;
+    return ret;
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify
+* Name:        crypto_sign_verify
 *
 * Description: Verifies signature.
 *
@@ -273,11 +290,14 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign(uint8_t *sm, size_t *smlen, const uint8_
 *              - size_t siglen: length of signature
 *              - const uint8_t *m: pointer to message
 *              - size_t mlen: length of message
+*              - const uint8_t *ctx: pointer to context string
+*              - size_t ctxlen: length of context string
 *              - const uint8_t *pk: pointer to bit-packed public key
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen, const uint8_t *pk) {
+int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify_ctx(const uint8_t *sig, size_t siglen, const uint8_t *m, size_t mlen,
+        const uint8_t *ctx, size_t ctxlen, const uint8_t *pk) {
     unsigned int i, j, pos = 0;
     /* PQCLEAN_DILITHIUM2_AVX2_polyw1_pack writes additional 14 bytes */
     ALIGNED_UINT8(K * POLYW1_PACKEDBYTES + 14) buf;
@@ -289,20 +309,24 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen
     poly c, w1, h;
     shake256incctx state;
 
-    if (siglen != PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES) {
+    if (ctxlen > 255 || siglen != PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES) {
         return -1;
     }
 
     /* Compute CRH(H(rho, t1), msg) */
-    shake256(mu, CRHBYTES, pk, PQCLEAN_DILITHIUM2_AVX2_CRYPTO_PUBLICKEYBYTES);
+    shake256(mu, TRBYTES, pk, PQCLEAN_DILITHIUM2_AVX2_CRYPTO_PUBLICKEYBYTES);
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, mu, CRHBYTES);
+    mu[0] = 0;
+    mu[1] = ctxlen;
+    shake256_inc_absorb(&state, mu, 2);
+    shake256_inc_absorb(&state, ctx, ctxlen);
     shake256_inc_absorb(&state, m, mlen);
     shake256_inc_finalize(&state);
     shake256_inc_squeeze(mu, CRHBYTES, &state);
     shake256_inc_ctx_release(&state);
 
-    /* Expand PQCLEAN_DILITHIUM2_AVX2_challenge */
+    /* Expand challenge */
     PQCLEAN_DILITHIUM2_AVX2_poly_challenge(&c, sig);
     PQCLEAN_DILITHIUM2_AVX2_poly_ntt(&c);
 
@@ -349,13 +373,12 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen
     }
 
     /* Extra indices are zero for strong unforgeability */
-    for (j = pos; j < OMEGA; ++j) {
+    for (j = pos; j < OMEGA; ++j)
         if (hint[j]) {
             return -1;
         }
-    }
 
-    /* Call random oracle and verify PQCLEAN_DILITHIUM2_AVX2_challenge */
+    /* Call random oracle and verify challenge */
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, mu, CRHBYTES);
     shake256_inc_absorb(&state, buf.coeffs, K * POLYW1_PACKEDBYTES);
@@ -367,12 +390,11 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen
             return -1;
         }
     }
-
     return 0;
 }
 
 /*************************************************
-* Name:        PQCLEAN_DILITHIUM2_AVX2_crypto_sign_open
+* Name:        crypto_sign_open
 *
 * Description: Verify signed message.
 *
@@ -381,11 +403,14 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(const uint8_t *sig, size_t siglen
 *              - size_t *mlen: pointer to output length of message
 *              - const uint8_t *sm: pointer to signed message
 *              - size_t smlen: length of signed message
+*              - const uint8_t *ctx: pointer to context string
+*              - size_t ctxlen: length of context string
 *              - const uint8_t *pk: pointer to bit-packed public key
 *
 * Returns 0 if signed message could be verified correctly and -1 otherwise
 **************************************************/
-int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_open(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen, const uint8_t *pk) {
+int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_open_ctx(uint8_t *m, size_t *mlen, const uint8_t *sm, size_t smlen,
+        const uint8_t *ctx, size_t ctxlen, const uint8_t *pk) {
     size_t i;
 
     if (smlen < PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES) {
@@ -393,7 +418,7 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_open(uint8_t *m, size_t *mlen, const uin
     }
 
     *mlen = smlen - PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES;
-    if (PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify(sm, PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES, sm + PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES, *mlen, pk)) {
+    if (PQCLEAN_DILITHIUM2_AVX2_crypto_sign_verify_ctx(sm, PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES, sm + PQCLEAN_DILITHIUM2_AVX2_CRYPTO_BYTES, *mlen, ctx, ctxlen, pk)) {
         goto badsig;
     } else {
         /* All good, copy msg, return 0 */
@@ -405,7 +430,7 @@ int PQCLEAN_DILITHIUM2_AVX2_crypto_sign_open(uint8_t *m, size_t *mlen, const uin
 
 badsig:
     /* Signature verification failed */
-    *mlen = -1;
+    *mlen = 0;
     for (i = 0; i < smlen; ++i) {
         m[i] = 0;
     }

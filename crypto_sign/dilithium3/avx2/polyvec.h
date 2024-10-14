@@ -49,7 +49,7 @@ int PQCLEAN_DILITHIUM3_AVX2_polyveck_chknorm(const polyveck *v, int32_t B);
 void PQCLEAN_DILITHIUM3_AVX2_polyveck_power2round(polyveck *v1, polyveck *v0, const polyveck *v);
 void PQCLEAN_DILITHIUM3_AVX2_polyveck_decompose(polyveck *v1, polyveck *v0, const polyveck *v);
 unsigned int PQCLEAN_DILITHIUM3_AVX2_polyveck_make_hint(uint8_t *hint, const polyveck *v0, const polyveck *v1);
-void PQCLEAN_DILITHIUM3_AVX2_polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h);
+void PQCLEAN_DILITHIUM3_AVX2_polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h);
 
 void PQCLEAN_DILITHIUM3_AVX2_polyveck_pack_w1(uint8_t r[K * POLYW1_PACKEDBYTES], const polyveck *w1);
 

@@ -24,7 +24,10 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyvecl_pointwise_acc_montgomery(poly *w,
         const polyvecl *u,
         const polyvecl *v);
 
+
 int PQCLEAN_DILITHIUM3_CLEAN_polyvecl_chknorm(const polyvecl *v, int32_t B);
+
+
 
 /* Vectors of polynomials of length K */
 typedef struct {
@@ -51,7 +54,7 @@ void PQCLEAN_DILITHIUM3_CLEAN_polyveck_decompose(polyveck *v1, polyveck *v0, con
 unsigned int PQCLEAN_DILITHIUM3_CLEAN_polyveck_make_hint(polyveck *h,
         const polyveck *v0,
         const polyveck *v1);
-void PQCLEAN_DILITHIUM3_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *u, const polyveck *h);
+void PQCLEAN_DILITHIUM3_CLEAN_polyveck_use_hint(polyveck *w, const polyveck *v, const polyveck *h);
 
 void PQCLEAN_DILITHIUM3_CLEAN_polyveck_pack_w1(uint8_t r[K * POLYW1_PACKEDBYTES], const polyveck *w1);
 

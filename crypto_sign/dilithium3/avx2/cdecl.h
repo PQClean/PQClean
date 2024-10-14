@@ -1,6 +1,8 @@
 #ifndef PQCLEAN_DILITHIUM3_AVX2_CDECL_H
 #define PQCLEAN_DILITHIUM3_AVX2_CDECL_H
 
+
+
 #define _8XQ          0
 #define _8XQINV       8
 #define _8XDIV_QINV  16
