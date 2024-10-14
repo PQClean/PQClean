@@ -639,7 +639,7 @@ void PQCLEAN_MLDSA87_AVX2_poly_uniform_gamma1_4x(poly *a0,
 * Arguments:   - poly *c: pointer to output polynomial
 *              - const uint8_t mu[]: byte array containing seed of length CTILDEBYTES
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_poly_challenge(poly * restrict c, const uint8_t seed[CTILDEBYTES]) {
+void PQCLEAN_MLDSA87_AVX2_poly_challenge(poly *restrict c, const uint8_t seed[CTILDEBYTES]) {
     unsigned int i, b, pos;
     uint64_t signs;
     ALIGNED_UINT8(SHAKE256_RATE) buf;
@@ -680,7 +680,7 @@ void PQCLEAN_MLDSA87_AVX2_poly_challenge(poly * restrict c, const uint8_t seed[C
 *                            POLYETA_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const poly * restrict a) {
+void PQCLEAN_MLDSA87_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const poly *restrict a) {
     unsigned int i;
     uint8_t t[8];
     DBENCH_START();
@@ -711,7 +711,7 @@ void PQCLEAN_MLDSA87_AVX2_polyeta_pack(uint8_t r[POLYETA_PACKEDBYTES], const pol
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyeta_unpack(poly * restrict r, const uint8_t a[POLYETA_PACKEDBYTES]) {
+void PQCLEAN_MLDSA87_AVX2_polyeta_unpack(poly *restrict r, const uint8_t a[POLYETA_PACKEDBYTES]) {
     unsigned int i;
     DBENCH_START();
 
@@ -748,7 +748,7 @@ void PQCLEAN_MLDSA87_AVX2_polyeta_unpack(poly * restrict r, const uint8_t a[POLY
 *                            POLYT1_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyt1_pack(uint8_t r[POLYT1_PACKEDBYTES], const poly * restrict a) {
+void PQCLEAN_MLDSA87_AVX2_polyt1_pack(uint8_t r[POLYT1_PACKEDBYTES], const poly *restrict a) {
     unsigned int i;
     DBENCH_START();
 
@@ -772,7 +772,7 @@ void PQCLEAN_MLDSA87_AVX2_polyt1_pack(uint8_t r[POLYT1_PACKEDBYTES], const poly 
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyt1_unpack(poly * restrict r, const uint8_t a[POLYT1_PACKEDBYTES]) {
+void PQCLEAN_MLDSA87_AVX2_polyt1_unpack(poly *restrict r, const uint8_t a[POLYT1_PACKEDBYTES]) {
     unsigned int i;
     DBENCH_START();
 
@@ -795,7 +795,7 @@ void PQCLEAN_MLDSA87_AVX2_polyt1_unpack(poly * restrict r, const uint8_t a[POLYT
 *                            POLYT0_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const poly * restrict a) {
+void PQCLEAN_MLDSA87_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const poly *restrict a) {
     unsigned int i;
     uint32_t t[8];
     DBENCH_START();
@@ -843,7 +843,7 @@ void PQCLEAN_MLDSA87_AVX2_polyt0_pack(uint8_t r[POLYT0_PACKEDBYTES], const poly 
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyt0_unpack(poly * restrict r, const uint8_t a[POLYT0_PACKEDBYTES]) {
+void PQCLEAN_MLDSA87_AVX2_polyt0_unpack(poly *restrict r, const uint8_t a[POLYT0_PACKEDBYTES]) {
     unsigned int i;
     DBENCH_START();
 
@@ -907,7 +907,7 @@ void PQCLEAN_MLDSA87_AVX2_polyt0_unpack(poly * restrict r, const uint8_t a[POLYT
 *                            POLYZ_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly * restrict a) {
+void PQCLEAN_MLDSA87_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly *restrict a) {
     unsigned int i;
     uint32_t t[4];
     DBENCH_START();
@@ -936,7 +936,7 @@ void PQCLEAN_MLDSA87_AVX2_polyz_pack(uint8_t r[POLYZ_PACKEDBYTES], const poly * 
 * Arguments:   - poly *r: pointer to output polynomial
 *              - const uint8_t *a: byte array with bit-packed polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyz_unpack(poly * restrict r, const uint8_t *a) {
+void PQCLEAN_MLDSA87_AVX2_polyz_unpack(poly *restrict r, const uint8_t *a) {
     unsigned int i;
     __m256i f;
     const __m256i shufbidx = _mm256_set_epi8(-1, 11, 10, 9, -1, 9, 8, 7, -1, 6, 5, 4, -1, 4, 3, 2,
@@ -969,7 +969,7 @@ void PQCLEAN_MLDSA87_AVX2_polyz_unpack(poly * restrict r, const uint8_t *a) {
 *                            POLYW1_PACKEDBYTES bytes
 *              - const poly *a: pointer to input polynomial
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_polyw1_pack(uint8_t *r, const poly * restrict a) {
+void PQCLEAN_MLDSA87_AVX2_polyw1_pack(uint8_t *r, const poly *restrict a) {
     unsigned int i;
     __m256i f0, f1, f2, f3, f4, f5, f6, f7;
     const __m256i shift = _mm256_set1_epi16((16 << 8) + 1);
