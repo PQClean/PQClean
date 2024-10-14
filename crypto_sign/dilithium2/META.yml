@@ -13,7 +13,7 @@ auxiliary-submitters:
   - Eike Kiltz
   - Tancrède Lepoint
   - Peter Schwabe
-  - Gregor Seiler 
+  - Gregor Seiler
   - Damien Stehlé
 implementations:
     - name: clean
