@@ -263,7 +263,7 @@ const uint8_t PQCLEAN_MLDSA44_AVX2_idxlut[256][8] = {
     { 0,  1,  2,  3,  4,  5,  6,  7}
 };
 
-unsigned int PQCLEAN_MLDSA44_AVX2_rej_uniform_avx(int32_t * restrict r, const uint8_t buf[REJ_UNIFORM_BUFLEN + 8]) {
+unsigned int PQCLEAN_MLDSA44_AVX2_rej_uniform_avx(int32_t *restrict r, const uint8_t buf[REJ_UNIFORM_BUFLEN + 8]) {
     unsigned int ctr, pos;
     uint32_t good;
     __m256i d, tmp;
@@ -310,7 +310,7 @@ unsigned int PQCLEAN_MLDSA44_AVX2_rej_uniform_avx(int32_t * restrict r, const ui
     return ctr;
 }
 
-unsigned int PQCLEAN_MLDSA44_AVX2_rej_eta_avx(int32_t * restrict r, const uint8_t buf[REJ_UNIFORM_ETA_BUFLEN]) {
+unsigned int PQCLEAN_MLDSA44_AVX2_rej_eta_avx(int32_t *restrict r, const uint8_t buf[REJ_UNIFORM_ETA_BUFLEN]) {
     unsigned int ctr, pos;
     uint32_t good;
     __m256i f0, f1, f2;

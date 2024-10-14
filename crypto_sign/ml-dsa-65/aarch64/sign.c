@@ -116,12 +116,12 @@ int crypto_sign_keypair(uint8_t *pk, uint8_t *sk) {
 * Returns 0 (success) or -1 (context string too long)
 **************************************************/
 int crypto_sign_signature_ctx(uint8_t *sig,
-                          size_t *siglen,
-                          const uint8_t *m,
-                          size_t mlen,
-                          const uint8_t *ctx,
-                          size_t ctxlen,
-                          const uint8_t *sk) {
+                              size_t *siglen,
+                              const uint8_t *m,
+                              size_t mlen,
+                              const uint8_t *ctx,
+                              size_t ctxlen,
+                              const uint8_t *sk) {
     unsigned int n;
     uint8_t seedbuf[2 * SEEDBYTES + TRBYTES + RNDBYTES + 2 * CRHBYTES];
     uint8_t *rho, *tr, *key, *mu, *rhoprime, *rnd;
@@ -247,12 +247,12 @@ rej:
 * Returns 0 (success) or -1 (context string too long)
 **************************************************/
 int crypto_sign_ctx(uint8_t *sm,
-                size_t *smlen,
-                const uint8_t *m,
-                size_t mlen,
-                const uint8_t *ctx,
-                size_t ctxlen,
-                const uint8_t *sk) {
+                    size_t *smlen,
+                    const uint8_t *m,
+                    size_t mlen,
+                    const uint8_t *ctx,
+                    size_t ctxlen,
+                    const uint8_t *sk) {
     int ret;
     size_t i;
 
@@ -278,12 +278,12 @@ int crypto_sign_ctx(uint8_t *sm,
 * Returns 0 if signature could be verified correctly and -1 otherwise
 **************************************************/
 int crypto_sign_verify_ctx(const uint8_t *sig,
-                       size_t siglen,
-                       const uint8_t *m,
-                       size_t mlen,
-                       const uint8_t *ctx,
-                       size_t ctxlen,
-                       const uint8_t *pk) {
+                           size_t siglen,
+                           const uint8_t *m,
+                           size_t mlen,
+                           const uint8_t *ctx,
+                           size_t ctxlen,
+                           const uint8_t *pk) {
     unsigned int i;
     uint8_t buf[K * POLYW1_PACKEDBYTES];
     uint8_t rho[SEEDBYTES];
@@ -372,12 +372,12 @@ int crypto_sign_verify_ctx(const uint8_t *sig,
 * Returns 0 if signed message could be verified correctly and -1 otherwise
 **************************************************/
 int crypto_sign_open_ctx(uint8_t *m,
-                     size_t *mlen,
-                     const uint8_t *sm,
-                     size_t smlen,
-                     const uint8_t *ctx,
-                     size_t ctxlen,
-                     const uint8_t *pk) {
+                         size_t *mlen,
+                         const uint8_t *sm,
+                         size_t smlen,
+                         const uint8_t *ctx,
+                         size_t ctxlen,
+                         const uint8_t *pk) {
     size_t i;
 
     if (smlen < DILITHIUM_CRYPTO_BYTES) {

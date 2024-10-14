@@ -95,7 +95,7 @@ void PQCLEAN_MLDSA87_AVX2_decompose_avx(__m256i *a1, __m256i *a0, const __m256i 
 *
 * Returns number of overflowing low bits
 **************************************************/
-unsigned int PQCLEAN_MLDSA87_AVX2_make_hint_avx(uint8_t hint[N], const __m256i * restrict a0, const __m256i * restrict a1) {
+unsigned int PQCLEAN_MLDSA87_AVX2_make_hint_avx(uint8_t hint[N], const __m256i *restrict a0, const __m256i *restrict a1) {
     unsigned int i, n = 0;
     __m256i f0, f1, g0, g1;
     uint32_t bad;
@@ -132,7 +132,7 @@ unsigned int PQCLEAN_MLDSA87_AVX2_make_hint_avx(uint8_t hint[N], const __m256i *
 *              - const __m256i *a: input array of length N/8 with hint bits
 *
 **************************************************/
-void PQCLEAN_MLDSA87_AVX2_use_hint_avx(__m256i *b, const __m256i *a, const __m256i * restrict hint) {
+void PQCLEAN_MLDSA87_AVX2_use_hint_avx(__m256i *b, const __m256i *a, const __m256i *restrict hint) {
     unsigned int i;
     __m256i a0[N / 8];
     __m256i f, g, h, t;
