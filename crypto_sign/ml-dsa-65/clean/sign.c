@@ -111,7 +111,7 @@ int PQCLEAN_MLDSA65_CLEAN_crypto_sign_signature_ctx(uint8_t *sig,
 
     /* Compute mu = CRH(tr, 0, ctxlen, ctx, msg) */
     mu[0] = 0;
-    mu[1] = ctxlen;
+    mu[1] = (uint8_t)ctxlen;
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, tr, TRBYTES);
     shake256_inc_absorb(&state, mu, 2);
@@ -280,7 +280,7 @@ int PQCLEAN_MLDSA65_CLEAN_crypto_sign_verify_ctx(const uint8_t *sig,
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, mu, TRBYTES);
     mu[0] = 0;
-    mu[1] = ctxlen;
+    mu[1] = (uint8_t)ctxlen;
     shake256_inc_absorb(&state, mu, 2);
     shake256_inc_absorb(&state, ctx, ctxlen);
     shake256_inc_absorb(&state, m, mlen);

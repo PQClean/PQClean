@@ -153,7 +153,7 @@ int PQCLEAN_MLDSA44_AVX2_crypto_sign_signature_ctx(uint8_t *sig, size_t *siglen,
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, tr, TRBYTES);
     mu[0] = 0;
-    mu[1] = ctxlen;
+    mu[1] = (uint8_t)ctxlen;
     shake256_inc_absorb(&state, mu, 2);
     shake256_inc_absorb(&state, ctx, ctxlen);
     shake256_inc_absorb(&state, m, mlen);
@@ -318,7 +318,7 @@ int PQCLEAN_MLDSA44_AVX2_crypto_sign_verify_ctx(const uint8_t *sig, size_t sigle
     shake256_inc_init(&state);
     shake256_inc_absorb(&state, mu, CRHBYTES);
     mu[0] = 0;
-    mu[1] = ctxlen;
+    mu[1] = (uint8_t)ctxlen;
     shake256_inc_absorb(&state, mu, 2);
     shake256_inc_absorb(&state, ctx, ctxlen);
     shake256_inc_absorb(&state, m, mlen);
