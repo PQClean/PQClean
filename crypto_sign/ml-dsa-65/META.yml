@@ -17,9 +17,9 @@ auxiliary-submitters:
   - Damien Stehlé
 implementations:
     - name: clean
-      version: https://github.com/pq-crystals/dilithium/commit/cbcd8753a43402885c90343cd6335fb54712cda1 via https://github.com/mkannwischer/package-pqclean/tree/826748b3ee7d0ef682a29a8916a39b774cb99387/dilithium
+      version: https://github.com/pq-crystals/dilithium/commit/cbcd8753a43402885c90343cd6335fb54712cda1 via https://github.com/mkannwischer/package-pqclean/tree/69049406ed50d83a792f2fa67f6c088dbd0e335e/dilithium
     - name: avx2
-      version: https://github.com/pq-crystals/dilithium/commit/cbcd8753a43402885c90343cd6335fb54712cda1 via https://github.com/mkannwischer/package-pqclean/tree/826748b3ee7d0ef682a29a8916a39b774cb99387/dilithium
+      version: https://github.com/pq-crystals/dilithium/commit/cbcd8753a43402885c90343cd6335fb54712cda1 via https://github.com/mkannwischer/package-pqclean/tree/69049406ed50d83a792f2fa67f6c088dbd0e335e/dilithium
       supported_platforms:
         - architecture: x86_64
           operating_systems:
