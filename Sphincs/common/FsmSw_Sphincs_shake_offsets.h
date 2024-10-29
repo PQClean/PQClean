@@ -44,7 +44,6 @@
 /* The start of the 4 byte field used to specify the node in the FORS or Merkle tree */
 #define FSMSW_SPHINCSSHAKE_OFFSET_TREE_INDEX 28
 
-#define FSMSW_SPHINCSSHAKE_SHAKE              1
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/

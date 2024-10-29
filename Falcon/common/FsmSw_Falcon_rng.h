@@ -20,7 +20,6 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -34,6 +33,8 @@
  * The unions with 'dummy_u64' are there to ensure proper alignment for 64-bit direct access. */
 typedef struct
 {
+    /* polyspace +2 MISRA2012:19.2 [Justified:]"The buffer and the remainder of the code require 
+    the use of the union keyword." */
     union
     {
         uint8 d[512]; /* MUST be 512, exactly */
@@ -42,6 +43,8 @@ typedef struct
 
     uint32 ptr;
 
+    /* polyspace +2 MISRA2012:19.2 [Justified:]"The buffer and the remainder of the code require 
+    the use of the union keyword." */
     union
     {
         uint8 d[256];

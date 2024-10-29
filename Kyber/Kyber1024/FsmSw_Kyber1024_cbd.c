@@ -18,9 +18,10 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Kyber1024_params.h"
 #include "FsmSw_Kyber1024_cbd.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -85,17 +86,17 @@ static void cbd2(poly1024 *r, const uint8 buf[2u * KYBER_N / 4u])
     uint32 t, d;
     sint16 a, b;
 
-    for (i = 0; i < KYBER_N / 8u; i++)
+    for (i = 0; i < (KYBER_N / 8u); i++)
     {
         t  = load32_littleendian(&buf[4u * i]);
         d  = t & 0x55555555u;
         d += (t >> 1u) & 0x55555555u;
 
-        for (j = 0; j < 8u; j++)
+        for (j = 0; (j < 8u); j++)
         {
-            a = (sint16)((uint16)((uint16)((d >> (4u * j + 0u))) & 0x3u));
-            b = (sint16)((uint16)((uint16)((d >> (4u * j + 2u))) & 0x3u));
-            r->coeffs[8u * i + j] = a - b;
+            a = (sint16)((uint16)((uint16)((d >> ((4u * j)))) & 0x3u));
+            b = (sint16)((uint16)((uint16)((d >> ((4u * j) + 2u))) & 0x3u));
+            r->coeffs[(8u * i) + j] = a - b;
         }
     }
 }

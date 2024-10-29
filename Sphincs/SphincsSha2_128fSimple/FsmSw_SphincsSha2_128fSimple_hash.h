@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_128fSimple_context.h"
 #include "FsmSw_SphincsSha2_128fSimple_params.h"
 
@@ -52,8 +52,6 @@ void FsmSw_SphincsSha2_128fSimple_gen_message_random(uint8 *R, const uint8 *sk_p
 void FsmSw_SphincsSha2_128fSimple_hash_message(uint8 *digest, uint64 *tree, uint32 *leaf_idx, const uint8 *R,
                                                const uint8 *pk, const uint8 *m, uint32 mlen,
                                                const sphincs_sha2_128f_ctx *ctx);
-
-void FsmSw_SphincsSha2_128fSimple_mgf1_256(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 
 void FsmSw_SphincsSha2_128fSimple_mgf1_512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 

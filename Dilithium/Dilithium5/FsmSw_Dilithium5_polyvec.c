@@ -18,10 +18,11 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Dilithium5_params.h"
 #include "FsmSw_Dilithium5_poly.h"
 #include "FsmSw_Dilithium5_polyvec.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -42,11 +43,32 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-
+static void FsmSw_Dilithium5_polyvecl_pointwise_acc_montgomery(poly_D5 *w, const polyvecl_D5 *u, const polyvecl_D5 *v);
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
+/***********************************************************************************************************************
+* Name:        FsmSw_Dilithium5_polyvecl_pointwise_acc_montgomery
+*
+* Description: Pointwise multiply vectors of polynomials of length L, multiply resulting vector by 2^{-32}
+*              and add (accumulate) polynomials in it. Input/output vectors are in NTT domain representation.
+*
+* Arguments:   - poly_D5 *w:           output polynomial
+*              - const polyvecl_D5 *u: pointer to first input vector
+*              - const polyvecl_D5 *v: pointer to second input vector
+***********************************************************************************************************************/
+static void FsmSw_Dilithium5_polyvecl_pointwise_acc_montgomery(poly_D5 *w, const polyvecl_D5 *u, const polyvecl_D5 *v)
+{
+    uint8 i;
+    poly_D5 t;
 
+    FsmSw_Dilithium5_poly_pointwise_montgomery(w, &u->vec[0], &v->vec[0]);
+    for (i = 1; i < L_DILITHIUM5; ++i)
+    {
+        FsmSw_Dilithium5_poly_pointwise_montgomery(&t, &u->vec[i], &v->vec[i]);
+        FsmSw_Dilithium5_poly_add(w, w, &t);
+    }
+}
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
@@ -104,10 +126,13 @@ void FsmSw_Dilithium5_polyvec_matrix_pointwise_montgomery(polyveck_D5 *t, const 
 void FsmSw_Dilithium5_polyvecl_uniform_eta(polyvecl_D5 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
     uint8 i;
+    /* nonce_temp is used to avoid modifying the input. */
+    uint16 nonce_temp = nonce;
 
     for (i = 0; i < L_DILITHIUM5; ++i)
     {
-        FsmSw_Dilithium5_poly_uniform_eta(&v->vec[i], seed, nonce++);
+        FsmSw_Dilithium5_poly_uniform_eta(&v->vec[i], seed, nonce_temp);
+        nonce_temp++;
     }
 }
 
@@ -126,7 +151,7 @@ void FsmSw_Dilithium5_polyvecl_uniform_gamma1(polyvecl_D5 *v, const uint8 seed[C
 
     for (i = 0; i < L_DILITHIUM5; ++i)
     {
-        FsmSw_Dilithium5_poly_uniform_gamma1(&v->vec[i], seed, (uint16) (L_DILITHIUM5 * nonce + i));
+        FsmSw_Dilithium5_poly_uniform_gamma1(&v->vec[i], seed, (uint16) ((L_DILITHIUM5 * nonce) + i));
     }
 }
 
@@ -221,29 +246,6 @@ void FsmSw_Dilithium5_polyvecl_pointwise_poly_montgomery(polyvecl_D5 *r, const p
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Dilithium5_polyvecl_pointwise_acc_montgomery
-*
-* Description: Pointwise multiply vectors of polynomials of length L, multiply resulting vector by 2^{-32}
-*              and add (accumulate) polynomials in it. Input/output vectors are in NTT domain representation.
-*
-* Arguments:   - poly_D5 *w:           output polynomial
-*              - const polyvecl_D5 *u: pointer to first input vector
-*              - const polyvecl_D5 *v: pointer to second input vector
-***********************************************************************************************************************/
-void FsmSw_Dilithium5_polyvecl_pointwise_acc_montgomery(poly_D5 *w, const polyvecl_D5 *u, const polyvecl_D5 *v)
-{
-    uint8 i;
-    poly_D5 t;
-
-    FsmSw_Dilithium5_poly_pointwise_montgomery(w, &u->vec[0], &v->vec[0]);
-    for (i = 1; i < L_DILITHIUM5; ++i)
-    {
-        FsmSw_Dilithium5_poly_pointwise_montgomery(&t, &u->vec[i], &v->vec[i]);
-        FsmSw_Dilithium5_poly_add(w, w, &t);
-    }
-}
-
-/***********************************************************************************************************************
 * Name:        FsmSw_Dilithium5_polyvecl_chknorm
 *
 * Description: Check infinity norm of polynomials in vector of length L.
@@ -258,15 +260,16 @@ void FsmSw_Dilithium5_polyvecl_pointwise_acc_montgomery(poly_D5 *w, const polyve
 sint8 FsmSw_Dilithium5_polyvecl_chknorm(const polyvecl_D5 *v, sint32 bound)
 {
     uint8 i;
+    sint8 retVal = 0;
 
     for (i = 0; i < L_DILITHIUM5; ++i)
     {
         if (0 < FsmSw_Dilithium5_poly_chknorm(&v->vec[i], bound)) {
-            return 1;
+            retVal = 1;
         }
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -281,10 +284,13 @@ sint8 FsmSw_Dilithium5_polyvecl_chknorm(const polyvecl_D5 *v, sint32 bound)
 void FsmSw_Dilithium5_polyveck_uniform_eta(polyveck_D5 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
     uint8 i;
+    /* nonce_temp is used to avoid modifying the input. */
+    uint16 nonce_temp = nonce;
 
     for (i = 0; i < K_DILITHIUM5; ++i)
     {
-        FsmSw_Dilithium5_poly_uniform_eta(&v->vec[i], seed, nonce++);
+        FsmSw_Dilithium5_poly_uniform_eta(&v->vec[i], seed, nonce_temp);
+        nonce_temp++;
     }
 }
 
@@ -448,16 +454,17 @@ void FsmSw_Dilithium5_polyveck_pointwise_poly_montgomery(polyveck_D5 *r, const p
 sint8 FsmSw_Dilithium5_polyveck_chknorm(const polyveck_D5 *v, sint32 bound)
 {
     uint8 i;
+    sint8 retVal = 0;
 
     for (i = 0; i < K_DILITHIUM5; ++i)
     {
         if (0 < FsmSw_Dilithium5_poly_chknorm(&v->vec[i], bound))
         {
-            return 1;
+            retVal = 1;
         }
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************

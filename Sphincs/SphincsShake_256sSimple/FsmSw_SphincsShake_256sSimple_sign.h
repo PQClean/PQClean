@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -41,19 +41,17 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-int FsmSw_SphincsShake_256sSimple_crypto_sign_seed_keypair(uint8 *pk, uint8 *sk, const uint8 *seed);
+sint8 FsmSw_SphincsShake_256sSimple_crypto_sign_keypair(uint8 *pk, uint8 *sk);
 
-int FsmSw_SphincsShake_256sSimple_crypto_sign_keypair(uint8 *pk, uint8 *sk);
-
-int FsmSw_SphincsShake_256sSimple_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen,
+sint8 FsmSw_SphincsShake_256sSimple_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen,
                                                        const uint8 *sk);
 
-int FsmSw_SphincsShake_256sSimple_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
+sint8 FsmSw_SphincsShake_256sSimple_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
                                                     const uint8 *pk);
 
-int FsmSw_SphincsShake_256sSimple_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk);
+sint8 FsmSw_SphincsShake_256sSimple_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk);
 
-int FsmSw_SphincsShake_256sSimple_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen,
+sint8 FsmSw_SphincsShake_256sSimple_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen,
                                                   const uint8 *pk);
 
 #endif /* FSMSW_SPHINCSSHAKE_256SSIMPLE_SIGN_H */

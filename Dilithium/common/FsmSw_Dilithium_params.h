@@ -31,7 +31,6 @@
 #define N_DILITHIUM                 256u
 #define Q_DILITHIUM                 8380417
 #define D_DILITHIUM                 13u
-#define ROOT_OF_UNITY_DILITHIUM     1753
 
 #define POLYT1_PACKEDBYTES_DILITHIUM  320u
 #define POLYT0_PACKEDBYTES_DILITHIUM  416u

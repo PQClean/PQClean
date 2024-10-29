@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_SphincsShake_192fSimple_context.h"
 #include "FsmSw_SphincsShake_192fSimple_params.h"
 
@@ -44,7 +44,7 @@
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
 void FsmSw_SphincsShake_192fSimple_merkle_sign(uint8 *sig, uint8 *root, const sphincs_shake_192f_ctx *ctx,
-                                               uint32 wots_addr[8], uint32 tree_addr[8], uint32 idx_leaf);
+                                               const uint32 wots_addr[8], uint32 tree_addr[8], uint32 idx_leaf);
 
 void FsmSw_SphincsShake_192fSimple_merkle_gen_root(uint8 *root, const sphincs_shake_192f_ctx *ctx);
 

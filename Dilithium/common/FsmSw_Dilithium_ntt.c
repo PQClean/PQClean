@@ -18,10 +18,10 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
+#include "FsmSw_Dilithium_ntt.h"
 #include "FsmSw_Dilithium_params.h"
 #include "FsmSw_Dilithium_reduce.h"
-#include "FsmSw_Dilithium_ntt.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -100,9 +100,10 @@ void FsmSw_Dilithium_ntt(sint32 a[N_DILITHIUM])
     {
         for (start = 0; start < N_DILITHIUM; start = j + len)
         {
-            zeta = FsmSw_Dilithium_zetas[++k];
+            k++;
+            zeta = FsmSw_Dilithium_zetas[k];
 
-            for (j = start; j < start + len; ++j)
+            for (j = start; j < (start + len); ++j)
             {
                 t = FsmSw_Dilithium_montgomery_reduce((sint64)zeta * a[j + len]);
                 a[j + len] = a[j] - t;
@@ -133,8 +134,9 @@ void FsmSw_Dilithium_invntt_tomont(sint32 a[N_DILITHIUM])
     {
         for (start = 0; start < N_DILITHIUM; start = j + len)
         {
-            zeta = -FsmSw_Dilithium_zetas[--k];
-            for (j = start; j < start + len; ++j)
+            k--;
+            zeta = -FsmSw_Dilithium_zetas[k];
+            for (j = start; j < (start + len); ++j)
             {
                 t = a[j];
                 a[j] = t + a[j + len];

@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_Fips202.h"
 #include "FsmSw_Kyber_params.h"
 
@@ -41,12 +41,6 @@ typedef shake128ctx xof_state;
 /**********************************************************************************************************************/
 /* MACROS                                                                                                             */
 /**********************************************************************************************************************/
-#define hash_h(OUT, IN, INBYTES) FsmSw_Fips202_sha3_256(OUT, IN, INBYTES)
-#define hash_g(OUT, IN, INBYTES) FsmSw_Fips202_sha3_512(OUT, IN, INBYTES)
-#define xof_absorb(STATE, SEED, X, Y) FsmSw_Kyber_shake128_absorb(STATE, SEED, X, Y)
-#define xof_squeezeblocks(OUT, OUTBLOCKS, STATE) FsmSw_Fips202_shake128_squeezeblocks(OUT, OUTBLOCKS, STATE)
-#define prf(OUT, OUTBYTES, KEY, NONCE) FsmSw_Kyber_shake256_prf(OUT, OUTBYTES, KEY, NONCE)
-#define kdf(OUT, IN, INBYTES) FsmSw_Fips202_shake256(OUT, KYBER_SSBYTES, IN, INBYTES)
 
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */

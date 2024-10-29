@@ -47,7 +47,6 @@
 /* The start of the 4 byte field used to specify the node in the FORS or Merkle tree */
 #define FSMSW_SPHINCSSHA2_OFFSET_TREE_INDEX  18
 
-#define FSMSW_SPHINCSSHA2_SHA2                1
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/

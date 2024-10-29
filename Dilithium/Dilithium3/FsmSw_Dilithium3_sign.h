@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_Dilithium3_params.h"
 #include "FsmSw_Dilithium3_poly.h"
 #include "FsmSw_Dilithium3_polyvec.h"

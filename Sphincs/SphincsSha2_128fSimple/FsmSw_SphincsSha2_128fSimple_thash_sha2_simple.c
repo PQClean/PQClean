@@ -63,15 +63,15 @@
 *              - const uint8                 *in:       t.b.d.
 *              -       uint32                 inblocks: t.b.d.
 *              - const sphincs_sha2_128f_ctx *ctx:      t.b.d.
-*              -       uint32                 addr[8]:  t.b.d.
+*              - const uint32                 addr[8]:  t.b.d.
 ***********************************************************************************************************************/
 void FsmSw_SphincsSha2_128fSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks, const sphincs_sha2_128f_ctx *ctx,
-                                        uint32 addr[8])
+                                        const uint32 addr[8])
 {
 
     uint8 outbuf[FSMSW_SPHINCS_SHA256_OUTPUT_BYTES];
     sha256ctx sha2_state;
-    uint8 buf[SPX_SHA256_ADDR_BYTES + FSMSW_SPHINCSSHA2_128FSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHA2_128FSIMPLE_N];
+    uint8 buf[SPX_SHA256_ADDR_BYTES + (FSMSW_SPHINCSSHA2_128FSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHA2_128FSIMPLE_N)];
 
     /* Retrieve precomputed state containing pub_seed */
     FsmSw_sha256_inc_ctx_clone(&sha2_state, &ctx->state_seeded);
@@ -80,6 +80,6 @@ void FsmSw_SphincsSha2_128fSimple_thash(uint8 *out, const uint8 *in, uint32 inbl
     FsmSw_CommonLib_memcpy(&buf[SPX_SHA256_ADDR_BYTES], in, inblocks * FSMSW_SPHINCSSHA2_128FSIMPLE_N);
 
     FsmSw_sha256_inc_finalize(outbuf, &sha2_state, buf, SPX_SHA256_ADDR_BYTES +
-                              inblocks * FSMSW_SPHINCSSHA2_128FSIMPLE_N);
+                              (inblocks * FSMSW_SPHINCSSHA2_128FSIMPLE_N));
     FsmSw_CommonLib_memcpy(out, outbuf, FSMSW_SPHINCSSHA2_128FSIMPLE_N);
 }

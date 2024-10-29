@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_Dilithium3_params.h"
 #include "FsmSw_Dilithium3_poly.h"
 
@@ -58,7 +58,6 @@ void FsmSw_Dilithium3_polyvecl_add(polyvecl_D3 *w, const polyvecl_D3 *u, const p
 void FsmSw_Dilithium3_polyvecl_ntt(polyvecl_D3 *v);
 void FsmSw_Dilithium3_polyvecl_invntt_tomont(polyvecl_D3 *v);
 void FsmSw_Dilithium3_polyvecl_pointwise_poly_montgomery(polyvecl_D3 *r, const poly_D3 *a, const polyvecl_D3 *v);
-void FsmSw_Dilithium3_polyvecl_pointwise_acc_montgomery(poly_D3 *w, const polyvecl_D3 *u, const polyvecl_D3 *v);
 sint8 FsmSw_Dilithium3_polyvecl_chknorm(const polyvecl_D3 *v, sint32 bound);
 void FsmSw_Dilithium3_polyveck_uniform_eta(polyveck_D3 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce);
 void FsmSw_Dilithium3_polyveck_reduce(polyveck_D3 *v);

@@ -20,18 +20,12 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_Kyber1024_params.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define FSMSW_KYBER1024_CRYPTO_SECRETKEYBYTES  KYBER1024_SECRETKEYBYTES
-#define FSMSW_KYBER1024_CRYPTO_PUBLICKEYBYTES  KYBER1024_PUBLICKEYBYTES
-#define FSMSW_KYBER1024_CRYPTO_CIPHERTEXTBYTES KYBER1024_CIPHERTEXTBYTES
-#define FSMSW_KYBER1024_CRYPTO_BYTES           KYBER_SSBYTES
-
-#define FSMSW_KYBER1024_CRYPTO_ALGNAME "Kyber1024"
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */

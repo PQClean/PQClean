@@ -46,41 +46,37 @@
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN1     (8u * FSMSW_SPHINCSSHAKE_128SSIMPLE_N / \
                                                           FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LOGW)
 
-/* FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN2 is floor(log(len_1 * (w - 1)) / log(w)) + 1; we precompute */
+/* FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN2 is floor(log(len_1 * (w - 1)) / log(w)) + 1 we precompute */
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN2      3u
 
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN           (FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN1 + \
                                                           FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN2)
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_BYTES         (FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_LEN * \
                                                           FSMSW_SPHINCSSHAKE_128SSIMPLE_N)
-#define FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_PK_BYTES       FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_BYTES
 
 /* Subtree size. */
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_TREE_HEIGHT        (FSMSW_SPHINCSSHAKE_128SSIMPLE_FULL_HEIGHT / \
                                                           FSMSW_SPHINCSSHAKE_128SSIMPLE_D)
 
 /* FORS parameters. */
-#define FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_MSG_BYTES    ((FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_HEIGHT * \
-                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_TREES + 7u) / 8u)
+#define FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_MSG_BYTES    (((FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_HEIGHT * \
+                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_TREES) + 7u) / 8u)
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_BYTES        ((FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_HEIGHT + 1u) * \
                                                           FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_TREES * \
                                                           FSMSW_SPHINCSSHAKE_128SSIMPLE_N)
-#define FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_PK_BYTES       FSMSW_SPHINCSSHAKE_128SSIMPLE_N
 
 /* Resulting SPX sizes. */
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_BYTES              (FSMSW_SPHINCSSHAKE_128SSIMPLE_N + \
                                                           FSMSW_SPHINCSSHAKE_128SSIMPLE_FORS_BYTES + \
-                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_D * \
-                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_BYTES +\
-                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_FULL_HEIGHT * \
-                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_N)
+                                                          (FSMSW_SPHINCSSHAKE_128SSIMPLE_D * \
+                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_WOTS_BYTES) +\
+                                                          (FSMSW_SPHINCSSHAKE_128SSIMPLE_FULL_HEIGHT * \
+                                                          FSMSW_SPHINCSSHAKE_128SSIMPLE_N))
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_PK_BYTES           (2u * FSMSW_SPHINCSSHAKE_128SSIMPLE_N)
+/* polyspace +2 MISRA2012:2.5 [Justified:]"This define is reserved for the future." */
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_SK_BYTES           (2u * FSMSW_SPHINCSSHAKE_128SSIMPLE_N + \
                                                                FSMSW_SPHINCSSHAKE_128SSIMPLE_PK_BYTES)
 
-#define FSMSW_SPHINCSSHAKE_128SSIMPLE_CRYPTO_SECRETKEYBYTES  FSMSW_SPHINCSSHAKE_128SSIMPLE_SK_BYTES
-#define FSMSW_SPHINCSSHAKE_128SSIMPLE_CRYPTO_PUBLICKEYBYTES  FSMSW_SPHINCSSHAKE_128SSIMPLE_PK_BYTES
-#define FSMSW_SPHINCSSHAKE_128SSIMPLE_CRYPTO_BYTES           FSMSW_SPHINCSSHAKE_128SSIMPLE_BYTES
 #define FSMSW_SPHINCSSHAKE_128SSIMPLE_CRYPTO_SEEDBYTES      (3u*FSMSW_SPHINCSSHAKE_128SSIMPLE_N)
 
 /* Defines for max array length */

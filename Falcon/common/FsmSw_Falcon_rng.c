@@ -27,6 +27,8 @@
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
+/* polyspace +2 MISRA2012:D4.9 [Justified:]"No refactoring of macros, as converting to, for example, 
+inline functions would not provide significant benefits." */
 #define QROUND(a, b, c, d)   { \
                                     state[a] += state[b]; \
                                     state[d] ^= state[a]; \
@@ -56,7 +58,7 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-void prng_refill(prng *p);
+static void prng_refill(prng *p);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
@@ -75,13 +77,15 @@ void prng_refill(prng *p);
 * Arguments:   - prng                   *p:   t.b.d.
 *
 ***********************************************************************************************************************/
-void prng_refill(prng *p)
+static void prng_refill(prng *p)
 {
     static const uint32 CW[] = {0x61707865, 0x3320646e, 0x79622d32, 0x6b206574};
 
     uint64 cc;
     uint32 u;
 
+    /* polyspace +4 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     /* State uses local endianness. Only the output bytes must be converted to little endian (if used on a
      * big-endian machine). */
     cc = *(uint64 *) ((void*)(&p->state.d[48]));
@@ -91,7 +95,7 @@ void prng_refill(prng *p)
       uint32 v;
       sint32 i;
 
-      FsmSw_CommonLib_memcpy(&state[0], CW, sizeof CW);
+      FsmSw_CommonLib_memcpy(&state[0], CW, sizeof(CW));
       FsmSw_CommonLib_memcpy(&state[4], p->state.d, 48);
       state[14] ^= (uint32) cc;
       state[15] ^= (uint32)(cc >> 32);
@@ -114,6 +118,8 @@ void prng_refill(prng *p)
 
       for (v = 4; v < 14u; v++)
       {
+          /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+          Ensured proper alignment and validity." */
           state[v] = state[v] + ((uint32 *) ((void*) p->state.d))[v - 4u];
       }
 
@@ -126,13 +132,15 @@ void prng_refill(prng *p)
       /* We mimic the interleaving that is used in the AVX2 implementation.*/
       for (v = 0; v < 16u; v++)
       {
-        p->buf.d[(u << 2) + (v << 5) + 0u] = (uint8) state[v];
+        p->buf.d[(u << 2) + (v << 5)] = (uint8) state[v];
         p->buf.d[(u << 2) + (v << 5) + 1u] = (uint8)(state[v] >> 8);
         p->buf.d[(u << 2) + (v << 5) + 2u] = (uint8)(state[v] >> 16);
         p->buf.d[(u << 2) + (v << 5) + 3u] = (uint8)(state[v] >> 24);
       }
     }
 
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     *(  (uint64*) ((void*)(&p->state.d[48]))  ) = cc;
 
     p->ptr = 0;
@@ -159,14 +167,16 @@ void FsmSw_Falcon_prng_init(prng *p, inner_shake256_context *src)
     sint32 i;
     uint32 w;
 
+    /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     uint32 *d32 = (uint32*) ((void*)p->state.d);
     uint64 *d64 = (uint64*) ((void*)p->state.d);
 
-    inner_shake256_extract(src, tmp, 56);
+    FsmSw_Fips202_shake256_inc_squeeze(tmp, 56, src);
 
     for (i = 0; i < 14; i++)
     {
-      w =    (uint32) tmp[((uint32)((uint32)i) << 2u) + 0u]
+      w =    (uint32) tmp[((uint32)((uint32)i) << 2u)]
           | ((uint32) tmp[((uint32)((uint32)i) << 2u) + 1u] << 8u)
           | ((uint32) tmp[((uint32)((uint32)i) << 2u) + 2u] << 16u)
           | ((uint32) tmp[((uint32)((uint32)i) << 2u) + 3u] << 24u);
@@ -194,22 +204,27 @@ void FsmSw_Falcon_prng_get_bytes(prng *p, void *dst, uint32 len)
     uint8 *buf;
     uint32 clen;
 
-    buf = dst;
-    while (len > 0u)
-    {
-      clen = (sizeof p->buf.d) - p->ptr;
+    /* len_temp is used to avoid modifying the input. */
+    uint32 len_temp = len;
 
-      if (clen > len)
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
+    buf = dst;
+    while (len_temp > 0u)
+    {
+      clen = (sizeof(p->buf.d)) - p->ptr;
+
+      if (clen > len_temp)
       {
-        clen = len;
+        clen = len_temp;
       }
 
       FsmSw_CommonLib_memcpy(buf, p->buf.d, clen);
       buf = &buf[clen];
-      len -= clen;
+      len_temp -= clen;
       p->ptr += clen;
 
-      if (p->ptr == sizeof p->buf.d)
+      if (p->ptr == sizeof(p->buf.d))
       {
         prng_refill(p);
       }
@@ -231,14 +246,14 @@ uint64 FsmSw_Falcon_prng_get_u64(prng *p)
   /* If there are less than 9 bytes in the buffer, we refill it. This means that we may drop the last few bytes, but
    * this allows for faster extraction code. Also, it means that we never leave an empty buffer. */
   u = p->ptr;
-  if (u >= (sizeof p->buf.d) - 9u)
+  if (u >= (sizeof(p->buf.d)) - 9u)
   {
     prng_refill(p);
     u = 0;
   }
   p->ptr = u + 8u;
 
-  return (uint64)((uint64) p->buf.d[u + 0u]
+  return (uint64)((uint64) p->buf.d[u]
       | ((uint64) p->buf.d[u + 1u] << 8)
       | ((uint64) p->buf.d[u + 2u] << 16)
       | ((uint64) p->buf.d[u + 3u] << 24)
@@ -260,8 +275,9 @@ uint32 FsmSw_Falcon_prng_get_u8(prng *p)
 {
   uint32 v;
 
-  v = p->buf.d[p->ptr++];
-  if (p->ptr == sizeof p->buf.d)
+  v = p->buf.d[p->ptr];
+  p->ptr++;
+  if (p->ptr == sizeof(p->buf.d))
   {
     prng_refill(p);
   }

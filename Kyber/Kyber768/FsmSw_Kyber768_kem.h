@@ -20,18 +20,12 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_Kyber768_params.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define FSMSW_KYBER768_CRYPTO_SECRETKEYBYTES  KYBER768_SECRETKEYBYTES
-#define FSMSW_KYBER768_CRYPTO_PUBLICKEYBYTES  KYBER768_PUBLICKEYBYTES
-#define FSMSW_KYBER768_CRYPTO_CIPHERTEXTBYTES KYBER768_CIPHERTEXTBYTES
-#define FSMSW_KYBER768_CRYPTO_BYTES           KYBER_SSBYTES
-
-#define FSMSW_KYBER768_CRYPTO_ALGNAME "Kyber768"
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */

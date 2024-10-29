@@ -57,6 +57,8 @@
 *
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:8.13 [Justified:]"For SHAKE256, there is no immediate reason to initialize at the start, 
+so this function is an empty operation." */
 void FsmSw_SphincsShake_256fSimple_initialize_hash_function(sphincs_shake_256f_ctx *ctx)
 {
     (void)ctx; /* Suppress an 'unused parameter' warning. */
@@ -71,6 +73,7 @@ void FsmSw_SphincsShake_256fSimple_initialize_hash_function(sphincs_shake_256f_c
 *
 *
 ***********************************************************************************************************************/
+/* polyspace +1 MISRA2012:8.13 [Justified:]"in case the hash function api is heap-based." */
 void FsmSw_SphincsShake_256fSimple_free_hash_function(sphincs_shake_256f_ctx *ctx)
 {
     (void)ctx;

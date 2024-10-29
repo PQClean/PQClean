@@ -18,7 +18,6 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_CommonLib.h"
 #include "FsmSw_Kyber_ntt.h"
 #include "FsmSw_Kyber_symmetric.h"
@@ -27,10 +26,14 @@
 #include "FsmSw_Kyber1024_polyvec.h"
 #include "FsmSw_Kyber1024_indcpa.h"
 
+#include "FsmSw_Types.h"
+
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define GEN_MATRIX_NBLOCKS ((12u*KYBER_N/8u*4096u/KYBER_Q + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
+/* polyspace +2 MISRA2012:2.2 [Justified:]"The function is used deeper in the code for crucial calculations 
+if the defines change, so it's not dead code." */
+#define GEN_MATRIX_NBLOCKS (((((12u*KYBER_N)/(8u*4096u))/KYBER_Q) + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
@@ -43,18 +46,16 @@
 /**********************************************************************************************************************/
 /* MACROS                                                                                                             */
 /**********************************************************************************************************************/
-#define gen_a(A,B)  FsmSw_Kyber1024_gen_matrix(A,B,0)
-#define gen_at(A,B) FsmSw_Kyber1024_gen_matrix(A,B,1)
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static void pack_pk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], polyvec1024 *pk, const uint8 seed[KYBER_SYMBYTES]);
+static void pack_pk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], const polyvec1024 *pk, const uint8 seed[KYBER_SYMBYTES]);
 static void unpack_pk(polyvec1024 *pk, uint8 seed[KYBER_SYMBYTES],
                       const uint8 packedpk[KYBER1024_INDCPA_PUBLICKEYBYTES]);
-static void pack_sk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], polyvec1024 *sk);
+static void pack_sk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], const polyvec1024 *sk);
 static void unpack_sk(polyvec1024 *sk, const uint8 packedsk[KYBER1024_INDCPA_SECRETKEYBYTES]);
-static void pack_ciphertext(uint8 r[KYBER1024_INDCPA_BYTES], polyvec1024 *b, poly1024 *v);
+static void pack_ciphertext(uint8 r[KYBER1024_INDCPA_BYTES], const polyvec1024 *b, const poly1024 *v);
 static void unpack_ciphertext(polyvec1024 *b, poly1024 *v, const uint8 c[KYBER1024_INDCPA_BYTES]);
 static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen);
 
@@ -69,10 +70,10 @@ static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen
 *              and the public seed used to generate the matrix A.
 *
 * Arguments:         uint8       *r:    pointer to the output serialized public key
-*                    polyvec1024 *pk:   pointer to the input public-key polyvec
+*              const polyvec1024 *pk:   pointer to the input public-key polyvec
 *              const uint8       *seed: pointer to the input public seed
 ***********************************************************************************************************************/
-static void pack_pk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], polyvec1024 *pk, const uint8 seed[KYBER_SYMBYTES])
+static void pack_pk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], const polyvec1024 *pk, const uint8 seed[KYBER_SYMBYTES])
 {
     uint32 i;
 
@@ -113,10 +114,10 @@ static void unpack_pk(polyvec1024 *pk,
 *
 * Description: Serialize the secret key
 *
-* Arguments:   - uint8       *r:  pointer to output serialized secret key
-*              - polyvec1024 *sk: pointer to input vector of polynomials (secret key)
+* Arguments:   -       uint8       *r:  pointer to output serialized secret key
+*              - const polyvec1024 *sk: pointer to input vector of polynomials (secret key)
 ***********************************************************************************************************************/
-static void pack_sk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], polyvec1024 *sk) 
+static void pack_sk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], const polyvec1024 *sk) 
 {
     FsmSw_Kyber1024_polyvec_tobytes(r, sk);
 }
@@ -141,11 +142,11 @@ static void unpack_sk(polyvec1024 *sk, const uint8 packedsk[KYBER1024_INDCPA_SEC
 *              compressed and serialized vector of polynomials b
 *              and the compressed and serialized polynomial v
 *
-* Arguments:   uint8    *r: pointer to the output serialized ciphertext
-*              poly1024 *b: pointer to the input vector of polynomials b
-*              poly1024 *v: pointer to the input polynomial v
+* Arguments:         uint8    *r: pointer to the output serialized ciphertext
+*              const poly1024 *b: pointer to the input vector of polynomials b
+*              const poly1024 *v: pointer to the input polynomial v
 ***********************************************************************************************************************/
-static void pack_ciphertext(uint8 r[KYBER1024_INDCPA_BYTES], polyvec1024 *b, poly1024 *v) 
+static void pack_ciphertext(uint8 r[KYBER1024_INDCPA_BYTES], const polyvec1024 *b, const poly1024 *v) 
 {
     FsmSw_Kyber1024_polyvec_compress(r, b);
     FsmSw_Kyber1024_poly_compress(&r[KYBER1024_POLYVECCOMPRESSEDBYTES], v);
@@ -185,22 +186,25 @@ static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen
     uint16 ctr, pos;
     uint16 val0, val1;
 
-    ctr = pos = 0;
+    ctr = 0;
+    pos = 0;
 
-    while (ctr < len && pos + 3u <= buflen)
+    while ((ctr < len) && ((pos + 3u) <= buflen))
     {
-        val0 = (((uint16)buf[pos + 0u] >> 0u) | ((uint16)buf[pos + 1u] << 8u)) & 0xFFFu;
-        val1 = (((uint16)buf[pos + 1u] >> 4u) | ((uint16)buf[pos + 2u] << 4u)) & 0xFFFu;
+        val0 = (((uint16)buf[pos] >> 0u) | ((uint16)buf[pos + 1u] << 8u)) & 0xFFFu;
+        val1 = (((uint16)buf[(pos + 1u)] >> 4u) | ((uint16)buf[pos + 2u] << 4u)) & 0xFFFu;
         pos  = pos + 3u;
 
         if (val0 < KYBER_Q)
         {
-            r[ctr++] = (sint16)val0;
+            r[ctr] = (sint16)val0;
+            ctr++;
         }
 
-        if (ctr < len && val1 < KYBER_Q)
+        if ((ctr < len) && (val1 < KYBER_Q))
         {
-            r[ctr++] = (sint16)val1;
+            r[ctr] = (sint16)val1;
+            ctr++;
         }
     }
 
@@ -222,12 +226,14 @@ static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen
 *              - const uint8       *seed:       pointer to input seed
 *              -       uint8        transposed: boolean deciding whether A or A^T is generated
 ***********************************************************************************************************************/
-// Not static for benchmarking
+/* polyspace +1 MISRA2012:8.7 [Justified:]"Not static for benchmarking */
 void FsmSw_Kyber1024_gen_matrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES], uint8 transposed)
 {
     uint8  i, j;
-    uint16 buflen, off, ctr, k;
-    uint8  buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES + 2u];
+    uint16 buflen, off, ctr;
+    /* polyspace +2 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
+    and therefore not dead code" */ 
+    uint8  buf[(GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES) + 2u];
     xof_state state;
 
     for (i = 0; i < KYBER1024_K; i++) 
@@ -236,25 +242,24 @@ void FsmSw_Kyber1024_gen_matrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES]
         {
             if (transposed > 0u)
             {
-                xof_absorb(&state, seed, i, j);
+                FsmSw_Kyber_shake128_absorb(&state, seed, i, j);
             }
             else
             {
-                xof_absorb(&state, seed, j, i);
+                FsmSw_Kyber_shake128_absorb(&state, seed, j, i);
             }
 
-            xof_squeezeblocks(buf, GEN_MATRIX_NBLOCKS, &state);
+            FsmSw_Fips202_shake128_squeezeblocks(buf, GEN_MATRIX_NBLOCKS, &state);
+            /* polyspace +2 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
+             and therefore not dead code" */ 
             buflen = GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES;
             ctr = rej_uniform(a[i].vec[j].coeffs, KYBER_N, buf, buflen);
 
             while (ctr < KYBER_N)
             {
                 off = buflen % 3u;
-                for (k = 0; k < off; k++)
-                {
-                    buf[k] = buf[buflen - off + k];
-                }
-                xof_squeezeblocks(&buf[off], 1u, &state);
+
+                FsmSw_Fips202_shake128_squeezeblocks(&buf[off], 1u, &state);
                 buflen = off + XOF_BLOCKBYTES;
                 ctr = ctr + (rej_uniform(&(a[i].vec[j].coeffs[ctr]), KYBER_N - ctr, buf, buflen));
             }
@@ -283,18 +288,20 @@ void FsmSw_Kyber1024_indcpa_keypair(uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES],
     polyvec1024 a[KYBER1024_K], e, pkpv, skpv;
 
     (void)FsmSw_CommonLib_randombytes(buf, KYBER_SYMBYTES);
-    hash_g(buf, buf, KYBER_SYMBYTES);
+    FsmSw_Fips202_sha3_512(buf, buf, KYBER_SYMBYTES);
 
-    gen_a(a, publicseed);
+    FsmSw_Kyber1024_gen_matrix(a, publicseed, 0);
 
     for (i = 0; i < KYBER1024_K; i++)
     {
-        FsmSw_Kyber1024_poly_getnoise_eta1(&skpv.vec[i], noiseseed, nonce++);
+        FsmSw_Kyber1024_poly_getnoise_eta1(&skpv.vec[i], noiseseed, nonce);
+        nonce++;
     }
 
     for (i = 0; i < KYBER1024_K; i++)
     {
-        FsmSw_Kyber1024_poly_getnoise_eta1(&e.vec[i], noiseseed, nonce++);
+        FsmSw_Kyber1024_poly_getnoise_eta1(&e.vec[i], noiseseed, nonce);
+        nonce++;
     }
 
     FsmSw_Kyber1024_polyvec_ntt(&skpv);
@@ -340,16 +347,18 @@ void FsmSw_Kyber1024_indcpa_enc(      uint8 c[KYBER1024_INDCPA_BYTES],
 
     unpack_pk(&pkpv, seed, pk);
     FsmSw_Kyber1024_poly_frommsg(&k, m);
-    gen_at(at, seed);
+    FsmSw_Kyber1024_gen_matrix(at, seed, 1);
 
     for (i = 0; i < KYBER1024_K; i++)
     {
-        FsmSw_Kyber1024_poly_getnoise_eta1(&(sp.vec[i]), coins, nonce++);
+        FsmSw_Kyber1024_poly_getnoise_eta1(&(sp.vec[i]), coins, nonce);
+        nonce++;
     }
 
     for (i = 0; i < KYBER1024_K; i++)
     {
-        FsmSw_Kyber1024_poly_getnoise_eta2(&(ep.vec[i]), coins, nonce++);
+        FsmSw_Kyber1024_poly_getnoise_eta2(&(ep.vec[i]), coins, nonce);
+        nonce++;
     }
 
     FsmSw_Kyber1024_poly_getnoise_eta2(&epp, coins, nonce);

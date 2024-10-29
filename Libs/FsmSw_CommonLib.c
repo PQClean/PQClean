@@ -56,6 +56,8 @@ static uint32 iav_commonlib_rand(void);
 ***********************************************************************************************************************/
 static uint8 iav_commonlib_rand_byte(void)
 {
+    /* polyspace +2 MISRA2012:D1.1 [Justified:]"Generates a random byte. Float conversion is acceptable 
+    due to randomness and planned future replacement of the function." */
     return (uint8)((float32)(256.0f * ((float32)((float32)iav_commonlib_rand()/32768.0f))));
 }
 
@@ -69,7 +71,7 @@ static uint8 iav_commonlib_rand_byte(void)
 ***********************************************************************************************************************/
 static uint32 iav_commonlib_rand(void)
 {
-    next = next * 1103515245u + 12345u;
+    next = (next * 1103515245u) + 12345u;
     return( (uint32)(next/65536u) & (32768u - 1u));
 
 }
@@ -90,6 +92,8 @@ static uint32 iav_commonlib_rand(void)
 void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
 {
     uint32 i;
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;
     const uint8* srcPtr  = (const uint8*)src;
 
@@ -112,6 +116,8 @@ void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
 void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
 {
     uint32 i;
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;
 
     for (i=0; i<n; i++)
@@ -134,18 +140,21 @@ void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
 uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
 {
     uint32 i;
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;
     const uint8* srcPtr  = (const uint8*)src;
+    uint8 retVal = 0;
 
     for (i=0; i<n; i++)
     {
         if (destPtr[i] != srcPtr[i])
         {
-            return 1;
+            retVal = 1;
         }
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -161,6 +170,8 @@ uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
 void FsmSw_CommonLib_memmove(void *dest, const void * src,  const uint32 n)
 {
     sint32 i;
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;
     const uint8* srcPtr  = (const uint8*)src;
 

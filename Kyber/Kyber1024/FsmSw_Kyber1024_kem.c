@@ -18,13 +18,14 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_CommonLib.h"
 #include "FsmSw_Kyber_symmetric.h"
 #include "FsmSw_Kyber_verify.h"
 #include "FsmSw_Kyber1024_params.h"
 #include "FsmSw_Kyber1024_indcpa.h"
 #include "FsmSw_Kyber1024_kem.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -75,7 +76,7 @@ uint8 FsmSw_Kyber1024_crypto_kem_keypair(uint8 *pk, uint8 *sk)
         sk[i + KYBER1024_INDCPA_SECRETKEYBYTES] = pk[i];
     }
 
-    hash_h(&sk[KYBER1024_SECRETKEYBYTES - (2u * KYBER_SYMBYTES)], pk, KYBER1024_PUBLICKEYBYTES);
+    FsmSw_Fips202_sha3_256(&sk[KYBER1024_SECRETKEYBYTES - (2u * KYBER_SYMBYTES)], pk, KYBER1024_PUBLICKEYBYTES);
 
     /* Value z for pseudo-random output on reject */
     (void)FsmSw_CommonLib_randombytes(&sk[KYBER1024_SECRETKEYBYTES - KYBER_SYMBYTES], KYBER_SYMBYTES);
@@ -103,19 +104,19 @@ uint8 FsmSw_Kyber1024_crypto_kem_enc(uint8 *ct, uint8 *ss, const uint8 *pk)
 
     (void)FsmSw_CommonLib_randombytes(buf, KYBER_SYMBYTES);
     /* Don't release system RNG output */
-    hash_h(buf, buf, KYBER_SYMBYTES);
+    FsmSw_Fips202_sha3_256(buf, buf, KYBER_SYMBYTES);
 
     /* Multitarget countermeasure for coins + contributory KEM */
-    hash_h(&buf[KYBER_SYMBYTES], pk, KYBER1024_PUBLICKEYBYTES);
-    hash_g(kr, buf, 2u * KYBER_SYMBYTES);
+    FsmSw_Fips202_sha3_256(&buf[KYBER_SYMBYTES], pk, KYBER1024_PUBLICKEYBYTES);
+    FsmSw_Fips202_sha3_512(kr, buf, 2u * KYBER_SYMBYTES);
 
     /* coins are in kr+KYBER_SYMBYTES */
     FsmSw_Kyber1024_indcpa_enc(ct, buf, pk, &kr[KYBER_SYMBYTES]);
 
     /* overwrite coins in kr with H(c) */
-    hash_h(&kr[KYBER_SYMBYTES], ct, KYBER1024_CIPHERTEXTBYTES);
+    FsmSw_Fips202_sha3_256(&kr[KYBER_SYMBYTES], ct, KYBER1024_CIPHERTEXTBYTES);
     /* hash concatenation of pre-k and H(c) to k */
-    kdf(ss, kr, 2u * KYBER_SYMBYTES);
+    FsmSw_Fips202_shake256(ss, KYBER_SSBYTES, kr, 2u * KYBER_SYMBYTES);
 
     return 0;
 }
@@ -149,10 +150,10 @@ uint8 FsmSw_Kyber1024_crypto_kem_dec(uint8 *ss, const uint8 *ct, const uint8 *sk
     /* Multitarget countermeasure for coins + contributory KEM */
     for (i = 0; i < KYBER_SYMBYTES; i++)
     {
-        buf[KYBER_SYMBYTES + i] = sk[KYBER1024_SECRETKEYBYTES - 2u * KYBER_SYMBYTES + i];
+        buf[KYBER_SYMBYTES + i] = sk[KYBER1024_SECRETKEYBYTES - (2u * KYBER_SYMBYTES) + i];
     }
 
-    hash_g(kr, buf, 2u * KYBER_SYMBYTES);
+    FsmSw_Fips202_sha3_512(kr, buf, 2u * KYBER_SYMBYTES);
 
     /* coins are in kr+KYBER_SYMBYTES */
     FsmSw_Kyber1024_indcpa_enc(cmp, buf, pk, &kr[KYBER_SYMBYTES]);
@@ -160,13 +161,13 @@ uint8 FsmSw_Kyber1024_crypto_kem_dec(uint8 *ss, const uint8 *ct, const uint8 *sk
     fail = FsmSw_Kyber_verify(ct, cmp, KYBER1024_CIPHERTEXTBYTES);
 
     /* overwrite coins in kr with H(c) */
-    hash_h(&kr[KYBER_SYMBYTES], ct, KYBER1024_CIPHERTEXTBYTES);
+    FsmSw_Fips202_sha3_256(&kr[KYBER_SYMBYTES], ct, KYBER1024_CIPHERTEXTBYTES);
 
     /* Overwrite pre-k with z on re-encryption failure */
     FsmSw_Kyber_cmov(kr, &sk[KYBER1024_SECRETKEYBYTES - KYBER_SYMBYTES], KYBER_SYMBYTES, fail);
 
     /* hash concatenation of pre-k and H(c) to k */
-    kdf(ss, kr, 2u * KYBER_SYMBYTES);
+    FsmSw_Fips202_shake256(ss, KYBER_SSBYTES, kr, 2u * KYBER_SYMBYTES);
 
     return 0;
 }

@@ -14,8 +14,10 @@
 *  $Rev$
 *
 ***********************************************************************************************************************/
-/* Based on the public domain implementation in crypto_hash/FsmSw_sha512/ref/ from http://bench.cr.yp.to/supercop.html
- * by D. J. Bernstein */
+/* Based on the public domain implementation in crypto_hash/FsmSw_sha512/ref/ from */ 
+/* polyspace +1 MISRA2012:3.1 [Justified:]"The comment is a link and therefore contains a slash" */
+/* http://bench.cr.yp.to/supercop.html */
+/* by D. J. Bernstein */
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
@@ -25,6 +27,8 @@
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
+/* polyspace +80 MISRA2012:D4.9 [Justified:]"No refactoring of macros, as converting to, for example, 
+inline functions would not provide significant benefits." */
 #define SHR(x, c) ((x) >> (c))
 #define ROTR_32(x, c) (((x) >> (c)) | ((x) << (32 - (c))))
 #define ROTR_64(x, c) (((x) >> (c)) | ((x) << (64 - (c))))
@@ -161,6 +165,10 @@ static uint32 load_bigendian_32(const uint8 *x);
 static uint64 load_bigendian_64(const uint8 *x);
 static void store_bigendian_32(uint8 *x, uint64 u);
 static void store_bigendian_64(uint8 *x, uint64 u);
+static void FsmSw_sha224_inc_init(sha224ctx *state);
+static void FsmSw_sha384_inc_init(sha384ctx *state);
+static void FsmSw_sha224_inc_finalize(uint8 *out, sha224ctx *state, const uint8 *in, uint32 inlen);
+static void FsmSw_sha384_inc_finalize(uint8 *out, sha384ctx *state, const uint8 *in, uint32 inlen);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
@@ -189,6 +197,10 @@ static uint32 crypto_hashblocks_sha256(uint8 *statebytes, const uint8 *in, uint3
     uint32 T1;
     uint32 T2;
 
+    /* in_temp and inlen_temp are used to avoid modifying the input. */
+    const uint8 *in_temp = in;
+    uint32 inlen_temp = inlen;
+
     a = load_bigendian_32(&statebytes[0]);
     state[0] = a;
     b = load_bigendian_32(&statebytes[4]);
@@ -206,24 +218,24 @@ static uint32 crypto_hashblocks_sha256(uint8 *statebytes, const uint8 *in, uint3
     h = load_bigendian_32(&statebytes[28]);
     state[7] = h;
 
-    while (inlen >= 64u)
+    while (inlen_temp >= 64u)
     {
-        uint32 w0  = load_bigendian_32(&in[0]);
-        uint32 w1  = load_bigendian_32(&in[4]);
-        uint32 w2  = load_bigendian_32(&in[8]);
-        uint32 w3  = load_bigendian_32(&in[12]);
-        uint32 w4  = load_bigendian_32(&in[16]);
-        uint32 w5  = load_bigendian_32(&in[20]);
-        uint32 w6  = load_bigendian_32(&in[24]);
-        uint32 w7  = load_bigendian_32(&in[28]);
-        uint32 w8  = load_bigendian_32(&in[32]);
-        uint32 w9  = load_bigendian_32(&in[36]);
-        uint32 w10 = load_bigendian_32(&in[40]);
-        uint32 w11 = load_bigendian_32(&in[44]);
-        uint32 w12 = load_bigendian_32(&in[48]);
-        uint32 w13 = load_bigendian_32(&in[52]);
-        uint32 w14 = load_bigendian_32(&in[56]);
-        uint32 w15 = load_bigendian_32(&in[60]);
+        uint32 w0  = load_bigendian_32(&in_temp[0]);
+        uint32 w1  = load_bigendian_32(&in_temp[4]);
+        uint32 w2  = load_bigendian_32(&in_temp[8]);
+        uint32 w3  = load_bigendian_32(&in_temp[12]);
+        uint32 w4  = load_bigendian_32(&in_temp[16]);
+        uint32 w5  = load_bigendian_32(&in_temp[20]);
+        uint32 w6  = load_bigendian_32(&in_temp[24]);
+        uint32 w7  = load_bigendian_32(&in_temp[28]);
+        uint32 w8  = load_bigendian_32(&in_temp[32]);
+        uint32 w9  = load_bigendian_32(&in_temp[36]);
+        uint32 w10 = load_bigendian_32(&in_temp[40]);
+        uint32 w11 = load_bigendian_32(&in_temp[44]);
+        uint32 w12 = load_bigendian_32(&in_temp[48]);
+        uint32 w13 = load_bigendian_32(&in_temp[52]);
+        uint32 w14 = load_bigendian_32(&in_temp[56]);
+        uint32 w15 = load_bigendian_32(&in_temp[60]);
 
         F_32(w0, 0x428a2f98u)
         F_32(w1, 0x71374491u)
@@ -317,8 +329,8 @@ static uint32 crypto_hashblocks_sha256(uint8 *statebytes, const uint8 *in, uint3
         state[6] = g;
         state[7] = h;
 
-        in = &in[64];
-        inlen = inlen - 64u;
+        in_temp = &in_temp[64];
+        inlen_temp = inlen_temp - 64u;
     }
 
     store_bigendian_32(&statebytes[0],  state[0]);
@@ -330,7 +342,7 @@ static uint32 crypto_hashblocks_sha256(uint8 *statebytes, const uint8 *in, uint3
     store_bigendian_32(&statebytes[24], state[6]);
     store_bigendian_32(&statebytes[28], state[7]);
 
-    return inlen;
+    return inlen_temp;
 }
 
 /***********************************************************************************************************************
@@ -343,6 +355,8 @@ static uint32 crypto_hashblocks_sha256(uint8 *statebytes, const uint8 *in, uint3
 *              -       uint32  inlen:      t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 CODE-METRICS:STMT [Justified:]"[Value: 926]More instructions are necessary 
+because the MISRA 17.8 warnings require temporary variables to be fixed." */
 static uint32 crypto_hashblocks_sha512(uint8 *statebytes, const uint8 *in, uint32 inlen)
 {
     uint64 state[8];
@@ -356,6 +370,10 @@ static uint32 crypto_hashblocks_sha512(uint8 *statebytes, const uint8 *in, uint3
     uint64 h;
     uint64 T1;
     uint64 T2;
+
+    /* in_temp and inlen_temp are used to avoid modifying the input. */
+    const uint8 *in_temp = in;
+    uint32 inlen_temp = inlen;
 
     a = load_bigendian_64(&statebytes[0]);
     state[0] = a;
@@ -374,24 +392,24 @@ static uint32 crypto_hashblocks_sha512(uint8 *statebytes, const uint8 *in, uint3
     h = load_bigendian_64(&statebytes[56]);
     state[7] = h;
 
-    while (inlen >= 128u)
+    while (inlen_temp >= 128u)
     {
-        uint64 w0  = load_bigendian_64(&in[0]);
-        uint64 w1  = load_bigendian_64(&in[8]);
-        uint64 w2  = load_bigendian_64(&in[16]);
-        uint64 w3  = load_bigendian_64(&in[24]);
-        uint64 w4  = load_bigendian_64(&in[32]);
-        uint64 w5  = load_bigendian_64(&in[40]);
-        uint64 w6  = load_bigendian_64(&in[48]);
-        uint64 w7  = load_bigendian_64(&in[56]);
-        uint64 w8  = load_bigendian_64(&in[64]);
-        uint64 w9  = load_bigendian_64(&in[72]);
-        uint64 w10 = load_bigendian_64(&in[80]);
-        uint64 w11 = load_bigendian_64(&in[88]);
-        uint64 w12 = load_bigendian_64(&in[96]);
-        uint64 w13 = load_bigendian_64(&in[104]);
-        uint64 w14 = load_bigendian_64(&in[112]);
-        uint64 w15 = load_bigendian_64(&in[120]);
+        uint64 w0  = load_bigendian_64(&in_temp[0]);
+        uint64 w1  = load_bigendian_64(&in_temp[8]);
+        uint64 w2  = load_bigendian_64(&in_temp[16]);
+        uint64 w3  = load_bigendian_64(&in_temp[24]);
+        uint64 w4  = load_bigendian_64(&in_temp[32]);
+        uint64 w5  = load_bigendian_64(&in_temp[40]);
+        uint64 w6  = load_bigendian_64(&in_temp[48]);
+        uint64 w7  = load_bigendian_64(&in_temp[56]);
+        uint64 w8  = load_bigendian_64(&in_temp[64]);
+        uint64 w9  = load_bigendian_64(&in_temp[72]);
+        uint64 w10 = load_bigendian_64(&in_temp[80]);
+        uint64 w11 = load_bigendian_64(&in_temp[88]);
+        uint64 w12 = load_bigendian_64(&in_temp[96]);
+        uint64 w13 = load_bigendian_64(&in_temp[104]);
+        uint64 w14 = load_bigendian_64(&in_temp[112]);
+        uint64 w15 = load_bigendian_64(&in_temp[120]);
 
         F_64(w0,  0x428a2f98d728ae22ULL)
         F_64(w1,  0x7137449123ef65cdULL)
@@ -504,8 +522,8 @@ static uint32 crypto_hashblocks_sha512(uint8 *statebytes, const uint8 *in, uint3
         state[6] = g;
         state[7] = h;
 
-        in = &in[128];
-        inlen = inlen - 128u;
+        in_temp = &in_temp[128];
+        inlen_temp = inlen_temp - 128u;
     }
 
     store_bigendian_64(&statebytes[0],  state[0]);
@@ -517,7 +535,7 @@ static uint32 crypto_hashblocks_sha512(uint8 *statebytes, const uint8 *in, uint3
     store_bigendian_64(&statebytes[48], state[6]);
     store_bigendian_64(&statebytes[56], state[7]);
 
-    return inlen;
+    return inlen_temp;
 }
 
 /***********************************************************************************************************************
@@ -561,13 +579,16 @@ static uint64 load_bigendian_64(const uint8 *x)
 ***********************************************************************************************************************/
 static void store_bigendian_32(uint8 *x, uint64 u)
 {
-    x[3] = (uint8) u;
-    u >>= 8;
-    x[2] = (uint8) u;
-    u >>= 8;
-    x[1] = (uint8) u;
-    u >>= 8;
-    x[0] = (uint8) u;
+    /* u_temp is used to avoid modifying the input. */
+    uint64 u_temp = u;
+
+    x[3] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[2] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[1] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[0] = (uint8) u_temp;
 }
 
 /***********************************************************************************************************************
@@ -581,26 +602,26 @@ static void store_bigendian_32(uint8 *x, uint64 u)
 ***********************************************************************************************************************/
 static void store_bigendian_64(uint8 *x, uint64 u)
 {
-    x[7] = (uint8) u;
-    u >>= 8;
-    x[6] = (uint8) u;
-    u >>= 8;
-    x[5] = (uint8) u;
-    u >>= 8;
-    x[4] = (uint8) u;
-    u >>= 8;
-    x[3] = (uint8) u;
-    u >>= 8;
-    x[2] = (uint8) u;
-    u >>= 8;
-    x[1] = (uint8) u;
-    u >>= 8;
-    x[0] = (uint8) u;
+    /* u_temp is used to avoid modifying the input. */
+    uint64 u_temp = u;
+
+    x[7] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[6] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[5] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[4] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[3] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[2] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[1] = (uint8) u_temp;
+    u_temp >>= 8;
+    x[0] = (uint8) u_temp;
 }
 
-/**********************************************************************************************************************/
-/* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
-/**********************************************************************************************************************/
 /***********************************************************************************************************************
 * Name:        FsmSw_sha224_inc_init
 *
@@ -609,31 +630,11 @@ static void store_bigendian_64(uint8 *x, uint64 u)
 * Arguments:   - sha224ctx *state: t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_sha224_inc_init(sha224ctx *state)
+static void FsmSw_sha224_inc_init(sha224ctx *state)
 {
     for (uint32 i = 0; i < 32u; ++i)
     {
         state->ctx[i] = iv_224[i];
-    }
-    for (uint32 i = 32; i < 40u; ++i)
-    {
-        state->ctx[i] = 0;
-    }
-}
-
-/***********************************************************************************************************************
-* Name:        FsmSw_sha256_inc_init
-*
-* Description: Initialize the incremental hashing API.
-*
-* Arguments:   - sha256ctx *state: t.b.d.
-*
-***********************************************************************************************************************/
-void FsmSw_sha256_inc_init(sha256ctx *state)
-{
-    for (uint32 i = 0; i < 32u; ++i)
-    {
-        state->ctx[i] = iv_256[i];
     }
     for (uint32 i = 32; i < 40u; ++i)
     {
@@ -649,13 +650,87 @@ void FsmSw_sha256_inc_init(sha256ctx *state)
 * Arguments:   - sha384ctx *state: t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_sha384_inc_init(sha384ctx *state)
+static void FsmSw_sha384_inc_init(sha384ctx *state)
 {
     for (uint32 i = 0; i < 64u; ++i)
     {
         state->ctx[i] = iv_384[i];
     }
     for (uint32 i = 64; i < 72u; ++i)
+    {
+        state->ctx[i] = 0;
+    }
+}
+
+/***********************************************************************************************************************
+* Name:        FsmSw_sha224_inc_finalize
+*
+* Description: Finalize and obtain the digest. If applicable, this function will free the memory associated with
+*              the sha224ctx.
+*
+* Arguments:   -       uint8     *out:   t.b.d.
+*              -       sha224ctx *state: t.b.d.
+*              - const uint8     *in:    t.b.d.
+*              -       uint32     inlen: t.b.d.
+*
+***********************************************************************************************************************/
+static void FsmSw_sha224_inc_finalize(uint8 *out, sha224ctx *state, const uint8 *in, uint32 inlen)
+{
+    uint8 tmp[32];
+
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
+    FsmSw_sha256_inc_finalize(tmp, (sha256ctx*)((void*)state), in, inlen);
+
+    for (uint32 i = 0; i < 28u; ++i)
+    {
+        out[i] = tmp[i];
+    }
+}
+
+/***********************************************************************************************************************
+* Name:        FsmSw_sha384_inc_finalize
+*
+* Description: Finalize and obtain the digest. If applicable, this function will free the memory associated with the
+*              sha384ctx.
+*
+* Arguments:   -       uint8     *out:   t.b.d.
+*              -       sha384ctx *state: t.b.d.
+*              - const uint8     *in:    t.b.d.
+*              -       uint32     inlen: t.b.d.
+*
+***********************************************************************************************************************/
+static void FsmSw_sha384_inc_finalize(uint8 *out, sha384ctx *state, const uint8 *in, uint32 inlen)
+{
+    uint8 tmp[64];
+
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
+    FsmSw_sha512_inc_finalize(tmp, (sha512ctx*)((void*)state), in, inlen);
+
+    for (uint32 i = 0; i < 48u; ++i)
+    {
+        out[i] = tmp[i];
+    }
+}
+/**********************************************************************************************************************/
+/* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
+/**********************************************************************************************************************/
+/***********************************************************************************************************************
+* Name:        FsmSw_sha256_inc_init
+*
+* Description: Initialize the incremental hashing API.
+*
+* Arguments:   - sha256ctx *state: t.b.d.
+*
+***********************************************************************************************************************/
+void FsmSw_sha256_inc_init(sha256ctx *state)
+{
+    for (uint32 i = 0; i < 32u; ++i)
+    {
+        state->ctx[i] = iv_256[i];
+    }
+    for (uint32 i = 32; i < 40u; ++i)
     {
         state->ctx[i] = 0;
     }
@@ -769,6 +844,8 @@ void FsmSw_sha256_inc_blocks(sha256ctx *state, const uint8 *in, uint32 inblocks)
 ***********************************************************************************************************************/
 void FsmSw_sha224_inc_blocks(sha224ctx *state, const uint8 *in, uint32 inblocks)
 {
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     FsmSw_sha256_inc_blocks((sha256ctx*)((void*)state), in, inblocks);
 }
 
@@ -804,6 +881,8 @@ void FsmSw_sha512_inc_blocks(sha512ctx *state, const uint8 *in, uint32 inblocks)
 ***********************************************************************************************************************/
 void FsmSw_sha384_inc_blocks(sha384ctx *state, const uint8 *in, uint32 inblocks)
 {
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     FsmSw_sha512_inc_blocks((sha512ctx*)((void*)state), in, inblocks);
 }
 
@@ -825,21 +904,25 @@ void FsmSw_sha256_inc_finalize(uint8 *out, sha256ctx *state, const uint8 *in, ui
     uint32 inlen_temp;
     uint64 bytes = load_bigendian_64(&state->ctx[32]) + inlen;
 
-    (void)crypto_hashblocks_sha256(state->ctx, in, inlen);
-    inlen_temp = inlen & 63u;
-    in = &in[(inlen - inlen_temp)];
+    /* in_temp and inlen_temp_input are used to avoid modifying the input. */
+    const uint8 *in_temp = in;
+    uint32 inlen_temp_input = inlen;
+
+    (void)crypto_hashblocks_sha256(state->ctx, in_temp, inlen_temp_input);
+    inlen_temp = inlen_temp_input & 63u;
+    in_temp = &in_temp[(inlen_temp_input - inlen_temp)];
     
-    inlen = inlen_temp;
+    inlen_temp_input = inlen_temp;
 
-    for (uint32 i = 0; i < inlen; ++i)
+    for (uint32 i = 0; i < inlen_temp_input; ++i)
     {
-        padded[i] = in[i];
+        padded[i] = in_temp[i];
     }
-    padded[inlen] = 0x80;
+    padded[inlen_temp_input] = 0x80;
 
-    if (inlen < 56u)
+    if (inlen_temp_input < 56u)
     {
-        for (uint32 i = inlen + 1u; i < 56u; ++i)
+        for (uint32 i = inlen_temp_input + 1u; i < 56u; ++i)
         {
             padded[i] = 0;
         }
@@ -855,7 +938,7 @@ void FsmSw_sha256_inc_finalize(uint8 *out, sha256ctx *state, const uint8 *in, ui
     }
     else
     {
-        for (uint32 i = inlen + 1u; i < 120u; ++i)
+        for (uint32 i = inlen_temp_input + 1u; i < 120u; ++i)
         {
             padded[i] = 0;
         }
@@ -877,30 +960,6 @@ void FsmSw_sha256_inc_finalize(uint8 *out, sha256ctx *state, const uint8 *in, ui
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_sha224_inc_finalize
-*
-* Description: Finalize and obtain the digest. If applicable, this function will free the memory associated with
-*              the sha224ctx.
-*
-* Arguments:   -       uint8     *out:   t.b.d.
-*              -       sha224ctx *state: t.b.d.
-*              - const uint8     *in:    t.b.d.
-*              -       uint32     inlen: t.b.d.
-*
-***********************************************************************************************************************/
-void FsmSw_sha224_inc_finalize(uint8 *out, sha224ctx *state, const uint8 *in, uint32 inlen)
-{
-    uint8 tmp[32];
-
-    FsmSw_sha256_inc_finalize(tmp, (sha256ctx*)((void*)state), in, inlen);
-
-    for (uint32 i = 0; i < 28u; ++i)
-    {
-        out[i] = tmp[i];
-    }
-}
-
-/***********************************************************************************************************************
 * Name:        FsmSw_sha512_inc_finalize
 *
 * Description: Finalize and obtain the digest. If applicable, this function will free the memory associated with the
@@ -918,21 +977,25 @@ void FsmSw_sha512_inc_finalize(uint8 *out, sha512ctx *state, const uint8 *in, ui
     uint32 inlen_temp;
     uint64 bytes = load_bigendian_64(&state->ctx[64]) + inlen;
 
-    (void)crypto_hashblocks_sha512(state->ctx, in, inlen);
-    inlen_temp = inlen & 127u;
-    in = &in[(inlen - inlen_temp)];
+    /* in_temp and inlen_temp_input are used to avoid modifying the input. */
+    const uint8 *in_temp = in;
+    uint32 inlen_temp_input = inlen;
+
+    (void)crypto_hashblocks_sha512(state->ctx, in_temp, inlen_temp_input);
+    inlen_temp = inlen_temp_input & 127u;
+    in_temp = &in_temp[(inlen_temp_input - inlen_temp)];
     
-    inlen = inlen_temp;
+    inlen_temp_input = inlen_temp;
 
-    for (uint32 i = 0; i < inlen; ++i)
+    for (uint32 i = 0; i < inlen_temp_input; ++i)
     {
-        padded[i] = in[i];
+        padded[i] = in_temp[i];
     }
-    padded[inlen] = 0x80;
+    padded[inlen_temp_input] = 0x80;
 
-    if (inlen < 112u)
+    if (inlen_temp_input < 112u)
     {
-        for (uint32 i = inlen + 1u; i < 119u; ++i)
+        for (uint32 i = inlen_temp_input + 1u; i < 119u; ++i)
         {
             padded[i] = 0;
         }
@@ -949,7 +1012,7 @@ void FsmSw_sha512_inc_finalize(uint8 *out, sha512ctx *state, const uint8 *in, ui
     }
     else
     {
-        for (uint32 i = inlen + 1u; i < 247u; ++i)
+        for (uint32 i = inlen_temp_input + 1u; i < 247u; ++i)
         {
             padded[i] = 0;
         }
@@ -968,30 +1031,6 @@ void FsmSw_sha512_inc_finalize(uint8 *out, sha512ctx *state, const uint8 *in, ui
     for (uint32 i = 0; i < 64u; ++i)
     {
         out[i] = state->ctx[i];
-    }
-}
-
-/***********************************************************************************************************************
-* Name:        FsmSw_sha384_inc_finalize
-*
-* Description: Finalize and obtain the digest. If applicable, this function will free the memory associated with the
-*              sha384ctx.
-*
-* Arguments:   -       uint8     *out:   t.b.d.
-*              -       sha384ctx *state: t.b.d.
-*              - const uint8     *in:    t.b.d.
-*              -       uint32     inlen: t.b.d.
-*
-***********************************************************************************************************************/
-void FsmSw_sha384_inc_finalize(uint8 *out, sha384ctx *state, const uint8 *in, uint32 inlen)
-{
-    uint8 tmp[64];
-
-    FsmSw_sha512_inc_finalize(tmp, (sha512ctx*)((void*)state), in, inlen);
-
-    for (uint32 i = 0; i < 48u; ++i)
-    {
-        out[i] = tmp[i];
     }
 }
 

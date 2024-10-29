@@ -82,7 +82,7 @@ static void gen_chain(uint8 *out, const uint8 *in, uint32 start, uint32 steps, c
     FsmSw_CommonLib_memcpy(out, in, FSMSW_SPHINCSSHA2_128FSIMPLE_N);
 
     /* Iterate 'steps' calls to the hash function. */
-    for (i = start; i < (start + steps) && i < FSMSW_SPHINCSSHA2_128FSIMPLE_WOTS_W; i++)
+    for (i = start; (i < (start + steps)) && (i < FSMSW_SPHINCSSHA2_128FSIMPLE_WOTS_W); i++)
     {
         FsmSw_SphincsSha2_set_hash_addr(addr, i);
         FsmSw_SphincsSha2_128fSimple_thash(out, out, 1, ctx, addr);
@@ -132,7 +132,7 @@ static void base_w(uint32 *output, sint32 out_len, const uint8 *input)
 static void wots_checksum(uint32 *csum_base_w, const uint32 *msg_base_w)
 {
     uint32 csum = 0;
-    uint8 csum_bytes[(FSMSW_SPHINCSSHA2_128FSIMPLE_WOTS_LEN2 * FSMSW_SPHINCSSHA2_128FSIMPLE_WOTS_LOGW + 7u) / 8u];
+    uint8 csum_bytes[((FSMSW_SPHINCSSHA2_128FSIMPLE_WOTS_LEN2 * FSMSW_SPHINCSSHA2_128FSIMPLE_WOTS_LOGW) + 7u) / 8u];
     uint32 i;
 
     /* Compute checksum. */

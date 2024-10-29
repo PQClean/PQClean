@@ -33,51 +33,51 @@
 /**********************************************************************************************************************/
 /* GLOBAL VARIABLES                                                                                                   */
 /**********************************************************************************************************************/
-static const fpr fpr_q              = 4667981563525332992;
-static const fpr fpr_inverse_of_q   = 4545632735260551042;
-static const fpr fpr_inv_2sqrsigma0 = 4594603506513722306;
+static const fpr fpr_q              = (uint64) 4667981563525332992;
+static const fpr fpr_inverse_of_q   = (uint64) 4545632735260551042;
+static const fpr fpr_inv_2sqrsigma0 = (uint64) 4594603506513722306;
 static const fpr fpr_inv_sigma[]    = {
-                                           0,  /* unused */
-                                           4574611497772390042,
-                                           4574501679055810265,
-                                           4574396282908341804,
-                                           4574245855758572086,
-                                           4574103865040221165,
-                                           4573969550563515544,
-                                           4573842244705920822,
-                                           4573721358406441454,
-                                           4573606369665796042,
-                                           4573496814039276259
+                                           (uint64) 0,  /* unused */
+                                           (uint64) 4574611497772390042,
+                                           (uint64) 4574501679055810265,
+                                           (uint64) 4574396282908341804,
+                                           (uint64) 4574245855758572086,
+                                           (uint64) 4574103865040221165,
+                                           (uint64) 4573969550563515544,
+                                           (uint64) 4573842244705920822,
+                                           (uint64) 4573721358406441454,
+                                           (uint64) 4573606369665796042,
+                                           (uint64) 4573496814039276259
                                        };
 static const fpr fpr_sigma_min[]     = {
-                                           0,  /* unused */
-                                           4607707126469777035,
-                                           4607777455861499430,
-                                           4607846828256951418,
-                                           4607949175006100261,
-                                           4608049571757433526,
-                                           4608148125896792003,
-                                           4608244935301382692,
-                                           4608340089478362016,
-                                           4608433670533905013,
-                                           4608525754002622308
+                                           (uint64) 0,  /* unused */
+                                           (uint64) 4607707126469777035,
+                                           (uint64) 4607777455861499430,
+                                           (uint64) 4607846828256951418,
+                                           (uint64) 4607949175006100261,
+                                           (uint64) 4608049571757433526,
+                                           (uint64) 4608148125896792003,
+                                           (uint64) 4608244935301382692,
+                                           (uint64) 4608340089478362016,
+                                           (uint64) 4608433670533905013,
+                                           (uint64) 4608525754002622308
                                        };
 
-static const fpr fpr_log2      = 4604418534313441775;
-static const fpr fpr_inv_log2  = 4609176140021203710;
-static const fpr fpr_bnorm_max = 4670353323383631276;
-static const fpr fpr_zero      = 0;
-static const fpr fpr_one       = 4607182418800017408;
-static const fpr fpr_two       = 4611686018427387904;
-static const fpr fpr_onehalf   = 4602678819172646912;
-static const fpr fpr_invsqrt2  = 4604544271217802189;
-static const fpr fpr_invsqrt8  = 4600040671590431693;
-static const fpr fpr_ptwo31    = 4746794007248502784;
-static const fpr fpr_ptwo31m1  = 4746794007244308480;
-static const fpr fpr_mtwo31m1  = 13970166044099084288U;
-static const fpr fpr_ptwo63m1  = 4890909195324358656;
-static const fpr fpr_mtwo63m1  = 14114281232179134464U;
-static const fpr fpr_ptwo63    = 4890909195324358656;
+static const fpr fpr_log2      = (uint64) 4604418534313441775;
+static const fpr fpr_inv_log2  = (uint64) 4609176140021203710;
+static const fpr fpr_bnorm_max = (uint64) 4670353323383631276;
+static const fpr fpr_zero      = (uint64) 0;
+static const fpr fpr_one       = (uint64) 4607182418800017408;
+static const fpr fpr_two       = (uint64) 4611686018427387904;
+static const fpr fpr_onehalf   = (uint64) 4602678819172646912;
+static const fpr fpr_invsqrt2  = (uint64) 4604544271217802189;
+static const fpr fpr_invsqrt8  = (uint64) 4600040671590431693;
+static const fpr fpr_ptwo31    = (uint64) 4746794007248502784;
+static const fpr fpr_ptwo31m1  = (uint64) 4746794007244308480;
+static const fpr fpr_mtwo31m1  = (uint64) 13970166044099084288U;
+static const fpr fpr_ptwo63m1  = (uint64) 4890909195324358656;
+static const fpr fpr_mtwo63m1  = (uint64) 14114281232179134464U;
+static const fpr fpr_ptwo63    = (uint64) 4890909195324358656;
 
 static const fpr fpr_gm_tab[]  = {
                                     0, 0, 9223372036854775808U, 4607182418800017408U,
@@ -803,7 +803,7 @@ uint64 FsmSw_Falcon_fpr_expm_p63(fpr x, fpr ccs);
 /* MISRA C 2012 rule 8.2 violation: [R] Function types shall be in prototype form with named parameters: We ignore
  * this MISRA finding because the constant values are used in other modules, but not in every module. The constants are
  * not moved to the modules where they are used, as the fpr is provided for this. */
-static inline void FsmSw_Falcon_TriCoreVXToolSet_CompilerWarning_IgnoreUnusedConst()
+static inline void FsmSw_Falcon_TriCoreVXToolSet_CompilerWarning_IgnoreUnusedConst(void)
 {
     (void)fpr_q;
     (void)fpr_inverse_of_q;

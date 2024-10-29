@@ -71,14 +71,14 @@
 ***********************************************************************************************************************/
 void FsmSw_SphincsShake_128fSimple_prf_addr(uint8 *out, const sphincs_shake_128f_ctx *ctx, const uint32 addr[8])
 {
-    uint8 buf[2u * FSMSW_SPHINCSSHAKE_128FSIMPLE_N + FSMSW_SPHINCSSHAKE_128FSIMPLE_ADDR_BYTES];
+    uint8 buf[(2u * FSMSW_SPHINCSSHAKE_128FSIMPLE_N) + FSMSW_SPHINCSSHAKE_128FSIMPLE_ADDR_BYTES];
 
     FsmSw_CommonLib_memcpy(buf, ctx->pub_seed, FSMSW_SPHINCSSHAKE_128FSIMPLE_N);
     FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHAKE_128FSIMPLE_N], addr, FSMSW_SPHINCSSHAKE_128FSIMPLE_ADDR_BYTES);
     FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHAKE_128FSIMPLE_N + FSMSW_SPHINCSSHAKE_128FSIMPLE_ADDR_BYTES],
                            ctx->sk_seed, FSMSW_SPHINCSSHAKE_128FSIMPLE_N);
 
-    FsmSw_Fips202_shake256(out, FSMSW_SPHINCSSHAKE_128FSIMPLE_N, buf, 2u * FSMSW_SPHINCSSHAKE_128FSIMPLE_N +
+    FsmSw_Fips202_shake256(out, FSMSW_SPHINCSSHAKE_128FSIMPLE_N, buf, (2u * FSMSW_SPHINCSSHAKE_128FSIMPLE_N) +
                            FSMSW_SPHINCSSHAKE_128FSIMPLE_ADDR_BYTES);
 }
 

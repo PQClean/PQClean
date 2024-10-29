@@ -20,23 +20,13 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_SphincsShake_128fSimple_context.h"
 #include "FsmSw_SphincsShake_128fSimple_params.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-/* Macro to set the leaf_info to something 'benign', that is, it would run with the same time as it does during the
- * real signing process. Used only by the benchmark code */
-#define INITIALIZE_LEAF_INFO_X1(info, addr, step_buffer) { \
-                                                             (info).wots_sig = 0;             \
-                                                             (info).wots_sign_leaf = ~0;      \
-                                                             (info).wots_steps = step_buffer; \
-                                                             memcpy( &(info).leaf_addr[0], (addr), 32 ); \
-                                                             memcpy( &(info).pk_addr[0], (addr), 32 ); \
-                                                         }
-
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */

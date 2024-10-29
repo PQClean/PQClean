@@ -62,11 +62,14 @@ void FsmSw_Sphincs_ull_to_bytes(uint8 *out, uint32 outlen, uint64 in)
 {
     sint32  i;
 
+    /* in_temp is used to avoid modifying the input. */
+    uint64 in_temp = in;
+
     /* Iterate over out in decreasing order, for big-endianness. */
     for (i = (sint32)outlen - 1; i >= 0; i--)
     {
-        out[i] = (uint8)(in & 0xFFu);
-        in = in >> 8;
+        out[i] = (uint8)(in_temp & 0xFFu);
+        in_temp = in_temp >> 8;
     }
 }
 

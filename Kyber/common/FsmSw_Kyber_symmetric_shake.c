@@ -18,7 +18,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_CommonLib.h"
 #include "FsmSw_Fips202.h"
 #include "FsmSw_Kyber_params.h"
@@ -66,7 +66,7 @@ void FsmSw_Kyber_shake128_absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES],
     uint8 extseed[KYBER_SYMBYTES + 2u];
 
     FsmSw_CommonLib_memcpy(extseed, seed, KYBER_SYMBYTES);
-    extseed[KYBER_SYMBYTES + 0u] = x;
+    extseed[KYBER_SYMBYTES] = x;
     extseed[KYBER_SYMBYTES + 1u] = y;
 
     FsmSw_Fips202_shake128_absorb(s, extseed, sizeof(extseed));

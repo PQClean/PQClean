@@ -49,8 +49,9 @@ struct fors_gen_leaf_info
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static void fors_gen_sk(uint8 *sk, const sphincs_shake_192f_ctx *ctx, uint32 fors_leaf_addr[8]);
-static void fors_sk_to_leaf(uint8 *leaf, const uint8 *sk, const sphincs_shake_192f_ctx *ctx, uint32 fors_leaf_addr[8]);
+static void fors_gen_sk(uint8 *sk, const sphincs_shake_192f_ctx *ctx, const uint32 fors_leaf_addr[8]);
+static void fors_sk_to_leaf(uint8 *leaf, const uint8 *sk, const sphincs_shake_192f_ctx *ctx, 
+                            const uint32 fors_leaf_addr[8]);
 static void fors_gen_leafx1(uint8 *leaf, const sphincs_shake_192f_ctx *ctx, uint32 addr_idx, void *info);
 static void message_to_indices(uint32 *indices, const uint8 *m);
 
@@ -64,10 +65,10 @@ static void message_to_indices(uint32 *indices, const uint8 *m);
 *
 * Arguments:   -       uint8                  *sk:                t.b.d.
 *              - const sphincs_shake_192f_ctx *ctx:               t.b.d.
-*              -       uint32                  fors_leaf_addr[8]: t.b.d.
+*              - const uint32                  fors_leaf_addr[8]: t.b.d.
 *
 ***********************************************************************************************************************/
-static void fors_gen_sk(uint8 *sk, const sphincs_shake_192f_ctx *ctx, uint32 fors_leaf_addr[8])
+static void fors_gen_sk(uint8 *sk, const sphincs_shake_192f_ctx *ctx, const uint32 fors_leaf_addr[8])
 {
     FsmSw_SphincsShake_192fSimple_prf_addr(sk, ctx, fors_leaf_addr);
 }
@@ -80,10 +81,11 @@ static void fors_gen_sk(uint8 *sk, const sphincs_shake_192f_ctx *ctx, uint32 for
 * Arguments:   -       uint8                  *leaf:              t.b.d.
 *              - const uint8                  *sk:                t.b.d.
 *              - const sphincs_shake_192f_ctx *ctx:               t.b.d.
-*              -       uint32                  fors_leaf_addr[8]: t.b.d.
+*              - const uint32                  fors_leaf_addr[8]: t.b.d.
 *
 ***********************************************************************************************************************/
-static void fors_sk_to_leaf(uint8 *leaf, const uint8 *sk, const sphincs_shake_192f_ctx *ctx, uint32 fors_leaf_addr[8])
+static void fors_sk_to_leaf(uint8 *leaf, const uint8 *sk, const sphincs_shake_192f_ctx *ctx, 
+                            const uint32 fors_leaf_addr[8])
 {
     FsmSw_SphincsShake_192fSimple_thash(leaf, sk, 1, ctx, fors_leaf_addr);
 }
@@ -101,6 +103,8 @@ static void fors_sk_to_leaf(uint8 *leaf, const uint8 *sk, const sphincs_shake_19
 ***********************************************************************************************************************/
 static void fors_gen_leafx1(uint8 *leaf, const sphincs_shake_192f_ctx *ctx, uint32 addr_idx, void *info)
 {
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     struct fors_gen_leaf_info *fors_info = info;
     uint32 *fors_leaf_addr = fors_info->leaf_addrx;
 
@@ -167,6 +171,9 @@ void FsmSw_SphincsShake_192fSimple_fors_sign(uint8 *sig, uint8 *pk, const uint8 
     uint32 idx_offset;
     uint32 i;
 
+    /* sig_temp is used to avoid modifying the input. */
+    uint8 *sig_temp = sig;
+
     FsmSw_SphincsShake_192fSimple_copy_keypair_addr(fors_tree_addr, fors_addr);
     FsmSw_SphincsShake_192fSimple_copy_keypair_addr(fors_leaf_addr, fors_addr);
 
@@ -184,16 +191,16 @@ void FsmSw_SphincsShake_192fSimple_fors_sign(uint8 *sig, uint8 *pk, const uint8 
         FsmSw_SphincsShake_set_type(fors_tree_addr, FSMSW_SPHINCS_ADDR_TYPE_FORSPRF);
 
         /* Include the secret key part that produces the selected leaf node. */
-        fors_gen_sk(sig, ctx, fors_tree_addr);
+        fors_gen_sk(sig_temp, ctx, fors_tree_addr);
         FsmSw_SphincsShake_set_type(fors_tree_addr, FSMSW_SPHINCS_ADDR_TYPE_FORSTREE);
-        sig = &sig[FSMSW_SPHINCSSHAKE_192FSIMPLE_N];
+        sig_temp = &sig_temp[FSMSW_SPHINCSSHAKE_192FSIMPLE_N];
 
         /* Compute the authentication path for this leaf node. */
-        FsmSw_SphincsShake_192fSimple_treehashx1(&roots[i * FSMSW_SPHINCSSHAKE_192FSIMPLE_N], sig, ctx,
+        FsmSw_SphincsShake_192fSimple_treehashx1(&roots[i * FSMSW_SPHINCSSHAKE_192FSIMPLE_N], sig_temp, ctx,
                                                  indices[i], idx_offset, FSMSW_SPHINCSSHAKE_192FSIMPLE_FORS_HEIGHT,
                                                  fors_gen_leafx1, fors_tree_addr, &fors_info);
 
-        sig = &sig[FSMSW_SPHINCSSHAKE_192FSIMPLE_N * FSMSW_SPHINCSSHAKE_192FSIMPLE_FORS_HEIGHT];
+        sig_temp = &sig_temp[FSMSW_SPHINCSSHAKE_192FSIMPLE_N * FSMSW_SPHINCSSHAKE_192FSIMPLE_FORS_HEIGHT];
     }
 
     /* Hash horizontally across all tree roots to derive the public key. */
@@ -226,6 +233,9 @@ void FsmSw_SphincsShake_192fSimple_fors_pk_from_sig(uint8 *pk, const uint8 *sig,
     uint32 idx_offset;
     uint32 i;
 
+    /* sig_temp is used to avoid modifying the input. */
+    const uint8 *sig_temp = sig;
+
     FsmSw_SphincsShake_192fSimple_copy_keypair_addr(fors_tree_addr, fors_addr);
     FsmSw_SphincsShake_192fSimple_copy_keypair_addr(fors_pk_addr, fors_addr);
 
@@ -242,14 +252,14 @@ void FsmSw_SphincsShake_192fSimple_fors_pk_from_sig(uint8 *pk, const uint8 *sig,
         FsmSw_SphincsShake_set_tree_index(fors_tree_addr, indices[i] + idx_offset);
 
         /* Derive the leaf from the included secret key part. */
-        fors_sk_to_leaf(leaf, sig, ctx, fors_tree_addr);
-        sig = &sig[FSMSW_SPHINCSSHAKE_192FSIMPLE_N];
+        fors_sk_to_leaf(leaf, sig_temp, ctx, fors_tree_addr);
+        sig_temp = &sig_temp[FSMSW_SPHINCSSHAKE_192FSIMPLE_N];
 
         /* Derive the corresponding root node of this tree. */
         FsmSw_SphincsShake_192fSimple_compute_root(&roots[i * FSMSW_SPHINCSSHAKE_192FSIMPLE_N], leaf, indices[i],
-                                                   idx_offset, sig, FSMSW_SPHINCSSHAKE_192FSIMPLE_FORS_HEIGHT, ctx,
+                                                   idx_offset, sig_temp, FSMSW_SPHINCSSHAKE_192FSIMPLE_FORS_HEIGHT, ctx,
                                                    fors_tree_addr);
-        sig = &sig[FSMSW_SPHINCSSHAKE_192FSIMPLE_N * FSMSW_SPHINCSSHAKE_192FSIMPLE_FORS_HEIGHT];
+        sig_temp = &sig_temp[FSMSW_SPHINCSSHAKE_192FSIMPLE_N * FSMSW_SPHINCSSHAKE_192FSIMPLE_FORS_HEIGHT];
     }
 
     /* Hash horizontally across all tree roots to derive the public key. */

@@ -61,14 +61,14 @@
 *              - const uint8                  *in:       t.b.d.
 *              -       uint32                  inblocks: t.b.d.
 *              - const sphincs_shake_192s_ctx *ctx:      t.b.d.
-*              -       uint32                  addr[8]:  t.b.d.
+*              - const uint32                  addr[8]:  t.b.d.
 *
 ***********************************************************************************************************************/
 void FsmSw_SphincsShake_192sSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks,
-                                         const sphincs_shake_192s_ctx *ctx, uint32 addr[8])
+                                         const sphincs_shake_192s_ctx *ctx, const uint32 addr[8])
 {
     uint8 buf[FSMSW_SPHINCSSHAKE_192SSIMPLE_N + FSMSW_SPHINCSSHAKE_192SSIMPLE_ADDR_BYTES +
-              FSMSW_SPHINCSSHAKE_192SSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHAKE_192SSIMPLE_N];
+              (FSMSW_SPHINCSSHAKE_192SSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHAKE_192SSIMPLE_N)];
 
     FsmSw_CommonLib_memcpy(buf, ctx->pub_seed, FSMSW_SPHINCSSHAKE_192SSIMPLE_N);
     FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHAKE_192SSIMPLE_N], addr, FSMSW_SPHINCSSHAKE_192SSIMPLE_ADDR_BYTES);
@@ -76,5 +76,5 @@ void FsmSw_SphincsShake_192sSimple_thash(uint8 *out, const uint8 *in, uint32 inb
                            inblocks * FSMSW_SPHINCSSHAKE_192SSIMPLE_N);
 
     FsmSw_Fips202_shake256(out, FSMSW_SPHINCSSHAKE_192SSIMPLE_N, buf, FSMSW_SPHINCSSHAKE_192SSIMPLE_N +
-                           FSMSW_SPHINCSSHAKE_192SSIMPLE_ADDR_BYTES + inblocks * FSMSW_SPHINCSSHAKE_192SSIMPLE_N);
+                           FSMSW_SPHINCSSHAKE_192SSIMPLE_ADDR_BYTES + (inblocks * FSMSW_SPHINCSSHAKE_192SSIMPLE_N));
 }

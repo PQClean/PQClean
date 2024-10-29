@@ -97,6 +97,9 @@ void FsmSw_Falcon_hash_to_point_vartime(inner_shake256_context *sc, uint16 *x, u
      * in a scenario where the attacker does not have access to the signature value or to the public key, but knows
      * the nonce (without knowledge of the nonce, the hashed output cannot be matched against potential plaintexts). */
     uint32 n;
+    /* x_temp is used to avoid modifying the input. */
+    uint16 *x_temp = x;
+    
     n = (uint32)1 << logn;
 
     while (n > 0u)
@@ -104,7 +107,9 @@ void FsmSw_Falcon_hash_to_point_vartime(inner_shake256_context *sc, uint16 *x, u
         uint8 buf[2];
         uint32 w;
 
-        inner_shake256_extract(sc, (void *)buf, sizeof buf);
+        /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+        Ensured proper alignment and validity." */  
+        FsmSw_Fips202_shake256_inc_squeeze((void *)buf, sizeof(buf), sc);       
         w = ((uint32)buf[0] << 8) | (uint32)buf[1];
 
         if (w < 61445u)
@@ -113,7 +118,8 @@ void FsmSw_Falcon_hash_to_point_vartime(inner_shake256_context *sc, uint16 *x, u
             {
                 w -= 12289u;
             }
-            *x ++ = (uint16)w;
+            *x_temp = (uint16)w;
+            x_temp++;
             n --;
         }
     }
@@ -164,6 +170,8 @@ void FsmSw_Falcon_hash_to_point_ct(inner_shake256_context *sc, uint16 *x, uint32
     n2 = n << 1;
     over = overtab[logn];
     m = n + over;
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     tt1 = (uint16 *)((void*)tmp);
 
     for (u = 0; u < m; u++)
@@ -171,7 +179,7 @@ void FsmSw_Falcon_hash_to_point_ct(inner_shake256_context *sc, uint16 *x, uint32
         uint8 buf[2];
         uint32 w, wr;
 
-        inner_shake256_extract(sc, buf, sizeof buf);
+        FsmSw_Fips202_shake256_inc_squeeze(buf, sizeof(buf), sc);
         w = ((uint32)buf[0] << 8) | (uint32)buf[1];
         wr = w  - ((uint32)24578 & (((w  - 24578u) >> 31) - 1u));
         wr = wr - ((uint32)24578 & (((wr - 24578u) >> 31) - 1u));
@@ -286,6 +294,7 @@ sint32 FsmSw_Falcon_is_short(const sint16 *s1, const sint16 *s2, uint32 logn)
     uint32 n, u;
     uint32 s, ng;
     sint32 z;
+    sint32 retVal = 0;
 
     n = (uint32)1 << logn;
     s = 0;
@@ -303,8 +312,13 @@ sint32 FsmSw_Falcon_is_short(const sint16 *s1, const sint16 *s2, uint32 logn)
 
     s |= (uint32)((sint32)((-1) * (sint32)((uint32)(ng >> 31))));
 
-    return (sint32)(s <= l2bound[logn]);
-}
+    if (s <= l2bound[logn])
+    {
+        retVal = 1;
+    }
+
+    return retVal;
+}   
 
 /***********************************************************************************************************************
 * Name:        FsmSw_Falcon_is_short_half
@@ -325,18 +339,26 @@ sint32 FsmSw_Falcon_is_short_half(uint32 sqn, const sint16 *s2, uint32 logn)
     uint32 n, u;
     uint32 ng;
     sint32 z;
+    /* sqn_temp is used to avoid modifying the input. */
+    uint32 sqn_temp = sqn;
+    sint32 retVal = 0;
 
     n = (uint32)1 << logn;
-    ng = (uint32)((sint32)((-1) * (sint32)((uint32)(sqn >> 31))));
+    ng = (uint32)((sint32)((-1) * (sint32)((uint32)(sqn_temp >> 31))));
 
     for (u = 0; u < n; u++)
     {
         z = s2[u];
-        sqn += (uint32)((sint32)(z * z));
-        ng |= sqn;
+        sqn_temp += (uint32)((sint32)(z * z));
+        ng |= sqn_temp;
     }
 
-    sqn |= (uint32)((sint32)((-1) * (sint32)((uint32)(ng >> 31))));;
+    sqn_temp |= (uint32)((sint32)((-1) * (sint32)((uint32)(ng >> 31))));;
 
-    return (sint32)(sqn <= l2bound[logn]);
+    if (sqn_temp <= l2bound[logn])
+    {
+        retVal = 1;
+    }
+
+    return retVal;
 }

@@ -325,8 +325,11 @@ static uint32 mq_sub(uint32 x, uint32 y)
 ***********************************************************************************************************************/
 static uint32 mq_rshift1(uint32 x)
 {
-  x += Q & (uint32)((sint32)((-1) * (sint32)((uint32)(x & 1u))));
-  return (x >> 1);
+  /* x_temp is used to avoid modifying the input. */
+  uint32 x_temp = x;
+
+  x_temp += Q & (uint32)((sint32)((-1) * (sint32)((uint32)(x_temp & 1u))));
+  return (x_temp >> 1);
 }
 
 /***********************************************************************************************************************
@@ -656,6 +659,8 @@ sint32 FsmSw_Falcon_verify_raw(const uint16 *c0, const sint16 *s2, const uint16 
   sint32 w2;
 
   n = (uint32) 1 << logn;
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   tt = (uint16 *)((void*)tmp);
 
   /* Reduce s2 elements modulo q ([0..q-1] range). */
@@ -681,6 +686,8 @@ sint32 FsmSw_Falcon_verify_raw(const uint16 *c0, const sint16 *s2, const uint16 
     tt[u] = (uint16)w2;
   }
 
+  /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   /* Signature is valid if and only if the aggregate (-s1,s2) vector is short enough. */
   return FsmSw_Falcon_is_short((sint16 *)((void*)tt), s2, logn);
 }
@@ -705,8 +712,11 @@ sint32 FsmSw_Falcon_compute_public(uint16 *h, const sint8 *f, const sint8 *g, ui
 {
   uint32 u, n;
   uint16 *tt;
+  sint32 retVal = 1;
 
   n = (uint32) 1 << logn;
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   tt = (uint16 *) ((void*)tmp);
 
   for (u = 0; u < n; u++)
@@ -722,7 +732,7 @@ sint32 FsmSw_Falcon_compute_public(uint16 *h, const sint8 *f, const sint8 *g, ui
   {
     if (tt[u] == 0u)
     {
-      return 0;
+      retVal = 0;
     }
 
     h[u] = (uint16) mq_div_12289(h[u], tt[u]);
@@ -730,7 +740,7 @@ sint32 FsmSw_Falcon_compute_public(uint16 *h, const sint8 *f, const sint8 *g, ui
 
   mq_iNTT(h, logn);
 
-  return 1;
+  return retVal;
 }
 
 /***********************************************************************************************************************
@@ -757,8 +767,11 @@ sint32 FsmSw_Falcon_complete_private(sint8 *G, const sint8 *f, const sint8 *g, c
   uint16 *t1, *t2;
   uint32 w;
   sint32 gi;
+  sint32 retVal = 1;
 
   n = (uint32) 1 << logn;
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   t1 = (uint16*)((void*)tmp);
   t2 = &t1[n];
 
@@ -784,7 +797,7 @@ sint32 FsmSw_Falcon_complete_private(sint8 *G, const sint8 *f, const sint8 *g, c
   {
     if (t2[u] == 0u)
     {
-      return 0;
+      retVal = 0;
     }
 
     t1[u] = (uint16) mq_div_12289(t1[u], t2[u]);
@@ -799,14 +812,14 @@ sint32 FsmSw_Falcon_complete_private(sint8 *G, const sint8 *f, const sint8 *g, c
 
     gi = (sint32)w;
 
-    if (gi < -127 || gi > +127)
+    if ((gi < -127) || (gi > +127))
     {
-      return 0;
+      retVal = 0;
     }
 
     G[u] = (sint8) gi;
   }
 
-  return 1;
+  return retVal;
 }
 

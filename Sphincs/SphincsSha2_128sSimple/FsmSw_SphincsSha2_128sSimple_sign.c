@@ -50,13 +50,9 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-
+static sint8 FsmSw_SphincsSha2_128sSimple_crypto_sign_seed_keypair(uint8 *pk, uint8 *sk, const uint8 *seed);
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
-/**********************************************************************************************************************/
-
-/**********************************************************************************************************************/
-/* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
 * Name:        FsmSw_SphincsSha2_128sSimple_crypto_sign_seed_keypair
@@ -72,7 +68,7 @@
 * Returns 0.
 *
 ***********************************************************************************************************************/
-int FsmSw_SphincsSha2_128sSimple_crypto_sign_seed_keypair(uint8 *pk, uint8 *sk, const uint8 *seed)
+static sint8 FsmSw_SphincsSha2_128sSimple_crypto_sign_seed_keypair(uint8 *pk, uint8 *sk, const uint8 *seed)
 {
     sphincs_sha2_128s_ctx ctx;
 
@@ -96,7 +92,9 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_seed_keypair(uint8 *pk, uint8 *sk, 
 
     return 0;
 }
-
+/**********************************************************************************************************************/
+/* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
+/**********************************************************************************************************************/
 /***********************************************************************************************************************
 * Name:        FsmSw_SphincsSha2_128sSimple_crypto_sign_keypair
 *
@@ -110,7 +108,7 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_seed_keypair(uint8 *pk, uint8 *sk, 
 * Returns 0.
 *
 ***********************************************************************************************************************/
-int FsmSw_SphincsSha2_128sSimple_crypto_sign_keypair(uint8 *pk, uint8 *sk)
+sint8 FsmSw_SphincsSha2_128sSimple_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 {
     uint8 seed[FSMSW_SPHINCSSHA2_128SSIMPLE_CRYPTO_SEEDBYTES];
     (void)FsmSw_CommonLib_randombytes(seed, FSMSW_SPHINCSSHA2_128SSIMPLE_CRYPTO_SEEDBYTES);
@@ -133,7 +131,9 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 * Returns 0.
 *
 ***********************************************************************************************************************/
-int FsmSw_SphincsSha2_128sSimple_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen,
+/* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
+designed for use by other systems that aim to integrate the Sphincs." */
+sint8 FsmSw_SphincsSha2_128sSimple_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen,
                                                        const uint8 *sk)
 {
     sphincs_sha2_128s_ctx ctx;
@@ -150,6 +150,9 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_signature(uint8 *sig, uint32 *sigle
     uint32 wots_addr[8] = {0};
     uint32 tree_addr[8] = {0};
 
+    /* sig_temp is used to avoid modifying the input. */
+    uint8 *sig_temp = sig;
+
     FsmSw_CommonLib_memcpy(ctx.sk_seed, sk, FSMSW_SPHINCSSHA2_128SSIMPLE_N);
     FsmSw_CommonLib_memcpy(ctx.pub_seed, pk, FSMSW_SPHINCSSHA2_128SSIMPLE_N);
 
@@ -165,18 +168,18 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_signature(uint8 *sig, uint32 *sigle
        getting a large number of traces when the signer uses the same nodes. */
     (void)FsmSw_CommonLib_randombytes(optrand, FSMSW_SPHINCSSHA2_128SSIMPLE_N);
     /* Compute the digest randomization value. */
-    FsmSw_SphincsSha2_128sSimple_gen_message_random(sig, sk_prf, optrand, m, mlen, &ctx);
+    FsmSw_SphincsSha2_128sSimple_gen_message_random(sig_temp, sk_prf, optrand, m, mlen, &ctx);
 
     /* Derive the message digest and leaf index from R, PK and M. */
-    FsmSw_SphincsSha2_128sSimple_hash_message(mhash, &tree, &idx_leaf, sig, pk, m, mlen, &ctx);
-    sig = &sig[FSMSW_SPHINCSSHA2_128SSIMPLE_N];
+    FsmSw_SphincsSha2_128sSimple_hash_message(mhash, &tree, &idx_leaf, sig_temp, pk, m, mlen, &ctx);
+    sig_temp = &sig_temp[FSMSW_SPHINCSSHA2_128SSIMPLE_N];
 
     FsmSw_SphincsSha2_set_tree_addr(wots_addr, tree);
     FsmSw_SphincsSha2_128sSimple_set_keypair_addr(wots_addr, idx_leaf);
 
     /* Sign the message hash using FORS. */
-    FsmSw_SphincsSha2_128sSimple_fors_sign(sig, root, mhash, &ctx, wots_addr);
-    sig = &sig[FSMSW_SPHINCSSHA2_128SSIMPLE_FORS_BYTES];
+    FsmSw_SphincsSha2_128sSimple_fors_sign(sig_temp, root, mhash, &ctx, wots_addr);
+    sig_temp = &sig_temp[FSMSW_SPHINCSSHA2_128SSIMPLE_FORS_BYTES];
 
     for (i = 0; i < FSMSW_SPHINCSSHA2_128SSIMPLE_D; i++)
     {
@@ -186,9 +189,9 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_signature(uint8 *sig, uint32 *sigle
         FsmSw_SphincsSha2_copy_subtree_addr(wots_addr, tree_addr);
         FsmSw_SphincsSha2_128sSimple_set_keypair_addr(wots_addr, idx_leaf);
 
-        FsmSw_SphincsSha2_128sSimple_merkle_sign(sig, root, &ctx, wots_addr, tree_addr, idx_leaf);
-        sig = &sig[FSMSW_SPHINCSSHA2_128SSIMPLE_WOTS_BYTES + FSMSW_SPHINCSSHA2_128SSIMPLE_TREE_HEIGHT *
-                   FSMSW_SPHINCSSHA2_128SSIMPLE_N];
+        FsmSw_SphincsSha2_128sSimple_merkle_sign(sig_temp, root, &ctx, wots_addr, tree_addr, idx_leaf);
+        sig_temp = &sig_temp[FSMSW_SPHINCSSHA2_128SSIMPLE_WOTS_BYTES + (FSMSW_SPHINCSSHA2_128SSIMPLE_TREE_HEIGHT *
+                   FSMSW_SPHINCSSHA2_128SSIMPLE_N)];
 
         /* Update the indices for the next layer. */
         idx_leaf = (uint32)(tree & (((uint64)((uint64)1u << FSMSW_SPHINCSSHA2_128SSIMPLE_TREE_HEIGHT)) - 1u));
@@ -214,7 +217,9 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_signature(uint8 *sig, uint32 *sigle
 * Returns 0.
 *
 ***********************************************************************************************************************/
-int FsmSw_SphincsSha2_128sSimple_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
+/* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
+designed for use by other systems that aim to integrate the Sphincs." */
+sint8 FsmSw_SphincsSha2_128sSimple_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
                                                     const uint8 *pk)
 {
     sphincs_sha2_128s_ctx ctx;
@@ -229,10 +234,14 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_verify(const uint8 *sig, uint32 sig
     uint32 wots_addr[8] = {0};
     uint32 tree_addr[8] = {0};
     uint32 wots_pk_addr[8] = {0};
+    sint8 retVal = 0;
+
+    /* sig_temp is used to avoid modifying the input. */
+    const uint8 *sig_temp = sig;
 
     if (siglen != FSMSW_SPHINCSSHA2_128SSIMPLE_BYTES)
     {
-        return -1;
+        retVal = -1;
     }
 
     FsmSw_CommonLib_memcpy(ctx.pub_seed, pk, FSMSW_SPHINCSSHA2_128SSIMPLE_N);
@@ -247,15 +256,15 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_verify(const uint8 *sig, uint32 sig
 
     /* Derive the message digest and leaf index from R || PK || M. */
     /* The additional FSMSW_SPHINCSSHA2_128SSIMPLE_N is a result of the hash domain separator. */
-    FsmSw_SphincsSha2_128sSimple_hash_message(mhash, &tree, &idx_leaf, sig, pk, m, mlen, &ctx);
-    sig = &sig[FSMSW_SPHINCSSHA2_128SSIMPLE_N];
+    FsmSw_SphincsSha2_128sSimple_hash_message(mhash, &tree, &idx_leaf, sig_temp, pk, m, mlen, &ctx);
+    sig_temp = &sig_temp[FSMSW_SPHINCSSHA2_128SSIMPLE_N];
 
     /* Layer correctly defaults to 0, so no need to FsmSw_SphincsSha2_set_layer_addr */
     FsmSw_SphincsSha2_set_tree_addr(wots_addr, tree);
     FsmSw_SphincsSha2_128sSimple_set_keypair_addr(wots_addr, idx_leaf);
 
-    FsmSw_SphincsSha2_128sSimple_fors_pk_from_sig(root, sig, mhash, &ctx, wots_addr);
-    sig = &sig[FSMSW_SPHINCSSHA2_128SSIMPLE_FORS_BYTES];
+    FsmSw_SphincsSha2_128sSimple_fors_pk_from_sig(root, sig_temp, mhash, &ctx, wots_addr);
+    sig_temp = &sig_temp[FSMSW_SPHINCSSHA2_128SSIMPLE_FORS_BYTES];
 
     /* For each subtree.. */
     for (i = 0; i < FSMSW_SPHINCSSHA2_128SSIMPLE_D; i++)
@@ -271,16 +280,16 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_verify(const uint8 *sig, uint32 sig
         /* The WOTS public key is only correct if the signature was correct. */
         /* Initially, root is the FORS pk, but on subsequent iterations it is
            the root of the subtree below the currently processed subtree. */
-        FsmSw_SphincsSha2_128sSimple_wots_pk_from_sig(wots_pk, sig, root, &ctx, wots_addr);
-        sig = &sig[FSMSW_SPHINCSSHA2_128SSIMPLE_WOTS_BYTES];
+        FsmSw_SphincsSha2_128sSimple_wots_pk_from_sig(wots_pk, sig_temp, root, &ctx, wots_addr);
+        sig_temp = &sig_temp[FSMSW_SPHINCSSHA2_128SSIMPLE_WOTS_BYTES];
 
         /* Compute the leaf node using the WOTS public key. */
         FsmSw_SphincsSha2_128sSimple_thash(leaf, wots_pk, FSMSW_SPHINCSSHA2_128SSIMPLE_WOTS_LEN, &ctx, wots_pk_addr);
 
         /* Compute the root node of this subtree. */
-        FsmSw_SphincsSha2_128sSimple_compute_root(root, leaf, idx_leaf, 0, sig,
+        FsmSw_SphincsSha2_128sSimple_compute_root(root, leaf, idx_leaf, 0, sig_temp,
                                                   FSMSW_SPHINCSSHA2_128SSIMPLE_TREE_HEIGHT, &ctx, tree_addr);
-        sig = &sig[FSMSW_SPHINCSSHA2_128SSIMPLE_TREE_HEIGHT * FSMSW_SPHINCSSHA2_128SSIMPLE_N];
+        sig_temp = &sig_temp[FSMSW_SPHINCSSHA2_128SSIMPLE_TREE_HEIGHT * FSMSW_SPHINCSSHA2_128SSIMPLE_N];
 
         /* Update the indices for the next layer. */
         idx_leaf = (uint32)(tree & (((uint64)((uint64)1u << FSMSW_SPHINCSSHA2_128SSIMPLE_TREE_HEIGHT)) - 1u));
@@ -290,10 +299,10 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_verify(const uint8 *sig, uint32 sig
     /* Check if the root node equals the root node in the public key. */
     if (FsmSw_CommonLib_memcmp(root, pub_root, FSMSW_SPHINCSSHA2_128SSIMPLE_N) != 0u)
     {
-        return -1;
+        retVal = -1;
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -310,7 +319,7 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_verify(const uint8 *sig, uint32 sig
 * Returns 0.
 *
 ***********************************************************************************************************************/
-int FsmSw_SphincsSha2_128sSimple_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk)
+sint8 FsmSw_SphincsSha2_128sSimple_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk)
 {
     uint32 siglen;
 
@@ -336,16 +345,18 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign(uint8 *sm, uint32 *smlen, const uin
 * Returns 0.
 *
 ***********************************************************************************************************************/
-int FsmSw_SphincsSha2_128sSimple_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen,
+sint8 FsmSw_SphincsSha2_128sSimple_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen,
                                                   const uint8 *pk)
 {
+    sint8 retVal = 0;
+
     /* The API caller does not necessarily know what size a signature should be
        but SPHINCS+ signatures are always exactly FSMSW_SPHINCSSHA2_128SSIMPLE_BYTES. */
     if (smlen < FSMSW_SPHINCSSHA2_128SSIMPLE_BYTES)
     {
         FsmSw_CommonLib_memset(m, 0, smlen);
         *mlen = 0;
-        return -1;
+        retVal = -1;
     }
 
     *mlen = smlen - FSMSW_SPHINCSSHA2_128SSIMPLE_BYTES;
@@ -355,11 +366,11 @@ int FsmSw_SphincsSha2_128sSimple_crypto_sign_open(uint8 *m, uint32 *mlen, const 
     {
         FsmSw_CommonLib_memset(m, 0, smlen);
         *mlen = 0;
-        return -1;
+        retVal = -1;
     }
 
     /* If verification was successful, move the message to the right place. */
     FsmSw_CommonLib_memmove(m, &sm[FSMSW_SPHINCSSHA2_128SSIMPLE_BYTES], *mlen);
 
-    return 0;
+    return retVal;
 }

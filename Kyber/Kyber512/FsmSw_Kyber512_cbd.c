@@ -18,9 +18,10 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Kyber512_params.h"
 #include "FsmSw_Kyber512_cbd.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -109,7 +110,7 @@ static void cbd2(poly512 *r, const uint8 buf[2u * KYBER_N / 4u])
     uint32 t, d;
     sint16 a, b;
 
-    for (i = 0; i < KYBER_N / 8u; i++)
+    for (i = 0; i < (KYBER_N / 8u); i++)
     {
         t  = load32_littleendian(&buf[4u * i]);
         d  = t & 0x55555555u;
@@ -117,9 +118,9 @@ static void cbd2(poly512 *r, const uint8 buf[2u * KYBER_N / 4u])
 
         for (j = 0; j < 8u; j++)
         {
-            a = (sint16)((uint16)((uint16)((d >> (4u * j + 0u))) & 0x3u));
-            b = (sint16)((uint16)((uint16)((d >> (4u * j + 2u))) & 0x3u));
-            r->coeffs[8u * i + j] = a - b;
+            a = (sint16)((uint16)((uint16)((d >> ((4u * j)))) & 0x3u));
+            b = (sint16)((uint16)((uint16)((d >> ((4u * j) + 2u))) & 0x3u));
+            r->coeffs[(8u * i) + j] = a - b;
         }
     }
 }
@@ -141,7 +142,7 @@ static void cbd3(poly512 *r, const uint8 buf[3u * KYBER_N / 4u])
     uint32 t, d;
     sint16 a, b;
 
-    for (i = 0; i < KYBER_N / 4u; i++)
+    for (i = 0; i < (KYBER_N / 4u); i++)
     {
         t  = load24_littleendian(&buf[3u * i]);
         d  = t & 0x00249249u;
@@ -150,9 +151,9 @@ static void cbd3(poly512 *r, const uint8 buf[3u * KYBER_N / 4u])
 
         for (j = 0; j < 4u; j++)
         {
-            a = (sint16)((uint16)((uint16)((d >> (6u * j + 0u))) & 0x7u));
-            b = (sint16)((uint16)((uint16)((d >> (6u * j + 3u))) & 0x7u));
-            r->coeffs[4u * i + j] = a - b;
+            a = (sint16)((uint16)((uint16)((d >> ((6u * j)))) & 0x7u));
+            b = (sint16)((uint16)((uint16)((d >> ((6u * j) + 3u))) & 0x7u));
+            r->coeffs[(4u * i) + j] = a - b;
         }
     }
 }

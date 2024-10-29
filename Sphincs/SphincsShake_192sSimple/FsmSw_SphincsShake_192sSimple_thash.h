@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_SphincsShake_192sSimple_context.h"
 
 /**********************************************************************************************************************/
@@ -43,6 +43,6 @@
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
 void FsmSw_SphincsShake_192sSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks,
-                                         const sphincs_shake_192s_ctx *ctx, uint32 addr[8]);
+                                         const sphincs_shake_192s_ctx *ctx, const uint32 addr[8]);
 
 #endif /* FSMSW_SPHINCSSHAKE_192SSIMPLE_THASH_H */

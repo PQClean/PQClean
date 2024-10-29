@@ -14,9 +14,13 @@
  *  $Rev$
  *
  **********************************************************************************************************************/
-/* Based on the public domain implementation in crypto_hash/keccakc512/simple/ from http://bench.cr.yp.to/supercop.html
-* by Ronny Van Keer and the public domain "TweetFips202" implementation from https://twitter.com/tweetfips202
-* by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
+/* Based on the public domain implementation in crypto_hash/keccakc512/simple/ from */
+/* polyspace +1 MISRA2012:3.1 [Justified:]"The comment is a link and therefore contains a slash" */
+/* http://bench.cr.yp.to/supercop.html */
+/* by Ronny Van Keer and the public domain "TweetFips202" implementation from */ 
+/* polyspace +1 MISRA2012:3.1 [Justified:]"The comment is a link and therefore contains a slash" */
+/* https://twitter.com/tweetfips202 */ 
+/* by Gilles Van Assche, Daniel J. Bernstein, and Peter Schwabe */
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
@@ -55,6 +59,8 @@ static const uint64 KeccakF_RoundConstants[NROUNDS] =
 /**********************************************************************************************************************/
 /* MACROS                                                                                                             */
 /**********************************************************************************************************************/
+/* polyspace +2 MISRA2012:D4.9 [Justified:]"No refactoring of macros, as converting to, for example, 
+inline functions would not provide significant benefits." */
 #define ROL(a, offset) (((a) << (offset)) ^ ((a) >> (64 - (offset))))
 
 /**********************************************************************************************************************/
@@ -66,6 +72,8 @@ static void   KeccakF1600_StatePermute(uint64 *state);
 static void   keccak_absorb(uint64 *s, uint32 r, const uint8 *m, uint32 mlen, uint8 p);
 static void   keccak_inc_finalize(uint64 *s_inc, uint32 r, uint8 p);
 static void   keccak_inc_squeeze(uint8 *h, uint32 outlen, uint64 *s_inc, uint32 r);
+static void   FsmSw_Fips202_shake256_absorb(shake256ctx *state, const uint8 *input, uint32 inlen);
+static void   FsmSw_Fips202_shake256_squeezeblocks(uint8 *output, uint32 nblocks, shake256ctx *state);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
@@ -86,7 +94,7 @@ static uint64 load64(const uint8 *x)
 
     for (uint32 i = 0; i < 8u; ++i)
     {
-        r |= (uint64)x[i] << 8u * i;
+        r |= (uint64)x[i] << (8u * i);
     }
 
     return r;
@@ -105,7 +113,7 @@ static void store64(uint8 *x, uint64 u)
 {
     for (uint32 i = 0; i < 8u; ++i)
     {
-        x[i] = (uint8) (u >> 8u * i);
+        x[i] = (uint8) (u >> (8u * i));
     }
 }
 
@@ -399,22 +407,26 @@ static void keccak_absorb(uint64 *s, uint32 r, const uint8 *m, uint32 mlen, uint
     uint32 i;
     uint8 t[200];
 
+    /* m_temp and mlen_temp are used to avoid modifying the input. */
+    const uint8 *m_temp = m;
+    uint32 mlen_temp = mlen;
+
     /* Zero state */
     for (i = 0; i < 25u; ++i)
     {
         s[i] = 0;
     }
 
-    while (mlen >= r)
+    while (mlen_temp >= r)
     {
-        for (i = 0; i < r / 8u; ++i)
+        for (i = 0; i < (r / 8u); ++i)
         {
-            s[i] ^= load64(&m[8u * i]);
+            s[i] ^= load64(&m_temp[8u * i]);
         }
 
         KeccakF1600_StatePermute(s);
-        mlen -= r;
-        m     = &m[r];
+        mlen_temp -= r;
+        m_temp     = &m_temp[r];
     }
 
     for (i = 0; i < r; ++i)
@@ -422,15 +434,15 @@ static void keccak_absorb(uint64 *s, uint32 r, const uint8 *m, uint32 mlen, uint
         t[i] = 0;
     }
 
-    for (i = 0; i < mlen; ++i)
+    for (i = 0; i < mlen_temp; ++i)
     {
-        t[i] = m[i];
+        t[i] = m_temp[i];
     }
 
     t[i] = p;
     t[r - 1u] |= 128u;
 
-    for (i = 0; i < r / 8u; ++i)
+    for (i = 0; i < (r / 8u); ++i)
     {
         s[i] ^= load64(&t[8u * i]);
     }
@@ -450,17 +462,21 @@ static void keccak_absorb(uint64 *s, uint32 r, const uint8 *m, uint32 mlen, uint
 ***********************************************************************************************************************/
 static void keccak_squeezeblocks(uint8 *h, uint32 nblocks, uint64 *s, uint32 r)
 {
-    while (nblocks > 0u)
+    /* h_temp and nblocks_temp are used to avoid modifying the input. */
+    uint8 *h_temp = h;
+    uint32 nblocks_temp = nblocks;
+
+    while (nblocks_temp > 0u)
     {
         KeccakF1600_StatePermute(s);
 
         for (uint32 i = 0; i < (r >> 3); i++)
         {
-            store64(&h[8u * i], s[i]);
+            store64(&h_temp[8u * i], s[i]);
         }
 
-        h = &h[r];
-        nblocks--;
+        h_temp = &h_temp[r];
+        nblocks_temp--;
     }
 }
 
@@ -504,28 +520,32 @@ static void keccak_inc_absorb(uint64 *s_inc, uint32 r, const uint8 *m, uint32 ml
 {
     uint32 i;
 
+    /* m_temp and mlen_temp are used to avoid modifying the input. */
+    const uint8 *m_temp = m;
+    uint32 mlen_temp = mlen;
+
     /* Recall that s_inc[25] is the non-absorbed bytes xored into the state */
-    while (mlen + s_inc[25] >= r)
+    while ((mlen_temp + s_inc[25]) >= r)
     {
-        for (i = 0; i < r - (uint32)s_inc[25]; i++)
+        for (i = 0; i < (r - (uint32)s_inc[25]); i++)
         {
             /* Take the i'th byte from message xor with the s_inc[25] + i'th byte of the state; little-endian */
-            s_inc[(s_inc[25] + i) >> 3] ^= (uint64)m[i] << (8u * ((s_inc[25] + i) & 0x07u));
+            s_inc[(s_inc[25] + i) >> 3] ^= (uint64)m_temp[i] << (8u * ((s_inc[25] + i) & 0x07u));
         }
 
-        mlen -= (uint32)(r - s_inc[25]);
-        m = &m[r - s_inc[25]];
+        mlen_temp -= (uint32)(r - s_inc[25]);
+        m_temp = &m_temp[r - s_inc[25]];
         s_inc[25] = 0;
 
         KeccakF1600_StatePermute(s_inc);
     }
 
-    for (i = 0; i < mlen; i++)
+    for (i = 0; i < mlen_temp; i++)
     {
-        s_inc[(s_inc[25] + i) >> 3] ^= (uint64)m[i] << (8u * ((s_inc[25] + i) & 0x07u));
+        s_inc[(s_inc[25] + i) >> 3] ^= (uint64)m_temp[i] << (8u * ((s_inc[25] + i) & 0x07u));
     }
 
-    s_inc[25] += mlen;
+    s_inc[25] += mlen_temp;
 }
 
 /***********************************************************************************************************************
@@ -565,32 +585,67 @@ static void keccak_inc_squeeze(uint8 *h, uint32 outlen, uint64 *s_inc, uint32 r)
 {
     uint32 i;
 
+    /* h_temp and outlen_temp are used to avoid modifying the input. */
+    uint8 *h_temp = h;
+    uint32 outlen_temp = outlen;
+
     /* First consume any bytes we still have sitting around */
-    for (i = 0; i < outlen && i < s_inc[25]; i++)
+    for (i = 0; (i < outlen_temp) && (i < s_inc[25]); i++)
     {
         /* There are s_inc[25] bytes left, so r - s_inc[25] is the first available byte. We consume from there, i.e.,
          * up to r. */
-        h[i] = (uint8)(s_inc[(r - s_inc[25] + i) >> 3] >> (8u * ((r - s_inc[25] + i) & 0x07u)));
+        h_temp[i] = (uint8)(s_inc[(r - s_inc[25] + i) >> 3] >> (8u * ((r - s_inc[25] + i) & 0x07u)));
     }
 
-    h = &h[i];
-    outlen -= i;
+    h_temp = &h_temp[i];
+    outlen_temp -= i;
     s_inc[25] -= i;
 
     /* Then squeeze the remaining necessary blocks */
-    while (outlen > 0u)
+    while (outlen_temp > 0u)
     {
         KeccakF1600_StatePermute(s_inc);
 
-        for (i = 0; i < outlen && i < r; i++)
+        for (i = 0; (i < outlen_temp) && (i < r); i++)
         {
-            h[i] = (uint8)(s_inc[i >> 3] >> (8u * (i & 0x07u)));
+            h_temp[i] = (uint8)(s_inc[i >> 3] >> (8u * (i & 0x07u)));
         }
 
-        h = &h[i];
-        outlen -= i;
+        h_temp = &h_temp[i];
+        outlen_temp -= i;
         s_inc[25] = (uint64)r - i;
     }
+}
+
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake256_absorb
+*
+* Description: Absorb step of the SHAKE256 XOF. Non-incremental, starts by zeroeing the state.
+*
+* Arguments:   -       shake256ctx *state: pointer to (uninitialized) output Keccak state
+*              - const uint8       *input: pointer to input to be absorbed into s
+*              -       uint32       inlen: length of input in bytes
+*
+***********************************************************************************************************************/
+static void FsmSw_Fips202_shake256_absorb(shake256ctx *state, const uint8 *input, uint32 inlen)
+{
+    keccak_absorb(state->ctx, SHAKE256_RATE, input, inlen, 0x1F);
+}
+
+/***********************************************************************************************************************
+* Name:        FsmSw_Fips202_shake256_squeezeblocks
+*
+* Description: Squeeze step of SHAKE256 XOF. Squeezes full blocks of SHAKE256_RATE bytes each. Modifies the state.
+*              Can be called multiple times to keep squeezing, i.e., is incremental.
+*
+* Arguments:   - uint8       *output:  pointer to output blocks
+*              - uint32       nblocks: number of blocks to be squeezed (written to output)
+*              - shake256ctx *state:   pointer to input/output Keccak state
+*
+***********************************************************************************************************************/
+static void FsmSw_Fips202_shake256_squeezeblocks(uint8 *output, uint32 nblocks, shake256ctx *state)
+{
+    keccak_squeezeblocks(output, nblocks, state->ctx, SHAKE256_RATE);
 }
 
 /**********************************************************************************************************************/
@@ -781,37 +836,6 @@ void FsmSw_Fips202_shake128_ctx_clone(shake128ctx *dest, const shake128ctx *src)
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Fips202_shake256_absorb
-*
-* Description: Absorb step of the SHAKE256 XOF. Non-incremental, starts by zeroeing the state.
-*
-* Arguments:   -       shake256ctx *state: pointer to (uninitialized) output Keccak state
-*              - const uint8       *input: pointer to input to be absorbed into s
-*              -       uint32       inlen: length of input in bytes
-*
-***********************************************************************************************************************/
-void FsmSw_Fips202_shake256_absorb(shake256ctx *state, const uint8 *input, uint32 inlen)
-{
-    keccak_absorb(state->ctx, SHAKE256_RATE, input, inlen, 0x1F);
-}
-
-/***********************************************************************************************************************
-* Name:        FsmSw_Fips202_shake256_squeezeblocks
-*
-* Description: Squeeze step of SHAKE256 XOF. Squeezes full blocks of SHAKE256_RATE bytes each. Modifies the state.
-*              Can be called multiple times to keep squeezing, i.e., is incremental.
-*
-* Arguments:   - uint8       *output:  pointer to output blocks
-*              - uint32       nblocks: number of blocks to be squeezed (written to output)
-*              - shake256ctx *state:   pointer to input/output Keccak state
-*
-***********************************************************************************************************************/
-void FsmSw_Fips202_shake256_squeezeblocks(uint8 *output, uint32 nblocks, shake256ctx *state)
-{
-    keccak_squeezeblocks(output, nblocks, state->ctx, SHAKE256_RATE);
-}
-
-/***********************************************************************************************************************
 * Name:        FsmSw_Fips202_shake256_ctx_clone
 *
 * Description: t.b.d.
@@ -842,18 +866,22 @@ void FsmSw_Fips202_shake128(uint8 *output, uint32 outlen, const uint8 *input, ui
     uint8 t[SHAKE128_RATE];
     shake128ctx s;
 
+    /* output_temp and outlen_temp are used to avoid modifying the input. */
+    uint8 *output_temp = output;
+    uint32 outlen_temp = outlen;
+
     FsmSw_Fips202_shake128_absorb(&s, input, inlen);
-    FsmSw_Fips202_shake128_squeezeblocks(output, nblocks, &s);
+    FsmSw_Fips202_shake128_squeezeblocks(output_temp, nblocks, &s);
 
-    output = &output[nblocks * SHAKE128_RATE];
-    outlen -= nblocks * SHAKE128_RATE;
+    output_temp = &output_temp[nblocks * SHAKE128_RATE];
+    outlen_temp -= nblocks * SHAKE128_RATE;
 
-    if (outlen > 0u)
+    if (outlen_temp > 0u)
     {
         FsmSw_Fips202_shake128_squeezeblocks(t, 1, &s);
-        for (uint32 i = 0; i < outlen; ++i)
+        for (uint32 i = 0; i < outlen_temp; ++i)
         {
-            output[i] = t[i];
+            output_temp[i] = t[i];
         }
     }
 }
@@ -875,19 +903,23 @@ void FsmSw_Fips202_shake256(uint8 *output, uint32 outlen, const uint8 *input, ui
     uint8 t[SHAKE256_RATE];
     shake256ctx s;
 
+    /* output_temp and outlen_temp are used to avoid modifying the input. */
+    uint8 *output_temp = output;
+    uint32 outlen_temp = outlen;
+
     FsmSw_Fips202_shake256_absorb(&s, input, inlen);
-    FsmSw_Fips202_shake256_squeezeblocks(output, nblocks, &s);
+    FsmSw_Fips202_shake256_squeezeblocks(output_temp, nblocks, &s);
 
-    output = &output[nblocks * SHAKE256_RATE];
-    outlen -= nblocks * SHAKE256_RATE;
+    output_temp = &output_temp[nblocks * SHAKE256_RATE];
+    outlen_temp -= nblocks * SHAKE256_RATE;
 
-    if (outlen > 0u)
+    if (outlen_temp > 0u)
     {
         FsmSw_Fips202_shake256_squeezeblocks(t, 1, &s);
 
-        for (uint32 i = 0; i < outlen; ++i)
+        for (uint32 i = 0; i < outlen_temp; ++i)
         {
-            output[i] = t[i];
+            output_temp[i] = t[i];
         }
     }
 }

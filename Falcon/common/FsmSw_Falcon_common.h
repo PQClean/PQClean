@@ -44,7 +44,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_Fips202.h"
 
 /**********************************************************************************************************************/
@@ -52,10 +52,6 @@
 /**********************************************************************************************************************/
 /* API is defined to be easily replaced with the fips202.h API defined as part of PQClean. */
 #define inner_shake256_context                shake256incctx
-#define inner_shake256_init(sc)               FsmSw_Fips202_shake256_inc_init(sc)
-#define inner_shake256_inject(sc, in, len)    FsmSw_Fips202_shake256_inc_absorb(sc, in, len)
-#define inner_shake256_flip(sc)               FsmSw_Fips202_shake256_inc_finalize(sc)
-#define inner_shake256_extract(sc, out, len)  FsmSw_Fips202_shake256_inc_squeeze(out, len, sc)
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */

@@ -27,6 +27,8 @@
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
+/* polyspace +3 MISRA2012:D4.9 [Justified:]"No refactoring of macros, as converting to, for example, 
+inline functions would not provide significant benefits." */
 /* Compute degree N from logarithm 'logn'. */
 #define MKN(logn)   ((uint32)1 << (logn))
 
@@ -69,13 +71,13 @@ static const uint32 dist[] = {10745844u, 3068844u, 3741698u, 5559083u,
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-       uint32   ffLDL_treesize(uint32 logn);
+static uint32   ffLDL_treesize(uint32 logn);
 static void     ffLDL_fft_inner(fpr *tree, fpr *g0, fpr *g1, uint32 logn, fpr *tmp);
 static void     ffLDL_binary_normalize(fpr *tree, uint32 orig_logn, uint32 logn);
 static void     smallints_to_fpr(fpr *r, const sint8 *t, uint32 logn);
 static sint32   ber_exp(prng *p, fpr x, fpr ccs);
-       sint32   sign_sampler(void *ctx, fpr mu, fpr isigma);
-       sint32   gaussian0_sampler(prng *p);
+static sint32   sign_sampler(void *ctx, fpr mu, fpr isigma);
+static sint32   gaussian0_sampler(prng *p);
 static void     ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx, fpr *t0, fpr *t1, fpr *g00, fpr *g01, fpr *g11,
                                        uint32 orig_logn, uint32 logn, fpr *tmp);
 static void     ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, const fpr *tree, const fpr *t0,
@@ -97,7 +99,7 @@ static sint32   do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sin
 * Returns t.b.d.
 *
 ***********************************************************************************************************************/
-uint32 ffLDL_treesize(uint32 logn)
+static uint32 ffLDL_treesize(uint32 logn)
 {
   /* For logn = 0 (polynomials are constant), the "tree" is a single element. Otherwise, the tree node has size 2^logn,
    * and has two child trees for size logn-1 each. Thus, treesize s() must fulfill these two relations:
@@ -122,32 +124,35 @@ uint32 ffLDL_treesize(uint32 logn)
 static void ffLDL_fft_inner(fpr *tree, fpr *g0, fpr *g1, uint32 logn, fpr *tmp)
 {
   uint32 n, hn;
+  boolean bStopFunc = FALSE;
 
   n = MKN(logn);
 
   if (n == 1u)
   {
     tree[0] = g0[0];
-    return;
+    bStopFunc = TRUE;
   }
+  if (FALSE == bStopFunc)
+  {
+    hn = n >> 1;
 
-  hn = n >> 1;
+    /* The LDL decomposition yields L (which is written in the tree) and the diagonal of D. Since d00 = g0, we just write
+    * d11 into tmp. */
+    FsmSw_Falcon_poly_LDLmv_fft(tmp, tree, g0, g1, g0, logn);
 
-  /* The LDL decomposition yields L (which is written in the tree) and the diagonal of D. Since d00 = g0, we just write
-   * d11 into tmp. */
-  FsmSw_Falcon_poly_LDLmv_fft(tmp, tree, g0, g1, g0, logn);
+    /* Split d00 (currently in g0) and d11 (currently in tmp). We reuse g0 and g1 as temporary storage spaces:
+    *   d00 splits into g1, g1+hn
+    *   d11 splits into g0, g0+hn */
+    FsmSw_Falcon_poly_split_fft(g1, &g1[hn], g0, logn);
+    FsmSw_Falcon_poly_split_fft(g0, &g0[hn], tmp, logn);
 
-  /* Split d00 (currently in g0) and d11 (currently in tmp). We reuse g0 and g1 as temporary storage spaces:
-   *   d00 splits into g1, g1+hn
-   *   d11 splits into g0, g0+hn */
-  FsmSw_Falcon_poly_split_fft(g1, &g1[hn], g0, logn);
-  FsmSw_Falcon_poly_split_fft(g0, &g0[hn], tmp, logn);
-
-  /* Each split result is the first row of a new auto-adjoint quasicyclic matrix for the next recursive step. */
-  /* MISRA C 2012 rule 17.2 violation: [R] Functions shall not call themselves, either directly or indirectly:
-   * Without in-depth knowledge, this violation cannot be resolved. */
-  ffLDL_fft_inner(&tree[n], g1, &g1[hn], logn - 1u, tmp);
-  ffLDL_fft_inner(&tree[n + ffLDL_treesize(logn - 1u)], g0, &g0[hn], logn - 1u, tmp);
+    /* Each split result is the first row of a new auto-adjoint quasicyclic matrix for the next recursive step. */
+    /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
+    ffLDL_fft_inner(&tree[n], g1, &g1[hn], logn - 1u, tmp);
+    /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
+    ffLDL_fft_inner(&tree[n + ffLDL_treesize(logn - 1u)], g0, &g0[hn], logn - 1u, tmp);
+  }
 }
 
 
@@ -175,9 +180,9 @@ static void ffLDL_binary_normalize(fpr *tree, uint32 orig_logn, uint32 logn)
   }
   else
   {
-    /* MISRA C 2012 rule 17.2 violation: [R] Functions shall not call themselves, either directly or indirectly:
-     * Without in-depth knowledge, this violation cannot be resolved. */
+    /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
     ffLDL_binary_normalize(&tree[n], orig_logn, logn - 1u);
+    /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
     ffLDL_binary_normalize(&tree[n + ffLDL_treesize(logn - 1u)], orig_logn, logn - 1u);
   }
 }
@@ -272,14 +277,17 @@ static sint32 ber_exp(prng *p, fpr x, fpr ccs)
 * Returns t.b.d.
 *
 ***********************************************************************************************************************/
-sint32 sign_sampler(void *ctx, fpr mu, fpr isigma)
+static sint32 sign_sampler(void *ctx, fpr mu, fpr isigma)
 {
     sampler_context *spc;
     sint32 s;
     fpr r, dss, ccs;
     sint32 z0, z, b;
     fpr x;
+    sint32 retVal = 0;
 
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     spc = ctx;
 
     /* Center is mu. We compute mu = s + r where s is an integer and 0 <= r < 1. */
@@ -302,7 +310,7 @@ sint32 sign_sampler(void *ctx, fpr mu, fpr isigma)
        */
       z0 = gaussian0_sampler(&spc->p);
       b = (sint32)((uint32)(FsmSw_Falcon_prng_get_u8(&spc->p) & 1u));
-      z = b + ((sint32) ((uint32)(((uint32)b << 1) - 1u))) * z0;
+      z = b + (((sint32) ((uint32)(((uint32)b << 1) - 1u))) * z0);
 
       /* Rejection sampling. We want a Gaussian centered on r; but we sampled against a Gaussian centered on b (0 or 1).
        * But we know that z is always in the range where our sampling distribution is greater than the Gaussian
@@ -327,11 +335,12 @@ sint32 sign_sampler(void *ctx, fpr mu, fpr isigma)
       if (0 < ber_exp(&spc->p, x, ccs))
       {
         /* Rejection sampling was centered on r, but the actual center is mu = s + r. */
-        return s + z;
+        retVal = s + z;
+        break;
       }
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -345,7 +354,7 @@ sint32 sign_sampler(void *ctx, fpr mu, fpr isigma)
 * Returns z
 *
 ***********************************************************************************************************************/
-sint32 gaussian0_sampler(prng *p)
+static sint32 gaussian0_sampler(prng *p)
 {
     uint32 v0, v1, v2, hi;
     uint64 lo;
@@ -362,13 +371,13 @@ sint32 gaussian0_sampler(prng *p)
     /* Sampled value is z, such that v0..v2 is lower than the first z elements of the table. */
     z = 0;
 
-    for (u = 0; u < (sizeof dist) / sizeof(dist[0]); u += 3u)
+    for (u = 0; u < (sizeof(dist)) / sizeof(dist[0]); u += 3u)
     {
       uint32 w0, w1, w2, cc;
 
       w0 = dist[u + 2u];
       w1 = dist[u + 1u];
-      w2 = dist[u + 0u];
+      w2 = dist[u];
       cc = (v0 - w0) >> 31;
       cc = (v1 - w1 - cc) >> 31;
       cc = (v2 - w2 - cc) >> 31;
@@ -401,6 +410,7 @@ static void ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx, fpr *t0, fpr *
 {
   uint32 n, hn;
   fpr *z0, *z1;
+  boolean bStopFunc = FALSE;
 
   /* Deepest level: the LDL tree leaf value is just g00 (the array has length only 1 at this point); we normalize it
    * with regards to sigma, then use it for sampling. */
@@ -413,9 +423,11 @@ static void ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx, fpr *t0, fpr *
     t0[0] = FsmSw_Falcon_fpr_of(samp(samp_ctx, t0[0], leaf));
     t1[0] = FsmSw_Falcon_fpr_of(samp(samp_ctx, t1[0], leaf));
 
-    return;
+    bStopFunc = TRUE;
   }
 
+  if (FALSE == bStopFunc)
+  {
   n = (uint32) 1 << logn;
   hn = n >> 1;
 
@@ -424,12 +436,12 @@ static void ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx, fpr *t0, fpr *
 
   /* Split d00 and d11 and expand them into half-size quasi-cyclic Gram matrices. We also save l10 in tmp[]. */
   FsmSw_Falcon_poly_split_fft(tmp, &tmp[hn], g00, logn);
-  FsmSw_CommonLib_memcpy(g00, tmp, n * sizeof *tmp);
+  FsmSw_CommonLib_memcpy(g00, tmp, n * sizeof(*tmp));
   FsmSw_Falcon_poly_split_fft(tmp, &tmp[hn], g11, logn);
-  FsmSw_CommonLib_memcpy(g11, tmp, n * sizeof *tmp);
-  FsmSw_CommonLib_memcpy(tmp, g01, n * sizeof *g01);
-  FsmSw_CommonLib_memcpy(g01, g00, hn * sizeof *g00);
-  FsmSw_CommonLib_memcpy(&g01[hn], g11, hn * sizeof *g00);
+  FsmSw_CommonLib_memcpy(g11, tmp, n * sizeof(*tmp));
+  FsmSw_CommonLib_memcpy(tmp, g01, n * sizeof(*g01));
+  FsmSw_CommonLib_memcpy(g01, g00, hn * sizeof(*g00));
+  FsmSw_CommonLib_memcpy(&g01[hn], g11, hn * sizeof(*g00));
 
   /* The half-size Gram matrices for the recursive LDL tree building are now:
    *   - left sub-tree: g00, g00+hn, g01
@@ -440,27 +452,26 @@ static void ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx, fpr *t0, fpr *
    * back into tmp + 2*n. */
   z1 = &tmp[n];
   FsmSw_Falcon_poly_split_fft(z1, &z1[hn], t1, logn);
-  /* MISRA C 2012 rule 17.2 violation: [R] Functions shall not call themselves, either directly or indirectly:
-   * Without in-depth knowledge, this violation cannot be resolved. */
+  /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
   ffSampling_fft_dyntree(samp, samp_ctx, z1, &z1[hn], g11, &g11[hn], &g01[hn], orig_logn, logn - 1u, &z1[n]);
   FsmSw_Falcon_poly_merge_fft(&tmp[(n << 1)], z1, &z1[hn], logn);
 
   /* Compute tb0 = t0 + (t1 - z1) * l10. At that point, l10 is in tmp, t1 is unmodified, and z1 is in tmp + (n << 1).
    * The buffer in z1 is free.   *
    * In the end, z1 is written over t1, and tb0 is in t0. */
-  FsmSw_CommonLib_memcpy(z1, t1, n * sizeof *t1);
+  FsmSw_CommonLib_memcpy(z1, t1, n * sizeof(*t1));
   FsmSw_Falcon_poly_sub(z1, &tmp[(n << 1)], logn);
-  FsmSw_CommonLib_memcpy(t1, &tmp[(n << 1)], n * sizeof *tmp);
+  FsmSw_CommonLib_memcpy(t1, &tmp[(n << 1)], n * sizeof(*tmp));
   FsmSw_Falcon_poly_mul_fft(tmp, z1, logn);
   FsmSw_Falcon_poly_add(t0, tmp, logn);
 
   /* Second recursive invocation, on the split tb0 (currently in t0) and the left sub-tree. */
   z0 = tmp;
   FsmSw_Falcon_poly_split_fft(z0, &z0[hn], t0, logn);
-  /* MISRA C 2012 rule 17.2 violation: [R] Functions shall not call themselves, either directly or indirectly:
-   * Without in-depth knowledge, this violation cannot be resolved. */
+  /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
   ffSampling_fft_dyntree(samp, samp_ctx, z0, &z0[hn], g00, &g00[hn], g01, orig_logn, logn - 1u, &z0[n]);
   FsmSw_Falcon_poly_merge_fft(t0, z0, &z0[hn], logn);
+  }
 }
 
 /***********************************************************************************************************************
@@ -484,6 +495,7 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
 {
   uint32 n, hn;
   const fpr *tree0, *tree1;
+  boolean bStopFunc = FALSE;
 
   /* When logn == 2, we inline the last two recursion levels. */
   if (logn == 2u)
@@ -531,10 +543,14 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
     b_im = w3;
     c_re = FsmSw_Falcon_fpr_mul(FsmSw_Falcon_fpr_sub(b_re, b_im), fpr_invsqrt2);
     c_im = FsmSw_Falcon_fpr_mul(FsmSw_Falcon_fpr_add(b_re, b_im), fpr_invsqrt2);
-    z1[0] = w0 = FsmSw_Falcon_fpr_add(a_re, c_re);
-    z1[2] = w2 = FsmSw_Falcon_fpr_add(a_im, c_im);
-    z1[1] = w1 = FsmSw_Falcon_fpr_sub(a_re, c_re);
-    z1[3] = w3 = FsmSw_Falcon_fpr_sub(a_im, c_im);
+    z1[0] = FsmSw_Falcon_fpr_add(a_re, c_re);
+    w0 = FsmSw_Falcon_fpr_add(a_re, c_re);
+    z1[2] = FsmSw_Falcon_fpr_add(a_im, c_im);
+    w2 = FsmSw_Falcon_fpr_add(a_im, c_im);
+    z1[1] = FsmSw_Falcon_fpr_sub(a_re, c_re);
+    w1 = FsmSw_Falcon_fpr_sub(a_re, c_re);
+    z1[3] = FsmSw_Falcon_fpr_sub(a_im, c_im);
+    w3 = FsmSw_Falcon_fpr_sub(a_im, c_im);
 
     /* Compute tb0 = t0 + (t1 - z1) * L. Value tb0 ends up in w*. */
     w0 = FsmSw_Falcon_fpr_sub(t1[0], w0);
@@ -577,8 +593,10 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
     x0 = w2;
     x1 = w3;
     sigma = tree0[3];
-    w2 = y0 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x0, sigma));
-    w3 = y1 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x1, sigma));
+    w2 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x0, sigma));
+    y0 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x0, sigma));
+    w3 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x1, sigma));
+    y1 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x1, sigma));
     a_re = FsmSw_Falcon_fpr_sub(x0, y0);
     a_im = FsmSw_Falcon_fpr_sub(x1, y1);
     b_re = tree0[0];
@@ -602,7 +620,7 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
     z0[1] = FsmSw_Falcon_fpr_sub(a_re, c_re);
     z0[3] = FsmSw_Falcon_fpr_sub(a_im, c_im);
 
-    return;
+    bStopFunc = TRUE;
   }
 
   /* Case logn == 1 is reachable only when using Falcon-2 (the smallest size for which Falcon is mathematically
@@ -615,8 +633,10 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
     x0 = t1[0];
     x1 = t1[1];
     sigma = tree[3];
-    z1[0] = y0 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x0, sigma));
-    z1[1] = y1 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x1, sigma));
+    z1[0] = FsmSw_Falcon_fpr_of(samp(samp_ctx, x0, sigma));
+    y0 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x0, sigma));
+    z1[1] = FsmSw_Falcon_fpr_of(samp(samp_ctx, x1, sigma));
+    y1 = FsmSw_Falcon_fpr_of(samp(samp_ctx, x1, sigma));
     a_re = FsmSw_Falcon_fpr_sub(x0, y0);
     a_im = FsmSw_Falcon_fpr_sub(x1, y1);
     b_re = tree[0];
@@ -629,9 +649,11 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
     z0[0] = FsmSw_Falcon_fpr_of(samp(samp_ctx, x0, sigma));
     z0[1] = FsmSw_Falcon_fpr_of(samp(samp_ctx, x1, sigma));
 
-    return;
+    bStopFunc = TRUE;
   }
 
+  if (FALSE == bStopFunc)
+  {
   /* General recursive case (logn >= 3). */
   n = (uint32) 1 << logn;
   hn = n >> 1;
@@ -641,21 +663,22 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
   /* We split t1 into z1 (reused as temporary storage), then do the recursive invocation, with output in tmp.
    * We finally merge back into z1. */
   FsmSw_Falcon_poly_split_fft(z1, &z1[hn], t1, logn);
+  /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
   ffSampling_fft(samp, samp_ctx, tmp, &tmp[hn], tree1, z1, &z1[hn], logn - 1u, &tmp[n]);
   FsmSw_Falcon_poly_merge_fft(z1, tmp, &tmp[hn], logn);
 
   /* Compute tb0 = t0 + (t1 - z1) * L. Value tb0 ends up in tmp[]. */
-  FsmSw_CommonLib_memcpy(tmp, t1, n * sizeof *t1);
+  FsmSw_CommonLib_memcpy(tmp, t1, n * sizeof(*t1));
   FsmSw_Falcon_poly_sub(tmp, z1, logn);
   FsmSw_Falcon_poly_mul_fft(tmp, tree, logn);
   FsmSw_Falcon_poly_add(tmp, t0, logn);
 
   /* Second recursive invocation. */
   FsmSw_Falcon_poly_split_fft(z0, &z0[hn], tmp, logn);
-  /* MISRA C 2012 rule 17.2 violation: [R] Functions shall not call themselves, either directly or indirectly:
-   * Without in-depth knowledge, this violation cannot be resolved. */
+  /* polyspace +1 MISRA2012:17.2 [Justified:]"Without in-depth knowledge, this violation cannot be resolved." */
   ffSampling_fft(samp, samp_ctx, tmp, &tmp[hn], tree0, z0, &z0[hn], logn - 1u, &tmp[n]);
   FsmSw_Falcon_poly_merge_fft(z0, tmp, &tmp[hn], logn);
+  }
 }
 
 /***********************************************************************************************************************
@@ -689,6 +712,7 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
   uint32 sqn, ng;
   sint16 *s1tmp, *s2tmp;
   sint32 z;
+  sint32 retVal = 0;
 
   n = MKN(logn);
 
@@ -721,19 +745,19 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
   t0 = &b11[n];
   t1 = &t0[n];
 
-  FsmSw_CommonLib_memcpy(t0, b01, n * sizeof *b01);
+  FsmSw_CommonLib_memcpy(t0, b01, n * sizeof(*b01));
   FsmSw_Falcon_poly_mulselfadj_fft(t0, logn);    /* t0 <- b01*adj(b01) */
 
-  FsmSw_CommonLib_memcpy(t1, b00, n * sizeof *b00);
+  FsmSw_CommonLib_memcpy(t1, b00, n * sizeof(*b00));
   FsmSw_Falcon_poly_muladj_fft(t1, b10, logn);   /* t1 <- b00*adj(b10) */
   FsmSw_Falcon_poly_mulselfadj_fft(b00, logn);   /* b00 <- b00*adj(b00) */
   FsmSw_Falcon_poly_add(b00, t0, logn);      /* b00 <- g00 */
-  FsmSw_CommonLib_memcpy(t0, b01, n * sizeof *b01);
+  FsmSw_CommonLib_memcpy(t0, b01, n * sizeof(*b01));
   FsmSw_Falcon_poly_muladj_fft(b01, b11, logn);  /* b01 <- b01*adj(b11) */
   FsmSw_Falcon_poly_add(b01, t1, logn);      /* b01 <- g01 */
 
   FsmSw_Falcon_poly_mulselfadj_fft(b10, logn);   /* b10 <- b10*adj(b10) */
-  FsmSw_CommonLib_memcpy(t1, b11, n * sizeof *b11);
+  FsmSw_CommonLib_memcpy(t1, b11, n * sizeof(*b11));
   FsmSw_Falcon_poly_mulselfadj_fft(t1, logn);    /* t1 <- b11*adj(b11) */
   FsmSw_Falcon_poly_add(b10, t1, logn);      /* b10 <- g11 */
 
@@ -752,21 +776,21 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
   for (u = 0; u < n; u++)
   {
     t0[u] = FsmSw_Falcon_fpr_of((sint64)hm[u]);
-    /* This is implicit.
-     * t1[u] = fpr_zero; */
+    /* This is implicit. 
+     * t1[u] = fpr_zero */
   }
 
   /* Apply the lattice basis to obtain the real target vector (after normalization with regards to modulus). */
   FsmSw_Falcon_FFT(t0, logn);
   ni = fpr_inverse_of_q;
-  FsmSw_CommonLib_memcpy(t1, t0, n * sizeof *t0);
+  FsmSw_CommonLib_memcpy(t1, t0, n * sizeof(*t0));
   FsmSw_Falcon_poly_mul_fft(t1, b01, logn);
   FsmSw_Falcon_poly_mulconst(t1, FsmSw_Falcon_fpr_neg(ni), logn);
   FsmSw_Falcon_poly_mul_fft(t0, b11, logn);
   FsmSw_Falcon_poly_mulconst(t0, ni, logn);
 
   /* b01 and b11 can be discarded, so we move back (t0,t1). Memory layout is now: g00 g01 g11 t0 t1 */
-  FsmSw_CommonLib_memcpy(b11, t0, n * 2u * sizeof *t0);
+  FsmSw_CommonLib_memcpy(b11, t0, n * 2u * sizeof(*t0));
   t0 = &g11[n];
   t1 = &t0[n];
 
@@ -779,7 +803,7 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
   b01 = &b00[n];
   b10 = &b01[n];
   b11 = &b10[n];
-  FsmSw_CommonLib_memmove(&b11[n], t0, n * 2u * sizeof *t0);
+  FsmSw_CommonLib_memmove(&b11[n], t0, n * 2u * sizeof(*t0));
   t0 = &b11[n];
   t1 = &t0[n];
   smallints_to_fpr(b01, f, logn);
@@ -796,20 +820,22 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
   ty = &tx[n];
 
   /* Get the lattice point corresponding to that tiny vector. */
-  FsmSw_CommonLib_memcpy(tx, t0, n * sizeof *t0);
-  FsmSw_CommonLib_memcpy(ty, t1, n * sizeof *t1);
+  FsmSw_CommonLib_memcpy(tx, t0, n * sizeof(*t0));
+  FsmSw_CommonLib_memcpy(ty, t1, n * sizeof(*t1));
   FsmSw_Falcon_poly_mul_fft(tx, b00, logn);
   FsmSw_Falcon_poly_mul_fft(ty, b10, logn);
   FsmSw_Falcon_poly_add(tx, ty, logn);
-  FsmSw_CommonLib_memcpy(ty, t0, n * sizeof *t0);
+  FsmSw_CommonLib_memcpy(ty, t0, n * sizeof(*t0));
   FsmSw_Falcon_poly_mul_fft(ty, b01, logn);
 
-  FsmSw_CommonLib_memcpy(t0, tx, n * sizeof *tx);
+  FsmSw_CommonLib_memcpy(t0, tx, n * sizeof(*tx));
   FsmSw_Falcon_poly_mul_fft(t1, b11, logn);
   FsmSw_Falcon_poly_add(t1, ty, logn);
   FsmSw_Falcon_iFFT(t0, logn);
   FsmSw_Falcon_iFFT(t1, logn);
 
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   s1tmp = (sint16 *)((void*)tx);
   sqn = 0;
   ng = 0;
@@ -828,6 +854,8 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
    * however, it may happen in practice for the very reduced versions (e.g. degree 16 or below). In that case, the
    * caller will loop, and we must not write anything into s2[] because s2[] may overlap with the hashed message hm[]
    * and we need hm[] for the next iteration. */
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   s2tmp = (sint16 *)((void*)tmp);
 
   for (u = 0; u < n; u++)
@@ -837,13 +865,13 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
 
   if (0 < FsmSw_Falcon_is_short_half(sqn, s2tmp, logn))
   {
-    FsmSw_CommonLib_memcpy(s2, s2tmp, n * sizeof *s2);
-    FsmSw_CommonLib_memcpy(tmp, s1tmp, n * sizeof *s1tmp);
+    FsmSw_CommonLib_memcpy(s2, s2tmp, n * sizeof(*s2));
+    FsmSw_CommonLib_memcpy(tmp, s1tmp, n * sizeof(*s1tmp));
 
-    return 1;
+    retVal = 1;
   }
 
-  return 0;
+  return retVal;
 }
 
 /**********************************************************************************************************************/
@@ -876,6 +904,8 @@ void FsmSw_Falcon_sign_dyn(sint16 *sig, inner_shake256_context *rng, const sint8
 {
   fpr *ftmp;
 
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   ftmp = (fpr*) ((void*)tmp);
 
   for (uint32 i = 0; i < 0xFFFFFFFFu; i++)

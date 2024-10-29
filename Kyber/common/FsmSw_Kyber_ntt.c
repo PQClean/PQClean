@@ -18,8 +18,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Kyber_ntt.h"
+
+#include "FsmSw_Types.h"
 #include "FsmSw_Kyber_params.h"
 #include "FsmSw_Kyber_reduce.h"
 
@@ -102,8 +103,9 @@ void FsmSw_Kyber_ntt(sint16 r[256])
     {
         for (start = 0; start < 256u; start = j + len)
         {
-            zeta = FsmSw_Kyber_zetas[k++];
-            for (j = start; j < start + len; j++)
+            zeta = FsmSw_Kyber_zetas[k];
+            k++;
+            for (j = start; j < (start + len); j++)
             {
                 t = fqmul(zeta, r[j + len]);
                 r[j + len] = r[j] - t;
@@ -133,8 +135,9 @@ void FsmSw_Kyber_invntt(sint16 r[256])
     {
         for (start = 0; start < 256u; start = j + len)
         {
-            zeta = FsmSw_Kyber_zetas[k--];
-            for (j = start; j < start + len; j++)
+            zeta = FsmSw_Kyber_zetas[k];
+            k--;
+            for (j = start; j < (start + len); j++)
             {
                 t = r[j];
                 r[j] = FsmSw_Kyber_barrett_reduce(t + r[j + len]);

@@ -18,9 +18,10 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Dilithium_params.h"
 #include "FsmSw_Dilithium_reduce.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -91,7 +92,7 @@ sint32 FsmSw_Dilithium_reduce32(sint32 a)
     temp = a + (sint32)((uint32)((uint32)1 << 22u));
     t = (sint32)((uint32)((uint64)temp >> 23));
 
-    t = a - t * Q_DILITHIUM;
+    t = a - (t * Q_DILITHIUM);
 
     return t;
 }
@@ -109,10 +110,13 @@ sint32 FsmSw_Dilithium_caddq(sint32 a)
 {
     uint32 temp;
 
-    temp = (uint32)((uint64)a >> 31);
-    a = a + (sint32)((uint32)(temp & (uint32)Q_DILITHIUM));
+    /* a_temp is used to avoid modifying the input. */
+    sint32 a_temp = a;
 
-    return a;
+    temp = (uint32)((uint64)a_temp >> 31);
+    a_temp = a_temp + (sint32)((uint32)(temp & (uint32)Q_DILITHIUM));
+
+    return a_temp;
 }
 
 /***********************************************************************************************************************
@@ -127,8 +131,11 @@ sint32 FsmSw_Dilithium_caddq(sint32 a)
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium_freeze(sint32 a)
 {
-    a = FsmSw_Dilithium_reduce32(a);
-    a = FsmSw_Dilithium_caddq(a);
+    /* a_temp is used to avoid modifying the input. */
+    sint32 a_temp = a;
 
-    return a;
+    a_temp = FsmSw_Dilithium_reduce32(a_temp);
+    a_temp = FsmSw_Dilithium_caddq(a_temp);
+
+    return a_temp;
 }

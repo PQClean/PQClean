@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -39,41 +39,55 @@
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Context for incremental API */
 typedef struct
 {
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } shake128incctx;
 
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Context for non-incremental API */
 typedef struct
 {
     uint64 ctx[PQC_SHAKECTX_LEN];
 } shake128ctx;
 
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Context for incremental API */
 typedef struct
 {
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } shake256incctx;
 
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Context for non-incremental API */
 typedef struct
 {
     uint64 ctx[PQC_SHAKECTX_LEN];
 } shake256ctx;
 
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Context for incremental API */
 typedef struct
 {
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } sha3_256incctx;
 
+/* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 typedef struct
 {
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
 } sha3_384incctx;
 
+/* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 typedef struct
 {
     uint64 ctx[PQC_SHAKEINCCTX_LEN];
@@ -99,8 +113,6 @@ void FsmSw_Fips202_shake128_inc_finalize(shake128incctx *state);
 void FsmSw_Fips202_shake128_inc_squeeze(uint8 *output, uint32 outlen, shake128incctx *state);
 void FsmSw_Fips202_shake128_inc_ctx_clone(shake128incctx *dest, const shake128incctx *src);
 
-void FsmSw_Fips202_shake256_absorb(shake256ctx *state, const uint8 *input, uint32 inlen);
-void FsmSw_Fips202_shake256_squeezeblocks(uint8 *output, uint32 nblocks, shake256ctx *state);
 void FsmSw_Fips202_shake256_ctx_clone(shake256ctx *dest, const shake256ctx *src);
 void FsmSw_Fips202_shake256_inc_init(shake256incctx *state);
 void FsmSw_Fips202_shake256_inc_absorb(shake256incctx *state, const uint8 *input, uint32 inlen);

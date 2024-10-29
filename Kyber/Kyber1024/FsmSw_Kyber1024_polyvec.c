@@ -18,10 +18,11 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Kyber1024_params.h"
 #include "FsmSw_Kyber1024_poly.h"
 #include "FsmSw_Kyber1024_polyvec.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -63,33 +64,36 @@ void FsmSw_Kyber1024_polyvec_compress(uint8 r[KYBER1024_POLYVECCOMPRESSEDBYTES],
     uint8  i, k;
     uint16 j, t[8];
 
+    /* r_temp is used to avoid modifying the input. */
+    uint8 *r_temp = r;
+
     for (i = 0; i < KYBER1024_K; i++)
     {
-        for (j = 0; j < KYBER_N / 8u; j++)
+        for (j = 0; j < (KYBER_N / 8u); j++)
         {
             for (k = 0; k < 8u; k++)
             {
-                t[k]  = (uint16)(a->vec[i].coeffs[8u * j + k]);
+                t[k]  = (uint16)(a->vec[i].coeffs[(8u * j) + k]);
                 /* Shift to get the first bit */
                 if ((t[k] >> 15u) != 0u)
                 {
                     t[k] = t[k] + KYBER_Q;
                 }
-                t[k]  = (uint16)((((t[k] << 11u) + KYBER_Q / 2u) / KYBER_Q) & 0x7ffu);
+                t[k]  = (uint16)((((t[k] << 11u) + (KYBER_Q / 2u)) / KYBER_Q) & 0x7ffu);
             }
 
-            r[ 0] = (uint8)( t[0] >>  0);
-            r[ 1] = (uint8)((t[0] >>  8) | (t[1] << 3));
-            r[ 2] = (uint8)((t[1] >>  5) | (t[2] << 6));
-            r[ 3] = (uint8)( t[2] >>  2);
-            r[ 4] = (uint8)((t[2] >> 10) | (t[3] << 1));
-            r[ 5] = (uint8)((t[3] >>  7) | (t[4] << 4));
-            r[ 6] = (uint8)((t[4] >>  4) | (t[5] << 7));
-            r[ 7] = (uint8)( t[5] >>  1);
-            r[ 8] = (uint8)((t[5] >>  9) | (t[6] << 2));
-            r[ 9] = (uint8)((t[6] >>  6) | (t[7] << 5));
-            r[10] = (uint8)( t[7] >>  3);
-            r     = &(r[11]);
+            r_temp[ 0] = (uint8)( t[0] >>  0);
+            r_temp[ 1] = (uint8)((t[0] >>  8) | (t[1] << 3));
+            r_temp[ 2] = (uint8)((t[1] >>  5) | (t[2] << 6));
+            r_temp[ 3] = (uint8)( t[2] >>  2);
+            r_temp[ 4] = (uint8)((t[2] >> 10) | (t[3] << 1));
+            r_temp[ 5] = (uint8)((t[3] >>  7) | (t[4] << 4));
+            r_temp[ 6] = (uint8)((t[4] >>  4) | (t[5] << 7));
+            r_temp[ 7] = (uint8)( t[5] >>  1);
+            r_temp[ 8] = (uint8)((t[5] >>  9) | (t[6] << 2));
+            r_temp[ 9] = (uint8)((t[6] >>  6) | (t[7] << 5));
+            r_temp[10] = (uint8)( t[7] >>  3);
+            r_temp     = &(r_temp[11]);
         }
     }
 }
@@ -108,24 +112,27 @@ void FsmSw_Kyber1024_polyvec_decompress(polyvec1024 *r, const uint8 a[KYBER1024_
     uint8  i, k;
     uint16 j, t[8];
 
+    /* a_temp is used to avoid modifying the input. */
+    const uint8 *a_temp = a;
+
     for (i = 0; i < KYBER1024_K; i++)
     {
-        for (j = 0; j < KYBER_N / 8u; j++)
+        for (j = 0; j < (KYBER_N / 8u); j++)
         {
-            t[0] = ((uint16)a[0] >> 0) | ((uint16)a[ 1] << 8);
-            t[1] = ((uint16)a[1] >> 3) | ((uint16)a[ 2] << 5);
-            t[2] = ((uint16)a[2] >> 6) | ((uint16)a[ 3] << 2) | ((uint16)a[4] << 10);
-            t[3] = ((uint16)a[4] >> 1) | ((uint16)a[ 5] << 7);
-            t[4] = ((uint16)a[5] >> 4) | ((uint16)a[ 6] << 4);
-            t[5] = ((uint16)a[6] >> 7) | ((uint16)a[ 7] << 1) | ((uint16)a[8] << 9);
-            t[6] = ((uint16)a[8] >> 2) | ((uint16)a[ 9] << 6);
-            t[7] = ((uint16)a[9] >> 5) | ((uint16)a[10] << 3);
+            t[0] = ((uint16)a_temp[0] >> 0) | ((uint16)a_temp[ 1] << 8);
+            t[1] = ((uint16)a_temp[1] >> 3) | ((uint16)a_temp[ 2] << 5);
+            t[2] = ((uint16)a_temp[2] >> 6) | ((uint16)a_temp[ 3] << 2) | ((uint16)a_temp[4] << 10);
+            t[3] = ((uint16)a_temp[4] >> 1) | ((uint16)a_temp[ 5] << 7);
+            t[4] = ((uint16)a_temp[5] >> 4) | ((uint16)a_temp[ 6] << 4);
+            t[5] = ((uint16)a_temp[6] >> 7) | ((uint16)a_temp[ 7] << 1) | ((uint16)a_temp[8] << 9);
+            t[6] = ((uint16)a_temp[8] >> 2) | ((uint16)a_temp[ 9] << 6);
+            t[7] = ((uint16)a_temp[9] >> 5) | ((uint16)a_temp[10] << 3);
             /* Set address from pointer a[10] to address a[11]  */
-            a = &(a[11]);
+            a_temp = &(a_temp[11]);
 
             for (k = 0; k < 8u; k++)
             {
-                r->vec[i].coeffs[8u * j + k] = (sint16)((uint16)(((t[k] & 0x7FFu) * KYBER_Q + 1024u) >> 11u));
+                r->vec[i].coeffs[(8u * j) + k] = (sint16)((uint16)((((t[k] & 0x7FFu) * KYBER_Q) + 1024u) >> 11u));
             }
         }
     }

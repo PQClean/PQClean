@@ -18,13 +18,14 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Kyber_ntt.h"
 #include "FsmSw_Kyber_reduce.h"
 #include "FsmSw_Kyber_symmetric.h"
 #include "FsmSw_Kyber1024_params.h"
 #include "FsmSw_Kyber1024_cbd.h"
 #include "FsmSw_Kyber1024_poly.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -67,22 +68,25 @@ void FsmSw_Kyber1024_poly_compress(uint8 r[KYBER1024_POLYCOMPRESSEDBYTES], const
     sint16 u;
     uint8  j, t[8];
 
-    for (i = 0; i < KYBER_N / 8u; i++)
+    /* r_temp is used to avoid modifying the input. */
+    uint8 *r_temp = r;
+
+    for (i = 0; i < (KYBER_N / 8u); i++)
     {
         for (j = 0; j < 8u; j++)
         {
             /* map to positive standard representatives */
-            u = a->coeffs[8u * i + j];
+            u = a->coeffs[(8u * i) + j];
             u = (sint16)(u + (sint16)((uint16)(((uint32)u >> 15u) & KYBER_Q)));
             t[j] = (uint8)(((((uint32)u << 5u) + KYBER_Q / 2u) / KYBER_Q) & 31u);
         }
 
-        r[0] = (t[0] >> 0) | (t[1] << 5);
-        r[1] = (t[1] >> 3) | (t[2] << 2) | (t[3] << 7);
-        r[2] = (t[3] >> 1) | (t[4] << 4);
-        r[3] = (t[4] >> 4) | (t[5] << 1) | (t[6] << 6);
-        r[4] = (t[6] >> 2) | (t[7] << 3);
-        r = &(r[5]);
+        r_temp[0] = (t[0] >> 0) | (t[1] << 5);
+        r_temp[1] = (t[1] >> 3) | (t[2] << 2) | (t[3] << 7);
+        r_temp[2] = (t[3] >> 1) | (t[4] << 4);
+        r_temp[3] = (t[4] >> 4) | (t[5] << 1) | (t[6] << 6);
+        r_temp[4] = (t[6] >> 2) | (t[7] << 3);
+        r_temp = &(r_temp[5]);
     }
 }
 
@@ -100,21 +104,24 @@ void FsmSw_Kyber1024_poly_decompress(poly1024 *r, const uint8 a[KYBER1024_POLYCO
     uint16 i;
     uint8  j, t[8];
 
-    for (i = 0; i < KYBER_N / 8u; i++)
+    /* a_temp is used to avoid modifying the input. */
+    const uint8 *a_temp = a;
+
+    for (i = 0; i < (KYBER_N / 8u); i++)
     {
-        t[0] = (a[0] >> 0);
-        t[1] = (a[0] >> 5) | (a[1] << 3);
-        t[2] = (a[1] >> 2);
-        t[3] = (a[1] >> 7) | (a[2] << 1);
-        t[4] = (a[2] >> 4) | (a[3] << 4);
-        t[5] = (a[3] >> 1);
-        t[6] = (a[3] >> 6) | (a[4] << 2);
-        t[7] = (a[4] >> 3);
-        a = &(a[5]);
+        t[0] = (a_temp[0] >> 0);
+        t[1] = (a_temp[0] >> 5) | (a_temp[1] << 3);
+        t[2] = (a_temp[1] >> 2);
+        t[3] = (a_temp[1] >> 7) | (a_temp[2] << 1);
+        t[4] = (a_temp[2] >> 4) | (a_temp[3] << 4);
+        t[5] = (a_temp[3] >> 1);
+        t[6] = (a_temp[3] >> 6) | (a_temp[4] << 2);
+        t[7] = (a_temp[4] >> 3);
+        a_temp = &(a_temp[5]);
 
         for (j = 0; j < 8u; j++)
         {
-            r->coeffs[8u * i + j] = (sint16)((uint16)(((uint32)((uint32)t[j] & 31u) * KYBER_Q + 16u) >> 5u));
+            r->coeffs[(8u * i) + j] = (sint16)((uint16)(((uint32)(((uint32)t[j] & 31u) * KYBER_Q) + 16u) >> 5u));
         }
     }
 }
@@ -131,7 +138,7 @@ void FsmSw_Kyber1024_poly_tobytes(uint8 r[KYBER_POLYBYTES], const poly1024 *a)
 {
     uint16 i, t0, t1;
 
-    for (i = 0; i < KYBER_N / 2u; i++)
+    for (i = 0; i < (KYBER_N / 2u); i++)
     {
         /* map to positive standard representatives */
         t0 = (uint16)(a->coeffs[2u * i]);
@@ -142,16 +149,16 @@ void FsmSw_Kyber1024_poly_tobytes(uint8 r[KYBER_POLYBYTES], const poly1024 *a)
             t0 = t0 + KYBER_Q;
         }
 
-        t1 = (uint16)(a->coeffs[2u * i + 1u]);
+        t1 = (uint16)(a->coeffs[(2u * i) + 1u]);
         /* Shift to get the first bit */
         if ((t1 >> 15u) != 0u)
         {
             t1 = t1 + KYBER_Q;
         }
 
-        r[3u * i + 0u] = (uint8)(t0 >> 0);
-        r[3u * i + 1u] = (uint8)((t0 >> 8u) | (t1 << 4u));
-        r[3u * i + 2u] = (uint8)(t1 >> 4u);
+        r[3u * i] = (uint8)(t0 >> 0);
+        r[(3u * i) + 1u] = (uint8)((t0 >> 8u) | (t1 << 4u));
+        r[(3u * i) + 2u] = (uint8)(t1 >> 4u);
     }
 }
 
@@ -168,18 +175,18 @@ void FsmSw_Kyber1024_poly_frombytes(poly1024 *r, const uint8 a[KYBER_POLYBYTES])
 {
     uint16 i;
 
-    for (i = 0; i < KYBER_N / 2u; i++)
+    for (i = 0; i < (KYBER_N / 2u); i++)
     {
         r->coeffs[2u * i]      = (sint16) ((uint16)( (((
-                                                         ((uint16)a[3u * i + 0u]) >> 0u) |
-                                                         ((uint16)a[3u * i + 1u]) << 8u)
+                                                         ((uint16)a[3u * i]) >> 0u) |
+                                                         (((uint16)a[(3u * i) + 1u]) << 8u))
                                                      ) & 0xFFFu
                                                    )
                                           );
 
-        r->coeffs[2u * i + 1u] = (sint16) ((uint16)( (((
-                                                         ((uint16)a[3u * i + 1u]) >> 4u) |
-                                                         ((uint16)a[3u * i + 2u]) << 4u)
+        r->coeffs[(2u * i) + 1u] = (sint16) ((uint16)( (((
+                                                         ((uint16)a[(3u * i) + 1u]) >> 4u) |
+                                                         (((uint16)a[(3u * i) + 2u]) << 4u))
                                                      ) & 0xFFFu
                                                    )
                                           );
@@ -200,12 +207,12 @@ void FsmSw_Kyber1024_poly_frommsg(poly1024 *r, const uint8 msg[KYBER1024_INDCPA_
     uint16 i;
     sint16 mask;
 
-    for (i = 0; i < KYBER_N / 8u; i++)
+    for (i = 0; i < (KYBER_N / 8u); i++)
     {
         for (j = 0; j < 8u; j++)
         {
             mask = -(sint16)((uint16)(((uint32)msg[i] >> j) & 1u));
-            r->coeffs[8u * i + j] = (sint16)((uint16)((uint16)mask & ((uint16)((KYBER_Q + 1u) / 2u))));
+            r->coeffs[(8u * i) + j] = (sint16)((uint16)((uint16)mask & ((uint16)((KYBER_Q + 1u) / 2u))));
         }
     }
 }
@@ -223,19 +230,19 @@ void FsmSw_Kyber1024_poly_tomsg(uint8 msg[KYBER1024_INDCPA_MSGBYTES], const poly
     uint8  j;
     uint16 i, t;
 
-    for (i = 0; i < KYBER_N / 8u; i++)
+    for (i = 0; i < (KYBER_N / 8u); i++)
     {
         msg[i] = 0;
         for (j = 0; j < 8u; j++)
         {
-            t  = (uint16)(a->coeffs[8u * i + j]);
+            t  = (uint16)(a->coeffs[(8u * i) + j]);
             /* Shift to get the first bit */
             if ((t >> 15u) != 0u)
             {
                 t = t + KYBER_Q;
             }
 
-            t  = (((t << 1u) + KYBER_Q / 2u) / KYBER_Q) & 1u;
+            t  = (((t << 1u) + (KYBER_Q / 2u)) / KYBER_Q) & 1u;
             msg[i] = (uint8)((uint16)msg[i] | (t << j));
         }
     }
@@ -256,7 +263,7 @@ void FsmSw_Kyber1024_poly_getnoise_eta1(poly1024 *r, const uint8 seed[KYBER_SYMB
 {
     uint8 buf[KYBER1024_ETA1 * KYBER_N / 4u];
 
-    prf(buf, sizeof(buf), seed, nonce);
+    FsmSw_Kyber_shake256_prf(buf, sizeof(buf), seed, nonce);
     FsmSw_Kyber1024_poly_cbd_eta1(r, buf);
 }
 
@@ -275,7 +282,7 @@ void FsmSw_Kyber1024_poly_getnoise_eta2(poly1024 *r, const uint8 seed[KYBER_SYMB
 {
     uint8 buf[KYBER1024_ETA2 * KYBER_N / 4u];
 
-    prf(buf, sizeof(buf), seed, nonce);
+    FsmSw_Kyber_shake256_prf(buf, sizeof(buf), seed, nonce);
     FsmSw_Kyber1024_poly_cbd_eta2(r, buf);
 }
 
@@ -321,13 +328,13 @@ void FsmSw_Kyber1024_poly_basemul_montgomery(poly1024 *r, const poly1024 *a, con
 {
     uint16 i;
 
-    for (i = 0; i < KYBER_N / 4u; i++)
+    for (i = 0; i < (KYBER_N / 4u); i++)
     {
         FsmSw_Kyber_basemul(&r->coeffs[4u * i], &a->coeffs[4u * i],
                             &b->coeffs[4u * i], FsmSw_Kyber_zetas[64u + i]);
 
-        FsmSw_Kyber_basemul(&r->coeffs[4u * i + 2u], &a->coeffs[4u * i + 2u],
-                            &b->coeffs[4u * i + 2u], -FsmSw_Kyber_zetas[64u + i]);
+        FsmSw_Kyber_basemul(&r->coeffs[(4u * i) + 2u], &a->coeffs[(4u * i) + 2u],
+                            &b->coeffs[(4u * i) + 2u], -FsmSw_Kyber_zetas[64u + i]);
     }
 }
 
@@ -346,7 +353,7 @@ void FsmSw_Kyber1024_poly_tomont(poly1024 *r)
 
     for (i = 0; i < KYBER_N; i++)
     {
-        r->coeffs[i] = FsmSw_Kyber_montgomery_reduce((sint32)r->coeffs[i] * f);
+        r->coeffs[i] = FsmSw_Kyber_montgomery_reduce((sint32)r->coeffs[i] * (sint32)f);
     }
 }
 

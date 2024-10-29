@@ -42,6 +42,9 @@
  * - Each operand is a real and an imaginary part.
  * - All overlaps are allowed. */
 
+/* polyspace +68 MISRA2012:D4.9 [Justified:]"No refactoring of macros, as converting to, for example, 
+inline functions would not provide significant benefits." */
+
 /* Addition of two complex numbers (d = a + b). */
 #define FPC_ADD(d_re, d_im, a_re, a_im, b_re, b_im)    { \
                                                            fpr fpct_re, fpct_im; \
@@ -61,6 +64,8 @@
                                                        }
 
 /* Multplication of two complex numbers (d = a * b). */
+/* polyspace +2 MISRA2012:2.2 [Justified:]"Polyspace does not properly decompose the function; 
+location of dead code unclear." */
 #define FPC_MUL(d_re, d_im, a_re, a_im, b_re, b_im) { \
                                                      fpr fpct_a_re, fpct_a_im; \
                                                      fpr fpct_b_re, fpct_b_im; \
@@ -78,37 +83,6 @@
                                                      (d_re) = fpct_d_re; \
                                                      (d_im) = fpct_d_im; \
                                                     }
-
-/* Squaring of a complex number (d = a * a). */
-#define FPC_SQR(d_re, d_im, a_re, a_im)    { \
-                                               fpr fpct_a_re, fpct_a_im; \
-                                               fpr fpct_d_re, fpct_d_im; \
-                                               fpct_a_re = (a_re); \
-                                               fpct_a_im = (a_im); \
-                                               fpct_d_re = FsmSw_Falcon_fpr_sub(FsmSw_Falcon_fpr_sqr(fpct_a_re), \
-                                                                                FsmSw_Falcon_fpr_sqr(fpct_a_im)); \
-                                               fpct_d_im = FsmSw_Falcon_fpr_double(FsmSw_Falcon_fpr_mul(fpct_a_re, \
-                                                                                   fpct_a_im)); \
-                                               (d_re) = fpct_d_re; \
-                                               (d_im) = fpct_d_im; \
-                                           }
-
-/* Inversion of a complex number (d = 1 / a). */
-#define FPC_INV(d_re, d_im, a_re, a_im)    { \
-                                               fpr fpct_a_re, fpct_a_im; \
-                                               fpr fpct_d_re, fpct_d_im; \
-                                               fpr fpct_m; \
-                                               fpct_a_re = (a_re); \
-                                               fpct_a_im = (a_im); \
-                                               fpct_m = FsmSw_Falcon_fpr_add(FsmSw_Falcon_fpr_sqr(fpct_a_re), \
-                                                                             FsmSw_Falcon_fpr_sqr(fpct_a_im)); \
-                                               fpct_m = FsmSw_Falcon_fpr_inv(fpct_m); \
-                                               fpct_d_re = FsmSw_Falcon_fpr_mul(fpct_a_re, fpct_m); \
-                                               fpct_d_im = FsmSw_Falcon_fpr_mul(FsmSw_Falcon_fpr_neg(fpct_a_im), \
-                                                                                fpct_m); \
-                                               (d_re) = fpct_d_re; \
-                                               (d_im) = fpct_d_im; \
-                                           }
 
 /* Division of complex numbers (d = a / b). */
 #define FPC_DIV(d_re, d_im, a_re, a_im, b_re, b_im)    { \
@@ -220,7 +194,7 @@ void FsmSw_Falcon_FFT(fpr *f, uint32 logn)
             j2 = j1 + ht;
             fpr s_re, s_im;
 
-            s_re = fpr_gm_tab[((m + i1) << 1) + 0u];
+            s_re = fpr_gm_tab[((m + i1) << 1)];
             s_im = fpr_gm_tab[((m + i1) << 1) + 1u];
 
             for (j = j1; j < j2; j++)
@@ -311,7 +285,7 @@ void FsmSw_Falcon_iFFT(fpr *f, uint32 logn)
             j2 = j1 + t;
             fpr s_re, s_im;
 
-            s_re = fpr_gm_tab[((hm + i1) << 1) + 0u];
+            s_re = fpr_gm_tab[((hm + i1) << 1)];
             s_im = FsmSw_Falcon_fpr_neg(fpr_gm_tab[((hm + i1) << 1) + 1u]);
 
             for (j = j1; j < j2; j++)
@@ -582,25 +556,25 @@ void FsmSw_Falcon_poly_invnorm2_fft(fpr *d, const fpr *a, const fpr *b, uint32 l
 void FsmSw_Falcon_poly_add_muladj_fft(fpr *d, const fpr *F, const fpr *G, const fpr *f, const fpr *g, uint32 logn)
 {
     uint32 n, hn, u;
-    fpr F_re, F_im, G_re, G_im;
-    fpr f_re, f_im, g_re, g_im;
+    fpr poly_F_real, poly_F_imaginary, poly_G_real, poly_G_imaginary;
+    fpr adj_f_real, adj_f_imaginary, adj_g_real, adj_g_imaginary;
     fpr a_re, a_im, b_re, b_im;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
     for (u = 0; u < hn; u++)
     {
-        F_re = F[u];
-        F_im = F[u + hn];
-        G_re = G[u];
-        G_im = G[u + hn];
-        f_re = f[u];
-        f_im = f[u + hn];
-        g_re = g[u];
-        g_im = g[u + hn];
+        poly_F_real = F[u];
+        poly_F_imaginary = F[u + hn];
+        poly_G_real = G[u];
+        poly_G_imaginary = G[u + hn];
+        adj_f_real = f[u];
+        adj_f_imaginary = f[u + hn];
+        adj_g_real = g[u];
+        adj_g_imaginary = g[u + hn];
 
-        FPC_MUL(a_re, a_im, F_re, F_im, f_re, FsmSw_Falcon_fpr_neg(f_im));
-        FPC_MUL(b_re, b_im, G_re, G_im, g_re, FsmSw_Falcon_fpr_neg(g_im));
+        FPC_MUL(a_re, a_im, poly_F_real, poly_F_imaginary, adj_f_real, FsmSw_Falcon_fpr_neg(adj_f_imaginary));
+        FPC_MUL(b_re, b_im, poly_G_real, poly_G_imaginary, adj_g_real, FsmSw_Falcon_fpr_neg(adj_g_imaginary));
         d[u] = FsmSw_Falcon_fpr_add(a_re, b_re);
         d[u + hn] = FsmSw_Falcon_fpr_add(a_im, b_im);
     }
@@ -768,8 +742,8 @@ void FsmSw_Falcon_poly_split_fft(fpr *f0, fpr *f1, const fpr *f, uint32 logn)
 
     for (u = 0; u < qn; u++)
     {
-        a_re = f[(u << 1) + 0u];
-        a_im = f[(u << 1) + 0u + hn];
+        a_re = f[(u << 1)];
+        a_im = f[(u << 1) + hn];
         b_re = f[(u << 1) + 1u];
         b_im = f[(u << 1) + 1u + hn];
 
@@ -818,8 +792,8 @@ void FsmSw_Falcon_poly_merge_fft(fpr *f, const fpr *f0, const fpr *f1, uint32 lo
         a_im = f0[u + qn];
         FPC_MUL(b_re, b_im, f1[u], f1[u + qn], fpr_gm_tab[((u + hn) << 1) + 0u], fpr_gm_tab[((u + hn) << 1) + 1u]);
         FPC_ADD(t_re, t_im, a_re, a_im, b_re, b_im);
-        f[(u << 1) + 0u] = t_re;
-        f[(u << 1) + 0u + hn] = t_im;
+        f[(u << 1)] = t_re;
+        f[(u << 1) + hn] = t_im;
         FPC_SUB(t_re, t_im, a_re, a_im, b_re, b_im);
         f[(u << 1) + 1u] = t_re;
         f[(u << 1) + 1u + hn] = t_im;

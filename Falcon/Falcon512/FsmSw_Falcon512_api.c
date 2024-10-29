@@ -97,84 +97,90 @@ static sint32 do_sign(uint8 *nonce, uint8 *sigbuf, uint32 *sigbuflen, const uint
     uint8 seed[48];
     inner_shake256_context sc;
     uint32 u, v;
+    boolean bStopFunc = FALSE;
+    sint8 retVal = -1;
 
     /* Decode the private key. */
     if (sk[0] != (0x50u + 9u))
     {
-        return -1;
+        bStopFunc = TRUE;
     }
 
     u = 1;
-    v = FsmSw_Falcon_trim_i8_decode(f, 9, FsmSw_Falcon_max_fg_bits[9], &sk[u],
+    v = FsmSw_Falcon_trim_i8_decode(f, 9, FsmSw_Falcon_max_small_fg_bits[9], &sk[u],
                                     FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES - u);
 
     if (v == 0u)
     {
-        return -1;
+        bStopFunc = TRUE;
     }
 
     u += v;
-    v = FsmSw_Falcon_trim_i8_decode(g, 9, FsmSw_Falcon_max_fg_bits[9], &sk[u],
+    v = FsmSw_Falcon_trim_i8_decode(g, 9, FsmSw_Falcon_max_small_fg_bits[9], &sk[u],
                                     FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES - u);
 
     if (v == 0u)
     {
-        return -1;
+        bStopFunc = TRUE;
     }
 
     u += v;
 
-    v = FsmSw_Falcon_trim_i8_decode(F, 9, FsmSw_Falcon_max_FG_bits[9], &sk[u],
+    v = FsmSw_Falcon_trim_i8_decode(F, 9, FsmSw_Falcon_max_big_FG_bits[9], &sk[u],
                                     FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES - u);
 
     if (v == 0u)
     {
-        return -1;
+        bStopFunc = TRUE;
     }
 
     u += v;
 
     if (u != FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES)
     {
-        return -1;
+        bStopFunc = TRUE;
     }
 
     if (0 == FsmSw_Falcon_complete_private(G, f, g, F, 9, tmp1_512.b))
     {
-        return -1;
+        bStopFunc = TRUE;
     }
 
-    /* Create a random nonce (40 bytes). */
-    (void)FsmSw_CommonLib_randombytes(nonce, FSMSW_FALCON512_NONCELEN);
-
-    /* Hash message nonce + message into a vector. */
-    inner_shake256_init(&sc);
-    inner_shake256_inject(&sc, nonce, FSMSW_FALCON512_NONCELEN);
-    inner_shake256_inject(&sc, m, mlen);
-    inner_shake256_flip(&sc);
-    FsmSw_Falcon_hash_to_point_ct(&sc, r_512.hm, 9, tmp1_512.b);
-
-    /* Initialize a RNG. */
-    (void)FsmSw_CommonLib_randombytes(seed, sizeof seed);
-    inner_shake256_init(&sc);
-    inner_shake256_inject(&sc, seed, sizeof seed);
-    inner_shake256_flip(&sc);
-
-    /* Compute and return the signature. This loops until a signature value is found that fits in the provided
-     * buffer. */
-    for (uint32 i = 0; i < 0xFFFFFFFFu; i++)
+    if (bStopFunc == FALSE)
     {
-        FsmSw_Falcon_sign_dyn(r_512.sig, &sc, f, g, F, G, r_512.hm, 9, tmp1_512.b);
-        v = FsmSw_Falcon_comp_encode(sigbuf, *sigbuflen, r_512.sig, 9);
+        /* Create a random nonce (40 bytes). */
+        (void)FsmSw_CommonLib_randombytes(nonce, FSMSW_FALCON512_NONCELEN);
 
-        if (v != 0u)
+        /* Hash message nonce + message into a vector. */
+        FsmSw_Fips202_shake256_inc_init(&sc);
+        FsmSw_Fips202_shake256_inc_absorb(&sc, nonce, FSMSW_FALCON512_NONCELEN);
+        FsmSw_Fips202_shake256_inc_absorb(&sc, m, mlen);
+        FsmSw_Fips202_shake256_inc_finalize(&sc);
+        FsmSw_Falcon_hash_to_point_ct(&sc, r_512.hm, 9, tmp1_512.b);
+
+        /* Initialize a RNG. */
+        (void)FsmSw_CommonLib_randombytes(seed, sizeof(seed));
+        FsmSw_Fips202_shake256_inc_init(&sc);
+        FsmSw_Fips202_shake256_inc_absorb(&sc, seed, sizeof(seed));
+        FsmSw_Fips202_shake256_inc_finalize(&sc);
+
+        /* Compute and return the signature. This loops until a signature value is found that fits in the provided
+        * buffer. */
+        for (uint32 i = 0; i < 0xFFFFFFFFu; i++)
         {
-            *sigbuflen = v;
-            return 0;
+            FsmSw_Falcon_sign_dyn(r_512.sig, &sc, f, g, F, G, r_512.hm, 9, tmp1_512.b);
+            v = FsmSw_Falcon_comp_encode(sigbuf, *sigbuflen, r_512.sig, 9);
+
+            if (v != 0u)
+            {
+                *sigbuflen = v;
+                retVal = 0;
+                break;
+            }
         }
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -198,45 +204,57 @@ static sint32 do_verify(const uint8 *nonce, const uint8 *sigbuf, uint32 sigbufle
     uint16 h[512], hm[512];
     sint16 sig[512];
     inner_shake256_context sc;
+    boolean bStopFunc = FALSE;
+    sint8 retVal = 0;
 
     /* Decode public key. */
-    if (pk[0] != (0x00u + 9u))
+    if (pk[0] != (9u))
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
 
-    if (FsmSw_Falcon_modq_decode(h, 9, &pk[1], FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u)
-        != FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u)
+    if ((FALSE == bStopFunc) && (FsmSw_Falcon_modq_decode(h, 9, &pk[1], FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u)
+        != FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u))
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
 
-    FsmSw_Falcon_to_ntt_monty(h, 9);
-
-    /* Decode signature. */
-    if (sigbuflen == 0u)
+    if (FALSE == bStopFunc)
     {
-        return -1;
-    }
+        FsmSw_Falcon_to_ntt_monty(h, 9);
 
-    if (FsmSw_Falcon_comp_decode(sig, 9, sigbuf, sigbuflen) != sigbuflen)
-    {
-        return -1;
-    }
+        /* Decode signature. */
+        if (sigbuflen == 0u)
+        {
+            retVal = -1;
+            bStopFunc = TRUE;
+        }
 
-    /* Hash nonce + message into a vector. */
-    inner_shake256_init(&sc);
-    inner_shake256_inject(&sc, nonce, FSMSW_FALCON512_NONCELEN);
-    inner_shake256_inject(&sc, m, mlen);
-    inner_shake256_flip(&sc);
-    FsmSw_Falcon_hash_to_point_ct(&sc, hm, 9, tmp3_512.b);
+        if ((FALSE == bStopFunc) && (FsmSw_Falcon_comp_decode(sig, 9, sigbuf, sigbuflen) != sigbuflen))
+        {
+            retVal = -1;
+            bStopFunc = TRUE;
+        }
 
-    /* Verify signature. */
-    if (0 == FsmSw_Falcon_verify_raw(hm, sig, h, 9, tmp3_512.b))
-    {
-        return -1;
+        if (FALSE == bStopFunc)
+        {
+		    /* Hash nonce + message into a vector. */
+		    FsmSw_Fips202_shake256_inc_init(&sc);
+		    FsmSw_Fips202_shake256_inc_absorb(&sc, nonce, FSMSW_FALCON512_NONCELEN);
+		    FsmSw_Fips202_shake256_inc_absorb(&sc, m, mlen);
+		    FsmSw_Fips202_shake256_inc_finalize(&sc);
+		    FsmSw_Falcon_hash_to_point_ct(&sc, hm, 9, tmp3_512.b);
+
+            /* Verify signature. */
+            if (0 == FsmSw_Falcon_verify_raw(hm, sig, h, 9, tmp3_512.b))
+            {
+                retVal = -1;
+            }
+        }
     }
-    return 0;
+    return retVal;
 }
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
@@ -286,58 +304,67 @@ sint32 FsmSw_Falcon512_crypto_sign_keypair(uint8 *pk, uint8 *sk)
     uint8 seed[48];
     inner_shake256_context rng;
     uint32 u, v;
+    sint8 retVal = 0;
+    boolean bStopFunc = FALSE;
 
     /* Generate key pair. */
-    (void)FsmSw_CommonLib_randombytes(seed, sizeof seed);
-    inner_shake256_init(&rng);
-    inner_shake256_inject(&rng, seed, sizeof seed);
-    inner_shake256_flip(&rng);
+    (void)FsmSw_CommonLib_randombytes(seed, sizeof(seed));
+    FsmSw_Fips202_shake256_inc_init(&rng);
+    FsmSw_Fips202_shake256_inc_absorb(&rng, seed, sizeof(seed));
+    FsmSw_Fips202_shake256_inc_finalize(&rng);
     FsmSw_Falcon_keygen(&rng, f, g, F, ((void *)0), h, 9, tmp2_512.b);
 
     /* Encode private key. */
     sk[0] = 0x50u + 9u;
     u = 1;
     v = FsmSw_Falcon_trim_i8_encode(&sk[u], FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES - u, f, 9u,
-                                    FsmSw_Falcon_max_fg_bits[9]);
+                                    FsmSw_Falcon_max_small_fg_bits[9]);
 
     if (v == 0u)
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
 
     u += v;
     v = FsmSw_Falcon_trim_i8_encode(&sk[u], FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES - u, g, 9u,
-                                    FsmSw_Falcon_max_fg_bits[9]);
+                                    FsmSw_Falcon_max_small_fg_bits[9]);
 
     if (v == 0u)
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
 
     u += v;
     v = FsmSw_Falcon_trim_i8_encode(&sk[u], FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES - u, F, 9u,
-                                    FsmSw_Falcon_max_FG_bits[9]);
+                                    FsmSw_Falcon_max_big_FG_bits[9]);
 
     if (v == 0u)
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
     u += v;
     if (u != FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES)
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
 
-    /* Encode public key. */
-    pk[0] = 0x00u + 9u;
-    v = FsmSw_Falcon_modq_encode(&pk[1], FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u, h, 9u);
-
-    if (v != FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u)
+    if (FALSE == bStopFunc)
     {
-        return -1;
+        /* Encode public key. */
+        pk[0] = 9u;
+        v = FsmSw_Falcon_modq_encode(&pk[1], FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u, h, 9u);
+
+        if (v != FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES - 1u)
+        {
+            retVal = -1;
+        }
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -364,17 +391,24 @@ sint32 FsmSw_Falcon512_crypto_sign_signature(uint8 *sig, uint32 *siglen, const u
      * signature value, if used on the same message, with the same private key, and using the same output from
      * FsmSw_CommonLib_randombytes() (this is for reproducibility of tests). */
     uint32 vlen;
+    sint8 retVal = 0;
+    boolean bStopFunc = FALSE;
 
     vlen = FSMSW_FALCON512_CRYPTO_BYTES - FSMSW_FALCON512_NONCELEN - 3u;
 
     if (do_sign(&sig[1], &sig[1u + FSMSW_FALCON512_NONCELEN], &vlen, m, mlen, sk) < 0)
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
 
-    sig[0] = 0x30 + 9;
-    *siglen = 1u + FSMSW_FALCON512_NONCELEN + vlen;
-    return 0;
+    if (FALSE == bStopFunc)
+    {
+        sig[0] = 0x30 + 9;
+        *siglen = 1u + FSMSW_FALCON512_NONCELEN + vlen;
+    }
+
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -394,18 +428,20 @@ sint32 FsmSw_Falcon512_crypto_sign_signature(uint8 *sig, uint32 *siglen, const u
 ***********************************************************************************************************************/
 sint32 FsmSw_Falcon512_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen, const uint8 *pk)
 {
+    sint32 retVal = do_verify(&sig[1], &sig[1u + FSMSW_FALCON512_NONCELEN], siglen - 1u - FSMSW_FALCON512_NONCELEN,
+                     m, mlen, pk);
+
     if (siglen < 1u + FSMSW_FALCON512_NONCELEN)
     {
-        return -1;
+        retVal = -1;
     }
 
     if (sig[0] != (0x30u + 9u))
     {
-        return -1;
+        retVal = -1;
     }
 
-    return do_verify(&sig[1], &sig[1u + FSMSW_FALCON512_NONCELEN], siglen - 1u - FSMSW_FALCON512_NONCELEN,
-                     m, mlen, pk);
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -429,6 +465,8 @@ sint32 FsmSw_Falcon512_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uin
 {
     uint8 *pm, *sigbuf;
     uint32 sigbuflen;
+    sint8 retVal = 0;
+    boolean bStopFunc = FALSE;
 
     /* Move the message to its final location; this is a FsmSw_CommonLib_memmove() so it handles overlaps properly. */
     FsmSw_CommonLib_memmove(&sm[2u + FSMSW_FALCON512_NONCELEN], m, mlen);
@@ -438,15 +476,20 @@ sint32 FsmSw_Falcon512_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uin
 
     if (do_sign(&sm[2], sigbuf, &sigbuflen, pm, mlen, sk) < 0)
     {
-        return -1;
+        retVal = -1;
+        bStopFunc = TRUE;
     }
 
-    pm[mlen] = 0x20 + 9;
-    sigbuflen++;
-    sm[0] = (uint8) (sigbuflen >> 8);
-    sm[1] = (uint8) sigbuflen;
-    *smlen = mlen + 2u + FSMSW_FALCON512_NONCELEN + sigbuflen;
-    return 0;
+    if (bStopFunc == FALSE)
+    {
+        pm[mlen] = 0x20 + 9;
+        sigbuflen++;
+        sm[0] = (uint8) (sigbuflen >> 8);
+        sm[1] = (uint8) sigbuflen;
+        *smlen = mlen + 2u + FSMSW_FALCON512_NONCELEN + sigbuflen;
+    }
+
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -471,17 +514,18 @@ sint32 FsmSw_Falcon512_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm,
 {
     const uint8 *sigbuf;
     uint32 pmlen, sigbuflen;
+    sint32 retVal = 0;
 
     if (smlen < (3u + FSMSW_FALCON512_NONCELEN))
     {
-        return -1;
+        retVal = -1;
     }
 
     sigbuflen = ((uint32) sm[0] << 8) | (uint32) sm[1];
 
     if ((sigbuflen < 2u) || (sigbuflen > (smlen - FSMSW_FALCON512_NONCELEN - 2u)))
     {
-        return -1;
+        retVal = -1;
     }
 
     sigbuflen--;
@@ -489,7 +533,7 @@ sint32 FsmSw_Falcon512_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm,
 
     if (sm[2u + FSMSW_FALCON512_NONCELEN + pmlen] != (0x20u + 9u))
     {
-        return -1;
+        retVal = -1;
     }
     sigbuf = &sm[2u + FSMSW_FALCON512_NONCELEN + pmlen + 1u];
 
@@ -498,12 +542,16 @@ sint32 FsmSw_Falcon512_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm,
      * byte). */
     if (do_verify(&sm[2u], sigbuf, sigbuflen, &sm[2u + FSMSW_FALCON512_NONCELEN], pmlen, pk) < 0)
     {
-        return -1;
+        retVal = -1;
     }
 
-    /* Signature is correct, we just have to copy/move the message to its final destination. The
-     * FsmSw_CommonLib_memmove() properly handles overlaps. */
-    FsmSw_CommonLib_memmove(m, &sm[2u + FSMSW_FALCON512_NONCELEN], pmlen);
-    *mlen = pmlen;
-    return 0;
+    if (retVal != -1)
+    {
+        /* Signature is correct, we just have to copy/move the message to its final destination. The
+        * FsmSw_CommonLib_memmove() properly handles overlaps. */
+        FsmSw_CommonLib_memmove(m, &sm[2u + FSMSW_FALCON512_NONCELEN], pmlen);
+        *mlen = pmlen;
+    }   
+    return retVal;
 }
+

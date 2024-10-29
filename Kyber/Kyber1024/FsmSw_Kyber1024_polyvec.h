@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_Kyber1024_params.h"
 #include "FsmSw_Kyber1024_poly.h"
 
@@ -31,7 +31,10 @@
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
-typedef struct {
+/* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
+typedef struct 
+{
     poly1024 vec[KYBER1024_K];
 } polyvec1024;
 

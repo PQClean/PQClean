@@ -63,15 +63,17 @@
 * Arguments:   -       uint8                 *sig:          t.b.d.
 *              -       uint8                 *root:         t.b.d.
 *              - const sphincs_sha2_256f_ctx *ctx:          t.b.d.
-*              -       uint32                 wots_addr[8]: t.b.d.
+*              - const uint32                 wots_addr[8]: t.b.d.
 *              -       uint32                 tree_addr[8]: t.b.d.
 *              -       uint32                 idx_leaf:     t.b.d.
 *
 ***********************************************************************************************************************/
 void FsmSw_SphincsSha2_256fSimple_merkle_sign(uint8 *sig, uint8 *root, const sphincs_sha2_256f_ctx *ctx,
-                                              uint32 wots_addr[8], uint32 tree_addr[8], uint32 idx_leaf)
+                                              const uint32 wots_addr[8], uint32 tree_addr[8], uint32 idx_leaf)
 {
     uint8 *auth_path = &sig[FSMSW_SPHINCSSHA2_256FSIMPLE_WOTS_BYTES];
+    /* polyspace +4 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     struct leaf_info_x1 info = { {(void*)0},
                                         {0},
                                  {(void*)0},
@@ -108,7 +110,7 @@ void FsmSw_SphincsSha2_256fSimple_merkle_gen_root(uint8 *root, const sphincs_sha
 {
     /* We do not need the auth path in key generation, but it simplifies the code to have just one treehash routine
      * that computes both root and path in one function. */
-    uint8 auth_path[FSMSW_SPHINCSSHA2_256FSIMPLE_TREE_HEIGHT * FSMSW_SPHINCSSHA2_256FSIMPLE_N +
+    uint8 auth_path[(FSMSW_SPHINCSSHA2_256FSIMPLE_TREE_HEIGHT * FSMSW_SPHINCSSHA2_256FSIMPLE_N) +
                     FSMSW_SPHINCSSHA2_256FSIMPLE_WOTS_BYTES];
     uint32 top_tree_addr[8] = {0};
     uint32 wots_addr[8] = {0};

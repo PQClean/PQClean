@@ -54,16 +54,13 @@
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
+/* polyspace +2 MISRA2012:D4.9 [Justified:]"No refactoring of macros, as converting to, for example, 
+inline functions would not provide significant benefits." */
 #define MKN(logn)     ((uint32)1 << (logn))
 #define RNG_CONTEXT   inner_shake256_context
 
 /* Minimal recursion depth at which we rebuild intermediate values when reconstructing f and g. */
 #define DEPTH_INT_FG   4u
-
-/* Simplified macros for NTT and iNTT (binary case) when the elements are consecutive in RAM. */
-#define modp_NTT2(a, gm, logn, p, p0i)   modp_NTT2_ext(a, 1, gm, logn, p, p0i)
-#define modp_iNTT2(a, igm, logn, p, p0i) modp_iNTT2_ext(a, 1, igm, logn, p, p0i)
-
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
@@ -661,10 +658,10 @@ static uint32 modp_ninv31(uint32 p)
   uint32 y;
 
   y  = 2u - p;
-  y *= 2u - p * y;
-  y *= 2u - p * y;
-  y *= 2u - p * y;
-  y *= 2u - p * y;
+  y *= 2u - (p * y);
+  y *= 2u - (p * y);
+  y *= 2u - (p * y);
+  y *= 2u - (p * y);
 
   return (uint32)(0x7FFFFFFFu & (uint32)((sint32)((-1) * (sint32)y)));
 }
@@ -806,15 +803,20 @@ static uint32 modp_Rx(uint32 x, uint32 p, uint32 p0i, uint32 R2)
   sint32 i;
   uint32 r, z;
 
+  /* x_temp is used to avoid modifying the input. */
+  uint32 x_temp = x;
+
   /* 2^(31*x) = (2^31)*(2^(31*(x-1))); i.e. we want the Montgomery representation of (2^31)^e mod p, where e = x-1.
    * R2 is 2^31 in Montgomery representation. */
-  x--;
+  x_temp--;
   r = R2;
   z = modp_R(p);
 
-  for (i = 0; (uint32)((uint32)1u << (uint32)i) <= x; i++)
+  /* polyspace +2 MISRA2012:14.2 [Justified:]"The calculation involving the loop counter directly affects loop 
+  continuation, addressing a MISRA 14.2 warning by following its rules for how loops should work." */
+  for (i = 0; (uint32)((uint32)1u << (uint32)i) <= x_temp; i++)
   {
-    if ((x & (uint32)((uint32)1u << (uint32)i)) != 0u)
+    if ((x_temp & (uint32)((uint32)1u << (uint32)i)) != 0u)
     {
       z = modp_montymul(z, r, p, p0i);
     }
@@ -893,27 +895,31 @@ static void modp_mkgm2(uint32 *gm, uint32 *igm, uint32 logn, uint32 g, uint32 p,
   uint32 ig, x1, x2, R2;
   uint32 v;
 
+  /* g_temp is used to avoid modifying the input. */
+  uint32 g_temp = g;
+
   n = (uint32) 1 << logn;
 
   /* We want g such that g^(2N) = 1 mod p, but the provided generator has order 2048. We must square it a few times. */
   R2 = modp_R2(p, p0i);
-  g = modp_montymul(g, R2, p, p0i);
+  g_temp = modp_montymul(g_temp, R2, p, p0i);
 
   for (k = logn; k < 10u; k++)
   {
-    g = modp_montymul(g, g, p, p0i);
+    g_temp = modp_montymul(g_temp, g_temp, p, p0i);
   }
 
-  ig = modp_div(R2, g, p, p0i, modp_R(p));
+  ig = modp_div(R2, g_temp, p, p0i, modp_R(p));
   k = 10u - logn;
-  x1 = x2 = modp_R(p);
+  x1 = modp_R(p);
+  x2 = modp_R(p);
 
   for (u = 0; u < n; u++)
   {
     v = REV10[u << k];
     gm[v] = x1;
     igm[v] = x2;
-    x1 = modp_montymul(x1, g, p, p0i);
+    x1 = modp_montymul(x1, g_temp, p, p0i);
     x2 = modp_montymul(x2, ig, p, p0i);
   }
 }
@@ -940,39 +946,43 @@ static void modp_NTT2_ext(uint32 *a, uint32 stride, const uint32 *gm, uint32 log
   uint32 v;
   uint32 *r1, *r2;
   uint32 x, y;
+  boolean bStopFunc = FALSE;
 
   if (logn == 0u)
   {
-    return;
+    bStopFunc = TRUE;
   }
 
-  n = (uint32) 1 << logn;
-  t = n;
-
-  for (m = 1; m < n; m <<= 1)
+  if (FALSE == bStopFunc)
   {
-    ht = t >> 1;
-    v1 = 0;
+    n = (uint32) 1 << logn;
+    t = n;
 
-    for (u = 0; u < m; u++)
+    for (m = 1; m < n; m <<= 1)
     {
-      s = gm[m + u];
-      r1 = &a[v1 * stride];
-      r2 = &r1[ht * stride];
+      ht = t >> 1;
+      v1 = 0;
 
-      for (v = 0; v < ht; v++)
+      for (u = 0; u < m; u++)
       {
-        x = *r1;
-        y = modp_montymul(*r2, s, p, p0i);
-        *r1 = modp_add(x, y, p);
-        *r2 = modp_sub(x, y, p);
-        r1 = &r1[stride];
-        r2 = &r2[stride];
-      }
+        s = gm[m + u];
+        r1 = &a[v1 * stride];
+        r2 = &r1[ht * stride];
 
-      v1 += t;
+        for (v = 0; v < ht; v++)
+        {
+          x = *r1;
+          y = modp_montymul(*r2, s, p, p0i);
+          *r1 = modp_add(x, y, p);
+          *r2 = modp_sub(x, y, p);
+          r1 = &r1[stride];
+          r2 = &r2[stride];
+        }
+
+        v1 += t;
+      }
+      t = ht;
     }
-    t = ht;
   }
 }
 
@@ -1000,50 +1010,48 @@ static void modp_iNTT2_ext(uint32 *a, uint32 stride, const uint32 *igm, uint32 l
   uint32 *r1, *r2;
   uint32 x, y;
 
-  if (logn == 0u)
+  if (logn != 0u)
   {
-    return;
-  }
+    n = (uint32) 1 << logn;
+    t = 1;
 
-  n = (uint32) 1 << logn;
-  t = 1;
-
-  for (m = n; m > 1u; m >>= 1)
-  {
-    hm = m >> 1;
-    dt = t << 1;
-    v1 = 0;
-
-    for (u = 0; u < hm; u++)
+    for (m = n; m > 1u; m >>= 1)
     {
-      s = igm[hm + u];
-      r1 = &a[v1 * stride];
-      r2 = &r1[t * stride];
+      hm = m >> 1;
+      dt = t << 1;
+      v1 = 0;
 
-      for (v = 0; v < t; v++)
+      for (u = 0; u < hm; u++)
       {
-        x = *r1;
-        y = *r2;
-        *r1 = modp_add(x, y, p);
-        *r2 = modp_montymul(modp_sub(x, y, p), s, p, p0i);
-        r1 = &r1[stride];
-        r2 = &r2[stride];
+        s = igm[hm + u];
+        r1 = &a[v1 * stride];
+        r2 = &r1[t * stride];
+
+        for (v = 0; v < t; v++)
+        {
+          x = *r1;
+          y = *r2;
+          *r1 = modp_add(x, y, p);
+          *r2 = modp_montymul(modp_sub(x, y, p), s, p, p0i);
+          r1 = &r1[stride];
+          r2 = &r2[stride];
+        }
+
+        v1 += dt;
       }
-
-      v1 += dt;
+      t = dt;
     }
-    t = dt;
-  }
 
-  /* We need 1/n in Montgomery representation, i.e. R/n. Since 1 <= logn <= 10, R/n is an integer; morever,
-   * R/n <= 2^30 < p, thus a simple shift will do. */
-  ni = (uint32) 1 << (31u - logn);
-  r = a;
+    /* We need 1/n in Montgomery representation, i.e. R/n. Since 1 <= logn <= 10, R/n is an integer; morever,
+    * R/n <= 2^30 < p, thus a simple shift will do. */
+    ni = (uint32) 1 << (31u - logn);
+    r = a;
 
-  for (k = 0; k < n; k++)
-  {
-    *r = modp_montymul(*r, ni, p, p0i);
-    r = &r[stride];
+    for (k = 0; k < n; k++)
+    {
+      *r = modp_montymul(*r, ni, p, p0i);
+      r = &r[stride];
+    }
   }
 }
 
@@ -1074,7 +1082,7 @@ static void modp_poly_rec_res(uint32 *f, uint32 logn, uint32 p, uint32 p0i, uint
 
   for (u = 0; u < hn; u++)
   {
-    w0 = f[(u << 1) + 0u];
+    w0 = f[(u << 1)];
     w1 = f[(u << 1) + 1u];
     f[u] = modp_montymul(modp_montymul(w0, w1, p, p0i), R2, p, p0i);
   }
@@ -1161,7 +1169,7 @@ static uint32 zint_mul_small(uint32 *m, uint32 mlen, uint32 x)
 
   for (u = 0; u < mlen; u++)
   {
-    z = (uint64)m[u] * (uint64)x + cc;
+    z = ((uint64)m[u] * (uint64)x) + cc;
     m[u] = (uint32)(z & 0x7FFFFFFFu);
     cc = (uint32)(z >> 31);
   }
@@ -1201,8 +1209,9 @@ static uint32 zint_mod_small_unsigned(const uint32 *d, uint32 dlen, uint32 p, ui
   x = 0;
   u = dlen;
 
-  while (u-- > 0u)
+  while (u > 0u)
   {
+    u--;
     x = modp_montymul(x, R2, p, p0i);
     w = d[u] - p;
     w += p & (uint32)((sint32)((-1) * (sint32)((uint32)(w >> 31))));
@@ -1231,16 +1240,18 @@ static uint32 zint_mod_small_unsigned(const uint32 *d, uint32 dlen, uint32 p, ui
 static uint32 zint_mod_small_signed(const uint32 *d, uint32 dlen, uint32 p, uint32 p0i, uint32 R2, uint32 Rx)
 {
   uint32 z;
-
-  if (dlen == 0u)
-  {
-    return 0;
-  }
+  uint32 retVal;
 
   z = zint_mod_small_unsigned(d, dlen, p, p0i, R2);
   z = modp_sub(z, Rx & (uint32)((sint32)((-1) * (sint32)((uint32)(d[dlen - 1u] >> 30)))), p);
+  retVal = z;
 
-  return z;
+  if (dlen == 0u)
+  {
+    retVal = 0;
+  }
+
+  return retVal;
 }
 
 /***********************************************************************************************************************
@@ -1268,7 +1279,7 @@ static void zint_add_mul_small(uint32 *x, const uint32 *y, uint32 len, uint32 s)
   {
     xw = x[u];
     yw = y[u];
-    z = (uint64) yw * (uint64) s + (uint64) xw + (uint64) cc;
+    z = ((uint64) yw * (uint64) s) + (uint64) xw + (uint64) cc;
     x[u] = (uint32)(z & 0x7FFFFFFFu);
     cc   = (uint32)(z >> 31);
   }
@@ -1299,8 +1310,9 @@ static void zint_norm_zero(uint32 *x, const uint32 *p, uint32 len)
   bb = 0;
   u = len;
 
-  while (u-- > 0u)
+  while (u > 0u)
   {
+    u--;
     /* Get the two words to compare in wx and wp (both over 31 bits exactly). */
     wx = x[u];
     wp = (p[u] >> 1) | (bb << 30);
@@ -1464,8 +1476,8 @@ static uint32 zint_co_reduce(uint32 *a, uint32 *b, uint32 len, sint64 xa, sint64
   {
     wa = a[u];
     wb = b[u];
-    za = wa * (uint64) xa + wb * (uint64) xb + (uint64) cca;
-    zb = wa * (uint64) ya + wb * (uint64) yb + (uint64) ccb;
+    za = (wa * (uint64) xa) + (wb * (uint64) xb) + (uint64) cca;
+    zb = (wa * (uint64) ya) + (wb * (uint64) yb) + (uint64) ccb;
 
     if (u > 0u)
     {
@@ -1585,15 +1597,15 @@ static void zint_co_reduce_mod(uint32 *a, uint32 *b, const uint32 *m, uint32 len
   /* These are actually four combined Montgomery multiplications. */
   cca = 0;
   ccb = 0;
-  fa = ((a[0] * (uint32) xa + b[0] * (uint32) xb) * m0i) & 0x7FFFFFFFu;
-  fb = ((a[0] * (uint32) ya + b[0] * (uint32) yb) * m0i) & 0x7FFFFFFFu;
+  fa = (((a[0] * (uint32) xa) + (b[0] * (uint32) xb)) * m0i) & 0x7FFFFFFFu;
+  fb = (((a[0] * (uint32) ya) + (b[0] * (uint32) yb)) * m0i) & 0x7FFFFFFFu;
 
   for (u = 0; u < len; u++)
   {
     wa = a[u];
     wb = b[u];
-    za = wa * (uint64) xa + wb * (uint64) xb + m[u] * (uint64) fa + (uint64) cca;
-    zb = wa * (uint64) ya + wb * (uint64) yb + m[u] * (uint64) fb + (uint64) ccb;
+    za = (wa * (uint64) xa) + (wb * (uint64) xb) + (m[u] * (uint64) fa) + (uint64) cca;
+    zb = (wa * (uint64) ya) + (wb * (uint64) yb) + (m[u] * (uint64) fb) + (uint64) ccb;
 
     if (u > 0u)
     {
@@ -1747,152 +1759,156 @@ static sint32 zint_bezout(uint32 *u, uint32 *v, const uint32 *x, const uint32 *y
   uint32 aw, bw;
   uint32 rt, oa, ob, cAB, cBA, cA;
   uint64 rz;
+  sint32 retVal;
 
   if (len == 0u)
   {
-    return 0;
+    retVal = 0;
   }
-
-  /* u0 and v0 are the u and v result buffers; the four other values (u1, v1, a and b) are taken from tmp[]. */
-  u0 = u;
-  v0 = v;
-  u1 = tmp;
-  v1 = &u1[len];
-  a  = &v1[len];
-  b  = &a[len];
-
-  /* We'll need the Montgomery reduction coefficients. */
-  x0i = modp_ninv31(x[0]);
-  y0i = modp_ninv31(y[0]);
-
-  /* Initialize a, b, u0, u1, v0 and v1.
-   *  a = x   u0 = 1   v0 = 0
-   *  b = y   u1 = y   v1 = x-1
-   * Note that x is odd, so computing x-1 is easy. */
-  FsmSw_CommonLib_memcpy(a, x, len * sizeof *x);
-  FsmSw_CommonLib_memcpy(b, y, len * sizeof *y);
-  u0[0] = 1;
-  FsmSw_CommonLib_memset(&u0[1], 0, (len - 1u) * sizeof *u0);
-  FsmSw_CommonLib_memset(v0, 0, len * sizeof *v0);
-  FsmSw_CommonLib_memcpy(u1, y, len * sizeof *u1);
-  FsmSw_CommonLib_memcpy(v1, x, len * sizeof *v1);
-  v1[0]--;
-
-  /* Each input operand may be as large as 31*len bits, and we reduce the total length by at least 30 bits at each
-   * iteration. */
-  for (num = 62u * len + 30u; num >= 30u; num -= 30u)
+  else
   {
-    /* Extract the top words of a and b. If j is the highest index >= 1 such that a[j] != 0 or b[j] != 0, then we
-     * want (a[j] << 31) + a[j-1] and (b[j] << 31) + b[j-1]. If a and b are down to one word each, then we use
-     * a[0] and b[0]. */
-    c0 = (uint32) -1;
-    c1 = (uint32) -1;
-    a0 = 0;
-    a1 = 0;
-    b0 = 0;
-    b1 = 0;
-    j = len;
+    /* u0 and v0 are the u and v result buffers; the four other values (u1, v1, a and b) are taken from tmp[]. */
+    u0 = u;
+    v0 = v;
+    u1 = tmp;
+    v1 = &u1[len];
+    a  = &v1[len];
+    b  = &a[len];
 
-    while (j-- > 0u)
+    /* We'll need the Montgomery reduction coefficients. */
+    x0i = modp_ninv31(x[0]);
+    y0i = modp_ninv31(y[0]);
+
+    /* Initialize a, b, u0, u1, v0 and v1.
+    *  a = x   u0 = 1   v0 = 0
+    *  b = y   u1 = y   v1 = x-1
+    * Note that x is odd, so computing x-1 is easy. */
+    FsmSw_CommonLib_memcpy(a, x, len * sizeof(*x));
+    FsmSw_CommonLib_memcpy(b, y, len * sizeof(*y));
+    u0[0] = 1;
+    FsmSw_CommonLib_memset(&u0[1], 0, (len - 1u) * sizeof(*u0));
+    FsmSw_CommonLib_memset(v0, 0, len * sizeof(*v0));
+    FsmSw_CommonLib_memcpy(u1, y, len * sizeof(*u1));
+    FsmSw_CommonLib_memcpy(v1, x, len * sizeof(*v1));
+    v1[0]--;
+
+    /* Each input operand may be as large as 31*len bits, and we reduce the total length by at least 30 bits at each
+    * iteration. */
+    for (num = (62u * len) + 30u; num >= 30u; num -= 30u)
     {
-      aw = a[j];
-      bw = b[j];
-      a0 ^= (a0 ^ aw) & c0;
-      a1 ^= (a1 ^ aw) & c1;
-      b0 ^= (b0 ^ bw) & c0;
-      b1 ^= (b1 ^ bw) & c1;
-      c1 = c0;
-      c0 &= (((aw | bw) + 0x7FFFFFFFu) >> 31) - 1u;
+      /* Extract the top words of a and b. If j is the highest index >= 1 such that a[j] != 0 or b[j] != 0, then we
+      * want (a[j] << 31) + a[j-1] and (b[j] << 31) + b[j-1]. If a and b are down to one word each, then we use
+      * a[0] and b[0]. */
+      c0 = UINT32_MAXVAL;
+      c1 = UINT32_MAXVAL;
+      a0 = 0;
+      a1 = 0;
+      b0 = 0;
+      b1 = 0;
+      j = len;
+
+      while (j > 0u)
+      {
+        j--;
+        aw = a[j];
+        bw = b[j];
+        a0 ^= (a0 ^ aw) & c0;
+        a1 ^= (a1 ^ aw) & c1;
+        b0 ^= (b0 ^ bw) & c0;
+        b1 ^= (b1 ^ bw) & c1;
+        c1 = c0;
+        c0 &= (((aw | bw) + 0x7FFFFFFFu) >> 31) - 1u;
+      }
+
+      /* If c1 = 0, then we grabbed two words for a and b. If c1 != 0 but c0 = 0, then we grabbed one word. It is not
+      * possible that c1 != 0 and c0 != 0, because that would mean that both integers are zero. */
+      a1 |= a0 & c1;
+      a0 &= ~c1;
+      b1 |= b0 & c1;
+      b0 &= ~c1;
+      a_hi = ((uint64) a0 << 31) + a1;
+      b_hi = ((uint64) b0 << 31) + b1;
+      a_lo = a[0];
+      b_lo = b[0];
+
+      /* Compute reduction factors:
+      *   a' = a*pa + b*pb
+      *   b' = a*qa + b*qb
+      * such that a' and b' are both multiple of 2^31, but are only marginally larger than a and b. */
+      pa = 1;
+      pb = 0;
+      qa = 0;
+      qb = 1;
+
+      for (i = 0; i < 31; i++)
+      {
+        /* At each iteration:
+        *   a <- (a-b)/2 if: a is odd, b is odd, a_hi > b_hi
+        *   b <- (b-a)/2 if: a is odd, b is odd, a_hi <= b_hi
+        *   a <- a/2 if: a is even
+        *   b <- b/2 if: a is odd, b is even
+        * We multiply a_lo and b_lo by 2 at each iteration, thus a division by 2 really is a non-multiplication by 2. */
+
+
+        /* rt = 1 if a_hi > b_hi, 0 otherwise. */
+        rz = b_hi - a_hi;
+        rt = (uint32) ((rz ^ ((a_hi ^ b_hi) & (a_hi ^ rz))) >> 63);
+
+        /* cAB = 1 if b must be subtracted from a. cBA = 1 if a must be subtracted from b.
+        * cA = 1 if a must be divided by 2
+        *
+        * Rules:
+        *   cAB and cBA cannot both be 1.
+        *   If a is not divided by 2, b is. */
+        oa = (a_lo >> (uint32)i) & 1u;
+        ob = (b_lo >> (uint32)i) & 1u;
+        cAB = oa & ob & rt;
+        cBA = oa & ob & ~rt;
+        cA = cAB | (oa ^ 1u);
+
+        /* Conditional subtractions. */
+        a_lo -= b_lo & ((uint32)((sint32)((-1) * (sint32)cAB)));
+        a_hi -= b_hi & ((uint64)((sint64)((-1) * (sint64)cAB)));
+        pa   -= (sint64)((uint64)((uint64)qa & ((uint64)((sint64)((-1) * (sint64)cAB)))));
+        pb   -= (sint64)((uint64)((uint64)qb & ((uint64)((sint64)((-1) * (sint64)cAB)))));
+        b_lo -= a_lo & ((uint32)((sint32)((-1) * (sint32)cBA)));
+        b_hi -= a_hi & ((uint64)((sint64)((-1) * (sint64)cBA)));
+        qa   -= (sint64)((uint64)((uint64)pa & ((uint64)((sint64)((-1) * (sint64)cBA)))));;
+        qb   -= (sint64)((uint64)((uint64)pb & ((uint64)((sint64)((-1) * (sint64)cBA)))));;
+
+        /* Shifting. */
+        a_lo += a_lo & (cA - 1u);
+        pa   += (sint64)((uint64)((uint64)pa & (uint64)((uint64)cA - 1u)));
+        pb   += (sint64)((uint64)((uint64)pb & (uint64)((uint64)cA - 1u)));
+        a_hi ^= (a_hi ^ (a_hi >> 1)) & (uint64)((sint64)((-1) * (sint64)cA));
+        b_lo += b_lo & (uint32)((sint32)((-1) * (sint32)cA));
+        qa   += (sint64)((uint64)((uint64)qa & (uint64)((sint64)((-1) * (sint64)cA))));
+        qb += (sint64)((uint64)((uint64)qb & (uint64)((sint64)((-1) * (sint64)cA))));
+        b_hi ^= (b_hi ^ (b_hi >> 1)) & ((uint64)cA - 1u);
+      }
+
+      /* Apply the computed parameters to our values. We may have to correct pa and pb depending on the returned value of
+      * zint_co_reduce() (when a and/or b had to be negated). */
+      r = zint_co_reduce(a, b, len, pa, pb, qa, qb);
+      pa -= (sint64)((uint64)(((uint64)pa + (uint64)pa) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r & 1u))))));
+      pb -= (sint64)((uint64)(((uint64)pb + (uint64)pb) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r & 1u))))));
+      qa -= (sint64)((uint64)(((uint64)qa + (uint64)qa) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r >> 1))))));
+      qb -= (sint64)((uint64)(((uint64)qb + (uint64)qb) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r >> 1))))));
+
+      zint_co_reduce_mod(u0, u1, y, len, y0i, pa, pb, qa, qb);
+      zint_co_reduce_mod(v0, v1, x, len, x0i, pa, pb, qa, qb);
     }
 
-    /* If c1 = 0, then we grabbed two words for a and b. If c1 != 0 but c0 = 0, then we grabbed one word. It is not
-     * possible that c1 != 0 and c0 != 0, because that would mean that both integers are zero. */
-    a1 |= a0 & c1;
-    a0 &= ~c1;
-    b1 |= b0 & c1;
-    b0 &= ~c1;
-    a_hi = ((uint64) a0 << 31) + a1;
-    b_hi = ((uint64) b0 << 31) + b1;
-    a_lo = a[0];
-    b_lo = b[0];
-
-    /* Compute reduction factors:
-     *   a' = a*pa + b*pb
-     *   b' = a*qa + b*qb
-     * such that a' and b' are both multiple of 2^31, but are only marginally larger than a and b. */
-    pa = 1;
-    pb = 0;
-    qa = 0;
-    qb = 1;
-
-    for (i = 0; i < 31; i++)
+    /* At that point, array a[] should contain the GCD, and the results (u,v) should already be set. We check that the
+    * GCD is indeed 1. We also check that the two operands x and y are odd. */
+    rc = a[0] ^ 1u;
+    for (j = 1; j < len; j++)
     {
-      /* At each iteration:
-       *   a <- (a-b)/2 if: a is odd, b is odd, a_hi > b_hi
-       *   b <- (b-a)/2 if: a is odd, b is odd, a_hi <= b_hi
-       *   a <- a/2 if: a is even
-       *   b <- b/2 if: a is odd, b is even
-       * We multiply a_lo and b_lo by 2 at each iteration, thus a division by 2 really is a non-multiplication by 2. */
-
-
-      /* rt = 1 if a_hi > b_hi, 0 otherwise. */
-      rz = b_hi - a_hi;
-      rt = (uint32) ((rz ^ ((a_hi ^ b_hi) & (a_hi ^ rz))) >> 63);
-
-      /* cAB = 1 if b must be subtracted from a. cBA = 1 if a must be subtracted from b.
-       * cA = 1 if a must be divided by 2
-       *
-       * Rules:
-       *   cAB and cBA cannot both be 1.
-       *   If a is not divided by 2, b is. */
-      oa = (a_lo >> (uint32)i) & 1u;
-      ob = (b_lo >> (uint32)i) & 1u;
-      cAB = oa & ob & rt;
-      cBA = oa & ob & ~rt;
-      cA = cAB | (oa ^ 1u);
-
-      /* Conditional subtractions. */
-      a_lo -= b_lo & ((uint32)((sint32)((-1) * (sint32)cAB)));
-      a_hi -= b_hi & ((uint64)((sint64)((-1) * (sint64)cAB)));
-      pa   -= (sint64)((uint64)((uint64)qa & ((uint64)((sint64)((-1) * (sint64)cAB)))));
-      pb   -= (sint64)((uint64)((uint64)qb & ((uint64)((sint64)((-1) * (sint64)cAB)))));
-      b_lo -= a_lo & ((uint32)((sint32)((-1) * (sint32)cBA)));
-      b_hi -= a_hi & ((uint64)((sint64)((-1) * (sint64)cBA)));
-      qa   -= (sint64)((uint64)((uint64)pa & ((uint64)((sint64)((-1) * (sint64)cBA)))));;
-      qb   -= (sint64)((uint64)((uint64)pb & ((uint64)((sint64)((-1) * (sint64)cBA)))));;
-
-      /* Shifting. */
-      a_lo += a_lo & (cA - 1u);
-      pa   += (sint64)((uint64)((uint64)pa & (uint64)((uint64)cA - 1u)));
-      pb   += (sint64)((uint64)((uint64)pb & (uint64)((uint64)cA - 1u)));
-      a_hi ^= (a_hi ^ (a_hi >> 1)) & (uint64)((sint64)((-1) * (sint64)cA));
-      b_lo += b_lo & (uint32)((sint32)((-1) * (sint32)cA));
-      qa   += (sint64)((uint64)((uint64)qa & (uint64)((sint64)((-1) * (sint64)cA))));
-      qb += (sint64)((uint64)((uint64)qb & (uint64)((sint64)((-1) * (sint64)cA))));
-      b_hi ^= (b_hi ^ (b_hi >> 1)) & ((uint64)cA - 1u);
+      rc |= a[j];
     }
-
-    /* Apply the computed parameters to our values. We may have to correct pa and pb depending on the returned value of
-     * zint_co_reduce() (when a and/or b had to be negated). */
-    r = zint_co_reduce(a, b, len, pa, pb, qa, qb);
-    pa -= (sint64)((uint64)(((uint64)pa + (uint64)pa) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r & 1u))))));
-    pb -= (sint64)((uint64)(((uint64)pb + (uint64)pb) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r & 1u))))));
-    qa -= (sint64)((uint64)(((uint64)qa + (uint64)qa) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r >> 1))))));
-    qb -= (sint64)((uint64)(((uint64)qb + (uint64)qb) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)r >> 1))))));
-
-    zint_co_reduce_mod(u0, u1, y, len, y0i, pa, pb, qa, qb);
-    zint_co_reduce_mod(v0, v1, x, len, x0i, pa, pb, qa, qb);
+    retVal = (sint32)((uint32)((1u - ((rc | ((uint32)((sint32)((-1) * (sint32)rc)))) >> 31)) & x[0] & y[0]));
   }
-
-  /* At that point, array a[] should contain the GCD, and the results (u,v) should already be set. We check that the
-   * GCD is indeed 1. We also check that the two operands x and y are odd. */
-  rc = a[0] ^ 1u;
-  for (j = 1; j < len; j++)
-  {
-    rc |= a[j];
-  }
-
-  return (sint32)((uint32)((1u - ((rc | ((uint32)((sint32)((-1) * (sint32)rc)))) >> 31)) & x[0] & y[0]));
+  return retVal;
 }
 
 /***********************************************************************************************************************
@@ -1924,42 +1940,40 @@ static void zint_add_scaled_mul_small(uint32 *x, uint32 xlen, const uint32 *y, u
   uint32 wy, wys, ccu;
   uint64 z;
 
-  if (ylen == 0u)
+  if (ylen != 0u)
   {
-    return;
-  }
+    ysign = ((uint32)((sint32)((-1) * (sint32)((uint32)(y[ylen - 1u] >> 30))))) >> 1;
+    tw = 0;
+    cc = 0;
 
-  ysign = ((uint32)((sint32)((-1) * (sint32)((uint32)(y[ylen - 1u] >> 30))))) >> 1;
-  tw = 0;
-  cc = 0;
-
-  for (u = sch; u < xlen; u++)
-  {
-    /* Get the next word of y (scaled). */
-    v = u - sch;
-
-    if (v < ylen)
+    for (u = sch; u < xlen; u++)
     {
-      wy = y[v];
+      /* Get the next word of y (scaled). */
+      v = u - sch;
+
+      if (v < ylen)
+      {
+        wy = y[v];
+      }
+      else
+      {
+        wy = ysign;
+      }
+
+      wys = ((wy << scl) & 0x7FFFFFFFu) | tw;
+      tw = wy >> (31u - scl);
+
+      /* The expression below does not overflow. */
+      z = (uint64)((wys * (uint64)k) + x[u] + (uint64)cc);
+      x[u] = (uint32)(z & 0x7FFFFFFFu);
+
+      /* Right-shifting the signed value z would yield implementation-defined results (arithmetic shift is not
+      * guaranteed). However, we can cast to uint32, and get the next carry as an unsigned word. We can then convert
+      * it back to signed by using the guaranteed fact that 'sint32' uses two's complement with no trap representation
+      * or padding bit, and with a layout compatible with that of 'uint32'. */
+      ccu = (uint32) (z >> 31);
+      cc = (sint32)ccu;
     }
-    else
-    {
-      wy = ysign;
-    }
-
-    wys = ((wy << scl) & 0x7FFFFFFFu) | tw;
-    tw = wy >> (31u - scl);
-
-    /* The expression below does not overflow. */
-    z = (uint64)(wys * (uint64)k + x[u] + (uint64)cc);
-    x[u] = (uint32)(z & 0x7FFFFFFFu);
-
-    /* Right-shifting the signed value z would yield implementation-defined results (arithmetic shift is not
-     * guaranteed). However, we can cast to uint32, and get the next carry as an unsigned word. We can then convert
-     * it back to signed by using the guaranteed fact that 'sint32' uses two's complement with no trap representation
-     * or padding bit, and with a layout compatible with that of 'uint32'. */
-    ccu = (uint32) (z >> 31);
-    cc = (sint32)ccu;
   }
 }
 
@@ -1989,35 +2003,33 @@ static void zint_sub_scaled(uint32 *x, uint32 xlen, const uint32 *y, uint32 ylen
   uint32 v;
   uint32 w, wy, wys;
 
-  if (ylen == 0u)
+  if (ylen != 0u)
   {
-    return;
-  }
+    ysign = ((uint32)((sint32)((-1) * (sint32)((uint32)(y[ylen - 1u] >> 30))))) >> 1;
+    tw = 0;
+    cc = 0;
 
-  ysign = ((uint32)((sint32)((-1) * (sint32)((uint32)(y[ylen - 1u] >> 30))))) >> 1;
-  tw = 0;
-  cc = 0;
-
-  for (u = sch; u < xlen; u++)
-  {
-    /* Get the next word of y (scaled). */
-    v = u - sch;
-
-    if (v < ylen)
+    for (u = sch; u < xlen; u++)
     {
-      wy = y[v];
-    }
-    else
-    {
-      wy = ysign;
-    }
+      /* Get the next word of y (scaled). */
+      v = u - sch;
 
-    wys = ((wy << scl) & 0x7FFFFFFFu) | tw;
-    tw = wy >> (31u - scl);
+      if (v < ylen)
+      {
+        wy = y[v];
+      }
+      else
+      {
+        wy = ysign;
+      }
 
-    w = x[u] - wys - cc;
-    x[u] = w & 0x7FFFFFFFu;
-    cc = w >> 31;
+      wys = ((wy << scl) & 0x7FFFFFFFu) | tw;
+      tw = wy >> (31u - scl);
+
+      w = x[u] - wys - cc;
+      x[u] = w & 0x7FFFFFFFu;
+      cc = w >> 31;
+    }
   }
 }
 
@@ -2065,6 +2077,9 @@ static void poly_big_to_fp(fpr *d, const uint32 *f, uint32 flen, uint32 fstride,
   fpr x, fsc;
   uint32 w;
 
+  /* f_temp is used to avoid modifying the input. */
+  const uint32 *f_temp = f;
+
   n = MKN(logn);
 
   if (flen == 0u)
@@ -2073,34 +2088,34 @@ static void poly_big_to_fp(fpr *d, const uint32 *f, uint32 flen, uint32 fstride,
     {
       d[u] = fpr_zero;
     }
-
-    return;
   }
-
-  for (u = 0; u < n; u++)
+  else
   {
-    /* Get sign of the integer; if it is negative, then we will load its absolute value instead, and negate the
-     * result. */
-    neg = (uint32)((sint32)((-1) * (sint32)((uint32)(f[flen - 1u] >> 30))));
-    xm = neg >> 1;
-    cc = neg & 1u;
-    x = fpr_zero;
-    fsc = fpr_one;
-
-    for (v = 0; v < flen; v++)
+    for (u = 0; u < n; u++)
     {
-      w = (f[v] ^ xm) + cc;
-      cc = w >> 31;
-      w &= 0x7FFFFFFFu;
-      w -= (w << 1) & neg;
-      x = FsmSw_Falcon_fpr_add(x, FsmSw_Falcon_fpr_mul(FsmSw_Falcon_fpr_of((sint32)w), fsc));
-      fsc = FsmSw_Falcon_fpr_mul(fsc, fpr_ptwo31);
+      /* Get sign of the integer; if it is negative, then we will load its absolute value instead, and negate the
+      * result. */
+      neg = (uint32)((sint32)((-1) * (sint32)((uint32)(f_temp[flen - 1u] >> 30))));
+      xm = neg >> 1;
+      cc = neg & 1u;
+      x = fpr_zero;
+      fsc = fpr_one;
+
+      for (v = 0; v < flen; v++)
+      {
+        w = (f_temp[v] ^ xm) + cc;
+        cc = w >> 31;
+        w &= 0x7FFFFFFFu;
+        w -= (w << 1) & neg;
+        x = FsmSw_Falcon_fpr_add(x, FsmSw_Falcon_fpr_mul(FsmSw_Falcon_fpr_of((sint32)w), fsc));
+        fsc = FsmSw_Falcon_fpr_mul(fsc, fpr_ptwo31);
+      }
+
+      d[u] = x;
+
+      f_temp = &f_temp[fstride];
+
     }
-
-    d[u] = x;
-
-    f = &f[fstride];
-
   }
 }
 
@@ -2125,6 +2140,7 @@ static sint32 poly_big_to_small(sint8 *d, const uint32 *s, sint32 lim, uint32 lo
 {
   uint32 n, u;
   sint32 z;
+  sint8 retVal = 1;
 
   n = MKN(logn);
 
@@ -2132,15 +2148,16 @@ static sint32 poly_big_to_small(sint8 *d, const uint32 *s, sint32 lim, uint32 lo
   {
     z = zint_one_to_plain(&s[u]);
 
-    if (z < -lim || z > lim)
+    if ((z < -lim) || (z > lim))
     {
-      return 0;
+      retVal = 0;
+      break;
     }
 
     d[u] = (sint8) z;
   }
 
-  return 1;
+  return retVal;
 }
 
 /***********************************************************************************************************************
@@ -2164,7 +2181,7 @@ static sint32 poly_big_to_small(sint8 *d, const uint32 *s, sint32 lim, uint32 lo
 *              -       uint32    logn:    t.b.d.
 *
 ***********************************************************************************************************************/
-static void poly_sub_scaled(uint32 *F, uint32 Flen, uint32 Fstride, const uint32 *f, uint32 flen, uint32 fstride,
+static void poly_sub_scaled(uint32 *F, uint32 Flen, uint32 Fstride, const uint32 *f, uint32 flen1, uint32 fstride1,
                             const sint32 *k, uint32 sch, uint32 scl, uint32 logn)
 {
   uint32 n, u;
@@ -2184,9 +2201,9 @@ static void poly_sub_scaled(uint32 *F, uint32 Flen, uint32 Fstride, const uint32
 
     for (v = 0; v < n; v++)
     {
-      zint_add_scaled_mul_small(x, Flen, y, flen, kf, sch, scl);
+      zint_add_scaled_mul_small(x, Flen, y, flen1, kf, sch, scl);
 
-      if (u + v == n - 1u)
+      if ((u + v) == (n - 1u))
       {
         x = F;
         kf = -kf;
@@ -2196,7 +2213,7 @@ static void poly_sub_scaled(uint32 *F, uint32 Flen, uint32 Fstride, const uint32
         x = &x[Fstride];
       }
 
-      y = &y[fstride];
+      y = &y[fstride1];
     }
   }
 }
@@ -2221,47 +2238,47 @@ static void poly_sub_scaled(uint32 *F, uint32 Flen, uint32 Fstride, const uint32
 *              -       uint32   *tmp:     t.b.d.
 *
 ***********************************************************************************************************************/
-static void poly_sub_scaled_ntt(uint32 *F, uint32 Flen, uint32 Fstride, const uint32 *f, uint32 flen, uint32 fstride,
+static void poly_sub_scaled_ntt(uint32 *F, uint32 Flen, uint32 Fstride, const uint32 *f, uint32 flen1, uint32 fstride1,
                                 const sint32 *k, uint32 sch, uint32 scl, uint32 logn, uint32 *tmp)
 {
   uint32 *gm, *igm, *fk, *t1, *x;
   const uint32 *y;
   uint32 n, u, tlen;
-  const small_prime *primes;
+  const small_prime *smallPrimes;
   uint32 p, p0i, R2, Rx;
   uint32 v;
 
   n = MKN(logn);
-  tlen = flen + 1u;
+  tlen = flen1 + 1u;
   gm = tmp;
   igm = &gm[MKN(logn)];
   fk = &igm[MKN(logn)];
   t1 = &fk[n * tlen];
 
-  primes = PRIMES;
+  smallPrimes = PRIMES;
 
   /* Compute k*f in fk[], in RNS notation. */
   for (u = 0; u < tlen; u++)
   {
-    p = primes[u].p;
+    p = smallPrimes[u].p;
     p0i = modp_ninv31(p);
     R2 = modp_R2(p, p0i);
-    Rx = modp_Rx((uint32) flen, p, p0i, R2);
-    modp_mkgm2(gm, igm, logn, primes[u].g, p, p0i);
+    Rx = modp_Rx((uint32) flen1, p, p0i, R2);
+    modp_mkgm2(gm, igm, logn, smallPrimes[u].g, p, p0i);
 
     for (v = 0; v < n; v++)
     {
       t1[v] = modp_set(k[v], p);
     }
 
-    modp_NTT2(t1, gm, logn, p, p0i);
+    modp_NTT2_ext(t1, 1, gm, logn, p, p0i);
 
     y = f;
     x = &fk[u];
     for (v = 0; v < n; v++)
     {
-      *x = zint_mod_small_signed(y, flen, p, p0i, R2, Rx);
-      y = &y[fstride];
+      *x = zint_mod_small_signed(y, flen1, p, p0i, R2, Rx);
+      y = &y[fstride1];
       x = &x[tlen];
     }
 
@@ -2278,7 +2295,7 @@ static void poly_sub_scaled_ntt(uint32 *F, uint32 Flen, uint32 Fstride, const ui
   }
 
   /* Rebuild k*f. */
-  zint_rebuild_CRT(fk, tlen, tlen, n, primes, 1, t1);
+  zint_rebuild_CRT(fk, tlen, tlen, n, smallPrimes, 1, t1);
 
   /* Subtract k*f, scaled, from F. */
   x = F;
@@ -2308,7 +2325,7 @@ static uint64 get_rng_u64(inner_shake256_context *rng)
   /* We enforce little-endian representation. */
   uint8 tmp[8];
 
-  inner_shake256_extract(rng, tmp, sizeof tmp);
+  FsmSw_Fips202_shake256_inc_squeeze(tmp, sizeof(tmp), rng);
 
   return (uint64) tmp[0] | ((uint64) tmp[1] << 8) | ((uint64) tmp[2] << 16)
       | ((uint64) tmp[3] << 24) | ((uint64) tmp[4] << 32)
@@ -2364,7 +2381,7 @@ static sint32 mkgauss(RNG_CONTEXT *rng, uint32 logn)
     r = get_rng_u64(rng);
     r &= ~((uint64) 1 << 63);
 
-    for (k = 1; k < (sizeof gauss_1024_12289) / (sizeof gauss_1024_12289[0]); k++)
+    for (k = 1; k < (sizeof(gauss_1024_12289)) / (sizeof(gauss_1024_12289[0])); k++)
     {
       t = (uint32) ((r - gauss_1024_12289[k]) >> 63) ^ 1u;
       v |= k & (uint32)((sint32)((-1) * (sint32)((uint32)(t & (f ^ 1u)))));
@@ -2430,9 +2447,13 @@ static fpr *align_fpr(void *base, void *data)
   uint8 *cb, *cd;
   uint32 k, km;
 
+  /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   cb = base;
   cd = data;
 
+  /* polyspace +2 MISRA2012:11.4 [Justified:]"Necessary conversion between a pointer to object 
+  and an integer type for functionality. Ensured proper alignment and validity." */
   k = (uint32)cd - (uint32)cb;
   km = k % sizeof(fpr);
 
@@ -2441,6 +2462,8 @@ static fpr *align_fpr(void *base, void *data)
     k += (sizeof(fpr)) - km;
   }
 
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   return (fpr*)((void*)(&cb[k]));
 }
 
@@ -2461,8 +2484,13 @@ static uint32 *align_u32(void *base, void *data)
   uint8 *cb, *cd;
   uint32 k, km;
 
+  /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   cb = base;
   cd = data;
+  /* polyspace +3 MISRA2012:11.4 [Justified:]"Necessary conversion between a pointer to object 
+  and an integer type for functionality. 
+  Ensured proper alignment and validity." */
   k = (uint32)cd - (uint32)cb;
   km = k % sizeof(uint32);
 
@@ -2471,6 +2499,8 @@ static uint32 *align_u32(void *base, void *data)
     k += (sizeof(uint32)) - km;
   }
 
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   return (uint32*)((void*)(&cb[k]));
 }
 
@@ -2515,7 +2545,7 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
   uint32 n, hn, u;
   uint32 slen, tlen;
   uint32 *fd, *gd, *fs, *gs, *gm, *igm, *t1;
-  const small_prime *primes;
+  const small_prime *smallPrimes;
   uint32 p, p0i, R2;
   uint32 v;
   uint32 *x;
@@ -2526,7 +2556,7 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
   hn = n >> 1;
   slen = MAX_BL_SMALL[depth];
   tlen = MAX_BL_SMALL[depth + 1u];
-  primes = PRIMES;
+  smallPrimes = PRIMES;
 
   /* Prepare room for the result. */
   fd  = data;
@@ -2537,15 +2567,15 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
   igm = &gm[n];
   t1  = &igm[n];
 
-  FsmSw_CommonLib_memmove(fs, data, 2u * n * slen * sizeof *data);
+  FsmSw_CommonLib_memmove(fs, data, 2u * n * slen * sizeof(*data));
 
   /* First slen words: we use the input values directly, and apply inverse NTT as we go. */
   for (u = 0; u < slen; u++)
   {
-    p = primes[u].p;
+    p = smallPrimes[u].p;
     p0i = modp_ninv31(p);
     R2 = modp_R2(p, p0i);
-    modp_mkgm2(gm, igm, logn, primes[u].g, p, p0i);
+    modp_mkgm2(gm, igm, logn, smallPrimes[u].g, p, p0i);
 
     x = &fs[u];
     for (v = 0; v < n; v++)
@@ -2556,13 +2586,13 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
 
     if (0 == in_ntt)
     {
-      modp_NTT2(t1, gm, logn, p, p0i);
+      modp_NTT2_ext(t1, 1, gm, logn, p, p0i);
     }
 
     x = &fd[u];
     for (v = 0; v < hn; v++)
     {
-      w0 = t1[(v << 1) + 0u];
+      w0 = t1[(v << 1)];
       w1 = t1[(v << 1) + 1u];
       *x = modp_montymul(modp_montymul(w0, w1, p, p0i), R2, p, p0i);
       x = &x[tlen];
@@ -2582,13 +2612,13 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
 
     if (0 == in_ntt)
     {
-      modp_NTT2(t1, gm, logn, p, p0i);
+      modp_NTT2_ext(t1, 1, gm, logn, p, p0i);
     }
 
     x = &gd[u];
     for (v = 0; v < hn; v++)
     {
-      w0 = t1[(v << 1) + 0u];
+      w0 = t1[(v << 1)];
       w1 = t1[(v << 1) + 1u];
       *x = modp_montymul(modp_montymul(w0, w1, p, p0i), R2, p, p0i);
       x = &x[tlen];
@@ -2607,17 +2637,17 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
   }
 
   /* Since the fs and gs words have been de-NTTized, we can use the CRT to rebuild the values. */
-  zint_rebuild_CRT(fs, slen, slen, n, primes, 1, gm);
-  zint_rebuild_CRT(gs, slen, slen, n, primes, 1, gm);
+  zint_rebuild_CRT(fs, slen, slen, n, smallPrimes, 1, gm);
+  zint_rebuild_CRT(gs, slen, slen, n, smallPrimes, 1, gm);
 
   /* Remaining words: use modular reductions to extract the values. */
   for (u = slen; u < tlen; u++)
   {
-    p = primes[u].p;
+    p = smallPrimes[u].p;
     p0i = modp_ninv31(p);
     R2 = modp_R2(p, p0i);
     Rx = modp_Rx((uint32) slen, p, p0i, R2);
-    modp_mkgm2(gm, igm, logn, primes[u].g, p, p0i);
+    modp_mkgm2(gm, igm, logn, smallPrimes[u].g, p, p0i);
 
     x = fs;
     for (v = 0; v < n; v++)
@@ -2626,12 +2656,12 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
       x = &x[slen];
     }
 
-    modp_NTT2(t1, gm, logn, p, p0i);
+    modp_NTT2_ext(t1, 1, gm, logn, p, p0i);
 
     x = &fd[u];
     for (v = 0; v < hn; v++)
     {
-      w0 = t1[(v << 1) + 0u];
+      w0 = t1[(v << 1)];
       w1 = t1[(v << 1) + 1u];
       *x = modp_montymul(modp_montymul(w0, w1, p, p0i), R2, p, p0i);
       x  = &x[tlen];
@@ -2644,12 +2674,12 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
       x = &x[slen];
     }
 
-    modp_NTT2(t1, gm, logn, p, p0i);
+    modp_NTT2_ext(t1, 1, gm, logn, p, p0i);
 
     x = &gd[u];
     for (v = 0; v < hn; v++)
     {
-      w0 = t1[(v << 1) + 0u];
+      w0 = t1[(v << 1)];
       w1 = t1[(v << 1) + 1u];
       *x = modp_montymul(modp_montymul(w0, w1, p, p0i), R2, p, p0i);
       x = &x[tlen];
@@ -2687,16 +2717,17 @@ static void make_fg(uint32 *data, const sint8 *f, const sint8 *g, uint32 logn, u
   uint32 n, u;
   uint32 *ft, *gt, p0;
   uint32 d;
-  const small_prime *primes;
+  const small_prime *smallPrimes;
   uint32 *gm, *igm;
   uint32 p, p0i;
+  boolean bStopFunc = FALSE;
 
 
   n = MKN(logn);
   ft = data;
   gt = &ft[n];
-  primes = PRIMES;
-  p0 = primes[0].p;
+  smallPrimes = PRIMES;
+  p0 = smallPrimes[0].p;
 
   for (u = 0; u < n; u++)
   {
@@ -2706,38 +2737,42 @@ static void make_fg(uint32 *data, const sint8 *f, const sint8 *g, uint32 logn, u
 
   if ( (depth == 0u) && (0 < out_ntt))
   {
-    p = primes[0].p;
+    p = smallPrimes[0].p;
     p0i = modp_ninv31(p);
     gm = &gt[n];
     igm = &gm[MKN(logn)];
-    modp_mkgm2(gm, igm, logn, primes[0].g, p, p0i);
-    modp_NTT2(ft, gm, logn, p, p0i);
-    modp_NTT2(gt, gm, logn, p, p0i);
+    modp_mkgm2(gm, igm, logn, smallPrimes[0].g, p, p0i);
+    modp_NTT2_ext(ft, 1, gm, logn, p, p0i);
+    modp_NTT2_ext(gt, 1, gm, logn, p, p0i);
 
-    return;
+    bStopFunc = TRUE;
   }
 
-  if (depth == 0u)
+  if ((depth == 0u) && (FALSE == bStopFunc))
   {
-    return;
+    bStopFunc = TRUE;
   }
 
-  if (depth == 1u)
+  if ((depth == 1u) && (FALSE == bStopFunc))
   {
     make_fg_step(data, logn, 0, 0, out_ntt);
 
-    return;
+    bStopFunc = TRUE;
   }
 
-  make_fg_step(data, logn, 0, 0, 1);
-
-  for (d = 1; d + 1u < depth; d++)
+  if (FALSE == bStopFunc)
   {
-    make_fg_step(data, logn - d, d, 1, 1);
+    make_fg_step(data, logn, 0, 0, 1);
+
+    /* polyspace +2 MISRA2012:14.2 [Justified:]"The calculation involving the loop counter directly affects loop 
+    continuation, addressing a MISRA 14.2 warning by following its rules for how loops should work." */
+    for (d = 1; (d + 1u) < depth; d++)
+    {
+      make_fg_step(data, logn - d, d, 1, 1);
+    }
+
+    make_fg_step(data, logn - depth + 1u, depth - 1u, 1, out_ntt);
   }
-
-  make_fg_step(data, logn - depth + 1u, depth - 1u, 1, out_ntt);
-
 }
 
 /***********************************************************************************************************************
@@ -2757,30 +2792,31 @@ static void make_fg(uint32 *data, const sint8 *f, const sint8 *g, uint32 logn, u
 static sint32 solve_NTRU_deepest(uint32 logn_top, const sint8 *f, const sint8 *g, uint32 *tmp)
 {
   uint32 len;
-  uint32 *Fp, *Gp, *fp, *gp, *t1, q;
-  const small_prime *primes;
+  uint32 *Fp, *Gp, *fp1, *gp1, *t1, q;
+  const small_prime *smallPrimes;
+  sint32 retVal = 1;
 
   len = MAX_BL_SMALL[logn_top];
-  primes = PRIMES;
+  smallPrimes = PRIMES;
 
   Fp = tmp;
   Gp = &Fp[len];
-  fp = &Gp[len];
-  gp = &fp[len];
-  t1 = &gp[len];
+  fp1 = &Gp[len];
+  gp1 = &fp1[len];
+  t1 = &gp1[len];
 
-  make_fg(fp, f, g, logn_top, logn_top, 0);
+  make_fg(fp1, f, g, logn_top, logn_top, 0);
 
   /* We use the CRT to rebuild the resultants as big integers. There are two such big integers. The resultants are
    * always nonnegative. */
-  zint_rebuild_CRT(fp, len, len, 2, primes, 0, t1);
+  zint_rebuild_CRT(fp1, len, len, 2, smallPrimes, 0, t1);
 
   /* Apply the binary GCD. The zint_bezout() function works only if both inputs are odd.   *
    * We can test on the result and return 0 because that would imply failure of the NTRU solving equation, and the
    * (f,g) values will be abandoned in that case. */
-  if (0 == zint_bezout(Gp, Fp, fp, gp, len, t1))
+  if (0 == zint_bezout(Gp, Fp, fp1, gp1, len, t1))
   {
-    return 0;
+    retVal = 0;
   }
 
   /* Multiply the two values by the target value q. Values must fit in the destination arrays. We can again test on the
@@ -2790,17 +2826,15 @@ static sint32 solve_NTRU_deepest(uint32 logn_top, const sint8 *f, const sint8 *g
 
   if (0u != zint_mul_small(Fp, len, q))
   {
-    return 0;
+    retVal = 0;
   }
 
   if (0u != zint_mul_small(Gp, len, q))
   {
-    return 0;
+    retVal = 0;
   }
 
-
-
-  return 1;
+  return retVal;
 }
 
 /***********************************************************************************************************************
@@ -2826,23 +2860,25 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
    *  - this function should return F and G of degree N. */
   uint32 logn;
   uint32 n, hn, slen, dlen, llen, rlen, FGlen, u;
-  uint32 *Fd, *Gd, *Ft, *Gt, *ft, *gt, *t1;
+  uint32 *Fd, *Gd, *Ft, *Gt, *ft1, *gt1, *t1;
   fpr *rt1, *rt2, *rt3, *rt4, *rt5;
-  sint32 scale_fg, minbl_fg, maxbl_fg, maxbl_FG, scale_k;
+  sint32 scale_fg, minbl_fg, maxbl_fg, maxbl_FG1, scale_k;
   uint32 *x, *y;
   sint32 *k;
-  const small_prime *primes;
+  const small_prime *smallPrimes;
   uint32 p, p0i, R2, Rx;
   uint32 v;
   uint32 *xs, *ys, *xd, *yd;
   uint32 *gm, *igm, *fx, *gx, *Fp, *Gp;
   uint32 ftA, ftB, gtA, gtB;
   uint32 mFp, mGp;
-  sint32 scale_FG, dc, new_maxbl_FG;
+  sint32 scale_FG1, dc, new_maxbl_FG;
   uint32 scl, sch;
   fpr pdc, pt;
   fpr xv;
   uint32 sw;
+  sint8 retVal = 1;
+  boolean bStopFunc = FALSE;
 
   logn = logn_top - depth;
   n = (uint32) 1 << logn;
@@ -2855,27 +2891,27 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
   slen = MAX_BL_SMALL[depth];
   dlen = MAX_BL_SMALL[depth + 1u];
   llen = MAX_BL_LARGE[depth];
-  primes = PRIMES;
+  smallPrimes = PRIMES;
 
   /* Fd and Gd are the F and G from the deeper level. */
   Fd = tmp;
   Gd = &Fd[dlen * hn];
 
   /* Compute the input f and g for this level. Note that we get f and g in RNS + NTT representation. */
-  ft = &Gd[dlen * hn];
-  make_fg(ft, f, g, logn_top, depth, 1);
+  ft1 = &Gd[dlen * hn];
+  make_fg(ft1, f, g, logn_top, depth, 1);
 
   /* Move the newly computed f and g to make room for our candidate F and G (unreduced). */
   Ft = tmp;
   Gt = &Ft[n * llen];
   t1 = &Gt[n * llen];
-  FsmSw_CommonLib_memmove(t1, ft, 2u * n * slen * sizeof *ft);
-  ft = t1;
-  gt = &ft[slen * n];
-  t1 = &gt[slen * n];
+  FsmSw_CommonLib_memmove(t1, ft1, 2u * n * slen * sizeof(*ft1));
+  ft1 = t1;
+  gt1 = &ft1[slen * n];
+  t1 = &gt1[slen * n];
 
   /* Move Fd and Gd _after_ f and g. */
-  FsmSw_CommonLib_memmove(t1, Fd, 2u * hn * dlen * sizeof *Fd);
+  FsmSw_CommonLib_memmove(t1, Fd, 2u * hn * dlen * sizeof(*Fd));
   Fd = t1;
   Gd = &Fd[hn * dlen];
 
@@ -2883,7 +2919,7 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
    * in each). */
   for (u = 0; u < llen; u++)
   {
-    p = primes[u].p;
+    p = smallPrimes[u].p;
     p0i = modp_ninv31(p);
     R2 = modp_R2(p, p0i);
     Rx = modp_Rx((uint32) dlen, p, p0i, R2);
@@ -2909,15 +2945,15 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
   for (u = 0; u < llen; u++)
   {
     /* All computations are done modulo p. */
-    p = primes[u].p;
+    p = smallPrimes[u].p;
     p0i = modp_ninv31(p);
     R2 = modp_R2(p, p0i);
 
     /* If we processed slen words, then f and g have been de-NTTized, and are in RNS; we can rebuild them. */
     if (u == slen)
     {
-      zint_rebuild_CRT(ft, slen, slen, n, primes, 1, t1);
-      zint_rebuild_CRT(gt, slen, slen, n, primes, 1, t1);
+      zint_rebuild_CRT(ft1, slen, slen, n, smallPrimes, 1, t1);
+      zint_rebuild_CRT(gt1, slen, slen, n, smallPrimes, 1, t1);
     }
 
     gm  = t1;
@@ -2925,12 +2961,12 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
     fx  = &igm[n];
     gx  = &fx[n];
 
-    modp_mkgm2(gm, igm, logn, primes[u].g, p, p0i);
+    modp_mkgm2(gm, igm, logn, smallPrimes[u].g, p, p0i);
 
     if (u < slen)
     {
-      x = &ft[u];
-      y = &gt[u];
+      x = &ft1[u];
+      y = &gt1[u];
       for (v = 0; v < n; v++)
       {
         fx[v] = *x;
@@ -2939,15 +2975,15 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
         y = &y[slen];
       }
 
-      modp_iNTT2_ext(&ft[u], slen, igm, logn, p, p0i);
-      modp_iNTT2_ext(&gt[u], slen, igm, logn, p, p0i);
+      modp_iNTT2_ext(&ft1[u], slen, igm, logn, p, p0i);
+      modp_iNTT2_ext(&gt1[u], slen, igm, logn, p, p0i);
     }
     else
     {
       Rx = modp_Rx((uint32)slen, p, p0i, R2);
 
-      x = ft;
-      y = gt;
+      x = ft1;
+      y = gt1;
       for (v = 0; v < n; v++)
       {
         fx[v] = zint_mod_small_signed(x, slen, p, p0i, R2, Rx);
@@ -2956,8 +2992,8 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
         y = &y[slen];
       }
 
-      modp_NTT2(fx, gm, logn, p, p0i);
-      modp_NTT2(gx, gm, logn, p, p0i);
+      modp_NTT2_ext(fx, 1,  gm, logn, p, p0i);
+      modp_NTT2_ext(gx, 1, gm, logn, p, p0i);
     }
 
     /* Get F' and G' modulo p and in NTT representation (they have degree n/2). These values were computed in a
@@ -2975,8 +3011,8 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
       y = &y[llen];
     }
 
-    modp_NTT2(Fp, gm, logn - 1u, p, p0i);
-    modp_NTT2(Gp, gm, logn - 1u, p, p0i);
+    modp_NTT2_ext(Fp, 1, gm, logn - 1u, p, p0i);
+    modp_NTT2_ext(Gp, 1, gm, logn - 1u, p, p0i);
 
     /* Compute our F and G modulo p.
      * General case:
@@ -3001,9 +3037,9 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
     y = &Gt[u];
     for (v = 0; v < hn; v++)
     {
-      ftA = fx[(v << 1) + 0u];
+      ftA = fx[(v << 1)];
       ftB = fx[(v << 1) + 1u];
-      gtA = gx[(v << 1) + 0u];
+      gtA = gx[(v << 1)];
       gtB = gx[(v << 1) + 1u];
       mFp = modp_montymul(Fp[v], R2, p, p0i);
       mGp = modp_montymul(Gp[v], R2, p, p0i);
@@ -3020,10 +3056,10 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
   }
 
   /* Rebuild F and G with the CRT. */
-  zint_rebuild_CRT(Ft, llen, llen, n, primes, 1, t1);
-  zint_rebuild_CRT(Gt, llen, llen, n, primes, 1, t1);
+  zint_rebuild_CRT(Ft, llen, llen, n, smallPrimes, 1, t1);
+  zint_rebuild_CRT(Gt, llen, llen, n, smallPrimes, 1, t1);
 
-  /* At that point, Ft, Gt, ft and gt are consecutive in RAM (in that order). */
+  /* At that point, Ft, Gt, ft1 and gt1 are consecutive in RAM (in that order). */
 
   /* Apply Babai reduction to bring back F and G to size slen.
    * We use the FFT to compute successive approximations of the reduction coefficient. We first isolate the top bits of
@@ -3063,14 +3099,18 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
   rt4 = &rt3[n];
   rt5 = &rt4[n];
   rt1 = &rt5[(n >> 1)];
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   k = (sint32 *) ((void*)align_u32(tmp, rt1));
   rt2 = align_fpr(tmp, &k[n]);
 
-  if (rt2 < (&rt1[n]))
+  if (rt2 < (&(rt1[n])))
   {
     rt2 = &rt1[n];
   }
 
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   t1 = (uint32*)((void*)(&k[n]));
 
   /* Get f and g into rt3 and rt4 as floating-point approximations.
@@ -3087,16 +3127,16 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
     rlen = slen;
   }
 
-  poly_big_to_fp(rt3, &ft[slen - rlen], rlen, slen, logn);
-  poly_big_to_fp(rt4, &gt[slen - rlen], rlen, slen, logn);
+  poly_big_to_fp(rt3, &ft1[slen - rlen], rlen, slen, logn);
+  poly_big_to_fp(rt4, &gt1[slen - rlen], rlen, slen, logn);
 
   /* Values in rt3 and rt4 are downscaled by 2^(scale_fg). */
   scale_fg = 31 * (sint32)((uint32)(slen - rlen));
 
   /* Estimated boundaries for the maximum size (in bits) of the coefficients of (f,g). We use the measured average, and
    * allow for a deviation of at most six times the standard deviation. */
-  minbl_fg = BITLENGTH[depth].avg - 6 * BITLENGTH[depth].std;
-  maxbl_fg = BITLENGTH[depth].avg + 6 * BITLENGTH[depth].std;
+  minbl_fg = BITLENGTH[depth].avg - (6 * BITLENGTH[depth].std);
+  maxbl_fg = BITLENGTH[depth].avg + (6 * BITLENGTH[depth].std);
 
   /* Compute 1/(f*adj(f)+g*adj(g)) in rt5. We also keep adj(f) and adj(g) in rt3 and rt4, respectively. */
   FsmSw_Falcon_FFT(rt3, logn);
@@ -3106,17 +3146,17 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
   FsmSw_Falcon_poly_adj_fft(rt4, logn);
 
   /* Reduce F and G repeatedly.
-   * The expected maximum bit length of coefficients of F and G is kept in maxbl_FG, with the corresponding word length
+   * The expected maximum bit length of coefficients of F and G is kept in maxbl_FG1, with the corresponding word length
    * in FGlen. */
   FGlen = llen;
-  maxbl_FG = 31 * (sint32) llen;
+  maxbl_FG1 = 31 * (sint32) llen;
 
   /* Each reduction operation computes the reduction polynomial "k". We need that polynomial to have coefficients that
    * fit on 32-bit signed integers, with some scaling; thus, we use a descending sequence of scaling values, down to
    * zero.
    * The size of the coefficients of k is (roughly) the difference between the size of the coefficients of (F,G) and
    * the size of the coefficients of (f,g). Thus, the maximum size of the coefficients of k is, at the start,
-   * maxbl_FG - minbl_fg; this is our starting scale value for k.
+   * maxbl_FG1 - minbl_fg; this is our starting scale value for k.
    * We need to estimate the size of (F,G) during the execution of the algorithm; we are allowed some overestimation
    * but not too much (poly_big_to_fp() uses a 310-bit window). Generally speaking, after applying a reduction with k
    * scaled to scale_k, the size of (F,G) will be size(f,g) + scale_k + dd, where 'dd' is a few bits to account for the
@@ -3124,7 +3164,7 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
    * allow for 10 extra bits).
    * The size of (f,g) is not known exactly, but maxbl_fg is an upper bound.
    */
-  scale_k = maxbl_FG - minbl_fg;
+  scale_k = maxbl_FG1 - minbl_fg;
 
   for (v = 0; v < 0xFFFFFFFFu; v++)
   {
@@ -3137,7 +3177,7 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
     {
       rlen = FGlen;
     }
-    scale_FG = 31 * ((sint32)FGlen - (sint32)rlen);
+    scale_FG1 = 31 * ((sint32)FGlen - (sint32)rlen);
     poly_big_to_fp(rt1, &Ft[FGlen - rlen], rlen, llen, logn);
     poly_big_to_fp(rt2, &Gt[FGlen - rlen], rlen, llen, logn);
 
@@ -3152,11 +3192,11 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
 
     /* (f,g) are scaled by 'scale_fg', meaning that the numbers in rt3/rt4 should be multiplied by 2^(scale_fg) to have
      * their true mathematical value.
-     * (F,G) are similarly scaled by 'scale_FG'. Therefore, the value we computed in rt2 is scaled by
-     * 'scale_FG-scale_fg'.
+     * (F,G) are similarly scaled by 'scale_FG1'. Therefore, the value we computed in rt2 is scaled by
+     * 'scale_FG1-scale_fg'.
      * We want that value to be scaled by 'scale_k', hence we apply a corrective scaling. After scaling, the values
      * should fit in -2^31-1..+2^31-1. */
-    dc = scale_k - scale_FG + scale_fg;
+    dc = scale_k - scale_FG1 + scale_fg;
 
     /* We will need to multiply values by 2^(-dc). The value 'dc' is not secret, so we can compute 2^(-dc) with a
      * non-constant-time process. (We could use ldexp(), but we prefer to avoid any dependency on libm. When using FP
@@ -3190,51 +3230,51 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
       /* Sometimes the values can be out-of-bounds if the algorithm fails; we must not call FsmSw_Falcon_fpr_rint()
        * (and cast to sint32) if the value is not in-bounds. Note that the test does not break constant-time discipline,
        * since any failure here implies that we discard the current secret key (f,g). */
-      if (0 == FsmSw_Falcon_fpr_lt(fpr_mtwo31m1, xv))
+      if ((0 == FsmSw_Falcon_fpr_lt(fpr_mtwo31m1, xv)) || (0 == FsmSw_Falcon_fpr_lt(xv, fpr_ptwo31m1)))
       {
-        return 0;
-      }
-      if (0 == FsmSw_Falcon_fpr_lt(xv, fpr_ptwo31m1))
-      {
-        return 0;
+        retVal = 0;
+        bStopFunc = TRUE;
+        break;
       }
 
       k[u] = (sint32) FsmSw_Falcon_fpr_rint(xv);
     }
 
-    /* Values in k[] are integers. They really are scaled down by maxbl_FG - minbl_fg bits.
-     * If we are at low depth, then we use the NTT to compute k*f and k*g. */
-    sch =  ((uint32)scale_k / 31u);
-    scl =  ((uint32)scale_k % 31u);
-    if (depth <= DEPTH_INT_FG)
+    if (FALSE == bStopFunc)
     {
-      poly_sub_scaled_ntt(Ft, FGlen, llen, ft, slen, slen, k, sch, scl,
-          logn, t1);
-      poly_sub_scaled_ntt(Gt, FGlen, llen, gt, slen, slen, k, sch, scl,
-          logn, t1);
-    }
-    else
-    {
-      poly_sub_scaled(Ft, FGlen, llen, ft, slen, slen, k, sch, scl, logn);
-      poly_sub_scaled(Gt, FGlen, llen, gt, slen, slen, k, sch, scl, logn);
-    }
-
-    /* We compute the new maximum size of (F,G), assuming that (f,g) has _maximal_ length (i.e. that reduction is
-     * "late" instead of "early". We also adjust FGlen accordingly. */
-    new_maxbl_FG = scale_k + maxbl_fg + 10;
-    if (new_maxbl_FG < maxbl_FG)
-    {
-      maxbl_FG = new_maxbl_FG;
-
-      if ((sint32) FGlen * 31 >= maxbl_FG + 31)
+      /* Values in k[] are integers. They really are scaled down by maxbl_FG1 - minbl_fg bits.
+      * If we are at low depth, then we use the NTT to compute k*f and k*g. */
+      sch =  ((uint32)scale_k / 31u);
+      scl =  ((uint32)scale_k % 31u);
+      if (depth <= DEPTH_INT_FG)
       {
-        FGlen--;
+        poly_sub_scaled_ntt(Ft, FGlen, llen, ft1, slen, slen, k, sch, scl,
+            logn, t1);
+        poly_sub_scaled_ntt(Gt, FGlen, llen, gt1, slen, slen, k, sch, scl,
+            logn, t1);
+      }
+      else
+      {
+        poly_sub_scaled(Ft, FGlen, llen, ft1, slen, slen, k, sch, scl, logn);
+        poly_sub_scaled(Gt, FGlen, llen, gt1, slen, slen, k, sch, scl, logn);
+      }
+
+      /* We compute the new maximum size of (F,G), assuming that (f,g) has _maximal_ length (i.e. that reduction is
+      * "late" instead of "early". We also adjust FGlen accordingly. */
+      new_maxbl_FG = scale_k + maxbl_fg + 10;
+      if (new_maxbl_FG < maxbl_FG1)
+      {
+        maxbl_FG1 = new_maxbl_FG;
+
+        if (((sint32) FGlen * 31) >= (maxbl_FG1 + 31))
+        {
+          FGlen--;
+        }
       }
     }
-
     /* We suppose that scaling down achieves a reduction by at least 25 bits per iteration. We stop when we have
      * done the loop with an unscaled k. */
-    if (scale_k <= 0)
+    if ((scale_k <= 0) || (TRUE == bStopFunc))
     {
       break;
     }
@@ -3276,11 +3316,11 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
   y = tmp;
   for (u = 0; u < (n << 1); u++)
   {
-    FsmSw_CommonLib_memmove(x, y, slen * sizeof *y);
+    FsmSw_CommonLib_memmove(x, y, slen * sizeof(*y));
     x = &x[slen];
     y = &y[llen];
   }
-  return 1;
+  return retVal;
 }
 
 /***********************************************************************************************************************
@@ -3297,6 +3337,9 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
 * Returns  1 on success, 0 on error.
 *
 ***********************************************************************************************************************/
+/* polyspace +3 MISRA2012:15.5 [Justified:]"Multiple return points enhance readability and efficiency 
+by allowing early exits on error conditions. Using a single return variable (retVal) 
+was evaluated but didn't work in this context." */
 static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const sint8 *g, uint32 *tmp)
 {
   /* The first half of this function is a copy of the corresponding part in solve_NTRU_intermediate(), for the
@@ -3304,7 +3347,7 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
    * unreduced F and G fit in 53 bits of precision, allowing a much simpler process with lower RAM usage. */
   uint32 depth, logn;
   uint32 n_top, n, hn, slen, dlen, llen, u;
-  uint32 *Fd, *Gd, *Ft, *Gt, *ft, *gt, *t1;
+  uint32 *Fd, *Gd, *Ft, *Gt, *ft1, *gt1, *t1;
   fpr *rt1, *rt2, *rt3, *rt4, *rt5, *rt6;
   uint32 *x, *y;
   uint32 p, p0i, R2, Rx;
@@ -3373,10 +3416,10 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
   Ft = tmp;
   FsmSw_CommonLib_memmove(&Ft[llen * n], Gt, llen * n * sizeof(uint32));
   Gt = &Ft[llen * n];
-  ft = &Gt[llen * n];
-  gt = &ft[slen * n];
+  ft1 = &Gt[llen * n];
+  gt1 = &ft1[slen * n];
 
-  t1 = &gt[slen * n];
+  t1 = &gt1[slen * n];
 
   /* Compute our F and G modulo sufficiently many small primes. */
   for (u = 0; u < llen; u++)
@@ -3395,7 +3438,7 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
     gx  = &fx[n_top];
     modp_mkgm2(gm, igm, logn_top, PRIMES[u].g, p, p0i);
 
-    /* Set ft and gt to f and g modulo p, respectively. */
+    /* Set ft1 and gt1 to f and g modulo p, respectively. */
     for (v = 0; v < n_top; v++)
     {
       fx[v] = modp_set(f[v], p);
@@ -3403,8 +3446,8 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
     }
 
     /* Convert to NTT and compute our f and g. */
-    modp_NTT2(fx, gm, logn_top, p, p0i);
-    modp_NTT2(gx, gm, logn_top, p, p0i);
+    modp_NTT2_ext(fx, 1, gm, logn_top, p, p0i);
+    modp_NTT2_ext(gx, 1, gm, logn_top, p, p0i);
 
     for (e = logn_top; e > logn; e--)
     {
@@ -3413,11 +3456,11 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
     }
 
     /* From that point onward, we only need tables for degree n, so we can save some space. */
-    FsmSw_CommonLib_memmove(&gm[n], igm, n * sizeof *igm);
+    FsmSw_CommonLib_memmove(&gm[n], igm, n * sizeof(*igm));
     igm = &gm[n];
-    FsmSw_CommonLib_memmove(&igm[n], fx, n * sizeof *ft);
+    FsmSw_CommonLib_memmove(&igm[n], fx, n * sizeof(*ft1));
     fx = &igm[n];
-    FsmSw_CommonLib_memmove(&fx[n], gx, n * sizeof *gt);
+    FsmSw_CommonLib_memmove(&fx[n], gx, n * sizeof(*gt1));
     gx = &fx[n];
 
     /* Get F' and G' modulo p and in NTT representation (they have degree n/2). These values were computed in a
@@ -3435,8 +3478,8 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
       x = &x[llen];
       y = &y[llen];
     }
-    modp_NTT2(Fp, gm, logn - 1u, p, p0i);
-    modp_NTT2(Gp, gm, logn - 1u, p, p0i);
+    modp_NTT2_ext(Fp, 1, gm, logn - 1u, p, p0i);
+    modp_NTT2_ext(Gp, 1, gm, logn - 1u, p, p0i);
 
     /* Compute our F and G modulo p.
      * Equations are:
@@ -3460,9 +3503,9 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
     y = &Gt[u];
     for (v = 0; v < hn; v++)
     {
-      ftA = fx[(v << 1) + 0u];
+      ftA = fx[(v << 1)];
       ftB = fx[(v << 1) + 1u];
-      gtA = gx[(v << 1) + 0u];
+      gtA = gx[(v << 1)];
       gtB = gx[(v << 1) + 1u];
       mFp = modp_montymul(Fp[v], R2, p, p0i);
       mGp = modp_montymul(Gp[v], R2, p, p0i);
@@ -3477,14 +3520,14 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
     modp_iNTT2_ext(&Ft[u], llen, igm, logn, p, p0i);
     modp_iNTT2_ext(&Gt[u], llen, igm, logn, p, p0i);
 
-    /* Also save ft and gt (only up to size slen). */
+    /* Also save ft1 and gt1 (only up to size slen). */
     if (u < slen)
     {
-      modp_iNTT2(fx, igm, logn, p, p0i);
-      modp_iNTT2(gx, igm, logn, p, p0i);
+      modp_iNTT2_ext(fx, 1, igm, logn, p, p0i);
+      modp_iNTT2_ext(gx, 1, igm, logn, p, p0i);
 
-      x = &ft[u];
-      y = &gt[u];
+      x = &ft1[u];
+      y = &gt1[u];
       for (v = 0; v < n; v++)
       {
         *x = fx[v];
@@ -3498,35 +3541,37 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
   /* Rebuild f, g, F and G with the CRT. Note that the elements of F and G are consecutive, and thus can be rebuilt in
    * a single loop; similarly, the elements of f and g are consecutive. */
   zint_rebuild_CRT(Ft, llen, llen, n << 1, PRIMES, 1, t1);
-  zint_rebuild_CRT(ft, slen, slen, n << 1, PRIMES, 1, t1);
+  zint_rebuild_CRT(ft1, slen, slen, n << 1, PRIMES, 1, t1);
 
   /* Here starts the Babai reduction, specialized for depth = 1.
-   * Candidates F and G (from Ft and Gt), and base f and g (ft and gt), are converted to floating point. There is no
+   * Candidates F and G (from Ft and Gt), and base f and g (ft1 and gt1), are converted to floating point. There is no
    * scaling, and a single pass is sufficient. */
 
   /* Convert F and G into floating point (rt1 and rt2). */
-  rt1 = align_fpr(tmp, &gt[slen * n]);
+  rt1 = align_fpr(tmp, &gt1[slen * n]);
   rt2 = &rt1[n];
   poly_big_to_fp(rt1, Ft, llen, llen, logn);
   poly_big_to_fp(rt2, Gt, llen, llen, logn);
 
   /* Integer representation of F and G is no longer needed, we can remove it. */
-  FsmSw_CommonLib_memmove(tmp, ft, 2u * slen * n * sizeof *ft);
-  ft = tmp;
-  gt = &ft[slen * n];
-  rt3 = align_fpr(tmp, &gt[slen * n]);
-  FsmSw_CommonLib_memmove(rt3, rt1, 2u * n * sizeof *rt1);
+  FsmSw_CommonLib_memmove(tmp, ft1, 2u * slen * n * sizeof(*ft1));
+  ft1 = tmp;
+  gt1 = &ft1[slen * n];
+  rt3 = align_fpr(tmp, &gt1[slen * n]);
+  FsmSw_CommonLib_memmove(rt3, rt1, 2u * n * sizeof(*rt1));
   rt1 = rt3;
   rt2 = &rt1[n];
   rt3 = &rt2[n];
   rt4 = &rt3[n];
 
   /* Convert f and g into floating point (rt3 and rt4). */
-  poly_big_to_fp(rt3, ft, slen, slen, logn);
-  poly_big_to_fp(rt4, gt, slen, slen, logn);
+  poly_big_to_fp(rt3, ft1, slen, slen, logn);
+  poly_big_to_fp(rt4, gt1, slen, slen, logn);
 
-  /* Remove unneeded ft and gt. */
-  FsmSw_CommonLib_memmove(tmp, rt1, 4u * n * sizeof *rt1);
+  /* Remove unneeded ft1 and gt1. */
+  FsmSw_CommonLib_memmove(tmp, rt1, 4u * n * sizeof(*rt1));
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  Ensured proper alignment and validity." */
   rt1 = (fpr*)(void*)tmp;
   rt2 = &rt1[n];
   rt3 = &rt2[n];
@@ -3589,7 +3634,7 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
   Ft = tmp;
   Gt = &Ft[n];
   rt3 = align_fpr(tmp, &Gt[n]);
-  FsmSw_CommonLib_memmove(rt3, rt1, 2u * n * sizeof *rt1);
+  FsmSw_CommonLib_memmove(rt3, rt1, 2u * n * sizeof(*rt1));
   rt1 = rt3;
   rt2 = &rt1[n];
 
@@ -3658,8 +3703,8 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
     Fp[u] = modp_set(zint_one_to_plain(&Fp[u]), p);
     Gp[u] = modp_set(zint_one_to_plain(&Gp[u]), p);
   }
-  modp_NTT2(Fp, gm, logn - 1u, p, p0i);
-  modp_NTT2(Gp, gm, logn - 1u, p, p0i);
+  modp_NTT2_ext(Fp, 1, gm, logn - 1u, p, p0i);
+  modp_NTT2_ext(Gp, 1, gm, logn - 1u, p, p0i);
 
   /* Load f and g and convert them to NTT representation. */
   for (u = 0; u < n; u++)
@@ -3667,30 +3712,30 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
     ft[u] = modp_set(f[u], p);
     gt[u] = modp_set(g[u], p);
   }
-  modp_NTT2(ft, gm, logn, p, p0i);
-  modp_NTT2(gt, gm, logn, p, p0i);
+  modp_NTT2_ext(ft, 1, gm, logn, p, p0i);
+  modp_NTT2_ext(gt, 1, gm, logn, p, p0i);
 
   /* Build the unreduced F,G in ft and gt. */
   for (u = 0; u < n; u += 2u)
   {
-    ftA = ft[u + 0u];
+    ftA = ft[u];
     ftB = ft[u + 1u];
-    gtA = gt[u + 0u];
+    gtA = gt[u];
     gtB = gt[u + 1u];
     mFp = modp_montymul(Fp[u >> 1], R2, p, p0i);
     mGp = modp_montymul(Gp[u >> 1], R2, p, p0i);
-    ft[u + 0u] = modp_montymul(gtB, mFp, p, p0i);
+    ft[u] = modp_montymul(gtB, mFp, p, p0i);
     ft[u + 1u] = modp_montymul(gtA, mFp, p, p0i);
-    gt[u + 0u] = modp_montymul(ftB, mGp, p, p0i);
+    gt[u] = modp_montymul(ftB, mGp, p, p0i);
     gt[u + 1u] = modp_montymul(ftA, mGp, p, p0i);
   }
 
-  modp_iNTT2(ft, igm, logn, p, p0i);
-  modp_iNTT2(gt, igm, logn, p, p0i);
+  modp_iNTT2_ext(ft, 1, igm, logn, p, p0i);
+  modp_iNTT2_ext(gt, 1, igm, logn, p, p0i);
 
   Gp = &Fp[n];
   t1 = &Gp[n];
-  FsmSw_CommonLib_memmove(Fp, ft, 2u * n * sizeof *ft);
+  FsmSw_CommonLib_memmove(Fp, ft, 2u * n * sizeof(*ft));
 
   /* We now need to apply the Babai reduction. At that point, we have F and G in two n-word arrays.
    * We can compute F*adj(f)+G*adj(g) and f*adj(f)+g*adj(g) modulo p, using the NTT. We still move memory around in
@@ -3704,11 +3749,12 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
   modp_mkgm2(t1, t2, logn, PRIMES[0].g, p, p0i);
 
   /* Convert F and G to NTT. */
-  modp_NTT2(Fp, t1, logn, p, p0i);
-  modp_NTT2(Gp, t1, logn, p, p0i);
+  modp_NTT2_ext(Fp, 1, t1, logn, p, p0i);
+  modp_NTT2_ext(Gp, 1, t1, logn, p, p0i);
 
   /* Load f and adj(f) in t4 and t5, and convert them to NTT representation. */
-  t4[0] = t5[0] = modp_set(f[0], p);
+  t4[0] = modp_set(f[0], p);
+  t5[0] = modp_set(f[0], p);
 
   for (u = 1; u < n; u++)
   {
@@ -3716,8 +3762,8 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
     t5[n - u] = modp_set(-f[u], p);
   }
 
-  modp_NTT2(t4, t1, logn, p, p0i);
-  modp_NTT2(t5, t1, logn, p, p0i);
+  modp_NTT2_ext(t4, 1, t1, logn, p, p0i);
+  modp_NTT2_ext(t5, 1, t1, logn, p, p0i);
 
   /* Compute F*adj(f) in t2, and f*adj(f) in t3. */
   for (u = 0; u < n; u++)
@@ -3728,7 +3774,8 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
   }
 
   /* Load g and adj(g) in t4 and t5, and convert them to NTT representation. */
-  t4[0] = t5[0] = modp_set(g[0], p);
+  t4[0] = modp_set(g[0], p);
+  t5[0] = modp_set(g[0], p);
 
   for (u = 1; u < n; u++)
   {
@@ -3736,8 +3783,8 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
     t5[n - u] = modp_set(-g[u], p);
   }
 
-  modp_NTT2(t4, t1, logn, p, p0i);
-  modp_NTT2(t5, t1, logn, p, p0i);
+  modp_NTT2_ext(t4, 1, t1, logn, p, p0i);
+  modp_NTT2_ext(t5, 1, t1, logn, p, p0i);
 
   /* Add G*adj(g) to t2, and g*adj(g) to t3. */
   for (u = 0; u < n; u++)
@@ -3750,8 +3797,8 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
   /* Convert back t2 and t3 to normal representation (normalized around 0), and then move them to t1 and t2. We first
    * need to recompute the inverse table for NTT. */
   modp_mkgm2(t1, t4, logn, PRIMES[0].g, p, p0i);
-  modp_iNTT2(t2, t4, logn, p, p0i);
-  modp_iNTT2(t3, t4, logn, p, p0i);
+  modp_iNTT2_ext(t2, 1, t4, logn, p, p0i);
+  modp_iNTT2_ext(t3, 1, t4, logn, p, p0i);
 
   for (u = 0; u < n; u++)
   {
@@ -3777,7 +3824,7 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
 
   FsmSw_Falcon_FFT(rt3, logn);
   rt2 = align_fpr(tmp, t2);
-  FsmSw_CommonLib_memmove(rt2, rt3, hn * sizeof *rt3);
+  FsmSw_CommonLib_memmove(rt2, rt3, hn * sizeof(*rt3));
 
   /* Convert F*adj(f)+G*adj(g) in FFT representation. */
   rt3 = &rt2[hn];
@@ -3815,9 +3862,9 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
     t5[u] = modp_set(g[u], p);
   }
 
-  modp_NTT2(t1, t2, logn, p, p0i);
-  modp_NTT2(t4, t2, logn, p, p0i);
-  modp_NTT2(t5, t2, logn, p, p0i);
+  modp_NTT2_ext(t1, 1, t2, logn, p, p0i);
+  modp_NTT2_ext(t4, 1, t2, logn, p, p0i);
+  modp_NTT2_ext(t5, 1, t2, logn, p, p0i);
 
   for (u = 0; u < n; u++)
   {
@@ -3826,8 +3873,8 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
     Gp[u] = modp_sub(Gp[u], modp_montymul(kw, t5[u], p, p0i), p);
   }
 
-  modp_iNTT2(Fp, t3, logn, p, p0i);
-  modp_iNTT2(Gp, t3, logn, p, p0i);
+  modp_iNTT2_ext(Fp, 1, t3, logn, p, p0i);
+  modp_iNTT2_ext(Gp, 1, t3, logn, p, p0i);
 
   for (u = 0; u < n; u++)
   {
@@ -3855,14 +3902,20 @@ static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 
 * Returns  1 on success, 0 on error.
 *
 ***********************************************************************************************************************/
+/* polyspace +3 MISRA2012:15.5 [Justified:]"Multiple return points enhance readability and efficiency 
+by allowing early exits on error conditions. Using a single return variable (retVal) 
+was evaluated but didn't work in this context." */
 static sint32 solve_NTRU(uint32 logn, sint8 *F, sint8 *G, const sint8 *f, const sint8 *g, sint32 lim, uint32 *tmp)
 {
   uint32 n, u;
-  uint32 *ft, *gt, *Ft, *Gt, *gm;
+  uint32 *ft, *gt, *Ft1, *Gt1, *gm;
   uint32 p, p0i, r;
-  const small_prime *primes;
+  const small_prime *smallPrimes;
   uint32 depth;
   uint32 z;
+
+  /* G_temp is used to avoid modifying the input. */
+  sint8 *G_temp = G;
 
   n = MKN(logn);
 
@@ -3876,8 +3929,9 @@ static sint32 solve_NTRU(uint32 logn, sint8 *F, sint8 *G, const sint8 *f, const 
   if (logn <= 2u)
   {
     depth = logn;
-    while (depth-- > 0u)
+    while (depth > 0u)
     {
+      depth--;
       if (0 == solve_NTRU_intermediate(logn, f, g, depth, tmp))
       {
         return 0;
@@ -3887,8 +3941,9 @@ static sint32 solve_NTRU(uint32 logn, sint8 *F, sint8 *G, const sint8 *f, const 
   else
   {
     depth = logn;
-    while (depth-- > 2u)
+    while (depth > 2u)
     {
+      depth--;
       if (0 == solve_NTRU_intermediate(logn, f, g, depth, tmp))
       {
         return 0;
@@ -3899,17 +3954,15 @@ static sint32 solve_NTRU(uint32 logn, sint8 *F, sint8 *G, const sint8 *f, const 
     {
       return 0;
     }
-
-    if (0 == solve_NTRU_binary_depth0(logn, f, g, tmp))
-    {
-      return 0;
-    }
+    (void) solve_NTRU_binary_depth0(logn, f, g, tmp);
   }
 
   /* If no buffer has been provided for G, use a temporary one. */
-  if (G == ((void *)0))
+  if (G_temp == ((void *)0))
   {
-    G = (sint8*)(void*)(&tmp[2u * n]);
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
+    G_temp = (sint8*)(void*)(&tmp[2u * n]);
   }
 
   /* Final F and G are in fk->tmp, one word per coefficient (signed value over 31 bits). */
@@ -3917,47 +3970,47 @@ static sint32 solve_NTRU(uint32 logn, sint8 *F, sint8 *G, const sint8 *f, const 
   {
     return 0;
   }
-  if (0 == poly_big_to_small(G, &tmp[n], lim, logn))
+  if (0 == poly_big_to_small(G_temp, &tmp[n], lim, logn))
   {
     return 0;
   }
 
   /* Verify that the NTRU equation is fulfilled. Since all elements have short lengths, verifying modulo a small prime
    * p works, and allows using the NTT.
-   * We put Gt[] first in tmp[], and process it first, so that it does not overlap with G[] in case we allocated it
+   * We put Gt1[] first in tmp[], and process it first, so that it does not overlap with G[] in case we allocated it
    * ourselves. */
-  Gt = tmp;
-  ft = &Gt[n];
+  Gt1 = tmp;
+  ft = &Gt1[n];
   gt = &ft[n];
-  Ft = &gt[n];
-  gm = &Ft[n];
+  Ft1 = &gt[n];
+  gm = &Ft1[n];
 
-  primes = PRIMES;
-  p = primes[0].p;
+  smallPrimes = PRIMES;
+  p = smallPrimes[0].p;
   p0i = modp_ninv31(p);
-  modp_mkgm2(gm, tmp, logn, primes[0].g, p, p0i);
+  modp_mkgm2(gm, tmp, logn, smallPrimes[0].g, p, p0i);
 
   for (u = 0; u < n; u++)
   {
-    Gt[u] = modp_set(G[u], p);
+    Gt1[u] = modp_set(G_temp[u], p);
   }
 
   for (u = 0; u < n; u++)
   {
     ft[u] = modp_set(f[u], p);
     gt[u] = modp_set(g[u], p);
-    Ft[u] = modp_set(F[u], p);
+    Ft1[u] = modp_set(F[u], p);
   }
 
-  modp_NTT2(ft, gm, logn, p, p0i);
-  modp_NTT2(gt, gm, logn, p, p0i);
-  modp_NTT2(Ft, gm, logn, p, p0i);
-  modp_NTT2(Gt, gm, logn, p, p0i);
+  modp_NTT2_ext(ft, 1, gm, logn, p, p0i);
+  modp_NTT2_ext(gt, 1, gm, logn, p, p0i);
+  modp_NTT2_ext(Ft1, 1, gm, logn, p, p0i);
+  modp_NTT2_ext(Gt1, 1, gm, logn, p, p0i);
   r = modp_montymul(12289, 1, p, p0i);
 
   for (u = 0; u < n; u++)
   {
-    z = modp_sub(modp_montymul(ft[u], Gt[u], p, p0i), modp_montymul(gt[u], Ft[u], p, p0i), p);
+    z = modp_sub(modp_montymul(ft[u], Gt1[u], p, p0i), modp_montymul(gt[u], Ft1[u], p, p0i), p);
 
     if (z != r)
     {
@@ -3997,7 +4050,7 @@ static void poly_small_mkgauss(RNG_CONTEXT *rng, sint8 *f, uint32 logn)
         s = mkgauss(rng, logn);
         /* We need the coefficient to fit within -127..+127; realistically, this is always the case except for the very
          * low degrees (N = 2 or 4), for which there is no real security anyway. */
-        if (s < -127 || s > 127)
+        if ((s < -127) || (s > 127))
         {
           continue;
         }
@@ -4088,12 +4141,12 @@ void FsmSw_Falcon_keygen(inner_shake256_context *rng, sint8 *f, sint8 *g, sint8 
 
     /* Verify that all coefficients are within the bounds defined in max_fg_bits. This is the case with overwhelming
      * probability; this guarantees that the key will be encodable with FALCON_COMP_TRIM. */
-    lim = (sint32)((uint8)(1u << (FsmSw_Falcon_max_fg_bits[logn] - 1u)));
+    lim = (sint32)((uint8)(1u << (FsmSw_Falcon_max_small_fg_bits[logn] - 1u)));
 
     for (u = 0; u < n; u++)
     {
       /* We can use non-CT tests since on any failure we will discard f and g. */
-      if (f[u] >= lim || f[u] <= -lim || g[u] >= lim || g[u] <= -lim)
+      if ((f[u] >= lim) || (f[u] <= -lim) || (g[u] >= lim) || (g[u] <= -lim))
       {
         lim = -1;
         break;
@@ -4116,6 +4169,8 @@ void FsmSw_Falcon_keygen(inner_shake256_context *rng, sint8 *f, sint8 *g, sint8 
       continue;
     }
 
+    /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     /* We compute the orthogonalized vector norm. */
     rt1 = (fpr*)((void*)tmp);
     rt2 = &rt1[n];
@@ -4149,23 +4204,31 @@ void FsmSw_Falcon_keygen(inner_shake256_context *rng, sint8 *f, sint8 *g, sint8 
     /* Compute public key h = g/f mod X^N+1 mod q. If this fails, we must restart. */
     if (h == ((void*)0))
     {
+      /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+      Ensured proper alignment and validity." */
       h2 = (uint16*)((void*)tmp);
       tmp2 = &h2[n];
     }
     else
     {
       h2 = h;
+      /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+      Ensured proper alignment and validity." */
       tmp2 = (uint16*)((void*)tmp);
     }
 
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     if (0 == FsmSw_Falcon_compute_public(h2, f, g, logn, (uint8*)((void*)tmp2)))
     {
       continue;
     }
 
     /* Solve the NTRU equation to get F and G. */
-    lim = (sint32)((uint8)(1u << (FsmSw_Falcon_max_FG_bits[logn] - 1u)));
+    lim = (sint32)((uint8)(1u << (FsmSw_Falcon_max_big_FG_bits[logn] - 1u)));
 
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     if (0 == solve_NTRU(logn, F, G, f, g, lim, (uint32*)((void*)tmp)))
     {
       continue;

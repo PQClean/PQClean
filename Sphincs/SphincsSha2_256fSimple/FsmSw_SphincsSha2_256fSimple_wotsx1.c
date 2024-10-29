@@ -70,6 +70,8 @@
 void FsmSw_SphincsSha2_256fSimple_wots_gen_leafx1(uint8 *dest, const sphincs_sha2_256f_ctx *ctx, uint32 leaf_idx,
                                                   void *v_info)
 {
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     struct leaf_info_x1 *info = v_info;
     uint32 *leaf_addr = info->leaf_addr;
     uint32 *pk_addr = info->pk_addr;

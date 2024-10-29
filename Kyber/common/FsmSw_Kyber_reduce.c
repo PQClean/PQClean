@@ -18,9 +18,10 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
 #include "FsmSw_Kyber_params.h"
 #include "FsmSw_Kyber_reduce.h"
+
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -82,11 +83,14 @@ sint16 FsmSw_Kyber_montgomery_reduce(sint32 a)
 sint16 FsmSw_Kyber_barrett_reduce(sint16 a)
 {
     sint16 t;
+    sint16 temp0;
     sint32 temp1;
     uint32 temp2;
     const sint16 v = (sint16)((uint16)((((uint32)1 << 26u) + KYBER_Q / 2u) / KYBER_Q));
 
-    temp1 = (sint32)v * a + (sint16)(uint16)((uint32)1u << (uint16)25u);
+    temp0 = (sint16)(uint16)((uint32)1u << (uint16)25u);
+    /* Polyspace cannot resolve the operation if the shift operation is inserted instead of temp0. */
+    temp1 = ((sint32)v * a) + temp0;
 
     /* Check the first bit */
     if (((uint32)temp1 & 0x80000000u) != 0u)

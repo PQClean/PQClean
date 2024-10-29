@@ -75,47 +75,53 @@ void FsmSw_SphincsShake_256fSimple_compute_root(uint8 *root, const uint8 *leaf, 
     uint32 i;
     uint8 buffer[2u * FSMSW_SPHINCSSHAKE_256FSIMPLE_N];
 
+    /* leaf_idx_temp, idx_offset_temp and auth_path_temp are used to avoid modifying the input. */
+    uint32 leaf_idx_temp = leaf_idx;
+    uint32 idx_offset_temp = idx_offset;
+    const uint8 *auth_path_temp = auth_path;
+
     /* If leaf_idx is odd (last bit = 1), current path element is a right child
        and auth_path has to go left. Otherwise it is the other way around. */
-    if (0u < (leaf_idx & 1u))
+    if (0u < (leaf_idx_temp & 1u))
     {
         FsmSw_CommonLib_memcpy(&buffer[FSMSW_SPHINCSSHAKE_256FSIMPLE_N], leaf, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
-        FsmSw_CommonLib_memcpy(buffer, auth_path, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
+        FsmSw_CommonLib_memcpy(buffer, auth_path_temp, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
     }
     else
     {
         FsmSw_CommonLib_memcpy(buffer, leaf, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
-        FsmSw_CommonLib_memcpy(&buffer[FSMSW_SPHINCSSHAKE_256FSIMPLE_N], auth_path, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
+        FsmSw_CommonLib_memcpy(&buffer[FSMSW_SPHINCSSHAKE_256FSIMPLE_N], auth_path_temp, 
+        FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
     }
-    auth_path = &auth_path[FSMSW_SPHINCSSHAKE_256FSIMPLE_N];
+    auth_path_temp = &auth_path_temp[FSMSW_SPHINCSSHAKE_256FSIMPLE_N];
 
-    for (i = 0; i < tree_height - 1u; i++)
+    for (i = 0; i < (tree_height - 1u); i++)
     {
-        leaf_idx >>= 1;
-        idx_offset >>= 1;
+        leaf_idx_temp >>= 1;
+        idx_offset_temp >>= 1;
         /* Set the address of the node we're creating. */
         FsmSw_SphincsShake_set_tree_height(addr, i + 1u);
-        FsmSw_SphincsShake_set_tree_index(addr, leaf_idx + idx_offset);
+        FsmSw_SphincsShake_set_tree_index(addr, leaf_idx_temp + idx_offset_temp);
 
         /* Pick the right or left neighbor, depending on parity of the node. */
-        if (0u < (leaf_idx & 1u))
+        if (0u < (leaf_idx_temp & 1u))
         {
             FsmSw_SphincsShake_256fSimple_thash(&buffer[FSMSW_SPHINCSSHAKE_256FSIMPLE_N], buffer, 2, ctx, addr);
-            FsmSw_CommonLib_memcpy(buffer, auth_path, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
+            FsmSw_CommonLib_memcpy(buffer, auth_path_temp, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
         }
         else
         {
             FsmSw_SphincsShake_256fSimple_thash(buffer, buffer, 2, ctx, addr);
-            FsmSw_CommonLib_memcpy(&buffer[FSMSW_SPHINCSSHAKE_256FSIMPLE_N], auth_path, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
+            FsmSw_CommonLib_memcpy(&buffer[FSMSW_SPHINCSSHAKE_256FSIMPLE_N], auth_path_temp, FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
         }
-        auth_path = &auth_path[FSMSW_SPHINCSSHAKE_256FSIMPLE_N];
+        auth_path_temp = &auth_path_temp[FSMSW_SPHINCSSHAKE_256FSIMPLE_N];
     }
 
     /* The last iteration is exceptional; we do not copy an auth_path node. */
-    leaf_idx >>= 1;
-    idx_offset >>= 1;
+    leaf_idx_temp >>= 1;
+    idx_offset_temp >>= 1;
     FsmSw_SphincsShake_set_tree_height(addr, tree_height);
-    FsmSw_SphincsShake_set_tree_index(addr, leaf_idx + idx_offset);
+    FsmSw_SphincsShake_set_tree_index(addr, leaf_idx_temp + idx_offset_temp);
     FsmSw_SphincsShake_256fSimple_thash(root, buffer, 2, ctx, addr);
 }
 
@@ -176,7 +182,7 @@ void FsmSw_SphincsShake_256fSimple_treehash(uint8 *root, uint8 *auth_path, const
         }
 
         /* While the top-most nodes are of equal height. */
-        while (offset >= 2u && heights[offset - 1u] == heights[offset - 2u])
+        while ((offset >= 2u) && (heights[offset - 1u] == heights[offset - 2u]))
         {
             /* Compute index of the new node, in the next layer. */
             tree_idx = (idx >> (heights[offset - 1u] + 1u));

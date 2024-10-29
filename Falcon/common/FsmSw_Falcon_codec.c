@@ -56,8 +56,8 @@
  * IMPORTANT: the code assumes that all coefficients of f, g, F and G ultimately fit in the -127..+127 range. Thus,
  * none of the elements of max_fg_bits[] and max_FG_bits[] shall be greater than 8. */
 
-const uint8 FsmSw_Falcon_max_fg_bits[11] = { 0, /* unused */ 8, 8, 8, 8, 8, 7, 7, 6, 6, 5 };
-const uint8 FsmSw_Falcon_max_FG_bits[11] = { 0, /* unused */ 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
+const uint8 FsmSw_Falcon_max_small_fg_bits[11] = { 0, /* unused */ 8, 8, 8, 8, 8, 7, 7, 6, 6, 5 };
+const uint8 FsmSw_Falcon_max_big_FG_bits[11] = { 0, /* unused */ 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 };
 
 /* When generating a new key pair, we can always reject keys which feature an abnormally large coefficient. This can
  * also be done for signatures, albeit with some care: in case the signature process is used in a derandomized setup
@@ -120,6 +120,7 @@ uint32 FsmSw_Falcon_modq_encode(void *out, uint32 max_out_len, const uint16 *x, 
     uint8 *buf;
     uint32 acc;
     sint32 acc_len;
+    boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
 
@@ -127,41 +128,51 @@ uint32 FsmSw_Falcon_modq_encode(void *out, uint32 max_out_len, const uint16 *x, 
     {
         if (x[u] >= 12289u)
         {
-            return 0;
+            out_len = 0;
+            bStopFunc = TRUE;
         }
     }
 
-    out_len = ((n * 14u) + 7u) >> 3;
-
-    if (out == ((void *)0))
+    if (bStopFunc == FALSE)
     {
-        return out_len;
+        out_len = ((n * 14u) + 7u) >> 3;
+
+        if (out == ((void *)0))
+        {
+            bStopFunc = TRUE;
+        }
     }
 
-    if (out_len > max_out_len)
+    if (bStopFunc == FALSE)
     {
-        return 0;
-    }
+        if (out_len > max_out_len)
+        {  
+            out_len = 0;
+        }
 
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     buf = out;
     acc = 0;
     acc_len = 0;
 
-    for (u = 0; u < n; u++)
-    {
-        acc = (acc << 14) | x[u];
-        acc_len += 14;
-
-        while (acc_len >= 8)
+        for (u = 0; u < n; u++)
         {
-            acc_len -= 8;
-            *buf++ = (uint8) (acc >> (uint32)acc_len);
-        }
-    }
+            acc = (acc << 14) | x[u];
+            acc_len += 14;
 
-    if (acc_len > 0)
-    {
-        *buf = (uint8)(acc << (8u - (uint32)acc_len));
+            while (acc_len >= 8)
+            {
+                acc_len -= 8;
+                *buf = (uint8) (acc >> (uint32)acc_len);
+                buf++;
+            }
+        }
+
+        if (acc_len > 0)
+        {
+            *buf = (uint8)(acc << (8u - (uint32)acc_len));
+        }
     }
     return out_len;
 }
@@ -188,44 +199,50 @@ uint32 FsmSw_Falcon_modq_decode(uint16 *x, uint32 logn, const void *in, uint32 m
     uint32 acc;
     sint32 acc_len;
     uint32 w;
+    boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
     in_len = ((n * 14u) + 7u) >> 3;
 
     if (in_len > max_in_len)
     {
-        return 0;
+        in_len = 0;
+        bStopFunc = TRUE;
     }
-
-    buf = in;
-    acc = 0;
-    acc_len = 0;
-    u = 0;
-
-    while (u < n)
+    if (bStopFunc == FALSE)
     {
-        acc = (acc << 8) | (*buf++);
-        acc_len += 8;
+        buf = in;
+        acc = 0;
+        acc_len = 0;
+        u = 0;
 
-        if (acc_len >= 14)
+        while (u < n)
         {
-            acc_len -= 14;
-            w = (acc >> (uint32)acc_len) & 0x3FFFu;
+            acc = (acc << 8) | (*buf);
+            buf++;
+            acc_len += 8;
 
-            if (w >= 12289u)
+            if (acc_len >= 14)
             {
-                return 0;
-            }
+                acc_len -= 14;
+                w = (acc >> (uint32)acc_len) & 0x3FFFu;
 
-            x[u++] = (uint16) w;
+                if (w >= 12289u)
+                {
+                    in_len = 0;
+                    break;
+                }
+
+                x[u] = (uint16) w;
+                u++;;
+            }
+        }
+
+        if(((acc & (((uint32)1u << (uint32)acc_len) - 1u)) != 0u) && (bStopFunc == FALSE))
+        {
+            in_len = 0;
         }
     }
-
-    if( (acc & (((uint32)1u << (uint32)acc_len) - 1u)) != 0u)
-    {
-        return 0;
-    }
-
     return in_len;
 }
 
@@ -247,6 +264,8 @@ uint32 FsmSw_Falcon_modq_decode(uint16 *x, uint32 logn, const void *in, uint32 m
 * Returns out_len.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 CODE-METRICS:LEVEL [Justified:]"[Value: 5]Additional call levels are required 
+to resolve a MISRA 15 warning." */
 uint32 FsmSw_Falcon_trim_i8_encode(void *out, uint32 max_out_len, const sint8 *x, uint32 logn, uint32 bits)
 {
     uint32 n, u, out_len;
@@ -255,6 +274,7 @@ uint32 FsmSw_Falcon_trim_i8_encode(void *out, uint32 max_out_len, const sint8 *x
     uint32 acc, mask;
     uint32 acc_len;
     uint32 temp1;
+    boolean bStopFunc = FALSE;
 
     n = (uint32)1 << logn;
     temp1 = ((uint32)1u << (bits - 1u)) - 1u;
@@ -263,48 +283,55 @@ uint32 FsmSw_Falcon_trim_i8_encode(void *out, uint32 max_out_len, const sint8 *x
 
     for (u = 0; u < n; u++)
     {
-        if (x[u] < minv || x[u] > maxv)
+        if ((x[u] < minv) || (x[u] > maxv))
         {
-            return 0;
+            out_len = 0;
+            bStopFunc = TRUE;
         }
     }
 
-    out_len = ((n * bits) + 7u) >> 3;
-
-    if (out == ((void *)0))
+    if (bStopFunc == FALSE)
     {
-        return out_len;
-    }
+        out_len = ((n * bits) + 7u) >> 3;
 
-    if (out_len > max_out_len)
-    {
-        return 0;
-    }
-
-    buf = out;
-    acc = 0;
-    acc_len = 0;
-    mask = ((uint32)1u << bits) - 1u;
-
-    for (u = 0; u < n; u++)
-    {
-        acc = (acc << bits) | ((uint8) x[u] & mask);
-        acc_len += bits;
-
-        while (acc_len >= 8u)
+        if (out == ((void *)0))
         {
-            acc_len -= 8u;
-            *buf = (uint8) (acc >> acc_len);
-            buf++;
+            /* end of the funtion, return out_len */
+        }
 
+        else if (out_len > max_out_len)
+        {
+            out_len = 0;
+        }
+        else 
+        {
+			/* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    		Ensured proper alignment and validity." */
+            buf = out;
+            acc = 0;
+            acc_len = 0;
+            mask = ((uint32)1u << bits) - 1u;
+
+            for (u = 0; u < n; u++)
+            {
+                acc = (acc << bits) | ((uint8) x[u] & mask);
+                acc_len += bits;
+
+                while (acc_len >= 8u)
+                {
+                    acc_len -= 8u;
+                    *buf = (uint8) (acc >> acc_len);
+                    buf++;
+
+                }
+            }
+
+            if (acc_len > 0u)
+            {
+                *buf = (uint8) (acc << (8u - acc_len));
+            }
         }
     }
-
-    if (acc_len > 0u)
-    {
-        *buf = (uint8) (acc << (8u - acc_len));
-    }
-
     return out_len;
 }
 
@@ -332,49 +359,57 @@ uint32 FsmSw_Falcon_trim_i8_decode(sint8 *x, uint32 logn, uint32 bits, const voi
     uint32 acc, mask1, mask2;
     uint32 acc_len;
     uint32 w;
+    boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
     in_len = ((n * bits) + 7u) >> 3;
 
     if (in_len > max_in_len)
     {
-        return 0;
+        in_len = 0;
+        bStopFunc = TRUE;
     }
 
-    buf = in;
-    u = 0;
-    acc = 0;
-    acc_len = 0;
-    mask1 = ((uint32)1u << bits) - 1u;
-    mask2 = (uint32)1u << (bits - 1u);
-
-    while (u < n)
+    if (bStopFunc == FALSE)
     {
-        acc = (acc << 8) | *buf++;
-        acc_len += 8u;
+        buf = in;
+        u = 0;
+        acc = 0;
+        acc_len = 0;
+        mask1 = ((uint32)1u << bits) - 1u;
+        mask2 = (uint32)1u << (bits - 1u);
 
-        while (acc_len >= bits && u < n)
+        while (u < n)
         {
-            acc_len -= bits;
-            w = (acc >> acc_len) & mask1;
-            w |= (uint32)((sint32)((-1) * (sint32)((uint32)(w & mask2))));
+            acc = (acc << 8) | *buf;
+            buf++;
+            acc_len += 8u;
 
-            if (w == (uint32)((sint32)((-1) * (sint32)mask2)))
+            while ((acc_len >= bits) && (u < n))
             {
-                /* The -2^(bits-1) value is forbidden. */
-                return 0;
-            }
+                acc_len -= bits;
+                w = (acc >> acc_len) & mask1;
+                w |= (uint32)((sint32)((-1) * (sint32)((uint32)(w & mask2))));
 
-            x[u++] = (sint8)((sint32)w);
+                if (w == (uint32)((sint32)((-1) * (sint32)mask2)))
+                {
+                    /* The -2^(bits-1) value is forbidden. */
+                    in_len = 0;
+                    bStopFunc = TRUE;
+                    break;
+                }
+
+                x[u] = (sint8)((sint32)w);
+                u++;
+            }
+        }
+
+        if (((acc & (((uint32)1 << acc_len) - 1u)) != 0u) && (bStopFunc == FALSE))
+        {
+            /* Extra bits in the last byte must be zero. */
+            in_len = 0;
         }
     }
-
-    if ((acc & (((uint32)1 << acc_len) - 1u)) != 0u)
-    {
-        /* Extra bits in the last byte must be zero. */
-        return 0;
-    }
-
     return in_len;
 }
 
@@ -395,91 +430,104 @@ uint32 FsmSw_Falcon_trim_i8_decode(sint8 *x, uint32 logn, uint32 bits, const voi
 * Returns out_len.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 CODE-METRICS:LEVEL [Justified:]"[Value: 5]Additional call levels are required 
+to resolve a MISRA 15 warning." */
 uint32 FsmSw_Falcon_comp_encode(void *out, uint32 max_out_len, const sint16 *x, uint32 logn)
 {
     uint8 *buf;
     uint32 n, u, v;
     uint32 acc;
     uint32 acc_len;
+    boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
+    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+    Ensured proper alignment and validity." */
     buf = out;
 
     /* Make sure that all values are within the -2047..+2047 range. */
     for (u = 0; u < n; u++)
     {
-        if (x[u] < -2047 || x[u] > +2047)
+        if ((x[u] < -2047) || (x[u] > +2047))
         {
-            return 0;
+            v = 0;
+            bStopFunc = TRUE;
         }
     }
-
-    acc = 0;
-    acc_len = 0;
-    v = 0;
-
-    for (u = 0; u < n; u++)
+    if (bStopFunc == FALSE)
     {
-        sint32 t;
-        uint32 w;
+        acc = 0;
+        acc_len = 0;
+        v = 0;
 
-        /* Get sign and absolute value of next integer; push the sign bit. */
-        acc <<= 1;
-        t = x[u];
-
-        if (t < 0)
+        for (u = 0; u < n; u++)
         {
-            t = -t;
+            sint32 t;
+            uint32 w;
+
+            /* Get sign and absolute value of next integer; push the sign bit. */
+            acc <<= 1;
+            t = x[u];
+
+            if (t < 0)
+            {
+                t = -t;
+                acc |= 1u;
+            }
+
+            w = (uint32) t;
+
+            /* Push the low 7 bits of the absolute value. */
+            acc <<= 7;
+            acc |= w & 127u;
+            w >>= 7;
+
+            /* We pushed exactly 8 bits. */
+            acc_len += 8u;
+
+            /* Push as many zeros as necessary, then a one. Since the absolute value is at most 2047, w can only range up
+            * to 15 at this point, thus we will add at most 16 bits here. With the 8 bits above and possibly up to 7 bits
+            * from previous iterations, we may go up to 31 bits, which will fit in the accumulator, which is an uint32. */
+            acc <<= (w + 1u);
             acc |= 1u;
+            acc_len += w + 1u;
+
+            /* Produce all full bytes. */
+            while (acc_len >= 8u)
+            {
+                acc_len -= 8u;
+                if (buf != ((void *)0))
+                {
+                    if (v >= max_out_len)
+                    {
+                        v = 0;
+                        bStopFunc = TRUE;
+                        break;
+                    }
+                    buf[v] = (uint8) (acc >> acc_len);
+                }
+                v++;
+            }
         }
 
-        w = (uint32) t;
-
-        /* Push the low 7 bits of the absolute value. */
-        acc <<= 7;
-        acc |= w & 127u;
-        w >>= 7;
-
-        /* We pushed exactly 8 bits. */
-        acc_len += 8u;
-
-        /* Push as many zeros as necessary, then a one. Since the absolute value is at most 2047, w can only range up
-         * to 15 at this point, thus we will add at most 16 bits here. With the 8 bits above and possibly up to 7 bits
-         * from previous iterations, we may go up to 31 bits, which will fit in the accumulator, which is an uint32. */
-        acc <<= (w + 1u);
-        acc |= 1u;
-        acc_len += w + 1u;
-
-        /* Produce all full bytes. */
-        while (acc_len >= 8u)
+        /* Flush remaining bits (if any). */
+        if ((acc_len > 0u) && (bStopFunc == FALSE))
         {
-            acc_len -= 8u;
             if (buf != ((void *)0))
             {
                 if (v >= max_out_len)
                 {
-                    return 0;
+                    v = 0;
+                    bStopFunc = TRUE;
                 }
-                buf[v] = (uint8) (acc >> acc_len);
+                buf[v] = (uint8) (acc << (8u - acc_len));
             }
-            v++;
-        }
-    }
-
-    /* Flush remaining bits (if any). */
-    if (acc_len > 0u)
-    {
-        if (buf != ((void *)0))
-        {
-            if (v >= max_out_len)
+            if (bStopFunc == FALSE)
             {
-                return 0;
+                v++;
             }
-            buf[v] = (uint8) (acc << (8u - acc_len));
         }
-        v++;
     }
-
     return v;
 }
 
@@ -498,6 +546,9 @@ uint32 FsmSw_Falcon_comp_encode(void *out, uint32 max_out_len, const sint16 *x, 
 * Returns out_len.
 *
 ***********************************************************************************************************************/
+/* polyspace +3 MISRA2012:15.5 [Justified:]"Multiple return points enhance readability and efficiency 
+by allowing early exits on error conditions. Using a single return variable (retVal) 
+was evaluated but didn't work in this context." */
 uint32 FsmSw_Falcon_comp_decode(sint16 *x, uint32 logn, const void *in, uint32 max_in_len)
 {
     const uint8 *buf;
@@ -518,7 +569,8 @@ uint32 FsmSw_Falcon_comp_decode(sint16 *x, uint32 logn, const void *in, uint32 m
         {
             return 0;
         }
-        acc = (acc << 8) | (uint32) buf[v++];
+        acc = (acc << 8) | (uint32) buf[v];
+        v++;
         b = acc >> acc_len;
         s = b & 128u;
         m = b & 127u;
@@ -532,7 +584,8 @@ uint32 FsmSw_Falcon_comp_decode(sint16 *x, uint32 logn, const void *in, uint32 m
                 {
                     return 0;
                 }
-                acc = (acc << 8) | (uint32) buf[v++];
+                acc = (acc << 8) | (uint32) buf[v];
+                v++;
                 acc_len = 8;
             }
             acc_len--;

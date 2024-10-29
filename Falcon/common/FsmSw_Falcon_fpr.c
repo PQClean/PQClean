@@ -50,8 +50,9 @@
  *
  *   - 32x32->64 multiplication (unsigned) has an execution time that is independent of its operands. This is true of
  *     most modern x86 and ARM cores. Notable exceptions are the ARM Cortex M0, M0+ and M3 (in the M0 and M0+, this is
- *     done in software, so it depends on that routine), and the PowerPC cores from the G3/G4 lines.
- *     For more info, see: https://www.bearssl.org/ctmul.html
+ *     done in software, so it depends on that routine), and the PowerPC cores from the G3/G4 lines. */
+       /* polyspace +1 MISRA2012:3.1 [Justified:]"The comment is a link and therefore contains a slash" */ /*
+ *     For more info, see: https://www.bearssl.org/ctmul.html */ /*
  *
  *   - Left-shifts and right-shifts of 32-bit values have an execution time which does not depend on the shifted value
  *     nor on the shift count. An historical exception is the Pentium IV, but most modern CPU have barrel shifters.
@@ -89,13 +90,13 @@ static const uint64 C[] = {0x00000004741183A3u, 0x00000036548CFC06u, 0x0000024FD
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-fpr    fpr_scaled(sint64 i, sint32 sc);
-uint64 fpr_ursh(uint64 x, sint32 n);
-sint64 fpr_irsh(sint64 x, sint32 n);
-uint64 fpr_ulsh(uint64 x, sint32 n);
-fpr    fpr_check_exponent(sint32 s, sint32 e, uint64 m);
-fpr    fpr_div(fpr x, fpr y);
-void   fpr_norm64(uint64 *mp, sint32 *ep);
+static fpr    fpr_scaled(sint64 i, sint32 sc);
+static uint64 fpr_ursh(uint64 x, sint32 n);
+static sint64 fpr_irsh(sint64 x, sint32 n);
+static uint64 fpr_ulsh(uint64 x, sint32 n);
+static fpr    fpr_check_exponent(sint32 s, sint32 e, uint64 m);
+static fpr    fpr_div(fpr x, fpr y);
+static void   fpr_norm64(uint64 *mp, sint32 *ep);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
@@ -118,10 +119,13 @@ void   fpr_norm64(uint64 *mp, sint32 *ep);
 * Returns t.b.d.
 *
 ***********************************************************************************************************************/
-uint64 fpr_ursh(uint64 x, sint32 n)
+static uint64 fpr_ursh(uint64 x, sint32 n)
 {
-    x ^= (x ^ (x >> 32)) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)n >> 5))));
-    return x >> ((uint64)n & 31u);
+    /* x_temp is used to avoid modifying the input. */
+    uint64 x_temp = x;
+
+    x_temp ^= (x_temp ^ (x_temp >> 32)) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)n >> 5))));
+    return x_temp >> ((uint64)n & 31u);
 }
 
 /***********************************************************************************************************************
@@ -135,27 +139,30 @@ uint64 fpr_ursh(uint64 x, sint32 n)
 * Returns t.b.d.
 *
 ***********************************************************************************************************************/
-sint64 fpr_irsh(sint64 x, sint32 n)
+static sint64 fpr_irsh(sint64 x, sint32 n)
 {
     sint64 temp3;
     uint64 temp2;
     sint64 temp1 = ((-1) * (sint64)((uint64)((uint64)n >> 5)));
 
-    if(x >= 0)
+    /* x_temp is used to avoid modifying the input. */
+    sint64 x_temp = x;
+
+    if(x_temp >= 0)
     {
-        temp2 = ((uint64)x >> 32);
+        temp2 = ((uint64)x_temp >> 32);
     }
     else
     {
-        temp2 = ((uint64)x >> 32) | 0xFFFFFFFF00000000u ;
+        temp2 = ((uint64)x_temp >> 32) | 0xFFFFFFFF00000000u ;
     }
 
-    temp3 = (sint64)((uint64)((uint64)x ^ temp2));
+    temp3 = (sint64)((uint64)((uint64)x_temp ^ temp2));
 
 
-    x = (sint64)((uint64)((uint64)x ^ (uint64)((uint64)temp3 & (uint64)temp1)));
+    x_temp = (sint64)((uint64)((uint64)x_temp ^ (uint64)((uint64)temp3 & (uint64)temp1)));
 
-    return (sint64)((uint64)((uint64)x >> ((uint64)n & 31u)));
+    return (sint64)((uint64)((uint64)x_temp >> ((uint64)n & 31u)));
 }
 
 /***********************************************************************************************************************
@@ -169,10 +176,13 @@ sint64 fpr_irsh(sint64 x, sint32 n)
 * Returns t.b.d.
 *
 ***********************************************************************************************************************/
-uint64 fpr_ulsh(uint64 x, sint32 n)
+static uint64 fpr_ulsh(uint64 x, sint32 n)
 {
-    x ^= (x ^ (x << 32u)) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)n >> 5))));
-    return x << ((uint64)n & 31u);
+    /* x_temp is used to avoid modifying the input. */
+    uint64 x_temp = x;
+
+    x_temp ^= (x_temp ^ (x_temp << 32u)) & (uint64)((sint64)((-1) * (sint64)((uint64)((uint64)n >> 5))));
+    return x_temp << ((uint64)n & 31u);
 }
 
 /***********************************************************************************************************************
@@ -191,31 +201,35 @@ uint64 fpr_ulsh(uint64 x, sint32 n)
 * Returns x
 *
 ***********************************************************************************************************************/
-fpr fpr_check_exponent(sint32 s, sint32 e, uint64 m)
+static fpr fpr_check_exponent(sint32 s, sint32 e, uint64 m)
 {
     fpr x;
     uint32 t;
     uint32 f;
     uint32 temp;
 
+    /* e_temp and m_temp are used to avoid modifying the input. */
+    sint32 e_temp = e;
+    uint64 m_temp = m;
+
     /* If e >= -1076, then the value is "normal"; otherwise, it should be a subnormal, which we clamp down to zero. */
-    e += 1076;
-    t = (uint32)e >> 31;
-    m &= (uint64)t - 1u;
+    e_temp += 1076;
+    t = (uint32)e_temp >> 31;
+    m_temp &= (uint64)t - 1u;
 
     /* If m = 0 then we want a zero; make e = 0 too, but conserve the sign. */
-    t = (uint32)(m >> 54u);
-    e = (sint32)((uint32)((uint32)e & (uint32)((sint32)((-1)*(sint32)t))));
+    t = (uint32)(m_temp >> 54u);
+    e_temp = (sint32)((uint32)((uint32)e_temp & (uint32)((sint32)((-1)*(sint32)t))));
 
     /* The 52 mantissa bits come from m. Value m has its top bit set (unless it is a zero); we leave it "as is": the
      * top bit will increment the exponent by 1, except when m = 0, which is exactly what we want. */
-    x = (((uint64)s << 63) | (m >> 2)) + ((uint64)(uint32)e << 52);
+    x = (((uint64)s << 63) | (m_temp >> 2)) + ((uint64)(uint32)e_temp << 52);
 
     /* Rounding: if the low three bits of m are 011, 110 or 111 then the value should be incremented to get the next
      * representable value. This implements the usual round-to-nearest rule (with preference to even values in case
      * of a tie). Note that the increment may make a carry spill into the exponent field, which is again exactly what
      * we want in that case. */
-    f = (uint32)m & 7u;
+    f = (uint32)m_temp & 7u;
     temp = ((uint32)0xC8u >> f) & 1u;
     x += (fpr)temp;
 
@@ -233,7 +247,7 @@ fpr fpr_check_exponent(sint32 s, sint32 e, uint64 m)
 * Returns t.b.d.
 *
 ***********************************************************************************************************************/
-fpr fpr_div(fpr x, fpr y)
+static fpr fpr_div(fpr x, fpr y)
 {
     uint64 xu, yu, q, q2, w;
     sint32 i, ex, ey, e, d, s;
@@ -306,20 +320,23 @@ fpr fpr_div(fpr x, fpr y)
 * Returns t.b.d.
 *
 ***********************************************************************************************************************/
-fpr fpr_scaled(sint64 i, sint32 sc)
+static fpr fpr_scaled(sint64 i, sint32 sc)
 {
     sint32 s, e;
     uint32 t;
     uint64 m;
 
+    /* i_temp is used to avoid modifying the input. */
+    sint64 i_temp = i;
+
     /* Extract sign bit. We have: -i = 1 + ~i */
-    s = (sint32) ((uint32)((uint64)i >> 63));
-    i = (sint64)((uint64)((uint64)i ^ (uint64)(sint64)((sint32)((-1) * s))));
-    i += s;
+    s = (sint32) ((uint32)((uint64)i_temp >> 63));
+    i_temp = (sint64)((uint64)((uint64)i_temp ^ (uint64)(sint64)((sint32)((-1) * s))));
+    i_temp += s;
 
     /* For now we suppose that i != 0. Otherwise, we set m to i and left-shift it as much as needed to get a 1 in the
      * top bit. We can do that in a logarithmic number of conditional shifts. */
-    m = (uint64) i;
+    m = (uint64) i_temp;
     e = 9 + sc;
     fpr_norm64(&m, &e);
 
@@ -329,7 +346,7 @@ fpr fpr_scaled(sint64 i, sint32 sc)
     m >>= 9;
 
     /* Corrective action: if i = 0 then all of the above was incorrect, and we clamp e and m down to zero. */
-    t = (uint32) ((uint64)((uint64)(((uint64)i | (uint64)((sint64)((-1) * i)))) >> 63));
+    t = (uint32) ((uint64)((uint64)(((uint64)i_temp | (uint64)((sint64)((-1) * i_temp)))) >> 63));
     m &= (uint64)((sint64)((-1) * (sint64)t));
     e = (sint32)((uint32)((uint32)e & (uint32)((sint32)((-1) * (sint32) t))));
 
@@ -352,7 +369,7 @@ fpr fpr_scaled(sint64 i, sint32 sc)
 * Returns t.b.d.????
 *
 ***********************************************************************************************************************/
-void fpr_norm64(uint64 *mp, sint32 *ep)
+static void fpr_norm64(uint64 *mp, sint32 *ep)
 {
     uint32 nt;
 
@@ -549,6 +566,10 @@ fpr FsmSw_Falcon_fpr_add(fpr x, fpr y)
     uint32 cs;
     sint32 ex, ey, sx, sy, cc;
 
+    /* x_temp and y_temp are used to avoid modifying the input. */
+    fpr x_temp = x;
+    fpr y_temp = y;
+
     /* Make sure that the first operand (x) has the larger absolute value. This guarantees that the exponent of y is
      * less than or equal to the exponent of x, and, if they are equal, then the mantissa of y will not be greater than
      * the mantissa of x.
@@ -556,26 +577,26 @@ fpr FsmSw_Falcon_fpr_add(fpr x, fpr y)
      * y have opposite sign bits; in that case, the result shall be +0 even if the sign bit of x is 1. To handle this
      * case properly, we do the swap is abs(x) = abs(y) AND the sign of x is 1. */
     m  = ((uint64) 1 << 63) - 1u;
-    za = (x & m) - (y & m);
-    cs = (uint32) (za >> 63) | ((1u - (uint32) ((uint64)((sint64)((-1) * (sint64)za)) >> 63)) & (uint32) (x >> 63));
-    m  = (uint64)((fpr)((x ^ y) & (fpr)((sint32)((-1) * (sint32)cs))));
-    x ^= m;
-    y ^= m;
+    za = (x_temp & m) - (y_temp & m);
+    cs = (uint32) (za >> 63) | ((1u - (uint32) ((uint64)((sint64)((-1) * (sint64)za)) >> 63)) & (uint32) (x_temp >> 63));
+    m  = (uint64)((fpr)((x_temp ^ y_temp) & (fpr)((sint32)((-1) * (sint32)cs))));
+    x_temp ^= m;
+    y_temp ^= m;
 
     /* Extract sign bits, exponents and mantissas. The mantissas are scaled up to 2^55..2^56-1, and the exponent is
      * unbiased. If an operand is zero, its mantissa is set to 0 at this step, and its exponent will be -1078. */
-    ex = (sint32)((uint32)(x >> 52));
+    ex = (sint32)((uint32)(x_temp >> 52));
     sx = (sint32)((uint32)((uint32)ex >> 11));
     ex = (sint32)((uint32)((uint32)ex & 0x7FFu));
     m  = (uint64)(((uint64)((uint32)((((uint32)((uint32)ex + 0x7FFu)) >> 11))) << 52u));
-    xu = ((x & (((uint64) 1 << 52) - 1u)) | m) << 3;
+    xu = ((x_temp & (((uint64) 1 << 52) - 1u)) | m) << 3;
 
     ex -= (sint32)1078u;
-    ey = (sint32)((fpr)(y >> 52));
+    ey = (sint32)((fpr)(y_temp >> 52));
     sy = (sint32)((uint32)((uint32)ey >> 11));
     ey = (sint32)((uint32)((uint32)ey & 0x7FFu));
     m  = (uint64) (uint32) (((uint32)ey + 0x7FFu) >> 11) << 52;
-    yu = ((y & (((uint64) 1 << 52) - 1u)) | m) << 3;
+    yu = ((y_temp & (((uint64) 1 << 52) - 1u)) | m) << 3;
     ey -= (sint32)1078u;
 
     /* x has the larger exponent; hence, we only need to right-shift y. If the shift count is larger than 59 bits then
@@ -634,8 +655,12 @@ fpr FsmSw_Falcon_fpr_add(fpr x, fpr y)
 ***********************************************************************************************************************/
 fpr FsmSw_Falcon_fpr_sub(fpr x, fpr y)
 {
-    y ^= (uint64)1 << 63;
-    return FsmSw_Falcon_fpr_add(x, y);
+    /* y_temp is used to avoid modifying the input. */
+    fpr y_temp = y;
+
+
+    y_temp ^= (uint64)1 << 63;
+    return FsmSw_Falcon_fpr_add(x, y_temp);
 }
 
 /***********************************************************************************************************************
@@ -650,8 +675,11 @@ fpr FsmSw_Falcon_fpr_sub(fpr x, fpr y)
 ***********************************************************************************************************************/
 fpr FsmSw_Falcon_fpr_neg(fpr x)
 {
-    x ^= (uint64)1 << 63;
-    return x;
+    /* x_temp is used to avoid modifying the input. */
+    fpr x_temp = x;
+
+    x_temp ^= (uint64)1 << 63;
+    return x_temp;
 }
 
 /***********************************************************************************************************************
@@ -669,10 +697,13 @@ fpr FsmSw_Falcon_fpr_half(fpr x)
     /* To divide a value by 2, we just have to subtract 1 from its exponent, but we have to take care of zero. */
     uint32 t;
 
-    x -= (uint64)1 << 52;
-    t = (uint32)((uint64)(((uint64)((uint64)(x >> 52) & 0x7FFu)) + 1u) >> 11);
-    x &= t - (fpr)1u;
-    return x;
+    /* x_temp is used to avoid modifying the input. */
+    fpr x_temp = x;
+
+    x_temp -= (uint64)1 << 52;
+    t = (uint32)((uint64)(((uint64)((uint64)(x_temp >> 52) & 0x7FFu)) + 1u) >> 11);
+    x_temp &= t - (fpr)1u;
+    return x_temp;
 }
 
 /***********************************************************************************************************************
@@ -687,10 +718,13 @@ fpr FsmSw_Falcon_fpr_half(fpr x)
 ***********************************************************************************************************************/
 fpr FsmSw_Falcon_fpr_double(fpr x)
 {
+    /* x_temp is used to avoid modifying the input. */
+    fpr x_temp = x;
+
     /* To double a value, we just increment by one the exponent. We don't care about infinites or NaNs; however, 0 is a
      * special case. */
-    x += (fpr)(((uint64)((uint64)(((uint64)((uint64)(x >> 52) & 0x7FFu) + 0x7FFu) >> 11))) << 52);
-    return x;
+    x_temp += (fpr)(((uint64)((uint64)(((uint64)((uint64)(x_temp >> 52) & 0x7FFu) + 0x7FFu) >> 11))) << 52);
+    return x_temp;
 }
 
 /***********************************************************************************************************************
@@ -928,13 +962,15 @@ fpr FsmSw_Falcon_fpr_sqrt(fpr x)
 ***********************************************************************************************************************/
 uint64 FsmSw_Falcon_fpr_expm_p63(fpr x, fpr ccs)
 {
-    /* Polynomial approximation of exp(-x) is taken from FACCT: https://eprint.iacr.org/2018/1234
-     * Specifically, values are extracted from the implementation referenced from the FACCT article, and available at:
-     * https://github.com/raykzhao/gaussian
-     * Here, the coefficients have been scaled up by 2^63 and converted to integers.
+    /* polyspace +1 MISRA2012:3.1 [Justified:]"The comment is a link and therefore contains a slash" */
+    /* Polynomial approximation of exp(-x) is taken from FACCT: https://eprint.iacr.org/2018/1234 */
+    /* Specifically, values are extracted from the implementation referenced from the FACCT article, and available at: */
+    /* polyspace +1 MISRA2012:3.1 [Justified:]"The comment is a link and therefore contains a slash" */
+    /* https://github.com/raykzhao/gaussian */
+    /* Here, the coefficients have been scaled up by 2^63 and converted to integers.
      *
      * Tests over more than 24 billions of random inputs in the 0..log(2) range have never shown a deviation larger
-     * than 2^(-50) from the true mathematical value.*/
+     * than 2^(-50) from the true mathematical value.*/ 
     uint64 z, y;
     uint32 u;
     uint32 z0, z1, y0, y1;
@@ -942,7 +978,7 @@ uint64 FsmSw_Falcon_fpr_expm_p63(fpr x, fpr ccs)
 
     y = C[0];
     z = (uint64) FsmSw_Falcon_fpr_trunc(FsmSw_Falcon_fpr_mul(x, fpr_ptwo63)) << 1;
-    for (u = 1; u < (sizeof C) / sizeof(C[0]); u++)
+    for (u = 1; u < (sizeof(C)) / sizeof(C[0]); u++)
     {
         /* Compute product z * y over 128 bits, but keep only the top 64 bits.
          *

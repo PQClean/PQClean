@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_sha2.h"
 #include "FsmSw_SphincsSha2_128fSimple_params.h"
 
@@ -31,7 +31,10 @@
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
-typedef struct {
+/* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
+typedef struct 
+{
     uint8 pub_seed[FSMSW_SPHINCSSHA2_128FSIMPLE_N];
     uint8 sk_seed[FSMSW_SPHINCSSHA2_128FSIMPLE_N];
 

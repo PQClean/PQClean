@@ -43,16 +43,16 @@
 #define POLYW1_PACKEDBYTES_DILITHIUM3  128u
 #define POLYETA_PACKEDBYTES_DILITHIUM3 128u
 
-#define FSMSW_DILITHIUM3_CRYPTO_PUBLICKEYBYTES (SEEDBYTES_DILITHIUM + K_DILITHIUM3*POLYT1_PACKEDBYTES_DILITHIUM)
+#define FSMSW_DILITHIUM3_CRYPTO_PUBLICKEYBYTES (SEEDBYTES_DILITHIUM + (K_DILITHIUM3*POLYT1_PACKEDBYTES_DILITHIUM))
 
-#define FSMSW_DILITHIUM3_CRYPTO_SECRETKEYBYTES (  2u*SEEDBYTES_DILITHIUM                       \
+#define FSMSW_DILITHIUM3_CRYPTO_SECRETKEYBYTES (  (2u*SEEDBYTES_DILITHIUM)                       \
                                                 + TRBYTES_DILITHIUM                           \
-                                                + L_DILITHIUM3*POLYETA_PACKEDBYTES_DILITHIUM3 \
-                                                + K_DILITHIUM3*POLYETA_PACKEDBYTES_DILITHIUM3 \
-                                                + K_DILITHIUM3*POLYT0_PACKEDBYTES_DILITHIUM)
+                                                + (L_DILITHIUM3*POLYETA_PACKEDBYTES_DILITHIUM3) \
+                                                + (K_DILITHIUM3*POLYETA_PACKEDBYTES_DILITHIUM3) \
+                                                + (K_DILITHIUM3*POLYT0_PACKEDBYTES_DILITHIUM))
 
 #define FSMSW_DILITHIUM3_CRYPTO_BYTES (  CTILDEBYTES_DILITHIUM3                    \
-                                       + L_DILITHIUM3*POLYZ_PACKEDBYTES_DILITHIUM3 \
+                                       + (L_DILITHIUM3*POLYZ_PACKEDBYTES_DILITHIUM3) \
                                        + POLYVECH_PACKEDBYTES_DILITHIUM3)
 
 /**********************************************************************************************************************/

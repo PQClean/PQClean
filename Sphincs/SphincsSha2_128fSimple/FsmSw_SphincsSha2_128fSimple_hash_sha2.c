@@ -43,6 +43,7 @@
 #define SPX_LEAF_BYTES          ((SPX_LEAF_BITS + 7u) / 8u)
 #define SPX_DGST_BYTES          (FSMSW_SPHINCSSHA2_128FSIMPLE_FORS_MSG_BYTES + SPX_TREE_BYTES + SPX_LEAF_BYTES)
 /* Round to nearest multiple of SPX_SHAX_BLOCK_BYTES */
+/* polyspace +1 MISRA2012:12.4 [Justified:]"Necessary controlled type conversions for block calculation." */
 #define SPX_INBLOCKS            (uint32)((uint32)((uint32)(((FSMSW_SPHINCSSHA2_128FSIMPLE_N + \
                                           FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES + SPX_SHAX_BLOCK_BYTES - 1u) & \
                                          (uint32)((sint32)((-1)*(sint32)SPX_SHAX_BLOCK_BYTES)))) / \
@@ -65,8 +66,7 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-
-
+static void FsmSw_SphincsSha2_128fSimple_mgf1_256(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
@@ -82,27 +82,32 @@
 *              - const uint8  *in:     t.b.d.
 *              -       uint32  inlen:  t.b.d.
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_128fSimple_mgf1_256(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen)
+static void FsmSw_SphincsSha2_128fSimple_mgf1_256(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen)
 {
     uint8 inbuf[FSMSW_SPHINCSSHA2_128FSIMPLE_MGF1_256_BUF_LEN + 4];
     uint8 outbuf[FSMSW_SPHINCS_SHA256_OUTPUT_BYTES];
     uint32 i;
 
+    /* out_temp is used to avoid modifying the input. */
+    uint8 *out_temp = out;
+
     FsmSw_CommonLib_memcpy(inbuf, in, inlen);
 
     /* While we can fit in at least another full block of SHA256 output.. */
-    for (i = 0; (i + 1u)*FSMSW_SPHINCS_SHA256_OUTPUT_BYTES <= outlen; i++)
+    /* polyspace +2 MISRA2012:14.2 [Justified:]"The calculation involving the loop counter directly affects loop 
+    continuation, addressing a MISRA 14.2 warning by following its rules for how loops should work." */
+    for (i = 0; ((i + 1u)*FSMSW_SPHINCS_SHA256_OUTPUT_BYTES) <= outlen; i++)
     {
         FsmSw_Sphincs_u32_to_bytes(&inbuf[inlen], i);
-        FsmSw_sha256(out, inbuf, inlen + 4u);
-        out = &out[FSMSW_SPHINCS_SHA256_OUTPUT_BYTES];
+        FsmSw_sha256(out_temp, inbuf, inlen + 4u);
+        out_temp = &out_temp[FSMSW_SPHINCS_SHA256_OUTPUT_BYTES];
     }
     /* Until we cannot anymore, and we fill the remainder. */
-    if (outlen > i * FSMSW_SPHINCS_SHA256_OUTPUT_BYTES)
+    if (outlen > (i * FSMSW_SPHINCS_SHA256_OUTPUT_BYTES))
     {
         FsmSw_Sphincs_u32_to_bytes(&inbuf[inlen], i);
         FsmSw_sha256(outbuf, inbuf, inlen + 4u);
-        FsmSw_CommonLib_memcpy(out, outbuf, outlen - i * FSMSW_SPHINCS_SHA256_OUTPUT_BYTES);
+        FsmSw_CommonLib_memcpy(out_temp, outbuf, outlen - (i * FSMSW_SPHINCS_SHA256_OUTPUT_BYTES));
     }
 }
 
@@ -124,21 +129,26 @@ void FsmSw_SphincsSha2_128fSimple_mgf1_512(uint8 *out, uint32 outlen, const uint
     uint8 outbuf[FSMSW_SPHINCS_SHA512_OUTPUT_BYTES];
     uint32 i;
 
+    /* out_temp is used to avoid modifying the input. */
+    uint8 *out_temp = out;
+
     FsmSw_CommonLib_memcpy(inbuf, in, inlen);
 
     /* While we can fit in at least another full block of SHA512 output.. */
-    for (i = 0; (i + 1u)*FSMSW_SPHINCS_SHA512_OUTPUT_BYTES <= outlen; i++)
+    /* polyspace +2 MISRA2012:14.2 [Justified:]"The calculation involving the loop counter directly affects loop 
+    continuation, addressing a MISRA 14.2 warning by following its rules for how loops should work." */
+    for (i = 0; ((i + 1u)*FSMSW_SPHINCS_SHA512_OUTPUT_BYTES) <= outlen; i++)
     {
         FsmSw_Sphincs_u32_to_bytes(&inbuf[inlen], i);
-        FsmSw_sha512(out, inbuf, inlen + 4u);
-        out = &out[FSMSW_SPHINCS_SHA512_OUTPUT_BYTES];
+        FsmSw_sha512(out_temp, inbuf, inlen + 4u);
+        out_temp = &out_temp[FSMSW_SPHINCS_SHA512_OUTPUT_BYTES];
     }
     /* Until we cannot anymore, and we fill the remainder. */
-    if (outlen > i * FSMSW_SPHINCS_SHA512_OUTPUT_BYTES)
+    if (outlen > (i * FSMSW_SPHINCS_SHA512_OUTPUT_BYTES))
     {
         FsmSw_Sphincs_u32_to_bytes(&inbuf[inlen], i);
         FsmSw_sha512(outbuf, inbuf, inlen + 4u);
-        FsmSw_CommonLib_memcpy(out, outbuf, outlen - i * FSMSW_SPHINCS_SHA512_OUTPUT_BYTES);
+        FsmSw_CommonLib_memcpy(out_temp, outbuf, outlen - (i * FSMSW_SPHINCS_SHA512_OUTPUT_BYTES));
     }
 }
 /**********************************************************************************************************************/
@@ -199,6 +209,10 @@ void FsmSw_SphincsSha2_128fSimple_gen_message_random(uint8 *R, const uint8 *sk_p
     shaXstate state;
     uint8 i;
 
+    /* m_temp and mlen_temp are used to avoid modifying the input. */
+    const uint8 *m_temp = m;
+    uint32 mlen_temp = mlen;
+
     /* This implements HMAC-SHA */
     for (i = 0; i < FSMSW_SPHINCSSHA2_128FSIMPLE_N; i++) {
         buf[i] = 0x36u ^ sk_prf[i];
@@ -212,22 +226,22 @@ void FsmSw_SphincsSha2_128fSimple_gen_message_random(uint8 *R, const uint8 *sk_p
     FsmSw_CommonLib_memcpy(buf, optrand, FSMSW_SPHINCSSHA2_128FSIMPLE_N);
 
     /* If optrand + message cannot fill up an entire block */
-    if (FSMSW_SPHINCSSHA2_128FSIMPLE_N + mlen < SPX_SHAX_BLOCK_BYTES)
+    if ((FSMSW_SPHINCSSHA2_128FSIMPLE_N + mlen_temp) < SPX_SHAX_BLOCK_BYTES)
     {
-        FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHA2_128FSIMPLE_N], m, mlen);
+        FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHA2_128FSIMPLE_N], m_temp, mlen_temp);
         shaX_inc_finalize(&buf[SPX_SHAX_BLOCK_BYTES], &state,
-                          buf, mlen + FSMSW_SPHINCSSHA2_128FSIMPLE_N);
+                          buf, mlen_temp + FSMSW_SPHINCSSHA2_128FSIMPLE_N);
     }
     /* Otherwise first fill a block, so that finalize only uses the message */
     else
     {
-        FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHA2_128FSIMPLE_N], m,
+        FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHA2_128FSIMPLE_N], m_temp,
                                SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N);
         shaX_inc_blocks(&state, buf, 1);
 
-        m = &m[SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N];
-        mlen -= SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N;
-        shaX_inc_finalize(&buf[SPX_SHAX_BLOCK_BYTES], &state, m, mlen);
+        m_temp = &m_temp[SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N];
+        mlen_temp -= SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N;
+        shaX_inc_finalize(&buf[SPX_SHAX_BLOCK_BYTES], &state, m_temp, mlen_temp);
     }
 
     for (i = 0; i < FSMSW_SPHINCSSHA2_128FSIMPLE_N; i++)
@@ -262,7 +276,9 @@ void FsmSw_SphincsSha2_128fSimple_hash_message(uint8 *digest, uint64 *tree, uint
                                                const sphincs_sha2_128f_ctx *ctx)
 {
     (void)ctx;
-    uint8 seed [2u * FSMSW_SPHINCSSHA2_128FSIMPLE_N + SPX_SHAX_OUTPUT_BYTES];
+    uint8 seed [(2u * FSMSW_SPHINCSSHA2_128FSIMPLE_N) + SPX_SHAX_OUTPUT_BYTES];
+    /* polyspace +2 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
+    and therefore not dead code" */ 
     uint8 inbuf[SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES];
     uint8 buf  [SPX_DGST_BYTES];
     uint8 *bufp = buf;
@@ -270,31 +286,44 @@ void FsmSw_SphincsSha2_128fSimple_hash_message(uint8 *digest, uint64 *tree, uint
 
     shaX_inc_init(&state);
 
+    /* m_temp and mlen_temp are used to avoid modifying the input. */
+    const uint8 *m_temp = m;
+    uint32 mlen_temp = mlen;
+
     /* seed: SHA-X(R ‖ PK.seed ‖ PK.root ‖ M) */
     FsmSw_CommonLib_memcpy(inbuf, R, FSMSW_SPHINCSSHA2_128FSIMPLE_N);
     FsmSw_CommonLib_memcpy(&inbuf[FSMSW_SPHINCSSHA2_128FSIMPLE_N], pk, FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES);
 
     /* If R + pk + message cannot fill up an entire block */
-    if (0u < (uint32)(FSMSW_SPHINCSSHA2_128FSIMPLE_N + FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES +
-                      mlen < SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES))
+    /* polyspace +3 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
+    and therefore not dead code" */ 
+    if ((FSMSW_SPHINCSSHA2_128FSIMPLE_N + FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES + mlen_temp) <
+            (SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES))
     {
-        FsmSw_CommonLib_memcpy(&inbuf[FSMSW_SPHINCSSHA2_128FSIMPLE_N + FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES], m, mlen);
+        FsmSw_CommonLib_memcpy(&inbuf[FSMSW_SPHINCSSHA2_128FSIMPLE_N + FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES], 
+        m_temp, mlen_temp);
         shaX_inc_finalize(&seed[2u * FSMSW_SPHINCSSHA2_128FSIMPLE_N], &state, inbuf, FSMSW_SPHINCSSHA2_128FSIMPLE_N +
-                          FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES + mlen);
+                          FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES + mlen_temp);
     }
     /* Otherwise first fill a block, so that finalize only uses the message */
     else
     {
-        FsmSw_CommonLib_memcpy(&inbuf[FSMSW_SPHINCSSHA2_128FSIMPLE_N + FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES], m,
-                               SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N -
+        /* polyspace +3 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
+        and therefore not dead code" */ 
+        FsmSw_CommonLib_memcpy(&inbuf[FSMSW_SPHINCSSHA2_128FSIMPLE_N + FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES], m_temp,
+                               (SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES) - FSMSW_SPHINCSSHA2_128FSIMPLE_N -
                                FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES);
         shaX_inc_blocks(&state, inbuf, SPX_INBLOCKS);
 
-        m = &m[SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N -
+        /* polyspace +2 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
+        and therefore not dead code" */ 
+        m_temp = &m_temp[(SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES) - FSMSW_SPHINCSSHA2_128FSIMPLE_N -
                FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES];
-        mlen = mlen - (SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES - FSMSW_SPHINCSSHA2_128FSIMPLE_N -
+        /* polyspace +2 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
+        and therefore not dead code" */ 
+        mlen_temp = mlen_temp - ((SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES) - FSMSW_SPHINCSSHA2_128FSIMPLE_N -
                        FSMSW_SPHINCSSHA2_128FSIMPLE_PK_BYTES);
-        shaX_inc_finalize(&seed[2u * FSMSW_SPHINCSSHA2_128FSIMPLE_N], &state, m, (uint32)mlen);
+        shaX_inc_finalize(&seed[2u * FSMSW_SPHINCSSHA2_128FSIMPLE_N], &state, m_temp, (uint32)mlen_temp);
     }
 
     /* H_msg: MGF1-SHA-X(R ‖ PK.seed ‖ seed) */
@@ -303,7 +332,7 @@ void FsmSw_SphincsSha2_128fSimple_hash_message(uint8 *digest, uint64 *tree, uint
 
     /* By doing this in two steps, we prevent hashing the message twice;
        otherwise each iteration in MGF1 would hash the message again. */
-    mgf1_X(bufp, SPX_DGST_BYTES, seed, 2u * FSMSW_SPHINCSSHA2_128FSIMPLE_N + SPX_SHAX_OUTPUT_BYTES);
+    mgf1_X(bufp, SPX_DGST_BYTES, seed, (2u * FSMSW_SPHINCSSHA2_128FSIMPLE_N) + SPX_SHAX_OUTPUT_BYTES);
 
     FsmSw_CommonLib_memcpy(digest, bufp, FSMSW_SPHINCSSHA2_128FSIMPLE_FORS_MSG_BYTES);
     bufp = &bufp[FSMSW_SPHINCSSHA2_128FSIMPLE_FORS_MSG_BYTES];

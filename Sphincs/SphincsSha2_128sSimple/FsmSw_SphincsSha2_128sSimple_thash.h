@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_128sSimple_context.h"
 #include "FsmSw_SphincsSha2_128sSimple_params.h"
 
@@ -44,6 +44,6 @@
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
 void FsmSw_SphincsSha2_128sSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks, const sphincs_sha2_128s_ctx *ctx,
-                                        uint32 addr[8]);
+                                        const uint32 addr[8]);
 
 #endif /* FSMSW_SPHINCSSHA2_128SSIMPLE_THASH_H */

@@ -91,11 +91,11 @@ sint32 FsmSw_Dilithium3_decompose(sint32 *a0, sint32 a)
     a1  = (sint32)((uint32)(((uint32)a + 127u) >> 7));
 
     /* (1u << 21) = 2.097.152 */
-    temp1 = (a1 * 1025 + (sint32)2097152u);
+    temp1 = ((a1 * 1025) + (sint32)2097152u);
     a1 = (sint32)((uint32)((uint32)temp1 >> 22));
     a1 = (sint32)((uint32)((uint32)a1 & 15u));
 
-    *a0  = a - a1 * 2 * GAMMA2_DILITHIUM3;
+    *a0  = a - (a1 * (2 * GAMMA2_DILITHIUM3));
     temp2 = ((Q_DILITHIUM - 1) / 2 - *a0);
     temp3 = (sint32)((uint32)((uint64)temp2 >> 31));
     *a0 = *a0 - (sint32)((uint32)((uint32)temp3 & (uint32)Q_DILITHIUM));
@@ -115,12 +115,14 @@ sint32 FsmSw_Dilithium3_decompose(sint32 *a0, sint32 a)
 ***********************************************************************************************************************/
 uint8 FsmSw_Dilithium3_make_hint(sint32 a0, sint32 a1)
 {
-    if (a0 > GAMMA2_DILITHIUM3 || a0 < -GAMMA2_DILITHIUM3 || (a0 == -GAMMA2_DILITHIUM3 && a1 != 0))
+    uint8 retVal = 0;
+
+    if ((a0 > GAMMA2_DILITHIUM3) || (a0 < -GAMMA2_DILITHIUM3) || (((a0 == -GAMMA2_DILITHIUM3) && (a1 != 0)) != 0))
     {
-        return 1;
+        retVal = 1;
     }
 
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -136,18 +138,24 @@ uint8 FsmSw_Dilithium3_make_hint(sint32 a0, sint32 a1)
 sint32 FsmSw_Dilithium3_use_hint(sint32 a, uint32 hint)
 {
     sint32 a0, a1;
+    sint32 retVal = 0;
 
     a1 = FsmSw_Dilithium3_decompose(&a0, a);
 
     if (hint == 0u)
     {
-        return a1;
+        retVal = a1;
     }
 
-    if (a0 > 0)
+    else if (a0 > 0)
     {
-        return (sint32)((uint32)(((uint32)a1 + 1u) & 15u));
+        retVal = (sint32)((uint32)(((uint32)a1 + 1u) & 15u));
     }
 
-    return (sint32)((uint32)(((uint32)a1 - 1u) & 15u));
+    else 
+    {
+        retVal = (sint32)((uint32)(((uint32)a1 - 1u) & 15u));
+    }
+
+    return retVal;
 }

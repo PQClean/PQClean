@@ -68,7 +68,7 @@
 ***********************************************************************************************************************/
 sint8 FsmSw_Dilithium2_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 {
-    uint8 seedbuf[2u * SEEDBYTES_DILITHIUM + CRHBYTES_DILITHIUM];
+    uint8 seedbuf[(2u * SEEDBYTES_DILITHIUM) + CRHBYTES_DILITHIUM];
     uint8 tr[TRBYTES_DILITHIUM];
     const uint8 *rho, *rhoprime, *key;
     polyvecl_D2 mat[K_DILITHIUM2];
@@ -77,7 +77,7 @@ sint8 FsmSw_Dilithium2_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 
     /* Get randomness for rho, rhoprime and key */
     (void)FsmSw_CommonLib_randombytes(seedbuf, SEEDBYTES_DILITHIUM);
-    FsmSw_Fips202_shake256(seedbuf, 2u * SEEDBYTES_DILITHIUM + CRHBYTES_DILITHIUM, seedbuf, SEEDBYTES_DILITHIUM);
+    FsmSw_Fips202_shake256(seedbuf, (2u * SEEDBYTES_DILITHIUM) + CRHBYTES_DILITHIUM, seedbuf, SEEDBYTES_DILITHIUM);
     rho      = seedbuf;
     rhoprime = &rho[SEEDBYTES_DILITHIUM];
     key      = &rhoprime[CRHBYTES_DILITHIUM];
@@ -124,10 +124,12 @@ sint8 FsmSw_Dilithium2_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 *
 * Returns 0 (success)
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
+designed for use by other systems that aim to integrate the Dilithium." */
 sint8 FsmSw_Dilithium2_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen, const uint8 *sk)
 {
     uint32 n;
-    uint8 seedbuf[2u * SEEDBYTES_DILITHIUM + TRBYTES_DILITHIUM + RNDBYTES_DILITHIUM + 2u * CRHBYTES_DILITHIUM];
+    uint8 seedbuf[(2u * SEEDBYTES_DILITHIUM) + TRBYTES_DILITHIUM + RNDBYTES_DILITHIUM + (2u * CRHBYTES_DILITHIUM)];
     uint8 *rho, *tr, *key, *mu, *rhoprime, *rnd;
     uint16 nonce = 0;
     polyvecl_D2 mat[K_DILITHIUM2], s1, y, z;
@@ -166,7 +168,8 @@ sint8 FsmSw_Dilithium2_crypto_sign_signature(uint8 *sig, uint32 *siglen, const u
     while(TRUE == loop)
     {
         /* Sample intermediate vector y */
-        FsmSw_Dilithium2_polyvecl_uniform_gamma1(&y, rhoprime, nonce++);
+        FsmSw_Dilithium2_polyvecl_uniform_gamma1(&y, rhoprime, nonce);
+        nonce++;
 
         /* Matrix-vector multiplication */
         z = y;
@@ -273,6 +276,8 @@ sint8 FsmSw_Dilithium2_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uin
 *
 * Returns 0 if signature could be verified correctly and -1 otherwise
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
+designed for use by other systems that aim to integrate the Dilithium." */
 sint8 FsmSw_Dilithium2_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen, const uint8 *pk)
 {
     uint16 i;
@@ -286,19 +291,21 @@ sint8 FsmSw_Dilithium2_crypto_sign_verify(const uint8 *sig, uint32 siglen, const
     polyveck_D2 t1, w1, h;
     shake256incctx state;
 
+    sint8 retVal = 0;
+
     if (siglen != FSMSW_DILITHIUM2_CRYPTO_BYTES)
     {
-        return -1;
+        retVal = -1;
     }
 
     FsmSw_Dilithium2_unpack_pk(rho, &t1, pk);
     if (0 < FsmSw_Dilithium2_unpack_sig(c, &z, &h, sig))
     {
-        return -1;
+        retVal = -1;
     }
     if (0 < FsmSw_Dilithium2_polyvecl_chknorm(&z, (sint32)(GAMMA1_DILITHIUM2 - BETA_DILITHIUM2)))
     {
-        return -1;
+        retVal = -1;
     }
 
     /* Compute CRH(H(rho, t1), msg) */
@@ -340,10 +347,10 @@ sint8 FsmSw_Dilithium2_crypto_sign_verify(const uint8 *sig, uint32 siglen, const
     {
         if (c[i] != c2[i])
         {
-            return -1;
+            retVal = -1;
         }
     }
-    return 0;
+    return retVal;
 }
 
 /***********************************************************************************************************************
@@ -382,7 +389,7 @@ sint8 FsmSw_Dilithium2_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm,
     if((sint8)0u != retVal)
     {
         /* Signature verification failed */
-        *mlen = (uint32)-1;
+        *mlen = UINT32_MAXVAL;
         for (i = 0; i < smlen; ++i)
         {
             m[i] = 0;

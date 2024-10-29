@@ -23,7 +23,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "Platform_Types.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -34,25 +34,32 @@
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Structure for the incremental API */
 typedef struct
 {
     uint8 ctx[PQC_SHA256CTX_BYTES];
 } sha224ctx;
 
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Structure for the incremental API */
 typedef struct
 {
     uint8 ctx[PQC_SHA256CTX_BYTES];
 } sha256ctx;
 
-
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Structure for the incremental API */
 typedef struct
 {
     uint8 ctx[PQC_SHA512CTX_BYTES];
 } sha384ctx;
 
+/* polyspace +4 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
+making it impractical and complex to hide the implementation details." */
 /* Structure for the incremental API */
 typedef struct
 {
@@ -70,29 +77,25 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-/* ====== SHA224 API ==== */
-void FsmSw_sha224_inc_init(sha224ctx *state);
+/* SHA224 API */
 void FsmSw_sha224_inc_ctx_clone(sha224ctx *stateout, const sha224ctx *statein);
 void FsmSw_sha224_inc_blocks(sha224ctx *state, const uint8 *in, uint32 inblocks);
-void FsmSw_sha224_inc_finalize(uint8 *out, sha224ctx *state, const uint8 *in, uint32 inlen);
 void FsmSw_sha224(uint8 *out, const uint8 *in, uint32 inlen);
 
-/* ====== SHA256 API ==== */
+/* SHA256 API */
 void FsmSw_sha256_inc_init(sha256ctx *state);
 void FsmSw_sha256_inc_ctx_clone(sha256ctx *stateout, const sha256ctx *statein);
 void FsmSw_sha256_inc_blocks(sha256ctx *state, const uint8 *in, uint32 inblocks);
 void FsmSw_sha256_inc_finalize(uint8 *out, sha256ctx *state, const uint8 *in, uint32 inlen);
 void FsmSw_sha256(uint8 *out, const uint8 *in, uint32 inlen);
 
-/* ====== SHA384 API ==== */
-void FsmSw_sha384_inc_init(sha384ctx *state);
+/* SHA384 API */
 void FsmSw_sha384_inc_ctx_clone(sha384ctx *stateout, const sha384ctx *statein);
 void FsmSw_sha384_inc_blocks(sha384ctx *state, const uint8 *in, uint32 inblocks);
-void FsmSw_sha384_inc_finalize(uint8 *out, sha384ctx *state, const uint8 *in, uint32 inlen);
 void FsmSw_sha384(uint8 *out, const uint8 *in, uint32 inlen);
 
 
-/* ====== SHA512 API ==== */
+/* SHA512 API */
 void FsmSw_sha512_inc_init(sha512ctx *state);
 void FsmSw_sha512_inc_ctx_clone(sha512ctx *stateout, const sha512ctx *statein);
 void FsmSw_sha512_inc_blocks(sha512ctx *state, const uint8 *in, uint32 inblocks);

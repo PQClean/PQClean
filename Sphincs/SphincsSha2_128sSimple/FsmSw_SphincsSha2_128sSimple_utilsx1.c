@@ -94,8 +94,14 @@ void FsmSw_SphincsSha2_128sSimple_treehashx1(uint8 *root, uint8 *auth_path, cons
 
     uint32 idx;
     uint32 max_idx = ((uint32)1u << tree_height) - 1u;
+    boolean bStopFunc = FALSE;
     for (idx = 0; idx < 0xFFFFFFFFu; idx++)
     {
+        if (TRUE == bStopFunc)
+        {
+            break;
+        }
+
         /* Current logical node is at index[FSMSW_SPHINCSSHA2_128SSIMPLE_N]. We do this to minimize the number of copies
          * needed during a FsmSw_SphincsSha2_128sSimple_thash */
         uint8 current[2u * FSMSW_SPHINCSSHA2_128SSIMPLE_N];
@@ -114,11 +120,11 @@ void FsmSw_SphincsSha2_128sSimple_treehashx1(uint8 *root, uint8 *auth_path, cons
             {
                 /* We hit the root; return it */
                 FsmSw_CommonLib_memcpy(root, &current[FSMSW_SPHINCSSHA2_128SSIMPLE_N], FSMSW_SPHINCSSHA2_128SSIMPLE_N);
-                return;
+                bStopFunc = TRUE;
             }
 
             /* Check if the node we have is a part of the authentication path; if it is, write it out */
-            if ((internal_idx ^ internal_leaf) == 0x01u)
+            if (((internal_idx ^ internal_leaf) == 0x01u) && (FALSE == bStopFunc))
             {
                 FsmSw_CommonLib_memcpy( &auth_path[h * FSMSW_SPHINCSSHA2_128SSIMPLE_N],
                         &current[FSMSW_SPHINCSSHA2_128SSIMPLE_N],
@@ -127,7 +133,7 @@ void FsmSw_SphincsSha2_128sSimple_treehashx1(uint8 *root, uint8 *auth_path, cons
 
             /* Check if we're at a left child; if so, stop going up the stack. Exception: if we've reached the end of
              * the tree, keep on going (so we combine the last 4 nodes into the one root node in two more iterations) */
-            if (((internal_idx & 1u) == 0u) && (idx < max_idx))
+            if ((((internal_idx & 1u) == 0u) && (idx < max_idx)) || (TRUE == bStopFunc))
             {
                 break;
             }
@@ -136,11 +142,11 @@ void FsmSw_SphincsSha2_128sSimple_treehashx1(uint8 *root, uint8 *auth_path, cons
              * Set the address of the node we're creating. */
             internal_idx_offset >>= 1;
             FsmSw_SphincsSha2_set_tree_height(tree_addr, h + 1u);
-            FsmSw_SphincsSha2_set_tree_index(tree_addr, internal_idx / 2u + internal_idx_offset);
+            FsmSw_SphincsSha2_set_tree_index(tree_addr, (internal_idx / 2u) + internal_idx_offset);
 
             uint8 *left = &stack[h * FSMSW_SPHINCSSHA2_128SSIMPLE_N];
             FsmSw_CommonLib_memcpy(&current[0], left, FSMSW_SPHINCSSHA2_128SSIMPLE_N);
-            FsmSw_SphincsSha2_128sSimple_thash(&current[1u * FSMSW_SPHINCSSHA2_128SSIMPLE_N],
+            FsmSw_SphincsSha2_128sSimple_thash(&current[FSMSW_SPHINCSSHA2_128SSIMPLE_N],
                                                &current[0u * FSMSW_SPHINCSSHA2_128SSIMPLE_N],
                                                2u, ctx, tree_addr);
 
@@ -148,9 +154,12 @@ void FsmSw_SphincsSha2_128sSimple_treehashx1(uint8 *root, uint8 *auth_path, cons
             internal_leaf >>= 1;
         }
 
-        /* We've hit a left child; save the current for when we get the */
-        /* corresponding right right */
-        FsmSw_CommonLib_memcpy(&stack[h * FSMSW_SPHINCSSHA2_128SSIMPLE_N], &current[FSMSW_SPHINCSSHA2_128SSIMPLE_N],
-                                FSMSW_SPHINCSSHA2_128SSIMPLE_N);
+        if (FALSE == bStopFunc)
+        {
+            /* We've hit a left child; save the current for when we get the */
+            /* corresponding right right */
+            FsmSw_CommonLib_memcpy(&stack[h * FSMSW_SPHINCSSHA2_128SSIMPLE_N], &current[FSMSW_SPHINCSSHA2_128SSIMPLE_N],
+                                    FSMSW_SPHINCSSHA2_128SSIMPLE_N);
+        }
     }
 }
