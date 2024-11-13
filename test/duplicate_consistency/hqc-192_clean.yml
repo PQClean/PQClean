@@ -19,6 +19,7 @@ consistency_checks:
       - gf.c
       - gf2x.c
       - hqc.c
+      - kem.c
       - parsing.c
       - reed_muller.c
       - reed_solomon.c
