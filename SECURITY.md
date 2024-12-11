@@ -29,6 +29,10 @@ Reported vulnerabilities in the **Historic Issues** section have become irreleva
 
 ## Resolved Issues
 
+### 2024-12-11
+* HQC decapsulation mishandled the secret key and, when given a malformed ciphertext, returned an incorrect shared secret.
+  [PR #578](https://github.com/PQClean/PQClean/pull/578) addressed this.
+
 ### 2024-06-11
 * Kyber used a conditional move that resulted in branch instructions leaking side-channel information for certain compilers.
   [PR #558](https://github.com/PQClean/PQClean/pull/558) addressed this for the `clean` and `avx2` implementations.
