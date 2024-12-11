@@ -25,4 +25,4 @@ principal-submitters:
   - Gilles Zémor
 implementations:
     - name: clean
-      version: hqc-submission_2023-04-30 via https://github.com/SWilson4/package-pqclean/tree/8db1b24b/hqc
+      version: hqc-submission_2023-04-30 via https://github.com/SWilson4/package-pqclean/tree/9b509aa7/hqc
