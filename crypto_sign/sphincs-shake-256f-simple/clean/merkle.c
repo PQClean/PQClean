@@ -21,7 +21,7 @@ void merkle_sign(uint8_t *sig, unsigned char *root,
                  uint32_t idx_leaf) {
     unsigned char *auth_path = sig + SPX_WOTS_BYTES;
     struct leaf_info_x1 info = { 0 };
-    unsigned steps[ SPX_WOTS_LEN ];
+    uint32_t steps[ SPX_WOTS_LEN ];
 
     info.wots_sig = sig;
     chain_lengths(steps, root);
