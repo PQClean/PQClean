@@ -1,4 +1,5 @@
 #include "f1600x2.h"
+#include <stdint.h>
 
 uint64_t f1600_RC[24] = {
     0x0000000000000001,

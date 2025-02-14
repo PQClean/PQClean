@@ -20,6 +20,6 @@ void wots_pk_from_sig(unsigned char *pk,
  * Compute the chain lengths needed for a given message hash
  */
 #define chain_lengths SPX_NAMESPACE(chain_lengths)
-void chain_lengths(unsigned int *lengths, const unsigned char *msg);
+void chain_lengths(uint32_t *lengths, const unsigned char *msg);
 
 #endif

@@ -1,4 +1,9 @@
 #include "context.h"
+#include "params.h"
+#include "sha2.h"
+#include "sha2_offsets.h"
+#include <stddef.h>
+#include <stdint.h>
 
 /**
  * Absorb the constant pub_seed using one round of the compression function
@@ -20,6 +25,7 @@ static void seed_state(spx_ctx *ctx) {
     sha256_inc_init(&ctx->state_seeded);
     sha256_inc_blocks(&ctx->state_seeded, block, 1);
 }
+
 
 /* We initialize the state for the hash functions */
 void initialize_hash_function(spx_ctx *ctx) {

@@ -1,14 +1,13 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "wots.h"
+#include "context.h"
 #include "wotsx1.h"
 
 #include "address.h"
 #include "hash.h"
 #include "params.h"
 #include "thash.h"
-#include "utils.h"
 
 /*
  * This generates a WOTS public key
@@ -32,7 +31,7 @@ void wots_gen_leafx1(unsigned char *dest,
         wots_k_mask = 0;
     } else {
         /* Nope, we're just generating pk's; turn off the signature logic */
-        wots_k_mask = (uint32_t)~0;
+        wots_k_mask = ~0U;
     }
 
     set_keypair_addr( leaf_addr, leaf_idx );
@@ -56,7 +55,7 @@ void wots_gen_leafx1(unsigned char *dest,
             /* Check if this is the value that needs to be saved as a */
             /* part of the WOTS signature */
             if (k == wots_k) {
-                memcpy( info->wots_sig + i * SPX_N, buffer, SPX_N );
+                memcpy( info->wots_sig + (i * SPX_N), buffer, SPX_N );
             }
 
             /* Check if we hit the top of the chain */

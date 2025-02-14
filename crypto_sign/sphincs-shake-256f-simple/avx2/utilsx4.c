@@ -1,8 +1,10 @@
+#include <stdint.h>
 #include <string.h>
 
 #include "utilsx4.h"
 
 #include "address.h"
+#include "context.h"
 #include "params.h"
 #include "thashx4.h"
 #include "utils.h"
@@ -56,7 +58,7 @@ void treehashx4(unsigned char *root, unsigned char *auth_path,
     uint32_t max_idx = (1U << (tree_height - 2)) - 1;
     for (idx = 0;; idx++) {
         unsigned char current[4 * SPX_N]; /* Current logical node */
-        gen_leafx4( current, ctx, 4 * idx + idx_offset,
+        gen_leafx4( current, ctx, (4 * idx) + idx_offset,
                     info );
 
         /* Now combine the freshly generated right node with previously */
@@ -115,9 +117,9 @@ void treehashx4(unsigned char *root, unsigned char *auth_path,
             unsigned int j;
             internal_idx_offset >>= 1;
             for (j = 0; j < 4; j++) {
-                set_tree_height(tree_addrx4 + j * 8, h + 1);
-                set_tree_index(tree_addrx4 + j * 8,
-                               (4 / 2) * (internal_idx & ~1U) + j - left_adj + internal_idx_offset );
+                set_tree_height(tree_addrx4 + (j * 8), h + 1);
+                set_tree_index(tree_addrx4 + (j * 8),
+                               ((4 / 2) * (internal_idx & ~1U)) + j - left_adj + internal_idx_offset );
             }
             unsigned char *left = &stackx4[h * 4 * SPX_N];
             thashx4( &current[0 * SPX_N],

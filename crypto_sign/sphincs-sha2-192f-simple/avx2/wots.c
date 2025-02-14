@@ -4,13 +4,11 @@
 #include "wots.h"
 
 #include "address.h"
-#include "hash.h"
+#include "context.h"
 #include "hashx8.h"
 #include "params.h"
-#include "thash.h"
 #include "thashx8.h"
 #include "utils.h"
-#include "utilsx8.h"
 #include "wotsx8.h"
 
 // TODO clarify address expectations, and make them more uniform.
@@ -40,7 +38,7 @@ static void gen_chains(
 
     /* set addrs = {addr, addr, ..., addr} */
     for (j = 0; j < 8; j++) {
-        memcpy(addrs + j * 8, addr, sizeof(uint32_t) * 8);
+        memcpy(addrs + (j * 8), addr, sizeof(uint32_t) * 8);
     }
 
     /* Initialize out with the value at position 'start'. */
@@ -65,7 +63,7 @@ static void gen_chains(
     for (i = 0; i < SPX_WOTS_LEN; i += 8) {
         for (j = 0; j < 8 && i + j < SPX_WOTS_LEN; j++) {
             idx = idxs[i + j];
-            set_chain_addr(addrs + j * 8, idx);
+            set_chain_addr(addrs + (j * 8), idx);
             bufs[j] = out + SPX_N * idx;
         }
 
@@ -93,7 +91,7 @@ static void gen_chains(
                 break;
             }
             for (j = 0; j < watching + 1; j++) {
-                set_hash_addr(addrs + j * 8, k + start[idxs[i + j]]);
+                set_hash_addr(addrs + (j * 8), k + start[idxs[i + j]]);
             }
 
             thashx8(bufs[0], bufs[1], bufs[2], bufs[3],
@@ -206,8 +204,8 @@ void wots_gen_leafx8(unsigned char *dest,
     }
 
     for (j = 0; j < 8; j++) {
-        set_keypair_addr( leaf_addr + j * 8, leaf_idx + j );
-        set_keypair_addr( pk_addr + j * 8, leaf_idx + j );
+        set_keypair_addr( leaf_addr + (j * 8), leaf_idx + j );
+        set_keypair_addr( pk_addr + (j * 8), leaf_idx + j );
     }
 
     for (i = 0, buffer = pk_buffer; i < SPX_WOTS_LEN; i++, buffer += SPX_N) {
@@ -216,22 +214,22 @@ void wots_gen_leafx8(unsigned char *dest,
 
         /* Start with the secret seed */
         for (j = 0; j < 8; j++) {
-            set_chain_addr(leaf_addr + j * 8, i);
-            set_hash_addr(leaf_addr + j * 8, 0);
-            set_type(leaf_addr + j * 8, SPX_ADDR_TYPE_WOTSPRF);
+            set_chain_addr(leaf_addr + (j * 8), i);
+            set_hash_addr(leaf_addr + (j * 8), 0);
+            set_type(leaf_addr + (j * 8), SPX_ADDR_TYPE_WOTSPRF);
         }
-        prf_addrx8(buffer + 0 * wots_offset,
-                   buffer + 1 * wots_offset,
-                   buffer + 2 * wots_offset,
-                   buffer + 3 * wots_offset,
-                   buffer + 4 * wots_offset,
-                   buffer + 5 * wots_offset,
-                   buffer + 6 * wots_offset,
-                   buffer + 7 * wots_offset,
+        prf_addrx8(buffer + (0 * wots_offset),
+                   buffer + (1 * wots_offset),
+                   buffer + (2 * wots_offset),
+                   buffer + (3 * wots_offset),
+                   buffer + (4 * wots_offset),
+                   buffer + (5 * wots_offset),
+                   buffer + (6 * wots_offset),
+                   buffer + (7 * wots_offset),
                    ctx, leaf_addr);
 
         for (j = 0; j < 8; j++) {
-            set_type(leaf_addr + j * 8, SPX_ADDR_TYPE_WOTS);
+            set_type(leaf_addr + (j * 8), SPX_ADDR_TYPE_WOTS);
         }
 
         /* Iterate down the WOTS chain */
@@ -239,8 +237,8 @@ void wots_gen_leafx8(unsigned char *dest,
             /* Check if one of the values we have needs to be saved as a */
             /* part of the WOTS signature */
             if (k == wots_k) {
-                memcpy( info->wots_sig + i * SPX_N,
-                        buffer + wots_sign_index * wots_offset, SPX_N );
+                memcpy( info->wots_sig + (i * SPX_N),
+                        buffer + (wots_sign_index * wots_offset), SPX_N );
             }
 
             /* Check if we hit the top of the chain */
@@ -250,42 +248,42 @@ void wots_gen_leafx8(unsigned char *dest,
 
             /* Iterate one step on all 8 chains */
             for (j = 0; j < 8; j++) {
-                set_hash_addr(leaf_addr + j * 8, k);
+                set_hash_addr(leaf_addr + (j * 8), k);
             }
-            thashx8(buffer + 0 * wots_offset,
-                    buffer + 1 * wots_offset,
-                    buffer + 2 * wots_offset,
-                    buffer + 3 * wots_offset,
-                    buffer + 4 * wots_offset,
-                    buffer + 5 * wots_offset,
-                    buffer + 6 * wots_offset,
-                    buffer + 7 * wots_offset,
-                    buffer + 0 * wots_offset,
-                    buffer + 1 * wots_offset,
-                    buffer + 2 * wots_offset,
-                    buffer + 3 * wots_offset,
-                    buffer + 4 * wots_offset,
-                    buffer + 5 * wots_offset,
-                    buffer + 6 * wots_offset,
-                    buffer + 7 * wots_offset, 1, ctx, leaf_addr);
+            thashx8(buffer + (0 * wots_offset),
+                    buffer + (1 * wots_offset),
+                    buffer + (2 * wots_offset),
+                    buffer + (3 * wots_offset),
+                    buffer + (4 * wots_offset),
+                    buffer + (5 * wots_offset),
+                    buffer + (6 * wots_offset),
+                    buffer + (7 * wots_offset),
+                    buffer + (0 * wots_offset),
+                    buffer + (1 * wots_offset),
+                    buffer + (2 * wots_offset),
+                    buffer + (3 * wots_offset),
+                    buffer + (4 * wots_offset),
+                    buffer + (5 * wots_offset),
+                    buffer + (6 * wots_offset),
+                    buffer + (7 * wots_offset), 1, ctx, leaf_addr);
         }
     }
 
     /* Do the final thash to generate the public keys */
-    thashx8(dest + 0 * SPX_N,
-            dest + 1 * SPX_N,
-            dest + 2 * SPX_N,
-            dest + 3 * SPX_N,
-            dest + 4 * SPX_N,
-            dest + 5 * SPX_N,
-            dest + 6 * SPX_N,
-            dest + 7 * SPX_N,
-            pk_buffer + 0 * wots_offset,
-            pk_buffer + 1 * wots_offset,
-            pk_buffer + 2 * wots_offset,
-            pk_buffer + 3 * wots_offset,
-            pk_buffer + 4 * wots_offset,
-            pk_buffer + 5 * wots_offset,
-            pk_buffer + 6 * wots_offset,
-            pk_buffer + 7 * wots_offset, SPX_WOTS_LEN, ctx, pk_addr);
+    thashx8(dest + (0 * SPX_N),
+            dest + (1 * SPX_N),
+            dest + (2 * SPX_N),
+            dest + (3 * SPX_N),
+            dest + (4 * SPX_N),
+            dest + (5 * SPX_N),
+            dest + (6 * SPX_N),
+            dest + (7 * SPX_N),
+            pk_buffer + (0 * wots_offset),
+            pk_buffer + (1 * wots_offset),
+            pk_buffer + (2 * wots_offset),
+            pk_buffer + (3 * wots_offset),
+            pk_buffer + (4 * wots_offset),
+            pk_buffer + (5 * wots_offset),
+            pk_buffer + (6 * wots_offset),
+            pk_buffer + (7 * wots_offset), SPX_WOTS_LEN, ctx, pk_addr);
 }

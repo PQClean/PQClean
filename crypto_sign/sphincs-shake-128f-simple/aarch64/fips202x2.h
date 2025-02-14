@@ -6,6 +6,7 @@
 uint64_t load64(const unsigned char *x);
 void store64(uint8_t *x, uint64_t u);
 
+
 void shake128x2(unsigned char *out0,
                 unsigned char *out1,
                 unsigned long long outlen,

@@ -46,12 +46,13 @@ static void keccak_absorb4x(__m256i *s,
 
     unsigned long long *ss = (unsigned long long *)s;
 
+
     while (mlen >= r) {
         for (i = 0; i < r / 8; ++i) {
-            ss[4 * i + 0] ^= load64(m0 + 8 * i);
-            ss[4 * i + 1] ^= load64(m1 + 8 * i);
-            ss[4 * i + 2] ^= load64(m2 + 8 * i);
-            ss[4 * i + 3] ^= load64(m3 + 8 * i);
+            ss[(4 * i) + 0] ^= load64(m0 + (8 * i));
+            ss[(4 * i) + 1] ^= load64(m1 + (8 * i));
+            ss[(4 * i) + 2] ^= load64(m2 + (8 * i));
+            ss[(4 * i) + 3] ^= load64(m3 + (8 * i));
         }
 
         KeccakF1600_StatePermute4x(s);
@@ -86,12 +87,13 @@ static void keccak_absorb4x(__m256i *s,
     t3[r - 1] |= 128;
 
     for (i = 0; i < r / 8; ++i) {
-        ss[4 * i + 0] ^= load64(t0 + 8 * i);
-        ss[4 * i + 1] ^= load64(t1 + 8 * i);
-        ss[4 * i + 2] ^= load64(t2 + 8 * i);
-        ss[4 * i + 3] ^= load64(t3 + 8 * i);
+        ss[(4 * i) + 0] ^= load64(t0 + (8 * i));
+        ss[(4 * i) + 1] ^= load64(t1 + (8 * i));
+        ss[(4 * i) + 2] ^= load64(t2 + (8 * i));
+        ss[(4 * i) + 3] ^= load64(t3 + (8 * i));
     }
 }
+
 
 static void keccak_squeezeblocks4x(unsigned char *h0,
                                    unsigned char *h1,
@@ -107,10 +109,10 @@ static void keccak_squeezeblocks4x(unsigned char *h0,
     while (nblocks > 0) {
         KeccakF1600_StatePermute4x(s);
         for (i = 0; i < (r >> 3); i++) {
-            store64(h0 + 8 * i, ss[4 * i + 0]);
-            store64(h1 + 8 * i, ss[4 * i + 1]);
-            store64(h2 + 8 * i, ss[4 * i + 2]);
-            store64(h3 + 8 * i, ss[4 * i + 3]);
+            store64(h0 + (8 * i), ss[(4 * i) + 0]);
+            store64(h1 + (8 * i), ss[(4 * i) + 1]);
+            store64(h2 + (8 * i), ss[(4 * i) + 2]);
+            store64(h3 + (8 * i), ss[(4 * i) + 3]);
         }
         h0 += r;
         h1 += r;
@@ -119,6 +121,8 @@ static void keccak_squeezeblocks4x(unsigned char *h0,
         nblocks--;
     }
 }
+
+
 
 void shake128x4(unsigned char *out0,
                 unsigned char *out1,
@@ -161,6 +165,7 @@ void shake128x4(unsigned char *out0,
         }
     }
 }
+
 
 void shake256x4(unsigned char *out0,
                 unsigned char *out1,

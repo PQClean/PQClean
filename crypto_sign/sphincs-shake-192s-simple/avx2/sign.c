@@ -54,7 +54,7 @@ int crypto_sign_seed_keypair(uint8_t *pk, uint8_t *sk,
     /* Initialize SK_SEED, SK_PRF and PUB_SEED from seed. */
     memcpy(sk, seed, CRYPTO_SEEDBYTES);
 
-    memcpy(pk, sk + 2 * SPX_N, SPX_N);
+    memcpy(pk, sk + (2 * SPX_N), SPX_N);
 
     memcpy(ctx.pub_seed, pk, SPX_N);
     memcpy(ctx.sk_seed, sk, SPX_N);
@@ -64,12 +64,12 @@ int crypto_sign_seed_keypair(uint8_t *pk, uint8_t *sk,
     initialize_hash_function(&ctx);
 
     /* Compute root node of the top-most subtree. */
-    merkle_gen_root(sk + 3 * SPX_N, &ctx);
+    merkle_gen_root(sk + (3 * SPX_N), &ctx);
 
     // cleanup
     free_hash_function(&ctx);
 
-    memcpy(pk + SPX_N, sk + 3 * SPX_N, SPX_N);
+    memcpy(pk + SPX_N, sk + (3 * SPX_N), SPX_N);
 
     return 0;
 }
@@ -95,7 +95,7 @@ int crypto_sign_signature(uint8_t *sig, size_t *siglen,
     spx_ctx ctx;
 
     const uint8_t *sk_prf = sk + SPX_N;
-    const uint8_t *pk = sk + 2 * SPX_N;
+    const uint8_t *pk = sk + (2 * SPX_N);
 
     uint8_t optrand[SPX_N];
     uint8_t mhash[SPX_FORS_MSG_BYTES];
@@ -239,6 +239,7 @@ int crypto_sign_verify(const uint8_t *sig, size_t siglen,
 
     return 0;
 }
+
 
 /**
  * Returns an array containing the signature followed by the message.

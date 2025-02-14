@@ -1,11 +1,12 @@
+#include <stdint.h>
 #include <string.h>
 
 #include "utilsx2.h"
 
 #include "address.h"
+#include "context.h"
 #include "params.h"
 #include "thashx2.h"
-#include "utils.h"
 
 /*
  * Generate the entire Merkle tree, computing the authentication path for leaf_idx,
@@ -52,7 +53,7 @@ void treehashx2(unsigned char *root, unsigned char *auth_path,
     uint32_t max_idx = (1 << (tree_height - 1)) - 1;
     for (idx = 0;; idx++) {
         unsigned char current[2 * SPX_N]; /* Current logical node */
-        gen_leafx2( current, ctx, 2 * idx + idx_offset,
+        gen_leafx2( current, ctx, (2 * idx) + idx_offset,
                     info );
 
         /* Now combine the freshly generated right node with previously */
@@ -88,7 +89,7 @@ void treehashx2(unsigned char *root, unsigned char *auth_path,
              * Check if one of the nodes we have is a part of the
              * authentication path; if it is, write it out
              */
-            if ((((internal_idx << 1) ^ internal_leaf) & 0xFFFFFFFE) == 0) {
+            if ((((internal_idx << 1) ^ internal_leaf) & ~0x1U) == 0) {
                 memcpy( &auth_path[ h * SPX_N ],
                         &current[(((internal_leaf & 1) ^ 1) + prev_left_adj) * SPX_N],
                         SPX_N );
@@ -108,12 +109,12 @@ void treehashx2(unsigned char *root, unsigned char *auth_path,
             /* Now combine the left and right logical nodes together */
 
             /* Set the address of the node we're creating. */
-            unsigned int j;
+            uint8_t j;
             internal_idx_offset >>= 1;
             for (j = 0; j < 2; j++) {
-                set_tree_height(tree_addrx2 + j * 8, h + 1);
-                set_tree_index(tree_addrx2 + j * 8,
-                               (2 / 2) * (internal_idx & ~1U) + j - left_adj + internal_idx_offset );
+                set_tree_height(tree_addrx2 + (j * 8), h + 1);
+                set_tree_index(tree_addrx2 + (j * 8),
+                               ((2 / 2) * (internal_idx & ~1U)) + j - left_adj + internal_idx_offset );
             }
             unsigned char *left = &stackx2[h * 2 * SPX_N];
             thashx2( &current[0 * SPX_N],
