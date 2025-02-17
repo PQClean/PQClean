@@ -1,6 +1,12 @@
 #include <immintrin.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #include "context.h"
+#include "params.h"
+#include "sha2.h"
+#include "sha256avx.h"
+#include "sha2_offsets.h"
 
 /**
  * Absorb the constant pub_seed using one round of the compression function
@@ -31,6 +37,7 @@ static void seed_state(spx_ctx *ctx) {
     ctx->statex8_seeded.msglen = 512;
 
 }
+
 
 /* For SHA, we initialize the hash function at the start */
 void initialize_hash_function(spx_ctx *ctx) {

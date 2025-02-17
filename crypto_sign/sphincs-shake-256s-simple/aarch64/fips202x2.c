@@ -35,8 +35,8 @@ static void keccak_absorb2x(uint64_t *s,
 
     while (mlen >= r) {
         for (i = 0; i < r / 8; ++i) {
-            s[2 * i + 0] ^= load64(m0 + 8 * i);
-            s[2 * i + 1] ^= load64(m1 + 8 * i);
+            s[(2 * i) + 0] ^= load64(m0 + (8 * i));
+            s[(2 * i) + 1] ^= load64(m1 + (8 * i));
         }
 
         f1600x2(s);
@@ -61,10 +61,11 @@ static void keccak_absorb2x(uint64_t *s,
     t1[r - 1] |= 128;
 
     for (i = 0; i < r / 8; ++i) {
-        s[2 * i + 0] ^= load64(t0 + 8 * i);
-        s[2 * i + 1] ^= load64(t1 + 8 * i);
+        s[(2 * i) + 0] ^= load64(t0 + (8 * i));
+        s[(2 * i) + 1] ^= load64(t1 + (8 * i));
     }
 }
+
 
 static void keccak_squeezeblocks2x(unsigned char *h0,
                                    unsigned char *h1,
@@ -76,14 +77,16 @@ static void keccak_squeezeblocks2x(unsigned char *h0,
     while (nblocks > 0) {
         f1600x2(s);
         for (i = 0; i < (r >> 3); i++) {
-            store64(h0 + 8 * i, s[2 * i + 0]);
-            store64(h1 + 8 * i, s[2 * i + 1]);
+            store64(h0 + (8 * i), s[(2 * i) + 0]);
+            store64(h1 + (8 * i), s[(2 * i) + 1]);
         }
         h0 += r;
         h1 += r;
         nblocks--;
     }
 }
+
+
 
 void shake128x2(unsigned char *out0,
                 unsigned char *out1,
@@ -113,6 +116,7 @@ void shake128x2(unsigned char *out0,
         }
     }
 }
+
 
 void shake256x2(unsigned char *out0,
                 unsigned char *out1,

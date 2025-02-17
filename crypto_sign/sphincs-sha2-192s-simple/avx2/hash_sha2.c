@@ -1,11 +1,14 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "address.h"
+#include "context.h"
 #include "hash.h"
 #include "params.h"
 #include "sha2.h"
+#include "sha2_offsets.h"
 #include "utils.h"
+
+
 
 #define SPX_SHAX_OUTPUT_BYTES SPX_SHA512_OUTPUT_BYTES
 #define SPX_SHAX_BLOCK_BYTES SPX_SHA512_BLOCK_BYTES
@@ -40,7 +43,7 @@ void mgf1_256(unsigned char *out, unsigned long outlen,
     if (outlen > i * SPX_SHA256_OUTPUT_BYTES) {
         u32_to_bytes(inbuf + inlen, i);
         sha256(outbuf, inbuf, inlen + 4);
-        memcpy(out, outbuf, outlen - i * SPX_SHA256_OUTPUT_BYTES);
+        memcpy(out, outbuf, outlen - (i * SPX_SHA256_OUTPUT_BYTES));
     }
 }
 
@@ -65,7 +68,7 @@ void mgf1_512(unsigned char *out, unsigned long outlen,
     if (outlen > i * SPX_SHA512_OUTPUT_BYTES) {
         u32_to_bytes(inbuf + inlen, i);
         sha512(outbuf, inbuf, inlen + 4);
-        memcpy(out, outbuf, outlen - i * SPX_SHA512_OUTPUT_BYTES);
+        memcpy(out, outbuf, outlen - (i * SPX_SHA512_OUTPUT_BYTES));
     }
 }
 
@@ -107,6 +110,7 @@ void gen_message_random(unsigned char *R, const unsigned char *sk_prf,
     unsigned char buf[SPX_SHAX_BLOCK_BYTES + SPX_SHAX_OUTPUT_BYTES];
     shaXstate state;
     int i;
+
 
     /* This implements HMAC-SHA */
     for (i = 0; i < SPX_N; i++) {
@@ -160,7 +164,7 @@ void hash_message(unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
 #define SPX_LEAF_BYTES ((SPX_LEAF_BITS + 7) / 8)
 #define SPX_DGST_BYTES (SPX_FORS_MSG_BYTES + SPX_TREE_BYTES + SPX_LEAF_BYTES)
 
-    unsigned char seed[2 * SPX_N + SPX_SHAX_OUTPUT_BYTES];
+    unsigned char seed[(2 * SPX_N) + SPX_SHAX_OUTPUT_BYTES];
 
     /* Round to nearest multiple of SPX_SHAX_BLOCK_BYTES */
 #define SPX_INBLOCKS (((SPX_N + SPX_PK_BYTES + SPX_SHAX_BLOCK_BYTES - 1) & \
@@ -180,17 +184,17 @@ void hash_message(unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
     /* If R + pk + message cannot fill up an entire block */
     if (SPX_N + SPX_PK_BYTES + mlen < SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES) {
         memcpy(inbuf + SPX_N + SPX_PK_BYTES, m, mlen);
-        shaX_inc_finalize(seed + 2 * SPX_N, &state, inbuf, SPX_N + SPX_PK_BYTES + mlen);
+        shaX_inc_finalize(seed + (2 * SPX_N), &state, inbuf, SPX_N + SPX_PK_BYTES + mlen);
     }
     /* Otherwise first fill a block, so that finalize only uses the message */
     else {
         memcpy(inbuf + SPX_N + SPX_PK_BYTES, m,
-               SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES - SPX_N - SPX_PK_BYTES);
+               (SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES) - SPX_N - SPX_PK_BYTES);
         shaX_inc_blocks(&state, inbuf, SPX_INBLOCKS);
 
         m += SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES - SPX_N - SPX_PK_BYTES;
         mlen -= SPX_INBLOCKS * SPX_SHAX_BLOCK_BYTES - SPX_N - SPX_PK_BYTES;
-        shaX_inc_finalize(seed + 2 * SPX_N, &state, m, (size_t)mlen);
+        shaX_inc_finalize(seed + (2 * SPX_N), &state, m, mlen);
     }
 
     // H_msg: MGF1-SHA-X(R ‖ PK.seed ‖ seed)
@@ -199,10 +203,11 @@ void hash_message(unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
 
     /* By doing this in two steps, we prevent hashing the message twice;
        otherwise each iteration in MGF1 would hash the message again. */
-    mgf1_X(bufp, SPX_DGST_BYTES, seed, 2 * SPX_N + SPX_SHAX_OUTPUT_BYTES);
+    mgf1_X(bufp, SPX_DGST_BYTES, seed, (2 * SPX_N) + SPX_SHAX_OUTPUT_BYTES);
 
     memcpy(digest, bufp, SPX_FORS_MSG_BYTES);
     bufp += SPX_FORS_MSG_BYTES;
+
 
     *tree = bytes_to_ull(bufp, SPX_TREE_BYTES);
     *tree &= (~(uint64_t)0) >> (64 - SPX_TREE_BITS);
@@ -211,3 +216,5 @@ void hash_message(unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
     *leaf_idx = (uint32_t)bytes_to_ull(bufp, SPX_LEAF_BYTES);
     *leaf_idx &= (~(uint32_t)0) >> (32 - SPX_LEAF_BITS);
 }
+
+

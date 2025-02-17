@@ -1,11 +1,11 @@
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "fors.h"
 
 #include "address.h"
+#include "context.h"
 #include "hash.h"
+#include "params.h"
 #include "thash.h"
 #include "utils.h"
 #include "utilsx1.h"
@@ -97,7 +97,7 @@ void fors_sign(unsigned char *sig, unsigned char *pk,
         sig += SPX_N;
 
         /* Compute the authentication path for this leaf node. */
-        treehashx1(roots + i * SPX_N, sig, ctx,
+        treehashx1(roots + (i * SPX_N), sig, ctx,
                    indices[i], idx_offset, SPX_FORS_HEIGHT, fors_gen_leafx1,
                    fors_tree_addr, &fors_info);
 
@@ -146,7 +146,7 @@ void fors_pk_from_sig(unsigned char *pk,
         sig += SPX_N;
 
         /* Derive the corresponding root node of this tree. */
-        compute_root(roots + i * SPX_N, leaf, indices[i], idx_offset,
+        compute_root(roots + (i * SPX_N), leaf, indices[i], idx_offset,
                      sig, SPX_FORS_HEIGHT, ctx, fors_tree_addr);
         sig += SPX_N * SPX_FORS_HEIGHT;
     }

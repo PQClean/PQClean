@@ -1,12 +1,13 @@
 #include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include "fors.h"
 
+
 #include "address.h"
+#include "context.h"
 #include "hash.h"
 #include "hashx8.h"
+#include "params.h"
 #include "thash.h"
 #include "thashx8.h"
 #include "utils.h"
@@ -71,40 +72,40 @@ static void fors_gen_leafx8(unsigned char *leaf,
 
     /* Only set the parts that the caller doesn't set */
     for (j = 0; j < 8; j++) {
-        set_tree_index(fors_leaf_addrx8 + j * 8, addr_idx + j);
-        set_type(fors_leaf_addrx8 + j * 8, SPX_ADDR_TYPE_FORSPRF);
+        set_tree_index(fors_leaf_addrx8 + (j * 8), addr_idx + j);
+        set_type(fors_leaf_addrx8 + (j * 8), SPX_ADDR_TYPE_FORSPRF);
     }
 
-    fors_gen_skx8(leaf + 0 * SPX_N,
-                  leaf + 1 * SPX_N,
-                  leaf + 2 * SPX_N,
-                  leaf + 3 * SPX_N,
-                  leaf + 4 * SPX_N,
-                  leaf + 5 * SPX_N,
-                  leaf + 6 * SPX_N,
-                  leaf + 7 * SPX_N,
+    fors_gen_skx8(leaf + (0 * SPX_N),
+                  leaf + (1 * SPX_N),
+                  leaf + (2 * SPX_N),
+                  leaf + (3 * SPX_N),
+                  leaf + (4 * SPX_N),
+                  leaf + (5 * SPX_N),
+                  leaf + (6 * SPX_N),
+                  leaf + (7 * SPX_N),
                   ctx, fors_leaf_addrx8);
 
     for (j = 0; j < 8; j++) {
-        set_type(fors_leaf_addrx8 + j * 8, SPX_ADDR_TYPE_FORSTREE);
+        set_type(fors_leaf_addrx8 + (j * 8), SPX_ADDR_TYPE_FORSTREE);
     }
 
-    fors_sk_to_leafx8(leaf + 0 * SPX_N,
-                      leaf + 1 * SPX_N,
-                      leaf + 2 * SPX_N,
-                      leaf + 3 * SPX_N,
-                      leaf + 4 * SPX_N,
-                      leaf + 5 * SPX_N,
-                      leaf + 6 * SPX_N,
-                      leaf + 7 * SPX_N,
-                      leaf + 0 * SPX_N,
-                      leaf + 1 * SPX_N,
-                      leaf + 2 * SPX_N,
-                      leaf + 3 * SPX_N,
-                      leaf + 4 * SPX_N,
-                      leaf + 5 * SPX_N,
-                      leaf + 6 * SPX_N,
-                      leaf + 7 * SPX_N,
+    fors_sk_to_leafx8(leaf + (0 * SPX_N),
+                      leaf + (1 * SPX_N),
+                      leaf + (2 * SPX_N),
+                      leaf + (3 * SPX_N),
+                      leaf + (4 * SPX_N),
+                      leaf + (5 * SPX_N),
+                      leaf + (6 * SPX_N),
+                      leaf + (7 * SPX_N),
+                      leaf + (0 * SPX_N),
+                      leaf + (1 * SPX_N),
+                      leaf + (2 * SPX_N),
+                      leaf + (3 * SPX_N),
+                      leaf + (4 * SPX_N),
+                      leaf + (5 * SPX_N),
+                      leaf + (6 * SPX_N),
+                      leaf + (7 * SPX_N),
                       ctx, fors_leaf_addrx8);
 }
 
@@ -144,9 +145,9 @@ void fors_sign(unsigned char *sig, unsigned char *pk,
     unsigned int i;
 
     for (i = 0; i < 8; i++) {
-        copy_keypair_addr(fors_tree_addr + 8 * i, fors_addr);
-        set_type(fors_tree_addr + 8 * i, SPX_ADDR_TYPE_FORSTREE);
-        copy_keypair_addr(fors_leaf_addr + 8 * i, fors_addr);
+        copy_keypair_addr(fors_tree_addr + (8 * i), fors_addr);
+        set_type(fors_tree_addr + (8 * i), SPX_ADDR_TYPE_FORSTREE);
+        copy_keypair_addr(fors_leaf_addr + (8 * i), fors_addr);
     }
     copy_keypair_addr(fors_pk_addr, fors_addr);
     set_type(fors_pk_addr, SPX_ADDR_TYPE_FORSPK);
@@ -166,7 +167,7 @@ void fors_sign(unsigned char *sig, unsigned char *pk,
         sig += SPX_N;
 
         /* Compute the authentication path for this leaf node. */
-        treehashx8(roots + i * SPX_N, sig, ctx,
+        treehashx8(roots + (i * SPX_N), sig, ctx,
                    indices[i], idx_offset, SPX_FORS_HEIGHT, fors_gen_leafx8,
                    fors_tree_addr, &fors_info);
 
@@ -215,7 +216,7 @@ void fors_pk_from_sig(unsigned char *pk,
         sig += SPX_N;
 
         /* Derive the corresponding root node of this tree. */
-        compute_root(roots + i * SPX_N, leaf, indices[i], idx_offset,
+        compute_root(roots + (i * SPX_N), leaf, indices[i], idx_offset,
                      sig, SPX_FORS_HEIGHT, ctx, fors_tree_addr);
         sig += SPX_N * SPX_FORS_HEIGHT;
     }

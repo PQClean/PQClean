@@ -1,9 +1,9 @@
 #include <stdint.h>
-#include <stdio.h>
 #include <string.h>
 
 /* pull in the entire thing */
 #include "sha512x4.h"
+#include "sha2_offsets.h"
 #include "utils.h"
 
 typedef uint64_t u64;
@@ -40,6 +40,7 @@ static void transpose(u256 s[4]) {
     s[2] = _mm256_permute2x128_si256(tmp[0], tmp[2], 0x31);
     s[3] = _mm256_permute2x128_si256(tmp[1], tmp[3], 0x31);
 }
+
 
 void sha512_init4x(sha512x4ctx *ctx) {
 #define SET4(x) _mm256_set_epi64x((long long)(x), (long long)(x), (long long)(x), (long long)(x))
@@ -294,17 +295,17 @@ static void _sha512x4(
     if (ctx->datalen < 112) {
         for (i = 0; i < 4; ++i) {
             curlen = ctx->datalen;
-            ctx->msgblocks[128 * i + curlen++] = 0x80;
+            ctx->msgblocks[(128 * i) + curlen++] = 0x80;
             while (curlen < 128) {
-                ctx->msgblocks[128 * i + curlen++] = 0x00;
+                ctx->msgblocks[(128 * i) + curlen++] = 0x00;
             }
         }
     } else {
         for (i = 0; i < 4; ++i) {
             curlen = ctx->datalen;
-            ctx->msgblocks[128 * i + curlen++] = 0x80;
+            ctx->msgblocks[(128 * i) + curlen++] = 0x80;
             while (curlen < 128) {
-                ctx->msgblocks[128 * i + curlen++] = 0x00;
+                ctx->msgblocks[(128 * i) + curlen++] = 0x00;
             }
         }
         sha512_transform4x(
@@ -320,15 +321,15 @@ static void _sha512x4(
     // Add length of the message to each block
     ctx->msglen += (unsigned long long)(ctx->datalen) * 8;
     for (i = 0; i < 4; i++) {
-        ctx->msgblocks[128 * i + 127] = (unsigned char)(ctx->msglen);
-        ctx->msgblocks[128 * i + 126] = (unsigned char)(ctx->msglen >> 8);
-        ctx->msgblocks[128 * i + 125] = (unsigned char)(ctx->msglen >> 16);
-        ctx->msgblocks[128 * i + 124] = (unsigned char)(ctx->msglen >> 24);
-        ctx->msgblocks[128 * i + 123] = (unsigned char)(ctx->msglen >> 32);
-        ctx->msgblocks[128 * i + 122] = (unsigned char)(ctx->msglen >> 40);
-        ctx->msgblocks[128 * i + 121] = (unsigned char)(ctx->msglen >> 48);
-        ctx->msgblocks[128 * i + 120] = (unsigned char)(ctx->msglen >> 56);
-        memset( &ctx->msgblocks[128 * i + 112], 0, 8 );
+        ctx->msgblocks[(128 * i) + 127] = (unsigned char)(ctx->msglen);
+        ctx->msgblocks[(128 * i) + 126] = (unsigned char)(ctx->msglen >> 8);
+        ctx->msgblocks[(128 * i) + 125] = (unsigned char)(ctx->msglen >> 16);
+        ctx->msgblocks[(128 * i) + 124] = (unsigned char)(ctx->msglen >> 24);
+        ctx->msgblocks[(128 * i) + 123] = (unsigned char)(ctx->msglen >> 32);
+        ctx->msgblocks[(128 * i) + 122] = (unsigned char)(ctx->msglen >> 40);
+        ctx->msgblocks[(128 * i) + 121] = (unsigned char)(ctx->msglen >> 48);
+        ctx->msgblocks[(128 * i) + 120] = (unsigned char)(ctx->msglen >> 56);
+        memset( &ctx->msgblocks[(128 * i) + 112], 0, 8 );
     }
     sha512_transform4x(
         ctx,
@@ -361,6 +362,7 @@ static void _sha512x4(
     memcpy(out3, out, 64);
 }
 
+
 /**
  * Note that inlen should be sufficiently small that it still allows for
  * an array to be allocated on the stack. Typically 'in' is merely a seed.
@@ -377,10 +379,10 @@ void mgf1x4_512(unsigned char *outx4, unsigned long outlen,
     uint32_t i;
     unsigned int j;
 
-    memcpy(inbufx4 + 0 * (inlen + 4), in0, inlen);
-    memcpy(inbufx4 + 1 * (inlen + 4), in1, inlen);
-    memcpy(inbufx4 + 2 * (inlen + 4), in2, inlen);
-    memcpy(inbufx4 + 3 * (inlen + 4), in3, inlen);
+    memcpy(inbufx4 + (0 * (inlen + 4)), in0, inlen);
+    memcpy(inbufx4 + (1 * (inlen + 4)), in1, inlen);
+    memcpy(inbufx4 + (2 * (inlen + 4)), in2, inlen);
+    memcpy(inbufx4 + (3 * (inlen + 4)), in3, inlen);
 
     /* While we can fit in at least another full block of SHA512 output.. */
     unsigned long remaining = outlen;
@@ -391,7 +393,7 @@ void mgf1x4_512(unsigned char *outx4, unsigned long outlen,
         }
         remaining -= this_step;
         for (j = 0; j < 4; j++) {
-            u32_to_bytes(inbufx4 + inlen + j * (inlen + 4), i);
+            u32_to_bytes(inbufx4 + inlen + (j * (inlen + 4)), i);
         }
 
         sha512x4ctx ctx;
@@ -399,21 +401,21 @@ void mgf1x4_512(unsigned char *outx4, unsigned long outlen,
 
         _sha512x4(
             &ctx,
-            outbuf + 0 * 64,
-            outbuf + 1 * 64,
-            outbuf + 2 * 64,
-            outbuf + 3 * 64,
-            inbufx4 + 0 * (inlen + 4),
-            inbufx4 + 1 * (inlen + 4),
-            inbufx4 + 2 * (inlen + 4),
-            inbufx4 + 3 * (inlen + 4),
+            outbuf + (0 * 64),
+            outbuf + (1 * 64),
+            outbuf + (2 * 64),
+            outbuf + (3 * 64),
+            inbufx4 + (0 * (inlen + 4)),
+            inbufx4 + (1 * (inlen + 4)),
+            inbufx4 + (2 * (inlen + 4)),
+            inbufx4 + (3 * (inlen + 4)),
             inlen + 4
         );
 
-        memcpy(outx4 + 0 * outlen, outbuf + 0 * 64, this_step);
-        memcpy(outx4 + 1 * outlen, outbuf + 1 * 64, this_step);
-        memcpy(outx4 + 2 * outlen, outbuf + 2 * 64, this_step);
-        memcpy(outx4 + 3 * outlen, outbuf + 3 * 64, this_step);
+        memcpy(outx4 + (0 * outlen), outbuf + (0 * 64), this_step);
+        memcpy(outx4 + (1 * outlen), outbuf + (1 * 64), this_step);
+        memcpy(outx4 + (2 * outlen), outbuf + (2 * 64), this_step);
+        memcpy(outx4 + (3 * outlen), outbuf + (3 * 64), this_step);
         outx4 += this_step;
     }
 }

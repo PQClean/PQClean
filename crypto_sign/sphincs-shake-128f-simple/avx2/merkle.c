@@ -1,11 +1,10 @@
 #include <stdint.h>
-#include <string.h>
 
 #include "merkle.h"
 
 #include "address.h"
+#include "context.h"
 #include "params.h"
-#include "utils.h"
 #include "utilsx4.h"
 #include "wots.h"
 #include "wotsx4.h"
@@ -51,7 +50,7 @@ void merkle_gen_root(unsigned char *root, const spx_ctx *ctx) {
     /* We do not need the auth path in key generation, but it simplifies the
        code to have just one treehash routine that computes both root and path
        in one function. */
-    unsigned char auth_path[SPX_TREE_HEIGHT * SPX_N + SPX_WOTS_BYTES];
+    unsigned char auth_path[(SPX_TREE_HEIGHT * SPX_N) + SPX_WOTS_BYTES];
     uint32_t top_tree_addr[8] = {0};
     uint32_t wots_addr[8] = {0};
 

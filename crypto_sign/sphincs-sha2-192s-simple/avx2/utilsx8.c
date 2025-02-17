@@ -1,5 +1,7 @@
+#include <stdint.h>
 #include <string.h>
 
+#include "context.h"
 #include "utils.h"
 #include "utilsx8.h"
 
@@ -56,7 +58,7 @@ void treehashx8(unsigned char *root, unsigned char *auth_path,
     uint32_t max_idx = ((uint32_t)1 << (tree_height - 3)) - 1;
     for (idx = 0;; idx++) {
         unsigned char current[8 * SPX_N]; /* Current logical node */
-        gen_leafx8( current, ctx, 8 * idx + idx_offset,
+        gen_leafx8( current, ctx, (8 * idx) + idx_offset,
                     info );
 
         /* Now combine the freshly generated right node with previously */
@@ -115,9 +117,9 @@ void treehashx8(unsigned char *root, unsigned char *auth_path,
             uint32_t j;
             internal_idx_offset >>= 1;
             for (j = 0; j < 8; j++) {
-                set_tree_height(tree_addrx8 + j * 8, h + 1);
-                set_tree_index(tree_addrx8 + j * 8,
-                               (8 / 2) * (internal_idx & ~1U) + j - left_adj + internal_idx_offset );
+                set_tree_height(tree_addrx8 + (j * 8), h + 1);
+                set_tree_index(tree_addrx8 + (j * 8),
+                               ((8 / 2) * (internal_idx & ~1U)) + j - left_adj + internal_idx_offset );
             }
             unsigned char *left = &stackx8[h * 8 * SPX_N];
             thashx8( &current[0 * SPX_N],

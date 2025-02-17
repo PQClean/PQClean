@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "context.h"
 #include "hash.h"
 
-#include "address.h"
 #include "fips202.h"
 #include "params.h"
 #include "utils.h"
@@ -13,13 +13,13 @@
  */
 void prf_addr(unsigned char *out, const spx_ctx *ctx,
               const uint32_t addr[8]) {
-    unsigned char buf[2 * SPX_N + SPX_ADDR_BYTES];
+    unsigned char buf[(2 * SPX_N) + SPX_ADDR_BYTES];
 
     memcpy(buf, ctx->pub_seed, SPX_N);
     memcpy(buf + SPX_N, addr, SPX_ADDR_BYTES);
     memcpy(buf + SPX_N + SPX_ADDR_BYTES, ctx->sk_seed, SPX_N);
 
-    shake256(out, SPX_N, buf, 2 * SPX_N + SPX_ADDR_BYTES);
+    shake256(out, SPX_N, buf, (2 * SPX_N) + SPX_ADDR_BYTES);
 }
 
 /**
@@ -72,6 +72,7 @@ void hash_message(unsigned char *digest, uint64_t *tree, uint32_t *leaf_idx,
 
     memcpy(digest, bufp, SPX_FORS_MSG_BYTES);
     bufp += SPX_FORS_MSG_BYTES;
+
 
     *tree = bytes_to_ull(bufp, SPX_TREE_BYTES);
     *tree &= (~(uint64_t)0) >> (64 - SPX_TREE_BITS);

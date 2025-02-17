@@ -1,9 +1,10 @@
+#include <stdint.h>
 #include <string.h>
 
 #include "utils.h"
 
 #include "address.h"
-#include "hash.h"
+#include "context.h"
 #include "params.h"
 #include "thash.h"
 
@@ -112,13 +113,13 @@ void treehash(unsigned char *root, unsigned char *auth_path, const spx_ctx *ctx,
 
     for (idx = 0; idx < (uint32_t)(1 << tree_height); idx++) {
         /* Add the next leaf node to the stack. */
-        gen_leaf(stack + offset * SPX_N, ctx, idx + idx_offset, tree_addr);
+        gen_leaf(stack + (offset * SPX_N), ctx, idx + idx_offset, tree_addr);
         offset++;
         heights[offset - 1] = 0;
 
         /* If this is a node we need for the auth path.. */
         if ((leaf_idx ^ 0x1) == idx) {
-            memcpy(auth_path, stack + (offset - 1)*SPX_N, SPX_N);
+            memcpy(auth_path, stack + ((offset - 1)*SPX_N), SPX_N);
         }
 
         /* While the top-most nodes are of equal height.. */
@@ -131,16 +132,16 @@ void treehash(unsigned char *root, unsigned char *auth_path, const spx_ctx *ctx,
             set_tree_index(tree_addr,
                            tree_idx + (idx_offset >> (heights[offset - 1] + 1)));
             /* Hash the top-most nodes from the stack together. */
-            thash(stack + (offset - 2)*SPX_N,
-                  stack + (offset - 2)*SPX_N, 2, ctx, tree_addr);
+            thash(stack + ((offset - 2)*SPX_N),
+                  stack + ((offset - 2)*SPX_N), 2, ctx, tree_addr);
             offset--;
             /* Note that the top-most node is now one layer higher. */
             heights[offset - 1]++;
 
             /* If this is a node we need for the auth path.. */
             if (((leaf_idx >> heights[offset - 1]) ^ 0x1) == tree_idx) {
-                memcpy(auth_path + heights[offset - 1]*SPX_N,
-                       stack + (offset - 1)*SPX_N, SPX_N);
+                memcpy(auth_path + (heights[offset - 1]*SPX_N),
+                       stack + ((offset - 1)*SPX_N), SPX_N);
             }
         }
     }

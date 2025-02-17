@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "address.h"
-#include "params.h"
+#include "sha2_offsets.h"
 #include "utils.h"
 
 /*

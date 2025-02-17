@@ -1,10 +1,9 @@
+#include <immintrin.h>
 #include <stdint.h>
-#include <string.h>
 
+#include "context.h"
 #include "hashx4.h"
 
-#include "address.h"
-#include "fips202x4.h"
 #include "params.h"
 
 extern void KeccakP1600times4_PermuteAll_24rounds(__m256i *s);
@@ -26,24 +25,24 @@ void prf_addrx4(unsigned char *out0,
         state[i] = _mm256_set1_epi64x(((int64_t *)ctx->pub_seed)[i]);
     }
     for (int i = 0; i < 4; i++) {
-        state[SPX_N / 8 + i] = _mm256_set_epi32(
-                                   (int)addrx4[3 * 8 + 1 + 2 * i],
-                                   (int)addrx4[3 * 8 + 2 * i],
-                                   (int)addrx4[2 * 8 + 1 + 2 * i],
-                                   (int)addrx4[2 * 8 + 2 * i],
-                                   (int)addrx4[8 + 1 + 2 * i],
-                                   (int)addrx4[8 + 2 * i],
-                                   (int)addrx4[1 + 2 * i],
-                                   (int)addrx4[2 * i]
-                               );
+        state[(SPX_N / 8) + i] = _mm256_set_epi32(
+                                     (int)addrx4[(3 * 8) + 1 + (2 * i)],
+                                     (int)addrx4[(3 * 8) + (2 * i)],
+                                     (int)addrx4[(2 * 8) + 1 + (2 * i)],
+                                     (int)addrx4[(2 * 8) + (2 * i)],
+                                     (int)addrx4[8 + 1 + (2 * i)],
+                                     (int)addrx4[8 + (2 * i)],
+                                     (int)addrx4[1 + (2 * i)],
+                                     (int)addrx4[2 * i]
+                                 );
     }
     for (int i = 0; i < SPX_N / 8; i++) {
-        state[SPX_N / 8 + i + 4] = _mm256_set1_epi64x(((int64_t *)ctx->sk_seed)[i]);
+        state[(SPX_N / 8) + i + 4] = _mm256_set1_epi64x(((int64_t *)ctx->sk_seed)[i]);
     }
 
     /* SHAKE domain separator and padding. */
-    state[SPX_N / 4 + 4] = _mm256_set1_epi64x(0x1f);
-    for (int i = SPX_N / 4 + 5; i < 16; i++) {
+    state[(SPX_N / 4) + 4] = _mm256_set1_epi64x(0x1f);
+    for (int i = (SPX_N / 4) + 5; i < 16; i++) {
         state[i] = _mm256_set1_epi64x(0);
     }
     // shift unsigned and then cast to avoid UB

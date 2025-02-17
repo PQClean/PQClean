@@ -1,7 +1,9 @@
+#include <stdint.h>
 #include <string.h>
 
 #include "sha256avx.h"
 #include "sha256x8.h"
+#include "sha2_offsets.h"
 #include "utils.h"
 
 // Performs sha256x8 on an initialized (and perhaps seeded) state.
@@ -123,63 +125,63 @@ void mgf1x8(unsigned char *outx8, unsigned long outlen,
     uint32_t i;
     unsigned int j;
 
-    memcpy(inbufx8 + 0 * (inlen + 4), in0, inlen);
-    memcpy(inbufx8 + 1 * (inlen + 4), in1, inlen);
-    memcpy(inbufx8 + 2 * (inlen + 4), in2, inlen);
-    memcpy(inbufx8 + 3 * (inlen + 4), in3, inlen);
-    memcpy(inbufx8 + 4 * (inlen + 4), in4, inlen);
-    memcpy(inbufx8 + 5 * (inlen + 4), in5, inlen);
-    memcpy(inbufx8 + 6 * (inlen + 4), in6, inlen);
-    memcpy(inbufx8 + 7 * (inlen + 4), in7, inlen);
+    memcpy(inbufx8 + (0 * (inlen + 4)), in0, inlen);
+    memcpy(inbufx8 + (1 * (inlen + 4)), in1, inlen);
+    memcpy(inbufx8 + (2 * (inlen + 4)), in2, inlen);
+    memcpy(inbufx8 + (3 * (inlen + 4)), in3, inlen);
+    memcpy(inbufx8 + (4 * (inlen + 4)), in4, inlen);
+    memcpy(inbufx8 + (5 * (inlen + 4)), in5, inlen);
+    memcpy(inbufx8 + (6 * (inlen + 4)), in6, inlen);
+    memcpy(inbufx8 + (7 * (inlen + 4)), in7, inlen);
 
     /* While we can fit in at least another full block of SHA256 output.. */
     for (i = 0; (i + 1) * SPX_SHA256_OUTPUT_BYTES <= outlen; i++) {
         for (j = 0; j < 8; j++) {
-            u32_to_bytes(inbufx8 + inlen + j * (inlen + 4), i);
+            u32_to_bytes(inbufx8 + inlen + (j * (inlen + 4)), i);
         }
 
-        sha256x8(outx8 + 0 * outlen,
-                 outx8 + 1 * outlen,
-                 outx8 + 2 * outlen,
-                 outx8 + 3 * outlen,
-                 outx8 + 4 * outlen,
-                 outx8 + 5 * outlen,
-                 outx8 + 6 * outlen,
-                 outx8 + 7 * outlen,
-                 inbufx8 + 0 * (inlen + 4),
-                 inbufx8 + 1 * (inlen + 4),
-                 inbufx8 + 2 * (inlen + 4),
-                 inbufx8 + 3 * (inlen + 4),
-                 inbufx8 + 4 * (inlen + 4),
-                 inbufx8 + 5 * (inlen + 4),
-                 inbufx8 + 6 * (inlen + 4),
-                 inbufx8 + 7 * (inlen + 4), inlen + 4);
+        sha256x8(outx8 + (0 * outlen),
+                 outx8 + (1 * outlen),
+                 outx8 + (2 * outlen),
+                 outx8 + (3 * outlen),
+                 outx8 + (4 * outlen),
+                 outx8 + (5 * outlen),
+                 outx8 + (6 * outlen),
+                 outx8 + (7 * outlen),
+                 inbufx8 + (0 * (inlen + 4)),
+                 inbufx8 + (1 * (inlen + 4)),
+                 inbufx8 + (2 * (inlen + 4)),
+                 inbufx8 + (3 * (inlen + 4)),
+                 inbufx8 + (4 * (inlen + 4)),
+                 inbufx8 + (5 * (inlen + 4)),
+                 inbufx8 + (6 * (inlen + 4)),
+                 inbufx8 + (7 * (inlen + 4)), inlen + 4);
         outx8 += SPX_SHA256_OUTPUT_BYTES;
     }
     /* Until we cannot anymore, and we fill the remainder. */
     for (j = 0; j < 8; j++) {
-        u32_to_bytes(inbufx8 + inlen + j * (inlen + 4), i);
+        u32_to_bytes(inbufx8 + inlen + (j * (inlen + 4)), i);
     }
-    sha256x8(outbufx8 + 0 * SPX_SHA256_OUTPUT_BYTES,
-             outbufx8 + 1 * SPX_SHA256_OUTPUT_BYTES,
-             outbufx8 + 2 * SPX_SHA256_OUTPUT_BYTES,
-             outbufx8 + 3 * SPX_SHA256_OUTPUT_BYTES,
-             outbufx8 + 4 * SPX_SHA256_OUTPUT_BYTES,
-             outbufx8 + 5 * SPX_SHA256_OUTPUT_BYTES,
-             outbufx8 + 6 * SPX_SHA256_OUTPUT_BYTES,
-             outbufx8 + 7 * SPX_SHA256_OUTPUT_BYTES,
-             inbufx8 + 0 * (inlen + 4),
-             inbufx8 + 1 * (inlen + 4),
-             inbufx8 + 2 * (inlen + 4),
-             inbufx8 + 3 * (inlen + 4),
-             inbufx8 + 4 * (inlen + 4),
-             inbufx8 + 5 * (inlen + 4),
-             inbufx8 + 6 * (inlen + 4),
-             inbufx8 + 7 * (inlen + 4), inlen + 4);
+    sha256x8(outbufx8 + (0 * SPX_SHA256_OUTPUT_BYTES),
+             outbufx8 + (1 * SPX_SHA256_OUTPUT_BYTES),
+             outbufx8 + (2 * SPX_SHA256_OUTPUT_BYTES),
+             outbufx8 + (3 * SPX_SHA256_OUTPUT_BYTES),
+             outbufx8 + (4 * SPX_SHA256_OUTPUT_BYTES),
+             outbufx8 + (5 * SPX_SHA256_OUTPUT_BYTES),
+             outbufx8 + (6 * SPX_SHA256_OUTPUT_BYTES),
+             outbufx8 + (7 * SPX_SHA256_OUTPUT_BYTES),
+             inbufx8 + (0 * (inlen + 4)),
+             inbufx8 + (1 * (inlen + 4)),
+             inbufx8 + (2 * (inlen + 4)),
+             inbufx8 + (3 * (inlen + 4)),
+             inbufx8 + (4 * (inlen + 4)),
+             inbufx8 + (5 * (inlen + 4)),
+             inbufx8 + (6 * (inlen + 4)),
+             inbufx8 + (7 * (inlen + 4)), inlen + 4);
 
     for (j = 0; j < 8; j++) {
-        memcpy(outx8 + j * outlen,
-               outbufx8 + j * SPX_SHA256_OUTPUT_BYTES,
-               outlen - i * SPX_SHA256_OUTPUT_BYTES);
+        memcpy(outx8 + (j * outlen),
+               outbufx8 + (j * SPX_SHA256_OUTPUT_BYTES),
+               outlen - (i * SPX_SHA256_OUTPUT_BYTES));
     }
 }

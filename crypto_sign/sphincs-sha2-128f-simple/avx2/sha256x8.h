@@ -4,6 +4,8 @@
 #include "params.h"
 #include "sha256avx.h"
 
+
+
 #define sha256x8_seeded SPX_NAMESPACE(sha256x8_seeded)
 void sha256x8_seeded(
     unsigned char *out0,

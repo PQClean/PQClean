@@ -1,8 +1,10 @@
+#include <stdint.h>
 #include <string.h>
 
 #include "utilsx1.h"
 
 #include "address.h"
+#include "context.h"
 #include "params.h"
 #include "thash.h"
 #include "utils.h"
@@ -84,7 +86,7 @@ void treehashx1(unsigned char *root, unsigned char *auth_path,
             /* Set the address of the node we're creating. */
             internal_idx_offset >>= 1;
             set_tree_height(tree_addr, h + 1);
-            set_tree_index(tree_addr, internal_idx / 2 + internal_idx_offset );
+            set_tree_index(tree_addr, (internal_idx / 2) + internal_idx_offset );
 
             unsigned char *left = &stack[h * SPX_N];
             memcpy( &current[0], left, SPX_N );
