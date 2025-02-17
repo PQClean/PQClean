@@ -53,4 +53,6 @@ add		$256,%rdi
 call		nttunpack128_avx
 ret
 
+#if defined(__ELF__)
 .section .note.GNU-stack,"",@progbits
+#endif

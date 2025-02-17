@@ -908,4 +908,6 @@ subq		$1, %rax
 jnz		looptop
 ret
 
+#if defined(__ELF__)
 .section .note.GNU-stack,"",@progbits
+#endif
