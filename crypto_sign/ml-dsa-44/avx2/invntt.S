@@ -239,4 +239,6 @@ levels6t7	3
 
 ret
 
+#if defined(__ELF__)
 .section .note.GNU-stack,"",@progbits
+#endif
