@@ -38,3 +38,4 @@ implementations:
               - Darwin
           required_flags:
               - asimd
+              - sha3
