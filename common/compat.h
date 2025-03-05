@@ -15,12 +15,12 @@
     typedef long long __m256i_u __attribute__ ((__vector_size__ (32), __may_alias__, __aligned__ (1)));
 
 #if defined(__GNUC__) && !defined(__clang__)
-#include <features.h>
 
-#  if !__GNUC_PREREQ(7, 1) // at least GCC 7.1
+#if defined __GNUC_MINOR__ && ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((7) << 16) + (1))
+#else
 /* Versions of the GCC pre-7.1 don't have __m256*_u types */
 UNALIGNED_VECTOR_POLYFILL_GCC
-#  endif // __GNUC_PREREQ(7,1)
+#endif
 
 #elif defined(__GNUC__) && defined(__clang__)
 
