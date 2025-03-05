@@ -304,6 +304,7 @@ def get_cpu_info():
                 'crc32',
                 'neon',
                 'asimd',
+                'sha3',
             ]
 
     return the_info
