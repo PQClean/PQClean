@@ -123,7 +123,8 @@ static uint32 ffLDL_treesize(uint32 logn)
 ***********************************************************************************************************************/
 static void ffLDL_fft_inner(fpr *tree, fpr *g0, fpr *g1, uint32 logn, fpr *tmp)
 {
-  uint32 n, hn;
+  uint32 n = 0;
+  uint32 hn = 0;
   boolean bStopFunc = FALSE;
 
   n = MKN(logn);
@@ -169,7 +170,7 @@ static void ffLDL_fft_inner(fpr *tree, fpr *g0, fpr *g1, uint32 logn, fpr *tmp)
 static void ffLDL_binary_normalize(fpr *tree, uint32 orig_logn, uint32 logn)
 {
   /* TODO: make an iterative version. */
-  uint32 n;
+  uint32 n = 0;
 
   n = MKN(logn);
   if (n == 1u)
@@ -199,7 +200,8 @@ static void ffLDL_binary_normalize(fpr *tree, uint32 orig_logn, uint32 logn)
 ***********************************************************************************************************************/
 static void smallints_to_fpr(fpr *r, const sint8 *t, uint32 logn)
 {
-  uint32 n, u;
+  uint32 n = 0;
+  uint32 u = 0;
 
   n = MKN(logn);
   for (u = 0; u < n; u++)
@@ -223,10 +225,12 @@ static void smallints_to_fpr(fpr *r, const sint8 *t, uint32 logn)
 ***********************************************************************************************************************/
 static sint32 ber_exp(prng *p, fpr x, fpr ccs)
 {
-  sint32 s, i;
-  fpr r;
-  uint32 sw, w;
-  uint64 z;
+  sint32 s = 0;
+  sint32 i = 0;
+  fpr r = 0;
+  uint32 sw = 0;
+  uint32 w = 0;
+  uint64 z = 0;
 
   /* Reduce x modulo log(2): x = s*log(2) + r, with s an integer, and 0 <= r < log(2). Since x >= 0, we can use
    * FsmSw_Falcon_fpr_trunc(). */
@@ -279,11 +283,15 @@ static sint32 ber_exp(prng *p, fpr x, fpr ccs)
 ***********************************************************************************************************************/
 static sint32 sign_sampler(void *ctx, fpr mu, fpr isigma)
 {
-    sampler_context *spc;
-    sint32 s;
-    fpr r, dss, ccs;
-    sint32 z0, z, b;
-    fpr x;
+    sampler_context *spc = (sampler_context*)NULL_PTR;
+    sint32 s = 0;
+    fpr r = 0;
+    fpr dss = 0;
+    fpr ccs = 0;
+    sint32 z0 = 0;
+    sint32 z = 0;
+    sint32 b = 0;
+    fpr x = 0;
     sint32 retVal = 0;
 
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
@@ -356,10 +364,13 @@ static sint32 sign_sampler(void *ctx, fpr mu, fpr isigma)
 ***********************************************************************************************************************/
 static sint32 gaussian0_sampler(prng *p)
 {
-    uint32 v0, v1, v2, hi;
-    uint64 lo;
-    uint32 u;
-    sint32 z;
+    uint32 v0 = 0;
+    uint32 v1 = 0;
+    uint32 v2 = 0;
+    uint32 hi = 0;
+    uint64 lo = 0;
+    uint32 u = 0;
+    sint32 z = 0;
 
     /* Get a random 72-bit value, into three 24-bit limbs v0..v2. */
     lo = FsmSw_Falcon_prng_get_u64(p);
@@ -408,8 +419,10 @@ static sint32 gaussian0_sampler(prng *p)
 static void ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx, fpr *t0, fpr *t1, fpr *g00, fpr *g01, fpr *g11,
                                    uint32 orig_logn, uint32 logn, fpr *tmp)
 {
-  uint32 n, hn;
-  fpr *z0, *z1;
+  uint32 n = 0;
+  uint32 hn = 0;
+  fpr *z0 = (uint64*)NULL_PTR;
+  fpr *z1 = (uint64*)NULL_PTR;
   boolean bStopFunc = FALSE;
 
   /* Deepest level: the LDL tree leaf value is just g00 (the array has length only 1 at this point); we normalize it
@@ -493,8 +506,10 @@ static void ffSampling_fft_dyntree(samplerZ samp, void *samp_ctx, fpr *t0, fpr *
 static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, const fpr *tree, const fpr *t0,
                            const fpr *t1, uint32 logn, fpr *tmp)
 {
-  uint32 n, hn;
-  const fpr *tree0, *tree1;
+  uint32 n = 0;
+  uint32 hn = 0;
+  const fpr *tree0 = (uint64*)NULL_PTR;
+  const fpr *tree1 = (uint64*)NULL_PTR;
   boolean bStopFunc = FALSE;
 
   /* When logn == 2, we inline the last two recursion levels. */
@@ -705,13 +720,25 @@ static void ffSampling_fft(samplerZ samp, void *samp_ctx, fpr *z0, fpr *z1, cons
 static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8 *f, const sint8 *g, const sint8 *F,
                        const sint8 *G, const uint16 *hm, uint32 logn, fpr *tmp)
 {
-  uint32 n, u;
-  fpr *t0, *t1, *tx, *ty;
-  fpr *b00, *b01, *b10, *b11, *g00, *g01, *g11;
-  fpr ni;
-  uint32 sqn, ng;
-  sint16 *s1tmp, *s2tmp;
-  sint32 z;
+  uint32 n = 0;
+  uint32 u = 0;
+  fpr *t0 = (uint64*)NULL_PTR;
+  fpr *t1 = (uint64*)NULL_PTR;
+  fpr *tx = (uint64*)NULL_PTR;
+  fpr *ty = (uint64*)NULL_PTR;
+  fpr *b00 = (uint64*)NULL_PTR;
+  fpr *b01 = (uint64*)NULL_PTR;
+  fpr *b10 = (uint64*)NULL_PTR;
+  fpr *b11 = (uint64*)NULL_PTR;
+  fpr *g00 = (uint64*)NULL_PTR;
+  fpr *g01 = (uint64*)NULL_PTR;
+  fpr *g11 = (uint64*)NULL_PTR;
+  fpr ni = 0;
+  uint32 sqn = 0;
+  uint32 ng = 0;
+  sint16 *s1tmp = (sint16*)NULL_PTR;
+  sint16 *s2tmp = (sint16*)NULL_PTR;
+  sint32 z = 0;
   sint32 retVal = 0;
 
   n = MKN(logn);
@@ -902,7 +929,7 @@ static sint32 do_sign_dyn(samplerZ samp, void *samp_ctx, sint16 *s2, const sint8
 void FsmSw_Falcon_sign_dyn(sint16 *sig, inner_shake256_context *rng, const sint8 *f, const sint8 *g, const sint8 *F,
                            const sint8 *G, const uint16 *hm, uint32 logn, uint8 *tmp)
 {
-  fpr *ftmp;
+  fpr *ftmp = (uint64*)NULL_PTR;
 
   /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
   Ensured proper alignment and validity." */

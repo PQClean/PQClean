@@ -51,6 +51,6 @@ typedef struct {
 /**********************************************************************************************************************/
 void FsmSw_SphincsShake_128fSimple_initialize_hash_function(sphincs_shake_128f_ctx *ctx);
 
-void FsmSw_SphincsShake_128fSimple_free_hash_function(sphincs_shake_128f_ctx *ctx);
+void FsmSw_SphincsShake_128fSimple_1_free_hash_function(sphincs_shake_128f_ctx *ctx);
 
 #endif /* FSMSW_SPHINCSSHAKE_128FSIMPLE_CONTEXT_H */

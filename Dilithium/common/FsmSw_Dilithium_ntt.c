@@ -91,10 +91,12 @@ static const sint32 FsmSw_Dilithium_zetas[N_DILITHIUM] =
 ***********************************************************************************************************************/
 void FsmSw_Dilithium_ntt(sint32 a[N_DILITHIUM])
 {
-    uint16 len, start, j, k;
-    sint32 zeta, t;
-
-    k = 0;
+    uint16 len = 0;
+    uint16 start = 0;
+    uint16 j = 0;
+    uint16 k = 0;
+    sint32 zeta = 0;
+    sint32 t = 0;
 
     for (len = 128; len > 0u; len >>= 1)
     {
@@ -124,8 +126,12 @@ void FsmSw_Dilithium_ntt(sint32 a[N_DILITHIUM])
 ***********************************************************************************************************************/
 void FsmSw_Dilithium_invntt_tomont(sint32 a[N_DILITHIUM])
 {
-    uint16 start, len, j, k;
-    sint32 t, zeta;
+    uint16 start = 0;
+    uint16 len = 0;
+    uint16 j = 0;
+    uint16 k = 0;
+    sint32 t = 0;
+    sint32 zeta = 0;
     const sint32 f = 41978; // mont^2/256
 
     k = 256;

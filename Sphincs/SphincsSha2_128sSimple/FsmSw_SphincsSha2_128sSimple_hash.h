@@ -55,6 +55,8 @@ void FsmSw_SphincsSha2_128sSimple_hash_message(uint8 *digest, uint64 *tree, uint
 
 void FsmSw_SphincsSha2_128sSimple_mgf1_256(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsSha2_128sSimple_mgf1_512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 
 #endif /* FSMSW_SPHINCSSHA2_128SSIMPLE_HASH_H */

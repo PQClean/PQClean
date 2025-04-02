@@ -68,6 +68,8 @@
 *              -       uint32                  addr[8]:     t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsShake_192sSimple_compute_root(uint8 *root, const uint8 *leaf, uint32 leaf_idx, uint32 idx_offset,
                                                 const uint8 *auth_path, uint32 tree_height,
                                                 const sphincs_shake_192s_ctx *ctx, uint32 addr[8])
@@ -106,12 +108,12 @@ void FsmSw_SphincsShake_192sSimple_compute_root(uint8 *root, const uint8 *leaf, 
         /* Pick the right or left neighbor, depending on parity of the node. */
         if (0u < (leaf_idx_temp & 1u))
         {
-            FsmSw_SphincsShake_192sSimple_thash(&buffer[FSMSW_SPHINCSSHAKE_192SSIMPLE_N], buffer, 2, ctx, addr);
+            FsmSw_SphincsShake_192sSimple_1_thash(&buffer[FSMSW_SPHINCSSHAKE_192SSIMPLE_N], buffer, 2, ctx, addr);
             FsmSw_CommonLib_memcpy(buffer, auth_path_temp, FSMSW_SPHINCSSHAKE_192SSIMPLE_N);
         }
         else
         {
-            FsmSw_SphincsShake_192sSimple_thash(buffer, buffer, 2u, ctx, addr);
+            FsmSw_SphincsShake_192sSimple_1_thash(buffer, buffer, 2u, ctx, addr);
             FsmSw_CommonLib_memcpy(&buffer[FSMSW_SPHINCSSHAKE_192SSIMPLE_N], auth_path_temp,
                                    FSMSW_SPHINCSSHAKE_192SSIMPLE_N);
         }
@@ -123,11 +125,11 @@ void FsmSw_SphincsShake_192sSimple_compute_root(uint8 *root, const uint8 *leaf, 
     idx_offset_temp >>= 1;
     FsmSw_SphincsShake_set_tree_height(addr, tree_height);
     FsmSw_SphincsShake_set_tree_index(addr, leaf_idx_temp + idx_offset_temp);
-    FsmSw_SphincsShake_192sSimple_thash(root, buffer, 2, ctx, addr);
+    FsmSw_SphincsShake_192sSimple_1_thash(root, buffer, 2, ctx, addr);
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsShake_192sSimple_treehash
+* Name:        FsmSw_SphincsShake_192sSimple_2_treehash
 *
 * Description: For a given leaf index, computes the authentication path and the resulting root node using Merkle's
 *              TreeHash algorithm. Expects the layer and tree parts of the tree_addr to be set, as well as the tree
@@ -151,7 +153,7 @@ void FsmSw_SphincsShake_192sSimple_compute_root(uint8 *root, const uint8 *leaf, 
 *              -       uint32                  tree_addr[8]: t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsShake_192sSimple_treehash(uint8 *root, uint8 *auth_path, const sphincs_shake_192s_ctx *ctx,
+void FsmSw_SphincsShake_192sSimple_2_treehash(uint8 *root, uint8 *auth_path, const sphincs_shake_192s_ctx *ctx,
                                             uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
                                             void (*gen_leaf)
                                             (
@@ -191,7 +193,7 @@ void FsmSw_SphincsShake_192sSimple_treehash(uint8 *root, uint8 *auth_path, const
             FsmSw_SphincsShake_set_tree_height(tree_addr, heights[offset - 1u] + 1u);
             FsmSw_SphincsShake_set_tree_index(tree_addr, tree_idx + (idx_offset >> (heights[offset - 1u] + 1u)));
             /* Hash the top-most nodes from the stack together. */
-            FsmSw_SphincsShake_192sSimple_thash(&stack[(offset - 2u)*FSMSW_SPHINCSSHAKE_192SSIMPLE_N],
+            FsmSw_SphincsShake_192sSimple_1_thash(&stack[(offset - 2u)*FSMSW_SPHINCSSHAKE_192SSIMPLE_N],
                                                 &stack[(offset - 2u)*FSMSW_SPHINCSSHAKE_192SSIMPLE_N],
                                                 2u, ctx, tree_addr);
             offset--;

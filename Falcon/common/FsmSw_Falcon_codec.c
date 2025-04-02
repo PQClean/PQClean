@@ -20,6 +20,7 @@
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 #include "FsmSw_Falcon_codec.h"
+#include "FsmSw_CommonLib.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -116,10 +117,12 @@ const uint8 FsmSw_Falcon_max_sig_bits[11] = { 0, /* unused */ 10, 11, 11, 12, 12
 ***********************************************************************************************************************/
 uint32 FsmSw_Falcon_modq_encode(void *out, uint32 max_out_len, const uint16 *x, uint32 logn)
 {
-    uint32 n, out_len, u;
-    uint8 *buf;
-    uint32 acc;
-    sint32 acc_len;
+    uint32 n = 0;
+    uint32 u = 0;
+    uint32 out_len = 0;
+    uint8 *buf = (uint8*)NULL_PTR;
+    uint32 acc = 0;
+    sint32 acc_len = 0;
     boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
@@ -194,11 +197,13 @@ uint32 FsmSw_Falcon_modq_encode(void *out, uint32 max_out_len, const uint16 *x, 
 ***********************************************************************************************************************/
 uint32 FsmSw_Falcon_modq_decode(uint16 *x, uint32 logn, const void *in, uint32 max_in_len)
 {
-    uint32 n, in_len, u;
-    const uint8 *buf;
-    uint32 acc;
-    sint32 acc_len;
-    uint32 w;
+    uint32 n = 0;
+    uint32 in_len = 0;
+    uint32 u = 0;
+    const uint8 *buf = (uint8*)NULL_PTR;
+    uint32 acc = 0;
+    sint32 acc_len = 0;
+    uint32 w = 0;
     boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
@@ -268,12 +273,16 @@ uint32 FsmSw_Falcon_modq_decode(uint16 *x, uint32 logn, const void *in, uint32 m
 to resolve a MISRA 15 warning." */
 uint32 FsmSw_Falcon_trim_i8_encode(void *out, uint32 max_out_len, const sint8 *x, uint32 logn, uint32 bits)
 {
-    uint32 n, u, out_len;
-    sint32 minv, maxv;
-    uint8 *buf;
-    uint32 acc, mask;
-    uint32 acc_len;
-    uint32 temp1;
+    uint32 n = 0;
+    uint32 u = 0;
+    uint32 out_len = 0;
+    sint32 minv = 0;
+    sint32 maxv = 0;
+    uint8 *buf = (uint8*)NULL_PTR;
+    uint32 acc = 0;
+    uint32 mask = 0;
+    uint32 acc_len = 0;
+    uint32 temp1 = 0;
     boolean bStopFunc = FALSE;
 
     n = (uint32)1 << logn;
@@ -353,12 +362,15 @@ uint32 FsmSw_Falcon_trim_i8_encode(void *out, uint32 max_out_len, const sint8 *x
 ***********************************************************************************************************************/
 uint32 FsmSw_Falcon_trim_i8_decode(sint8 *x, uint32 logn, uint32 bits, const void *in, uint32 max_in_len)
 {
-    uint32 n, in_len;
-    const uint8 *buf;
-    uint32 u;
-    uint32 acc, mask1, mask2;
-    uint32 acc_len;
-    uint32 w;
+    uint32 n = 0;
+    uint32 in_len = 0;
+    const uint8 *buf = (uint8*)NULL_PTR;
+    uint32 u = 0;
+    uint32 acc = 0;
+    uint32 mask1 = 0;
+    uint32 mask2 = 0;
+    uint32 acc_len = 0;
+    uint32 w = 0;
     boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
@@ -434,10 +446,12 @@ uint32 FsmSw_Falcon_trim_i8_decode(sint8 *x, uint32 logn, uint32 bits, const voi
 to resolve a MISRA 15 warning." */
 uint32 FsmSw_Falcon_comp_encode(void *out, uint32 max_out_len, const sint16 *x, uint32 logn)
 {
-    uint8 *buf;
-    uint32 n, u, v;
-    uint32 acc;
-    uint32 acc_len;
+    uint8 *buf = (uint8*)NULL_PTR;
+    uint32 n = 0;
+    uint32 u = 0;
+    uint32 v = 0;
+    uint32 acc = 0;
+    uint32 acc_len = 0;
     boolean bStopFunc = FALSE;
 
     n = (uint32) 1 << logn;
@@ -551,11 +565,15 @@ by allowing early exits on error conditions. Using a single return variable (ret
 was evaluated but didn't work in this context." */
 uint32 FsmSw_Falcon_comp_decode(sint16 *x, uint32 logn, const void *in, uint32 max_in_len)
 {
-    const uint8 *buf;
-    uint32 n, u, v;
-    uint32 acc;
-    uint32 acc_len;
-    uint32 b, s, m;
+    const uint8 *buf = (uint8*)NULL_PTR;
+    uint32 n = 0;
+    uint32 u = 0;
+    uint32 v = 0;
+    uint32 acc = 0;
+    uint32 acc_len = 0;
+    uint32 b = 0;
+    uint32 s = 0;
+    uint32 m = 0;
 
     n = (uint32) 1 << logn;
     buf = in;

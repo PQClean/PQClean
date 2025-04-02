@@ -95,10 +95,13 @@ static sint16 fqmul(sint16 a, sint16 b)
 ***********************************************************************************************************************/
 void FsmSw_Kyber_ntt(sint16 r[256])
 {
-    uint16 len, start, j, k;
-    sint16 t, zeta;
+    uint16 len = 0;
+    uint16 start = 0;
+    uint16 j = 0;
+    uint16 k = 1u;
+    sint16 t = 0;
+    sint16 zeta = 0;
 
-    k = 1u;
     for (len = 128u; len >= 2u; len >>= 1u)
     {
         for (start = 0; start < 256u; start = j + len)
@@ -126,11 +129,14 @@ void FsmSw_Kyber_ntt(sint16 r[256])
 ***********************************************************************************************************************/
 void FsmSw_Kyber_invntt(sint16 r[256])
 {
-    uint16 start, len, j, k;
-    sint16 t, zeta;
+    uint16 start = 0;
+    uint16 len = 0;
+    uint16 j = 0;
+    uint16 k = 127u;
+    sint16 t = 0;
+    sint16 zeta = 0;
     const sint16 f = 1441; /* mont^2/128 */
 
-    k = 127u;
     for (len = 2u; len <= 128u; len <<= 1u)
     {
         for (start = 0; start < 256u; start = j + len)

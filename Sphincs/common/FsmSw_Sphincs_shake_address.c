@@ -134,6 +134,8 @@ void FsmSw_SphincsShake_set_keypair_addr_1_byte(uint32 addr[8], uint32 keypair)
 *              - uint32 keypair:  t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsShake_set_keypair_addr_2_byte(uint32 addr[8], uint32 keypair)
 {
     /* We have > 256 OTS at the bottom of the Merkle tree; to specify */
@@ -168,6 +170,8 @@ void FsmSw_SphincsShake_copy_keypair_addr_1_byte(uint32 out[8], const uint32 in[
 *              - const uint32 in[8]:  t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsShake_copy_keypair_addr_2_byte(uint32 out[8], const uint32 in[8])
 {
     FsmSw_CommonLib_memcpy( out, in, FSMSW_SPHINCSSHAKE_OFFSET_TREE + 8 );

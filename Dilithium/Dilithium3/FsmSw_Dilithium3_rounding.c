@@ -61,8 +61,8 @@
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium3_power2round(sint32 *a0, sint32 a)
 {
-    sint32 a1;
-    sint32 temp;
+    sint32 a1 = 0;
+    sint32 temp = 0;
 
     temp = (a + (sint32)4095u);
     a1  = (sint32)((uint32)((uint32)temp >> D_DILITHIUM));
@@ -85,8 +85,10 @@ sint32 FsmSw_Dilithium3_power2round(sint32 *a0, sint32 a)
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium3_decompose(sint32 *a0, sint32 a)
 {
-    sint32 a1;
-    sint32 temp1, temp2, temp3;
+    sint32 a1 = 0;
+    sint32 temp1 = 0;
+    sint32 temp2 = 0;
+    sint32 temp3 = 0;
 
     a1  = (sint32)((uint32)(((uint32)a + 127u) >> 7));
 
@@ -137,7 +139,8 @@ uint8 FsmSw_Dilithium3_make_hint(sint32 a0, sint32 a1)
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium3_use_hint(sint32 a, uint32 hint)
 {
-    sint32 a0, a1;
+    sint32 a0 = 0;
+    sint32 a1 = 0;
     sint32 retVal = 0;
 
     a1 = FsmSw_Dilithium3_decompose(&a0, a);

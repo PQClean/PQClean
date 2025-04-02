@@ -63,7 +63,7 @@
 ***********************************************************************************************************************/
 sint16 FsmSw_Kyber_montgomery_reduce(sint32 a)
 {
-    sint16 t;
+    sint16 t = 0;
 
     t = (sint16)a * QINV;
     t = (sint16)((uint16)(((uint32)a - ((uint32)t * KYBER_Q)) >> 16));
@@ -82,10 +82,10 @@ sint16 FsmSw_Kyber_montgomery_reduce(sint32 a)
 ***********************************************************************************************************************/
 sint16 FsmSw_Kyber_barrett_reduce(sint16 a)
 {
-    sint16 t;
-    sint16 temp0;
-    sint32 temp1;
-    uint32 temp2;
+    sint16 t = 0;
+    sint16 temp0 = 0;
+    sint32 temp1 = 0;
+    uint32 temp2 = 0;
     const sint16 v = (sint16)((uint16)((((uint32)1 << 26u) + KYBER_Q / 2u) / KYBER_Q));
 
     temp0 = (sint16)(uint16)((uint32)1u << (uint16)25u);

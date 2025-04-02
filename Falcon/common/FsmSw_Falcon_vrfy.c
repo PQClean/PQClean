@@ -20,6 +20,7 @@
 /**********************************************************************************************************************/
 #include "FsmSw_Falcon_common.h"
 #include "FsmSw_Falcon_vrfy.h"
+#include "FsmSw_CommonLib.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -259,7 +260,7 @@ static void mq_poly_sub(uint16 *f, const uint16 *g, uint32 logn);
 static uint32 mq_conv_small(sint32 x)
 {
   /* If x < 0, the cast to uint32 will set the high bit to 1. */
-  uint32 y;
+  uint32 y = 0;
 
   y = (uint32) x;
   y += Q & (uint32)((sint32)((-1) * (sint32)((uint32)(y >> 31))));
@@ -283,7 +284,7 @@ static uint32 mq_add(uint32 x, uint32 y)
   /* We compute x + y - q. If the result is negative, then the high bit will be set, and 'd >> 31' will be equal to 1;
    * thus '-(d >> 31)' will be an all-one pattern. Otherwise, it will be an all-zero pattern. In other words, this
    * implements a conditional addition of q. */
-  uint32 d;
+  uint32 d = 0;
 
   d = x + y - Q;
   d += Q & (uint32)((sint32)((-1) * (sint32)((uint32)(d >> 31))));
@@ -305,7 +306,7 @@ static uint32 mq_add(uint32 x, uint32 y)
 static uint32 mq_sub(uint32 x, uint32 y)
 {
   /* As in mq_add(), we use a conditional addition to ensure the result is in the 0..q-1 range. */
-  uint32 d;
+  uint32 d = 0;
 
   d = x - y;
   d += Q & (uint32)((sint32)((-1) * (sint32)((uint32)(d >> 31))));
@@ -346,7 +347,8 @@ static uint32 mq_rshift1(uint32 x)
 ***********************************************************************************************************************/
 static uint32 mq_montymul(uint32 x, uint32 y)
 {
-  uint32 z, w;
+  uint32 z = 0;
+  uint32 w = 0;
 
   /* We compute x*y + k*q with a value of k chosen so that the 16 low bits of the result are 0. We can then shift the
    * value. After the shift, result may still be larger than q, but it will be lower than 2*q, so a conditional
@@ -419,8 +421,25 @@ static uint32 mq_div_12289(uint32 x, uint32 y)
    *
    * Additions on exponents are converted to Montgomery multiplications. We define all intermediate results as so many
    * local variables, and let the C compiler work out which must be kept around. */
-  uint32 y0, y1, y2, y3, y4, y5, y6, y7, y8, y9;
-  uint32 y10, y11, y12, y13, y14, y15, y16, y17, y18;
+  uint32 y0 = 0;
+  uint32 y1 = 0;
+  uint32 y2 = 0;
+  uint32 y3 = 0;
+  uint32 y4 = 0;
+  uint32 y5 = 0;
+  uint32 y6 = 0;
+  uint32 y7 = 0;
+  uint32 y8 = 0;
+  uint32 y9 = 0;
+  uint32 y10 = 0;
+  uint32 y11 = 0;
+  uint32 y12 = 0;
+  uint32 y13 = 0;
+  uint32 y14 = 0;
+  uint32 y15 = 0;
+  uint32 y16 = 0;
+  uint32 y17 = 0;
+  uint32 y18 = 0;
 
   y0 = mq_montymul(y, R2);
   y1 = mq_montysqr(y0);
@@ -457,11 +476,17 @@ static uint32 mq_div_12289(uint32 x, uint32 y)
 ***********************************************************************************************************************/
 static void mq_NTT(uint16 *a, uint32 logn)
 {
-  uint32 n, t, m;
-  uint32 ht, i, j1;
-  uint32 j, j2;
-  uint32 s;
-  uint32 u, v;
+  uint32 n = 0;
+  uint32 t = 0;
+  uint32 m = 0;
+  uint32 ht = 0;
+  uint32 i = 0;
+  uint32 j1 = 0;
+  uint32 j = 0;
+  uint32 j2 = 0;
+  uint32 s = 0;
+  uint32 u = 0;
+  uint32 v = 0;
 
   n = (uint32) 1 << logn;
   t = n;
@@ -502,12 +527,20 @@ static void mq_NTT(uint16 *a, uint32 logn)
 ***********************************************************************************************************************/
 static void mq_iNTT(uint16 *a, uint32 logn)
 {
-  uint32 n, t, m;
-  uint32 ni;
-  uint32 hm, dt, i, j1;
-  uint32 j, j2;
-  uint32 s;
-  uint32 u, v, w;
+  uint32 n = 0;
+  uint32 t = 0;
+  uint32 m = 0;
+  uint32 ni = 0;
+  uint32 hm = 0;
+  uint32 dt = 0;
+  uint32 i = 0;
+  uint32 j1 = 0;
+  uint32 j = 0;
+  uint32 j2 = 0;
+  uint32 s = 0;
+  uint32 u = 0;
+  uint32 v = 0;
+  uint32 w = 0;
 
   n = (uint32) 1 << logn;
   t = 1;
@@ -567,7 +600,8 @@ static void mq_iNTT(uint16 *a, uint32 logn)
 ***********************************************************************************************************************/
 static void mq_poly_tomonty(uint16 *f, uint32 logn)
 {
-  uint32 u, n;
+  uint32 u = 0;
+  uint32 n = 0;
 
   n = (uint32) 1 << logn;
   for (u = 0; u < n; u++)
@@ -589,7 +623,8 @@ static void mq_poly_tomonty(uint16 *f, uint32 logn)
 ***********************************************************************************************************************/
 static void mq_poly_montymul_ntt(uint16 *f, const uint16 *g, uint32 logn)
 {
-  uint32 u, n;
+  uint32 u = 0;
+  uint32 n = 0;
 
   n = (uint32) 1 << logn;
   for (u = 0; u < n; u++)
@@ -610,7 +645,8 @@ static void mq_poly_montymul_ntt(uint16 *f, const uint16 *g, uint32 logn)
 ***********************************************************************************************************************/
 static void mq_poly_sub(uint16 *f, const uint16 *g, uint32 logn)
 {
-  uint32 u, n;
+  uint32 u = 0;
+  uint32 n = 0;
 
   n = (uint32) 1 << logn;
   for (u = 0; u < n; u++)
@@ -653,10 +689,11 @@ void FsmSw_Falcon_to_ntt_monty(uint16 *h, uint32 logn)
 ***********************************************************************************************************************/
 sint32 FsmSw_Falcon_verify_raw(const uint16 *c0, const sint16 *s2, const uint16 *h, uint32 logn, uint8 *tmp)
 {
-  uint32 u, n;
-  uint16 *tt;
-  uint32 w1;
-  sint32 w2;
+  uint32 u = 0;
+  uint32 n = 0;
+  uint16 *tt = (uint16*)NULL_PTR;
+  uint32 w1 = 0;
+  sint32 w2 = 0;
 
   n = (uint32) 1 << logn;
   /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
@@ -710,8 +747,9 @@ sint32 FsmSw_Falcon_verify_raw(const uint16 *c0, const sint16 *s2, const uint16 
 ***********************************************************************************************************************/
 sint32 FsmSw_Falcon_compute_public(uint16 *h, const sint8 *f, const sint8 *g, uint32 logn, uint8 *tmp)
 {
-  uint32 u, n;
-  uint16 *tt;
+  uint32 u = 0;
+  uint32 n = 0;
+  uint16 *tt = (uint16*)NULL_PTR;
   sint32 retVal = 1;
 
   n = (uint32) 1 << logn;
@@ -763,10 +801,12 @@ sint32 FsmSw_Falcon_compute_public(uint16 *h, const sint8 *f, const sint8 *g, ui
 ***********************************************************************************************************************/
 sint32 FsmSw_Falcon_complete_private(sint8 *G, const sint8 *f, const sint8 *g, const sint8 *F, uint32 logn, uint8 *tmp)
 {
-  uint32 u, n;
-  uint16 *t1, *t2;
-  uint32 w;
-  sint32 gi;
+  uint32 u = 0;
+  uint32 n = 0;
+  uint16 *t1 = (uint16*)NULL_PTR;
+  uint16 *t2 = (uint16*)NULL_PTR;
+  uint32 w = 0;
+  sint32 gi = 0;
   sint32 retVal = 1;
 
   n = (uint32) 1 << logn;

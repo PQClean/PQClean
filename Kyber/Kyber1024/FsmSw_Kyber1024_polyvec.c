@@ -61,8 +61,10 @@
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_compress(uint8 r[KYBER1024_POLYVECCOMPRESSEDBYTES], const polyvec1024 *a)
 {
-    uint8  i, k;
-    uint16 j, t[8];
+    uint8  i = 0;
+    uint8  k = 0;
+    uint16 j = 0;
+    uint16 t[8] = {0};
 
     /* r_temp is used to avoid modifying the input. */
     uint8 *r_temp = r;
@@ -109,8 +111,10 @@ void FsmSw_Kyber1024_polyvec_compress(uint8 r[KYBER1024_POLYVECCOMPRESSEDBYTES],
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_decompress(polyvec1024 *r, const uint8 a[KYBER1024_POLYVECCOMPRESSEDBYTES])
 {
-    uint8  i, k;
-    uint16 j, t[8];
+    uint8  i = 0;
+    uint8  k = 0;
+    uint16 j = 0;
+    uint16 t[8] = {0};
 
     /* a_temp is used to avoid modifying the input. */
     const uint8 *a_temp = a;
@@ -148,7 +152,7 @@ void FsmSw_Kyber1024_polyvec_decompress(polyvec1024 *r, const uint8 a[KYBER1024_
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_tobytes(uint8 r[KYBER1024_POLYVECBYTES], const polyvec1024 *a)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < KYBER1024_K; i++)
     {
@@ -167,7 +171,7 @@ void FsmSw_Kyber1024_polyvec_tobytes(uint8 r[KYBER1024_POLYVECBYTES], const poly
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_frombytes(polyvec1024 *r, const uint8 a[KYBER1024_POLYVECBYTES])
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < KYBER1024_K; i++)
     {
@@ -184,7 +188,7 @@ void FsmSw_Kyber1024_polyvec_frombytes(polyvec1024 *r, const uint8 a[KYBER1024_P
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_ntt(polyvec1024 *r)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < KYBER1024_K; i++)
     {
@@ -202,7 +206,7 @@ void FsmSw_Kyber1024_polyvec_ntt(polyvec1024 *r)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_invntt_tomont(polyvec1024 *r)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < KYBER1024_K; i++)
     {
@@ -222,8 +226,8 @@ void FsmSw_Kyber1024_polyvec_invntt_tomont(polyvec1024 *r)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_basemul_acc_montgomery(poly1024 *r, const polyvec1024 *a, const polyvec1024 *b)
 {
-    uint8    i;
-    poly1024 t;
+    uint8    i = 0;
+    poly1024 t = {0};
 
     FsmSw_Kyber1024_poly_basemul_montgomery(r, &a->vec[0], &b->vec[0]);
 
@@ -247,7 +251,7 @@ void FsmSw_Kyber1024_polyvec_basemul_acc_montgomery(poly1024 *r, const polyvec10
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_reduce(polyvec1024 *r)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < KYBER1024_K; i++)
     {
@@ -266,7 +270,7 @@ void FsmSw_Kyber1024_polyvec_reduce(polyvec1024 *r)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_polyvec_add(polyvec1024 *r, const polyvec1024 *a, const polyvec1024 *b)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < KYBER1024_K; i++)
     {

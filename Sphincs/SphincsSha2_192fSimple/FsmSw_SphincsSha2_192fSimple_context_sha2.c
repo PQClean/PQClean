@@ -39,13 +39,13 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static void seed_state(sphincs_sha2_192f_ctx *ctx);
+static void fsmsw_sphincssha2_192fsimple_SeedState(sphincs_sha2_192f_ctx *ctx);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        seed_state
+* Name:        fsmsw_sphincssha2_192fsimple_SeedState
 *
 * Description: Absorb the constant pub_seed using one round of the compression function. This initializes state_seeded
 *              and state_seeded_512, which can then be reused in FsmSw_SphincsSha2_192fSimple_thash
@@ -54,7 +54,7 @@ static void seed_state(sphincs_sha2_192f_ctx *ctx);
 *
 *
 ***********************************************************************************************************************/
-static void seed_state(sphincs_sha2_192f_ctx *ctx)
+static void fsmsw_sphincssha2_192fsimple_SeedState(sphincs_sha2_192f_ctx *ctx)
 {
     uint8 block[FSMSW_SPHINCS_SHA512_BLOCK_BYTES];
     uint32 i;
@@ -91,5 +91,5 @@ static void seed_state(sphincs_sha2_192f_ctx *ctx)
 ***********************************************************************************************************************/
 void FsmSw_SphincsSha2_192fSimple_initialize_hash_function(sphincs_sha2_192f_ctx *ctx)
 {
-    seed_state(ctx);
+    fsmsw_sphincssha2_192fsimple_SeedState(ctx);
 }

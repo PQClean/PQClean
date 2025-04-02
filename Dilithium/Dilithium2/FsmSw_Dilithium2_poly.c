@@ -50,14 +50,14 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
-static uint32 rej_uniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
+static uint32 fsmsw_dilithium2_RejEta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
+static uint32 fsmsw_dilithium2_RejUniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        rej_eta
+* Name:        fsmsw_dilithium2_RejEta
 *
 * Description: Sample uniformly random coefficients in [-ETA, ETA] by
 *              performing rejection sampling on array of random bytes.
@@ -69,13 +69,13 @@ static uint32 rej_uniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen
 *
 * Returns number of sampled coefficients. Can be smaller than len if not enough random bytes were given.
 ***********************************************************************************************************************/
-static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
+static uint32 fsmsw_dilithium2_RejEta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 {
-    uint32 ctr, pos;
-    uint32 t0, t1;
-
-    ctr = 0;
-    pos = 0;
+    uint32 ctr = 0;
+    uint32 pos = 0;
+    uint32 t0 = 0;
+    uint32 t1 = 0;
+    
     while ((ctr < len) && (pos < buflen))
     {
         t0 = (uint32)(buf[pos]) & 0x0Fu;
@@ -99,7 +99,7 @@ static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 }
 
 /***********************************************************************************************************************
-* Name:        rej_uniform
+* Name:        fsmsw_dilithium2_RejUniform
 *
 * Description: Sample uniformly random coefficients in [0, Q-1] by
 *              performing rejection sampling on array of random bytes.
@@ -112,7 +112,7 @@ static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 * Returns number of sampled coefficients. Can be smaller than len if not enough
 * random bytes were given.
 ***********************************************************************************************************************/
-static uint32 rej_uniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
+static uint32 fsmsw_dilithium2_RejUniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 {
     uint32 ctr, pos;
     uint32 t;
@@ -426,7 +426,7 @@ void FsmSw_Dilithium2_poly_uniform(poly_D2 *a, const uint8 seed[SEEDBYTES_DILITH
     FsmSw_Dilithium_shake128_stream_init(&state, seed, nonce);
     FsmSw_Fips202_shake128_inc_squeeze(buf, POLY_UNIFORM_NBLOCKS * SHAKE128_RATE, &state);
 
-    ctr = rej_uniform(a->coeffs, N_DILITHIUM, buf, buflen);
+    ctr = fsmsw_dilithium2_RejUniform(a->coeffs, N_DILITHIUM, buf, buflen);
 
     while (ctr < N_DILITHIUM)
     {
@@ -435,7 +435,7 @@ void FsmSw_Dilithium2_poly_uniform(poly_D2 *a, const uint8 seed[SEEDBYTES_DILITH
         
         FsmSw_Fips202_shake128_inc_squeeze(&buf[off], SHAKE128_RATE, &state);
         buflen = (uint32)(STREAM128_BLOCKBYTES + off);
-        ctr += rej_uniform(&a->coeffs[ctr], N_DILITHIUM - ctr, buf, buflen);
+        ctr += fsmsw_dilithium2_RejUniform(&a->coeffs[ctr], N_DILITHIUM - ctr, buf, buflen);
     }
 }
 
@@ -468,12 +468,12 @@ void FsmSw_Dilithium2_poly_uniform_eta(poly_D2 *a, const uint8 seed[CRHBYTES_DIL
                                               in the interger division" */
     FsmSw_Fips202_shake256_inc_squeeze(buf, (((136u + 136u - 1u)/136u)) * (136u), &state);
     
-    ctr = rej_eta(a->coeffs, N_DILITHIUM, buf, buflen);
+    ctr = fsmsw_dilithium2_RejEta(a->coeffs, N_DILITHIUM, buf, buflen);
 
     while (ctr < N_DILITHIUM)
     {
         FsmSw_Fips202_shake256_inc_squeeze(buf, SHAKE256_RATE, &state);
-        ctr += rej_eta(&(a->coeffs[ctr]), N_DILITHIUM - ctr, buf, STREAM256_BLOCKBYTES);
+        ctr += fsmsw_dilithium2_RejEta(&(a->coeffs[ctr]), N_DILITHIUM - ctr, buf, STREAM256_BLOCKBYTES);
     }
 }
 

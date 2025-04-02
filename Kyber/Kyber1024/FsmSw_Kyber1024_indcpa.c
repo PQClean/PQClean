@@ -50,20 +50,21 @@ if the defines change, so it's not dead code." */
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static void pack_pk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], const polyvec1024 *pk, const uint8 seed[KYBER_SYMBYTES]);
-static void unpack_pk(polyvec1024 *pk, uint8 seed[KYBER_SYMBYTES],
+static void fsmsw_kyber1024_PackPk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], const polyvec1024 *pk, 
+                                   const uint8 seed[KYBER_SYMBYTES]);
+static void fsmsw_kyber1024_UnpackPk(polyvec1024 *pk, uint8 seed[KYBER_SYMBYTES],
                       const uint8 packedpk[KYBER1024_INDCPA_PUBLICKEYBYTES]);
-static void pack_sk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], const polyvec1024 *sk);
-static void unpack_sk(polyvec1024 *sk, const uint8 packedsk[KYBER1024_INDCPA_SECRETKEYBYTES]);
-static void pack_ciphertext(uint8 r[KYBER1024_INDCPA_BYTES], const polyvec1024 *b, const poly1024 *v);
-static void unpack_ciphertext(polyvec1024 *b, poly1024 *v, const uint8 c[KYBER1024_INDCPA_BYTES]);
-static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen);
+static void fsmsw_kyber1024_PackSk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], const polyvec1024 *sk);
+static void fsmsw_kyber1024_UnpackSk(polyvec1024 *sk, const uint8 packedsk[KYBER1024_INDCPA_SECRETKEYBYTES]);
+static void fsmsw_kyber1024_PackCiphertext(uint8 r[KYBER1024_INDCPA_BYTES], const polyvec1024 *b, const poly1024 *v);
+static void fsmsw_kyber1024_UnpackCiphertext(polyvec1024 *b, poly1024 *v, const uint8 c[KYBER1024_INDCPA_BYTES]);
+static uint16 fsmsw_kyber1024_RejUniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        pack_pk
+* Name:        fsmsw_kyber1024_PackPk
 *
 * Description: Serialize the public key as concatenation of the
 *              serialized vector of polynomials pk
@@ -73,9 +74,10 @@ static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen
 *              const polyvec1024 *pk:   pointer to the input public-key polyvec
 *              const uint8       *seed: pointer to the input public seed
 ***********************************************************************************************************************/
-static void pack_pk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], const polyvec1024 *pk, const uint8 seed[KYBER_SYMBYTES])
+static void fsmsw_kyber1024_PackPk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], const polyvec1024 *pk, 
+                                   const uint8 seed[KYBER_SYMBYTES])
 {
-    uint32 i;
+    uint32 i = 0;
 
     FsmSw_Kyber1024_polyvec_tobytes(r, pk);
 
@@ -86,20 +88,19 @@ static void pack_pk(uint8 r[KYBER1024_INDCPA_PUBLICKEYBYTES], const polyvec1024 
 }
 
 /***********************************************************************************************************************
-* Name:        unpack_pk
+* Name:        fsmsw_kyber1024_UnpackPk
 *
 * Description: De-serialize public key from a byte array
-*              approximate inverse of pack_pk
+*              approximate inverse of fsmsw_kyber1024_PackPk
 *
 * Arguments:   -       polyvec1024 *pk:       pointer to output public-key polynomial vector
 *              -       uint8       *seed:     pointer to output seed to generate matrix A
 *              - const uint8       *packedpk: pointer to input serialized public key
 ***********************************************************************************************************************/
-static void unpack_pk(polyvec1024 *pk,
-                      uint8 seed[KYBER_SYMBYTES],
-                      const uint8 packedpk[KYBER1024_INDCPA_PUBLICKEYBYTES]) 
+static void fsmsw_kyber1024_UnpackPk(polyvec1024 *pk, uint8 seed[KYBER_SYMBYTES],
+                                     const uint8 packedpk[KYBER1024_INDCPA_PUBLICKEYBYTES]) 
 {
-    uint32 i;
+    uint32 i = 0;
 
     FsmSw_Kyber1024_polyvec_frombytes(pk, packedpk);
 
@@ -110,33 +111,33 @@ static void unpack_pk(polyvec1024 *pk,
 }
 
 /***********************************************************************************************************************
-* Name:        pack_sk
+* Name:        fsmsw_kyber1024_PackSk
 *
 * Description: Serialize the secret key
 *
 * Arguments:   -       uint8       *r:  pointer to output serialized secret key
 *              - const polyvec1024 *sk: pointer to input vector of polynomials (secret key)
 ***********************************************************************************************************************/
-static void pack_sk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], const polyvec1024 *sk) 
+static void fsmsw_kyber1024_PackSk(uint8 r[KYBER1024_INDCPA_SECRETKEYBYTES], const polyvec1024 *sk) 
 {
     FsmSw_Kyber1024_polyvec_tobytes(r, sk);
 }
 
 /***********************************************************************************************************************
-* Name:        unpack_sk
+* Name:        fsmsw_kyber1024_UnpackSk
 *
-* Description: De-serialize the secret key; inverse of pack_sk
+* Description: De-serialize the secret key; inverse of fsmsw_kyber1024_PackSk
 *
 * Arguments:   -       polyvec1024 *sk:       pointer to output vector of polynomials (secret key)
 *              - const uint8       *packedsk: pointer to input serialized secret key
 ***********************************************************************************************************************/
-static void unpack_sk(polyvec1024 *sk, const uint8 packedsk[KYBER1024_INDCPA_SECRETKEYBYTES]) 
+static void fsmsw_kyber1024_UnpackSk(polyvec1024 *sk, const uint8 packedsk[KYBER1024_INDCPA_SECRETKEYBYTES]) 
 {
     FsmSw_Kyber1024_polyvec_frombytes(sk, packedsk);
 }
 
 /***********************************************************************************************************************
-* Name:        pack_ciphertext
+* Name:        fsmsw_kyber1024_PackCiphertext
 *
 * Description: Serialize the ciphertext as concatenation of the
 *              compressed and serialized vector of polynomials b
@@ -146,30 +147,30 @@ static void unpack_sk(polyvec1024 *sk, const uint8 packedsk[KYBER1024_INDCPA_SEC
 *              const poly1024 *b: pointer to the input vector of polynomials b
 *              const poly1024 *v: pointer to the input polynomial v
 ***********************************************************************************************************************/
-static void pack_ciphertext(uint8 r[KYBER1024_INDCPA_BYTES], const polyvec1024 *b, const poly1024 *v) 
+static void fsmsw_kyber1024_PackCiphertext(uint8 r[KYBER1024_INDCPA_BYTES], const polyvec1024 *b, const poly1024 *v) 
 {
     FsmSw_Kyber1024_polyvec_compress(r, b);
     FsmSw_Kyber1024_poly_compress(&r[KYBER1024_POLYVECCOMPRESSEDBYTES], v);
 }
 
 /***********************************************************************************************************************
-* Name:        unpack_ciphertext
+* Name:        fsmsw_kyber1024_UnpackCiphertext
 *
 * Description: De-serialize and decompress ciphertext from a byte array;
-*              approximate inverse of pack_ciphertext
+*              approximate inverse of fsmsw_kyber1024_PackCiphertext
 *
 * Arguments:   -       polyvec1024 *b: pointer to the output vector of polynomials b
 *              -       poly1024    *v: pointer to the output polynomial v
 *              - const uint8       *c: pointer to the input serialized ciphertext
 ***********************************************************************************************************************/
-static void unpack_ciphertext(polyvec1024 *b, poly1024 *v, const uint8 c[KYBER1024_INDCPA_BYTES]) 
+static void fsmsw_kyber1024_UnpackCiphertext(polyvec1024 *b, poly1024 *v, const uint8 c[KYBER1024_INDCPA_BYTES]) 
 {
     FsmSw_Kyber1024_polyvec_decompress(b, c);
     FsmSw_Kyber1024_poly_decompress(v, &c[KYBER1024_POLYVECCOMPRESSEDBYTES]);
 }
 
 /***********************************************************************************************************************
-* Name:        rej_uniform
+* Name:        fsmsw_kyber1024_RejUniform
 *
 * Description: Run rejection sampling on uniform random bytes to generate
 *              uniform random integers mod q
@@ -181,13 +182,12 @@ static void unpack_ciphertext(polyvec1024 *b, poly1024 *v, const uint8 c[KYBER10
 *
 * Returns number of sampled 16-bit integers (at most len)
 ***********************************************************************************************************************/
-static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen)
+static uint16 fsmsw_kyber1024_RejUniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen)
 {
-    uint16 ctr, pos;
-    uint16 val0, val1;
-
-    ctr = 0;
-    pos = 0;
+    uint16 ctr = 0;
+    uint16 pos = 0;
+    uint16 val0 = 0;
+    uint16 val1 = 0;
 
     while ((ctr < len) && ((pos + 3u) <= buflen))
     {
@@ -229,11 +229,14 @@ static uint16 rej_uniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen
 /* polyspace +1 MISRA2012:8.7 [Justified:]"Not static for benchmarking */
 void FsmSw_Kyber1024_gen_matrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES], uint8 transposed)
 {
-    uint8  i, j;
-    uint16 buflen, off, ctr;
+    uint8  i = 0;
+    uint8  j = 0;
+    uint16 buflen = 0;
+    uint16 off = 0;
+    uint16 ctr = 0;
     /* polyspace +2 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
     and therefore not dead code" */ 
-    uint8  buf[(GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES) + 2u];
+    uint8  buf[(GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES) + 2u] = {0};
     xof_state state;
 
     for (i = 0; i < KYBER1024_K; i++) 
@@ -253,7 +256,7 @@ void FsmSw_Kyber1024_gen_matrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES]
             /* polyspace +2 MISRA2012:2.2 [Justified:]"Calculation is important if defines should change 
              and therefore not dead code" */ 
             buflen = GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES;
-            ctr = rej_uniform(a[i].vec[j].coeffs, KYBER_N, buf, buflen);
+            ctr = fsmsw_kyber1024_RejUniform(a[i].vec[j].coeffs, KYBER_N, buf, buflen);
 
             while (ctr < KYBER_N)
             {
@@ -261,7 +264,7 @@ void FsmSw_Kyber1024_gen_matrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES]
 
                 FsmSw_Fips202_shake128_squeezeblocks(&buf[off], 1u, &state);
                 buflen = off + XOF_BLOCKBYTES;
-                ctr = ctr + (rej_uniform(&(a[i].vec[j].coeffs[ctr]), KYBER_N - ctr, buf, buflen));
+                ctr = ctr + (fsmsw_kyber1024_RejUniform(&(a[i].vec[j].coeffs[ctr]), KYBER_N - ctr, buf, buflen));
             }
         }
     }
@@ -279,8 +282,8 @@ void FsmSw_Kyber1024_gen_matrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES]
 void FsmSw_Kyber1024_indcpa_keypair(uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES],
                                     uint8 sk[KYBER1024_INDCPA_SECRETKEYBYTES])
 {
-    uint8 i;
-    uint8 buf[2u * KYBER_SYMBYTES];
+    uint8 i = 0;
+    uint8 buf[2u * KYBER_SYMBYTES] = {0};
     const uint8 *publicseed = buf;
     const uint8 *noiseseed = &buf[KYBER_SYMBYTES];
     uint8 nonce = 0;
@@ -317,8 +320,8 @@ void FsmSw_Kyber1024_indcpa_keypair(uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES],
     FsmSw_Kyber1024_polyvec_add(&pkpv, &pkpv, &e);
     FsmSw_Kyber1024_polyvec_reduce(&pkpv);
 
-    pack_sk(sk, &skpv);
-    pack_pk(pk, &pkpv, publicseed);
+    fsmsw_kyber1024_PackSk(sk, &skpv);
+    fsmsw_kyber1024_PackPk(pk, &pkpv, publicseed);
 }
 
 /***********************************************************************************************************************
@@ -339,13 +342,19 @@ void FsmSw_Kyber1024_indcpa_enc(      uint8 c[KYBER1024_INDCPA_BYTES],
                                 const uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES],
                                 const uint8 coins[KYBER_SYMBYTES])
 {
-    uint8 i;
-    uint8 seed[KYBER_SYMBYTES];
+    uint8 i = 0;
+    uint8 seed[KYBER_SYMBYTES]  = {0};
     uint8 nonce = 0;
-    polyvec1024 sp, pkpv, ep, at[KYBER1024_K], b;
-    poly1024    v, k, epp;
+    polyvec1024 sp   = {0};
+    polyvec1024 pkpv = {0};
+    polyvec1024 ep   = {0};
+    polyvec1024 at[KYBER1024_K] = {0};
+    polyvec1024 b    = {0};
+    poly1024    v    = {0};
+    poly1024    k    = {0};
+    poly1024    epp  = {0};
 
-    unpack_pk(&pkpv, seed, pk);
+    fsmsw_kyber1024_UnpackPk(&pkpv, seed, pk);
     FsmSw_Kyber1024_poly_frommsg(&k, m);
     FsmSw_Kyber1024_gen_matrix(at, seed, 1);
 
@@ -382,7 +391,7 @@ void FsmSw_Kyber1024_indcpa_enc(      uint8 c[KYBER1024_INDCPA_BYTES],
     FsmSw_Kyber1024_polyvec_reduce(&b);
     FsmSw_Kyber1024_poly_reduce(&v);
 
-    pack_ciphertext(c, &b, &v);
+    fsmsw_kyber1024_PackCiphertext(c, &b, &v);
 }
 
 /***********************************************************************************************************************
@@ -399,11 +408,13 @@ void FsmSw_Kyber1024_indcpa_dec(      uint8 m[KYBER1024_INDCPA_MSGBYTES],
                                 const uint8 c[KYBER1024_INDCPA_BYTES],
                                 const uint8 sk[KYBER1024_INDCPA_SECRETKEYBYTES])
 {
-    polyvec1024 b, skpv;
-    poly1024    v, mp;
+    polyvec1024 b    = {0};
+    polyvec1024 skpv = {0};
+    poly1024    v    = {0};
+    poly1024    mp   = {0};
 
-    unpack_ciphertext(&b, &v, c);
-    unpack_sk(&skpv, sk);
+    fsmsw_kyber1024_UnpackCiphertext(&b, &v, c);
+    fsmsw_kyber1024_UnpackSk(&skpv, sk);
 
     FsmSw_Kyber1024_polyvec_ntt(&b);
     FsmSw_Kyber1024_polyvec_basemul_acc_montgomery(&mp, &skpv, &b);

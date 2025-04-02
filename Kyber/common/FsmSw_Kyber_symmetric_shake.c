@@ -63,7 +63,7 @@
 ***********************************************************************************************************************/
 void FsmSw_Kyber_shake128_absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES], uint8 x, uint8 y)
 {
-    uint8 extseed[KYBER_SYMBYTES + 2u];
+    uint8 extseed[KYBER_SYMBYTES + 2u] = {0};
 
     FsmSw_CommonLib_memcpy(extseed, seed, KYBER_SYMBYTES);
     extseed[KYBER_SYMBYTES] = x;
@@ -85,7 +85,7 @@ void FsmSw_Kyber_shake128_absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES],
 ***********************************************************************************************************************/
 void FsmSw_Kyber_shake256_prf(uint8 *out, uint32 outlen, const uint8 key[KYBER_SYMBYTES], uint8 nonce)
 {
-    uint8 extkey[KYBER_SYMBYTES + 1u];
+    uint8 extkey[KYBER_SYMBYTES + 1u] = {0};
 
     FsmSw_CommonLib_memcpy(extkey, key, KYBER_SYMBYTES);
     extkey[KYBER_SYMBYTES] = nonce;

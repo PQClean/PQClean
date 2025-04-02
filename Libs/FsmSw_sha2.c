@@ -185,17 +185,17 @@ static void FsmSw_sha384_inc_finalize(uint8 *out, sha384ctx *state, const uint8 
 ***********************************************************************************************************************/
 static uint32 crypto_hashblocks_sha256(uint8 *statebytes, const uint8 *in, uint32 inlen)
 {
-    uint32 state[8];
-    uint32 a;
-    uint32 b;
-    uint32 c;
-    uint32 d;
-    uint32 e;
-    uint32 f;
-    uint32 g;
-    uint32 h;
-    uint32 T1;
-    uint32 T2;
+    uint32 state[8] = {0};
+    uint32 a  = 0;
+    uint32 b  = 0;
+    uint32 c  = 0;
+    uint32 d  = 0;
+    uint32 e  = 0;
+    uint32 f  = 0;
+    uint32 g  = 0;
+    uint32 h  = 0;
+    uint32 T1 = 0;
+    uint32 T2 = 0;
 
     /* in_temp and inlen_temp are used to avoid modifying the input. */
     const uint8 *in_temp = in;
@@ -676,7 +676,7 @@ static void FsmSw_sha384_inc_init(sha384ctx *state)
 ***********************************************************************************************************************/
 static void FsmSw_sha224_inc_finalize(uint8 *out, sha224ctx *state, const uint8 *in, uint32 inlen)
 {
-    uint8 tmp[32];
+    uint8 tmp[32] = {0};
 
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
@@ -702,7 +702,7 @@ static void FsmSw_sha224_inc_finalize(uint8 *out, sha224ctx *state, const uint8 
 ***********************************************************************************************************************/
 static void FsmSw_sha384_inc_finalize(uint8 *out, sha384ctx *state, const uint8 *in, uint32 inlen)
 {
-    uint8 tmp[64];
+    uint8 tmp[64] = {0};
 
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
@@ -900,8 +900,8 @@ void FsmSw_sha384_inc_blocks(sha384ctx *state, const uint8 *in, uint32 inblocks)
 ***********************************************************************************************************************/
 void FsmSw_sha256_inc_finalize(uint8 *out, sha256ctx *state, const uint8 *in, uint32 inlen)
 {
-    uint8 padded[128];
-    uint32 inlen_temp;
+    uint8 padded[128] = {0};
+    uint32 inlen_temp = 0;
     uint64 bytes = load_bigendian_64(&state->ctx[32]) + inlen;
 
     /* in_temp and inlen_temp_input are used to avoid modifying the input. */
@@ -973,8 +973,8 @@ void FsmSw_sha256_inc_finalize(uint8 *out, sha256ctx *state, const uint8 *in, ui
 ***********************************************************************************************************************/
 void FsmSw_sha512_inc_finalize(uint8 *out, sha512ctx *state, const uint8 *in, uint32 inlen)
 {
-    uint8 padded[256];
-    uint32 inlen_temp;
+    uint8 padded[256] = {0};
+    uint32 inlen_temp = 0;
     uint64 bytes = load_bigendian_64(&state->ctx[64]) + inlen;
 
     /* in_temp and inlen_temp_input are used to avoid modifying the input. */
@@ -1046,7 +1046,7 @@ void FsmSw_sha512_inc_finalize(uint8 *out, sha512ctx *state, const uint8 *in, ui
 ***********************************************************************************************************************/
 void FsmSw_sha224(uint8 *out, const uint8 *in, uint32 inlen)
 {
-    sha224ctx state;
+    sha224ctx state = {0};
 
     FsmSw_sha224_inc_init(&state);
     FsmSw_sha224_inc_finalize(out, &state, in, inlen);
@@ -1064,7 +1064,7 @@ void FsmSw_sha224(uint8 *out, const uint8 *in, uint32 inlen)
 ***********************************************************************************************************************/
 void FsmSw_sha256(uint8 *out, const uint8 *in, uint32 inlen)
 {
-    sha256ctx state;
+    sha256ctx state = {0};
 
     FsmSw_sha256_inc_init(&state);
     FsmSw_sha256_inc_finalize(out, &state, in, inlen);
@@ -1082,7 +1082,7 @@ void FsmSw_sha256(uint8 *out, const uint8 *in, uint32 inlen)
 ***********************************************************************************************************************/
 void FsmSw_sha384(uint8 *out, const uint8 *in, uint32 inlen)
 {
-    sha384ctx state;
+    sha384ctx state = {0};
 
     FsmSw_sha384_inc_init(&state);
     FsmSw_sha384_inc_finalize(out, &state, in, inlen);
@@ -1100,7 +1100,7 @@ void FsmSw_sha384(uint8 *out, const uint8 *in, uint32 inlen)
 ***********************************************************************************************************************/
 void FsmSw_sha512(uint8 *out, const uint8 *in, uint32 inlen)
 {
-    sha512ctx state;
+    sha512ctx state = {0};
 
     FsmSw_sha512_inc_init(&state);
     FsmSw_sha512_inc_finalize(out, &state, in, inlen);

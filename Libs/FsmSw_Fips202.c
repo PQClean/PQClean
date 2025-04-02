@@ -404,8 +404,8 @@ static void KeccakF1600_StatePermute(uint64 *state)
 ***********************************************************************************************************************/
 static void keccak_absorb(uint64 *s, uint32 r, const uint8 *m, uint32 mlen, uint8 p)
 {
-    uint32 i;
-    uint8 t[200];
+    uint32 i = 0;
+    uint8 t[200] = {0};
 
     /* m_temp and mlen_temp are used to avoid modifying the input. */
     const uint8 *m_temp = m;
@@ -492,7 +492,7 @@ static void keccak_squeezeblocks(uint8 *h, uint32 nblocks, uint64 *s, uint32 r)
 ***********************************************************************************************************************/
 static void keccak_inc_init(uint64 *s_inc)
 {
-    uint32 i;
+    uint32 i = 0;
 
     for (i = 0; i < 25u; ++i)
     {
@@ -518,7 +518,7 @@ static void keccak_inc_init(uint64 *s_inc)
 ***********************************************************************************************************************/
 static void keccak_inc_absorb(uint64 *s_inc, uint32 r, const uint8 *m, uint32 mlen)
 {
-    uint32 i;
+    uint32 i = 0;
 
     /* m_temp and mlen_temp are used to avoid modifying the input. */
     const uint8 *m_temp = m;
@@ -583,7 +583,7 @@ static void keccak_inc_finalize(uint64 *s_inc, uint32 r, uint8 p)
 ***********************************************************************************************************************/
 static void keccak_inc_squeeze(uint8 *h, uint32 outlen, uint64 *s_inc, uint32 r)
 {
-    uint32 i;
+    uint32 i = 0;
 
     /* h_temp and outlen_temp are used to avoid modifying the input. */
     uint8 *h_temp = h;
@@ -863,8 +863,8 @@ void FsmSw_Fips202_shake256_ctx_clone(shake256ctx *dest, const shake256ctx *src)
 void FsmSw_Fips202_shake128(uint8 *output, uint32 outlen, const uint8 *input, uint32 inlen)
 {
     uint32 nblocks = outlen / SHAKE128_RATE;
-    uint8 t[SHAKE128_RATE];
-    shake128ctx s;
+    uint8 t[SHAKE128_RATE] = {0};
+    shake128ctx s = {0};
 
     /* output_temp and outlen_temp are used to avoid modifying the input. */
     uint8 *output_temp = output;
@@ -900,8 +900,8 @@ void FsmSw_Fips202_shake128(uint8 *output, uint32 outlen, const uint8 *input, ui
 void FsmSw_Fips202_shake256(uint8 *output, uint32 outlen, const uint8 *input, uint32 inlen)
 {
     uint32 nblocks = outlen / SHAKE256_RATE;
-    uint8 t[SHAKE256_RATE];
-    shake256ctx s;
+    uint8 t[SHAKE256_RATE] = {0};
+    shake256ctx s = {0};
 
     /* output_temp and outlen_temp are used to avoid modifying the input. */
     uint8 *output_temp = output;
@@ -1069,7 +1069,7 @@ void FsmSw_Fips202_sha3_384_inc_absorb(sha3_384incctx *state, const uint8 *input
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_384_inc_finalize(uint8 *output, sha3_384incctx *state)
 {
-    uint8 t[SHA3_384_RATE];
+    uint8 t[SHA3_384_RATE] = {0};
     keccak_inc_finalize(state->ctx, SHA3_384_RATE, 0x06);
 
     keccak_squeezeblocks(t, 1, state->ctx, SHA3_384_RATE);
@@ -1092,8 +1092,8 @@ void FsmSw_Fips202_sha3_384_inc_finalize(uint8 *output, sha3_384incctx *state)
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_384(uint8 *output, const uint8 *input, uint32 inlen)
 {
-    uint64 s[25];
-    uint8 t[SHA3_384_RATE];
+    uint64 s[25] = {0};
+    uint8 t[SHA3_384_RATE] = {0};
 
     /* Absorb input */
     keccak_absorb(s, SHA3_384_RATE, input, inlen, 0x06);
@@ -1160,7 +1160,7 @@ void FsmSw_Fips202_sha3_512_inc_absorb(sha3_512incctx *state, const uint8 *input
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_512_inc_finalize(uint8 *output, sha3_512incctx *state)
 {
-    uint8 t[SHA3_512_RATE];
+    uint8 t[SHA3_512_RATE] = {0};
     keccak_inc_finalize(state->ctx, SHA3_512_RATE, 0x06);
 
     keccak_squeezeblocks(t, 1, state->ctx, SHA3_512_RATE);
@@ -1183,8 +1183,8 @@ void FsmSw_Fips202_sha3_512_inc_finalize(uint8 *output, sha3_512incctx *state)
 ***********************************************************************************************************************/
 void FsmSw_Fips202_sha3_512(uint8 *output, const uint8 *input, uint32 inlen)
 {
-    uint64 s[25];
-    uint8 t[SHA3_512_RATE];
+    uint64 s[25] = {0};
+    uint8 t[SHA3_512_RATE] = {0};
 
     /* Absorb input */
     keccak_absorb(s, SHA3_512_RATE, input, inlen, 0x06);

@@ -141,8 +141,8 @@ static uint64 fpr_ursh(uint64 x, sint32 n)
 ***********************************************************************************************************************/
 static sint64 fpr_irsh(sint64 x, sint32 n)
 {
-    sint64 temp3;
-    uint64 temp2;
+    sint64 temp3 = 0;
+    uint64 temp2 = 0;
     sint64 temp1 = ((-1) * (sint64)((uint64)((uint64)n >> 5)));
 
     /* x_temp is used to avoid modifying the input. */
@@ -203,10 +203,10 @@ static uint64 fpr_ulsh(uint64 x, sint32 n)
 ***********************************************************************************************************************/
 static fpr fpr_check_exponent(sint32 s, sint32 e, uint64 m)
 {
-    fpr x;
-    uint32 t;
-    uint32 f;
-    uint32 temp;
+    fpr x = 0;
+    uint32 t = 0;
+    uint32 f = 0;
+    uint32 temp = 0;
 
     /* e_temp and m_temp are used to avoid modifying the input. */
     sint32 e_temp = e;
@@ -249,9 +249,18 @@ static fpr fpr_check_exponent(sint32 s, sint32 e, uint64 m)
 ***********************************************************************************************************************/
 static fpr fpr_div(fpr x, fpr y)
 {
-    uint64 xu, yu, q, q2, w;
-    sint32 i, ex, ey, e, d, s;
-    uint64 b;
+    uint64 xu = 0;
+    uint64 yu = 0;
+    uint64 q  = 0;
+    uint64 q2 = 0;
+    uint64 w  = 0;
+    sint32 i  = 0;
+    sint32 ex = 0;
+    sint32 ey = 0;
+    sint32 e  = 0;
+    sint32 d  = 0;
+    sint32 s  = 0;
+    uint64 b  = 0;
 
     /* Extract mantissas of x and y. */
     xu = (x & (((uint64) 1 << 52) - 1u)) | ((uint64) 1 << 52);
@@ -322,9 +331,10 @@ static fpr fpr_div(fpr x, fpr y)
 ***********************************************************************************************************************/
 static fpr fpr_scaled(sint64 i, sint32 sc)
 {
-    sint32 s, e;
-    uint32 t;
-    uint64 m;
+    sint32 s = 0;
+    sint32 e = 0;
+    uint32 t = 0;
+    uint64 m = 0;
 
     /* i_temp is used to avoid modifying the input. */
     sint64 i_temp = i;
@@ -371,7 +381,7 @@ static fpr fpr_scaled(sint64 i, sint32 sc)
 ***********************************************************************************************************************/
 static void fpr_norm64(uint64 *mp, sint32 *ep)
 {
-    uint32 nt;
+    uint32 nt = 0;
 
     uint64 m = *mp;
     sint32 e = *ep;
@@ -441,9 +451,12 @@ fpr FsmSw_Falcon_fpr_of(sint64 i)
 ***********************************************************************************************************************/
 sint64 FsmSw_Falcon_fpr_rint(fpr x)
 {
-    uint64 m, d;
-    sint32 e;
-    uint32 s, dd, f;
+    uint64 m = 0;
+    uint64 d = 0;
+    sint32 e = 0;
+    uint32 s = 0;
+    uint32 dd = 0;
+    uint32 f = 0;
 
     /* We assume that the value fits in -(2^63-1)..+(2^63-1). We can thus extract the mantissa as a 63-bit integer,
      * then right-shift it as needed. */
@@ -485,11 +498,12 @@ sint64 FsmSw_Falcon_fpr_rint(fpr x)
 ***********************************************************************************************************************/
 sint64 FsmSw_Falcon_fpr_floor(fpr x)
 {
-    uint64 t;
-    sint64 xi;
-    sint32 e, cc;
-    sint64 temp1;
-    uint64 temp2;
+    uint64 t     = 0;
+    sint64 xi    = 0;
+    sint32 e     = 0;
+    sint32 cc    = 0;
+    sint64 temp1 = 0;
+    uint64 temp2 = 0;
 
     /* We extract the integer as a _signed_ 64-bit integer with a scaling factor. Since we assume that the value fits
      * in the -(2^63-1)..+(2^63-1) range, we can left-shift the absolute value to make it in the 2^62..2^63-1 range:
@@ -528,8 +542,10 @@ sint64 FsmSw_Falcon_fpr_floor(fpr x)
 ***********************************************************************************************************************/
 sint64 FsmSw_Falcon_fpr_trunc(fpr x)
 {
-    uint64 t, xu;
-    sint32 e, cc;
+    uint64 t = 0;
+    uint64 xu = 0;
+    sint32 e = 0;
+    sint32 cc = 0;
 
     /* Extract the absolute value. Since we assume that the value fits in the -(2^63-1)..+(2^63-1) range, we can
      * left-shift the absolute value into the 2^62..2^63-1 range, and then do a right shift afterwards. */
@@ -562,9 +578,16 @@ sint64 FsmSw_Falcon_fpr_trunc(fpr x)
 ***********************************************************************************************************************/
 fpr FsmSw_Falcon_fpr_add(fpr x, fpr y)
 {
-    uint64 m, xu, yu, za;
-    uint32 cs;
-    sint32 ex, ey, sx, sy, cc;
+    uint64 m = 0;
+    uint64 xu = 0;
+    uint64 yu = 0;
+    uint64 za = 0;
+    uint32 cs = 0;
+    sint32 ex = 0;
+    sint32 ey = 0;
+    sint32 sx = 0;
+    sint32 sy = 0;
+    sint32 cc = 0;
 
     /* x_temp and y_temp are used to avoid modifying the input. */
     fpr x_temp = x;
@@ -777,11 +800,12 @@ fpr FsmSw_Falcon_fpr_inv(fpr x)
 ***********************************************************************************************************************/
 sint32 FsmSw_Falcon_fpr_lt(fpr x, fpr y)
 {
-    sint32 cc0, cc1;
-    sint64 sx;
-    sint64 sy;
-    sint64 temp1;
-    uint64 temp2;
+    sint32 cc0 = 0;
+    sint32 cc1 = 0;
+    sint64 sx = 0;
+    sint64 sy = 0;
+    sint64 temp1 = 0;
+    uint64 temp2 = 0;
 
     sx = (sint64)x;
     sy = (sint64)y;
@@ -821,9 +845,23 @@ sint32 FsmSw_Falcon_fpr_lt(fpr x, fpr y)
 ***********************************************************************************************************************/
 fpr FsmSw_Falcon_fpr_mul(fpr x, fpr y)
 {
-    uint64 xu, yu, w, zu, zv;
-    uint32 x0, x1, y0, y1, z0, z1, z2;
-    sint32 ex, ey, d, e, s;
+    uint64 xu = 0;
+    uint64 yu = 0;
+    uint64 w = 0;
+    uint64 zu = 0;
+    uint64 zv = 0;
+    uint32 x0 = 0;
+    uint32 x1 = 0;
+    uint32 y0 = 0;
+    uint32 y1 = 0;
+    uint32 z0 = 0;
+    uint32 z1 = 0;
+    uint32 z2 = 0;
+    sint32 ex = 0;
+    sint32 ey = 0;
+    sint32 d = 0;
+    sint32 e = 0;
+    sint32 s = 0;
 
     /* Extract absolute values as scaled unsigned integers. We don't extract exponents yet. */
     xu = (x & (((uint64) 1 << 52) - 1u)) | ((uint64) 1 << 52);
@@ -899,9 +937,14 @@ fpr FsmSw_Falcon_fpr_mul(fpr x, fpr y)
 ***********************************************************************************************************************/
 fpr FsmSw_Falcon_fpr_sqrt(fpr x)
 {
-    uint64 xu, q, s, r;
-    sint32 ex, e;
-    uint64 t, b;
+    uint64 xu = 0;
+    uint64 q = 0;
+    uint64 s = 0;
+    uint64 r = 0;
+    sint32 ex = 0;
+    sint32 e = 0;
+    uint64 t = 0;
+    uint64 b = 0;
 
     /* Extract the mantissa and the exponent. We don't care about the sign: by assumption, the operand is nonnegative.
      * We want the "true" exponent corresponding to a mantissa in the 1..2 range. */
@@ -971,10 +1014,15 @@ uint64 FsmSw_Falcon_fpr_expm_p63(fpr x, fpr ccs)
      *
      * Tests over more than 24 billions of random inputs in the 0..log(2) range have never shown a deviation larger
      * than 2^(-50) from the true mathematical value.*/ 
-    uint64 z, y;
-    uint32 u;
-    uint32 z0, z1, y0, y1;
-    uint64 a, b;
+    uint64 z = 0;
+    uint64 y = 0;
+    uint32 u = 0;
+    uint32 z0 = 0;
+    uint32 z1 = 0;
+    uint32 y0 = 0;
+    uint32 y1 = 0;
+    uint64 a = 0;
+    uint64 b = 0;
 
     y = C[0];
     z = (uint64) FsmSw_Falcon_fpr_trunc(FsmSw_Falcon_fpr_mul(x, fpr_ptwo63)) << 1;

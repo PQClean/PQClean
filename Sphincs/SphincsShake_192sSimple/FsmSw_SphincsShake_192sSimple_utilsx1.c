@@ -53,7 +53,7 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsShake_192sSimple_treehashx1
+* Name:        FsmSw_SphincsShake_192sSimple_3_treehashx1
 *
 * Description: Generate the entire Merkle tree, computing the authentication path for leaf_idx, and the resulting root
 *              node using Merkle's TreeHash algorithm. Expects the layer and tree parts of the tree_addr to be set, as
@@ -79,7 +79,7 @@
 *              -       uint32                  tree_addr[8]: t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsShake_192sSimple_treehashx1(uint8 *root, uint8 *auth_path, const sphincs_shake_192s_ctx *ctx,
+void FsmSw_SphincsShake_192sSimple_3_treehashx1(uint8 *root, uint8 *auth_path, const sphincs_shake_192s_ctx *ctx,
                                               uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
                                               void (*gen_leaf)
                                               (
@@ -104,7 +104,7 @@ void FsmSw_SphincsShake_192sSimple_treehashx1(uint8 *root, uint8 *auth_path, con
         }
 
         /* Current logical node is at index[FSMSW_SPHINCSSHAKE_192SSIMPLE_N]. We do this to minimize the number of
-         * copies needed during a FsmSw_SphincsShake_192sSimple_thash */
+         * copies needed during a FsmSw_SphincsShake_192sSimple_1_thash */
         uint8 current[2u * FSMSW_SPHINCSSHAKE_192SSIMPLE_N];
         gen_leaf( &current[FSMSW_SPHINCSSHAKE_192SSIMPLE_N], ctx, idx + idx_offset, info );
 
@@ -149,7 +149,7 @@ void FsmSw_SphincsShake_192sSimple_treehashx1(uint8 *root, uint8 *auth_path, con
 
             uint8 *left = &stack[h * FSMSW_SPHINCSSHAKE_192SSIMPLE_N];
             FsmSw_CommonLib_memcpy( &current[0], left, FSMSW_SPHINCSSHAKE_192SSIMPLE_N );
-            FsmSw_SphincsShake_192sSimple_thash(&current[FSMSW_SPHINCSSHAKE_192SSIMPLE_N],
+            FsmSw_SphincsShake_192sSimple_1_thash(&current[FSMSW_SPHINCSSHAKE_192SSIMPLE_N],
                                                 &current[0u * FSMSW_SPHINCSSHAKE_192SSIMPLE_N], 2u, ctx, tree_addr);
 
             internal_idx >>= 1;

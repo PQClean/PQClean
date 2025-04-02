@@ -46,6 +46,8 @@
 void FsmSw_SphincsSha2_128sSimple_fors_sign(uint8 *sig, uint8 *pk, const uint8 *m, const sphincs_sha2_128s_ctx *ctx,
                                             const uint32 fors_addr[8]);
 
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsSha2_128sSimple_fors_pk_from_sig(uint8 *pk, const uint8 *sig, const uint8 *m,
                                                    const sphincs_sha2_128s_ctx *ctx, const uint32 fors_addr[8]);
 

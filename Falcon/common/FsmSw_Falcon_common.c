@@ -19,6 +19,7 @@
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 #include "FsmSw_Falcon_common.h"
+#include "FsmSw_CommonLib.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -96,7 +97,7 @@ void FsmSw_Falcon_hash_to_point_vartime(inner_shake256_context *sc, uint16 *x, u
      * information on the plaintext (at least, enough to check the plaintext against a list of potential plaintexts)
      * in a scenario where the attacker does not have access to the signature value or to the public key, but knows
      * the nonce (without knowledge of the nonce, the hashed output cannot be matched against potential plaintexts). */
-    uint32 n;
+    uint32 n = 0;
     /* x_temp is used to avoid modifying the input. */
     uint16 *x_temp = x;
     
@@ -160,9 +161,15 @@ void FsmSw_Falcon_hash_to_point_ct(inner_shake256_context *sc, uint16 *x, uint32
      * If logn >= 7, then the provided temporary buffer is large enough. Otherwise, we use a stack buffer of 63 entries
      * (i.e. 126 bytes) for the values that do not fit in tmp[]. */
 
-    uint32 n, n2, u, m, p, over;
-    uint16 *tt1, tt2[63];
-    uint32 temp;
+    uint32 n = 0;
+    uint32 n2 = 0;
+    uint32 u = 0;
+    uint32 m = 0;
+    uint32 p = 0;
+    uint32 over = 0;
+    uint16 *tt1 = (uint16*)NULL_PTR;
+    uint16 tt2[63] = {0};
+    uint32 temp = 0;
 
     /* We first generate m 16-bit value. Values 0..n-1 go to x[]. Values n..2*n-1 go to tt1[]. Values 2*n and later
      * go to tt2[]. We also reduce modulo q the values; rejected values are set to 0xFFFF. */
@@ -291,9 +298,11 @@ sint32 FsmSw_Falcon_is_short(const sint16 *s1, const sint16 *s2, uint32 logn)
 {
     /* We use the l2-norm. Code below uses only 32-bit operations to compute the square of the norm with saturation to
      * 2^32-1 if the value exceeds 2^31-1. */
-    uint32 n, u;
-    uint32 s, ng;
-    sint32 z;
+    uint32 n = 0;
+    uint32 u = 0;
+    uint32 s = 0;
+    uint32 ng = 0;
+    sint32 z = 0;
     sint32 retVal = 0;
 
     n = (uint32)1 << logn;
@@ -336,9 +345,10 @@ sint32 FsmSw_Falcon_is_short(const sint16 *s1, const sint16 *s2, uint32 logn)
 ***********************************************************************************************************************/
 sint32 FsmSw_Falcon_is_short_half(uint32 sqn, const sint16 *s2, uint32 logn)
 {
-    uint32 n, u;
-    uint32 ng;
-    sint32 z;
+    uint32 n = 0;
+    uint32 u = 0;
+    uint32 ng = 0;
+    sint32 z = 0;
     /* sqn_temp is used to avoid modifying the input. */
     uint32 sqn_temp = sqn;
     sint32 retVal = 0;

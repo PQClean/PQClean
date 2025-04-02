@@ -43,7 +43,7 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsShake_192sSimple_treehashx1(uint8 *root, uint8 *auth_path, const sphincs_shake_192s_ctx *ctx,
+void FsmSw_SphincsShake_192sSimple_3_treehashx1(uint8 *root, uint8 *auth_path, const sphincs_shake_192s_ctx *ctx,
                                               uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
                                               void (*gen_leaf)
                                               (

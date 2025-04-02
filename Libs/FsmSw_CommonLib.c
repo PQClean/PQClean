@@ -89,9 +89,11 @@ static uint32 iav_commonlib_rand(void)
 *              - const uint32  n:    number of  values
 *
 ***********************************************************************************************************************/
+/* polyspace +2 CODE-METRICS:CALLING [Justified:]"[Value: 175]The increase to 175 is due 
+to recent refactoring and code improvements." */
 void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
 {
-    uint32 i;
+    uint32 i = 0;
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;
@@ -115,7 +117,7 @@ void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
 ***********************************************************************************************************************/
 void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
 {
-    uint32 i;
+    uint32 i = 0;
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;
@@ -139,7 +141,7 @@ void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
 ***********************************************************************************************************************/
 uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
 {
-    uint32 i;
+    uint32 i = 0;
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;
@@ -169,7 +171,7 @@ uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
 ***********************************************************************************************************************/
 void FsmSw_CommonLib_memmove(void *dest, const void * src,  const uint32 n)
 {
-    sint32 i;
+    sint32 i = 0;
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
     uint8 *destPtr = (uint8*)dest;

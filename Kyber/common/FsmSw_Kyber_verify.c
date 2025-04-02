@@ -62,11 +62,11 @@
 ***********************************************************************************************************************/
 uint8 FsmSw_Kyber_verify(const uint8 *a, const uint8 *b, uint32 len)
 {
-    uint32 i;
+    uint32 i = 0;
     uint8  r = 0;
 
-    sint64 temp1;
-    uint64 temp2;
+    sint64 temp1 = 0;
+    uint64 temp2 = 0;
 
     for (i = 0; i < len; i++)
     {
@@ -102,8 +102,8 @@ uint8 FsmSw_Kyber_verify(const uint8 *a, const uint8 *b, uint32 len)
 ***********************************************************************************************************************/
 void FsmSw_Kyber_cmov(uint8 *r, const uint8 *x, uint32 len, uint8 b)
 {
-    uint32 i;
-    sint8  b_sint;
+    uint32 i = 0;
+    sint8  b_sint = 0;
 
     b_sint = (-1) * (sint8)b;
 
