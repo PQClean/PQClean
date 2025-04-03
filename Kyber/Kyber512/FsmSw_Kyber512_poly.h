@@ -59,6 +59,8 @@ void FsmSw_Kyber512_poly_tomsg(uint8 msg[KYBER512_INDCPA_MSGBYTES], const poly51
 
 void FsmSw_Kyber512_poly_getnoise_eta1(poly512 *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce);
 
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_Kyber512_poly_getnoise_eta2(poly512 *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce);
 
 void FsmSw_Kyber512_poly_ntt(poly512 *r);

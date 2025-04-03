@@ -46,6 +46,8 @@
 void FsmSw_SphincsShake_256sSimple_wots_pk_from_sig(uint8 *pk, const uint8 *sig, const uint8 *msg,
                                                     const sphincs_shake_256s_ctx *ctx, uint32 addr[8]);
 
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsShake_256sSimple_chain_lengths(uint32 *lengths, const uint8 *msg);
 
 #endif /* FSMSW_SPHINCSSHAKE_256SSIMPLE_WOTS_H */

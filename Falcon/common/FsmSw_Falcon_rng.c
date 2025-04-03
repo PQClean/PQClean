@@ -81,8 +81,8 @@ static void prng_refill(prng *p)
 {
     static const uint32 CW[] = {0x61707865, 0x3320646e, 0x79622d32, 0x6b206574};
 
-    uint64 cc;
-    uint32 u;
+    uint64 cc = 0;
+    uint32 u = 0;
 
     /* polyspace +4 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
@@ -162,10 +162,11 @@ static void prng_refill(prng *p)
 void FsmSw_Falcon_prng_init(prng *p, inner_shake256_context *src)
 {
     /* To ensure reproducibility for a given seed, we must enforce little-endian interpretation of the state words. */
-    uint8 tmp[56];
-    uint64 th, tl;
-    sint32 i;
-    uint32 w;
+    uint8 tmp[56] = {0};
+    uint64 th = 0;
+    uint64 tl = 0;
+    sint32 i = 0;
+    uint32 w = 0;
 
     /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
@@ -201,8 +202,8 @@ void FsmSw_Falcon_prng_init(prng *p, inner_shake256_context *src)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_prng_get_bytes(prng *p, void *dst, uint32 len)
 {
-    uint8 *buf;
-    uint32 clen;
+    uint8 *buf = (uint8*)NULL_PTR;
+    uint32 clen = 0;
 
     /* len_temp is used to avoid modifying the input. */
     uint32 len_temp = len;
@@ -241,7 +242,7 @@ void FsmSw_Falcon_prng_get_bytes(prng *p, void *dst, uint32 len)
 ***********************************************************************************************************************/
 uint64 FsmSw_Falcon_prng_get_u64(prng *p)
 {
-  uint32 u;
+  uint32 u = 0;
 
   /* If there are less than 9 bytes in the buffer, we refill it. This means that we may drop the last few bytes, but
    * this allows for faster extraction code. Also, it means that we never leave an empty buffer. */
@@ -273,7 +274,7 @@ uint64 FsmSw_Falcon_prng_get_u64(prng *p)
 ***********************************************************************************************************************/
 uint32 FsmSw_Falcon_prng_get_u8(prng *p)
 {
-  uint32 v;
+  uint32 v = 0;
 
   v = p->buf.d[p->ptr];
   p->ptr++;

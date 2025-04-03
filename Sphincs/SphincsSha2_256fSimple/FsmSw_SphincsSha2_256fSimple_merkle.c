@@ -74,12 +74,12 @@ void FsmSw_SphincsSha2_256fSimple_merkle_sign(uint8 *sig, uint8 *root, const sph
     uint8 *auth_path = &sig[FSMSW_SPHINCSSHA2_256FSIMPLE_WOTS_BYTES];
     /* polyspace +4 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
-    struct leaf_info_x1 info = { {(void*)0},
-                                        {0},
-                                 {(void*)0},
-                                 {0,0,0,0,0,0,0,0},
-                                 {0,0,0,0,0,0,0,0}
-                               };
+    Fsmsw_Sphincssha2_256fSimple_LeafInfoX1_T info = { {(void*)0},
+                                                              {0},
+                                                       {(void*)0},
+                                                       {0,0,0,0,0,0,0,0},
+                                                       {0,0,0,0,0,0,0,0}
+                                                     };
     uint32 steps[ FSMSW_SPHINCSSHA2_256FSIMPLE_WOTS_LEN ];
 
     info.wots_sig = sig;
@@ -106,6 +106,8 @@ void FsmSw_SphincsSha2_256fSimple_merkle_sign(uint8 *sig, uint8 *root, const sph
 *              - const sphincs_sha2_256f_ctx *ctx:  t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsSha2_256fSimple_merkle_gen_root(uint8 *root, const sphincs_sha2_256f_ctx *ctx)
 {
     /* We do not need the auth path in key generation, but it simplifies the code to have just one treehash routine

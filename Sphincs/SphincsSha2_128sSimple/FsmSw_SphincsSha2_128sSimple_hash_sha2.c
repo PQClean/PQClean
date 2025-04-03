@@ -131,6 +131,8 @@ void FsmSw_SphincsSha2_128sSimple_mgf1_256(uint8 *out, uint32 outlen, const uint
 *
 * Note:        This function is currently not used.
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsSha2_128sSimple_mgf1_512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen)
 {
     uint8 inbuf[FSMSW_SPHINCSSHA2_128SSIMPLE_MGF1_512_BUF_LEN + 4u];

@@ -131,6 +131,8 @@ sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +4 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
 designed for use by other systems that aim to integrate the Sphincs." */
 sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen,
@@ -216,6 +218,8 @@ sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign_signature(uint8 *sig, uint32 *sig
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +4 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
 designed for use by other systems that aim to integrate the Sphincs." */
 sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
@@ -317,6 +321,8 @@ sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign_verify(const uint8 *sig, uint32 s
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk)
 {
     uint32 siglen;
@@ -343,6 +349,8 @@ sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign(uint8 *sm, uint32 *smlen, const u
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 sint8 FsmSw_SphincsSha2_256fSimple_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen,
                                                   const uint8 *pk)
 {

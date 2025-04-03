@@ -170,11 +170,21 @@ void FsmSw_Falcon_FFT(fpr *f, uint32 logn)
      * We only keep the first half of the complex numbers. We can see that after the first iteration, the first and
      * second halves of the array of complex numbers have separate lives, so we simply ignore the second part. */
 
-    uint32 u;
-    uint32 t, n, hn, m;
-    uint32 ht, hm, i1, j1;
-    uint32 j, j2;
-    fpr x_re, x_im, y_re, y_im;
+    uint32 u  = 0;
+    uint32 t  = 0;
+    uint32 n  = 0;
+    uint32 hn = 0;
+    uint32 m  = 0;
+    uint32 ht = 0;
+    uint32 hm = 0;
+    uint32 i1 = 0;
+    uint32 j1 = 0;
+    uint32 j  = 0;
+    uint32 j2 = 0;
+    fpr x_re = 0;
+    fpr x_im = 0;
+    fpr y_re = 0;
+    fpr y_im = 0;
 
     /* First iteration: compute f[j] + i * f[j+N/2] for all j < N/2 (because GM[1] = w^rev(1) = w^(N/2) = i). In our
      * chosen representation, this is a no-op: everything is already where it should be.
@@ -263,11 +273,22 @@ void FsmSw_Falcon_iFFT(fpr *f, uint32 logn)
      * is thus a simple doubling of the values in all the array.
      *
      * We make the last iteration a no-op by tweaking the final division into a division by N/2, not N. */
-    uint32 u, n, hn, t, m;
-    uint32 hm, dt, i1, j1;
-    uint32 j, j2;
-    fpr x_re, x_im, y_re, y_im;
-    fpr ni;
+    uint32 u = 0;
+    uint32 n = 0;
+    uint32 hn = 0;
+    uint32 t = 0;
+    uint32 m = 0;
+    uint32 hm = 0;
+    uint32 dt = 0;
+    uint32 i1 = 0;
+    uint32 j1 = 0;
+    uint32 j = 0;
+    uint32 j2 = 0;
+    fpr x_re = 0;
+    fpr x_im = 0;
+    fpr y_re = 0;
+    fpr y_im = 0;
+    fpr ni = 0;
 
     n = (uint32) 1 << logn;
     t = 1;
@@ -330,7 +351,8 @@ void FsmSw_Falcon_iFFT(fpr *f, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_add(fpr *a, const fpr *b, uint32 logn)
 {
-    uint32 n, u;
+    uint32 n = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     for (u = 0; u < n; u++)
@@ -352,7 +374,8 @@ void FsmSw_Falcon_poly_add(fpr *a, const fpr *b, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_sub(fpr *a, const fpr *b, uint32 logn)
 {
-    uint32 n, u;
+    uint32 n = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     for (u = 0; u < n; u++)
@@ -372,7 +395,8 @@ void FsmSw_Falcon_poly_sub(fpr *a, const fpr *b, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_neg(fpr *a, uint32 logn)
 {
-    uint32 n, u;
+    uint32 n = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     for (u = 0; u < n; u++)
@@ -392,7 +416,8 @@ void FsmSw_Falcon_poly_neg(fpr *a, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_adj_fft(fpr *a, uint32 logn)
 {
-    uint32 n, u;
+    uint32 n = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     for (u = (n >> 1); u < n; u++)
@@ -414,8 +439,13 @@ void FsmSw_Falcon_poly_adj_fft(fpr *a, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_mul_fft(fpr *a, const fpr *b, uint32 logn)
 {
-    uint32 n, hn, u;
-    fpr a_re, a_im, b_re, b_im;
+    uint32 n = 0;
+    uint32 hn = 0;
+    uint32 u = 0;
+    fpr a_re = 0;
+    fpr a_im = 0;
+    fpr b_re = 0;
+    fpr b_im = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -442,7 +472,9 @@ void FsmSw_Falcon_poly_mul_fft(fpr *a, const fpr *b, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_muladj_fft(fpr *a, const fpr *b, uint32 logn)
 {
-    uint32 n, hn, u;
+    uint32 n = 0;
+    uint32 hn = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -470,8 +502,11 @@ void FsmSw_Falcon_poly_muladj_fft(fpr *a, const fpr *b, uint32 logn)
 void FsmSw_Falcon_poly_mulselfadj_fft(fpr *a, uint32 logn)
 {
     /* Since each coefficient is multiplied with its own conjugate, the result contains only real values. */
-    uint32 n, hn, u;
-    fpr a_re, a_im;
+    uint32 n = 0;
+    uint32 hn = 0;
+    uint32 u = 0;
+    fpr a_re = 0;
+    fpr a_im = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -496,7 +531,8 @@ void FsmSw_Falcon_poly_mulselfadj_fft(fpr *a, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_mulconst(fpr *a, fpr x, uint32 logn)
 {
-    uint32 n, u;
+    uint32 n = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     for (u = 0; u < n; u++)
@@ -521,9 +557,13 @@ void FsmSw_Falcon_poly_mulconst(fpr *a, fpr x, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_invnorm2_fft(fpr *d, const fpr *a, const fpr *b, uint32 logn)
 {
-    uint32 n, hn, u;
-    fpr a_re, a_im;
-    fpr b_re, b_im;
+    uint32 n = 0;
+    uint32 hn = 0;
+    uint32 u = 0;
+    fpr a_re = 0;
+    fpr a_im = 0;
+    fpr b_re = 0;
+    fpr b_im = 0; 
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -555,10 +595,21 @@ void FsmSw_Falcon_poly_invnorm2_fft(fpr *d, const fpr *a, const fpr *b, uint32 l
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_add_muladj_fft(fpr *d, const fpr *F, const fpr *G, const fpr *f, const fpr *g, uint32 logn)
 {
-    uint32 n, hn, u;
-    fpr poly_F_real, poly_F_imaginary, poly_G_real, poly_G_imaginary;
-    fpr adj_f_real, adj_f_imaginary, adj_g_real, adj_g_imaginary;
-    fpr a_re, a_im, b_re, b_im;
+    uint32 n  = 0;
+    uint32 hn = 0;
+    uint32 u  = 0;
+    fpr poly_F_real      = 0;
+    fpr poly_F_imaginary = 0;
+    fpr poly_G_real      = 0;
+    fpr poly_G_imaginary = 0;
+    fpr adj_f_real       = 0;
+    fpr adj_f_imaginary  = 0;
+    fpr adj_g_real       = 0;
+    fpr adj_g_imaginary  = 0;
+    fpr a_re             = 0;
+    fpr a_im             = 0;
+    fpr b_re             = 0;
+    fpr b_im             = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -594,7 +645,9 @@ void FsmSw_Falcon_poly_add_muladj_fft(fpr *d, const fpr *F, const fpr *G, const 
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_mul_autoadj_fft(fpr *a, const fpr *b, uint32 logn)
 {
-    uint32 n, hn, u;
+    uint32 n = 0;
+    uint32 hn = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -619,7 +672,9 @@ void FsmSw_Falcon_poly_mul_autoadj_fft(fpr *a, const fpr *b, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_div_autoadj_fft(fpr *a, const fpr *b, uint32 logn)
 {
-    uint32 n, hn, u;
+    uint32 n = 0;
+    uint32 hn = 0;
+    uint32 u = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -649,9 +704,17 @@ void FsmSw_Falcon_poly_div_autoadj_fft(fpr *a, const fpr *b, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_LDL_fft(const fpr *g00, fpr *g01, fpr *g11,  uint32 logn)
 {
-    uint32 n, hn, u;
-    fpr g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
-    fpr mu_re, mu_im;
+    uint32 n   = 0;
+    uint32 hn  = 0;
+    uint32 u   = 0;
+    fpr g00_re = 0;
+    fpr g00_im = 0;
+    fpr g01_re = 0;
+    fpr g01_im = 0;
+    fpr g11_re = 0;
+    fpr g11_im = 0;
+    fpr mu_re  = 0;
+    fpr mu_im  = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -688,9 +751,17 @@ void FsmSw_Falcon_poly_LDL_fft(const fpr *g00, fpr *g01, fpr *g11,  uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_LDLmv_fft(fpr *d11, fpr *l10, const fpr *g00, const fpr *g01, const fpr *g11, uint32 logn)
 {
-    uint32 n, hn, u;
-    fpr g00_re, g00_im, g01_re, g01_im, g11_re, g11_im;
-    fpr mu_re, mu_im;
+    uint32 n   = 0;
+    uint32 hn  = 0;
+    uint32 u   = 0;
+    fpr g00_re = 0;
+    fpr g00_im = 0; 
+    fpr g01_re = 0;
+    fpr g01_im = 0;
+    fpr g11_re = 0;
+    fpr g11_im = 0;
+    fpr mu_re  = 0;
+    fpr mu_im  = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -727,9 +798,16 @@ void FsmSw_Falcon_poly_split_fft(fpr *f0, fpr *f1, const fpr *f, uint32 logn)
 {
     /* The FFT representation we use is in bit-reversed order (element i contains f(w^(rev(i))), where rev() is the
      * bit-reversal function over the ring degree. This changes indexes with regards to the Falcon specification. */
-    uint32 n, hn, qn, u;
-    fpr a_re, a_im, b_re, b_im;
-    fpr t_re, t_im;
+    uint32 n  = 0;
+    uint32 hn = 0;
+    uint32 qn = 0;
+    uint32 u  = 0;
+    fpr a_re = 0;
+    fpr a_im = 0;
+    fpr b_re = 0;
+    fpr b_im = 0;
+    fpr t_re = 0;
+    fpr t_im = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;
@@ -774,9 +852,16 @@ void FsmSw_Falcon_poly_split_fft(fpr *f0, fpr *f1, const fpr *f, uint32 logn)
 ***********************************************************************************************************************/
 void FsmSw_Falcon_poly_merge_fft(fpr *f, const fpr *f0, const fpr *f1, uint32 logn)
 {
-    uint32 n, hn, qn, u;
-    fpr a_re, a_im, b_re, b_im;
-    fpr t_re, t_im;
+    uint32 n  = 0;
+    uint32 hn = 0;
+    uint32 qn = 0;
+    uint32 u  = 0;
+    fpr a_re = 0;
+    fpr a_im = 0;
+    fpr b_re = 0;
+    fpr b_im = 0;
+    fpr t_re = 0;
+    fpr t_im = 0;
 
     n = (uint32) 1 << logn;
     hn = n >> 1;

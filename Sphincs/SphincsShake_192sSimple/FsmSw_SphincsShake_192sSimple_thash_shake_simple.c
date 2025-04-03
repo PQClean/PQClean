@@ -53,7 +53,7 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsShake_192sSimple_thash
+* Name:        FsmSw_SphincsShake_192sSimple_1_thash
 *
 * Description: Takes an array of inblocks concatenated arrays of FSMSW_SPHINCSSHAKE_192SSIMPLE_N bytes.
 *
@@ -64,7 +64,7 @@
 *              - const uint32                  addr[8]:  t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsShake_192sSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks,
+void FsmSw_SphincsShake_192sSimple_1_thash(uint8 *out, const uint8 *in, uint32 inblocks,
                                          const sphincs_shake_192s_ctx *ctx, const uint32 addr[8])
 {
     uint8 buf[FSMSW_SPHINCSSHAKE_192SSIMPLE_N + FSMSW_SPHINCSSHAKE_192SSIMPLE_ADDR_BYTES +

@@ -62,8 +62,8 @@
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium_montgomery_reduce(sint64 a)
 {
-    sint32 t;
-    sint64 temp;
+    sint32 t = 0;
+    sint64 temp = 0;
 
     t = (sint32)((uint32)((uint64)a * (uint64)QINV));
 
@@ -86,8 +86,8 @@ sint32 FsmSw_Dilithium_montgomery_reduce(sint64 a)
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium_reduce32(sint32 a)
 {
-    sint32 t;
-    sint32 temp;
+    sint32 t = 0;
+    sint32 temp = 0;
 
     temp = a + (sint32)((uint32)((uint32)1 << 22u));
     t = (sint32)((uint32)((uint64)temp >> 23));
@@ -108,7 +108,7 @@ sint32 FsmSw_Dilithium_reduce32(sint32 a)
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium_caddq(sint32 a)
 {
-    uint32 temp;
+    uint32 temp = 0;
 
     /* a_temp is used to avoid modifying the input. */
     sint32 a_temp = a;

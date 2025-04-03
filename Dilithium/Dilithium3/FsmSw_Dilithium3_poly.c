@@ -50,14 +50,14 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
-static uint32 rej_uniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
+static uint32 fsmsw_dilithium3_RejEta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
+static uint32 fsmsw_dilithium3_RejUniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        rej_eta
+* Name:        fsmsw_dilithium3_RejEta
 *
 * Description: Sample uniformly random coefficients in [-ETA, ETA] by
 *              performing rejection sampling on array of random bytes.
@@ -69,13 +69,13 @@ static uint32 rej_uniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen
 *
 * Returns number of sampled coefficients. Can be smaller than len if not enough random bytes were given.
 ***********************************************************************************************************************/
-static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
+static uint32 fsmsw_dilithium3_RejEta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 {
-    uint32 ctr, pos;
-    uint32 t0, t1;
+    uint32 ctr = 0;
+    uint32 pos = 0;
+    uint32 t0 = 0;
+    uint32 t1 = 0;
 
-    ctr = 0;
-    pos = 0;
     while ((ctr < len) && (pos < buflen))
     {
         t0 = (uint32)(buf[pos]) & 0x0Fu;
@@ -99,7 +99,7 @@ static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 }
 
 /***********************************************************************************************************************
-* Name:        rej_uniform
+* Name:        fsmsw_dilithium3_RejUniform
 *
 * Description: Sample uniformly random coefficients in [0, Q-1] by
 *              performing rejection sampling on array of random bytes.
@@ -112,13 +112,12 @@ static uint32 rej_eta(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 * Returns number of sampled coefficients. Can be smaller than len if not enough
 * random bytes were given.
 ***********************************************************************************************************************/
-static uint32 rej_uniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
+static uint32 fsmsw_dilithium3_RejUniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen)
 {
-    uint32 ctr, pos;
-    uint32 t;
-
-    ctr = 0;
-    pos = 0;
+    uint32 ctr = 0;
+    uint32 pos = 0;
+    uint32 t = 0;
+    
     while ((ctr < len) && ((pos + 3u) <= buflen))
     {
         t  = buf[pos];
@@ -153,7 +152,7 @@ static uint32 rej_uniform(sint32 *a, uint32 len, const uint8 *buf, uint32 buflen
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_reduce(poly_D3 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -189,7 +188,7 @@ void FsmSw_Dilithium3_poly_caddq(poly_D3 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_add(poly_D3 *c, const poly_D3 *a, const poly_D3 *b)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -208,7 +207,7 @@ void FsmSw_Dilithium3_poly_add(poly_D3 *c, const poly_D3 *a, const poly_D3 *b)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_sub(poly_D3 *c, const poly_D3 *a, const poly_D3 *b)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -226,7 +225,7 @@ void FsmSw_Dilithium3_poly_sub(poly_D3 *c, const poly_D3 *a, const poly_D3 *b)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_shiftl(poly_D3 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -271,7 +270,7 @@ void FsmSw_Dilithium3_poly_ntt(poly_D3 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_pointwise_montgomery(poly_D3 *c, const poly_D3 *a, const poly_D3 *b)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -291,7 +290,7 @@ void FsmSw_Dilithium3_poly_pointwise_montgomery(poly_D3 *c, const poly_D3 *a, co
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_power2round(poly_D3 *a1, poly_D3 *a0, const poly_D3 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -312,7 +311,7 @@ void FsmSw_Dilithium3_poly_power2round(poly_D3 *a1, poly_D3 *a0, const poly_D3 *
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_decompose(poly_D3 *a1, poly_D3 *a0, const poly_D3 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -334,7 +333,7 @@ void FsmSw_Dilithium3_poly_decompose(poly_D3 *a1, poly_D3 *a0, const poly_D3 *a)
 ***********************************************************************************************************************/
 uint32 FsmSw_Dilithium3_poly_make_hint(poly_D3 *h, const poly_D3 *a0, const poly_D3 *a1)
 {
-    uint16 i;
+    uint16 i = 0;
     uint32 s = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
@@ -357,7 +356,7 @@ uint32 FsmSw_Dilithium3_poly_make_hint(poly_D3 *h, const poly_D3 *a0, const poly
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_use_hint(poly_D3 *b, const poly_D3 *a, const poly_D3 *h)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < N_DILITHIUM; ++i)
     {
@@ -378,8 +377,8 @@ void FsmSw_Dilithium3_poly_use_hint(poly_D3 *b, const poly_D3 *a, const poly_D3 
 ***********************************************************************************************************************/
 sint8 FsmSw_Dilithium3_poly_chknorm(const poly_D3 *a, sint32 B)
 {
-    uint16 i;
-    sint32 t;
+    uint16 i = 0;
+    sint32 t = 0;
 
     sint8 retVal = 0;
 
@@ -418,15 +417,16 @@ sint8 FsmSw_Dilithium3_poly_chknorm(const poly_D3 *a, sint32 B)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_uniform(poly_D3 *a, const uint8 seed[SEEDBYTES_DILITHIUM], uint16 nonce)
 {
-    uint32 ctr, off;
+    uint32 ctr = 0; 
+    uint32 off = 0;
     uint32 buflen = POLY_UNIFORM_NBLOCKS * STREAM128_BLOCKBYTES;
-    uint8 buf[(POLY_UNIFORM_NBLOCKS * STREAM128_BLOCKBYTES) + 2u];
-    FsmSw_Dilithium_stream128_state state;
+    uint8 buf[(POLY_UNIFORM_NBLOCKS * STREAM128_BLOCKBYTES) + 2u] = {0};
+    FsmSw_Dilithium_stream128_state state = {0};
 
     FsmSw_Dilithium_shake128_stream_init(&state, seed, nonce);
     FsmSw_Fips202_shake128_inc_squeeze(buf, POLY_UNIFORM_NBLOCKS * SHAKE128_RATE, &state);
 
-    ctr = rej_uniform(a->coeffs, N_DILITHIUM, buf, buflen);
+    ctr = fsmsw_dilithium3_RejUniform(a->coeffs, N_DILITHIUM, buf, buflen);
 
     while (ctr < N_DILITHIUM)
     {
@@ -435,7 +435,7 @@ void FsmSw_Dilithium3_poly_uniform(poly_D3 *a, const uint8 seed[SEEDBYTES_DILITH
 
         FsmSw_Fips202_shake128_inc_squeeze(&buf[off], SHAKE128_RATE, &state);
         buflen = (uint32)(STREAM128_BLOCKBYTES + off);
-        ctr += rej_uniform(&a->coeffs[ctr], N_DILITHIUM - ctr, buf, buflen);
+        ctr += fsmsw_dilithium3_RejUniform(&a->coeffs[ctr], N_DILITHIUM - ctr, buf, buflen);
     }
 }
 
@@ -451,20 +451,20 @@ void FsmSw_Dilithium3_poly_uniform(poly_D3 *a, const uint8 seed[SEEDBYTES_DILITH
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_uniform_eta(poly_D3 *a, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
-    uint32 ctr;
+    uint32 ctr = 0;
     uint32 buflen = POLY_UNIFORM_ETA_NBLOCKS * STREAM256_BLOCKBYTES;
-    uint8 buf[POLY_UNIFORM_ETA_NBLOCKS * STREAM256_BLOCKBYTES];
-    FsmSw_Dilithium_stream256_state state;
+    uint8 buf[POLY_UNIFORM_ETA_NBLOCKS * STREAM256_BLOCKBYTES] = {0};
+    FsmSw_Dilithium_stream256_state state = {0};
 
     FsmSw_Dilithium_shake256_stream_init(&state, seed, nonce);
     FsmSw_Fips202_shake256_inc_squeeze(buf, POLY_UNIFORM_ETA_NBLOCKS * SHAKE256_RATE, &state);
 
-    ctr = rej_eta(a->coeffs, N_DILITHIUM, buf, buflen);
+    ctr = fsmsw_dilithium3_RejEta(a->coeffs, N_DILITHIUM, buf, buflen);
 
     while (ctr < N_DILITHIUM)
     {
         FsmSw_Fips202_shake256_inc_squeeze(buf, SHAKE256_RATE, &state);
-        ctr += rej_eta(&(a->coeffs[ctr]), N_DILITHIUM - ctr, buf, STREAM256_BLOCKBYTES);
+        ctr += fsmsw_dilithium3_RejEta(&(a->coeffs[ctr]), N_DILITHIUM - ctr, buf, STREAM256_BLOCKBYTES);
     }
 }
 
@@ -480,8 +480,8 @@ void FsmSw_Dilithium3_poly_uniform_eta(poly_D3 *a, const uint8 seed[CRHBYTES_DIL
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_uniform_gamma1(poly_D3 *a, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
-    uint8 buf[POLY_UNIFORM_GAMMA1_NBLOCKS * STREAM256_BLOCKBYTES];
-    FsmSw_Dilithium_stream256_state state;
+    uint8 buf[POLY_UNIFORM_GAMMA1_NBLOCKS * STREAM256_BLOCKBYTES] = {0};
+    FsmSw_Dilithium_stream256_state state = {0};
 
     FsmSw_Dilithium_shake256_stream_init(&state, seed, nonce);
     FsmSw_Fips202_shake256_inc_squeeze(buf, POLY_UNIFORM_GAMMA1_NBLOCKS * SHAKE256_RATE, &state);
@@ -499,18 +499,18 @@ void FsmSw_Dilithium3_poly_uniform_gamma1(poly_D3 *a, const uint8 seed[CRHBYTES_
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_poly_challenge(poly_D3 *c, const uint8 seed[SEEDBYTES_DILITHIUM])
 {
-    uint32 i, b, pos;
-    uint64 signs;
-    uint8 buf[SHAKE256_RATE];
-    shake256incctx state;
+    uint32 i = 0;
+    uint32 b = 0;
+    uint32 pos = 0;
+    uint64 signs = 0;
+    uint8 buf[SHAKE256_RATE] = {0};
+    shake256incctx state = {0};
 
     FsmSw_Fips202_shake256_inc_init(&state);
     FsmSw_Fips202_shake256_inc_absorb(&state, seed, SEEDBYTES_DILITHIUM);
     FsmSw_Fips202_shake256_inc_finalize(&state);
     FsmSw_Fips202_shake256_inc_squeeze(buf, sizeof(buf), &state);
 
-    
-    signs = 0;
     for (i = 0; i < 8u; ++i)
     {
 		signs |= (uint64)buf[i] << (8u * i);
@@ -553,8 +553,8 @@ void FsmSw_Dilithium3_poly_challenge(poly_D3 *c, const uint8 seed[SEEDBYTES_DILI
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyeta_pack(uint8 *r, const poly_D3 *a)
 {
-    uint16 i;
-    uint8  t[8];
+    uint16 i = 0;
+    uint8  t[8] = {0};
 
     for (i = 0; i < (N_DILITHIUM / 2u); ++i)
     {
@@ -574,7 +574,7 @@ void FsmSw_Dilithium3_polyeta_pack(uint8 *r, const poly_D3 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyeta_unpack(poly_D3 *r, const uint8 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (N_DILITHIUM / 2u); ++i)
     {
@@ -596,7 +596,7 @@ void FsmSw_Dilithium3_polyeta_unpack(poly_D3 *r, const uint8 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyt1_pack(uint8 *r, const poly_D3 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (N_DILITHIUM / 4u); ++i)
     {
@@ -622,7 +622,7 @@ void FsmSw_Dilithium3_polyt1_pack(uint8 *r, const poly_D3 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyt1_unpack(poly_D3 *r, const uint8 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (N_DILITHIUM / 4u); ++i)
     {
@@ -647,8 +647,8 @@ void FsmSw_Dilithium3_polyt1_unpack(poly_D3 *r, const uint8 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyt0_pack(uint8 *r, const poly_D3 *a)
 {
-    uint16 i;
-    uint32 t[8];
+    uint16 i = 0;
+    uint32 t[8] = {0};
 
     for (i = 0; i < (N_DILITHIUM / 8u); ++i)
     {
@@ -694,7 +694,7 @@ void FsmSw_Dilithium3_polyt0_pack(uint8 *r, const poly_D3 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyt0_unpack(poly_D3 *r, const uint8 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (N_DILITHIUM / 8u); ++i)
     {
@@ -774,8 +774,8 @@ void FsmSw_Dilithium3_polyt0_unpack(poly_D3 *r, const uint8 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyz_pack(uint8 *r, const poly_D3 *a)
 {
-    uint16 i;
-    uint32 t[4];
+    uint16 i = 0;
+    uint32 t[4] = {0};
 
     for (i = 0; i < (N_DILITHIUM / 2u); ++i)
     {
@@ -801,7 +801,7 @@ void FsmSw_Dilithium3_polyz_pack(uint8 *r, const poly_D3 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyz_unpack(poly_D3 *r, const uint8 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (N_DILITHIUM / 2u); ++i)
     {
@@ -833,7 +833,7 @@ void FsmSw_Dilithium3_polyz_unpack(poly_D3 *r, const uint8 *a)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyw1_pack(uint8 *r, const poly_D3 *a)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (N_DILITHIUM / 2u); ++i)
     {

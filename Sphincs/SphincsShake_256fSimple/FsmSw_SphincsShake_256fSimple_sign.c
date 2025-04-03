@@ -88,7 +88,7 @@ static sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_seed_keypair(uint8 *pk, u
     FsmSw_SphincsShake_256fSimple_merkle_gen_root(&sk[3u * FSMSW_SPHINCSSHAKE_256FSIMPLE_N], &ctx);
 
     /* cleanup */
-    FsmSw_SphincsShake_256fSimple_free_hash_function(&ctx);
+    FsmSw_SphincsShake_256fSimple_1_free_hash_function(&ctx);
 
     FsmSw_CommonLib_memcpy(&pk[FSMSW_SPHINCSSHAKE_256FSIMPLE_N],
                            &sk[3u * FSMSW_SPHINCSSHAKE_256FSIMPLE_N], FSMSW_SPHINCSSHAKE_256FSIMPLE_N);
@@ -135,6 +135,8 @@ sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +4 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
 designed for use by other systems that aim to integrate the Sphincs." */
 sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen,
@@ -201,7 +203,7 @@ sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_signature(uint8 *sig, uint32 *si
         tree = tree >> FSMSW_SPHINCSSHAKE_256FSIMPLE_TREE_HEIGHT;
     }
 
-    FsmSw_SphincsShake_256fSimple_free_hash_function(&ctx);
+    FsmSw_SphincsShake_256fSimple_1_free_hash_function(&ctx);
 
     *siglen = FSMSW_SPHINCSSHAKE_256FSIMPLE_BYTES;
 
@@ -222,6 +224,8 @@ sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_signature(uint8 *sig, uint32 *si
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +4 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:8.7 [Justified:]"This is an interface function 
 designed for use by other systems that aim to integrate the Sphincs." */
 sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
@@ -301,7 +305,7 @@ sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_verify(const uint8 *sig, uint32 
     }
 
     /* cleanup */
-    FsmSw_SphincsShake_256fSimple_free_hash_function(&ctx);
+    FsmSw_SphincsShake_256fSimple_1_free_hash_function(&ctx);
 
     /* Check if the root node equals the root node in the public key. */
     if (FsmSw_CommonLib_memcmp(root, pub_root, FSMSW_SPHINCSSHAKE_256FSIMPLE_N) != 0u)
@@ -326,6 +330,8 @@ sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_verify(const uint8 *sig, uint32 
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 sint8 FsmSw_SphincsShake_256fSimple_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk)
 {
     uint32 siglen;
@@ -352,6 +358,8 @@ sint8 FsmSw_SphincsShake_256fSimple_crypto_sign(uint8 *sm, uint32 *smlen, const 
 * Returns 0.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 sint8 FsmSw_SphincsShake_256fSimple_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen,
                                                    const uint8 *pk)
 {

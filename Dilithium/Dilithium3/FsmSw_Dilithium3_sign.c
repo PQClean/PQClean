@@ -68,12 +68,17 @@
 ***********************************************************************************************************************/
 sint8 FsmSw_Dilithium3_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 {
-    uint8 seedbuf[(2u * SEEDBYTES_DILITHIUM) + CRHBYTES_DILITHIUM];
-    uint8 tr[TRBYTES_DILITHIUM];
-    const uint8 *rho, *rhoprime, *key;
-    polyvecl_D3 mat[K_DILITHIUM3];
-    polyvecl_D3 s1, s1hat;
-    polyveck_D3 s2, t1, t0;
+    uint8 seedbuf[(2u * SEEDBYTES_DILITHIUM) + CRHBYTES_DILITHIUM] = {0};
+    uint8 tr[TRBYTES_DILITHIUM] = {0};
+    const uint8 *rho = (uint8*)NULL_PTR;
+    const uint8 *rhoprime = (uint8*)NULL_PTR;
+    const uint8 *key = (uint8*)NULL_PTR;
+    polyvecl_D3 mat[K_DILITHIUM3] = {0};
+    polyvecl_D3 s1 = {0};
+    polyvecl_D3 s1hat = {0};
+    polyveck_D3 s2 = {0};
+    polyveck_D3 t1 = {0};
+    polyveck_D3 t0 = {0};
 
     /* Get randomness for rho, rhoprime and key */
     (void)FsmSw_CommonLib_randombytes(seedbuf, SEEDBYTES_DILITHIUM);
@@ -128,14 +133,23 @@ sint8 FsmSw_Dilithium3_crypto_sign_keypair(uint8 *pk, uint8 *sk)
 designed for use by other systems that aim to integrate the Dilithium." */
 sint8 FsmSw_Dilithium3_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen, const uint8 *sk)
 {
-    uint32 n;
-    uint8 seedbuf[(2u * SEEDBYTES_DILITHIUM) + TRBYTES_DILITHIUM + RNDBYTES_DILITHIUM + (2u * CRHBYTES_DILITHIUM)];
-    uint8 *rho, *tr, *key, *mu, *rhoprime, *rnd;
+    uint32 n = 0;
+    uint8 seedbuf[(2u * SEEDBYTES_DILITHIUM) + TRBYTES_DILITHIUM + RNDBYTES_DILITHIUM + (2u * CRHBYTES_DILITHIUM)] = {0};
+    uint8 *rho = (uint8*)NULL_PTR;
+    uint8 *tr = (uint8*)NULL_PTR;
+    uint8 *key = (uint8*)NULL_PTR;
+    uint8 *mu = (uint8*)NULL_PTR;
+    uint8 *rhoprime = (uint8*)NULL_PTR;
+    uint8 *rnd = (uint8*)NULL_PTR;
     uint16 nonce = 0;
-    polyvecl_D3 mat[K_DILITHIUM3], s1, y, z;
-    polyveck_D3 t0, s2, w1, w0, h;
-    poly_D3 cp;
-    shake256incctx state;
+    polyvecl_D3 mat[K_DILITHIUM3], s1, y, z = {0};
+    polyveck_D3 t0 = {0};
+    polyveck_D3 s2 = {0};
+    polyveck_D3 w1 = {0};
+    polyveck_D3 w0 = {0};
+    polyveck_D3 h = {0};
+    poly_D3 cp = {0};
+    shake256incctx state = {0};
     boolean loop = TRUE;
 
     rho = seedbuf;
@@ -255,7 +269,7 @@ sint8 FsmSw_Dilithium3_crypto_sign_signature(uint8 *sig, uint32 *siglen, const u
 ***********************************************************************************************************************/
 sint8 FsmSw_Dilithium3_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk)
 {
-    uint32 i;
+    uint32 i = 0;
 
     for (i = 0; i < mlen; ++i)
     {
@@ -283,16 +297,19 @@ sint8 FsmSw_Dilithium3_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uin
 designed for use by other systems that aim to integrate the Dilithium." */
 sint8 FsmSw_Dilithium3_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen, const uint8 *pk)
 {
-    uint16 i;
-    uint8 buf[K_DILITHIUM3 * POLYW1_PACKEDBYTES_DILITHIUM3];
-    uint8 rho[SEEDBYTES_DILITHIUM];
-    uint8 mu[CRHBYTES_DILITHIUM];
-    uint8 c[CTILDEBYTES_DILITHIUM3];
-    uint8 c2[CTILDEBYTES_DILITHIUM3];
-    poly_D3 cp;
-    polyvecl_D3 mat[K_DILITHIUM3], z;
-    polyveck_D3 t1, w1, h;
-    shake256incctx state;
+    uint16 i = 0;
+    uint8 buf[K_DILITHIUM3 * POLYW1_PACKEDBYTES_DILITHIUM3] = {0};
+    uint8 rho[SEEDBYTES_DILITHIUM] = {0};
+    uint8 mu[CRHBYTES_DILITHIUM] = {0};
+    uint8 c[CTILDEBYTES_DILITHIUM3] = {0};
+    uint8 c2[CTILDEBYTES_DILITHIUM3] = {0};
+    poly_D3 cp = {0};
+    polyvecl_D3 mat[K_DILITHIUM3] = {0};
+    polyvecl_D3 z = {0};
+    polyveck_D3 t1 = {0};
+    polyveck_D3 w1 = {0};
+    polyveck_D3 h = {0};
+    shake256incctx state = {0};
     sint8 retVal = 0;
 
     if (siglen != FSMSW_DILITHIUM3_CRYPTO_BYTES)
@@ -370,7 +387,7 @@ sint8 FsmSw_Dilithium3_crypto_sign_verify(const uint8 *sig, uint32 siglen, const
 ***********************************************************************************************************************/
 sint8 FsmSw_Dilithium3_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen, const uint8 *pk)
 {
-    uint32 i;
+    uint32 i = 0;
     sint8 retVal = -1;
 
     if (smlen >= FSMSW_DILITHIUM3_CRYPTO_BYTES)

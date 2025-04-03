@@ -61,7 +61,7 @@ void FsmSw_Dilithium5_pack_pk(uint8 pk[FSMSW_DILITHIUM5_CRYPTO_PUBLICKEYBYTES],
                               const uint8 rho[SEEDBYTES_DILITHIUM],
                               const polyveck_D5 *t1)
 {
-    uint16 i;
+    uint16 i = 0;
     /* pk_temp is used to avoid modifying the input. */
     uint8 *pk_temp = pk;
 
@@ -90,7 +90,7 @@ void FsmSw_Dilithium5_unpack_pk(uint8 rho[SEEDBYTES_DILITHIUM],
                                 polyveck_D5 *t1,
                                 const uint8 pk[FSMSW_DILITHIUM5_CRYPTO_PUBLICKEYBYTES])
 {
-    uint16 i;
+    uint16 i = 0;
     /* pk_temp is used to avoid modifying the input. */
     const uint8 *pk_temp = pk;
 
@@ -127,7 +127,7 @@ void FsmSw_Dilithium5_pack_sk(uint8 sk[FSMSW_DILITHIUM5_CRYPTO_SECRETKEYBYTES],
                               const polyvecl_D5 *s1,
                               const polyveck_D5 *s2)
 {
-    uint16 i;
+    uint16 i = 0;
     /* sk_temp is used to avoid modifying the input. */
     uint8 *sk_temp = sk;
 
@@ -188,7 +188,7 @@ void FsmSw_Dilithium5_unpack_sk(uint8 rho[SEEDBYTES_DILITHIUM],
                                 polyveck_D5 *s2,
                                 const uint8 sk[FSMSW_DILITHIUM5_CRYPTO_SECRETKEYBYTES])
 {
-    uint16 i;
+    uint16 i = 0;
     /* sk_temp is used to avoid modifying the input. */
     const uint8 *sk_temp = sk;
 
@@ -243,7 +243,9 @@ void FsmSw_Dilithium5_pack_sig(uint8 sig[FSMSW_DILITHIUM5_CRYPTO_BYTES],
                                const polyvecl_D5 *z,
                                const polyveck_D5 *h)
 {
-    uint16 i, j, k;
+    uint16 i = 0;
+    uint16 j = 0;
+    uint16 k = 0;
     /* sig_temp is used to avoid modifying the input. */
     uint8 *sig_temp = sig;
 
@@ -298,7 +300,9 @@ sint8 FsmSw_Dilithium5_unpack_sig(uint8 c[CTILDEBYTES_DILITHIUM5],
                                 polyveck_D5 *h,
                                 const uint8 sig[FSMSW_DILITHIUM5_CRYPTO_BYTES])
 {
-    uint16 i, j, k;
+    uint16 i = 0;
+    uint16 j = 0;
+    uint16 k = 0;
     sint8 retVal = 0;
 
     /* sig_temp is used to avoid modifying the input. */

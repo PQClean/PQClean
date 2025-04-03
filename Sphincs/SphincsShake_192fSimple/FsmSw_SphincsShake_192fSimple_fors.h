@@ -43,7 +43,7 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsShake_192fSimple_fors_sign(uint8 *sig, uint8 *pk, const uint8 *m, const sphincs_shake_192f_ctx *ctx,
+void FsmSw_SphincsShake_192fSimple_1_fors_sign(uint8 *sig, uint8 *pk, const uint8 *m, const sphincs_shake_192f_ctx *ctx,
                                              const uint32 fors_addr[8]);
 
 void FsmSw_SphincsShake_192fSimple_fors_pk_from_sig(uint8 *pk, const uint8 *sig, const uint8 *m,

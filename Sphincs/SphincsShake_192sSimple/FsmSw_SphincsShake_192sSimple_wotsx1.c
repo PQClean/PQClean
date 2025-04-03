@@ -67,12 +67,14 @@
 *              -       void                   *v_info:   t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsShake_192sSimple_wots_gen_leafx1(uint8 *dest, const sphincs_shake_192s_ctx *ctx, uint32 leaf_idx,
                                                    void *v_info)
 {
     /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
-    struct leaf_info_x1 *info = v_info;
+    Fsmsw_Sphincsshake_192sSimple_LeafInfoX1_T *info = v_info;
     uint32 *leaf_addr = info->leaf_addr;
     uint32 *pk_addr = info->pk_addr;
     uint32 i, k;
@@ -128,12 +130,12 @@ void FsmSw_SphincsShake_192sSimple_wots_gen_leafx1(uint8 *dest, const sphincs_sh
             /* Iterate one step on the chain */
             FsmSw_SphincsShake_set_hash_addr(leaf_addr, k);
 
-            FsmSw_SphincsShake_192sSimple_thash(buffer, buffer, 1, ctx, leaf_addr);
+            FsmSw_SphincsShake_192sSimple_1_thash(buffer, buffer, 1, ctx, leaf_addr);
         }
 
         buffer = &buffer[FSMSW_SPHINCSSHAKE_192SSIMPLE_N];
     }
 
-    /* Do the final FsmSw_SphincsShake_192sSimple_thash to generate the public keys */
-    FsmSw_SphincsShake_192sSimple_thash(dest, pk_buffer, FSMSW_SPHINCSSHAKE_192SSIMPLE_WOTS_LEN, ctx, pk_addr);
+    /* Do the final FsmSw_SphincsShake_192sSimple_1_thash to generate the public keys */
+    FsmSw_SphincsShake_192sSimple_1_thash(dest, pk_buffer, FSMSW_SPHINCSSHAKE_192SSIMPLE_WOTS_LEN, ctx, pk_addr);
 }

@@ -61,8 +61,8 @@
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium2_power2round(sint32 *a0, sint32 a)
 {
-    sint32 a1;
-    sint32 temp;
+    sint32 a1 = 0;
+    sint32 temp = 0;
 
     temp = (a + (sint32)4095u);
     a1  = (sint32)((uint32)((uint32)temp >> D_DILITHIUM));
@@ -85,8 +85,12 @@ sint32 FsmSw_Dilithium2_power2round(sint32 *a0, sint32 a)
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium2_decompose(sint32 *a0, sint32 a)
 {
-    sint32 a1;
-    sint32 temp1, temp2, temp3, temp4, temp5;
+    sint32 a1 = 0;
+    sint32 temp1 = 0; 
+    sint32 temp2 = 0; 
+    sint32 temp3 = 0;
+    sint32 temp4 = 0;
+    sint32 temp5 = 0;
 
     a1  = (sint32)((uint32)(((uint32)a + 127u) >> 7));
     /* (1u << 23) = 8.388.608 */
@@ -138,7 +142,8 @@ uint8 FsmSw_Dilithium2_make_hint(sint32 a0, sint32 a1)
 ***********************************************************************************************************************/
 sint32 FsmSw_Dilithium2_use_hint(sint32 a, uint32 hint)
 {
-    sint32 a0, a1;
+    sint32 a0 = 0;
+    sint32 a1 = 0;
     sint32 retVal;
     boolean bStopFunc = FALSE;
 

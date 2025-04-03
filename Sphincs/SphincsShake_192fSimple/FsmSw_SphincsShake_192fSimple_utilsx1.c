@@ -78,6 +78,8 @@
 *                                             )
 *
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsShake_192fSimple_treehashx1(uint8 *root, uint8 *auth_path, const sphincs_shake_192f_ctx *ctx,
                                               uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
                                               void (*gen_leaf)

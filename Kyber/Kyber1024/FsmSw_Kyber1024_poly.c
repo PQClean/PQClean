@@ -64,9 +64,10 @@
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_compress(uint8 r[KYBER1024_POLYCOMPRESSEDBYTES], const poly1024 *a)
 {
-    uint16 i;
-    sint16 u;
-    uint8  j, t[8];
+    uint16 i = 0;
+    sint16 u = 0;
+    uint8  j = 0;
+    uint8  t[8] = {0};
 
     /* r_temp is used to avoid modifying the input. */
     uint8 *r_temp = r;
@@ -101,8 +102,9 @@ void FsmSw_Kyber1024_poly_compress(uint8 r[KYBER1024_POLYCOMPRESSEDBYTES], const
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_decompress(poly1024 *r, const uint8 a[KYBER1024_POLYCOMPRESSEDBYTES])
 {
-    uint16 i;
-    uint8  j, t[8];
+    uint16 i = 0;
+    uint8  j = 0;
+    uint8  t[8] = {0};
 
     /* a_temp is used to avoid modifying the input. */
     const uint8 *a_temp = a;
@@ -136,7 +138,9 @@ void FsmSw_Kyber1024_poly_decompress(poly1024 *r, const uint8 a[KYBER1024_POLYCO
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_tobytes(uint8 r[KYBER_POLYBYTES], const poly1024 *a)
 {
-    uint16 i, t0, t1;
+    uint16 i = 0;
+    uint16 t0 = 0;
+    uint16 t1 = 0;
 
     for (i = 0; i < (KYBER_N / 2u); i++)
     {
@@ -173,7 +177,7 @@ void FsmSw_Kyber1024_poly_tobytes(uint8 r[KYBER_POLYBYTES], const poly1024 *a)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_frombytes(poly1024 *r, const uint8 a[KYBER_POLYBYTES])
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (KYBER_N / 2u); i++)
     {
@@ -203,9 +207,9 @@ void FsmSw_Kyber1024_poly_frombytes(poly1024 *r, const uint8 a[KYBER_POLYBYTES])
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_frommsg(poly1024 *r, const uint8 msg[KYBER1024_INDCPA_MSGBYTES])
 {
-    uint8  j;
-    uint16 i;
-    sint16 mask;
+    uint8  j = 0;
+    uint16 i = 0;
+    sint16 mask = 0;
 
     for (i = 0; i < (KYBER_N / 8u); i++)
     {
@@ -227,8 +231,9 @@ void FsmSw_Kyber1024_poly_frommsg(poly1024 *r, const uint8 msg[KYBER1024_INDCPA_
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_tomsg(uint8 msg[KYBER1024_INDCPA_MSGBYTES], const poly1024 *a)
 {
-    uint8  j;
-    uint16 i, t;
+    uint8  j = 0;
+    uint16 i = 0;
+    uint16 t = 0;
 
     for (i = 0; i < (KYBER_N / 8u); i++)
     {
@@ -261,7 +266,7 @@ void FsmSw_Kyber1024_poly_tomsg(uint8 msg[KYBER1024_INDCPA_MSGBYTES], const poly
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_getnoise_eta1(poly1024 *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce)
 {
-    uint8 buf[KYBER1024_ETA1 * KYBER_N / 4u];
+    uint8 buf[KYBER1024_ETA1 * KYBER_N / 4u] = {0};
 
     FsmSw_Kyber_shake256_prf(buf, sizeof(buf), seed, nonce);
     FsmSw_Kyber1024_poly_cbd_eta1(r, buf);
@@ -278,9 +283,11 @@ void FsmSw_Kyber1024_poly_getnoise_eta1(poly1024 *r, const uint8 seed[KYBER_SYMB
 *              - const uint8 *seed:  pointer to input seed (of length KYBER_SYMBYTES bytes)
 *              - uint8        nonce: one-byte input nonce
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_Kyber1024_poly_getnoise_eta2(poly1024 *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce)
 {
-    uint8 buf[KYBER1024_ETA2 * KYBER_N / 4u];
+    uint8 buf[KYBER1024_ETA2 * KYBER_N / 4u] = {0};
 
     FsmSw_Kyber_shake256_prf(buf, sizeof(buf), seed, nonce);
     FsmSw_Kyber1024_poly_cbd_eta2(r, buf);
@@ -326,7 +333,7 @@ void FsmSw_Kyber1024_poly_invntt_tomont(poly1024 *r)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_basemul_montgomery(poly1024 *r, const poly1024 *a, const poly1024 *b)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < (KYBER_N / 4u); i++)
     {
@@ -348,7 +355,7 @@ void FsmSw_Kyber1024_poly_basemul_montgomery(poly1024 *r, const poly1024 *a, con
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_tomont(poly1024 *r)
 {
-    uint16 i;
+    uint16 i = 0;
     const sint16 f = (sint16) ((1ULL << 32u) % KYBER_Q);
 
     for (i = 0; i < KYBER_N; i++)
@@ -367,7 +374,7 @@ void FsmSw_Kyber1024_poly_tomont(poly1024 *r)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_reduce(poly1024 *r)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < KYBER_N; i++)
     {
@@ -386,7 +393,7 @@ void FsmSw_Kyber1024_poly_reduce(poly1024 *r)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_add(poly1024 *r, const poly1024 *a, const poly1024 *b)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < KYBER_N; i++)
     {
@@ -405,7 +412,7 @@ void FsmSw_Kyber1024_poly_add(poly1024 *r, const poly1024 *a, const poly1024 *b)
 ***********************************************************************************************************************/
 void FsmSw_Kyber1024_poly_sub(poly1024 *r, const poly1024 *a, const poly1024 *b)
 {
-    uint16 i;
+    uint16 i = 0;
 
     for (i = 0; i < KYBER_N; i++)
     {

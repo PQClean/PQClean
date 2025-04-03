@@ -43,6 +43,8 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_SphincsSha2_192sSimple_treehashx1(uint8 *root, uint8 *auth_path, const sphincs_sha2_192s_ctx *ctx,
                                              uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
                                              void (*gen_leaf)

@@ -67,7 +67,7 @@
 ***********************************************************************************************************************/
 uint8 FsmSw_Kyber1024_crypto_kem_keypair(uint8 *pk, uint8 *sk)
 {
-    uint32 i;
+    uint32 i = 0;
 
     FsmSw_Kyber1024_indcpa_keypair(pk, sk);
 
@@ -98,9 +98,9 @@ uint8 FsmSw_Kyber1024_crypto_kem_keypair(uint8 *pk, uint8 *sk)
 ***********************************************************************************************************************/
 uint8 FsmSw_Kyber1024_crypto_kem_enc(uint8 *ct, uint8 *ss, const uint8 *pk)
 {
-    uint8 buf[2u * KYBER_SYMBYTES];
+    uint8 buf[2u * KYBER_SYMBYTES] = {0};
     /* Will contain key, coins */
-    uint8 kr[2u * KYBER_SYMBYTES];
+    uint8 kr[2u * KYBER_SYMBYTES] = {0};
 
     (void)FsmSw_CommonLib_randombytes(buf, KYBER_SYMBYTES);
     /* Don't release system RNG output */
@@ -137,12 +137,12 @@ uint8 FsmSw_Kyber1024_crypto_kem_enc(uint8 *ct, uint8 *ss, const uint8 *pk)
 ***********************************************************************************************************************/
 uint8 FsmSw_Kyber1024_crypto_kem_dec(uint8 *ss, const uint8 *ct, const uint8 *sk)
 {
-    uint32 i;
-    uint8 fail;
-    uint8 buf[2u * KYBER_SYMBYTES];
+    uint32 i = 0;
+    uint8 fail = 0;
+    uint8 buf[2u * KYBER_SYMBYTES] = {0};
     /* Will contain key, coins */
-    uint8 kr[2u * KYBER_SYMBYTES];
-    uint8 cmp[KYBER1024_CIPHERTEXTBYTES];
+    uint8 kr[2u * KYBER_SYMBYTES] = {0};
+    uint8 cmp[KYBER1024_CIPHERTEXTBYTES] = {0};
     const uint8 *pk = &sk[KYBER1024_INDCPA_SECRETKEYBYTES];
 
     FsmSw_Kyber1024_indcpa_dec(buf, ct, sk);

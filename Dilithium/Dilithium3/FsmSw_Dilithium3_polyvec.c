@@ -59,8 +59,8 @@ static void FsmSw_Dilithium3_polyvecl_pointwise_acc_montgomery(poly_D3 *w, const
 ***********************************************************************************************************************/
 static void FsmSw_Dilithium3_polyvecl_pointwise_acc_montgomery(poly_D3 *w, const polyvecl_D3 *u, const polyvecl_D3 *v)
 {
-    uint8 i;
-    poly_D3 t;
+    uint8 i = 0;
+    poly_D3 t = {0};
 
     FsmSw_Dilithium3_poly_pointwise_montgomery(w, &u->vec[0], &v->vec[0]);
     for (i = 1; i < L_DILITHIUM3; ++i)
@@ -83,7 +83,8 @@ static void FsmSw_Dilithium3_polyvecl_pointwise_acc_montgomery(poly_D3 *w, const
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyvec_matrix_expand(polyvecl_D3 mat[K_DILITHIUM3], const uint8 rho[SEEDBYTES_DILITHIUM])
 {
-    uint8 i, j;
+    uint8 i = 0;
+    uint8 j = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -103,10 +104,12 @@ void FsmSw_Dilithium3_polyvec_matrix_expand(polyvecl_D3 mat[K_DILITHIUM3], const
 *              - const polyvecl_D3  mat[K_DILITHIUM3]: t.b.d
 *              - const polyvecl_D3 *v:                 t.b.d
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_Dilithium3_polyvec_matrix_pointwise_montgomery(polyveck_D3 *t, const polyvecl_D3 mat[K_DILITHIUM3],
                                                           const polyvecl_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -125,7 +128,7 @@ void FsmSw_Dilithium3_polyvec_matrix_pointwise_montgomery(polyveck_D3 *t, const 
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyvecl_uniform_eta(polyvecl_D3 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
-    uint8 i;
+    uint8 i = 0;
     /* nonce_temp is used to avoid modifying the input. */
     uint16 nonce_temp = nonce;
 
@@ -145,9 +148,11 @@ void FsmSw_Dilithium3_polyvecl_uniform_eta(polyvecl_D3 *v, const uint8 seed[CRHB
 *              - const uint8        seed[CRHBYTES_DILITHIUM]: t.b.d
 *              -       uint16       nonce:                    t.b.d
 ***********************************************************************************************************************/
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_Dilithium3_polyvecl_uniform_gamma1(polyvecl_D3 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < L_DILITHIUM3; ++i)
     {
@@ -164,7 +169,7 @@ void FsmSw_Dilithium3_polyvecl_uniform_gamma1(polyvecl_D3 *v, const uint8 seed[C
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyvecl_reduce(polyvecl_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < L_DILITHIUM3; ++i)
     {
@@ -183,7 +188,7 @@ void FsmSw_Dilithium3_polyvecl_reduce(polyvecl_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyvecl_add(polyvecl_D3 *w, const polyvecl_D3 *u, const polyvecl_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < L_DILITHIUM3; ++i)
     {
@@ -201,7 +206,7 @@ void FsmSw_Dilithium3_polyvecl_add(polyvecl_D3 *w, const polyvecl_D3 *u, const p
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyvecl_ntt(polyvecl_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < L_DILITHIUM3; ++i)
     {
@@ -218,7 +223,7 @@ void FsmSw_Dilithium3_polyvecl_ntt(polyvecl_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyvecl_invntt_tomont(polyvecl_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < L_DILITHIUM3; ++i)
     {
@@ -237,7 +242,7 @@ void FsmSw_Dilithium3_polyvecl_invntt_tomont(polyvecl_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyvecl_pointwise_poly_montgomery(polyvecl_D3 *r, const poly_D3 *a, const polyvecl_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < L_DILITHIUM3; ++i)
     {
@@ -259,7 +264,7 @@ void FsmSw_Dilithium3_polyvecl_pointwise_poly_montgomery(polyvecl_D3 *r, const p
 ***********************************************************************************************************************/
 sint8 FsmSw_Dilithium3_polyvecl_chknorm(const polyvecl_D3 *v, sint32 bound)
 {
-    uint8 i;
+    uint8 i = 0;
     sint8 retVal = 0;
 
     for (i = 0; i < L_DILITHIUM3; ++i)
@@ -283,7 +288,7 @@ sint8 FsmSw_Dilithium3_polyvecl_chknorm(const polyvecl_D3 *v, sint32 bound)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_uniform_eta(polyveck_D3 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
-    uint8 i;
+    uint8 i = 0;
     /* nonce_temp is used to avoid modifying the input. */
     uint16 nonce_temp = nonce;
 
@@ -304,7 +309,7 @@ void FsmSw_Dilithium3_polyveck_uniform_eta(polyveck_D3 *v, const uint8 seed[CRHB
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_reduce(polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -321,7 +326,7 @@ void FsmSw_Dilithium3_polyveck_reduce(polyveck_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_caddq(polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -340,7 +345,7 @@ void FsmSw_Dilithium3_polyveck_caddq(polyveck_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_add(polyveck_D3 *w, const polyveck_D3 *u, const polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -359,7 +364,7 @@ void FsmSw_Dilithium3_polyveck_add(polyveck_D3 *w, const polyveck_D3 *u, const p
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_sub(polyveck_D3 *w, const polyveck_D3 *u, const polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -377,7 +382,7 @@ void FsmSw_Dilithium3_polyveck_sub(polyveck_D3 *w, const polyveck_D3 *u, const p
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_shiftl(polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -395,7 +400,7 @@ void FsmSw_Dilithium3_polyveck_shiftl(polyveck_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_ntt(polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -413,7 +418,7 @@ void FsmSw_Dilithium3_polyveck_ntt(polyveck_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_invntt_tomont(polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -432,7 +437,7 @@ void FsmSw_Dilithium3_polyveck_invntt_tomont(polyveck_D3 *v)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_pointwise_poly_montgomery(polyveck_D3 *r, const poly_D3 *a, const polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -453,7 +458,7 @@ void FsmSw_Dilithium3_polyveck_pointwise_poly_montgomery(polyveck_D3 *r, const p
 ***********************************************************************************************************************/
 sint8 FsmSw_Dilithium3_polyveck_chknorm(const polyveck_D3 *v, sint32 bound)
 {
-    uint8 i;
+    uint8 i = 0;
     sint8 retVal = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
@@ -479,7 +484,7 @@ sint8 FsmSw_Dilithium3_polyveck_chknorm(const polyveck_D3 *v, sint32 bound)
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_power2round(polyveck_D3 *v1, polyveck_D3 *v0, const polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -500,7 +505,7 @@ void FsmSw_Dilithium3_polyveck_power2round(polyveck_D3 *v1, polyveck_D3 *v0, con
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_decompose(polyveck_D3 *v1, polyveck_D3 *v0, const polyveck_D3 *v)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -521,7 +526,7 @@ void FsmSw_Dilithium3_polyveck_decompose(polyveck_D3 *v1, polyveck_D3 *v0, const
 ***********************************************************************************************************************/
 uint32 FsmSw_Dilithium3_polyveck_make_hint(polyveck_D3 *h, const polyveck_D3 *v0, const polyveck_D3 *v1)
 {
-    uint8  i;
+    uint8  i = 0;
     uint32 s = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
@@ -543,7 +548,7 @@ uint32 FsmSw_Dilithium3_polyveck_make_hint(polyveck_D3 *h, const polyveck_D3 *v0
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_use_hint(polyveck_D3 *w, const polyveck_D3 *u, const polyveck_D3 *h)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {
@@ -561,7 +566,7 @@ void FsmSw_Dilithium3_polyveck_use_hint(polyveck_D3 *w, const polyveck_D3 *u, co
 ***********************************************************************************************************************/
 void FsmSw_Dilithium3_polyveck_pack_w1(uint8 r[K_DILITHIUM3 * POLYW1_PACKEDBYTES_DILITHIUM3], const polyveck_D3 *w1)
 {
-    uint8 i;
+    uint8 i = 0;
 
     for (i = 0; i < K_DILITHIUM3; ++i)
     {

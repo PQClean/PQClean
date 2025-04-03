@@ -72,7 +72,7 @@ void FsmSw_SphincsShake_128fSimple_initialize_hash_function(sphincs_shake_128f_c
 *
 ***********************************************************************************************************************/
 /* polyspace +1 MISRA2012:8.13 [Justified:]"in case the hash function api is heap-based." */
-void FsmSw_SphincsShake_128fSimple_free_hash_function(sphincs_shake_128f_ctx *ctx)
+void FsmSw_SphincsShake_128fSimple_1_free_hash_function(sphincs_shake_128f_ctx *ctx)
 {
     (void)ctx;
 }

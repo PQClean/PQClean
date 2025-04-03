@@ -52,6 +52,8 @@ typedef struct {
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
 void FsmSw_Dilithium2_polyvecl_uniform_eta(polyvecl_D2 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce);
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_Dilithium2_polyvecl_uniform_gamma1(polyvecl_D2 *v, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce);
 void FsmSw_Dilithium2_polyvecl_reduce(polyvecl_D2 *v);
 void FsmSw_Dilithium2_polyvecl_add(polyvecl_D2 *w, const polyvecl_D2 *u, const polyvecl_D2 *v);
@@ -75,6 +77,8 @@ uint32 FsmSw_Dilithium2_polyveck_make_hint(polyveck_D2 *h, const polyveck_D2 *v0
 void FsmSw_Dilithium2_polyveck_use_hint(polyveck_D2 *w, const polyveck_D2 *u, const polyveck_D2 *h);
 void FsmSw_Dilithium2_polyveck_pack_w1(uint8 r[K_DILITHIUM2 * POLYW1_PACKEDBYTES_DILITHIUM2], const polyveck_D2 *w1);
 void FsmSw_Dilithium2_polyvec_matrix_expand(polyvecl_D2 mat[K_DILITHIUM2], const uint8 rho[SEEDBYTES_DILITHIUM]);
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 void FsmSw_Dilithium2_polyvec_matrix_pointwise_montgomery(polyveck_D2 *t, const polyvecl_D2 mat[K_DILITHIUM2],
                                                           const polyvecl_D2 *v);
 

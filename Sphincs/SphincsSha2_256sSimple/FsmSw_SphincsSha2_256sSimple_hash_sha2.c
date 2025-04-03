@@ -126,6 +126,8 @@ void FsmSw_SphincsSha2_256sSimple_mgf1_256(uint8 *out, uint32 outlen, const uint
 *              -       uint32   inlen:  t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +4 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:8.7 [Justified:]"Refactoring to a static function would introduce other defects, 
 hence it is justified." */
 void FsmSw_SphincsSha2_256sSimple_mgf1_512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen)

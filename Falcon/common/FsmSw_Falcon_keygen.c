@@ -619,7 +619,7 @@ static const uint32 MAX_BL_LARGE[] = { 2, 2, 5, 7, 12, 21, 40, 78, 157, 308 };
 ***********************************************************************************************************************/
 static uint32 modp_set(sint32 x, uint32 p)
 {
-  uint32 w;
+  uint32 w = 0;
 
   w = (uint32) x;
   w += p & (uint32)((sint32)((-1) * (sint32)((uint32)(w >> 31))));
@@ -655,7 +655,7 @@ static sint32 modp_norm(uint32 x, uint32 p)
 ***********************************************************************************************************************/
 static uint32 modp_ninv31(uint32 p)
 {
-  uint32 y;
+  uint32 y = 0;
 
   y  = 2u - p;
   y *= 2u - (p * y);
@@ -696,7 +696,7 @@ static uint32 modp_R(uint32 p)
 ***********************************************************************************************************************/
 static uint32 modp_add(uint32 a, uint32 b, uint32 p)
 {
-  uint32 d;
+  uint32 d = 0;
 
   d = a + b - p;
   d += p & (uint32)((sint32)((-1) * (sint32)((uint32)(d >> 31))));
@@ -718,7 +718,7 @@ static uint32 modp_add(uint32 a, uint32 b, uint32 p)
 ***********************************************************************************************************************/
 static uint32 modp_sub(uint32 a, uint32 b, uint32 p)
 {
-  uint32 d;
+  uint32 d = 0;
 
   d = a - b;
   d += p & (uint32)((sint32)((-1) * (sint32)((uint32)(d >> 31))));
@@ -742,8 +742,9 @@ static uint32 modp_sub(uint32 a, uint32 b, uint32 p)
 ***********************************************************************************************************************/
 static uint32 modp_montymul(uint32 a, uint32 b, uint32 p, uint32 p0i)
 {
-  uint64 z, w;
-  uint32 d;
+  uint64 z = 0;
+  uint64 w = 0;
+  uint32 d = 0;
 
   z = (uint64) a * (uint64) b;
   w = ((z * p0i) & (uint64) 0x7FFFFFFF) * p;
@@ -766,7 +767,7 @@ static uint32 modp_montymul(uint32 a, uint32 b, uint32 p, uint32 p0i)
 ***********************************************************************************************************************/
 static uint32 modp_R2(uint32 p, uint32 p0i)
 {
-  uint32 z;
+  uint32 z = 0;
 
   /* Compute z = 2^31 mod p (this is the value 1 in Montgomery representation), then double it with an addition. */
   z = modp_R(p);
@@ -800,8 +801,9 @@ static uint32 modp_R2(uint32 p, uint32 p0i)
 ***********************************************************************************************************************/
 static uint32 modp_Rx(uint32 x, uint32 p, uint32 p0i, uint32 R2)
 {
-  sint32 i;
-  uint32 r, z;
+  sint32 i = 0;
+  uint32 r = 0;
+  uint32 z = 0;
 
   /* x_temp is used to avoid modifying the input. */
   uint32 x_temp = x;
@@ -843,8 +845,9 @@ static uint32 modp_Rx(uint32 x, uint32 p, uint32 p0i, uint32 R2)
 ***********************************************************************************************************************/
 static uint32 modp_div(uint32 a, uint32 b, uint32 p, uint32 p0i, uint32 R)
 {
-  uint32 z, e;
-  sint32 i;
+  uint32 z = 0;
+  uint32 e = 0;
+  sint32 i = 0;
 
   e = p - 2u;
   z = R;
@@ -890,10 +893,14 @@ static uint32 modp_div(uint32 a, uint32 b, uint32 p, uint32 p0i, uint32 R)
 ***********************************************************************************************************************/
 static void modp_mkgm2(uint32 *gm, uint32 *igm, uint32 logn, uint32 g, uint32 p, uint32 p0i)
 {
-  uint32 u, n;
-  uint32 k;
-  uint32 ig, x1, x2, R2;
-  uint32 v;
+  uint32 u = 0;
+  uint32 n = 0;
+  uint32 k = 0;
+  uint32 ig = 0;
+  uint32 x1 = 0;
+  uint32 x2 = 0;
+  uint32 R2 = 0;
+  uint32 v = 0;
 
   /* g_temp is used to avoid modifying the input. */
   uint32 g_temp = g;
@@ -940,12 +947,18 @@ static void modp_mkgm2(uint32 *gm, uint32 *igm, uint32 logn, uint32 g, uint32 p,
 ***********************************************************************************************************************/
 static void modp_NTT2_ext(uint32 *a, uint32 stride, const uint32 *gm, uint32 logn, uint32 p, uint32 p0i)
 {
-  uint32 t, m, n;
-  uint32 ht, u, v1;
-  uint32 s;
-  uint32 v;
-  uint32 *r1, *r2;
-  uint32 x, y;
+  uint32 t = 0;
+  uint32 m = 0;
+  uint32 n = 0;
+  uint32 ht = 0;
+  uint32 u = 0;
+  uint32 v1 = 0;
+  uint32 s = 0;
+  uint32 v = 0;
+  uint32 *r1 = (uint32*)NULL_PTR;
+  uint32 *r2 = (uint32*)NULL_PTR;
+  uint32 x = 0;
+  uint32 y = 0;
   boolean bStopFunc = FALSE;
 
   if (logn == 0u)
@@ -1001,14 +1014,22 @@ static void modp_NTT2_ext(uint32 *a, uint32 stride, const uint32 *gm, uint32 log
 ***********************************************************************************************************************/
 static void modp_iNTT2_ext(uint32 *a, uint32 stride, const uint32 *igm, uint32 logn, uint32 p, uint32 p0i)
 {
-  uint32 t, m, n, k;
-  uint32 ni;
-  uint32 *r;
-  uint32 hm, dt, u, v1;
-  uint32 s;
-  uint32 v;
-  uint32 *r1, *r2;
-  uint32 x, y;
+  uint32 t = 0;
+  uint32 m = 0;
+  uint32 n = 0;
+  uint32 k = 0;
+  uint32 ni = 0;
+  uint32 *r = (uint32*)NULL_PTR;
+  uint32 hm = 0;
+  uint32 dt = 0;
+  uint32 u = 0;
+  uint32 v1 = 0;
+  uint32 s = 0;
+  uint32 v = 0;
+  uint32 *r1 = (uint32*)NULL_PTR;
+  uint32 *r2 = (uint32*)NULL_PTR;
+  uint32 x = 0;
+  uint32 y = 0;
 
   if (logn != 0u)
   {
@@ -1075,8 +1096,10 @@ static void modp_iNTT2_ext(uint32 *a, uint32 stride, const uint32 *igm, uint32 l
 ***********************************************************************************************************************/
 static void modp_poly_rec_res(uint32 *f, uint32 logn, uint32 p, uint32 p0i, uint32 R2)
 {
-  uint32 hn, u;
-  uint32 w0, w1;
+  uint32 hn = 0;
+  uint32 u = 0;
+  uint32 w0 = 0;
+  uint32 w1 = 0;
 
   hn = (uint32) 1 << (logn - 1u);
 
@@ -1127,9 +1150,11 @@ static void modp_poly_rec_res(uint32 *f, uint32 logn, uint32 p, uint32 p0i, uint
 ***********************************************************************************************************************/
 static uint32 zint_sub(uint32 *a, const uint32 *b, uint32 len, uint32 ctl)
 {
-  uint32 u;
-  uint32 cc, m;
-  uint32 aw, w;
+  uint32 u = 0;
+  uint32 cc = 0;
+  uint32 m = 0;
+  uint32 aw = 0;
+  uint32 w = 0;
 
   cc = 0;
   m = (uint32)((sint32)((-1) * (sint32)ctl));
@@ -1161,11 +1186,9 @@ static uint32 zint_sub(uint32 *a, const uint32 *b, uint32 len, uint32 ctl)
 ***********************************************************************************************************************/
 static uint32 zint_mul_small(uint32 *m, uint32 mlen, uint32 x)
 {
-  uint32 u;
-  uint32 cc;
-  uint64 z;
-
-  cc = 0;
+  uint32 u = 0;
+  uint32 cc = 0;
+  uint64 z = 0;
 
   for (u = 0; u < mlen; u++)
   {
@@ -1199,14 +1222,13 @@ static uint32 zint_mul_small(uint32 *m, uint32 mlen, uint32 x)
 ***********************************************************************************************************************/
 static uint32 zint_mod_small_unsigned(const uint32 *d, uint32 dlen, uint32 p, uint32 p0i, uint32 R2)
 {
-  uint32 x;
-  uint32 u;
-  uint32 w;
+  uint32 x = 0;
+  uint32 u = 0;
+  uint32 w = 0;
 
   /* Algorithm: we inject words one by one, starting with the high word. Each step is:
    *  - multiply x by 2^31
    *  - add new word */
-  x = 0;
   u = dlen;
 
   while (u > 0u)
@@ -1239,8 +1261,8 @@ static uint32 zint_mod_small_unsigned(const uint32 *d, uint32 dlen, uint32 p, ui
 ***********************************************************************************************************************/
 static uint32 zint_mod_small_signed(const uint32 *d, uint32 dlen, uint32 p, uint32 p0i, uint32 R2, uint32 Rx)
 {
-  uint32 z;
-  uint32 retVal;
+  uint32 z = 0;
+  uint32 retVal = 0;
 
   z = zint_mod_small_unsigned(d, dlen, p, p0i, R2);
   z = modp_sub(z, Rx & (uint32)((sint32)((-1) * (sint32)((uint32)(d[dlen - 1u] >> 30)))), p);
@@ -1268,10 +1290,11 @@ static uint32 zint_mod_small_signed(const uint32 *d, uint32 dlen, uint32 p, uint
 ***********************************************************************************************************************/
 static void zint_add_mul_small(uint32 *x, const uint32 *y, uint32 len, uint32 s)
 {
-  uint32 u;
-  uint32 cc;
-  uint32 xw, yw;
-  uint64 z;
+  uint32 u = 0;
+  uint32 cc = 0;
+  uint32 xw = 0;
+  uint32 yw = 0;
+  uint64 z = 0;
 
   cc = 0;
 
@@ -1300,14 +1323,15 @@ static void zint_add_mul_small(uint32 *x, const uint32 *y, uint32 len, uint32 s)
 ***********************************************************************************************************************/
 static void zint_norm_zero(uint32 *x, const uint32 *p, uint32 len)
 {
-  uint32 u;
-  uint32 r, bb;
-  uint32 wx, wp, cc;
+  uint32 u = 0;
+  uint32 r = 0;
+  uint32 bb = 0;
+  uint32 wx = 0;
+  uint32 wp = 0;
+  uint32 cc = 0;
 
   /* Compare x with p/2. We use the shifted version of p, and p is odd, so we really compare with (p-1)/2; we want to
    * perform the subtraction if and only if x > (p-1)/2. */
-  r = 0;
-  bb = 0;
   u = len;
 
   while (u > 0u)
@@ -1354,11 +1378,16 @@ static void zint_norm_zero(uint32 *x, const uint32 *p, uint32 len)
 static void zint_rebuild_CRT(uint32 *xx, uint32 xlen, uint32 xstride, uint32 num, const small_prime *primes,
                              sint32 normalize_signed, uint32 *tmp)
 {
-  uint32 u;
-  uint32 *x;
-  uint32 p, p0i, s, R2;
-  uint32 v;
-  uint32 xp, xq, xr;
+  uint32 u = 0;
+  uint32 *x = (uint32*)NULL_PTR;
+  uint32 p = 0;
+  uint32 p0i = 0;
+  uint32 s = 0;
+  uint32 R2 = 0;
+  uint32 v = 0;
+  uint32 xp = 0;
+  uint32 xq = 0;
+  uint32 xr = 0;
 
   tmp[0] = primes[0].p;
   for (u = 1; u < xlen; u++)
@@ -1419,9 +1448,10 @@ static void zint_rebuild_CRT(uint32 *xx, uint32 xlen, uint32 xstride, uint32 num
 ***********************************************************************************************************************/
 static void zint_negate(uint32 *a, uint32 len, uint32 ctl)
 {
-  uint32 u;
-  uint32 cc, m;
-  uint32 aw;
+  uint32 u = 0;
+  uint32 cc = 0;
+  uint32 m = 0;
+  uint32 aw = 0;
 
   /* If ctl = 1 then we flip the bits of a by XORing with 0x7FFFFFFF, and we add 1 to the value. If ctl = 0 then we XOR
    * with 0 and add 0, which leaves the value unchanged. */
@@ -1462,12 +1492,16 @@ static void zint_negate(uint32 *a, uint32 len, uint32 ctl)
 ***********************************************************************************************************************/
 static uint32 zint_co_reduce(uint32 *a, uint32 *b, uint32 len, sint64 xa, sint64 xb, sint64 ya, sint64 yb)
 {
-  uint32 u;
-  sint64 cca, ccb;
-  uint32 nega, negb;
-  uint32 wa, wb;
-  uint64 za, zb;
-  sint64 temp;
+  uint32 u = 0;
+  sint64 cca = 0;
+  sint64 ccb = 0;
+  uint32 nega = 0;
+  uint32 negb = 0;
+  uint32 wa = 0;
+  uint32 wb = 0;
+  uint64 za = 0;
+  uint64 zb = 0;
+  sint64 temp = 0;
 
   cca = 0;
   ccb = 0;
@@ -1537,13 +1571,15 @@ static uint32 zint_co_reduce(uint32 *a, uint32 *b, uint32 len, sint64 xa, sint64
 ***********************************************************************************************************************/
 static void zint_finish_mod(uint32 *a, uint32 len, const uint32 *m, uint32 neg)
 {
-  uint32 u;
-  uint32 cc, xm, ym;
-  uint32 aw, mw;
+  uint32 u = 0;
+  uint32 cc = 0;
+  uint32 xm = 0;
+  uint32 ym = 0;
+  uint32 aw = 0;
+  uint32 mw = 0;
 
   /* First pass: compare a (assumed nonnegative) with m. Note that if the top word uses 32 bits, subtracting m must
    * yield a value less than 2^31 since a < 2*m. */
-  cc = 0;
 
   for (u = 0; u < len; u++)
   {
@@ -1588,15 +1624,18 @@ static void zint_finish_mod(uint32 *a, uint32 len, const uint32 *m, uint32 neg)
 static void zint_co_reduce_mod(uint32 *a, uint32 *b, const uint32 *m, uint32 len, uint32 m0i, sint64 xa, sint64 xb,
                                sint64 ya, sint64 yb)
 {
-  uint32 u;
-  sint64 cca, ccb, temp;
-  uint32 fa, fb;
-  uint32 wa, wb;
-  uint64 za, zb;
+  uint32 u = 0;
+  sint64 cca = 0;
+  sint64 ccb = 0;
+  sint64 temp = 0;
+  uint32 fa = 0;
+  uint32 fb = 0;
+  uint32 wa = 0;
+  uint32 wb = 0;
+  uint64 za = 0;
+  uint64 zb = 0;
 
   /* These are actually four combined Montgomery multiplications. */
-  cca = 0;
-  ccb = 0;
   fa = (((a[0] * (uint32) xa) + (b[0] * (uint32) xb)) * m0i) & 0x7FFFFFFFu;
   fb = (((a[0] * (uint32) ya) + (b[0] * (uint32) yb)) * m0i) & 0x7FFFFFFFu;
 
@@ -1745,21 +1784,43 @@ static sint32 zint_bezout(uint32 *u, uint32 *v, const uint32 *x, const uint32 *y
    * off, requiring an optional correction: if a' < 0, then we replace pa with -pa and pb with -pb. Each such step will
    * reduce the total length (sum of lengths of a and b) by at least 30 bits at each iteration. */
 
-  uint32 *u0, *u1, *v0, *v1, *a, *b;
-  uint32 x0i, y0i;
-  uint32 num, rc;
-  uint32 j;
-  uint32 c0, c1;
-  uint32 a0, a1, b0, b1;
-  uint64 a_hi, b_hi;
-  uint32 a_lo, b_lo;
-  sint64 pa, pb, qa, qb;
-  sint32 i;
-  uint32 r;
-  uint32 aw, bw;
-  uint32 rt, oa, ob, cAB, cBA, cA;
-  uint64 rz;
-  sint32 retVal;
+  uint32 *u0 = (uint32*)NULL_PTR;
+  uint32 *u1 = (uint32*)NULL_PTR;
+  uint32 *v0 = (uint32*)NULL_PTR;
+  uint32 *v1 = (uint32*)NULL_PTR;
+  uint32 *a = (uint32*)NULL_PTR;
+  uint32 *b = (uint32*)NULL_PTR;
+  uint32 x0i = 0;
+  uint32 y0i = 0;
+  uint32 num = 0;
+  uint32 rc = 0;
+  uint32 j = 0;
+  uint32 c0 = 0;
+  uint32 c1 = 0;
+  uint32 a0 = 0;
+  uint32 a1 = 0;
+  uint32 b0 = 0;
+  uint32 b1 = 0;
+  uint64 a_hi = 0;
+  uint64 b_hi = 0;
+  uint32 a_lo = 0;
+  uint32 b_lo = 0;
+  sint64 pa = 0;
+  sint64 pb = 0;
+  sint64 qa = 0;
+  sint64 qb = 0;
+  sint32 i = 0;
+  uint32 r = 0;
+  uint32 aw = 0;
+  uint32 bw = 0;
+  uint32 rt = 0;
+  uint32 oa = 0;
+  uint32 ob = 0;
+  uint32 cAB = 0;
+  uint32 cBA = 0;
+  uint32 cA = 0;
+  uint64 rz = 0;
+  sint32 retVal = 0;
 
   if (len == 0u)
   {
@@ -1997,11 +2058,14 @@ static void zint_add_scaled_mul_small(uint32 *x, uint32 xlen, const uint32 *y, u
 ***********************************************************************************************************************/
 static void zint_sub_scaled(uint32 *x, uint32 xlen, const uint32 *y, uint32 ylen, uint32 sch, uint32 scl)
 {
-  uint32 u;
-  uint32 ysign, tw;
-  uint32 cc;
-  uint32 v;
-  uint32 w, wy, wys;
+  uint32 u = 0;
+  uint32 ysign = 0;
+  uint32 tw = 0;
+  uint32 cc = 0;
+  uint32 v = 0;
+  uint32 w = 0;
+  uint32 wy = 0;
+  uint32 wys = 0;
 
   if (ylen != 0u)
   {
@@ -2045,7 +2109,7 @@ static void zint_sub_scaled(uint32 *x, uint32 xlen, const uint32 *y, uint32 ylen
 ***********************************************************************************************************************/
 static sint32 zint_one_to_plain(const uint32 *x)
 {
-  uint32 w;
+  uint32 w = 0;
 
   w = x[0];
   w |= (w & 0x40000000u) << 1;
@@ -2071,11 +2135,15 @@ static sint32 zint_one_to_plain(const uint32 *x)
 ***********************************************************************************************************************/
 static void poly_big_to_fp(fpr *d, const uint32 *f, uint32 flen, uint32 fstride, uint32 logn)
 {
-  uint32 n, u;
-  uint32 v;
-  uint32 neg, cc, xm;
-  fpr x, fsc;
-  uint32 w;
+  uint32 n = 0;
+  uint32 u = 0;
+  uint32 v = 0;
+  uint32 neg = 0;
+  uint32 cc = 0;
+  uint32 xm = 0;
+  fpr x = 0;
+  fpr fsc = 0;
+  uint32 w = 0;
 
   /* f_temp is used to avoid modifying the input. */
   const uint32 *f_temp = f;
@@ -2138,8 +2206,9 @@ static void poly_big_to_fp(fpr *d, const uint32 *f, uint32 flen, uint32 fstride,
 ***********************************************************************************************************************/
 static sint32 poly_big_to_small(sint8 *d, const uint32 *s, sint32 lim, uint32 logn)
 {
-  uint32 n, u;
-  sint32 z;
+  uint32 n = 0;
+  uint32 u = 0;
+  sint32 z = 0;
   sint8 retVal = 1;
 
   n = MKN(logn);
@@ -2184,11 +2253,12 @@ static sint32 poly_big_to_small(sint8 *d, const uint32 *s, sint32 lim, uint32 lo
 static void poly_sub_scaled(uint32 *F, uint32 Flen, uint32 Fstride, const uint32 *f, uint32 flen1, uint32 fstride1,
                             const sint32 *k, uint32 sch, uint32 scl, uint32 logn)
 {
-  uint32 n, u;
-  sint32 kf;
-  uint32 v;
-  uint32 *x;
-  const uint32 *y;
+  uint32 n = 0;
+  uint32 u = 0;
+  sint32 kf = 0;
+  uint32 v = 0;
+  uint32 *x = (uint32*)NULL_PTR;
+  const uint32 *y = (uint32*)NULL_PTR;
 
 
   n = MKN(logn);
@@ -2241,12 +2311,21 @@ static void poly_sub_scaled(uint32 *F, uint32 Flen, uint32 Fstride, const uint32
 static void poly_sub_scaled_ntt(uint32 *F, uint32 Flen, uint32 Fstride, const uint32 *f, uint32 flen1, uint32 fstride1,
                                 const sint32 *k, uint32 sch, uint32 scl, uint32 logn, uint32 *tmp)
 {
-  uint32 *gm, *igm, *fk, *t1, *x;
-  const uint32 *y;
-  uint32 n, u, tlen;
-  const small_prime *smallPrimes;
-  uint32 p, p0i, R2, Rx;
-  uint32 v;
+  uint32 *gm = (uint32*)NULL_PTR;
+  uint32 *igm = (uint32*)NULL_PTR;
+  uint32 *fk = (uint32*)NULL_PTR;
+  uint32 *t1 = (uint32*)NULL_PTR;
+  uint32 *x = (uint32*)NULL_PTR;
+  const uint32 *y = (uint32*)NULL_PTR;
+  uint32 n = 0;
+  uint32 u = 0;
+  uint32 tlen = 0;
+  const small_prime *smallPrimes = (small_prime*)NULL_PTR;
+  uint32 p = 0;
+  uint32 p0i = 0;
+  uint32 R2 = 0;
+  uint32 Rx = 0;
+  uint32 v = 0;
 
   n = MKN(logn);
   tlen = flen1 + 1u;
@@ -2323,7 +2402,7 @@ static void poly_sub_scaled_ntt(uint32 *F, uint32 Flen, uint32 Fstride, const ui
 static uint64 get_rng_u64(inner_shake256_context *rng)
 {
   /* We enforce little-endian representation. */
-  uint8 tmp[8];
+  uint8 tmp[8] = {0};
 
   FsmSw_Fips202_shake256_inc_squeeze(tmp, sizeof(tmp), rng);
 
@@ -2350,11 +2429,15 @@ static uint64 get_rng_u64(inner_shake256_context *rng)
 ***********************************************************************************************************************/
 static sint32 mkgauss(RNG_CONTEXT *rng, uint32 logn)
 {
-  uint32 u, g;
-  sint32 val;
-  uint64 r;
-  uint32 f, v, k, neg;
-  uint32 t;
+  uint32 u = 0;
+  uint32 g = 0;
+  sint32 val = 0;
+  uint64 r = 0;
+  uint32 f = 0;
+  uint32 v = 0;
+  uint32 k = 0;
+  uint32 neg = 0;
+  uint32 t = 0;
 
   g = (uint32)1u << (10u - logn);
   val = 0;
@@ -2412,9 +2495,11 @@ static sint32 mkgauss(RNG_CONTEXT *rng, uint32 logn)
 ***********************************************************************************************************************/
 static uint32 poly_small_sqnorm(const sint8 *f, uint32 logn)
 {
-  uint32 n, u;
-  uint32 s, ng;
-  sint32 z;
+  uint32 n = 0;
+  uint32 u = 0;
+  uint32 s = 0;
+  uint32 ng = 0;
+  sint32 z = 0;
 
   n = MKN(logn);
   s = 0;
@@ -2444,8 +2529,10 @@ static uint32 poly_small_sqnorm(const sint8 *f, uint32 logn)
 ***********************************************************************************************************************/
 static fpr *align_fpr(void *base, void *data)
 {
-  uint8 *cb, *cd;
-  uint32 k, km;
+  uint8 *cb = (uint8*)NULL_PTR;
+  uint8 *cd = (uint8*)NULL_PTR;
+  uint32 k = 0;
+  uint32 km = 0;
 
   /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
   Ensured proper alignment and validity." */
@@ -2481,8 +2568,10 @@ static fpr *align_fpr(void *base, void *data)
 ***********************************************************************************************************************/
 static uint32 *align_u32(void *base, void *data)
 {
-  uint8 *cb, *cd;
-  uint32 k, km;
+  uint8 *cb = (uint8*)NULL_PTR;
+  uint8 *cd = (uint8*)NULL_PTR;
+  uint32 k = 0;
+  uint32 km = 0;
 
   /* polyspace +3 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
   Ensured proper alignment and validity." */
@@ -2516,7 +2605,8 @@ static uint32 *align_u32(void *base, void *data)
 ***********************************************************************************************************************/
 static void poly_small_to_fp(fpr *x, const sint8 *f, uint32 logn)
 {
-  uint32 n, u;
+  uint32 n = 0;
+  uint32 u = 0;
 
   n = MKN(logn);
 
@@ -2542,15 +2632,27 @@ static void poly_small_to_fp(fpr *x, const sint8 *f, uint32 logn)
 ***********************************************************************************************************************/
 static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt, sint32 out_ntt)
 {
-  uint32 n, hn, u;
-  uint32 slen, tlen;
-  uint32 *fd, *gd, *fs, *gs, *gm, *igm, *t1;
-  const small_prime *smallPrimes;
-  uint32 p, p0i, R2;
-  uint32 v;
-  uint32 *x;
-  uint32 w0, w1;
-  uint32 Rx;
+  uint32 n = 0;
+  uint32 hn = 0;
+  uint32 u = 0;
+  uint32 slen = 0;
+  uint32 tlen = 0;
+  uint32 *fd = (uint32*)NULL_PTR;
+  uint32 *gd = (uint32*)NULL_PTR;
+  uint32 *fs = (uint32*)NULL_PTR;
+  uint32 *gs = (uint32*)NULL_PTR;
+  uint32 *gm = (uint32*)NULL_PTR;
+  uint32 *igm = (uint32*)NULL_PTR;
+  uint32 *t1 = (uint32*)NULL_PTR;
+  const small_prime *smallPrimes = (small_prime*)NULL_PTR;
+  uint32 p = 0;
+  uint32 p0i = 0;
+  uint32 R2 = 0;
+  uint32 v = 0;
+  uint32 *x = (uint32*)NULL_PTR;
+  uint32 w0 = 0;
+  uint32 w1 = 0;
+  uint32 Rx = 0;
 
   n = (uint32) 1 << logn;
   hn = n >> 1;
@@ -2714,12 +2816,17 @@ static void make_fg_step(uint32 *data, uint32 logn, uint32 depth, sint32 in_ntt,
 ***********************************************************************************************************************/
 static void make_fg(uint32 *data, const sint8 *f, const sint8 *g, uint32 logn, uint32 depth, sint32 out_ntt)
 {
-  uint32 n, u;
-  uint32 *ft, *gt, p0;
-  uint32 d;
-  const small_prime *smallPrimes;
-  uint32 *gm, *igm;
-  uint32 p, p0i;
+  uint32 n = 0;
+  uint32 u = 0;
+  uint32 *ft = (uint32*)NULL_PTR;
+  uint32 *gt = (uint32*)NULL_PTR;
+  uint32 p0 = 0;
+  uint32 d = 0;
+  const small_prime *smallPrimes = (small_prime*)NULL_PTR;
+  uint32 *gm = (uint32*)NULL_PTR;
+  uint32 *igm = (uint32*)NULL_PTR;
+  uint32 p = 0;
+  uint32 p0i = 0;
   boolean bStopFunc = FALSE;
 
 
@@ -2791,9 +2898,14 @@ static void make_fg(uint32 *data, const sint8 *f, const sint8 *g, uint32 logn, u
 ***********************************************************************************************************************/
 static sint32 solve_NTRU_deepest(uint32 logn_top, const sint8 *f, const sint8 *g, uint32 *tmp)
 {
-  uint32 len;
-  uint32 *Fp, *Gp, *fp1, *gp1, *t1, q;
-  const small_prime *smallPrimes;
+  uint32 len = 0;
+  uint32 *Fp = (uint32*)NULL_PTR;
+  uint32 *Gp = (uint32*)NULL_PTR;
+  uint32 *fp1 = (uint32*)NULL_PTR;
+  uint32 *gp1 = (uint32*)NULL_PTR;
+  uint32 *t1 = (uint32*)NULL_PTR;
+  uint32 q = 0;
+  const small_prime *smallPrimes = (small_prime*)NULL_PTR;
   sint32 retVal = 1;
 
   len = MAX_BL_SMALL[logn_top];
@@ -2858,25 +2970,66 @@ static sint32 solve_NTRU_intermediate(uint32 logn_top, const sint8 *f, const sin
    *  - the F and G values already in fk->tmp (from the deeper
    *    levels) have degree N/2;
    *  - this function should return F and G of degree N. */
-  uint32 logn;
-  uint32 n, hn, slen, dlen, llen, rlen, FGlen, u;
-  uint32 *Fd, *Gd, *Ft, *Gt, *ft1, *gt1, *t1;
-  fpr *rt1, *rt2, *rt3, *rt4, *rt5;
-  sint32 scale_fg, minbl_fg, maxbl_fg, maxbl_FG1, scale_k;
-  uint32 *x, *y;
+  uint32 logn = 0;
+  uint32 n = 0;
+  uint32 hn = 0;
+  uint32 slen = 0;
+  uint32 dlen = 0;
+  uint32 llen = 0;
+  uint32 rlen = 0;
+  uint32 FGlen = 0;
+  uint32 u = 0;
+  uint32 *Fd = (uint32*)NULL_PTR;
+  uint32 *Gd = (uint32*)NULL_PTR;
+  uint32 *Ft = (uint32*)NULL_PTR;
+  uint32 *Gt = (uint32*)NULL_PTR;
+  uint32 *ft1 = (uint32*)NULL_PTR;
+  uint32 *gt1 = (uint32*)NULL_PTR;
+  uint32 *t1 = (uint32*)NULL_PTR;
+  fpr *rt1 = (uint64*)NULL_PTR;
+  fpr *rt2 = (uint64*)NULL_PTR;
+  fpr *rt3 = (uint64*)NULL_PTR;
+  fpr *rt4 = (uint64*)NULL_PTR;
+  fpr *rt5 = (uint64*)NULL_PTR;
+  sint32 scale_fg = 0;
+  sint32 minbl_fg = 0;
+  sint32 maxbl_fg = 0;
+  sint32 maxbl_FG1 = 0;
+  sint32 scale_k = 0;
+  uint32 *x;
+  uint32 *y;
   sint32 *k;
-  const small_prime *smallPrimes;
-  uint32 p, p0i, R2, Rx;
-  uint32 v;
-  uint32 *xs, *ys, *xd, *yd;
-  uint32 *gm, *igm, *fx, *gx, *Fp, *Gp;
-  uint32 ftA, ftB, gtA, gtB;
-  uint32 mFp, mGp;
-  sint32 scale_FG1, dc, new_maxbl_FG;
-  uint32 scl, sch;
-  fpr pdc, pt;
-  fpr xv;
-  uint32 sw;
+  const small_prime *smallPrimes = (small_prime*)NULL_PTR;
+  uint32 p = 0;
+  uint32 p0i = 0;
+  uint32 R2 = 0;
+  uint32 Rx = 0;
+  uint32 v = 0;
+  uint32 *xs = (uint32*)NULL_PTR;
+  uint32 *ys = (uint32*)NULL_PTR;
+  uint32 *xd = (uint32*)NULL_PTR;
+  uint32 *yd = (uint32*)NULL_PTR;
+  uint32 *gm = (uint32*)NULL_PTR;
+  uint32 *igm = (uint32*)NULL_PTR;
+  uint32 *fx = (uint32*)NULL_PTR;
+  uint32 *gx = (uint32*)NULL_PTR;
+  uint32 *Fp = (uint32*)NULL_PTR;
+  uint32 *Gp = (uint32*)NULL_PTR;
+  uint32 ftA = 0;
+  uint32 ftB = 0;
+  uint32 gtA = 0;
+  uint32 gtB = 0;
+  uint32 mFp = 0;
+  uint32 mGp = 0;
+  sint32 scale_FG1 = 0;
+  sint32 dc = 0;
+  sint32 new_maxbl_FG = 0;
+  uint32 scl = 0;
+  uint32 sch = 0;
+  fpr pdc = 0;
+  fpr pt = 0;
+  fpr xv = 0;
+  uint32 sw = 0;
   sint8 retVal = 1;
   boolean bStopFunc = FALSE;
 
@@ -3345,19 +3498,53 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
   /* The first half of this function is a copy of the corresponding part in solve_NTRU_intermediate(), for the
    * reconstruction of the unreduced F and G. The second half (Babai reduction) is done differently, because the
    * unreduced F and G fit in 53 bits of precision, allowing a much simpler process with lower RAM usage. */
-  uint32 depth, logn;
-  uint32 n_top, n, hn, slen, dlen, llen, u;
-  uint32 *Fd, *Gd, *Ft, *Gt, *ft1, *gt1, *t1;
-  fpr *rt1, *rt2, *rt3, *rt4, *rt5, *rt6;
-  uint32 *x, *y;
-  uint32 p, p0i, R2, Rx;
-  uint32 v;
-  uint32 *xs, *ys, *xd, *yd;
-  uint32 ftA, ftB, gtA, gtB;
-  uint32 mFp, mGp;
-  uint32 *gm, *igm, *fx, *gx, *Fp, *Gp;
-  uint32 e;
-  fpr z;
+  uint32 depth = 0;
+  uint32 logn = 0;
+  uint32 n_top = 0;
+  uint32 n = 0;
+  uint32 hn = 0;
+  uint32 slen = 0;
+  uint32 dlen = 0;
+  uint32 llen = 0;
+  uint32 u = 0;
+  uint32 *Fd = (uint32*)NULL_PTR;
+  uint32 *Gd = (uint32*)NULL_PTR;
+  uint32 *Ft = (uint32*)NULL_PTR;
+  uint32 *Gt = (uint32*)NULL_PTR;
+  uint32 *ft1 = (uint32*)NULL_PTR;
+  uint32 *gt1 = (uint32*)NULL_PTR;
+  uint32 *t1 = (uint32*)NULL_PTR;
+  fpr *rt1 = (uint64*)NULL_PTR;
+  fpr *rt2 = (uint64*)NULL_PTR;
+  fpr *rt3 = (uint64*)NULL_PTR;
+  fpr *rt4 = (uint64*)NULL_PTR;
+  fpr *rt5 = (uint64*)NULL_PTR;
+  fpr *rt6 = (uint64*)NULL_PTR;
+  uint32 *x = (uint32*)NULL_PTR;
+  uint32 *y = (uint32*)NULL_PTR;
+  uint32 p = 0;
+  uint32 p0i = 0;
+  uint32 R2 = 0;
+  uint32 Rx = 0;
+  uint32 v = 0;
+  uint32 *xs = (uint32*)NULL_PTR;
+  uint32 *ys = (uint32*)NULL_PTR;
+  uint32 *xd = (uint32*)NULL_PTR;
+  uint32 *yd = (uint32*)NULL_PTR;
+  uint32 ftA = 0;
+  uint32 ftB = 0;
+  uint32 gtA = 0;
+  uint32 gtB = 0;
+  uint32 mFp = 0;
+  uint32 mGp = 0;
+  uint32 *gm = (uint32*)NULL_PTR;
+  uint32 *igm = (uint32*)NULL_PTR;
+  uint32 *fx = (uint32*)NULL_PTR;
+  uint32 *gx = (uint32*)NULL_PTR;
+  uint32 *Fp = (uint32*)NULL_PTR;
+  uint32 *Gp = (uint32*)NULL_PTR;
+  uint32 e = 0;
+  fpr z = 0;
 
   depth = 1;
   n_top = (uint32) 1 << logn_top;
@@ -3663,15 +3850,33 @@ static sint32 solve_NTRU_binary_depth1(uint32 logn_top, const sint8 *f, const si
 ***********************************************************************************************************************/
 static sint32 solve_NTRU_binary_depth0(uint32 logn, const sint8 *f, const sint8 *g, uint32 *tmp)
 {
-  uint32 n, hn, u;
-  uint32 p, p0i, R2;
-  uint32 *Fp, *Gp, *t1, *t2, *t3, *t4, *t5;
-  uint32 *gm, *igm, *ft, *gt;
-  fpr *rt2, *rt3;
-  uint32 ftA, ftB, gtA, gtB;
-  uint32 mFp, mGp;
-  uint32 w;
-  uint32 kw;
+  uint32 n = 0;
+  uint32 hn = 0;
+  uint32 u = 0;
+  uint32 p = 0;
+  uint32 p0i = 0;
+  uint32 R2 = 0;
+  uint32 *Fp = (uint32*)NULL_PTR;
+  uint32 *Gp = (uint32*)NULL_PTR;
+  uint32 *t1 = (uint32*)NULL_PTR;
+  uint32 *t2 = (uint32*)NULL_PTR;
+  uint32 *t3 = (uint32*)NULL_PTR;
+  uint32 *t4 = (uint32*)NULL_PTR;
+  uint32 *t5 = (uint32*)NULL_PTR;
+  uint32 *gm = (uint32*)NULL_PTR;
+  uint32 *igm = (uint32*)NULL_PTR;
+  uint32 *ft = (uint32*)NULL_PTR;
+  uint32 *gt = (uint32*)NULL_PTR;
+  fpr *rt2 = (uint64*)NULL_PTR;
+  fpr *rt3 = (uint64*)NULL_PTR;
+  uint32 ftA = 0;
+  uint32 ftB = 0;
+  uint32 gtA = 0;
+  uint32 gtB = 0;
+  uint32 mFp = 0;
+  uint32 mGp = 0;
+  uint32 w = 0;
+  uint32 kw = 0;
 
   n = (uint32) 1 << logn;
   hn = n >> 1;
@@ -3907,12 +4112,19 @@ by allowing early exits on error conditions. Using a single return variable (ret
 was evaluated but didn't work in this context." */
 static sint32 solve_NTRU(uint32 logn, sint8 *F, sint8 *G, const sint8 *f, const sint8 *g, sint32 lim, uint32 *tmp)
 {
-  uint32 n, u;
-  uint32 *ft, *gt, *Ft1, *Gt1, *gm;
-  uint32 p, p0i, r;
-  const small_prime *smallPrimes;
-  uint32 depth;
-  uint32 z;
+  uint32 n = 0;
+  uint32 u = 0;
+  uint32 *ft = (uint32*)NULL_PTR;
+  uint32 *gt = (uint32*)NULL_PTR;
+  uint32 *Ft1 = (uint32*)NULL_PTR;
+  uint32 *Gt1 = (uint32*)NULL_PTR;
+  uint32 *gm = (uint32*)NULL_PTR;
+  uint32 p = 0;
+  uint32 p0i = 0;
+  uint32 r = 0;
+  const small_prime *smallPrimes = (small_prime*)NULL_PTR;
+  uint32 depth = 0;
+  uint32 z = 0;
 
   /* G_temp is used to avoid modifying the input. */
   sint8 *G_temp = G;
@@ -4034,8 +4246,9 @@ static sint32 solve_NTRU(uint32 logn, sint8 *F, sint8 *G, const sint8 *f, const 
 ***********************************************************************************************************************/
 static void poly_small_mkgauss(RNG_CONTEXT *rng, sint8 *f, uint32 logn)
 {
-  uint32 n, u;
-  uint32 mod2;
+  uint32 n = 0;
+  uint32 u = 0;
+  uint32 mod2 = 0;
   sint32 s = 0;
   boolean loop = TRUE;
 
@@ -4112,13 +4325,19 @@ void FsmSw_Falcon_keygen(inner_shake256_context *rng, sint8 *f, sint8 *g, sint8 
    *  - Compute h = g/f mod phi mod q.
    *  - Solve the NTRU equation fG - gF = q; if the solving fails, try again. Usual failure condition is when
    *    Res(f,phi) and Res(g,phi) are not prime to each other. */
-  uint32 n, u;
-  uint16 *h2, *tmp2;
-  RNG_CONTEXT *rc;
-  fpr *rt1, *rt2, *rt3;
-  fpr bnorm;
-  uint32 normf, normg, norm;
-  sint32 lim;
+  uint32 n = 0;
+  uint32 u = 0;
+  uint16 *h2 = (uint16*)NULL_PTR;
+  uint16 *tmp2 = (uint16*)NULL_PTR;
+  RNG_CONTEXT *rc = (RNG_CONTEXT*)NULL_PTR;
+  fpr *rt1 = (uint64*)NULL_PTR;
+  fpr *rt2 = (uint64*)NULL_PTR;
+  fpr *rt3 = (uint64*)NULL_PTR;
+  fpr bnorm = 0;
+  uint32 normf = 0;
+  uint32 normg = 0;
+  uint32 norm = 0;
+  sint32 lim = 0;
 
   n = MKN(logn);
   rc = rng;

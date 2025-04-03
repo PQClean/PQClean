@@ -42,14 +42,14 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static uint32 load32_littleendian(const uint8 x[4]);
-static void cbd2(poly768 *r, const uint8 buf[2u * KYBER_N / 4u]);
+static uint32 fsmsw_kyber768_Load32Littleendian(const uint8 x[4]);
+static void fsmsw_kyber768_Cbd2(poly768 *r, const uint8 buf[2u * KYBER_N / 4u]);
 
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        load32_littleendian
+* Name:        fsmsw_kyber768_Load32Littleendian
 *
 * Description: load 4 bytes into a 32-bit integer
 *              in little-endian order
@@ -58,9 +58,9 @@ static void cbd2(poly768 *r, const uint8 buf[2u * KYBER_N / 4u]);
 *
 * Returns 32-bit unsigned integer loaded from x
 ***********************************************************************************************************************/
-static uint32 load32_littleendian(const uint8 x[4])
+static uint32 fsmsw_kyber768_Load32Littleendian(const uint8 x[4])
 {
-    uint32 r;
+    uint32 r = 0;
 
     r  = (uint32)x[0];
     r |= (uint32)x[1] << 8u;
@@ -80,15 +80,18 @@ static uint32 load32_littleendian(const uint8 x[4])
 * Arguments:   -       poly  *r:   pointer to output polynomial
 *              - const uint8 *buf: pointer to input byte array
 ***********************************************************************************************************************/
-static void cbd2(poly768 *r, const uint8 buf[2u * KYBER_N / 4u])
+static void fsmsw_kyber768_Cbd2(poly768 *r, const uint8 buf[2u * KYBER_N / 4u])
 {
-    uint8  i, j;
-    uint32 t, d;
-    sint16 a, b;
+    uint8  i = 0;
+    uint8  j = 0;
+    uint32 t = 0;
+    uint32 d = 0;
+    sint16 a = 0;
+    sint16 b = 0;
 
     for (i = 0; i < (KYBER_N / 8u); i++)
 	{
-        t  = load32_littleendian(&buf[4u * i]);
+        t  = fsmsw_kyber768_Load32Littleendian(&buf[4u * i]);
         d  = t & 0x55555555u;
         d += (t >> 1u) & 0x55555555u;
 
@@ -117,7 +120,7 @@ static void cbd2(poly768 *r, const uint8 buf[2u * KYBER_N / 4u])
 ***********************************************************************************************************************/
 void FsmSw_Kyber768_poly_cbd_eta1(poly768 *r, const uint8 buf[KYBER768_ETA1 * KYBER_N / 4u])
 {
-    cbd2(r, buf);
+    fsmsw_kyber768_Cbd2(r, buf);
 }
 
 /***********************************************************************************************************************
@@ -132,5 +135,5 @@ void FsmSw_Kyber768_poly_cbd_eta1(poly768 *r, const uint8 buf[KYBER768_ETA1 * KY
 ***********************************************************************************************************************/
 void FsmSw_Kyber768_poly_cbd_eta2(poly768 *r, const uint8 buf[KYBER768_ETA2 * KYBER_N / 4u])
 {
-    cbd2(r, buf);
+    fsmsw_kyber768_Cbd2(r, buf);
 }
