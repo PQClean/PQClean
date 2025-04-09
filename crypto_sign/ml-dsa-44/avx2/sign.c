@@ -438,3 +438,34 @@ badsig:
 
     return -1;
 }
+
+int PQCLEAN_MLDSA44_AVX2_crypto_sign_signature(uint8_t *sig,
+        size_t *siglen,
+        const uint8_t *m,
+        size_t mlen,
+        const uint8_t *sk) {
+    return PQCLEAN_MLDSA44_AVX2_crypto_sign_signature_ctx(sig, siglen, m, mlen, NULL, 0, sk);
+}
+
+int PQCLEAN_MLDSA44_AVX2_crypto_sign(uint8_t *sm,
+                                     size_t *smlen,
+                                     const uint8_t *m,
+                                     size_t mlen,
+                                     const uint8_t *sk) {
+    return PQCLEAN_MLDSA44_AVX2_crypto_sign_ctx(sm, smlen, m, mlen, NULL, 0, sk);
+}
+
+int PQCLEAN_MLDSA44_AVX2_crypto_sign_verify(const uint8_t *sig,
+        size_t siglen,
+        const uint8_t *m,
+        size_t mlen,
+        const uint8_t *pk) {
+    return PQCLEAN_MLDSA44_AVX2_crypto_sign_verify_ctx(sig, siglen, m, mlen, NULL, 0, pk);
+}
+
+int PQCLEAN_MLDSA44_AVX2_crypto_sign_open(uint8_t *m,
+        size_t *mlen,
+        const uint8_t *sm, size_t smlen,
+        const uint8_t *pk) {
+    return PQCLEAN_MLDSA44_AVX2_crypto_sign_open_ctx(m, mlen, sm, smlen, NULL, 0, pk);
+}
