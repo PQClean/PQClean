@@ -375,6 +375,30 @@ end:
     return res;
 }
 
+static int test_func_ptrs(void) {
+    // This test will likely be optimized away by the compiler if each of the
+    // expected functions actually can be made into a function pointer of the
+    // correct type. Otherwise, a compiler error should occur.
+    int ret = 0;
+
+    int (*keypair_fn)(uint8_t *, uint8_t *) = (crypto_sign_keypair);
+    ret |= keypair_fn == NULL;
+
+    int (*sign_fn)(uint8_t *, size_t *, const uint8_t *, size_t, const uint8_t *) = (crypto_sign);
+    ret |= sign_fn == NULL;
+
+    int (*sign_open_fn)(uint8_t *, size_t *, const uint8_t *, size_t, const uint8_t *) = (crypto_sign_open);
+    ret |= sign_open_fn == NULL;
+
+    int (*sign_signature_fn)(uint8_t *, size_t *, const uint8_t *, size_t, const uint8_t *) = (crypto_sign_signature);
+    ret |= sign_signature_fn == NULL;
+
+    int (*sign_verify_fn)(const uint8_t *, size_t, const uint8_t *, size_t, const uint8_t *) = (crypto_sign_verify);
+    ret |= sign_verify_fn == NULL;
+
+    return ret;
+}
+
 int main(void) {
     // check if CRYPTO_ALGNAME is printable
     puts(CRYPTO_ALGNAME);
@@ -382,6 +406,7 @@ int main(void) {
     result += test_sign();
     result += test_sign_detached();
     result += test_wrong_pk();
+    result += test_func_ptrs();
 
     return result;
 }
