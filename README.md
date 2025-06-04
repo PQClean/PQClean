@@ -1,5 +1,5 @@
 # PQCleanAutomotive
-PQCleanAutomotive is planed as a collection of post-quantum cryptographic algorithms for automotive microcontrollers. The post-quantum cryptographic algorithms are based on the [PQClean](https://github.com/PQClean/PQClean) repository, which is a clean collection of the [NIST post-quantum project](https://csrc.nist.gov/projects/post-quantum-cryptography).
+PQCleanAutomotive is planned as a collection of post-quantum cryptographic algorithms for automotive microcontrollers. The post-quantum cryptographic algorithms are based on the [PQClean](https://github.com/PQClean/PQClean) repository, which is a clean collection of the [NIST post-quantum project](https://csrc.nist.gov/projects/post-quantum-cryptography).
 
 ## Security Note
 There was no security risk analysis like TARA or similar carried out for QuantumSAR. The post-quantum cryptographic algorithms itself were evaluated by NIST.
