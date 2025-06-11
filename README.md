@@ -16,8 +16,6 @@ The base of PQCleanAutomotive is the PQClean repository with the latest commit [
 ## Implementation
 For the integration of PQCleanAutomotive, the file Crypto.c in the IAV quantumSAR repository contains an example of the use of the CRYSTALS-KYBER, CRYSTALS-DILITHIUM, SPHINCS+ and FALCON algorithm.
 
-The library requires an H-file containing all data types of the respective hardware platform (Platform_Types.h). The implementation from Infineon for the AURIX microcontroller family can be used as an example here: https://github.com/Infineon/AURIX_code_examples/blob/master/code_examples/Blinky_LED_1_KIT_TC397_TFT/Libraries/iLLD/TC39B/Tricore/Cpu/Std/Platform_Types.h
-
 In the SPHINCS+ algorithm, dynamic arrays had to be replaced by static arrays in various functions for the microcontroller implementation.
 
 ## License
@@ -47,3 +45,6 @@ limitations under the License.
 ## MISRA
 PQCleanAutomotive and the post-quantum cryptographic algorithms are checked with the 2012 version of [MISRA](https://misra.org.uk/app/uploads/2021/06/MISRA-C-2012-Permits-First-Edition.pdf). Not all MISRA findings could be resolved. An explanation has been written in the relevant places.
 Note: Rule 1.1 of MISRA was globally disabled because the IAV headers in each file are detected as macros, leading to numerous false positives. Disabling this rule ensures that these headers are not incorrectly flagged as violations.
+
+## Compiler
+In this repository the post-quantum cryptographic algorithms are warning free compiled with TASKING Compiler with standard flags. 

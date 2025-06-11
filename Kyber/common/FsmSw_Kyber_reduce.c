@@ -19,10 +19,9 @@
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 #include "FsmSw_Kyber_params.h"
-#include "FsmSw_Kyber_reduce.h"
-
 #include "FsmSw_Types.h"
 
+#include "FsmSw_Kyber_reduce.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
@@ -51,7 +50,7 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber_montgomery_reduce
+* Name:        FsmSw_Kyber_MontgomeryReduce
 *
 * Description: Montgomery reduction; given a 32-bit integer a, computes
 *              16-bit integer congruent to a * R^-1 mod q, where R=2^16
@@ -61,17 +60,17 @@
 *
 * Returns:     integer in {-q+1,...,q-1} congruent to a * R^-1 modulo q.
 ***********************************************************************************************************************/
-sint16 FsmSw_Kyber_montgomery_reduce(sint32 a)
+sint16 FsmSw_Kyber_MontgomeryReduce(sint32 a)
 {
-    sint16 t = 0;
+  sint16 t = 0;
 
-    t = (sint16)a * QINV;
-    t = (sint16)((uint16)(((uint32)a - ((uint32)t * KYBER_Q)) >> 16));
-    return t;
+  t = (sint16)a * QINV;
+  t = (sint16)((uint16)(((uint32)a - ((uint32)t * KYBER_Q)) >> 16));
+  return t;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber_barrett_reduce
+* Name:        FsmSw_Kyber_BarrettReduce
 *
 * Description: Barrett reduction; given a 16-bit integer a, computes
 *              centered representative congruent to a mod q in {-(q-1)/2,...,(q-1)/2}
@@ -80,29 +79,29 @@ sint16 FsmSw_Kyber_montgomery_reduce(sint32 a)
 *
 * Returns:     integer in {-(q-1)/2,...,(q-1)/2} congruent to a modulo q.
 ***********************************************************************************************************************/
-sint16 FsmSw_Kyber_barrett_reduce(sint16 a)
+sint16 FsmSw_Kyber_BarrettReduce(sint16 a)
 {
-    sint16 t = 0;
-    sint16 temp0 = 0;
-    sint32 temp1 = 0;
-    uint32 temp2 = 0;
-    const sint16 v = (sint16)((uint16)((((uint32)1 << 26u) + KYBER_Q / 2u) / KYBER_Q));
+  sint16 t       = 0;
+  sint16 temp0   = 0;
+  sint32 temp1   = 0;
+  uint32 temp2   = 0;
+  const sint16 v = (sint16)((uint16)((((uint32)1 << 26u) + KYBER_Q / 2u) / KYBER_Q));
 
-    temp0 = (sint16)(uint16)((uint32)1u << (uint16)25u);
-    /* Polyspace cannot resolve the operation if the shift operation is inserted instead of temp0. */
-    temp1 = ((sint32)v * a) + temp0;
+  temp0 = (sint16)(uint16)((uint32)1u << (uint16)25u);
+  /* Polyspace cannot resolve the operation if the shift operation is inserted instead of temp0. */
+  temp1 = ((sint32)v * a) + temp0;
 
-    /* Check the first bit */
-    if (((uint32)temp1 & 0x80000000u) != 0u)
-    {
-        temp2 = ((uint32)temp1 >> 26u) | 0xFFFFFFC0u;
-    }
-    else
-    {
-        temp2 = ((uint32)temp1 >> 26u);
-    }
-    t = (sint16)((sint32)temp2);
-    t = (sint16)((uint16)(((uint32)t*KYBER_Q)));
+  /* Check the first bit */
+  if (((uint32)temp1 & 0x80000000u) != 0u)
+  {
+    temp2 = ((uint32)temp1 >> 26u) | 0xFFFFFFC0u;
+  }
+  else
+  {
+    temp2 = ((uint32)temp1 >> 26u);
+  }
+  t = (sint16)((sint32)temp2);
+  t = (sint16)((uint16)(((uint32)t * KYBER_Q)));
 
-    return a - t;
+  return a - t;
 }

@@ -18,10 +18,10 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Fips202.h"
 #include "FsmSw_Dilithium_params.h"
-#include "FsmSw_Dilithium_symmetric.h"
+#include "FsmSw_Fips202.h"
 
+#include "FsmSw_Dilithium_symmetric.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
@@ -50,7 +50,7 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_Dilithium_shake128_stream_init
+* Name:        FsmSw_Dilithium_Shake128_StreamInit
 *
 * Description: t.b.d
 *
@@ -58,21 +58,21 @@
 *              - const uint8          *seed:
 *              -       uint16          nonce:
 ***********************************************************************************************************************/
-void FsmSw_Dilithium_shake128_stream_init(shake128incctx *state, const uint8 seed[SEEDBYTES_DILITHIUM], uint16 nonce)
+void FsmSw_Dilithium_Shake128_StreamInit(shake128incctx *state, const uint8 seed[SEEDBYTES_DILITHIUM], uint16 nonce)
 {
-    uint8 t[2];
+  uint8 t[2];
 
-    t[0] = (uint8) nonce;
-    t[1] = (uint8) (nonce >> 8);
+  t[0] = (uint8)nonce;
+  t[1] = (uint8)(nonce >> 8);
 
-    FsmSw_Fips202_shake128_inc_init(state);
-    FsmSw_Fips202_shake128_inc_absorb(state, seed, SEEDBYTES_DILITHIUM);
-    FsmSw_Fips202_shake128_inc_absorb(state, t, 2);
-    FsmSw_Fips202_shake128_inc_finalize(state);
+  FsmSw_Fips202_Shake128_IncInit(state);
+  FsmSw_Fips202_Shake128_IncAbsorb(state, seed, SEEDBYTES_DILITHIUM);
+  FsmSw_Fips202_Shake128_IncAbsorb(state, t, 2);
+  FsmSw_Fips202_Shake128_IncFinalize(state);
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Dilithium_shake256_stream_init
+* Name:        FsmSw_Dilithium_Shake256_StreamInit
 *
 * Description: t.b.d
 *
@@ -80,15 +80,15 @@ void FsmSw_Dilithium_shake128_stream_init(shake128incctx *state, const uint8 see
 *              - const uint8          *seed:
 *              -       uint16          nonce:
 ***********************************************************************************************************************/
-void FsmSw_Dilithium_shake256_stream_init(shake256incctx *state, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
+void FsmSw_Dilithium_Shake256_StreamInit(shake256incctx *state, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce)
 {
-    uint8 t[2];
+  uint8 t[2];
 
-    t[0] = (uint8) nonce;
-    t[1] = (uint8) (nonce >> 8);
+  t[0] = (uint8)nonce;
+  t[1] = (uint8)(nonce >> 8);
 
-    FsmSw_Fips202_shake256_inc_init(state);
-    FsmSw_Fips202_shake256_inc_absorb(state, seed, CRHBYTES_DILITHIUM);
-    FsmSw_Fips202_shake256_inc_absorb(state, t, 2);
-    FsmSw_Fips202_shake256_inc_finalize(state);
+  FsmSw_Fips202_Shake256_IncInit(state);
+  FsmSw_Fips202_Shake256_IncAbsorb(state, seed, CRHBYTES_DILITHIUM);
+  FsmSw_Fips202_Shake256_IncAbsorb(state, t, 2);
+  FsmSw_Fips202_Shake256_IncFinalize(state);
 }

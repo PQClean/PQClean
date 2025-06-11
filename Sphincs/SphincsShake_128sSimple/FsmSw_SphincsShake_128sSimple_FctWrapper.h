@@ -24,8 +24,8 @@
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define FsmSw_SphincsShake_128sSimple_set_keypair_addr      FsmSw_SphincsShake_set_keypair_addr_2_byte
-#define FsmSw_SphincsShake_128sSimple_copy_keypair_addr     FsmSw_SphincsShake_copy_keypair_addr_2_byte
+#define FsmSw_SphincsShake_128sSimple_set_keypair_addr  FsmSw_SphincsShake_SetKeyPairAddr2Byte
+#define FsmSw_SphincsShake_128sSimple_copy_keypair_addr FsmSw_SphincsShake_CopyKeyPairAddr2Byte
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */

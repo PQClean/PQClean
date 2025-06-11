@@ -20,14 +20,14 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_192fSimple_context.h"
 #include "FsmSw_SphincsSha2_192fSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define SPX_SHA256_ADDR_BYTES     22u
+#define SPX_SHA256_ADDR_BYTES 22u
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
@@ -43,19 +43,21 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsSha2_192fSimple_prf_addr(uint8 *out, const sphincs_sha2_192f_ctx *ctx, const uint32 addr[8]);
+void FsmSw_SphincsSha2_192fSimple_PrfAddr(uint8 *out, const sphincs_sha2_192f_ctx *ctx, const uint32 addr[8]);
 
-void FsmSw_SphincsSha2_192fSimple_gen_message_random(uint8 *R, const uint8 *sk_prf, const uint8 *optrand,
-                                                     const uint8 *m, uint32 mlen, const sphincs_sha2_192f_ctx *ctx);
+void FsmSw_SphincsSha2_192fSimple_GenMessageRandom(uint8 *R, const uint8 *sk_prf, const uint8 *optrand, const uint8 *m,
+                                                   uint32 mlen, const sphincs_sha2_192f_ctx *ctx);
 
-void FsmSw_SphincsSha2_192fSimple_hash_message(uint8 *digest, uint64 *tree, uint32 *leaf_idx, const uint8 *R,
-                                               const uint8 *pk, const uint8 *m, uint32 mlen,
-                                               const sphincs_sha2_192f_ctx *ctx);
+void FsmSw_SphincsSha2_192fSimple_HashMessage(uint8 *digest, uint64 *tree, uint32 *leaf_idx, const uint8 *R,
+                                              const uint8 *pk, const uint8 *m, uint32 mlen,
+                                              const sphincs_sha2_192f_ctx *ctx);
 
-void FsmSw_SphincsSha2_192fSimple_mgf1_256(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
+void FsmSw_SphincsSha2_192fSimple_MgF1256(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_SphincsSha2_192fSimple_mgf1_512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
+void FsmSw_SphincsSha2_192fSimple_MgF1_512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 
 #endif /* FSMSW_SPHINCSSHA2_192FSIMPLE_HASH_H */

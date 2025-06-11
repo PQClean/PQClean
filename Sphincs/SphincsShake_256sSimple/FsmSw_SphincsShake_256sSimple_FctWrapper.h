@@ -21,12 +21,11 @@
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 
-
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define FsmSw_SphincsShake_256sSimple_set_keypair_addr      FsmSw_SphincsShake_set_keypair_addr_1_byte
-#define FsmSw_SphincsShake_256sSimple_copy_keypair_addr     FsmSw_SphincsShake_copy_keypair_addr_1_byte
+#define FsmSw_SphincsShake_256sSimple_set_keypair_addr  FsmSw_SphincsShake_SetKeyPairAddr1Byte
+#define FsmSw_SphincsShake_256sSimple_copy_keypair_addr FsmSw_SphincsShake_CopyKeyPairAddr1Byte
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */

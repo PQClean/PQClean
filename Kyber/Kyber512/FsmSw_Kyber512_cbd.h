@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Kyber512_params.h"
 #include "FsmSw_Kyber512_poly.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,8 +43,8 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Kyber512_poly_cbd_eta1(poly512 *r, const uint8 buf[KYBER512_ETA1 * KYBER_N / 4u]);
+void FsmSw_Kyber512_Poly_Cbd_Eta1(poly *r, const uint8 buf[KYBER512_ETA1 * KYBER_N / 4u]);
 
-void FsmSw_Kyber512_poly_cbd_eta2(poly512 *r, const uint8 buf[KYBER512_ETA2 * KYBER_N / 4u]);
+void FsmSw_Kyber512_Poly_Cbd_Eta2(poly *r, const uint8 buf[KYBER512_ETA2 * KYBER_N / 4u]);
 
 #endif /* FSMSW_KYBER512_CBD_H */

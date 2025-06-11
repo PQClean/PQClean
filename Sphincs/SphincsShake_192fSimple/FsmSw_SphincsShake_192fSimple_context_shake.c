@@ -48,7 +48,7 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsShake_192fSimple_initialize_hash_function
+* Name:        FsmSw_SphincsShake_192fSimple_InitializeHashFunction
 *
 * Description: For SHAKE256, there is no immediate reason to initialize at the start, so this function is an empty
 *              operation.
@@ -59,13 +59,13 @@
 ***********************************************************************************************************************/
 /* polyspace +2 MISRA2012:8.13 [Justified:]"For SHAKE256, there is no immediate reason to initialize at the start, 
 so this function is an empty operation." */
-void FsmSw_SphincsShake_192fSimple_initialize_hash_function(sphincs_shake_192f_ctx *ctx)
+void FsmSw_SphincsShake_192fSimple_InitializeHashFunction(sphincs_shake_192f_ctx *ctx)
 {
-    (void)ctx; /* Suppress an 'unused parameter' warning. */
+  (void)ctx; /* Suppress an 'unused parameter' warning. */
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsShake_192fSimple_2_free_hash_function
+* Name:        FsmSw_SphincsShake_192fSimple_2FreeHashFunction
 *
 * Description: in case the hash function api is heap-based.
 *
@@ -74,7 +74,7 @@ void FsmSw_SphincsShake_192fSimple_initialize_hash_function(sphincs_shake_192f_c
 *
 ***********************************************************************************************************************/
 /* polyspace +1 MISRA2012:8.13 [Justified:]"in case the hash function api is heap-based." */
-void FsmSw_SphincsShake_192fSimple_2_free_hash_function(sphincs_shake_192f_ctx *ctx)
+void FsmSw_SphincsShake_192fSimple_2FreeHashFunction(sphincs_shake_192f_ctx *ctx)
 {
-    (void)ctx;
+  (void)ctx;
 }

@@ -19,8 +19,8 @@
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 #include "FsmSw_Dilithium3_params.h"
-#include "FsmSw_Dilithium3_rounding.h"
 
+#include "FsmSw_Dilithium3_rounding.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
@@ -49,7 +49,7 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_Dilithium3_power2round
+* Name:        FsmSw_Dilithium3_Power2Round
 *
 * Description: For finite field element a, compute a0, a1 such that a mod^+ Q = a1*2^D + a0 with
 *              -2^{D-1} < a0 <= 2^{D-1}. Assumes a to be standard representative.
@@ -59,20 +59,20 @@
 *
 * Returns a1.
 ***********************************************************************************************************************/
-sint32 FsmSw_Dilithium3_power2round(sint32 *a0, sint32 a)
+sint32 FsmSw_Dilithium3_Power2Round(sint32 *a0, sint32 a)
 {
-    sint32 a1 = 0;
-    sint32 temp = 0;
+  sint32 a1   = 0;
+  sint32 temp = 0;
 
-    temp = (a + (sint32)4095u);
-    a1  = (sint32)((uint32)((uint32)temp >> D_DILITHIUM));
-    *a0 = a - (sint32)((uint32)((uint32)a1 << D_DILITHIUM));
+  temp = (a + (sint32)4095u);
+  a1   = (sint32)((uint32)((uint32)temp >> D_DILITHIUM));
+  *a0  = a - (sint32)((uint32)((uint32)a1 << D_DILITHIUM));
 
-    return a1;
+  return a1;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Dilithium3_decompose
+* Name:        FsmSw_Dilithium3_Decompose
 *
 * Description: For finite field element a, compute high and low bits a0, a1 such that a mod^+ Q = a1*ALPHA + a0 with
 *              -ALPHA/2 < a0 <= ALPHA/2 except if a1 = (Q-1)/ALPHA where we set a1 = 0 and
@@ -83,30 +83,30 @@ sint32 FsmSw_Dilithium3_power2round(sint32 *a0, sint32 a)
 *
 * Returns a1.
 ***********************************************************************************************************************/
-sint32 FsmSw_Dilithium3_decompose(sint32 *a0, sint32 a)
+sint32 FsmSw_Dilithium3_Decompose(sint32 *a0, sint32 a)
 {
-    sint32 a1 = 0;
-    sint32 temp1 = 0;
-    sint32 temp2 = 0;
-    sint32 temp3 = 0;
+  sint32 a1    = 0;
+  sint32 temp1 = 0;
+  sint32 temp2 = 0;
+  sint32 temp3 = 0;
 
-    a1  = (sint32)((uint32)(((uint32)a + 127u) >> 7));
+  a1 = (sint32)((uint32)(((uint32)a + 127u) >> 7));
 
-    /* (1u << 21) = 2.097.152 */
-    temp1 = ((a1 * 1025) + (sint32)2097152u);
-    a1 = (sint32)((uint32)((uint32)temp1 >> 22));
-    a1 = (sint32)((uint32)((uint32)a1 & 15u));
+  /* (1u << 21) = 2.097.152 */
+  temp1 = ((a1 * 1025) + (sint32)2097152u);
+  a1    = (sint32)((uint32)((uint32)temp1 >> 22));
+  a1    = (sint32)((uint32)((uint32)a1 & 15u));
 
-    *a0  = a - (a1 * (2 * GAMMA2_DILITHIUM3));
-    temp2 = ((Q_DILITHIUM - 1) / 2 - *a0);
-    temp3 = (sint32)((uint32)((uint64)temp2 >> 31));
-    *a0 = *a0 - (sint32)((uint32)((uint32)temp3 & (uint32)Q_DILITHIUM));
+  *a0   = a - (a1 * (2 * GAMMA2_DILITHIUM3));
+  temp2 = ((Q_DILITHIUM - 1) / 2 - *a0);
+  temp3 = (sint32)((uint32)((uint64)temp2 >> 31));
+  *a0   = *a0 - (sint32)((uint32)((uint32)temp3 & (uint32)Q_DILITHIUM));
 
-    return a1;
+  return a1;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Dilithium3_make_hint
+* Name:        FsmSw_Dilithium3_MakeHint
 *
 * Description: Compute hint bit indicating whether the low bits of the input element overflow into the high bits.
 *
@@ -115,20 +115,20 @@ sint32 FsmSw_Dilithium3_decompose(sint32 *a0, sint32 a)
 *
 * Returns 1 if overflow.
 ***********************************************************************************************************************/
-uint8 FsmSw_Dilithium3_make_hint(sint32 a0, sint32 a1)
+uint8 FsmSw_Dilithium3_MakeHint(sint32 a0, sint32 a1)
 {
-    uint8 retVal = 0;
+  uint8 retVal = 0;
 
-    if ((a0 > GAMMA2_DILITHIUM3) || (a0 < -GAMMA2_DILITHIUM3) || (((a0 == -GAMMA2_DILITHIUM3) && (a1 != 0)) != 0))
-    {
-        retVal = 1;
-    }
+  if ((a0 > GAMMA2_DILITHIUM3) || (a0 < -GAMMA2_DILITHIUM3) || (((a0 == -GAMMA2_DILITHIUM3) && (a1 != 0)) != 0))
+  {
+    retVal = 1;
+  }
 
-    return retVal;
+  return retVal;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Dilithium3_use_hint
+* Name:        FsmSw_Dilithium3_UseHint
 *
 * Description: Correct high bits according to hint.
 *
@@ -137,28 +137,28 @@ uint8 FsmSw_Dilithium3_make_hint(sint32 a0, sint32 a1)
 *
 * Returns corrected high bits.
 ***********************************************************************************************************************/
-sint32 FsmSw_Dilithium3_use_hint(sint32 a, uint32 hint)
+sint32 FsmSw_Dilithium3_UseHint(sint32 a, uint32 hint)
 {
-    sint32 a0 = 0;
-    sint32 a1 = 0;
-    sint32 retVal = 0;
+  sint32 a0     = 0;
+  sint32 a1     = 0;
+  sint32 retVal = 0;
 
-    a1 = FsmSw_Dilithium3_decompose(&a0, a);
+  a1 = FsmSw_Dilithium3_Decompose(&a0, a);
 
-    if (hint == 0u)
-    {
-        retVal = a1;
-    }
+  if (hint == 0u)
+  {
+    retVal = a1;
+  }
 
-    else if (a0 > 0)
-    {
-        retVal = (sint32)((uint32)(((uint32)a1 + 1u) & 15u));
-    }
+  else if (a0 > 0)
+  {
+    retVal = (sint32)((uint32)(((uint32)a1 + 1u) & 15u));
+  }
 
-    else 
-    {
-        retVal = (sint32)((uint32)(((uint32)a1 - 1u) & 15u));
-    }
+  else
+  {
+    retVal = (sint32)((uint32)(((uint32)a1 - 1u) & 15u));
+  }
 
-    return retVal;
+  return retVal;
 }

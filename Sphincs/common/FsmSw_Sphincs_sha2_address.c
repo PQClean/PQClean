@@ -18,9 +18,11 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
+#include "FsmSw_Sphincs_sha2_address.h"
 #include "FsmSw_CommonLib.h"
-#include "FsmSw_Sphincs_utils.h"
 #include "FsmSw_Sphincs_sha2_offsets.h"
+#include "FsmSw_Sphincs_utils.h"
+
 #include "FsmSw_Sphincs_sha2_address.h"
 
 /**********************************************************************************************************************/
@@ -59,13 +61,13 @@
 *              - uint32 layer:   t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_layer_addr(uint32 addr[8], uint32 layer)
+void FsmSw_SphincsSha2_SetLayerAddr(uint32 addr[8], uint32 layer)
 {
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_LAYER] = (uint8)layer;
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_LAYER] = (uint8)layer;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsSha2_set_tree_addr
+* Name:        FsmSw_SphincsSha2_SetTreeAddr
 *
 * Description: Specify which Merkle tree within the level (the "tree address") we're working on
 *
@@ -73,9 +75,9 @@ void FsmSw_SphincsSha2_set_layer_addr(uint32 addr[8], uint32 layer)
 *              - uint64 tree:    t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_tree_addr(uint32 addr[8], uint64 tree)
+void FsmSw_SphincsSha2_SetTreeAddr(uint32 addr[8], uint64 tree)
 {
-    FsmSw_Sphincs_ull_to_bytes(&((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TREE], 8, tree );
+  FsmSw_Sphincs_UllToBytes(&((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TREE], 8, tree);
 }
 
 /***********************************************************************************************************************
@@ -89,9 +91,9 @@ void FsmSw_SphincsSha2_set_tree_addr(uint32 addr[8], uint64 tree)
 *              - uint32 type:    t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_type(uint32 addr[8], uint32 type)
+void FsmSw_SphincsSha2_SetType(uint32 addr[8], uint32 type)
 {
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TYPE] = (uint8)type;
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TYPE] = (uint8)type;
 }
 
 /***********************************************************************************************************************
@@ -104,15 +106,15 @@ void FsmSw_SphincsSha2_set_type(uint32 addr[8], uint32 type)
 *              - const uint32 in[8]:  t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_copy_subtree_addr(uint32 out[8], const uint32 in[8])
+void FsmSw_SphincsSha2_CopySubTreeAddr(uint32 out[8], const uint32 in[8])
 {
-    FsmSw_CommonLib_memcpy( out, in, FSMSW_SPHINCSSHA2_OFFSET_TREE + 8 );
+  FsmSw_CommonLib_MemCpy(out, in, FSMSW_SPHINCSSHA2_OFFSET_TREE + 8);
 }
 
 /* These functions are used for OTS addresses. */
 
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsSha2_set_keypair_addr_1_byte
+* Name:        FsmSw_SphincsSha2_SetKeyPairAddr1Byte
 *
 * Description: Specify which Merkle leaf we're working on; that is, which OTS keypair we're talking about.
 *
@@ -120,13 +122,13 @@ void FsmSw_SphincsSha2_copy_subtree_addr(uint32 out[8], const uint32 in[8])
 *              - uint32 keypair: t.b.d
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_keypair_addr_1_byte(uint32 addr[8], uint32 keypair)
+void FsmSw_SphincsSha2_SetKeyPairAddr1Byte(uint32 addr[8], uint32 keypair)
 {
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = (uint8)keypair;
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = (uint8)keypair;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsSha2_set_keypair_addr_2_byte
+* Name:        FsmSw_SphincsSha2_SetKeyPairAddr2Byte
 *
 * Description: Specify which Merkle leaf we're working on; that is, which OTS keypair we're talking about.
 *
@@ -134,17 +136,19 @@ void FsmSw_SphincsSha2_set_keypair_addr_1_byte(uint32 addr[8], uint32 keypair)
 *              - uint32 keypair: t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_SphincsSha2_set_keypair_addr_2_byte(uint32 addr[8], uint32 keypair)
+void FsmSw_SphincsSha2_SetKeyPairAddr2Byte(uint32 addr[8], uint32 keypair)
 {
-    /* We have > 256 OTS at the bottom of the Merkle tree; to specify which one, we'd need to express it in two bytes */
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR2] = (uint8)(keypair >> 8);
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = (uint8)keypair;
+  /* We have > 256 OTS at the bottom of the Merkle tree; to specify which one, we'd need to express it in two bytes */
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR2] = (uint8)(keypair >> 8);
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = (uint8)keypair;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsSha2_copy_keypair_addr_1_byte
+* Name:        FsmSw_SphincsSha2_CopyKeyPairAddr1Byte
 *
 * Description: Copy the layer, tree and keypair fields of the address structure. This is used when we're doing
 *              multiple things within the same OTS keypair
@@ -153,14 +157,14 @@ void FsmSw_SphincsSha2_set_keypair_addr_2_byte(uint32 addr[8], uint32 keypair)
 *              - const uint32 in[8]:  t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_copy_keypair_addr_1_byte(uint32 out[8], const uint32 in[8])
+void FsmSw_SphincsSha2_CopyKeyPairAddr1Byte(uint32 out[8], const uint32 in[8])
 {
-    FsmSw_CommonLib_memcpy( out, in, FSMSW_SPHINCSSHA2_OFFSET_TREE + 8 );
-    ((uint8 *)out)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = ((const uint8 *)in)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1];
+  FsmSw_CommonLib_MemCpy(out, in, FSMSW_SPHINCSSHA2_OFFSET_TREE + 8);
+  ((uint8 *)out)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = ((const uint8 *)in)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1];
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsSha2_copy_keypair_addr_2_byte
+* Name:        FsmSw_SphincsSha2_CopyKeyPairAddr2Byte
 *
 * Description: Copy the layer, tree and keypair fields of the address structure. This is used when we're doing
 *              multiple things within the same OTS keypair
@@ -169,13 +173,15 @@ void FsmSw_SphincsSha2_copy_keypair_addr_1_byte(uint32 out[8], const uint32 in[8
 *              - const uint32 in[8]:  t.b.d.
 *
 ***********************************************************************************************************************/
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_SphincsSha2_copy_keypair_addr_2_byte(uint32 out[8], const uint32 in[8])
+void FsmSw_SphincsSha2_CopyKeyPairAddr2Byte(uint32 out[8], const uint32 in[8])
 {
-    FsmSw_CommonLib_memcpy( out, in, FSMSW_SPHINCSSHA2_OFFSET_TREE + 8 );
-    ((uint8 *)out)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR2] = ((const uint8 *)in)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR2];
-    ((uint8 *)out)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = ((const uint8 *)in)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1];
+  FsmSw_CommonLib_MemCpy(out, in, FSMSW_SPHINCSSHA2_OFFSET_TREE + 8);
+  ((uint8 *)out)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR2] = ((const uint8 *)in)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR2];
+  ((uint8 *)out)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1] = ((const uint8 *)in)[FSMSW_SPHINCSSHA2_OFFSET_KP_ADDR1];
 }
 
 /***********************************************************************************************************************
@@ -187,9 +193,9 @@ void FsmSw_SphincsSha2_copy_keypair_addr_2_byte(uint32 out[8], const uint32 in[8
 *              - uint32 chain:   t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_chain_addr(uint32 addr[8], uint32 chain)
+void FsmSw_SphincsSha2_SetChainAddr(uint32 addr[8], uint32 chain)
 {
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_CHAIN_ADDR] = (uint8)chain;
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_CHAIN_ADDR] = (uint8)chain;
 }
 
 /***********************************************************************************************************************
@@ -201,9 +207,9 @@ void FsmSw_SphincsSha2_set_chain_addr(uint32 addr[8], uint32 chain)
 *              - uint32 hash:    t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_hash_addr(uint32 addr[8], uint32 hash)
+void FsmSw_SphincsSha2_SetHashAddr(uint32 addr[8], uint32 hash)
 {
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_HASH_ADDR] = (uint8)hash;
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_HASH_ADDR] = (uint8)hash;
 }
 
 /* These functions are used for all hash tree addresses (including FORS). */
@@ -217,9 +223,9 @@ void FsmSw_SphincsSha2_set_hash_addr(uint32 addr[8], uint32 hash)
 *              - uint32 tree_height: t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_tree_height(uint32 addr[8], uint32 tree_height)
+void FsmSw_SphincsSha2_SetTreeHeight(uint32 addr[8], uint32 tree_height)
 {
-    ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TREE_HGT] = (uint8)tree_height;
+  ((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TREE_HGT] = (uint8)tree_height;
 }
 
 /***********************************************************************************************************************
@@ -231,7 +237,7 @@ void FsmSw_SphincsSha2_set_tree_height(uint32 addr[8], uint32 tree_height)
 *              - uint32 tree_index: t.b.d.
 *
 ***********************************************************************************************************************/
-void FsmSw_SphincsSha2_set_tree_index(uint32 addr[8], uint32 tree_index)
+void FsmSw_SphincsSha2_SetTreeIndex(uint32 addr[8], uint32 tree_index)
 {
-    FsmSw_Sphincs_u32_to_bytes(&((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TREE_INDEX], tree_index );
+  FsmSw_Sphincs_U32ToBytes(&((uint8 *)addr)[FSMSW_SPHINCSSHA2_OFFSET_TREE_INDEX], tree_index);
 }

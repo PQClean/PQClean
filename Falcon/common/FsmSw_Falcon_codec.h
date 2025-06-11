@@ -72,11 +72,11 @@ extern const uint8 FsmSw_Falcon_max_sig_bits[11];
  *   - comp: variable-length encoding for signed integers; each integer uses a minimum of 9 bits, possibly more. This
  *           is normally used only for signatures. */
 
-uint32 FsmSw_Falcon_modq_encode(void *out, uint32 max_out_len, const uint16 *x, uint32 logn);
-uint32 FsmSw_Falcon_modq_decode(uint16 *x, uint32 logn, const void *in, uint32 max_in_len);
-uint32 FsmSw_Falcon_trim_i8_encode(void *out, uint32 max_out_len, const sint8 *x, uint32 logn, uint32 bits);
-uint32 FsmSw_Falcon_trim_i8_decode(sint8 *x, uint32 logn, uint32 bits, const void *in, uint32 max_in_len);
-uint32 FsmSw_Falcon_comp_encode(void *out, uint32 max_out_len, const sint16 *x, uint32 logn);
-uint32 FsmSw_Falcon_comp_decode(sint16 *x, uint32 logn, const void *in, uint32 max_in_len);
+uint32 FsmSw_Falcon_ModqEncode(void *out, uint32 max_out_len, const uint16 *x, uint32 logn);
+uint32 FsmSw_Falcon_ModqDecode(uint16 *x, uint32 logn, const void *in, uint32 max_in_len);
+uint32 FsmSw_Falcon_TrimI8Encode(void *out, uint32 max_out_len, const sint8 *x, uint32 logn, uint32 bits);
+uint32 FsmSw_Falcon_TrimI8Decode(sint8 *x, uint32 logn, uint32 bits, const void *in, uint32 max_in_len);
+uint32 FsmSw_Falcon_CompEncode(void *out, uint32 max_out_len, const sint16 *x, uint32 logn);
+uint32 FsmSw_Falcon_CompDecode(sint16 *x, uint32 logn, const void *in, uint32 max_in_len);
 
 #endif /* FSMSW_FALCON_CODEC_H */

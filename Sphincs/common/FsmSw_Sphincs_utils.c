@@ -1,26 +1,26 @@
 /***********************************************************************************************************************
-*
-*                                          IAV GmbH
-*
-***********************************************************************************************************************/
+ *
+ *                                          IAV GmbH
+ *
+ **********************************************************************************************************************/
 /*
-*
-*  $File$
-*
-*  $Author$
-*
-*  $Date$
-*
-*  $Rev$
-*
+ *
+ *  $File$
+ *
+ *  $Author$
+ *
+ *  $Date$
+ *
+ *  $Rev$
+ *
 ***********************************************************************************************************************/
 
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 #include "FsmSw_CommonLib.h"
-#include "FsmSw_Sphincs_utils.h"
 
+#include "FsmSw_Sphincs_utils.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
@@ -49,66 +49,66 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_Sphincs_ull_to_bytes
-*
-* Description: Converts the value of 'in' to 'outlen' bytes in big-endian byte order.
-*
-* Arguments:   - uint8   *out:    t.b.d.
-*              - uint32   outlen: t.b.d.
-*              - uint64   in:     t.b.d.
-*
-***********************************************************************************************************************/
-void FsmSw_Sphincs_ull_to_bytes(uint8 *out, uint32 outlen, uint64 in)
+ * Name:        FsmSw_Sphincs_UllToBytes
+ *
+ * Description: Converts the value of 'in' to 'outlen' bytes in big-endian byte order.
+ *
+ * Arguments:   - uint8   *out:    t.b.d.
+ *              - uint32   outlen: t.b.d.
+ *              - uint64   in:     t.b.d.
+ *
+ **********************************************************************************************************************/
+void FsmSw_Sphincs_UllToBytes(uint8 *out, uint32 outlen, uint64 in)
 {
-    sint32  i;
+  sint32 i = 0;
 
-    /* in_temp is used to avoid modifying the input. */
-    uint64 in_temp = in;
+  /* in_temp is used to avoid modifying the input. */
+  uint64 in_temp = in;
 
-    /* Iterate over out in decreasing order, for big-endianness. */
-    for (i = (sint32)outlen - 1; i >= 0; i--)
-    {
-        out[i] = (uint8)(in_temp & 0xFFu);
-        in_temp = in_temp >> 8;
-    }
+  /* Iterate over out in decreasing order, for big-endianness. */
+  for (i = (sint32)outlen - 1; i >= 0; i--)
+  {
+    out[i]  = (uint8)(in_temp & 0xFFu);
+    in_temp = in_temp >> 8;
+  }
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Sphincs_u32_to_bytes
-*
-* Description: t.b.d.
-*
-* Arguments:   - uint8   *out: t.b.d.
-*              - uint32   in:  t.b.d.
-*
-***********************************************************************************************************************/
-void FsmSw_Sphincs_u32_to_bytes(uint8 *out, uint32 in)
+ * Name:        FsmSw_Sphincs_U32ToBytes
+ *
+ * Description: t.b.d.
+ *
+ * Arguments:   - uint8   *out: t.b.d.
+ *              - uint32   in:  t.b.d.
+ *
+ **********************************************************************************************************************/
+void FsmSw_Sphincs_U32ToBytes(uint8 *out, uint32 in)
 {
-    out[0] = (uint8)(in >> 24);
-    out[1] = (uint8)(in >> 16);
-    out[2] = (uint8)(in >> 8);
-    out[3] = (uint8)in;
+  out[0] = (uint8)(in >> 24);
+  out[1] = (uint8)(in >> 16);
+  out[2] = (uint8)(in >> 8);
+  out[3] = (uint8)in;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Sphincs_bytes_to_ull
-*
-* Description: Converts the inlen bytes in 'in' from big-endian byte order to an integer.
-*
-* Arguments:   - const uint8  *in:    t.b.d.
-*              -       uint32  inlen: t.b.d.
-*
-* Returns uint64 retval.
-*
-***********************************************************************************************************************/
-uint64 FsmSw_Sphincs_bytes_to_ull(const uint8 *in, uint32 inlen)
+ * Name:        FsmSw_Sphincs_bytes_to_ull
+ *
+ * Description: Converts the inlen bytes in 'in' from big-endian byte order to an integer.
+ *
+ * Arguments:   - const uint8  *in:    t.b.d.
+ *              -       uint32  inlen: t.b.d.
+ *
+ * Returns uint64 retval.
+ *
+ **********************************************************************************************************************/
+uint64 FsmSw_Sphincs_BytesToUll(const uint8 *in, uint32 inlen)
 {
-    uint64 retval = 0;
-    uint32 i;
+  uint64 retval = 0;
+  uint32 i      = 0;
 
-    for (i = 0; i < inlen; i++)
-    {
-        retval |= ((uint64)in[i]) << (8u * (inlen - 1u - i));
-    }
-    return retval;
+  for (i = 0; i < inlen; i++)
+  {
+    retval |= ((uint64)in[i]) << (8u * (inlen - 1u - i));
+  }
+  return retval;
 }

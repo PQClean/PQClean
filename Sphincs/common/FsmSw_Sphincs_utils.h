@@ -41,8 +41,8 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void   FsmSw_Sphincs_ull_to_bytes(uint8 *out, uint32 outlen, uint64 in);
-void   FsmSw_Sphincs_u32_to_bytes(uint8 *out, uint32 in);
-uint64 FsmSw_Sphincs_bytes_to_ull(const uint8 *in, uint32 inlen);
+void FsmSw_Sphincs_UllToBytes(uint8 *out, uint32 outlen, uint64 in);
+void FsmSw_Sphincs_U32ToBytes(uint8 *out, uint32 in);
+uint64 FsmSw_Sphincs_BytesToUll(const uint8 *in, uint32 inlen);
 
 #endif /* FSMSW_SPHINCS_UTILS_H */

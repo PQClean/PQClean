@@ -18,12 +18,12 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_CommonLib.h"
 #include "FsmSw_Fips202.h"
 #include "FsmSw_Kyber_params.h"
-#include "FsmSw_Kyber_symmetric.h"
+#include "FsmSw_Types.h"
 
+#include "FsmSw_Kyber_symmetric.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
@@ -52,7 +52,7 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber_shake128_absorb
+* Name:        FsmSw_Kyber_Shake128_Absorb
 *
 * Description: Absorb step of the SHAKE128 specialized for the Kyber context.
 *
@@ -61,19 +61,19 @@
 *              -       uint8      i:     additional byte of input
 *              -       uint8      j:     additional byte of input
 ***********************************************************************************************************************/
-void FsmSw_Kyber_shake128_absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES], uint8 x, uint8 y)
+void FsmSw_Kyber_Shake128_Absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES], uint8 x, uint8 y)
 {
-    uint8 extseed[KYBER_SYMBYTES + 2u] = {0};
+  uint8 extseed[KYBER_SYMBYTES + 2u] = {0};
 
-    FsmSw_CommonLib_memcpy(extseed, seed, KYBER_SYMBYTES);
-    extseed[KYBER_SYMBYTES] = x;
-    extseed[KYBER_SYMBYTES + 1u] = y;
+  FsmSw_CommonLib_MemCpy(extseed, seed, KYBER_SYMBYTES);
+  extseed[KYBER_SYMBYTES]      = x;
+  extseed[KYBER_SYMBYTES + 1u] = y;
 
-    FsmSw_Fips202_shake128_absorb(s, extseed, sizeof(extseed));
+  FsmSw_Fips202_Shake128_Absorb(s, extseed, sizeof(extseed));
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber_shake256_prf
+* Name:        FsmSw_Kyber_Shake256_Prf
 *
 * Description: Usage of SHAKE256 as a PRF, concatenates secret and public input
 *              and then generates outlen bytes of SHAKE256 output
@@ -83,12 +83,12 @@ void FsmSw_Kyber_shake128_absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES],
 *              - const uint8  *key:    pointer to the key (of length KYBER_SYMBYTES)
 *              -       uint8   nonce:  single-byte nonce (public PRF input)
 ***********************************************************************************************************************/
-void FsmSw_Kyber_shake256_prf(uint8 *out, uint32 outlen, const uint8 key[KYBER_SYMBYTES], uint8 nonce)
+void FsmSw_Kyber_Shake256_Prf(uint8 *out, uint32 outlen, const uint8 key[KYBER_SYMBYTES], uint8 nonce)
 {
-    uint8 extkey[KYBER_SYMBYTES + 1u] = {0};
+  uint8 extkey[KYBER_SYMBYTES + 1u] = {0};
 
-    FsmSw_CommonLib_memcpy(extkey, key, KYBER_SYMBYTES);
-    extkey[KYBER_SYMBYTES] = nonce;
+  FsmSw_CommonLib_MemCpy(extkey, key, KYBER_SYMBYTES);
+  extkey[KYBER_SYMBYTES] = nonce;
 
-    FsmSw_Fips202_shake256(out, outlen, extkey, sizeof(extkey));
+  FsmSw_Fips202_Shake256(out, outlen, extkey, sizeof(extkey));
 }

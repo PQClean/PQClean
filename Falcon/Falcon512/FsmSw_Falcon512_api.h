@@ -1,19 +1,19 @@
 /***********************************************************************************************************************
-*
-*                                          IAV GmbH
-*
-***********************************************************************************************************************/
+ *
+ *                                          IAV GmbH
+ *
+ **********************************************************************************************************************/
 /*
-*
-*  $File$
-*
-*  $Author$
-*
-*  $Date$
-*
-*  $Rev$
-*
-***********************************************************************************************************************/
+ *
+ *  $File$
+ *
+ *  $Author$
+ *
+ *  $Date$
+ *
+ *  $Rev$
+ *
+ **********************************************************************************************************************/
 #ifndef FSMSW_FALCON512_API_H
 #define FSMSW_FALCON512_API_H
 
@@ -24,9 +24,9 @@
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES   1281u
-#define FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES   897u
-#define FSMSW_FALCON512_CRYPTO_BYTES            666u
+#define FSMSW_FALCON512_CRYPTO_SECRETKEYBYTES 1281u
+#define FSMSW_FALCON512_CRYPTO_PUBLICKEYBYTES 897u
+#define FSMSW_FALCON512_CRYPTO_BYTES          666u
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
@@ -43,11 +43,10 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-sint32 FsmSw_Falcon512_crypto_sign_keypair(uint8 *pk, uint8 *sk);
-sint32 FsmSw_Falcon512_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen, const uint8 *sk);
-sint32 FsmSw_Falcon512_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
-                                          const uint8 *pk);
-sint32 FsmSw_Falcon512_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk);
-sint32 FsmSw_Falcon512_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen, const uint8 *pk);
+sint32 FsmSw_Falcon512_Crypto_Sign_KeyPair(uint8 *pk, uint8 *sk);
+sint32 FsmSw_Falcon512_Crypto_Sign_Signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen, const uint8 *sk);
+sint32 FsmSw_Falcon512_Crypto_Sign_Verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen, const uint8 *pk);
+sint32 FsmSw_Falcon512_Crypto_Sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk);
+sint32 FsmSw_Falcon512_Crypto_Sign_Open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen, const uint8 *pk);
 
 #endif /* FSMSW_FALCON512_API_H */

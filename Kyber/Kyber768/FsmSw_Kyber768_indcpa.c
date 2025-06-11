@@ -19,19 +19,19 @@
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 #include "FsmSw_CommonLib.h"
-#include "FsmSw_Kyber_ntt.h"
-#include "FsmSw_Kyber_symmetric.h"
 #include "FsmSw_Kyber768_params.h"
 #include "FsmSw_Kyber768_poly.h"
 #include "FsmSw_Kyber768_polyvec.h"
-#include "FsmSw_Kyber768_indcpa.h"
-
+#include "FsmSw_Kyber_ntt.h"
+#include "FsmSw_Kyber_poly.h"
+#include "FsmSw_Kyber_symmetric.h"
 #include "FsmSw_Types.h"
 
+#include "FsmSw_Kyber768_indcpa.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-#define GEN_MATRIX_NBLOCKS (((((12u*KYBER_N)/8u*4096u)/KYBER_Q) + XOF_BLOCKBYTES)/XOF_BLOCKBYTES)
+#define GEN_MATRIX_NBLOCKS (((((12u * KYBER_N) / 8u * 4096u) / KYBER_Q) + XOF_BLOCKBYTES) / XOF_BLOCKBYTES)
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
@@ -48,14 +48,14 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static void fsmsw_kyber768_PackPk(uint8 r[KYBER768_INDCPA_PUBLICKEYBYTES], const polyvec768 *pk, 
+static void fsmsw_kyber768_PackPk(uint8 r[KYBER768_INDCPA_PUBLICKEYBYTES], const polyvec768 *pk,
                                   const uint8 seed[KYBER_SYMBYTES]);
 static void fsmsw_kyber768_UnpackPk(polyvec768 *pk, uint8 seed[KYBER_SYMBYTES],
-                      const uint8 packedpk[KYBER768_INDCPA_PUBLICKEYBYTES]);
+                                    const uint8 packedpk[KYBER768_INDCPA_PUBLICKEYBYTES]);
 static void fsmsw_kyber768_PackSk(uint8 r[KYBER768_INDCPA_SECRETKEYBYTES], const polyvec768 *sk);
 static void fsmsw_kyber768_UnpackSk(polyvec768 *sk, const uint8 packedsk[KYBER768_INDCPA_SECRETKEYBYTES]);
-static void fsmsw_kyber768_PackCiphertext(uint8 r[KYBER768_INDCPA_BYTES], const polyvec768 *b, const poly768 *v);
-static void fsmsw_kyber768_UnpackCiphertext(polyvec768 *b, poly768 *v, const uint8 c[KYBER768_INDCPA_BYTES]);
+static void fsmsw_kyber768_PackCiphertext(uint8 r[KYBER768_INDCPA_BYTES], const polyvec768 *b, const poly *v);
+static void fsmsw_kyber768_UnpackCiphertext(polyvec768 *b, poly *v, const uint8 c[KYBER768_INDCPA_BYTES]);
 static uint16 fsmsw_kyber768_RejUniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen);
 
 /**********************************************************************************************************************/
@@ -72,18 +72,17 @@ static uint16 fsmsw_kyber768_RejUniform(sint16 *r, uint16 len, const uint8 *buf,
 *              const polyvec768 *pk:   pointer to the input public-key polyvec
 *              const uint8      *seed: pointer to the input public seed
 ***********************************************************************************************************************/
-static void fsmsw_kyber768_PackPk(uint8 r[KYBER768_INDCPA_PUBLICKEYBYTES],
-                                  const polyvec768 *pk,
+static void fsmsw_kyber768_PackPk(uint8 r[KYBER768_INDCPA_PUBLICKEYBYTES], const polyvec768 *pk,
                                   const uint8 seed[KYBER_SYMBYTES])
 {
-    uint32 i = 0;
+  uint32 i = 0;
 
-    FsmSw_Kyber768_polyvec_tobytes(r, pk);
+  FsmSw_Kyber768_Polyvec_ToBytes(r, pk);
 
-    for (i = 0; i < KYBER_SYMBYTES; i++)
-    {
-        r[i + KYBER768_POLYVECBYTES] = seed[i];
-    }
+  for (i = 0; i < KYBER_SYMBYTES; i++)
+  {
+    r[i + KYBER768_POLYVECBYTES] = seed[i];
+  }
 }
 
 /***********************************************************************************************************************
@@ -99,14 +98,14 @@ static void fsmsw_kyber768_PackPk(uint8 r[KYBER768_INDCPA_PUBLICKEYBYTES],
 static void fsmsw_kyber768_UnpackPk(polyvec768 *pk, uint8 seed[KYBER_SYMBYTES],
                                     const uint8 packedpk[KYBER768_INDCPA_PUBLICKEYBYTES])
 {
-    uint32 i = 0;
+  uint32 i = 0;
 
-    FsmSw_Kyber768_polyvec_frombytes(pk, packedpk);
+  FsmSw_Kyber768_Polyvec_FromBytes(pk, packedpk);
 
-    for (i = 0; i < KYBER_SYMBYTES; i++)
-    {
-        seed[i] = packedpk[i + KYBER768_POLYVECBYTES];
-    }
+  for (i = 0; i < KYBER_SYMBYTES; i++)
+  {
+    seed[i] = packedpk[i + KYBER768_POLYVECBYTES];
+  }
 }
 
 /***********************************************************************************************************************
@@ -119,7 +118,7 @@ static void fsmsw_kyber768_UnpackPk(polyvec768 *pk, uint8 seed[KYBER_SYMBYTES],
 ***********************************************************************************************************************/
 static void fsmsw_kyber768_PackSk(uint8 r[KYBER768_INDCPA_SECRETKEYBYTES], const polyvec768 *sk)
 {
-    FsmSw_Kyber768_polyvec_tobytes(r, sk);
+  FsmSw_Kyber768_Polyvec_ToBytes(r, sk);
 }
 
 /***********************************************************************************************************************
@@ -132,7 +131,7 @@ static void fsmsw_kyber768_PackSk(uint8 r[KYBER768_INDCPA_SECRETKEYBYTES], const
 ***********************************************************************************************************************/
 static void fsmsw_kyber768_UnpackSk(polyvec768 *sk, const uint8 packedsk[KYBER768_INDCPA_SECRETKEYBYTES])
 {
-    FsmSw_Kyber768_polyvec_frombytes(sk, packedsk);
+  FsmSw_Kyber768_Polyvec_FromBytes(sk, packedsk);
 }
 
 /***********************************************************************************************************************
@@ -143,13 +142,13 @@ static void fsmsw_kyber768_UnpackSk(polyvec768 *sk, const uint8 packedsk[KYBER76
 *              and the compressed and serialized polynomial v
 *
 * Arguments:         uint8   *r: pointer to the output serialized ciphertext
-*              const poly768 *b: pointer to the input vector of polynomials b
-*              const poly768 *v: pointer to the input polynomial v
+*              const poly *b: pointer to the input vector of polynomials b
+*              const poly *v: pointer to the input polynomial v
 ***********************************************************************************************************************/
-static void fsmsw_kyber768_PackCiphertext(uint8 r[KYBER768_INDCPA_BYTES], const polyvec768 *b, const poly768 *v)
+static void fsmsw_kyber768_PackCiphertext(uint8 r[KYBER768_INDCPA_BYTES], const polyvec768 *b, const poly *v)
 {
-    FsmSw_Kyber768_polyvec_compress(r, b);
-    FsmSw_Kyber768_poly_compress(&r[KYBER768_POLYVECCOMPRESSEDBYTES], v);
+  FsmSw_Kyber768_Polyvec_Compress(r, b);
+  FsmSw_Kyber768_Poly_Compress(&r[KYBER768_POLYVECCOMPRESSEDBYTES], v);
 }
 
 /***********************************************************************************************************************
@@ -159,13 +158,13 @@ static void fsmsw_kyber768_PackCiphertext(uint8 r[KYBER768_INDCPA_BYTES], const 
 *              approximate inverse of fsmsw_kyber768_PackCiphertext
 *
 * Arguments:   -       polyvec768 *b: pointer to the output vector of polynomials b
-*              -       poly768    *v: pointer to the output polynomial v
+*              -       poly    *v: pointer to the output polynomial v
 *              - const uint8      *c: pointer to the input serialized ciphertext
 ***********************************************************************************************************************/
-static void fsmsw_kyber768_UnpackCiphertext(polyvec768 *b, poly768 *v, const uint8 c[KYBER768_INDCPA_BYTES])
+static void fsmsw_kyber768_UnpackCiphertext(polyvec768 *b, poly *v, const uint8 c[KYBER768_INDCPA_BYTES])
 {
-    FsmSw_Kyber768_polyvec_decompress(b, c);
-    FsmSw_Kyber768_poly_decompress(v, &c[KYBER768_POLYVECCOMPRESSEDBYTES]);
+  FsmSw_Kyber768_Polyvec_Decompress(b, c);
+  FsmSw_Kyber768_Poly_Decompress(v, &c[KYBER768_POLYVECCOMPRESSEDBYTES]);
 }
 
 /***********************************************************************************************************************
@@ -183,38 +182,38 @@ static void fsmsw_kyber768_UnpackCiphertext(polyvec768 *b, poly768 *v, const uin
 ***********************************************************************************************************************/
 static uint16 fsmsw_kyber768_RejUniform(sint16 *r, uint16 len, const uint8 *buf, uint16 buflen)
 {
-    uint16 ctr = 0;
-    uint16 pos = 0;
-    uint16 val0 = 0;
-    uint16 val1 = 0;
+  uint16 ctr  = 0;
+  uint16 pos  = 0;
+  uint16 val0 = 0;
+  uint16 val1 = 0;
 
-    while ((ctr < len) && ((pos + 3u) <= buflen))
+  while ((ctr < len) && ((pos + 3u) <= buflen))
+  {
+    val0 = (((uint16)buf[pos] >> 0u) | ((uint16)buf[pos + 1u] << 8u)) & 0xFFFu;
+    val1 = (((uint16)buf[pos + 1u] >> 4u) | ((uint16)buf[pos + 2u] << 4u)) & 0xFFFu;
+    pos  = pos + 3u;
+
+    if (val0 < KYBER_Q)
     {
-        val0 = (((uint16)buf[pos] >> 0u) | ((uint16)buf[pos + 1u] << 8u)) & 0xFFFu;
-        val1 = (((uint16)buf[pos + 1u] >> 4u) | ((uint16)buf[pos + 2u] << 4u)) & 0xFFFu;
-        pos  = pos + 3u;
-
-        if (val0 < KYBER_Q)
-        {
-            r[ctr] = (sint16)val0;
-            ctr++;
-        }
-
-        if ((ctr < len) && (val1 < KYBER_Q))
-        {
-            r[ctr] = (sint16)val1;
-            ctr++;
-        }
+      r[ctr] = (sint16)val0;
+      ctr++;
     }
 
-    return ctr;
+    if ((ctr < len) && (val1 < KYBER_Q))
+    {
+      r[ctr] = (sint16)val1;
+      ctr++;
+    }
+  }
+
+  return ctr;
 }
 
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber768_gen_matrix
+* Name:        FsmSw_Kyber768_Indcpa_GenMatrix
 *
 * Description: Deterministically generate matrix A (or the transpose of A)
 *              from a seed. Entries of the matrix are polynomials that look
@@ -226,47 +225,47 @@ static uint16 fsmsw_kyber768_RejUniform(sint16 *r, uint16 len, const uint8 *buf,
 *              -       uint8       transposed: boolean deciding whether A or A^T is generated
 ***********************************************************************************************************************/
 /* polyspace +1 MISRA2012:8.7 [Justified:]"Not static for benchmarking */
-void FsmSw_Kyber768_gen_matrix(polyvec768 *a, const uint8 seed[KYBER_SYMBYTES], uint8 transposed)
+void FsmSw_Kyber768_Indcpa_GenMatrix(polyvec768 *a, const uint8 seed[KYBER_SYMBYTES], uint8 transposed)
 {
-    uint8  i = 0;
-    uint8  j = 0;
-    uint16 buflen = 0;
-    uint16 off = 0;
-    uint16 ctr = 0;
-    uint8  buf[(GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES) + 2u] = {0};
-    xof_state state = {0};
+  uint8 i                                               = 0;
+  uint8 j                                               = 0;
+  uint16 buflen                                         = 0;
+  uint16 off                                            = 0;
+  uint16 ctr                                            = 0;
+  uint8 buf[(GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES) + 2u] = {0};
+  xof_state state;
 
-    for (i = 0; i < KYBER768_K; i++)
+  for (i = 0; i < KYBER768_K; i++)
+  {
+    for (j = 0; j < KYBER768_K; j++)
     {
-        for (j = 0; j < KYBER768_K; j++)
-        {
-            if (transposed > 0u)
-            {
-                FsmSw_Kyber_shake128_absorb(&state, seed, i, j);
-            }
-            else
-            {
-                FsmSw_Kyber_shake128_absorb(&state, seed, j, i);
-            }
+      if (transposed > 0u)
+      {
+        FsmSw_Kyber_Shake128_Absorb(&state, seed, i, j);
+      }
+      else
+      {
+        FsmSw_Kyber_Shake128_Absorb(&state, seed, j, i);
+      }
 
-            FsmSw_Fips202_shake128_squeezeblocks(buf, GEN_MATRIX_NBLOCKS, &state);
-            buflen = GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES;
-            ctr = fsmsw_kyber768_RejUniform(a[i].vec[j].coeffs, KYBER_N, buf, buflen);
+      FsmSw_Fips202_Shake128_SqueezeBlocks(buf, GEN_MATRIX_NBLOCKS, &state);
+      buflen = GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES;
+      ctr    = fsmsw_kyber768_RejUniform(a[i].vec[j].coeffs, KYBER_N, buf, buflen);
 
-            while (ctr < KYBER_N)
-            {
-                off = buflen % 3u;
-    
-                FsmSw_Fips202_shake128_squeezeblocks(&buf[off], 1u, &state);
-                buflen = off + XOF_BLOCKBYTES;
-                ctr    = ctr + fsmsw_kyber768_RejUniform(&(a[i].vec[j].coeffs[ctr]), KYBER_N - ctr, buf, buflen);
-            }
-        }
+      while (ctr < KYBER_N)
+      {
+        off = buflen % 3u;
+
+        FsmSw_Fips202_Shake128_SqueezeBlocks(&buf[off], 1u, &state);
+        buflen = off + XOF_BLOCKBYTES;
+        ctr    = ctr + fsmsw_kyber768_RejUniform(&(a[i].vec[j].coeffs[ctr]), KYBER_N - ctr, buf, buflen);
+      }
     }
+  }
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber768_indcpa_keypair
+* Name:        FsmSw_Kyber768_Indcpa_KeyPair
 *
 * Description: Generates public and private key for the CPA-secure
 *              public-key encryption scheme underlying Kyber
@@ -274,53 +273,52 @@ void FsmSw_Kyber768_gen_matrix(polyvec768 *a, const uint8 seed[KYBER_SYMBYTES], 
 * Arguments:   - uint8 *pk: pointer to output public key (of length KYBER768_INDCPA_PUBLICKEYBYTES bytes)
 *              - uint8 *sk: pointer to output private key  (of length KYBER768_INDCPA_SECRETKEYBYTES bytes)
 ***********************************************************************************************************************/
-void FsmSw_Kyber768_indcpa_keypair(uint8 pk[KYBER768_INDCPA_PUBLICKEYBYTES],
-                                   uint8 sk[KYBER768_INDCPA_SECRETKEYBYTES])
+void FsmSw_Kyber768_Indcpa_KeyPair(uint8 pk[KYBER768_INDCPA_PUBLICKEYBYTES], uint8 sk[KYBER768_INDCPA_SECRETKEYBYTES])
 {
-    uint8 i = 0;
-    uint8 buf[2u * KYBER_SYMBYTES] = {0};
-    const uint8 *publicseed = buf;
-    const uint8 *noiseseed = &buf[KYBER_SYMBYTES];
-    uint8 nonce = 0;
+  uint8 i                        = 0;
+  uint8 buf[2u * KYBER_SYMBYTES] = {0};
+  const uint8 *publicseed        = buf;
+  const uint8 *noiseseed         = &buf[KYBER_SYMBYTES];
+  uint8 nonce                    = 0;
 
-    polyvec768 a[KYBER768_K], e, pkpv, skpv;
+  polyvec768 a[KYBER768_K], e, pkpv, skpv;
 
-    (void)FsmSw_CommonLib_randombytes(buf, KYBER_SYMBYTES);
-    FsmSw_Fips202_sha3_512(buf, buf, KYBER_SYMBYTES);
+  (void)FsmSw_CommonLib_RandomBytes(buf, KYBER_SYMBYTES);
+  FsmSw_Fips202_Sha3_512(buf, buf, KYBER_SYMBYTES);
 
-    FsmSw_Kyber768_gen_matrix(a, publicseed, 0);
+  FsmSw_Kyber768_Indcpa_GenMatrix(a, publicseed, 0);
 
-    for (i = 0; i < KYBER768_K; i++)
-    {
-        FsmSw_Kyber768_poly_getnoise_eta1(&skpv.vec[i], noiseseed, nonce);
-        nonce++;
-    }
+  for (i = 0; i < KYBER768_K; i++)
+  {
+    FsmSw_Kyber768_Poly_GetNoiseEta1(&skpv.vec[i], noiseseed, nonce);
+    nonce++;
+  }
 
-    for (i = 0; i < KYBER768_K; i++)
-    {
-        FsmSw_Kyber768_poly_getnoise_eta1(&e.vec[i], noiseseed, nonce);
-        nonce++;
-    }
+  for (i = 0; i < KYBER768_K; i++)
+  {
+    FsmSw_Kyber768_Poly_GetNoiseEta1(&e.vec[i], noiseseed, nonce);
+    nonce++;
+  }
 
-    FsmSw_Kyber768_polyvec_ntt(&skpv);
-    FsmSw_Kyber768_polyvec_ntt(&e);
+  FsmSw_Kyber768_Polyvec_Ntt(&skpv);
+  FsmSw_Kyber768_Polyvec_Ntt(&e);
 
-    // matrix-vector multiplication
-    for (i = 0; i < KYBER768_K; i++)
-    {
-        FsmSw_Kyber768_polyvec_basemul_acc_montgomery(&pkpv.vec[i], &a[i], &skpv);
-        FsmSw_Kyber768_poly_tomont(&pkpv.vec[i]);
-    }
+  // matrix-vector multiplication
+  for (i = 0; i < KYBER768_K; i++)
+  {
+    FsmSw_Kyber768_Polyvec_BasemulAccMontgomery(&pkpv.vec[i], &a[i], &skpv);
+    FsmSw_Kyber_Poly_Tomont(&pkpv.vec[i]);
+  }
 
-    FsmSw_Kyber768_polyvec_add(&pkpv, &pkpv, &e);
-    FsmSw_Kyber768_polyvec_reduce(&pkpv);
+  FsmSw_Kyber768_Polyvec_Add(&pkpv, &pkpv, &e);
+  FsmSw_Kyber768_Polyvec_Reduce(&pkpv);
 
-    fsmsw_kyber768_PackSk(sk, &skpv);
-    fsmsw_kyber768_PackPk(pk, &pkpv, publicseed);
+  fsmsw_kyber768_PackSk(sk, &skpv);
+  fsmsw_kyber768_PackPk(pk, &pkpv, publicseed);
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber768_indcpa_enc
+* Name:        FsmSw_Kyber768_Indcpa_Enc
 *
 * Description: Encryption function of the CPA-secure
 *              public-key encryption scheme underlying Kyber.
@@ -332,65 +330,63 @@ void FsmSw_Kyber768_indcpa_keypair(uint8 pk[KYBER768_INDCPA_PUBLICKEYBYTES],
 *                                    (of length KYBER_SYMBYTES bytes) to deterministically
 *                                    generate all randomness
 ***********************************************************************************************************************/
-void FsmSw_Kyber768_indcpa_enc(uint8 c[KYBER768_INDCPA_BYTES],
-                               const uint8 m[KYBER768_INDCPA_MSGBYTES],
-                               const uint8 pk[KYBER768_INDCPA_PUBLICKEYBYTES],
-                               const uint8 coins[KYBER_SYMBYTES])
+void FsmSw_Kyber768_Indcpa_Enc(uint8 c[KYBER768_INDCPA_BYTES], const uint8 m[KYBER768_INDCPA_MSGBYTES],
+                               const uint8 pk[KYBER768_INDCPA_PUBLICKEYBYTES], const uint8 coins[KYBER_SYMBYTES])
 {
-    uint8 i = 0;
-    uint8 seed[KYBER_SYMBYTES] = {0};
-    uint8 nonce = 0;
-    polyvec768 sp   = {0};
-    polyvec768 pkpv = {0};
-    polyvec768 ep   = {0};
-    polyvec768 at[KYBER768_K] = {0};
-    polyvec768 b    = {0};
-    poly768    v    = {0};
-    poly768    k    = {0};
-    poly768    epp  = {0};
+  uint8 i                    = 0;
+  uint8 seed[KYBER_SYMBYTES] = {0};
+  uint8 nonce                = 0;
+  polyvec768 sp              = {{{{0}}}};
+  polyvec768 pkpv            = {{{{0}}}};
+  polyvec768 ep              = {{{{0}}}};
+  polyvec768 at[KYBER768_K]  = {{{{{0}}}}};
+  polyvec768 b               = {{{{0}}}};
+  poly v                     = {{0}};
+  poly k                     = {{0}};
+  poly epp                   = {{0}};
 
-    fsmsw_kyber768_UnpackPk(&pkpv, seed, pk);
-    FsmSw_Kyber768_poly_frommsg(&k, m);
-    FsmSw_Kyber768_gen_matrix(at, seed, 1);
+  fsmsw_kyber768_UnpackPk(&pkpv, seed, pk);
+  FsmSw_Kyber768_Poly_FromMsg(&k, m);
+  FsmSw_Kyber768_Indcpa_GenMatrix(at, seed, 1);
 
-    for (i = 0; i < KYBER768_K; i++)
-    {
-        FsmSw_Kyber768_poly_getnoise_eta1(&(sp.vec[i]), coins, nonce);
-        nonce++;
-    }
+  for (i = 0; i < KYBER768_K; i++)
+  {
+    FsmSw_Kyber768_Poly_GetNoiseEta1(&(sp.vec[i]), coins, nonce);
+    nonce++;
+  }
 
-    for (i = 0; i < KYBER768_K; i++)
-    {
-        FsmSw_Kyber768_poly_getnoise_eta2(&(ep.vec[i]), coins, nonce);
-        nonce++;
-    }
+  for (i = 0; i < KYBER768_K; i++)
+  {
+    FsmSw_Kyber768_Poly_GetNoiseEta2(&(ep.vec[i]), coins, nonce);
+    nonce++;
+  }
 
-    FsmSw_Kyber768_poly_getnoise_eta2(&epp, coins, nonce);
+  FsmSw_Kyber768_Poly_GetNoiseEta2(&epp, coins, nonce);
 
-    FsmSw_Kyber768_polyvec_ntt(&sp);
+  FsmSw_Kyber768_Polyvec_Ntt(&sp);
 
-    /* matrix-vector multiplication */
-    for (i = 0; i < KYBER768_K; i++)
-    {
-        FsmSw_Kyber768_polyvec_basemul_acc_montgomery(&b.vec[i], &at[i], &sp);
-    }
+  /* matrix-vector multiplication */
+  for (i = 0; i < KYBER768_K; i++)
+  {
+    FsmSw_Kyber768_Polyvec_BasemulAccMontgomery(&b.vec[i], &at[i], &sp);
+  }
 
-    FsmSw_Kyber768_polyvec_basemul_acc_montgomery(&v, &pkpv, &sp);
+  FsmSw_Kyber768_Polyvec_BasemulAccMontgomery(&v, &pkpv, &sp);
 
-    FsmSw_Kyber768_polyvec_invntt_tomont(&b);
-    FsmSw_Kyber768_poly_invntt_tomont(&v);
+  FsmSw_Kyber768_Polyvec_InvnttTomont(&b);
+  FsmSw_Kyber_Poly_InvnttTomont(&v);
 
-    FsmSw_Kyber768_polyvec_add(&b, &b, &ep);
-    FsmSw_Kyber768_poly_add(&v, &v, &epp);
-    FsmSw_Kyber768_poly_add(&v, &v, &k);
-    FsmSw_Kyber768_polyvec_reduce(&b);
-    FsmSw_Kyber768_poly_reduce(&v);
+  FsmSw_Kyber768_Polyvec_Add(&b, &b, &ep);
+  FsmSw_Kyber_Poly_Add(&v, &v, &epp);
+  FsmSw_Kyber_Poly_Add(&v, &v, &k);
+  FsmSw_Kyber768_Polyvec_Reduce(&b);
+  FsmSw_Kyber_Poly_Reduce(&v);
 
-    fsmsw_kyber768_PackCiphertext(c, &b, &v);
+  fsmsw_kyber768_PackCiphertext(c, &b, &v);
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber768_indcpa_dec
+* Name:        FsmSw_Kyber768_Indcpa_dec
 *
 * Description: Decryption function of the CPA-secure
 *              public-key encryption scheme underlying Kyber.
@@ -399,24 +395,23 @@ void FsmSw_Kyber768_indcpa_enc(uint8 c[KYBER768_INDCPA_BYTES],
 *              - const uint8 *c:  pointer to input ciphertext (of length KYBER768_INDCPA_BYTES bytes)
 *              - const uint8 *sk: pointer to input secret key (of length KYBER768_INDCPA_SECRETKEYBYTES bytes)
 ***********************************************************************************************************************/
-void FsmSw_Kyber768_indcpa_dec(uint8 m[KYBER768_INDCPA_MSGBYTES],
-                               const uint8 c[KYBER768_INDCPA_BYTES],
+void FsmSw_Kyber768_Indcpa_dec(uint8 m[KYBER768_INDCPA_MSGBYTES], const uint8 c[KYBER768_INDCPA_BYTES],
                                const uint8 sk[KYBER768_INDCPA_SECRETKEYBYTES])
 {
-    polyvec768 b = {0};
-    polyvec768 skpv = {0};
-    poly768    v = {0};
-    poly768    mp = {0};
+  polyvec768 b    = {{{{0}}}};
+  polyvec768 skpv = {{{{0}}}};
+  poly v          = {{0}};
+  poly mp         = {{0}};
 
-    fsmsw_kyber768_UnpackCiphertext(&b, &v, c);
-    fsmsw_kyber768_UnpackSk(&skpv, sk);
+  fsmsw_kyber768_UnpackCiphertext(&b, &v, c);
+  fsmsw_kyber768_UnpackSk(&skpv, sk);
 
-    FsmSw_Kyber768_polyvec_ntt(&b);
-    FsmSw_Kyber768_polyvec_basemul_acc_montgomery(&mp, &skpv, &b);
-    FsmSw_Kyber768_poly_invntt_tomont(&mp);
+  FsmSw_Kyber768_Polyvec_Ntt(&b);
+  FsmSw_Kyber768_Polyvec_BasemulAccMontgomery(&mp, &skpv, &b);
+  FsmSw_Kyber_Poly_InvnttTomont(&mp);
 
-    FsmSw_Kyber768_poly_sub(&mp, &v, &mp);
-    FsmSw_Kyber768_poly_reduce(&mp);
+  FsmSw_Kyber_Poly_Sub(&mp, &v, &mp);
+  FsmSw_Kyber_Poly_Reduce(&mp);
 
-    FsmSw_Kyber768_poly_tomsg(m, &mp);
+  FsmSw_Kyber768_Poly_ToMsg(m, &mp);
 }

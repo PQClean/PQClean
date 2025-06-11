@@ -33,25 +33,25 @@
  * The unions with 'dummy_u64' are there to ensure proper alignment for 64-bit direct access. */
 typedef struct
 {
-    /* polyspace +2 MISRA2012:19.2 [Justified:]"The buffer and the remainder of the code require 
+  /* polyspace +2 MISRA2012:19.2 [Justified:]"The buffer and the remainder of the code require 
     the use of the union keyword." */
-    union
-    {
-        uint8 d[512]; /* MUST be 512, exactly */
-        uint64 dummy_u64;
-    } buf;
+  union
+  {
+    uint8 d[512]; /* MUST be 512, exactly */
+    uint64 dummy_u64;
+  } buf;
 
-    uint32 ptr;
+  uint32 ptr;
 
-    /* polyspace +2 MISRA2012:19.2 [Justified:]"The buffer and the remainder of the code require 
+  /* polyspace +2 MISRA2012:19.2 [Justified:]"The buffer and the remainder of the code require 
     the use of the union keyword." */
-    union
-    {
-        uint8 d[256];
-        uint64 dummy_u64;
-    } state;
+  union
+  {
+    uint8 d[256];
+    uint64 dummy_u64;
+  } state;
 
-    sint32 type;
+  sint32 type;
 } prng;
 
 /**********************************************************************************************************************/
@@ -65,10 +65,9 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void     FsmSw_Falcon_prng_init(prng *p, inner_shake256_context *src);
-void     FsmSw_Falcon_prng_get_bytes(prng *p, void *dst, uint32 len);
-uint64   FsmSw_Falcon_prng_get_u64(prng *p);
-uint32   FsmSw_Falcon_prng_get_u8(prng *p);
-
+void FsmSw_Falcon_Prng_Init(prng *p, inner_shake256_context *src);
+void FsmSw_Falcon_Prng_GetBytes(prng *p, void *dst, uint32 len);
+uint64 FsmSw_Falcon_Prng_GetU64(prng *p);
+uint32 FsmSw_Falcon_Prng_GetU8(prng *p);
 
 #endif /* FSMSW_FALCON_RNG_H */

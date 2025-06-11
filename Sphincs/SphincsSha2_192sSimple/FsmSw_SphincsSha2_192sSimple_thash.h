@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_192sSimple_context.h"
 #include "FsmSw_SphincsSha2_192sSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,7 +43,7 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsSha2_192sSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks, const sphincs_sha2_192s_ctx *ctx,
+void FsmSw_SphincsSha2_192sSimple_Thash(uint8 *out, const uint8 *in, uint32 inblocks, const sphincs_sha2_192s_ctx *ctx,
                                         const uint32 addr[8]);
 
 #endif /* FSMSW_SPHINCSSHA2_192SSIMPLE_THASH_H */

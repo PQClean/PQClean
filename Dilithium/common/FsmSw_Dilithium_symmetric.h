@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
-#include "FsmSw_Fips202.h"
 #include "FsmSw_Dilithium_params.h"
+#include "FsmSw_Fips202.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -47,7 +47,7 @@ typedef shake256incctx FsmSw_Dilithium_stream256_state;
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Dilithium_shake128_stream_init(shake128incctx *state, const uint8 seed[SEEDBYTES_DILITHIUM], uint16 nonce);
-void FsmSw_Dilithium_shake256_stream_init(shake256incctx *state, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce);
+void FsmSw_Dilithium_Shake128_StreamInit(shake128incctx *state, const uint8 seed[SEEDBYTES_DILITHIUM], uint16 nonce);
+void FsmSw_Dilithium_Shake256_StreamInit(shake256incctx *state, const uint8 seed[CRHBYTES_DILITHIUM], uint16 nonce);
 
 #endif /* FSMSW_DILITHIUM_SYMMETRIC_H */

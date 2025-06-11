@@ -1,30 +1,31 @@
 /***********************************************************************************************************************
-*
-*                                          IAV GmbH
-*
-***********************************************************************************************************************/
+ *
+ *                                          IAV GmbH
+ *
+ **********************************************************************************************************************/
 /*
-*
-*  $File$
-*
-*  $Author$
-*
-*  $Date$
-*
-*  $Rev$
-*
-***********************************************************************************************************************/
+ *
+ *  $File$
+ *
+ *  $Author$
+ *
+ *  $Date$
+ *
+ *  $Rev$
+ *
+ **********************************************************************************************************************/
 
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_sha2.h"
 #include "FsmSw_CommonLib.h"
-#include "FsmSw_Sphincs_sha2_address.h"
-#include "FsmSw_SphincsSha2_192fSimple_params.h"
-#include "FsmSw_SphincsSha2_192fSimple_thash.h"
-#include "FsmSw_SphincsSha2_192fSimple_utils.h"
 #include "FsmSw_SphincsSha2_192fSimple_hash.h"
+#include "FsmSw_SphincsSha2_192fSimple_params.h"
+#include "FsmSw_SphincsSha2_192fSimple_utils.h"
+#include "FsmSw_Sphincs_sha2_address.h"
+#include "FsmSw_sha2.h"
+
+#include "FsmSw_SphincsSha2_192fSimple_thash.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -54,32 +55,33 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsSha2_192fSimple_thash
-*
-* Description: Takes an array of inblocks concatenated arrays of FSMSW_SPHINCSSHA2_192FSIMPLE_N bytes.
-*
-* Arguments:   -       uint8                 *out:        t.b.d.
-*              - const uint8                 *in:        t.b.d.
-*              -       uint32                 inblocks:    t.b.d.
-*              - const sphincs_sha2_192f_ctx *ctx:         t.b.d.
-*              - const uint32                 addr[8]:     t.b.d.
-*
-***********************************************************************************************************************/
-void FsmSw_SphincsSha2_192fSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks, const sphincs_sha2_192f_ctx *ctx,
+ * Name:        FsmSw_SphincsSha2_192fSimple_Thash
+ *
+ * Description: Takes an array of inblocks concatenated arrays of FSMSW_SPHINCSSHA2_192FSIMPLE_N bytes.
+ *
+ * Arguments:   -       uint8                 *out:        t.b.d.
+ *              - const uint8                 *in:        t.b.d.
+ *              -       uint32                 inblocks:    t.b.d.
+ *              - const sphincs_sha2_192f_ctx *ctx:         t.b.d.
+ *              - const uint32                 addr[8]:     t.b.d.
+ *
+ **********************************************************************************************************************/
+void FsmSw_SphincsSha2_192fSimple_Thash(uint8 *out, const uint8 *in, uint32 inblocks, const sphincs_sha2_192f_ctx *ctx,
                                         const uint32 addr[8])
 {
 
-    uint8 outbuf[FSMSW_SPHINCS_SHA256_OUTPUT_BYTES];
-    sha256ctx sha2_state;
-    uint8 buf[SPX_SHA256_ADDR_BYTES + (FSMSW_SPHINCSSHA2_192FSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHA2_192FSIMPLE_N)];
+  uint8 outbuf[FSMSW_SPHINCS_SHA256_OUTPUT_BYTES] = {0};
+  sha256ctx sha2_state                            = {{0}};
+  uint8 buf[SPX_SHA256_ADDR_BYTES + (FSMSW_SPHINCSSHA2_192FSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHA2_192FSIMPLE_N)] = {
+      0};
 
-    /* Retrieve precomputed state containing pub_seed */
-    FsmSw_sha256_inc_ctx_clone(&sha2_state, &ctx->state_seeded);
+  /* Retrieve precomputed state containing pub_seed */
+  FsmSw_Sha256_IncCtxClone(&sha2_state, &ctx->state_seeded);
 
-    FsmSw_CommonLib_memcpy(buf, addr, SPX_SHA256_ADDR_BYTES);
-    FsmSw_CommonLib_memcpy(&buf[SPX_SHA256_ADDR_BYTES], in, inblocks * FSMSW_SPHINCSSHA2_192FSIMPLE_N);
+  FsmSw_CommonLib_MemCpy(buf, addr, SPX_SHA256_ADDR_BYTES);
+  FsmSw_CommonLib_MemCpy(&buf[SPX_SHA256_ADDR_BYTES], in, inblocks * FSMSW_SPHINCSSHA2_192FSIMPLE_N);
 
-    FsmSw_sha256_inc_finalize(outbuf, &sha2_state, buf, SPX_SHA256_ADDR_BYTES + (inblocks *
-                              FSMSW_SPHINCSSHA2_192FSIMPLE_N));
-    FsmSw_CommonLib_memcpy(out, outbuf, FSMSW_SPHINCSSHA2_192FSIMPLE_N);
+  FsmSw_Sha256_IncFinalize(outbuf, &sha2_state, buf,
+                           SPX_SHA256_ADDR_BYTES + (inblocks * FSMSW_SPHINCSSHA2_192FSIMPLE_N));
+  FsmSw_CommonLib_MemCpy(out, outbuf, FSMSW_SPHINCSSHA2_192FSIMPLE_N);
 }

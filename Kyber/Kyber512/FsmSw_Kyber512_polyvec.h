@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Kyber512_params.h"
 #include "FsmSw_Kyber512_poly.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -33,9 +33,9 @@
 /**********************************************************************************************************************/
 /* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
 making it impractical and complex to hide the implementation details." */
-typedef struct 
+typedef struct
 {
-    poly512 vec[KYBER512_K];
+  poly vec[KYBER512_K];
 } polyvec512;
 
 /**********************************************************************************************************************/
@@ -49,19 +49,19 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Kyber512_polyvec_compress(uint8 r[KYBER512_POLYVECCOMPRESSEDBYTES], const polyvec512 *a);
-void FsmSw_Kyber512_polyvec_decompress(polyvec512 *r, const uint8 a[KYBER512_POLYVECCOMPRESSEDBYTES]);
+void FsmSw_Kyber512_Polyvec_Compress(uint8 r[KYBER512_POLYVECCOMPRESSEDBYTES], const polyvec512 *a);
+void FsmSw_Kyber512_Polyvec_Decompress(polyvec512 *r, const uint8 a[KYBER512_POLYVECCOMPRESSEDBYTES]);
 
-void FsmSw_Kyber512_polyvec_tobytes(uint8 r[KYBER512_POLYVECBYTES], const polyvec512 *a);
-void FsmSw_Kyber512_polyvec_frombytes(polyvec512 *r, const uint8 a[KYBER512_POLYVECBYTES]);
+void FsmSw_Kyber512_Polyvec_ToBytes(uint8 r[KYBER512_POLYVECBYTES], const polyvec512 *a);
+void FsmSw_Kyber512_Polyvec_FromBytes(polyvec512 *r, const uint8 a[KYBER512_POLYVECBYTES]);
 
-void FsmSw_Kyber512_polyvec_ntt(polyvec512 *r);
-void FsmSw_Kyber512_polyvec_invntt_tomont(polyvec512 *r);
+void FsmSw_Kyber512_Polyvec_Ntt(polyvec512 *r);
+void FsmSw_Kyber512_Polyvec_InvnttTomont(polyvec512 *r);
 
-void FsmSw_Kyber512_polyvec_basemul_acc_montgomery(poly512 *r, const polyvec512 *a, const polyvec512 *b);
+void FsmSw_Kyber512_Polyvec_BasemulAccMontgomery(poly *r, const polyvec512 *a, const polyvec512 *b);
 
-void FsmSw_Kyber512_polyvec_reduce(polyvec512 *r);
+void FsmSw_Kyber512_Polyvec_Reduce(polyvec512 *r);
 
-void FsmSw_Kyber512_polyvec_add(polyvec512 *r, const polyvec512 *a, const polyvec512 *b);
+void FsmSw_Kyber512_Polyvec_Add(polyvec512 *r, const polyvec512 *a, const polyvec512 *b);
 
 #endif /* FSMSW_KYBER512_POLYVEC_H */

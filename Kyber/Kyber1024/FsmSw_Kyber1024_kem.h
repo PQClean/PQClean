@@ -20,8 +20,8 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Kyber1024_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -42,8 +42,8 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-uint8 FsmSw_Kyber1024_crypto_kem_keypair(uint8 *pk, uint8 *sk);
-uint8 FsmSw_Kyber1024_crypto_kem_enc(uint8 *ct, uint8 *ss, const uint8 *pk);
-uint8 FsmSw_Kyber1024_crypto_kem_dec(uint8 *ss, const uint8 *ct, const uint8 *sk);
+uint8 FsmSw_Kyber1024_Crypto_Kem_KeyPair(uint8 *pk, uint8 *sk);
+uint8 FsmSw_Kyber1024_Crypto_Kem_Enc(uint8 *ct, uint8 *ss, const uint8 *pk);
+uint8 FsmSw_Kyber1024_Crypto_Kem_Dec(uint8 *ss, const uint8 *ct, const uint8 *sk);
 
 #endif /* FSMSW_KYBER1024_KEM_H */

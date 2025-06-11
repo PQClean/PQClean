@@ -20,8 +20,8 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Dilithium3_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -42,9 +42,9 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-sint32 FsmSw_Dilithium3_power2round(sint32 *a0, sint32 a);
-sint32 FsmSw_Dilithium3_decompose(sint32 *a0, sint32 a);
-uint8 FsmSw_Dilithium3_make_hint(sint32 a0, sint32 a1);
-sint32 FsmSw_Dilithium3_use_hint(sint32 a, uint32 hint);
+sint32 FsmSw_Dilithium3_Power2Round(sint32 *a0, sint32 a);
+sint32 FsmSw_Dilithium3_Decompose(sint32 *a0, sint32 a);
+uint8 FsmSw_Dilithium3_MakeHint(sint32 a0, sint32 a1);
+sint32 FsmSw_Dilithium3_UseHint(sint32 a, uint32 hint);
 
 #endif /* FSMSW_DILITHIUM3_ROUNDING_H */

@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsShake_256sSimple_context.h"
 #include "FsmSw_SphincsShake_256sSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,22 +43,22 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_SphincsShake_256sSimple_compute_root(uint8 *root, const uint8 *leaf, uint32 leaf_idx, uint32 idx_offset,
-                                                const uint8 *auth_path, uint32 tree_height,
-                                                const sphincs_shake_256s_ctx *ctx, uint32 addr[8]);
+void FsmSw_SphincsShake_256sSimple_ComputeRoot(uint8 *root, const uint8 *leaf, uint32 leaf_idx, uint32 idx_offset,
+                                               const uint8 *auth_path, uint32 tree_height,
+                                               const sphincs_shake_256s_ctx *ctx, uint32 addr[8]);
 
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_SphincsShake_256sSimple_treehash(uint8 *root, uint8 *auth_path, const sphincs_shake_256s_ctx *ctx,
+void FsmSw_SphincsShake_256sSimple_TreeHash(uint8 *root, uint8 *auth_path, const sphincs_shake_256s_ctx *ctx,
                                             uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
-                                            void (*gen_leaf)
-                                            (
-                                              uint8 *leaf,
-                                              const sphincs_shake_256s_ctx *ctx,
-                                              uint32 addr_idx, const uint32 tree_addr[8]
-                                            ),
+                                            void (*gen_leaf)(uint8 *leaf, const sphincs_shake_256s_ctx *ctx,
+                                                             uint32 addr_idx, const uint32 tree_addr[8]),
                                             uint32 tree_addr[8]);
 
 #endif /* FSMSW_SPHINCSSHAKE_256SSIMPLE_UTILS_H */

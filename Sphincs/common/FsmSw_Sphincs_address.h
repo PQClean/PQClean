@@ -24,14 +24,14 @@
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
-/* The hash types that are passed to FsmSw_SphincsSha2_set_type */
-#define FSMSW_SPHINCS_ADDR_TYPE_WOTS         0
-#define FSMSW_SPHINCS_ADDR_TYPE_WOTSPK       1
-#define FSMSW_SPHINCS_ADDR_TYPE_HASHTREE     2
-#define FSMSW_SPHINCS_ADDR_TYPE_FORSTREE     3
-#define FSMSW_SPHINCS_ADDR_TYPE_FORSPK       4
-#define FSMSW_SPHINCS_ADDR_TYPE_WOTSPRF      5
-#define FSMSW_SPHINCS_ADDR_TYPE_FORSPRF      6
+/* The hash types that are passed to FsmSw_SphincsSha2_SetType */
+#define FSMSW_SPHINCS_ADDR_TYPE_WOTS     0
+#define FSMSW_SPHINCS_ADDR_TYPE_WOTSPK   1
+#define FSMSW_SPHINCS_ADDR_TYPE_HASHTREE 2
+#define FSMSW_SPHINCS_ADDR_TYPE_FORSTREE 3
+#define FSMSW_SPHINCS_ADDR_TYPE_FORSPK   4
+#define FSMSW_SPHINCS_ADDR_TYPE_WOTSPRF  5
+#define FSMSW_SPHINCS_ADDR_TYPE_FORSPRF  6
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */

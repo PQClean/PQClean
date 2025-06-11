@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_128fSimple_context.h"
 #include "FsmSw_SphincsSha2_128fSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,16 +43,14 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_SphincsSha2_128fSimple_treehashx1(uint8 *root, uint8 *auth_path, const sphincs_sha2_128f_ctx *ctx,
+void FsmSw_SphincsSha2_128fSimple_TreeHashX1(uint8 *root, uint8 *auth_path, const sphincs_sha2_128f_ctx *ctx,
                                              uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
-                                             void (*gen_leaf)
-                                             (
-                                               uint8 *out /* Where to write the leaf */,
-                                               const sphincs_sha2_128f_ctx *ctx,
-                                               uint32 idx, void *info
-                                             ),
+                                             void (*gen_leaf)(uint8 *out /* Where to write the leaf */,
+                                                              const sphincs_sha2_128f_ctx *ctx, uint32 idx, void *info),
                                              uint32 tree_addr[8], void *info);
 
 #endif /* FSMSW_SPHINCSSHA2_128FSIMPLE_UTILSX4_H */

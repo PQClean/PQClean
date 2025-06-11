@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
+#include "FsmSw_SphincsSha2_192fSimple_params.h"
 #include "FsmSw_Types.h"
 #include "FsmSw_sha2.h"
-#include "FsmSw_SphincsSha2_192fSimple_params.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -35,12 +35,12 @@
 making it impractical and complex to hide the implementation details." */
 typedef struct
 {
-                uint8 pub_seed[FSMSW_SPHINCSSHA2_192FSIMPLE_N];
-                uint8 sk_seed[FSMSW_SPHINCSSHA2_192FSIMPLE_N];
-                // sha256 state that absorbed pub_seed
-                sha256ctx state_seeded;
-                // sha512 state that absorbed pub_seed
-                sha512ctx state_seeded_512;
+  uint8 pub_seed[FSMSW_SPHINCSSHA2_192FSIMPLE_N];
+  uint8 sk_seed[FSMSW_SPHINCSSHA2_192FSIMPLE_N];
+  // sha256 state that absorbed pub_seed
+  sha256ctx state_seeded;
+  // sha512 state that absorbed pub_seed
+  sha512ctx state_seeded_512;
 } sphincs_sha2_192f_ctx;
 /**********************************************************************************************************************/
 /* GLOBAL VARIABLES                                                                                                   */
@@ -53,6 +53,6 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsSha2_192fSimple_initialize_hash_function(sphincs_sha2_192f_ctx *ctx);
+void FsmSw_SphincsSha2_192fSimple_InitializeHashFunction(sphincs_sha2_192f_ctx *ctx);
 
 #endif /* FSMSW_SPHINCSSHA2_192FSIMPLE_CONTEXT_H */

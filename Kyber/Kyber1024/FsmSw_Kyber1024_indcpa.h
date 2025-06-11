@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Kyber1024_params.h"
 #include "FsmSw_Kyber1024_polyvec.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,18 +43,15 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Kyber1024_gen_matrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES], uint8 transposed);
+void FsmSw_Kyber1024_Indcpa_GenMatrix(polyvec1024 *a, const uint8 seed[KYBER_SYMBYTES], uint8 transposed);
 
-void FsmSw_Kyber1024_indcpa_keypair(uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES],
+void FsmSw_Kyber1024_Indcpa_KeyPair(uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES],
                                     uint8 sk[KYBER1024_INDCPA_SECRETKEYBYTES]);
 
-void FsmSw_Kyber1024_indcpa_enc(uint8 c[KYBER1024_INDCPA_BYTES],
-                                const uint8 m[KYBER1024_INDCPA_MSGBYTES],
-                                const uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES],
-                                const uint8 coins[KYBER_SYMBYTES]);
+void FsmSw_Kyber1024_Indcpa_Enc(uint8 c[KYBER1024_INDCPA_BYTES], const uint8 m[KYBER1024_INDCPA_MSGBYTES],
+                                const uint8 pk[KYBER1024_INDCPA_PUBLICKEYBYTES], const uint8 coins[KYBER_SYMBYTES]);
 
-void FsmSw_Kyber1024_indcpa_dec(uint8 m[KYBER1024_INDCPA_MSGBYTES],
-                                const uint8 c[KYBER1024_INDCPA_BYTES],
+void FsmSw_Kyber1024_Indcpa_Dec(uint8 m[KYBER1024_INDCPA_MSGBYTES], const uint8 c[KYBER1024_INDCPA_BYTES],
                                 const uint8 sk[KYBER1024_INDCPA_SECRETKEYBYTES]);
 
 #endif /* FSMSW_KYBER1024_INDCPA_H */

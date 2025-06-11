@@ -20,8 +20,8 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsShake_128fSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -32,9 +32,10 @@
 /**********************************************************************************************************************/
 /* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
 making it impractical and complex to hide the implementation details." */
-typedef struct {
-    uint8 pub_seed[FSMSW_SPHINCSSHAKE_128FSIMPLE_N];
-    uint8 sk_seed[FSMSW_SPHINCSSHAKE_128FSIMPLE_N];
+typedef struct
+{
+  uint8 pub_seed[FSMSW_SPHINCSSHAKE_128FSIMPLE_N];
+  uint8 sk_seed[FSMSW_SPHINCSSHAKE_128FSIMPLE_N];
 
 } sphincs_shake_128f_ctx;
 
@@ -49,8 +50,8 @@ typedef struct {
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsShake_128fSimple_initialize_hash_function(sphincs_shake_128f_ctx *ctx);
+void FsmSw_SphincsShake_128fSimple_InitializeHashFunction(sphincs_shake_128f_ctx *ctx);
 
-void FsmSw_SphincsShake_128fSimple_1_free_hash_function(sphincs_shake_128f_ctx *ctx);
+void FsmSw_SphincsShake_128fSimple_1FreeHashFunction(sphincs_shake_128f_ctx *ctx);
 
 #endif /* FSMSW_SPHINCSSHAKE_128FSIMPLE_CONTEXT_H */

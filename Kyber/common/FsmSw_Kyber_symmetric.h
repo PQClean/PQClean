@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Fips202.h"
 #include "FsmSw_Kyber_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -45,7 +45,7 @@ typedef shake128ctx xof_state;
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Kyber_shake128_absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES], uint8 x, uint8 y);
-void FsmSw_Kyber_shake256_prf(uint8 *out, uint32 outlen, const uint8 key[KYBER_SYMBYTES], uint8 nonce);
+void FsmSw_Kyber_Shake128_Absorb(xof_state *s, const uint8 seed[KYBER_SYMBYTES], uint8 x, uint8 y);
+void FsmSw_Kyber_Shake256_Prf(uint8 *out, uint32 outlen, const uint8 key[KYBER_SYMBYTES], uint8 nonce);
 
 #endif /* FSMSW_KYBER_SYMMETRIC_H */

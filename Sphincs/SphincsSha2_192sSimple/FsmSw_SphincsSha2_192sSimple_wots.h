@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_192sSimple_context.h"
 #include "FsmSw_SphincsSha2_192sSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,8 +43,12 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsSha2_192sSimple_wots_pk_from_sig(uint8 *pk, const uint8 *sig, const uint8 *msg,
-                                                   const sphincs_sha2_192s_ctx *ctx, uint32 addr[8]);
-void FsmSw_SphincsSha2_192sSimple_chain_lengths(uint32 *lengths, const uint8 *msg);
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
+/* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
+void FsmSw_SphincsSha2_192sSimple_Wots_PkFromSig(uint8 *pk, const uint8 *sig, const uint8 *msg,
+                                                 const sphincs_sha2_192s_ctx *ctx, uint32 addr[8]);
+void FsmSw_SphincsSha2_192sSimple_Wots_ChainLengths(uint32 *lengths, const uint8 *msg);
 
 #endif /* FSMSW_SPHINCSSHA2_192SSIMPLE_WOTS_H */

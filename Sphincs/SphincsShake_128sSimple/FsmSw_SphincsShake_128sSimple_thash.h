@@ -20,8 +20,8 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsShake_128sSimple_context.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -42,7 +42,7 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsShake_128sSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks,
+void FsmSw_SphincsShake_128sSimple_Thash(uint8 *out, const uint8 *in, uint32 inblocks,
                                          const sphincs_shake_128s_ctx *ctx, const uint32 addr[8]);
 
 #endif /* FSMSW_SPHINCSSHAKE_128SSIMPLE_THASH_H */

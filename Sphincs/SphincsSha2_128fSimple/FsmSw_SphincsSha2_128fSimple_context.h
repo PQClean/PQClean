@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
+#include "FsmSw_SphincsSha2_128fSimple_params.h"
 #include "FsmSw_Types.h"
 #include "FsmSw_sha2.h"
-#include "FsmSw_SphincsSha2_128fSimple_params.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -33,13 +33,13 @@
 /**********************************************************************************************************************/
 /* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
 making it impractical and complex to hide the implementation details." */
-typedef struct 
+typedef struct
 {
-    uint8 pub_seed[FSMSW_SPHINCSSHA2_128FSIMPLE_N];
-    uint8 sk_seed[FSMSW_SPHINCSSHA2_128FSIMPLE_N];
+  uint8 pub_seed[FSMSW_SPHINCSSHA2_128FSIMPLE_N];
+  uint8 sk_seed[FSMSW_SPHINCSSHA2_128FSIMPLE_N];
 
-    // FsmSw_sha256 state that absorbed pub_seed
-    sha256ctx state_seeded;
+  // FsmSw_Sha256 state that absorbed pub_seed
+  sha256ctx state_seeded;
 
 } sphincs_sha2_128f_ctx;
 
@@ -54,6 +54,6 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsSha2_128fSimple_initialize_hash_function(sphincs_sha2_128f_ctx *ctx);
+void FsmSw_SphincsSha2_128fSimple_InitializeHashFunction(sphincs_sha2_128f_ctx *ctx);
 
 #endif /* FSMSW_SPHINCSSHA2_128FSIMPLE_CONTEXT_H */

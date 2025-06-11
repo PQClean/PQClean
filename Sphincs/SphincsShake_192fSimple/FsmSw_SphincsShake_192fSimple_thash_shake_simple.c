@@ -1,29 +1,30 @@
 /***********************************************************************************************************************
-*
-*                                          IAV GmbH
-*
-***********************************************************************************************************************/
+ *
+ *                                          IAV GmbH
+ *
+ **********************************************************************************************************************/
 /*
-*
-*  $File$
-*
-*  $Author$
-*
-*  $Date$
-*
-*  $Rev$
-*
-***********************************************************************************************************************/
+ *
+ *  $File$
+ *
+ *  $Author$
+ *
+ *  $Date$
+ *
+ *  $Rev$
+ *
+ **********************************************************************************************************************/
 
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Fips202.h"
 #include "FsmSw_CommonLib.h"
-#include "FsmSw_Sphincs_shake_address.h"
+#include "FsmSw_Fips202.h"
 #include "FsmSw_SphincsShake_192fSimple_params.h"
-#include "FsmSw_SphincsShake_192fSimple_thash.h"
 #include "FsmSw_SphincsShake_192fSimple_utils.h"
+#include "FsmSw_Sphincs_shake_address.h"
+
+#include "FsmSw_SphincsShake_192fSimple_thash.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -53,28 +54,29 @@
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_SphincsShake_192fSimple_thash
-*
-* Description: Takes an array of inblocks concatenated arrays of FSMSW_SPHINCSSHAKE_192FSIMPLE_N bytes.
-*
-* Arguments:   -       uint8                  *out:      t.b.d.
-*              - const uint8                  *in:       t.b.d.
-*              -       uint32                  inblocks: t.b.d.
-*              - const sphincs_shake_192f_ctx *ctx:      t.b.d.
-*              - const uint32                  addr[8]:  t.b.d.
-*
-***********************************************************************************************************************/
-void FsmSw_SphincsShake_192fSimple_thash(uint8 *out, const uint8 *in, uint32 inblocks,
+ * Name:        FsmSw_SphincsShake_192fSimple_Thash
+ *
+ * Description: Takes an array of inblocks concatenated arrays of FSMSW_SPHINCSSHAKE_192FSIMPLE_N bytes.
+ *
+ * Arguments:   -       uint8                  *out:      t.b.d.
+ *              - const uint8                  *in:       t.b.d.
+ *              -       uint32                  inblocks: t.b.d.
+ *              - const sphincs_shake_192f_ctx *ctx:      t.b.d.
+ *              - const uint32                  addr[8]:  t.b.d.
+ *
+ **********************************************************************************************************************/
+void FsmSw_SphincsShake_192fSimple_Thash(uint8 *out, const uint8 *in, uint32 inblocks,
                                          const sphincs_shake_192f_ctx *ctx, const uint32 addr[8])
 {
-    uint8 buf[FSMSW_SPHINCSSHAKE_192FSIMPLE_N + FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES +
-              (FSMSW_SPHINCSSHAKE_192FSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHAKE_192FSIMPLE_N)];
+  uint8 buf[FSMSW_SPHINCSSHAKE_192FSIMPLE_N + FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES +
+            (FSMSW_SPHINCSSHAKE_192FSIMPLE_THASH_BUF_LEN * FSMSW_SPHINCSSHAKE_192FSIMPLE_N)] = {0};
 
-    FsmSw_CommonLib_memcpy(buf, ctx->pub_seed, FSMSW_SPHINCSSHAKE_192FSIMPLE_N);
-    FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHAKE_192FSIMPLE_N], addr, FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES);
-    FsmSw_CommonLib_memcpy(&buf[FSMSW_SPHINCSSHAKE_192FSIMPLE_N + FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES], in,
-                           inblocks * FSMSW_SPHINCSSHAKE_192FSIMPLE_N);
+  FsmSw_CommonLib_MemCpy(buf, ctx->pub_seed, FSMSW_SPHINCSSHAKE_192FSIMPLE_N);
+  FsmSw_CommonLib_MemCpy(&buf[FSMSW_SPHINCSSHAKE_192FSIMPLE_N], addr, FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES);
+  FsmSw_CommonLib_MemCpy(&buf[FSMSW_SPHINCSSHAKE_192FSIMPLE_N + FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES], in,
+                         inblocks * FSMSW_SPHINCSSHAKE_192FSIMPLE_N);
 
-    FsmSw_Fips202_shake256(out, FSMSW_SPHINCSSHAKE_192FSIMPLE_N, buf, FSMSW_SPHINCSSHAKE_192FSIMPLE_N +
-                           FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES + (inblocks * FSMSW_SPHINCSSHAKE_192FSIMPLE_N));
+  FsmSw_Fips202_Shake256(out, FSMSW_SPHINCSSHAKE_192FSIMPLE_N, buf,
+                         FSMSW_SPHINCSSHAKE_192FSIMPLE_N + FSMSW_SPHINCSSHAKE_192FSIMPLE_ADDR_BYTES +
+                             (inblocks * FSMSW_SPHINCSSHAKE_192FSIMPLE_N));
 }

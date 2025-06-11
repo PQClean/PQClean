@@ -20,8 +20,8 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Dilithium_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,9 +43,9 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-sint32 FsmSw_Dilithium_montgomery_reduce(sint64 a);
-sint32 FsmSw_Dilithium_reduce32(sint32 a);
-sint32 FsmSw_Dilithium_caddq(sint32 a);
-sint32 FsmSw_Dilithium_freeze(sint32 a);
+sint32 FsmSw_Dilithium_MontgomeryReduce(sint64 a);
+sint32 FsmSw_Dilithium_Reduce32(sint32 a);
+sint32 FsmSw_Dilithium_CAddQ(sint32 a);
+sint32 FsmSw_Dilithium_Freeze(sint32 a);
 
 #endif /* FSMSW_DILITHIUM_REDUCE_H */

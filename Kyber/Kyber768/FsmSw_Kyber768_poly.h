@@ -20,8 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Kyber768_params.h"
+#include "FsmSw_Kyber_CommonLib.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -30,13 +31,6 @@
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
-/* polyspace +3 MISRA2012:D4.8 [Justified:]"Structs are used across multiple files, 
-making it impractical and complex to hide the implementation details." */
-typedef struct 
-{
-    sint16 coeffs[KYBER_N];
-} poly768;
-
 /**********************************************************************************************************************/
 /* GLOBAL VARIABLES                                                                                                   */
 /**********************************************************************************************************************/
@@ -48,29 +42,18 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Kyber768_poly_compress(uint8 r[KYBER768_POLYCOMPRESSEDBYTES], const poly768 *a);
-void FsmSw_Kyber768_poly_decompress(poly768 *r, const uint8 a[KYBER768_POLYCOMPRESSEDBYTES]);
+void FsmSw_Kyber768_Poly_Compress(uint8 r[KYBER768_POLYCOMPRESSEDBYTES], const poly *a);
+void FsmSw_Kyber768_Poly_Decompress(poly *r, const uint8 a[KYBER768_POLYCOMPRESSEDBYTES]);
 
-void FsmSw_Kyber768_poly_tobytes(uint8 r[KYBER_POLYBYTES], const poly768 *a);
-void FsmSw_Kyber768_poly_frombytes(poly768 *r, const uint8 a[KYBER_POLYBYTES]);
+void FsmSw_Kyber768_Poly_FromMsg(poly *r, const uint8 msg[KYBER768_INDCPA_MSGBYTES]);
+void FsmSw_Kyber768_Poly_ToMsg(uint8 msg[KYBER768_INDCPA_MSGBYTES], const poly *a);
 
-void FsmSw_Kyber768_poly_frommsg(poly768 *r, const uint8 msg[KYBER768_INDCPA_MSGBYTES]);
-void FsmSw_Kyber768_poly_tomsg(uint8 msg[KYBER768_INDCPA_MSGBYTES], const poly768 *a);
+void FsmSw_Kyber768_Poly_GetNoiseEta1(poly *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce);
 
-void FsmSw_Kyber768_poly_getnoise_eta1(poly768 *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce);
-
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_Kyber768_poly_getnoise_eta2(poly768 *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce);
-
-void FsmSw_Kyber768_poly_ntt(poly768 *r);
-void FsmSw_Kyber768_poly_invntt_tomont(poly768 *r);
-void FsmSw_Kyber768_poly_basemul_montgomery(poly768 *r, const poly768 *a, const poly768 *b);
-void FsmSw_Kyber768_poly_tomont(poly768 *r);
-
-void FsmSw_Kyber768_poly_reduce(poly768 *r);
-
-void FsmSw_Kyber768_poly_add(poly768 *r, const poly768 *a, const poly768 *b);
-void FsmSw_Kyber768_poly_sub(poly768 *r, const poly768 *a, const poly768 *b);
+void FsmSw_Kyber768_Poly_GetNoiseEta2(poly *r, const uint8 seed[KYBER_SYMBYTES], uint8 nonce);
 
 #endif /* FSMSW_KYBER768_POLY_H */

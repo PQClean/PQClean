@@ -40,7 +40,7 @@ static uint32 next = 1;
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static uint8  iav_commonlib_rand_byte(void);
+static uint8 iav_commonlib_rand_byte(void);
 static uint32 iav_commonlib_rand(void);
 
 /**********************************************************************************************************************/
@@ -56,9 +56,9 @@ static uint32 iav_commonlib_rand(void);
 ***********************************************************************************************************************/
 static uint8 iav_commonlib_rand_byte(void)
 {
-    /* polyspace +2 MISRA2012:D1.1 [Justified:]"Generates a random byte. Float conversion is acceptable 
+  /* polyspace +2 MISRA2012:D1.1 [Justified:]"Generates a random byte. Float conversion is acceptable 
     due to randomness and planned future replacement of the function." */
-    return (uint8)((float32)(256.0f * ((float32)((float32)iav_commonlib_rand()/32768.0f))));
+  return (uint8)((float32)(256.0f * ((float32)((float32)iav_commonlib_rand() / 32768.0f))));
 }
 
 /***********************************************************************************************************************
@@ -71,16 +71,15 @@ static uint8 iav_commonlib_rand_byte(void)
 ***********************************************************************************************************************/
 static uint32 iav_commonlib_rand(void)
 {
-    next = (next * 1103515245u) + 12345u;
-    return( (uint32)(next/65536u) & (32768u - 1u));
-
+  next = (next * 1103515245u) + 12345u;
+  return ((uint32)(next / 65536u) & (32768u - 1u));
 }
 
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_CommonLib_memcpy
+* Name:        FsmSw_CommonLib_MemCpy
 *
 * Description: This function copies n values from dest to src
 *
@@ -91,22 +90,22 @@ static uint32 iav_commonlib_rand(void)
 ***********************************************************************************************************************/
 /* polyspace +2 CODE-METRICS:CALLING [Justified:]"[Value: 175]The increase to 175 is due 
 to recent refactoring and code improvements." */
-void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
+void FsmSw_CommonLib_MemCpy(void *dest, const void *src, const uint32 n)
 {
-    uint32 i = 0;
-    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  uint32 i = 0;
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
-    uint8 *destPtr = (uint8*)dest;
-    const uint8* srcPtr  = (const uint8*)src;
+  uint8 *destPtr      = (uint8 *)dest;
+  const uint8 *srcPtr = (const uint8 *)src;
 
-    for (i=0; i<n; i++)
-    {
-        destPtr[i] = srcPtr[i];
-    }
+  for (i = 0; i < n; i++)
+  {
+    destPtr[i] = srcPtr[i];
+  }
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_CommonLib_memset
+* Name:        FsmSw_CommonLib_MemSet
 *
 * Description: This function sets n values from dest to value
 *
@@ -115,21 +114,21 @@ void FsmSw_CommonLib_memcpy(void *dest, const void * src,  const uint32 n)
 *              - const uint32  n:     number of values
 *
 ***********************************************************************************************************************/
-void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
+void FsmSw_CommonLib_MemSet(void *dest, const uint8 value, const uint32 n)
 {
-    uint32 i = 0;
-    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  uint32 i = 0;
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
-    uint8 *destPtr = (uint8*)dest;
+  uint8 *destPtr = (uint8 *)dest;
 
-    for (i=0; i<n; i++)
-    {
-        destPtr[i] = value;
-    }
+  for (i = 0; i < n; i++)
+  {
+    destPtr[i] = value;
+  }
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_CommonLib_memcmp
+* Name:        FsmSw_CommonLib_MemCmp
 *
 * Description: This function compares dest to src
 *
@@ -139,28 +138,28 @@ void FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n)
 *
 * Returns 0 success, otherwise 1
 ***********************************************************************************************************************/
-uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
+uint8 FsmSw_CommonLib_MemCmp(void *dest, const void *src, const uint32 n)
 {
-    uint32 i = 0;
-    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  uint32 i = 0;
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
-    uint8 *destPtr = (uint8*)dest;
-    const uint8* srcPtr  = (const uint8*)src;
-    uint8 retVal = 0;
+  uint8 *destPtr      = (uint8 *)dest;
+  const uint8 *srcPtr = (const uint8 *)src;
+  uint8 retVal        = 0;
 
-    for (i=0; i<n; i++)
+  for (i = 0; i < n; i++)
+  {
+    if (destPtr[i] != srcPtr[i])
     {
-        if (destPtr[i] != srcPtr[i])
-        {
-            retVal = 1;
-        }
+      retVal = 1;
     }
+  }
 
-    return retVal;
+  return retVal;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_CommonLib_memmove
+* Name:        FsmSw_CommonLib_MemMove
 *
 * Description: This function moves n values from dest to src
 *
@@ -169,29 +168,28 @@ uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n)
 *              - const uint32  n:    number of  values
 *
 ***********************************************************************************************************************/
-void FsmSw_CommonLib_memmove(void *dest, const void * src,  const uint32 n)
+void FsmSw_CommonLib_MemMove(void *dest, const void *src, const uint32 n)
 {
-    sint32 i = 0;
-    /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
+  sint32 i = 0;
+  /* polyspace +2 MISRA2012:11.5 [Justified:]"Necessary conversion from void* to object* for functionality. 
     Ensured proper alignment and validity." */
-    uint8 *destPtr = (uint8*)dest;
-    const uint8* srcPtr  = (const uint8*)src;
+  uint8 *destPtr      = (uint8 *)dest;
+  const uint8 *srcPtr = (const uint8 *)src;
 
-    if (destPtr > srcPtr)
-    {    /* copy from right to left */
-        for (i = (sint32)((sint32)n - (sint32)1u); i>=0; i--)
-        {
-            destPtr[i] = srcPtr[i];
-        }
+  if (destPtr > srcPtr)
+  { /* copy from right to left */
+    for (i = (sint32)((sint32)n - (sint32)1u); i >= 0; i--)
+    {
+      destPtr[i] = srcPtr[i];
     }
-    else
-    {   /* copy from left to right */
-        for (i=0; i<(sint32)n; i++)
-        {
-            destPtr[i] = srcPtr[i];
-        }
-
+  }
+  else
+  { /* copy from left to right */
+    for (i = 0; i < (sint32)n; i++)
+    {
+      destPtr[i] = srcPtr[i];
     }
+  }
 }
 
 /***********************************************************************************************************************
@@ -204,24 +202,24 @@ void FsmSw_CommonLib_memmove(void *dest, const void * src,  const uint32 n)
 *
 * Returns 0 (success)
 ***********************************************************************************************************************/
-uint8 FsmSw_CommonLib_randombytes(uint8 *output, const uint32 n)
+uint8 FsmSw_CommonLib_RandomBytes(uint8 *output, const uint32 n)
 {
-    for (uint32 i = 0; i < n; i++)
-    {
-        output[i] = iav_commonlib_rand_byte();
-    }
+  for (uint32 i = 0; i < n; i++)
+  {
+    output[i] = iav_commonlib_rand_byte();
+  }
 
-    return 0;
+  return 0;
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_CommonLib_srand
+* Name:        FsmSw_CommonLib_SRand
 *
 * Description: Initialize the random function with a seed
 *
 * Arguments:   - const uint32 seed: start seed for generating random values
 ***********************************************************************************************************************/
-void FsmSw_CommonLib_srand(const uint32 seed)
+void FsmSw_CommonLib_SRand(const uint32 seed)
 {
-    next = seed;
+  next = seed;
 }

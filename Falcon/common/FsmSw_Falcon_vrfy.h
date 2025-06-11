@@ -20,7 +20,7 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-
+#include "FsmSw_Types.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
@@ -40,13 +40,12 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Falcon_to_ntt_monty(uint16 *h, uint32 logn);
+void FsmSw_Falcon_ToNttMonty(uint16 *h, uint32 logn);
 
-sint32 FsmSw_Falcon_verify_raw(const uint16 *c0, const sint16 *s2, const uint16 *h, uint32 logn, uint8 *tmp);
+sint32 FsmSw_Falcon_VerifyRaw(const uint16 *c0, const sint16 *s2, const uint16 *h, uint32 logn, uint8 *tmp);
 
-sint32 FsmSw_Falcon_compute_public(uint16 *h, const sint8 *f, const sint8 *g, uint32 logn, uint8 *tmp);
+sint32 FsmSw_Falcon_ComputePublic(uint16 *h, const sint8 *f, const sint8 *g, uint32 logn, uint8 *tmp);
 
-sint32 FsmSw_Falcon_complete_private(sint8 *G, const sint8 *f, const sint8 *g, const sint8 *F, uint32 logn, uint8 *tmp);
-
+sint32 FsmSw_Falcon_CompletePrivate(sint8 *G, const sint8 *f, const sint8 *g, const sint8 *F, uint32 logn, uint8 *tmp);
 
 #endif /* FSMSW_FALCON_VRFY_H */

@@ -20,10 +20,10 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Dilithium3_params.h"
 #include "FsmSw_Dilithium3_poly.h"
 #include "FsmSw_Dilithium3_polyvec.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -44,11 +44,12 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Dilithium3_challenge(poly_D3 *c, const uint8 seed[SEEDBYTES_DILITHIUM]);
-sint8 FsmSw_Dilithium3_crypto_sign_keypair(uint8 *pk, uint8 *sk);
-sint8 FsmSw_Dilithium3_crypto_sign_signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen, const uint8 *sk);
-sint8 FsmSw_Dilithium3_crypto_sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk);
-sint8 FsmSw_Dilithium3_crypto_sign_verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen, const uint8 *pk);
-sint8 FsmSw_Dilithium3_crypto_sign_open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen, const uint8 *pk);
+void FsmSw_Dilithium3_Challenge(poly_D3 *c, const uint8 seed[SEEDBYTES_DILITHIUM]);
+sint8 FsmSw_Dilithium3_Crypto_Sign_KeyPair(uint8 *pk, uint8 *sk);
+sint8 FsmSw_Dilithium3_Crypto_Sign_Signature(uint8 *sig, uint32 *siglen, const uint8 *m, uint32 mlen, const uint8 *sk);
+sint8 FsmSw_Dilithium3_Crypto_Sign(uint8 *sm, uint32 *smlen, const uint8 *m, uint32 mlen, const uint8 *sk);
+sint8 FsmSw_Dilithium3_Crypto_Sign_Verify(const uint8 *sig, uint32 siglen, const uint8 *m, uint32 mlen,
+                                          const uint8 *pk);
+sint8 FsmSw_Dilithium3_Crypto_Sign_Open(uint8 *m, uint32 *mlen, const uint8 *sm, uint32 smlen, const uint8 *pk);
 
 #endif /* FSMSW_DILITHIUM3_SIGN_H */

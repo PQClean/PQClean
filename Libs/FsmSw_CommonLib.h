@@ -26,7 +26,7 @@
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
 #define UINT32_MAXVAL ((uint32)4294967295u) /* This value is 2^32 - 1 */
-#define NULL_PTR ((void *)0)
+#define NULL_PTR      ((void *)0)
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
 /**********************************************************************************************************************/
@@ -42,12 +42,11 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void  FsmSw_CommonLib_memcpy(void *dest, const void * src, const uint32 n);
-void  FsmSw_CommonLib_memset(void *dest, const uint8 value, const uint32 n);
-uint8 FsmSw_CommonLib_memcmp(void *dest, const void * src,  const uint32 n);
-void  FsmSw_CommonLib_memmove(void *dest, const void * src, const uint32 n);
-uint8 FsmSw_CommonLib_randombytes(uint8 *output, const uint32 n);
-void  FsmSw_CommonLib_srand(const uint32 seed);
-
+void FsmSw_CommonLib_MemCpy(void *dest, const void *src, const uint32 n);
+void FsmSw_CommonLib_MemSet(void *dest, const uint8 value, const uint32 n);
+uint8 FsmSw_CommonLib_MemCmp(void *dest, const void *src, const uint32 n);
+void FsmSw_CommonLib_MemMove(void *dest, const void *src, const uint32 n);
+uint8 FsmSw_CommonLib_RandomBytes(uint8 *output, const uint32 n);
+void FsmSw_CommonLib_SRand(const uint32 seed);
 
 #endif /* FSMSW_COMMONLIB_H */

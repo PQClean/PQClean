@@ -20,10 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_256sSimple_context.h"
 #include "FsmSw_SphincsSha2_256sSimple_params.h"
-
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -34,11 +33,11 @@
 /**********************************************************************************************************************/
 typedef struct
 {
-    uint8 *wots_sig;
-    uint32 wots_sign_leaf; /* The index of the WOTS we're using to sign */
-    uint32 *wots_steps;
-    uint32 leaf_addr[8];
-    uint32 pk_addr[8];
+  uint8 *wots_sig;
+  uint32 wots_sign_leaf; /* The index of the WOTS we're using to sign */
+  uint32 *wots_steps;
+  uint32 leaf_addr[8];
+  uint32 pk_addr[8];
 } Fsmsw_Sphincssha2_256sSimple_LeafInfoX1_T;
 /**********************************************************************************************************************/
 /* GLOBAL VARIABLES                                                                                                   */
@@ -51,9 +50,11 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
+/* polyspace +4 ISO-17961:funcdecl [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
+and avoids confusion with other functions. Therefore, this warning is a false positive." */
 /* polyspace +2 MISRA2012:5.1 [Justified:]"The identifiers are distinct. The naming convention ensures clarity 
 and avoids confusion with other functions. Therefore, this warning is a false positive." */
-void FsmSw_SphincsSha2_256sSimple_wots_gen_leafx1(uint8 *dest, const sphincs_sha2_256s_ctx *ctx, uint32 leaf_idx,
-                                                  void *v_info);
+void FsmSw_SphincsSha2_256sSimple_Wots_GenLeafX1(uint8 *dest, const sphincs_sha2_256s_ctx *ctx, uint32 leaf_idx,
+                                                 void *v_info);
 
 #endif /* FSMSW_SPHINCSSHA2_256SSIMPLE_WOTSX1_H */

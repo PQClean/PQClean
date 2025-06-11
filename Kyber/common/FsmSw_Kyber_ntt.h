@@ -20,8 +20,8 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Kyber_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,8 +43,8 @@ extern const sint16 FsmSw_Kyber_zetas[128];
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Kyber_ntt(sint16 r[256]);
-void FsmSw_Kyber_invntt(sint16 r[256]);
-void FsmSw_Kyber_basemul(sint16 r[2], const sint16 a[2], const sint16 b[2], sint16 zeta);
+void FsmSw_Kyber_Ntt(sint16 r[256]);
+void FsmSw_Kyber_Invntt(sint16 r[256]);
+void FsmSw_Kyber_Basemul(sint16 r[2], const sint16 a[2], const sint16 b[2], sint16 zeta);
 
 #endif /* FSMSW_KYBER_NTT_H */

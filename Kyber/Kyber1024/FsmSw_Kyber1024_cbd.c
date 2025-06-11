@@ -19,10 +19,10 @@
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
 #include "FsmSw_Kyber1024_params.h"
-#include "FsmSw_Kyber1024_cbd.h"
-
+#include "FsmSw_Kyber_CommonLib.h"
 #include "FsmSw_Types.h"
 
+#include "FsmSw_Kyber1024_cbd.h"
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
@@ -42,74 +42,14 @@
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTION PROTOTYPES                                                                                        */
 /**********************************************************************************************************************/
-static uint32 fsmsw_kyber1024_Load32Littleendian(const uint8 x[4]);
-static void fsmsw_kyber1024_Cbd2(poly1024 *r, const uint8 buf[2u * KYBER_N / 4u]);
-
 /**********************************************************************************************************************/
 /* PRIVATE FUNCTIONS DEFINITIONS                                                                                      */
 /**********************************************************************************************************************/
-/***********************************************************************************************************************
-* Name:        fsmsw_kyber1024_Load32Littleendian
-*
-* Description: load 4 bytes into a 32-bit integer
-*              in little-endian order
-*
-* Arguments:   - const uint8 *x: pointer to input byte array
-*
-* Returns 32-bit unsigned integer loaded from x
-***********************************************************************************************************************/
-static uint32 fsmsw_kyber1024_Load32Littleendian(const uint8 x[4])
-{
-    uint32 r = 0;
-
-    r  = (uint32)x[0];
-    r |= (uint32)x[1] << 8;
-    r |= (uint32)x[2] << 16;
-    r |= (uint32)x[3] << 24;
-
-    return r;
-}
-
-/***********************************************************************************************************************
-* Name:        cbd2
-*
-* Description: Given an array of uniformly random bytes, compute
-*              polynomial with coefficients distributed according to
-*              a centered binomial distribution with parameter eta=2
-*
-* Arguments:   -       poly  *r:   pointer to output polynomial
-*              - const uint8 *buf: pointer to input byte array
-***********************************************************************************************************************/
-static void fsmsw_kyber1024_Cbd2(poly1024 *r, const uint8 buf[2u * KYBER_N / 4u])
-{
-    uint8  i = 0;
-    uint8  j = 0;
-    uint32 t = 0;
-    uint32 d = 0;
-    sint16 a = 0;
-    sint16 b = 0;
-
-    for (i = 0; i < (KYBER_N / 8u); i++)
-    {
-        t  = fsmsw_kyber1024_Load32Littleendian(&buf[4u * i]);
-        d  = t & 0x55555555u;
-        d += (t >> 1u) & 0x55555555u;
-
-        for (j = 0; (j < 8u); j++)
-        {
-            a = (sint16)((uint16)((uint16)((d >> ((4u * j)))) & 0x3u));
-            b = (sint16)((uint16)((uint16)((d >> ((4u * j) + 2u))) & 0x3u));
-            r->coeffs[(8u * i) + j] = a - b;
-        }
-    }
-}
-
-
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTIONS DEFINITIONS                                                                                       */
 /**********************************************************************************************************************/
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber1024_poly_cbd_eta1
+* Name:        FsmSw_Kyber1024_Poly_Cbd_Eta1
 *
 * Description: Given an array of uniformly random bytes, compute
 *              polynomial with coefficients distributed according to
@@ -118,13 +58,13 @@ static void fsmsw_kyber1024_Cbd2(poly1024 *r, const uint8 buf[2u * KYBER_N / 4u]
 * Arguments:   -       poly  *r:   pointer to output polynomial
 *              - const uint8 *buf: pointer to input byte array
 ***********************************************************************************************************************/
-void FsmSw_Kyber1024_poly_cbd_eta1(poly1024 *r, const uint8 buf[KYBER1024_ETA1 * KYBER_N / 4u])
+void FsmSw_Kyber1024_Poly_Cbd_Eta1(poly *r, const uint8 buf[KYBER1024_ETA1 * KYBER_N / 4u])
 {
-    fsmsw_kyber1024_Cbd2(r, buf);
+  FsmSw_Kyber_Cbd2(r, buf);
 }
 
 /***********************************************************************************************************************
-* Name:        FsmSw_Kyber1024_poly_cbd_eta2
+* Name:        FsmSw_Kyber1024_Poly_Cbd_Eta2
 *
 * Description: Given an array of uniformly random bytes, compute
 *              polynomial with coefficients distributed according to
@@ -133,7 +73,7 @@ void FsmSw_Kyber1024_poly_cbd_eta1(poly1024 *r, const uint8 buf[KYBER1024_ETA1 *
 * Arguments:   -       poly  *r:   pointer to output polynomial
 *              - const uint8 *buf: pointer to input byte array
 ***********************************************************************************************************************/
-void FsmSw_Kyber1024_poly_cbd_eta2(poly1024 *r, const uint8 buf[KYBER1024_ETA2 * KYBER_N / 4u])
+void FsmSw_Kyber1024_Poly_Cbd_Eta2(poly *r, const uint8 buf[KYBER1024_ETA2 * KYBER_N / 4u])
 {
-    fsmsw_kyber1024_Cbd2(r, buf);
+  FsmSw_Kyber_Cbd2(r, buf);
 }

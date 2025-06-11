@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_128fSimple_context.h"
 #include "FsmSw_SphincsSha2_128fSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -44,15 +44,15 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsSha2_128fSimple_prf_addr(uint8 *out, const sphincs_sha2_128f_ctx *ctx, const uint32 addr[8]);
+void FsmSw_SphincsSha2_128fSimple_PrfAddr(uint8 *out, const sphincs_sha2_128f_ctx *ctx, const uint32 addr[8]);
 
-void FsmSw_SphincsSha2_128fSimple_gen_message_random(uint8 *R, const uint8 *sk_prf, const uint8 *optrand,
-                                                     const uint8 *m, uint32 mlen, const sphincs_sha2_128f_ctx *ctx);
+void FsmSw_SphincsSha2_128fSimple_GenMessageRandom(uint8 *R, const uint8 *sk_prf, const uint8 *optrand, const uint8 *m,
+                                                   uint32 mlen, const sphincs_sha2_128f_ctx *ctx);
 
-void FsmSw_SphincsSha2_128fSimple_hash_message(uint8 *digest, uint64 *tree, uint32 *leaf_idx, const uint8 *R,
-                                               const uint8 *pk, const uint8 *m, uint32 mlen,
-                                               const sphincs_sha2_128f_ctx *ctx);
+void FsmSw_SphincsSha2_128fSimple_HashMessage(uint8 *digest, uint64 *tree, uint32 *leaf_idx, const uint8 *R,
+                                              const uint8 *pk, const uint8 *m, uint32 mlen,
+                                              const sphincs_sha2_128f_ctx *ctx);
 
-void FsmSw_SphincsSha2_128fSimple_mgf1_512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
+void FsmSw_SphincsSha2_128fSimple_Mgf1512(uint8 *out, uint32 outlen, const uint8 *in, uint32 inlen);
 
 #endif /* FSMSW_SPHINCSSHA2_128FSIMPLE_HASH_H */

@@ -22,7 +22,7 @@
  *
  * This API has some non-trivial usage rules:
  *  - All public functions (i.e. the non-static ones) must be referenced with the FsmSw_Falcon_ macro (e.g.
- *    FsmSw_Falcon_verify_raw for the verify_raw() function). That macro adds a prefix to the name, which is
+ *    FsmSw_Falcon_VerifyRaw for the verify_raw() function). That macro adds a prefix to the name, which is
  *    configurable with the FALCON_PREFIX macro. This allows compiling the code into a specific "namespace" and
  *    potentially including several versions of this code into a single application (e.g. to have an AVX2 and a
  *    non-AVX2 variants and select the one to use at runtime based on availability of AVX2 opcodes).
@@ -35,7 +35,7 @@
  *    particular 32-bit x86 with the 387 FPU), this requires setting an hardware control word. The caller MUST use
  *    set_fpu_cw() to ensure proper precision:
  *      oldcw = set_fpu_cw(2);
- *      FsmSw_Falcon_sign_dyn(...);
+ *      FsmSw_Falcon_Sign_Dyn(...);
  *      set_fpu_cw(oldcw);
  *
  *    On systems where the native floating-point precision is already proper, or integer-based emulation is used, the
@@ -44,14 +44,14 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_Fips202.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
 /**********************************************************************************************************************/
 /* API is defined to be easily replaced with the fips202.h API defined as part of PQClean. */
-#define inner_shake256_context                shake256incctx
+#define inner_shake256_context shake256incctx
 
 /**********************************************************************************************************************/
 /* TYPES                                                                                                              */
@@ -73,9 +73,9 @@ typedef uint64 fpr;
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_Falcon_hash_to_point_vartime(inner_shake256_context *sc, uint16 *x, uint32 logn);
-void FsmSw_Falcon_hash_to_point_ct(inner_shake256_context *sc, uint16 *x, uint32 logn, uint8 *tmp);
-sint32 FsmSw_Falcon_is_short(const sint16 *s1, const sint16 *s2, uint32 logn);
-sint32 FsmSw_Falcon_is_short_half(uint32 sqn, const sint16 *s2, uint32 logn);
+void FsmSw_Falcon_HashToPointVartime(inner_shake256_context *sc, uint16 *x, uint32 logn);
+void FsmSw_Falcon_HashToPointCt(inner_shake256_context *sc, uint16 *x, uint32 logn, uint8 *tmp);
+sint32 FsmSw_Falcon_IsShort(const sint16 *s1, const sint16 *s2, uint32 logn);
+sint32 FsmSw_Falcon_IsShortHalf(uint32 sqn, const sint16 *s2, uint32 logn);
 
 #endif /* FSMSW_FALCON_COMMON_H */

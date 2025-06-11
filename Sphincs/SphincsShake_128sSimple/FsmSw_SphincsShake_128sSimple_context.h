@@ -20,8 +20,8 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsShake_128sSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -34,8 +34,8 @@
 making it impractical and complex to hide the implementation details." */
 typedef struct
 {
-    uint8 pub_seed[FSMSW_SPHINCSSHAKE_128SSIMPLE_N];
-    uint8 sk_seed[FSMSW_SPHINCSSHAKE_128SSIMPLE_N];
+  uint8 pub_seed[FSMSW_SPHINCSSHAKE_128SSIMPLE_N];
+  uint8 sk_seed[FSMSW_SPHINCSSHAKE_128SSIMPLE_N];
 
 } sphincs_shake_128s_ctx;
 
@@ -50,8 +50,8 @@ typedef struct
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsShake_128sSimple_initialize_hash_function(sphincs_shake_128s_ctx *ctx);
+void FsmSw_SphincsShake_128sSimple_InitializeHashFunction(sphincs_shake_128s_ctx *ctx);
 
-void FsmSw_SphincsShake_128sSimple_1_free_hash_function(sphincs_shake_128s_ctx *ctx);
+void FsmSw_SphincsShake_128sSimple_1FreeHashFunction(sphincs_shake_128s_ctx *ctx);
 
 #endif /* FSMSW_SPHINCSSHAKE_128SSIMPLE_CONTEXT_H */

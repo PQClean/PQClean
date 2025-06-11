@@ -20,9 +20,9 @@
 /**********************************************************************************************************************/
 /* INCLUDES                                                                                                           */
 /**********************************************************************************************************************/
-#include "FsmSw_Types.h"
 #include "FsmSw_SphincsSha2_256sSimple_context.h"
 #include "FsmSw_SphincsSha2_256sSimple_params.h"
+#include "FsmSw_Types.h"
 
 /**********************************************************************************************************************/
 /* DEFINES                                                                                                            */
@@ -43,18 +43,14 @@
 /**********************************************************************************************************************/
 /* PUBLIC FUNCTION PROTOTYPES                                                                                         */
 /**********************************************************************************************************************/
-void FsmSw_SphincsSha2_256sSimple_compute_root(uint8 *root, const uint8 *leaf, uint32 leaf_idx, uint32 idx_offset,
-                                               const uint8 *auth_path, uint32 tree_height,
-                                               const sphincs_sha2_256s_ctx *ctx, uint32 addr[8]);
+void FsmSw_SphincsSha2_256sSimple_ComputeRoot(uint8 *root, const uint8 *leaf, uint32 leaf_idx, uint32 idx_offset,
+                                              const uint8 *auth_path, uint32 tree_height,
+                                              const sphincs_sha2_256s_ctx *ctx, uint32 addr[8]);
 
-void FsmSw_SphincsSha2_256sSimple_treehash(uint8 *root, uint8 *auth_path, const sphincs_sha2_256s_ctx *ctx,
+void FsmSw_SphincsSha2_256sSimple_TreeHash(uint8 *root, uint8 *auth_path, const sphincs_sha2_256s_ctx *ctx,
                                            uint32 leaf_idx, uint32 idx_offset, uint32 tree_height,
-                                           void (*gen_leaf)
-                                           (
-                                             uint8 *leaf,
-                                             const sphincs_sha2_256s_ctx *ctx,
-                                             uint32 addr_idx, const uint32 tree_addr[8]
-                                           ),
+                                           void (*gen_leaf)(uint8 *leaf, const sphincs_sha2_256s_ctx *ctx,
+                                                            uint32 addr_idx, const uint32 tree_addr[8]),
                                            uint32 tree_addr[8]);
 
 #endif /* FSMSW_SPHINCSSHA2_256SSIMPLE_UTILS_H */
