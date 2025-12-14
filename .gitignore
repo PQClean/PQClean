@@ -11,3 +11,16 @@ bin/
 
 __pycache__
 testcases/
+*.o
+*.a
+*.so
+*.key
+*.dat
+server
+client
+eve
+server_tofu
+client_tofu
+server_sign
+client_sign
+eve_sign
