@@ -1,5 +1,15 @@
 # PQClean
 
+> [!WARNING]
+> **Deprecation Notice:** [PQClean is no longer under active maintenance and we plan to archive it as read-only in July 2026](https://github.com/PQClean/PQClean/issues/604).
+> For maintained implementations of standardized PQC, you may want to consider the [PQ Code Package](https://github.com/pq-code-package).
+>
+> For implementations of the following algorithms not yet supported by PQ Code Package, refer to:
+> * **Falcon/FN-DSA**: [Thomas Pornin's implementations](https://github.com/pornin?tab=repositories&q=fn-dsa&type=&language=&sort=)
+> * **HQC**: https://gitlab.com/pqc-hqc/hqc/
+> * **Classic McEliece**: [libmceliece](https://lib.mceliece.org)
+
+
 _[See the build status for each component here](.github/workflows/BADGES.md)_
 
 **PQClean**, in short, is an effort to collect **clean** implementations of the post-quantum
