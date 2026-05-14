@@ -94,6 +94,8 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     uint16_t deg_X, deg_X_sigma_p;
     uint16_t dd;
     uint16_t mu;
+    uint16_t diff;
+    uint16_t not_last;
 
     uint16_t i;
 
@@ -122,7 +124,8 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
         mask12 = mask1 & mask2;
         deg_sigma ^= mask12 & (deg_X_sigma_p ^ deg_sigma);
 
-        uint16_t not_last = (uint16_t)(-((uint16_t)(mu - (2 * PARAM_DELTA - 1)) != 0));
+        diff = mu - (2 * PARAM_DELTA - 1);
+        not_last = (uint16_t)(-(uint16_t)((diff | (0 - diff)) >> 15));
 
         pp ^= not_last & mask12 & (mu ^ pp);
         d_p ^= not_last & mask12 & (d ^ d_p);
