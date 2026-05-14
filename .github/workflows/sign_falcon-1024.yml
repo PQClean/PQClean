@@ -33,8 +33,6 @@ on:
       # Build if any files in the root change, except .md files
       - '*'
       - '!*.md'
-  schedule:
-    - cron: '5 4 * * *'
 
 name: Test falcon-1024
 
