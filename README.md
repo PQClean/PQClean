@@ -1,10 +1,15 @@
 # PQClean
 
 > [!WARNING]
-> **Deprecation Notice:** [PQClean is no longer under active maintenance and we plan to archive it as read-only in July 2026](https://github.com/PQClean/PQClean/issues/604).
-> For maintained implementations of standardized PQC, you may want to consider the [PQ Code Package](https://github.com/pq-code-package).
+> **Retirement Notice:** PQClean is retired and archived as read-only. See [issue #604](https://github.com/PQClean/PQClean/issues/604) for background.
+> For maintained implementations of standardized PQC, consider the [PQ Code Package](https://github.com/pq-code-package) organization, including these alternatives (list reflects the landscape at archival time and may go stale):
 >
-> For implementations of the following algorithms not yet supported by PQ Code Package, refer to:
+> * **ML-KEM (Kyber)**: [mlkem-native](https://github.com/pq-code-package/mlkem-native)
+> * **ML-DSA (Dilithium)**: [mldsa-native](https://github.com/pq-code-package/mldsa-native)
+> * **SLH-DSA (SPHINCS+)**: [slhdsa-c](https://github.com/pq-code-package/slhdsa-c)
+> * **Broad algorithm coverage / library integration**: [liboqs](https://github.com/open-quantum-safe/liboqs)
+>
+> For implementations of the following algorithms not covered by the above, refer to:
 > * **Falcon/FN-DSA**: [Thomas Pornin's implementations](https://github.com/pornin?tab=repositories&q=fn-dsa&type=&language=&sort=)
 > * **HQC**: https://gitlab.com/pqc-hqc/hqc/
 > * **Classic McEliece**: [libmceliece](https://lib.mceliece.org)
