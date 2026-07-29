@@ -1,0 +1,46 @@
+on:
+  issues:
+    types: [opened]
+  pull_request_target:
+    types: [opened]
+
+name: Archival notice
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Post archival notice on issue
+        if: github.event_name == 'issues'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `**Note: PQClean is being archived in July 2026** (see #604).
+
+            We are no longer accepting new features or pull requests. Security issues reported against schemes may remain open for posterity but will likely not be fixed or merged.
+
+            Thank you for your contribution to PQClean.`
+            })
+
+      - name: Post archival notice on PR
+        if: github.event_name == 'pull_request_target'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body: `**Note: PQClean is being archived in July 2026** (see #604).
+
+            We are no longer accepting new features or pull requests. Security issues reported against schemes may remain open for posterity but will likely not be merged.
+
+            Thank you for your contribution to PQClean.`
+            })
