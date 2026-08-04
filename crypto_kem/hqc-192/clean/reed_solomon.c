@@ -94,6 +94,8 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
     uint16_t deg_X, deg_X_sigma_p;
     uint16_t dd;
     uint16_t mu;
+    uint16_t diff;
+    uint16_t not_last;
 
     uint16_t i;
 
@@ -122,18 +124,17 @@ static uint16_t compute_elp(uint16_t *sigma, const uint16_t *syndromes) {
         mask12 = mask1 & mask2;
         deg_sigma ^= mask12 & (deg_X_sigma_p ^ deg_sigma);
 
-        if (mu == (2 * PARAM_DELTA - 1)) {
-            break;
-        }
+        diff = mu - (2 * PARAM_DELTA - 1);
+        not_last = (uint16_t)(-(uint16_t)((diff | (0 - diff)) >> 15));
 
-        pp ^= mask12 & (mu ^ pp);
-        d_p ^= mask12 & (d ^ d_p);
+        pp ^= not_last & mask12 & (mu ^ pp);
+        d_p ^= not_last & mask12 & (d ^ d_p);
         for (i = PARAM_DELTA; i; --i) {
-            X_sigma_p[i] = (mask12 & sigma_copy[i - 1]) ^ (~mask12 & X_sigma_p[i - 1]);
+            X_sigma_p[i] = (uint16_t)((not_last & ((mask12 & sigma_copy[i - 1]) ^ (~mask12 & X_sigma_p[i - 1]))) | (~not_last & X_sigma_p[i]));
         }
 
-        deg_sigma_p ^= mask12 & (deg_sigma_copy ^ deg_sigma_p);
-        d = syndromes[mu + 1];
+        deg_sigma_p ^= not_last & mask12 & (deg_sigma_copy ^ deg_sigma_p);
+        d ^= not_last & (syndromes[mu + 1] ^ d);
 
         for (i = 1; (i <= mu + 1) && (i <= PARAM_DELTA); ++i) {
             d ^= PQCLEAN_HQC192_CLEAN_gf_mul(sigma[i], syndromes[mu + 1 - i]);
@@ -303,7 +304,7 @@ static void correct_errors(uint8_t *cdw, const uint16_t *error_values) {
  * @param[in] cdw Array of size VEC_N1_SIZE_64 storing the received word
  */
 void PQCLEAN_HQC192_CLEAN_reed_solomon_decode(uint8_t *msg, uint8_t *cdw) {
-    uint16_t syndromes[2 * PARAM_DELTA] = {0};
+    uint16_t syndromes[2 * PARAM_DELTA + 1] = {0};
     uint16_t sigma[1 << PARAM_FFT] = {0};
     uint8_t error[1 << PARAM_M] = {0};
     uint16_t z[PARAM_N1] = {0};
