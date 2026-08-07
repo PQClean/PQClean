@@ -1,4 +1,9 @@
 /*
+ * SPDX-License-Identifer: Apache-2.0
+ * Copyright: Copyright (c) 2017-2019  Falcon Project
+ * Copyright: PQClean Project
+ * Copyright: Copyright (c) 2023 by Cryptographic Engineering Research Group (CERG) ECE Department, George Mason University Fairfax, VA, U.S.A.
+ *
  * Wrapper for implementing the PQClean API.
  */
 

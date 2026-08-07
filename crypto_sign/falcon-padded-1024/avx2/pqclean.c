@@ -1,4 +1,8 @@
 /*
+ * SPDX-License-Identifer: MIT
+ * Copyright: Copyright (c) 2017-2019  Falcon Project
+ * Copyright: PQClean Project
+ *
  * Wrapper for implementing the PQClean API.
  */
 

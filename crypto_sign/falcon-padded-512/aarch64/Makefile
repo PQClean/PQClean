@@ -1,3 +1,7 @@
+# SPDX-License-Identifier: MIT
+# Copyright: Falcon Project
+# Copyright: PQClean Project
+
 # This Makefile can be used with GNU Make or BSD Make
 
 LIB=libfalcon-padded-512_aarch64.a
